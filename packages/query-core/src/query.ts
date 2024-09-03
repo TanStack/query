@@ -499,7 +499,12 @@ export class Query<
           return
         }
 
-        this.setData(data)
+        try {
+          this.setData(data)
+        } catch (error) {
+          onError(error as TError)
+          return
+        }
 
         // Notify cache callback
         this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)

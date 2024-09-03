@@ -305,6 +305,7 @@ export function isPlainArray(value: unknown) {
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object
+// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
 export function isPlainObject(o: any): o is Object {
   if (!hasObjectPrototype(o)) {
     return false
@@ -353,6 +354,17 @@ export function replaceData<
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data) as TData
   } else if (options.structuralSharing !== false) {
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        JSON.stringify(prevData)
+        JSON.stringify(data)
+      } catch (error) {
+        console.error(
+          `StructuralSharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
+        )
+      }
+    }
+
     // Structurally share data between prev and new data if needed
     return replaceEqualDeep(prevData, data)
   }

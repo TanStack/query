@@ -2,30 +2,26 @@ import {
   For,
   Show,
   batch,
-  createContext,
   createEffect,
   createMemo,
   createSignal,
   on,
   onCleanup,
   onMount,
-  useContext,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import * as goober from 'goober'
 import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
-import { createLocalStorage } from '@solid-primitives/storage'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
-import { Portal, clearDelegatedEvents, delegateEvents } from 'solid-js/web'
+import { Portal } from 'solid-js/web'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
   displayValue,
   getMutationStatusColor,
-  getPreferredColorScheme,
   getQueryStatusColor,
   getQueryStatusColorByLabel,
   getQueryStatusLabel,
@@ -55,18 +51,25 @@ import {
   XCircle,
 } from './icons'
 import Explorer from './Explorer'
+import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
-  QueryDevtoolsContext,
-  ThemeContext,
-  useQueryDevtoolsContext,
-  useTheme,
-} from './Context'
+  BUTTON_POSITION,
+  DEFAULT_HEIGHT,
+  DEFAULT_MUTATION_SORT_FN_NAME,
+  DEFAULT_SORT_FN_NAME,
+  DEFAULT_SORT_ORDER,
+  DEFAULT_WIDTH,
+  INITIAL_IS_OPEN,
+  POSITION,
+  firstBreakpoint,
+  secondBreakpoint,
+  thirdBreakpoint,
+} from './constants'
 import type {
-  DevToolsErrorType,
-  DevtoolsButtonPosition,
+  DevtoolsErrorType,
   DevtoolsPosition,
   QueryDevtoolsProps,
-} from './Context'
+} from './contexts'
 import type {
   Mutation,
   MutationCache,
@@ -83,25 +86,18 @@ interface DevtoolsPanelProps {
   setLocalStore: StorageSetter<string, unknown>
 }
 
+interface ContentViewProps {
+  localStore: StorageObject<string>
+  setLocalStore: StorageSetter<string, unknown>
+  showPanelViewOnly?: boolean
+  onClose?: () => unknown
+}
+
 interface QueryStatusProps {
   label: string
   color: 'green' | 'yellow' | 'gray' | 'blue' | 'purple' | 'red'
   count: number
 }
-
-const firstBreakpoint = 1024
-const secondBreakpoint = 796
-const thirdBreakpoint = 700
-
-const BUTTON_POSITION: DevtoolsButtonPosition = 'bottom-right'
-const POSITION: DevtoolsPosition = 'bottom'
-const THEME_PREFERENCE = 'system'
-const INITIAL_IS_OPEN = false
-const DEFAULT_HEIGHT = 500
-const DEFAULT_WIDTH = 500
-const DEFAULT_SORT_FN_NAME = Object.keys(sortFns)[0]
-const DEFAULT_SORT_ORDER = 1
-const DEFAULT_MUTATION_SORT_FN_NAME = Object.keys(mutationSortFns)[0]
 
 const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
   null,
@@ -116,211 +112,7 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
 }
 
-interface PiPProviderProps {
-  children: JSX.Element
-  localStore: StorageObject<string>
-  setLocalStore: StorageSetter<string, unknown>
-}
-
-type PiPContextType = {
-  pipWindow: Window | null
-  requestPipWindow: (width: number, height: number) => Promise<void>
-  closePipWindow: () => void
-}
-
-const PiPContext = createContext<Accessor<PiPContextType> | undefined>(
-  undefined,
-)
-
-const PiPProvider = (props: PiPProviderProps) => {
-  // Expose pipWindow that is currently active
-  const [pipWindow, setPipWindow] = createSignal<Window | null>(null)
-
-  // Close pipWindow programmatically
-  const closePipWindow = () => {
-    const w = pipWindow()
-    if (w != null) {
-      w.close()
-      setPipWindow(null)
-    }
-  }
-
-  // Open new pipWindow
-  const requestPipWindow = async (width: number, height: number) => {
-    // We don't want to allow multiple requests.
-    if (pipWindow() != null) {
-      return
-    }
-
-    const pip = window.open(
-      '',
-      'TSQD-Devtools-Panel',
-      `width=${width},height=${height},popup`,
-    )
-
-    if (!pip) {
-      throw new Error(
-        'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
-      )
-    }
-
-    // Remove existing styles
-    pip.document.head.innerHTML = ''
-    // Remove existing body
-    pip.document.body.innerHTML = ''
-    // Clear Delegated Events
-    clearDelegatedEvents(pip.document)
-
-    pip.document.title = 'TanStack Query Devtools'
-    pip.document.body.style.margin = '0'
-
-    // Detect when window is closed by user
-    pip.addEventListener('pagehide', () => {
-      props.setLocalStore('pip_open', 'false')
-      setPipWindow(null)
-    })
-
-    // It is important to copy all parent window styles. Otherwise, there would be no CSS available at all
-    // https://developer.chrome.com/docs/web-platform/document-picture-in-picture/#copy-style-sheets-to-the-picture-in-picture-window
-    ;[
-      ...(useQueryDevtoolsContext().shadowDOMTarget || document).styleSheets,
-    ].forEach((styleSheet) => {
-      try {
-        const cssRules = [...styleSheet.cssRules]
-          .map((rule) => rule.cssText)
-          .join('')
-        const style = document.createElement('style')
-        const style_node = styleSheet.ownerNode
-        let style_id = ''
-
-        if (style_node && 'id' in style_node) {
-          style_id = style_node.id
-        }
-
-        if (style_id) {
-          style.setAttribute('id', style_id)
-        }
-        style.textContent = cssRules
-        pip.document.head.appendChild(style)
-      } catch (e) {
-        const link = document.createElement('link')
-        if (styleSheet.href == null) {
-          return
-        }
-
-        link.rel = 'stylesheet'
-        link.type = styleSheet.type
-        link.media = styleSheet.media.toString()
-        link.href = styleSheet.href
-        pip.document.head.appendChild(link)
-      }
-    })
-    delegateEvents(
-      [
-        'focusin',
-        'focusout',
-        'pointermove',
-        'keydown',
-        'pointerdown',
-        'pointerup',
-        'click',
-        'mousedown',
-        'input',
-      ],
-      pip.document,
-    )
-    props.setLocalStore('pip_open', 'true')
-    setPipWindow(pip)
-  }
-
-  createEffect(() => {
-    const pip_open = (props.localStore.pip_open ?? 'false') as 'true' | 'false'
-    if (pip_open === 'true') {
-      requestPipWindow(
-        Number(window.innerWidth),
-        Number(props.localStore.height || DEFAULT_HEIGHT),
-      )
-    }
-  })
-
-  createEffect(() => {
-    // Setup mutation observer for goober styles with id `_goober
-    const gooberStyles = (
-      useQueryDevtoolsContext().shadowDOMTarget || document
-    ).querySelector('#_goober')
-    const w = pipWindow()
-    if (gooberStyles && w) {
-      const observer = new MutationObserver(() => {
-        const pip_style = (
-          useQueryDevtoolsContext().shadowDOMTarget || w.document
-        ).querySelector('#_goober')
-        if (pip_style) {
-          pip_style.textContent = gooberStyles.textContent
-        }
-      })
-      observer.observe(gooberStyles, {
-        childList: true, // observe direct children
-        subtree: true, // and lower descendants too
-        characterDataOldValue: true, // pass old data to callback
-      })
-      onCleanup(() => {
-        observer.disconnect()
-      })
-    }
-  })
-
-  const value = createMemo(() => ({
-    pipWindow: pipWindow(),
-    requestPipWindow,
-    closePipWindow,
-  }))
-
-  return (
-    <PiPContext.Provider value={value}>{props.children}</PiPContext.Provider>
-  )
-}
-
-const usePiPWindow = () => {
-  const context = createMemo(() => {
-    const ctx = useContext(PiPContext)
-    if (!ctx) {
-      throw new Error('usePiPWindow must be used within a PiPProvider')
-    }
-    return ctx()
-  })
-  return context
-}
-
-const DevtoolsComponent: DevtoolsComponentType = (props) => {
-  const [localStore, setLocalStore] = createLocalStorage({
-    prefix: 'TanstackQueryDevtools',
-  })
-
-  const colorScheme = getPreferredColorScheme()
-
-  const theme = createMemo(() => {
-    const preference = (localStore.theme_preference || THEME_PREFERENCE) as
-      | 'system'
-      | 'dark'
-      | 'light'
-    if (preference !== 'system') return preference
-    return colorScheme()
-  })
-
-  return (
-    <QueryDevtoolsContext.Provider value={props}>
-      <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
-        <ThemeContext.Provider value={theme}>
-          <Devtools localStore={localStore} setLocalStore={setLocalStore} />
-        </ThemeContext.Provider>
-      </PiPProvider>
-    </QueryDevtoolsContext.Provider>
-  )
-}
-
-export default DevtoolsComponent
-
-const Devtools: Component<DevtoolsPanelProps> = (props) => {
+export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -393,10 +185,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
       <Show when={pip().pipWindow && pip_open() == 'true'}>
         <Portal mount={pip().pipWindow?.document.body}>
           <PiPPanel>
-            <ContentView
-              localStore={props.localStore}
-              setLocalStore={props.setLocalStore}
-            />
+            <ContentView {...props} />
           </PiPPanel>
         </Portal>
       </Show>
@@ -444,7 +233,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
       >
         <TransitionGroup name="tsqd-panel-transition">
           <Show when={isOpen() && !pip().pipWindow && pip_open() == 'false'}>
-            <DevtoolsPanel
+            <DraggablePanel
               localStore={props.localStore}
               setLocalStore={props.setLocalStore}
             />
@@ -547,7 +336,66 @@ const PiPPanel: Component<{
   )
 }
 
-const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
+export const ParentPanel: Component<{
+  children: JSX.Element
+}> = (props) => {
+  const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
+  })
+
+  let panelRef!: HTMLDivElement
+
+  onMount(() => {
+    createResizeObserver(panelRef, ({ width }, el) => {
+      if (el === panelRef) {
+        setPanelWidth(width)
+      }
+    })
+  })
+
+  const getPanelDynamicStyles = () => {
+    const { colors } = tokens
+    const t = (light: string, dark: string) =>
+      theme() === 'dark' ? dark : light
+    if (panelWidth() < secondBreakpoint) {
+      return css`
+        flex-direction: column;
+        background-color: ${t(colors.gray[300], colors.gray[600])};
+      `
+    }
+    return css`
+      flex-direction: row;
+      background-color: ${t(colors.gray[200], colors.darkGray[900])};
+    `
+  }
+
+  return (
+    <div
+      style={{
+        '--tsqd-font-size': '16px',
+      }}
+      ref={panelRef}
+      class={cx(
+        styles().parentPanel,
+        getPanelDynamicStyles(),
+        {
+          [css`
+            min-width: min-content;
+          `]: panelWidth() < thirdBreakpoint,
+        },
+        'tsqd-main-panel',
+      )}
+    >
+      {props.children}
+    </div>
+  )
+}
+
+const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -740,18 +588,14 @@ const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       >
         <ChevronDown />
       </button>
-      <ContentView
-        localStore={props.localStore}
-        setLocalStore={props.setLocalStore}
-      />
+      <ContentView {...props} />
     </aside>
   )
 }
 
-const ContentView: Component<DevtoolsPanelProps> = (props) => {
+export const ContentView: Component<ContentViewProps> = (props) => {
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
-
   let containerRef!: HTMLDivElement
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
@@ -900,8 +744,12 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             <button
               class={cx(styles().logo, 'tsqd-text-logo-container')}
               onClick={() => {
-                if (!pip().pipWindow) {
+                if (!pip().pipWindow && !props.showPanelViewOnly) {
                   props.setLocalStore('open', 'false')
+                  return
+                }
+                if (props.onClose) {
+                  props.onClose()
                 }
               }}
               aria-label="Close Tanstack query devtools"
@@ -1118,7 +966,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             >
               {offline() ? <Offline /> : <Wifi />}
             </button>
-            <Show when={!pip().pipWindow}>
+            <Show when={!pip().pipWindow && !pip().disabled}>
               <button
                 onClick={() => {
                   pip().requestPipWindow(
@@ -1167,90 +1015,92 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                   >
                     Settings
                   </div>
-                  <DropdownMenu.Sub overlap gutter={8} shift={-4}>
-                    <DropdownMenu.SubTrigger
-                      class={cx(
-                        styles().settingsSubTrigger,
-                        'tsqd-settings-menu-sub-trigger',
-                        'tsqd-settings-menu-sub-trigger-position',
-                      )}
-                    >
-                      <span>Position</span>
-                      <ChevronDown />
-                    </DropdownMenu.SubTrigger>
-                    <DropdownMenu.Portal
-                      ref={(el) => setComputedVariables(el as HTMLDivElement)}
-                      mount={
-                        pip().pipWindow
-                          ? pip().pipWindow!.document.body
-                          : document.body
-                      }
-                    >
-                      <DropdownMenu.SubContent
+                  <Show when={!props.showPanelViewOnly}>
+                    <DropdownMenu.Sub overlap gutter={8} shift={-4}>
+                      <DropdownMenu.SubTrigger
                         class={cx(
-                          styles().settingsMenu,
-                          'tsqd-settings-submenu',
+                          styles().settingsSubTrigger,
+                          'tsqd-settings-menu-sub-trigger',
+                          'tsqd-settings-menu-sub-trigger-position',
                         )}
                       >
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            setDevtoolsPosition('top')
-                          }}
-                          as="button"
+                        <span>Position</span>
+                        <ChevronDown />
+                      </DropdownMenu.SubTrigger>
+                      <DropdownMenu.Portal
+                        ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                        mount={
+                          pip().pipWindow
+                            ? pip().pipWindow!.document.body
+                            : document.body
+                        }
+                      >
+                        <DropdownMenu.SubContent
                           class={cx(
-                            styles().settingsSubButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-top',
+                            styles().settingsMenu,
+                            'tsqd-settings-submenu',
                           )}
                         >
-                          <span>Top</span>
-                          <ArrowUp />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            setDevtoolsPosition('bottom')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-bottom',
-                          )}
-                        >
-                          <span>Bottom</span>
-                          <ArrowDown />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            setDevtoolsPosition('left')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-left',
-                          )}
-                        >
-                          <span>Left</span>
-                          <ArrowLeft />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            setDevtoolsPosition('right')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-right',
-                          )}
-                        >
-                          <span>Right</span>
-                          <ArrowRight />
-                        </DropdownMenu.Item>
-                      </DropdownMenu.SubContent>
-                    </DropdownMenu.Portal>
-                  </DropdownMenu.Sub>
+                          <DropdownMenu.Item
+                            onSelect={() => {
+                              setDevtoolsPosition('top')
+                            }}
+                            as="button"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-top',
+                            )}
+                          >
+                            <span>Top</span>
+                            <ArrowUp />
+                          </DropdownMenu.Item>
+                          <DropdownMenu.Item
+                            onSelect={() => {
+                              setDevtoolsPosition('bottom')
+                            }}
+                            as="button"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-bottom',
+                            )}
+                          >
+                            <span>Bottom</span>
+                            <ArrowDown />
+                          </DropdownMenu.Item>
+                          <DropdownMenu.Item
+                            onSelect={() => {
+                              setDevtoolsPosition('left')
+                            }}
+                            as="button"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-left',
+                            )}
+                          >
+                            <span>Left</span>
+                            <ArrowLeft />
+                          </DropdownMenu.Item>
+                          <DropdownMenu.Item
+                            onSelect={() => {
+                              setDevtoolsPosition('right')
+                            }}
+                            as="button"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-right',
+                            )}
+                          >
+                            <span>Right</span>
+                            <ArrowRight />
+                          </DropdownMenu.Item>
+                        </DropdownMenu.SubContent>
+                      </DropdownMenu.Portal>
+                    </DropdownMenu.Sub>
+                  </Show>
                   <DropdownMenu.Sub overlap gutter={8} shift={-4}>
                     <DropdownMenu.SubTrigger
                       class={cx(
@@ -1747,7 +1597,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
         return false
       }
     }
-    if (panelWidth() < thirdBreakpoint) {
+    if (panelWidth() < secondBreakpoint) {
       return false
     }
 
@@ -1916,7 +1766,7 @@ const QueryDetails = () => {
     promise?.catch(() => {})
   }
 
-  const triggerError = (errorType?: DevToolsErrorType) => {
+  const triggerError = (errorType?: DevtoolsErrorType) => {
     const error =
       errorType?.initializer(activeQuery()!) ??
       new Error('Unknown error from devtools')
@@ -2581,6 +2431,32 @@ const stylesFactory = (
       position: fixed;
       z-index: 9999;
       display: flex;
+      gap: ${tokens.size[0.5]};
+      & * {
+        box-sizing: border-box;
+        text-transform: none;
+      }
+
+      & *::-webkit-scrollbar {
+        width: 7px;
+      }
+
+      & *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      & *::-webkit-scrollbar-thumb {
+        background: ${t(colors.gray[300], colors.darkGray[200])};
+      }
+
+      & *::-webkit-scrollbar-thumb:hover {
+        background: ${t(colors.gray[400], colors.darkGray[300])};
+      }
+    `,
+    parentPanel: css`
+      z-index: 9999;
+      display: flex;
+      height: 100%;
       gap: ${tokens.size[0.5]};
       & * {
         box-sizing: border-box;

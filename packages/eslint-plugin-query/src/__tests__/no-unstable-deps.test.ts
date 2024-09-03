@@ -5,10 +5,7 @@ import {
   useQueryHookNames,
 } from '../rules/no-unstable-deps/no-unstable-deps.rule'
 
-const ruleTester = new RuleTester({
-  parser: '@typescript-eslint/parser',
-  settings: {},
-})
+const ruleTester = new RuleTester()
 
 interface TestCase {
   reactHookImport: string
@@ -37,7 +34,7 @@ const baseTestCases = {
         code: `
             ${reactHookImport}
             import { ${queryHook} } from "@tanstack/react-query";
-    
+
             function Component() {
               const { refetch } = ${queryHook}({ queryFn: (value: string) => value });
               const callback = ${reactHookInvocation}(() => { query.refetch() }, [refetch]);
@@ -57,7 +54,7 @@ const baseTestCases = {
         code: `
             ${reactHookImport}
             import { useMutation } from "@tanstack/react-query";
-    
+
             function Component() {
               const mutation = useMutation({ mutationFn: (value: string) => value });
               const callback = ${reactHookInvocation}(() => { mutation.mutate('hello') }, [mutation]);
@@ -77,7 +74,7 @@ const baseTestCases = {
         code: `
             ${reactHookImport}
             import { ${queryHook} } from "@tanstack/react-query";
-    
+
             function Component() {
               const query = ${queryHook}({ queryFn: (value: string) => value });
               const callback = ${reactHookInvocation}(() => { query.refetch() }, [query]);

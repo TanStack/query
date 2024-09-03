@@ -10,9 +10,9 @@
     queryTimeMax,
     list,
     editingIndex,
-    type Todo,
   } from '$lib/stores'
   import { derived } from 'svelte/store'
+  import type { Todo } from '$lib/stores'
 
   const queryClient = useQueryClient()
 

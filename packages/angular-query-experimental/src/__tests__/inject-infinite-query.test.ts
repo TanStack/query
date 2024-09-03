@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing'
 import { afterEach } from 'vitest'
+import { Injector } from '@angular/core'
 import { QueryClient, injectInfiniteQuery, provideAngularQuery } from '..'
 import { expectSignals, infiniteFetcher } from './test-utils'
 
@@ -57,6 +58,33 @@ describe('injectInfiniteQuery', () => {
         pages: ['data on page 0', 'data on page 12'],
       },
       status: 'success',
+    })
+  })
+
+  describe('injection context', () => {
+    test('throws NG0203 with descriptive error outside injection context', () => {
+      expect(() => {
+        injectInfiniteQuery(() => ({
+          queryKey: ['injectionContextError'],
+          queryFn: infiniteFetcher,
+          initialPageParam: 0,
+          getNextPageParam: () => 12,
+        }))
+      }).toThrowError(/NG0203(.*?)injectInfiniteQuery/)
+    })
+
+    test('can be used outside injection context when passing an injector', () => {
+      const query = injectInfiniteQuery(
+        () => ({
+          queryKey: ['manualInjector'],
+          queryFn: infiniteFetcher,
+          initialPageParam: 0,
+          getNextPageParam: () => 12,
+        }),
+        TestBed.inject(Injector),
+      )
+
+      expect(query.status()).toBe('pending')
     })
   })
 })

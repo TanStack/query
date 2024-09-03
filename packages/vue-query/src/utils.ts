@@ -96,6 +96,7 @@ export function cloneDeepUnref<T>(
   })
 }
 
+// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
 function isPlainObject(value: unknown): value is Object {
   if (Object.prototype.toString.call(value) !== '[object Object]') {
     return false

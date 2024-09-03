@@ -929,6 +929,10 @@
             {
               "label": "Shadow DOM",
               "to": "framework/react/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/react/examples/devtools-panel"
             }
           ]
         },

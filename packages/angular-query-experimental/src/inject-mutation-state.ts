@@ -6,18 +6,17 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import {
-  type Mutation,
-  type MutationCache,
-  type MutationFilters,
-  type MutationState,
-  notifyManager,
-  replaceEqualDeep,
-} from '@tanstack/query-core'
+import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectQueryClient } from './inject-query-client'
 import { lazySignalInitializer } from './util/lazy-signal-initializer/lazy-signal-initializer'
 import type { Injector, Signal } from '@angular/core'
+import type {
+  Mutation,
+  MutationCache,
+  MutationFilters,
+  MutationState,
+} from '@tanstack/query-core'
 
 type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters

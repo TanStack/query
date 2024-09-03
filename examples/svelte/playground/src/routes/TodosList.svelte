@@ -6,9 +6,9 @@
     queryTimeMax,
     list,
     editingIndex,
-    type Todos,
   } from '$lib/stores'
   import { derived, writable } from 'svelte/store'
+  import type { Todos } from '$lib/stores'
 
   export let initialFilter: string
 
