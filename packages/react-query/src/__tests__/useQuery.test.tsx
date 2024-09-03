@@ -6655,15 +6655,16 @@ describe('useQuery', () => {
     })
 
     it('colocate suspense and promise', async () => {
-      // run plz
       const key = queryKey()
       let suspenseRenderCount = 0
       let pageRenderCount = 0
+      let callCount = 0
 
       function MyComponent() {
         const query = useQuery({
           queryKey: key,
           queryFn: async () => {
+            callCount++
             await sleep(1)
             return 'test'
           },
@@ -6695,6 +6696,9 @@ describe('useQuery', () => {
 
       // Page should be rendered once since since the promise do not change
       expect(pageRenderCount).toBe(1)
+
+      // FIXME: it should not be called again when remounting
+      // expect(callCount).toBe(1)
     })
 
     it('should work with initial data', async () => {
