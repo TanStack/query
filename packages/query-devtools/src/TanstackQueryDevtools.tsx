@@ -11,10 +11,9 @@ import type {
   DevtoolsErrorType,
   DevtoolsPosition,
   QueryDevtoolsProps,
-} from './Context'
+} from './contexts'
 import type { Signal } from 'solid-js'
 
-export type { DevtoolsButtonPosition, DevtoolsPosition, DevtoolsErrorType }
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot
@@ -95,7 +94,7 @@ class TanstackQueryDevtools {
       if (this.#Component) {
         Devtools = this.#Component
       } else {
-        Devtools = lazy(() => import('./Devtools'))
+        Devtools = lazy(() => import('./DevtoolsComponent'))
         this.#Component = Devtools
       }
 
