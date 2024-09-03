@@ -6654,6 +6654,49 @@ describe('useQuery', () => {
       expect(pageRenderCount).toBe(1)
     })
 
+    it('colocate suspense and promise', async () => {
+      // run plz
+      const key = queryKey()
+      let suspenseRenderCount = 0
+      let pageRenderCount = 0
+
+      function MyComponent() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(1)
+            return 'test'
+          },
+        })
+        const data = React.use(query.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        suspenseRenderCount++
+        return <>loading..</>
+      }
+      function Page() {
+        pageRenderCount++
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent />
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => rendered.getByText('test'))
+
+      // Suspense should rendered once since `.promise` is the only watched property
+      expect(suspenseRenderCount).toBe(1)
+
+      // Page should be rendered once since since the promise do not change
+      expect(pageRenderCount).toBe(1)
+    })
+
     it('should work with initial data', async () => {
       const key = queryKey()
       let suspenseRenderCount = 0

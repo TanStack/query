@@ -86,8 +86,35 @@ export class QueryObserver<
     this.#client = client
     this.#selectError = null
     this.#currentThenable = pendingThenable()
+
+    const query = client.getQueryCache().find(options)
+
     this.bindMethods()
     this.setOptions(options)
+
+    if (query?.promise) {
+      // If there is an existing promise, we tap into it to resolve the currentThenable
+      // This is because `use()` actually unmounts `useQuery()` immediately where the observer is never subscribing
+      query.promise
+        .then(() => {
+          if (
+            !this.hasListeners() &&
+            this.#currentThenable.status === 'pending'
+          ) {
+            const result = this.getOptimisticResult(options as any)
+            this.#currentThenable.resolve(result.data as any)
+          }
+        })
+        .catch(() => {
+          if (
+            !this.hasListeners() &&
+            this.#currentThenable.status === 'pending'
+          ) {
+            const result = this.getOptimisticResult(options as any)
+            this.#currentThenable.reject(result.error)
+          }
+        })
+    }
   }
 
   protected bindMethods(): void {

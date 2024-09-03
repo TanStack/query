@@ -67,6 +67,10 @@ export function useBaseQuery<
 
   useClearResetErrorBoundary(errorResetBoundary)
 
+  if (!client.getQueryState(options.queryKey)) {
+    client.prefetchQuery(defaultedOptions)
+  }
+
   const [observer] = React.useState(
     () =>
       new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(

@@ -8,6 +8,7 @@ import {
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
+import type { Thenable } from './thenable'
 import type {
   CancelOptions,
   DefaultError,
