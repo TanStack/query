@@ -299,7 +299,7 @@ export function injectQueries<
               observer.getOptimisticResult(
                 defaultedQueriesOptionsSignal(),
                 options.combine,
-              )[1](),
+              )[1](observer.getCurrentResult()),
             )
           })
         }),
