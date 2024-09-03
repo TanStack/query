@@ -1,3 +1,6 @@
+import { notifyManager } from './notifyManager'
+import { Removable } from './removable'
+import { canFetch, createRetryer, isCancelledError } from './retryer'
 import {
   ensureQueryFn,
   noop,
@@ -5,10 +8,9 @@ import {
   resolveEnabled,
   timeUntilStale,
 } from './utils'
-import { notifyManager } from './notifyManager'
-import { canFetch, createRetryer, isCancelledError } from './retryer'
-import { Removable } from './removable'
-import type { Thenable } from './thenable'
+import type { QueryCache } from './queryCache'
+import type { QueryObserver } from './queryObserver'
+import type { Retryer } from './retryer'
 import type {
   CancelOptions,
   DefaultError,
@@ -23,9 +25,6 @@ import type {
   QueryStatus,
   SetDataOptions,
 } from './types'
-import type { QueryCache } from './queryCache'
-import type { QueryObserver } from './queryObserver'
-import type { Retryer } from './retryer'
 
 // TYPES
 

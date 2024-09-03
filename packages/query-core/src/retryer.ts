@@ -2,7 +2,6 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { pendingThenable } from './thenable'
 import { isServer, sleep } from './utils'
-import type { Thenable } from './thenable'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 // TYPES
