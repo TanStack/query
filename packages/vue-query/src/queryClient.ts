@@ -1,4 +1,4 @@
-import { ref } from 'vue-demi'
+import { nextTick, ref } from 'vue-demi'
 import { QueryClient as QC } from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
 import { QueryCache } from './queryCache'
@@ -174,17 +174,27 @@ export class QueryClient extends QC {
     filters: MaybeRefDeep<InvalidateQueryFilters> = {},
     options: MaybeRefDeep<InvalidateOptions> = {},
   ): Promise<void> {
-    // eslint-disable-next-line cspell/spellchecker
-    // (dosipiuk): We need to delay `invalidate` execution to next macro task for all reactive values to be updated.
-    // This ensures that `context` in `queryFn` while `invalidating` along reactive variable change has correct value.
-    return new Promise((resolve) => {
-      setTimeout(async () => {
-        await super.invalidateQueries(
-          cloneDeepUnref(filters),
-          cloneDeepUnref(options),
-        )
-        resolve()
-      }, 0)
+    const filtersCloned = cloneDeepUnref(filters)
+    const optionsCloned = cloneDeepUnref(options)
+
+    super.invalidateQueries(
+      { ...filtersCloned, refetchType: 'none' },
+      optionsCloned,
+    )
+
+    if (filtersCloned.refetchType === 'none') {
+      return Promise.resolve()
+    }
+
+    const refetchFilters: RefetchQueryFilters = {
+      ...filtersCloned,
+      type: filtersCloned.refetchType ?? filtersCloned.type ?? 'active',
+    }
+
+    // (dosipiuk): We need to delay `refetchQueries` execution to next macro task for all reactive values to be updated.
+    // This ensures that `context` in `queryFn` while `invalidating` along reactive variable change has correct
+    return nextTick().then(() => {
+      return super.refetchQueries(refetchFilters, optionsCloned)
     })
   }
 

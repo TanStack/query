@@ -5,7 +5,7 @@ import { generateTsupOptions, parsePresetOptions } from 'tsup-preset-solid'
 
 const preset_options = {
   entries: {
-    entry: 'src/index.tsx',
+    entry: 'src/index.ts',
     dev_entry: true,
   },
   cjs: true,
