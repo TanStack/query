@@ -1133,4 +1133,99 @@ describe('queryObserver', () => {
 
     unsubscribe()
   })
+
+  test('should return a promise that resolves when data is present', async () => {
+    const results: Array<QueryObserverResult> = []
+    const key = queryKey()
+    let count = 0
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        if (++count > 9) {
+          return Promise.resolve('data')
+        }
+        throw new Error('rejected')
+      },
+      retry: 10,
+      retryDelay: 0,
+    })
+    const unsubscribe = observer.subscribe(() => {
+      results.push(observer.getCurrentResult())
+    })
+
+    await waitFor(() => {
+      expect(results.at(-1)?.data).toBe('data')
+    })
+
+    const numberOfUniquePromises = new Set(
+      results.map((result) => result.promise),
+    ).size
+    expect(numberOfUniquePromises).toBe(1)
+
+    unsubscribe()
+  })
+
+  test('should return a new promise after recovering from an error', async () => {
+    const results: Array<QueryObserverResult> = []
+    const key = queryKey()
+
+    let succeeds = false
+    let idx = 0
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        if (succeeds) {
+          return Promise.resolve('data')
+        }
+        throw new Error(`rejected #${++idx}`)
+      },
+      retry: 1,
+      retryDelay: 0,
+    })
+    const unsubscribe = observer.subscribe(() => {
+      results.push(observer.getCurrentResult())
+    })
+
+    await waitFor(() => {
+      expect(results.length).toBe(3)
+      expect(results.at(-1)?.status).toBe('error')
+    })
+
+    expect(
+      results.every((result) => result.promise === results[0]!.promise),
+    ).toBe(true)
+
+    {
+      // fail again
+      observer.refetch()
+      const lengthBefore = results.length
+      await waitFor(() => {
+        expect(results.length).toBeGreaterThan(lengthBefore)
+        expect(results.length).toBe(6)
+      })
+
+      const numberOfUniquePromises = new Set(
+        results.map((result) => result.promise),
+      ).size
+
+      expect(numberOfUniquePromises).toBe(2)
+    }
+    {
+      // succeed
+      succeeds = true
+      observer.refetch()
+
+      await waitFor(() => {
+        results.at(-1)?.status === 'success'
+      })
+
+      const numberOfUniquePromises = new Set(
+        results.map((result) => result.promise),
+      ).size
+
+      expect(numberOfUniquePromises).toBe(3)
+
+      unsubscribe()
+    }
+  })
 })
