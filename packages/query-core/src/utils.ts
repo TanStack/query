@@ -362,8 +362,6 @@ export function replaceData<
         console.error(
           `StructuralSharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
         )
-
-        throw new Error('Data is not serializable')
       }
     }
 
