@@ -2,6 +2,7 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
+  readonly,
   shallowReactive,
   shallowReadonly,
   toRefs,
@@ -26,12 +27,17 @@ type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
   'mutate' | 'reset'
 >
 
+type UseMutationOptionsBase<TData, TError, TVariables, TContext> =
+  MutationObserverOptions<TData, TError, TVariables, TContext> & {
+    shallow?: boolean
+  }
+
 export type UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = MaybeRefDeep<MutationObserverOptions<TData, TError, TVariables, TContext>>
+> = MaybeRefDeep<UseMutationOptionsBase<TData, TError, TVariables, TContext>>
 
 type MutateSyncFunction<
   TData = unknown,
@@ -61,7 +67,7 @@ export function useMutation<
   TContext = unknown,
 >(
   mutationOptions: MaybeRefDeep<
-    MutationObserverOptions<TData, TError, TVariables, TContext>
+    UseMutationOptionsBase<TData, TError, TVariables, TContext>
   >,
   queryClient?: QueryClient,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
@@ -101,7 +107,14 @@ export function useMutation<
     unsubscribe()
   })
 
-  const resultRefs = toRefs(shallowReadonly(state)) as unknown as ToRefs<
+  const readonlyState =
+    process.env.NODE_ENV === 'production'
+      ? state
+      : options.value.shallow
+        ? shallowReadonly(state)
+        : readonly(state)
+
+  const resultRefs = toRefs(readonlyState) as ToRefs<
     Readonly<MutationResult<TData, TError, TVariables, TContext>>
   >
 
