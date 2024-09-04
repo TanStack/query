@@ -429,10 +429,18 @@ export class QueryClient {
     this.#defaultOptions = options
   }
 
-  setQueryDefaults(
+  setQueryDefaults<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+  >(
     queryKey: QueryKey,
     options: Partial<
-      OmitKeyof<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+      OmitKeyof<
+        QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>,
+        'queryKey'
+      >
     >,
   ): void {
     this.#queryDefaults.set(hashKey(queryKey), {
@@ -459,10 +467,15 @@ export class QueryClient {
     return result
   }
 
-  setMutationDefaults(
+  setMutationDefaults<
+    TData = unknown,
+    TError = DefaultError,
+    TVariables = void,
+    TContext = unknown,
+  >(
     mutationKey: MutationKey,
     options: OmitKeyof<
-      MutationObserverOptions<any, any, any, any>,
+      MutationObserverOptions<TData, TError, TVariables, TContext>,
       'mutationKey'
     >,
   ): void {
