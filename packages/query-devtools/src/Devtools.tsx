@@ -252,6 +252,7 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
                 <TanstackLogo />
               </div>
               <button
+                type="button"
                 aria-label="Open Tanstack query devtools"
                 onClick={() => props.setLocalStore('open', 'true')}
                 class="tsqd-open-btn"
