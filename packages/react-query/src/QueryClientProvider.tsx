@@ -32,9 +32,7 @@ export const QueryClientProvider = ({
 }: QueryClientProviderProps): React.JSX.Element => {
   React.useEffect(() => {
     client.mount()
-    return () => {
-      client.unmount()
-    }
+    return client.unmount
   }, [client])
 
   return (
