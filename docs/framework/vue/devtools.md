@@ -38,6 +38,10 @@ bun add @tanstack/vue-query-devtools
 
 By default, Vue Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
 
+## Floating Mode
+
+@todo: blabla
+
 Devtools will be mounted as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
 
 Place the following code as high in your Vue app as you can. The closer it is to the root of the page, the better it will work!
@@ -57,9 +61,10 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 - `initialIsOpen: Boolean`
   - Set this `true` if you want the dev tools to default to being open.
-- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
+- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
   - Defaults to `bottom-right`.
   - The position of the React Query logo to open and close the devtools panel.
+  - If `relative`, the button is placed in the location that you render the devtools.
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`.
   - The position of the React Query devtools panel.
@@ -72,6 +77,33 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+
+## Embedded Mode
+
+@todo: blabla
+
+### Options
+
+- `style?: React.CSSProperties`
+  - Custom styles for the devtools panel
+  - Default: `{ height: '500px' }`
+  - Example: `{ height: '100%' }`
+  - Example: `{ height: '100%', width: '100%' }`
+- `onClose?: () => unknown`
+  - Callback function that is called when the devtools panel is closed
+- `client?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
+  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
+- `styleNonce?: string`
+  - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+- `shadowDOMTarget?: ShadowRoot`
+  - Default behavior will apply the devtool's styles to the head tag within the DOM.
+  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+
+## Devtools in production
+
+@todo: blabla
 
 ## Traditional Devtools
 

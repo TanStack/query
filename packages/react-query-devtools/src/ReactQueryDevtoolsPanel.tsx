@@ -7,7 +7,7 @@ import type { QueryClient } from '@tanstack/react-query'
 
 export interface DevtoolsPanelOptions {
   /**
-   * Custom instance of QueryClient
+   * Custom instance of QueryClient.
    */
   client?: QueryClient
   /**
@@ -22,17 +22,15 @@ export interface DevtoolsPanelOptions {
    * Use this so you can attach the devtool's styles to specific element in the DOM.
    */
   shadowDOMTarget?: ShadowRoot
-
   /**
-   * Custom styles for the devtools panel
+   * Custom styles for the devtools panel.
    * @default { height: '500px' }
    * @example { height: '100%' }
    * @example { height: '100%', width: '100%' }
    */
   style?: React.CSSProperties
-
   /**
-   * Callback function that is called when the devtools panel is closed
+   * Callback function that is called when the devtools panel is closed.
    */
   onClose?: () => unknown
 }

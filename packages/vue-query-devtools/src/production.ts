@@ -1,3 +1,5 @@
-import devtools from './devtools.vue'
+import Devtools from './VueQueryDevtools.vue'
+import DevtoolsPanel from './VueQueryDevtoolsPanel.vue'
 
-export default devtools
+export const VueQueryDevtools = Devtools
+export const VueQueryDevtoolsPanel = DevtoolsPanel

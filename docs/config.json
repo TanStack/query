@@ -983,6 +983,10 @@
             {
               "label": "Persister",
               "to": "framework/vue/examples/persister"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/vue/examples/devtools-panel"
             }
           ]
         },

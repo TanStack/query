@@ -11,23 +11,23 @@ import type { QueryClient } from '@tanstack/react-query'
 
 export interface DevtoolsOptions {
   /**
-   * Set this true if you want the dev tools to default to being open
+   * Set this true if you want the dev tools to default to being open.
    */
   initialIsOpen?: boolean
   /**
    * The position of the React Query logo to open and close the devtools panel.
-   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-right'.
+   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'relative'
+   * @default 'bottom-right'
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the React Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
-   * Defaults to 'bottom'.
+   * @default 'bottom'
    */
   position?: DevtoolsPosition
   /**
-   * Custom instance of QueryClient
+   * Custom instance of QueryClient.
    */
   client?: QueryClient
   /**

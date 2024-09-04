@@ -1,11 +1,20 @@
-import devtools from './devtools.vue'
+import Devtools from './VueQueryDevtools.vue'
+import DevtoolsPanel from './VueQueryDevtoolsPanel.vue'
 import type { DefineComponent } from 'vue'
-import type { DevtoolsOptions } from './types'
+import type { DevtoolsOptions, DevtoolsPanelOptions } from './types'
 
 export const VueQueryDevtools = (
   process.env.NODE_ENV !== 'development'
     ? function () {
         return null
       }
-    : devtools
+    : Devtools
 ) as DefineComponent<DevtoolsOptions, {}, unknown>
+
+export const VueQueryDevtoolsPanel = (
+  process.env.NODE_ENV !== 'development'
+    ? function () {
+        return null
+      }
+    : DevtoolsPanel
+) as DefineComponent<DevtoolsPanelOptions, {}, unknown>

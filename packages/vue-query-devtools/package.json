@@ -54,10 +54,12 @@
     "eslint-plugin-vue": "^9.27.0",
     "vite": "^5.3.5",
     "vue": "^3.4.27",
+    "vue-demi": "^0.14.10",
     "vue-tsc": "^2.0.26"
   },
   "peerDependencies": {
     "@tanstack/vue-query": "workspace:^",
-    "vue": "^3.3.0"
+    "vue": "^3.3.0",
+    "vue-demi": "^0.14.0"
   }
 }
