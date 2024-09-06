@@ -1,10 +1,19 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi, afterAll } from 'vitest'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
 import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('Server Side Rendering', () => {
+  beforeAll(() => {
+    vi.mock('@tanstack/query-core', async () => ({
+      ...(await vi.importActual('@tanstack/query-core')),
+      isServer: true,
+    }))
+  })
+  afterAll(() => {
+    vi.clearAllMocks()
+  })
   it('should not trigger fetch', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })

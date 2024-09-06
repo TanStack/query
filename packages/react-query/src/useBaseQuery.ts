@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { notifyManager, skipToken } from '@tanstack/query-core'
+import { isServer, notifyManager, skipToken } from '@tanstack/query-core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
@@ -133,6 +133,7 @@ export function useBaseQuery<
   )
 
   if (
+    !isServer &&
     willFetch(result, isRestoring) &&
     client.getQueryState(defaultedOptions.queryKey)?.data === undefined &&
     defaultedOptions.enabled !== false &&
