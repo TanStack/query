@@ -11,9 +11,11 @@ describe('Server Side Rendering', () => {
       isServer: true,
     }))
   })
+
   afterAll(() => {
     vi.clearAllMocks()
   })
+
   it('should not trigger fetch', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
