@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { notifyManager } from '@tanstack/query-core'
+import { notifyManager, skipToken } from '@tanstack/query-core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
@@ -78,21 +78,6 @@ export function useBaseQuery<
 
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  if (willFetch(result, isRestoring) && defaultedOptions.enabled !== false) {
-    // fetch immediately on mount
-    observer
-      .fetchOptimistic(defaultedOptions)
-      .catch(() => {
-        // noop
-      })
-      .finally(() => {
-        if (!observer.hasListeners()) {
-          // This allows `.use(query.promise)` to work without having to be subscribed to the query
-          // This is because `use()` actually unmounts `useQuery()` so the observer is never starts subscribing
-          observer.onQueryUpdate()
-        }
-      })
-  }
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
@@ -146,6 +131,28 @@ export function useBaseQuery<
     defaultedOptions,
     result,
   )
+
+  if (
+    willFetch(result, isRestoring) &&
+    client.getQueryState(defaultedOptions.queryKey)?.data === undefined &&
+    defaultedOptions.enabled !== false &&
+    defaultedOptions.queryFn !== skipToken &&
+    !observer.hasListeners()
+  ) {
+    // fetch immediately on mount
+    observer
+      .fetchOptimistic(defaultedOptions)
+      .catch(() => {
+        // noop
+      })
+      .finally(() => {
+        // If there is an existing promise, we tap into it to resolve the currentThenable
+        // This is because `use()` actually unmounts `useQuery()` immediately where the observer is never subscribing
+        if (!observer.hasListeners()) {
+          observer.onQueryUpdate()
+        }
+      })
+  }
 
   // Handle result property usage tracking
   return !defaultedOptions.notifyOnChangeProps

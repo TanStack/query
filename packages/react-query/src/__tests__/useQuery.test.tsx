@@ -6729,13 +6729,17 @@ describe('useQuery', () => {
       function Page() {
         pageRenderCount++
         return (
-          <React.Suspense fallback={<Loading />}>
-            <MyComponent />
-            <MyComponent />
-            <MyComponent />
-            <MyComponent />
-            <MyComponent />
-          </React.Suspense>
+          <>
+            <React.Suspense fallback={<Loading />}>
+              <MyComponent />
+              <MyComponent />
+              <MyComponent />
+            </React.Suspense>
+            <React.Suspense fallback={null}>
+              <MyComponent />
+              <MyComponent />
+            </React.Suspense>
+          </>
         )
       }
 
