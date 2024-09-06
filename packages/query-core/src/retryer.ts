@@ -77,7 +77,6 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   let isResolved = false
   let continueFn: ((value?: unknown) => void) | undefined
 
-  // swap this to thenable
   const thenable = pendingThenable<TData>()
 
   const cancel = (cancelOptions?: CancelOptions): void => {
