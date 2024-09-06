@@ -14,6 +14,7 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
+  willFetch,
 } from './suspense'
 import type { UseBaseQueryOptions } from './types'
 import type {
@@ -77,16 +78,21 @@ export function useBaseQuery<
 
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  const [unsubscribe] = React.useState(() => {
-    // subscribe immediately on mount
-    observer.subscribe(() => {
-      // i don't know what i'm doing
-    })
-  })
-  React.useEffect(() => {
-    return unsubscribe
-  })
-
+  if (willFetch(result, isRestoring) && defaultedOptions.enabled !== false) {
+    // fetch immediately on mount
+    observer
+      .fetchOptimistic(defaultedOptions)
+      .catch(() => {
+        // noop
+      })
+      .finally(() => {
+        if (!observer.hasListeners()) {
+          // This allows `.use(query.promise)` to work without having to be subscribed to the query
+          // This is because `use()` actually unmounts `useQuery()` so the observer is never starts subscribing
+          observer.onQueryUpdate()
+        }
+      })
+  }
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {

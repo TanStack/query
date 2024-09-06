@@ -97,7 +97,7 @@ export class QueryObserver<
       // This is because `use()` actually unmounts `useQuery()` immediately where the observer is never subscribing
       query.promise
         .catch(() => {
-          // th
+          // noop
         })
         .finally(() => {
           if (!this.hasListeners()) {
