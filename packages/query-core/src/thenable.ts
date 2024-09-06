@@ -10,17 +10,13 @@
 interface Fulfilled<T> {
   status: 'fulfilled'
   value: T
-  reason?: never
 }
 interface Rejected {
   status: 'rejected'
   reason: unknown
-  value?: never
 }
 interface Pending<T> {
   status: 'pending'
-  value?: never
-  reason?: never
 
   /**
    * Resolve the promise with a value.
