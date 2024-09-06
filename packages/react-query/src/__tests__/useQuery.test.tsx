@@ -6707,10 +6707,6 @@ describe('useQuery', () => {
       let pageRenderCount = 0
       let callCount = 0
 
-      const repeat = <T,>(times: number, fn: (index: number) => T) => {
-        return Array.from({ length: times }).map((_, index) => fn(index))
-      }
-
       function MyComponent() {
         const query = useQuery({
           queryKey: key,
@@ -6734,13 +6730,11 @@ describe('useQuery', () => {
         pageRenderCount++
         return (
           <React.Suspense fallback={<Loading />}>
-            <div data-testid="snap">
-              <MyComponent />
-              <MyComponent />
-              <MyComponent />
-              <MyComponent />
-              <MyComponent />
-            </div>
+            <MyComponent />
+            <MyComponent />
+            <MyComponent />
+            <MyComponent />
+            <MyComponent />
           </React.Suspense>
         )
       }
