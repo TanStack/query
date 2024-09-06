@@ -2,21 +2,14 @@
 import * as React from 'react'
 
 export class QueryErrorResetBoundaryValue {
-  #isReset = false
-  constructor() {
-    this.clearReset.bind(this)
-    this.reset.bind(this)
-    this.isReset.bind(this)
-  }
-  clearReset() {
+  #isReset: boolean = false
+  clearReset = () => {
     this.#isReset = false
   }
-  reset() {
+  reset = () => {
     this.#isReset = true
   }
-  isReset() {
-    return this.#isReset
-  }
+  isReset = () => this.#isReset
 }
 
 const QueryErrorResetBoundaryContext = React.createContext(
