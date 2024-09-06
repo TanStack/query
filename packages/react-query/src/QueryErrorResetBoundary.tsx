@@ -2,7 +2,7 @@
 import * as React from 'react'
 
 export class QueryErrorResetBoundaryValue {
-  #isReset: boolean = false
+  #isReset = false
   clearReset = () => {
     this.#isReset = false
   }
