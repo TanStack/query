@@ -739,10 +739,6 @@ export class QueryObserver<
       })
     })
   }
-
-  isObserved(): boolean {
-    return this.#currentQuery.hasObserver(this)
-  }
 }
 
 function shouldLoadOnMount(
