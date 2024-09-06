@@ -3,6 +3,7 @@ import { QueryClient as QC } from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
+import type { UseQueryOptions } from './useQuery'
 import type { Ref } from 'vue-demi'
 import type { MaybeRefDeep, NoUnknown } from './types'
 import type {
@@ -387,10 +388,15 @@ export class QueryClient extends QC {
     super.setDefaultOptions(cloneDeepUnref(options))
   }
 
-  setQueryDefaults(
+  setQueryDefaults<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+  >(
     queryKey: MaybeRefDeep<QueryKey>,
     options: MaybeRefDeep<
-      OmitKeyof<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+      Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryData>, 'queryKey'>
     >,
   ): void {
     super.setQueryDefaults(cloneDeepUnref(queryKey), cloneDeepUnref(options))
@@ -402,9 +408,16 @@ export class QueryClient extends QC {
     return super.getQueryDefaults(cloneDeepUnref(queryKey))
   }
 
-  setMutationDefaults(
+  setMutationDefaults<
+    TData = unknown,
+    TError = DefaultError,
+    TVariables = void,
+    TContext = unknown,
+  >(
     mutationKey: MaybeRefDeep<MutationKey>,
-    options: MaybeRefDeep<MutationObserverOptions<any, any, any, any>>,
+    options: MaybeRefDeep<
+      MutationObserverOptions<TData, TError, TVariables, TContext>
+    >,
   ): void {
     super.setMutationDefaults(
       cloneDeepUnref(mutationKey),

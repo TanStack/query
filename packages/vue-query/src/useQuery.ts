@@ -23,33 +23,37 @@ export type UseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = MaybeRef<{
-  [Property in keyof QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >]: Property extends 'enabled'
-    ? MaybeRefOrGetter<
-        QueryObserverOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryData,
-          DeepUnwrapRef<TQueryKey>
-        >[Property]
-      >
-    : MaybeRefDeep<
-        QueryObserverOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryData,
-          DeepUnwrapRef<TQueryKey>
-        >[Property]
-      >
-}>
+> = MaybeRef<
+  {
+    [Property in keyof QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >]: Property extends 'enabled'
+      ? MaybeRefOrGetter<
+          QueryObserverOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            DeepUnwrapRef<TQueryKey>
+          >[Property]
+        >
+      : MaybeRefDeep<
+          QueryObserverOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            DeepUnwrapRef<TQueryKey>
+          >[Property]
+        >
+  } & {
+    shallow?: boolean
+  }
+>
 
 export type UndefinedInitialQueryOptions<
   TQueryFnData = unknown,
