@@ -77,6 +77,16 @@ export function useBaseQuery<
 
   const result = observer.getOptimisticResult(defaultedOptions)
 
+  const [unsubscribe] = React.useState(() => {
+    // subscribe immediately on mount
+    observer.subscribe(() => {
+      // i don't know what i'm doing
+    })
+  })
+  React.useEffect(() => {
+    return unsubscribe
+  })
+
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {

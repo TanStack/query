@@ -1844,7 +1844,7 @@ describe('useInfiniteQuery', () => {
 
     // Suspense doesn't trigger when fetching next page
     expect(suspenseRenderCount).toBe(1)
-    // page renders twice since the promise will change
-    expect(pageRenderCount).toBe(2)
+
+    expect(pageRenderCount).toBe(1)
   })
 })
