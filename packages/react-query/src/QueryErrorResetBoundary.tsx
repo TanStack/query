@@ -31,7 +31,7 @@ export interface QueryErrorResetBoundaryProps {
 export const QueryErrorResetBoundary = ({
   children,
 }: QueryErrorResetBoundaryProps) => {
-  const [value] = React.useState(new QueryErrorResetBoundaryValue())
+  const [value] = React.useState(() => new QueryErrorResetBoundaryValue())
   return (
     <QueryErrorResetBoundaryContext.Provider value={value}>
       {typeof children === 'function'
