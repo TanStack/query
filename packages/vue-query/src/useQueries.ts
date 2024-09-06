@@ -4,6 +4,7 @@ import {
   getCurrentScope,
   onScopeDispose,
   readonly,
+  shallowReadonly,
   shallowRef,
   unref,
   watch,
@@ -256,6 +257,7 @@ export function useQueries<
   }: {
     queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
     combine?: (result: UseQueriesResults<T>) => TCombinedResult
+    shallow?: boolean
   },
   queryClient?: QueryClient,
 ): Readonly<Ref<TCombinedResult>> {
@@ -348,5 +350,9 @@ export function useQueries<
     unsubscribe()
   })
 
-  return readonly(state) as Readonly<Ref<TCombinedResult>>
+  return process.env.NODE_ENV === 'production'
+    ? state
+    : options.shallow
+      ? shallowReadonly(state)
+      : (readonly(state) as Readonly<Ref<TCombinedResult>>)
 }
