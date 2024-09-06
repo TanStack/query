@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
+import { describe, expect, it, vi } from 'vitest'
 import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
 import { createQueryClient, queryKey, setIsServer, sleep } from './utils'
 
