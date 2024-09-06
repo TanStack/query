@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, vi, afterAll } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
 import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
