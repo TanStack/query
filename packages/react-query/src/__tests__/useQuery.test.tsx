@@ -6668,6 +6668,7 @@ describe('useQuery', () => {
             await sleep(1)
             return 'test'
           },
+          staleTime: 1000,
         })
         const data = React.use(query.promise)
 
@@ -6697,8 +6698,7 @@ describe('useQuery', () => {
       // Page should be rendered once since since the promise do not change
       expect(pageRenderCount).toBe(1)
 
-      // FIXME: it should not be called again when remounting
-      // expect(callCount).toBe(1)
+      expect(callCount).toBe(1)
     })
 
     it('should work with initial data', async () => {
