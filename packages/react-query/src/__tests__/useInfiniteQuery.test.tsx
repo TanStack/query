@@ -1787,22 +1787,20 @@ describe('useInfiniteQuery', () => {
     let pageRenderCount = 0
     let suspenseRenderCount = 0
 
-    function useMyQuery() {
+    function Loading() {
+      suspenseRenderCount++
+      return <>loading...</>
+    }
+    function MyComponent() {
       const fetchCountRef = React.useRef(0)
-      return useInfiniteQuery({
+      const query = useInfiniteQuery({
         queryFn: ({ pageParam }) =>
           fetchItems(pageParam, fetchCountRef.current++),
         getNextPageParam: (lastPage) => lastPage.nextId,
         initialPageParam: 0,
         queryKey: key,
       })
-    }
-    function Loading() {
-      suspenseRenderCount++
-      return <>loading...</>
-    }
-    function MyComponent(props: { query: ReturnType<typeof useMyQuery> }) {
-      const data = React.use(props.query.promise)
+      const data = React.use(query.promise)
       return (
         <>
           {data.pages.map((page, index) => (
@@ -1815,18 +1813,15 @@ describe('useInfiniteQuery', () => {
               ))}
             </React.Fragment>
           ))}
-          <button onClick={() => props.query.fetchNextPage()}>
-            fetchNextPage
-          </button>
+          <button onClick={() => query.fetchNextPage()}>fetchNextPage</button>
         </>
       )
     }
     function Page() {
-      const query = useMyQuery()
       pageRenderCount++
       return (
         <React.Suspense fallback={<Loading />}>
-          <MyComponent query={query} />
+          <MyComponent />
         </React.Suspense>
       )
     }

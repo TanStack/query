@@ -89,6 +89,22 @@ export class QueryObserver<
 
     this.bindMethods()
     this.setOptions(options)
+
+    const query = this.#client.getQueryCache().find(this.options)
+
+    if (query?.promise) {
+      // If there is an existing promise, we tap into it to resolve the currentThenable
+      // This is because `use()` actually unmounts `useQuery()` immediately where the observer is never subscribing
+      query.promise
+        .catch(() => {
+          // th
+        })
+        .finally(() => {
+          if (!this.hasListeners()) {
+            this.onQueryUpdate()
+          }
+        })
+    }
   }
 
   protected bindMethods(): void {

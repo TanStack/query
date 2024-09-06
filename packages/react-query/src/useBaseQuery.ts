@@ -75,18 +75,6 @@ export function useBaseQuery<
       ),
   )
 
-  if (
-    client.getQueryState(options.queryKey)?.data === undefined &&
-    defaultedOptions.enabled !== false
-  ) {
-    client.prefetchQuery(defaultedOptions).finally(() => {
-      if (!observer.hasListeners()) {
-        // This allows `.use(query.promise)` to work without having to be subscribed to the query
-        // This is because `use()` actually unmounts `useQuery()` so the observer is never starts subscribing
-        observer.onQueryUpdate()
-      }
-    })
-  }
   const result = observer.getOptimisticResult(defaultedOptions)
 
   React.useSyncExternalStore(
