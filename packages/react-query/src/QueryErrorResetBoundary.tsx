@@ -19,12 +19,8 @@ const QueryErrorResetBoundaryContext = React.createContext(
   new QueryErrorResetBoundaryValue(),
 )
 
-// HOOK
-
 export const useQueryErrorResetBoundary = () =>
   React.useContext(QueryErrorResetBoundaryContext)
-
-// COMPONENT
 
 export interface QueryErrorResetBoundaryProps {
   children:
