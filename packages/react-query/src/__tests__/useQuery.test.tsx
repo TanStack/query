@@ -6701,6 +6701,69 @@ describe('useQuery', () => {
       expect(callCount).toBe(1)
     })
 
+    it('parallel queries', async () => {
+      const key = queryKey()
+      let suspenseRenderCount = 0
+      let pageRenderCount = 0
+      let callCount = 0
+
+      const repeat = <T,>(times: number, fn: (index: number) => T) => {
+        return Array.from({ length: times }).map((_, index) => fn(index))
+      }
+
+      function MyComponent() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            callCount++
+            await sleep(1)
+            return 'test'
+          },
+          staleTime: 1000,
+        })
+        const data = React.use(query.promise)
+
+        return data
+      }
+
+      function Loading() {
+        suspenseRenderCount++
+        return <>loading..</>
+      }
+      function Page() {
+        pageRenderCount++
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <div data-testid="snap">
+              <MyComponent />
+              <MyComponent />
+              <MyComponent />
+              <MyComponent />
+              <MyComponent />
+            </div>
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => {
+        expect(rendered.queryByText('loading..')).not.toBeInTheDocument()
+      })
+
+      expect(rendered.container.textContent).toMatchInlineSnapshot(
+        `"testtesttesttesttest"`,
+      )
+
+      // Suspense should rendered once since `.promise` is the only watched property
+      expect(suspenseRenderCount).toBe(1)
+
+      // Page should be rendered once since since the promise do not change
+      expect(pageRenderCount).toBe(1)
+
+      expect(callCount).toBe(1)
+    })
+
     it('should work with initial data', async () => {
       const key = queryKey()
       let suspenseRenderCount = 0
