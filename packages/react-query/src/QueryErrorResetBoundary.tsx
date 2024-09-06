@@ -1,30 +1,23 @@
 'use client'
 import * as React from 'react'
 
-// CONTEXT
+export class QueryErrorResetBoundaryValue {
+  #isReset = false
 
-export interface QueryErrorResetBoundaryValue {
-  clearReset: () => void
-  isReset: () => boolean
-  reset: () => void
-}
-
-function createValue(): QueryErrorResetBoundaryValue {
-  let isReset = false
-  return {
-    clearReset: () => {
-      isReset = false
-    },
-    reset: () => {
-      isReset = true
-    },
-    isReset: () => {
-      return isReset
-    },
+  clearReset() {
+    this.#isReset = false
+  }
+  reset() {
+    this.#isReset = true
+  }
+  isReset() {
+    return this.#isReset
   }
 }
 
-const QueryErrorResetBoundaryContext = React.createContext(createValue())
+const QueryErrorResetBoundaryContext = React.createContext(
+  new QueryErrorResetBoundaryValue(),
+)
 
 // HOOK
 
@@ -42,7 +35,7 @@ export interface QueryErrorResetBoundaryProps {
 export const QueryErrorResetBoundary = ({
   children,
 }: QueryErrorResetBoundaryProps) => {
-  const [value] = React.useState(() => createValue())
+  const [value] = React.useState(new QueryErrorResetBoundaryValue())
   return (
     <QueryErrorResetBoundaryContext.Provider value={value}>
       {typeof children === 'function'
