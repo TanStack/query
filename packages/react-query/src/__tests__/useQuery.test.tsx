@@ -6749,9 +6749,7 @@ describe('useQuery', () => {
         expect(rendered.queryByText('loading..')).not.toBeInTheDocument()
       })
 
-      expect(rendered.container.textContent).toMatchInlineSnapshot(
-        `"testtesttesttesttest"`,
-      )
+      expect(rendered.container.textContent).toBe('test'.repeat(5))
 
       // Suspense should rendered once since `.promise` is the only watched property
       expect(suspenseRenderCount).toBe(1)
