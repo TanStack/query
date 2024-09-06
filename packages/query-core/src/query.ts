@@ -1,6 +1,3 @@
-import { notifyManager } from './notifyManager'
-import { Removable } from './removable'
-import { canFetch, createRetryer, isCancelledError } from './retryer'
 import {
   ensureQueryFn,
   noop,
@@ -8,9 +5,9 @@ import {
   resolveEnabled,
   timeUntilStale,
 } from './utils'
-import type { QueryCache } from './queryCache'
-import type { QueryObserver } from './queryObserver'
-import type { Retryer } from './retryer'
+import { notifyManager } from './notifyManager'
+import { canFetch, createRetryer, isCancelledError } from './retryer'
+import { Removable } from './removable'
 import type {
   CancelOptions,
   DefaultError,
@@ -25,6 +22,9 @@ import type {
   QueryStatus,
   SetDataOptions,
 } from './types'
+import type { QueryCache } from './queryCache'
+import type { QueryObserver } from './queryObserver'
+import type { Retryer } from './retryer'
 
 // TYPES
 
@@ -300,7 +300,7 @@ export class Query<
   }
 
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (!this.hasObserver(observer)) {
+    if (!this.observers.includes(observer)) {
       this.observers.push(observer)
 
       // Stop the query from being garbage collected
@@ -310,12 +310,8 @@ export class Query<
     }
   }
 
-  hasObserver(observer: QueryObserver<any, any, any, any, any>): boolean {
-    return this.observers.includes(observer)
-  }
-
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.hasObserver(observer)) {
+    if (this.observers.includes(observer)) {
       this.observers = this.observers.filter((x) => x !== observer)
 
       if (!this.observers.length) {
