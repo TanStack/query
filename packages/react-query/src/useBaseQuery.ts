@@ -133,16 +133,15 @@ export function useBaseQuery<
   )
 
   if (!isServer && willFetch(result, isRestoring) && !observer.hasListeners()) {
-    // fetch immediately on mount
+    // Fetch immediately on mount in order to ensure `.promise` is resolved even if the component is unmounted
     observer
       .fetchOptimistic(defaultedOptions)
       .catch(() => {
         // noop
       })
       .finally(() => {
-        // If there is an existing promise, we tap into it to resolve the currentThenable
-        // This is because `use()` actually unmounts `useQuery()` immediately where the observer is never subscribing
         if (!observer.hasListeners()) {
+          // `.updateResult()` will trigger `.#currentThenable` to finalize
           observer.updateResult()
         }
       })
