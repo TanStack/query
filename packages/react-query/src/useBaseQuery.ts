@@ -1,28 +1,28 @@
 'use client'
 import * as React from 'react'
 
-import { isServer, notifyManager, skipToken } from '@tanstack/query-core'
-import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
+import { isServer, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { useIsRestoring } from './isRestoring'
+import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
   ensurePreventErrorBoundaryRetry,
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
+import { useIsRestoring } from './isRestoring'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
   willFetch,
 } from './suspense'
-import type { UseBaseQueryOptions } from './types'
 import type {
   QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { UseBaseQueryOptions } from './types'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -132,14 +132,7 @@ export function useBaseQuery<
     result,
   )
 
-  if (
-    !isServer &&
-    willFetch(result, isRestoring) &&
-    client.getQueryState(defaultedOptions.queryKey)?.data === undefined &&
-    defaultedOptions.enabled !== false &&
-    defaultedOptions.queryFn !== skipToken &&
-    !observer.hasListeners()
-  ) {
+  if (!isServer && willFetch(result, isRestoring) && !observer.hasListeners()) {
     // fetch immediately on mount
     observer
       .fetchOptimistic(defaultedOptions)
