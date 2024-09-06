@@ -49,6 +49,8 @@ export type UseInfiniteQueryOptions<
           TPageParam
         >[Property]
       >
+} & {
+  shallow?: boolean
 }
 
 export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
