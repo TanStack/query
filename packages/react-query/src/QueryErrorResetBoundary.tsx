@@ -3,7 +3,11 @@ import * as React from 'react'
 
 export class QueryErrorResetBoundaryValue {
   #isReset = false
-
+  constructor() {
+    this.clearReset.bind(this)
+    this.reset.bind(this)
+    this.isReset.bind(this)
+  }
   clearReset() {
     this.#isReset = false
   }
