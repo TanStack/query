@@ -280,7 +280,6 @@ export function replaceEqualDeep(a: any, b: any): any {
   return b
 }
 
-
 /**
  * Shallow compare objects.
  */
