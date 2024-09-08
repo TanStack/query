@@ -2,8 +2,9 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
-  reactive,
   readonly,
+  shallowReactive,
+  shallowReadonly,
   toRefs,
   watch,
 } from 'vue-demi'
@@ -26,12 +27,17 @@ type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
   'mutate' | 'reset'
 >
 
+type UseMutationOptionsBase<TData, TError, TVariables, TContext> =
+  MutationObserverOptions<TData, TError, TVariables, TContext> & {
+    shallow?: boolean
+  }
+
 export type UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = MaybeRefDeep<MutationObserverOptions<TData, TError, TVariables, TContext>>
+> = MaybeRefDeep<UseMutationOptionsBase<TData, TError, TVariables, TContext>>
 
 type MutateSyncFunction<
   TData = unknown,
@@ -61,7 +67,7 @@ export function useMutation<
   TContext = unknown,
 >(
   mutationOptions: MaybeRefDeep<
-    MutationObserverOptions<TData, TError, TVariables, TContext>
+    UseMutationOptionsBase<TData, TError, TVariables, TContext>
   >,
   queryClient?: QueryClient,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
@@ -78,7 +84,7 @@ export function useMutation<
     return client.defaultMutationOptions(cloneDeepUnref(mutationOptions))
   })
   const observer = new MutationObserver(client, options.value)
-  const state = reactive(observer.getCurrentResult())
+  const state = shallowReactive(observer.getCurrentResult())
 
   const unsubscribe = observer.subscribe((result) => {
     updateState(state, result)
@@ -101,7 +107,14 @@ export function useMutation<
     unsubscribe()
   })
 
-  const resultRefs = toRefs(readonly(state)) as unknown as ToRefs<
+  const readonlyState =
+    process.env.NODE_ENV === 'production'
+      ? state
+      : options.value.shallow
+        ? shallowReadonly(state)
+        : readonly(state)
+
+  const resultRefs = toRefs(readonlyState) as ToRefs<
     Readonly<MutationResult<TData, TError, TVariables, TContext>>
   >
 

@@ -2,13 +2,13 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
-  readonly,
-  ref,
+  shallowReadonly,
+  shallowRef,
   watch,
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
-import type { DeepReadonly, Ref } from 'vue-demi'
+import type { Ref } from 'vue-demi'
 import type {
   MutationFilters as MF,
   Mutation,
@@ -68,10 +68,12 @@ function getResult<TResult = MutationState>(
 export function useMutationState<TResult = MutationState>(
   options: MutationStateOptions<TResult> = {},
   queryClient?: QueryClient,
-): DeepReadonly<Ref<Array<TResult>>> {
+): Readonly<Ref<Array<TResult>>> {
   const filters = computed(() => cloneDeepUnref(options.filters))
   const mutationCache = (queryClient || useQueryClient()).getMutationCache()
-  const state = ref(getResult(mutationCache, options)) as Ref<Array<TResult>>
+  const state = shallowRef(getResult(mutationCache, options)) as Ref<
+    Array<TResult>
+  >
   const unsubscribe = mutationCache.subscribe(() => {
     const result = getResult(mutationCache, options)
     state.value = result
@@ -85,5 +87,5 @@ export function useMutationState<TResult = MutationState>(
     unsubscribe()
   })
 
-  return readonly(state)
+  return shallowReadonly(state)
 }
