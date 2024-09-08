@@ -356,7 +356,7 @@ export function replaceData<
   } else if (options.structuralSharing !== false) {
     if (process.env.NODE_ENV !== 'production') {
       try {
-        replaceEqualDeep(prevData, data)
+        return replaceEqualDeep(prevData, data)
       } catch (error) {
         console.error(
           `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
