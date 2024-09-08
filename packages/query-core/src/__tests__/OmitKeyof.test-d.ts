@@ -27,7 +27,7 @@ describe('OmitKeyof', () => {
         // @ts-expect-error Type does not satisfy the constraint keyof A
         'z' | 'y'
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
     expectTypeOf<
       OmitKeyof<
         A,
@@ -36,7 +36,7 @@ describe('OmitKeyof', () => {
         'z' | 'y',
         'strictly'
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
 
     // 2. safely
     expectTypeOf<
@@ -46,7 +46,7 @@ describe('OmitKeyof', () => {
         // @ts-expect-error Type does not satisfy the constraint keyof A
         'z' | 'y'
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
     expectTypeOf<
       OmitKeyof<
         A,
@@ -54,7 +54,7 @@ describe('OmitKeyof', () => {
         'z' | 'y',
         'safely'
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
   })
 
   it("'s number key type check", () => {
@@ -82,7 +82,7 @@ describe('OmitKeyof', () => {
         // @ts-expect-error Type does not satisfy the constraint keyof A
         3 | 2
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
     expectTypeOf<
       OmitKeyof<
         A,
@@ -91,7 +91,7 @@ describe('OmitKeyof', () => {
         3 | 2,
         'strictly'
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
 
     // 2. safely
     expectTypeOf<
@@ -101,7 +101,7 @@ describe('OmitKeyof', () => {
         // @ts-expect-error Type does not satisfy the constraint keyof A
         3 | 2
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
     expectTypeOf<
       OmitKeyof<
         A,
@@ -109,7 +109,7 @@ describe('OmitKeyof', () => {
         3 | 2,
         'safely'
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
   })
 
   it("'s symbol key type check", () => {
@@ -143,7 +143,7 @@ describe('OmitKeyof', () => {
         // @ts-expect-error Type does not satisfy the constraint keyof A
         typeof symbol3 | typeof symbol2
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
     expectTypeOf<
       OmitKeyof<
         A,
@@ -152,7 +152,7 @@ describe('OmitKeyof', () => {
         typeof symbol3 | typeof symbol2,
         'strictly'
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
 
     // 2. safely
     expectTypeOf<
@@ -162,7 +162,7 @@ describe('OmitKeyof', () => {
         // @ts-expect-error Type does not satisfy the constraint keyof A
         typeof symbol3 | typeof symbol2
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
     expectTypeOf<
       OmitKeyof<
         A,
@@ -170,6 +170,6 @@ describe('OmitKeyof', () => {
         typeof symbol3 | typeof symbol2,
         'safely'
       >
-    >().toEqualTypeOf<ExpectedType>
+    >().toEqualTypeOf<ExpectedType>()
   })
 })

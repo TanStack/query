@@ -15,13 +15,25 @@ Component-based devtools use a framework-agnostic implementation and are always 
 The devtools component is a separate package that you need to install:
 
 ```bash
-$ npm i @tanstack/vue-query-devtools
-# or
-$ pnpm add @tanstack/vue-query-devtools
-# or
-$ yarn add @tanstack/vue-query-devtools
-# or
-$ bun add @tanstack/vue-query-devtools
+npm i @tanstack/vue-query-devtools
+```
+
+or
+
+```bash
+pnpm add @tanstack/vue-query-devtools
+```
+
+or
+
+```bash
+yarn add @tanstack/vue-query-devtools
+```
+
+or
+
+```bash
+bun add @tanstack/vue-query-devtools
 ```
 
 By default, Vue Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.

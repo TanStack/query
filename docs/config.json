@@ -792,6 +792,10 @@
         {
           "label": "No Rest Destructuring",
           "to": "eslint/no-rest-destructuring"
+        },
+        {
+          "label": "No Unstable Deps",
+          "to": "eslint/no-unstable-deps"
         }
       ]
     },
@@ -925,6 +929,10 @@
             {
               "label": "Shadow DOM",
               "to": "framework/react/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/react/examples/devtools-panel"
             }
           ]
         },

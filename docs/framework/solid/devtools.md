@@ -12,13 +12,25 @@ When you begin your Solid Query journey, you'll want these devtools by your side
 The devtools are a separate package that you need to install:
 
 ```bash
-$ npm i @tanstack/solid-query-devtools
-# or
-$ pnpm add @tanstack/solid-query-devtools
-# or
-$ yarn add @tanstack/solid-query-devtools
-# or
-$ bun add @tanstack/solid-query-devtools
+npm i @tanstack/solid-query-devtools
+```
+
+or
+
+```bash
+pnpm add @tanstack/solid-query-devtools
+```
+
+or
+
+```bash
+yarn add @tanstack/solid-query-devtools
+```
+
+or
+
+```bash
+bun add @tanstack/solid-query-devtools
 ```
 
 You can import the devtools like this:
@@ -66,4 +78,4 @@ function App() {
   - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
-  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instad of within the head tag in the light DOM.
+  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.

@@ -3959,7 +3959,7 @@ describe('useQuery', () => {
     expect(results[2]).toMatchObject({ data: 'fetched data', isStale: false })
   })
 
-  it('it should support enabled:false in query object syntax', async () => {
+  it('should support enabled:false in query object syntax', async () => {
     const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
@@ -5911,7 +5911,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('it should have status=error on mount when a query has failed', async () => {
+  it('should have status=error on mount when a query has failed', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<unknown>> = []
     const error = new Error('oops')

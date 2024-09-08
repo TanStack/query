@@ -36,11 +36,23 @@ Visit https://tanstack.com/query/latest/docs/vue/overview
 
    ```bash
    $ npm i @tanstack/vue-query
-   # or
+   ```
+
+   or
+
+   ```bash
    $ pnpm add @tanstack/vue-query
-   # or
+   ```
+
+   or
+
+   ```bash
    $ yarn add @tanstack/vue-query
-   # or
+   ```
+
+   or
+
+   ```bash
    $ bun add @tanstack/vue-query
    ```
 

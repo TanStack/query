@@ -1,4 +1,4 @@
-import { Component, input, signal } from '@angular/core'
+import { Component, Injector, input, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
@@ -30,7 +30,7 @@ describe('injectMutationState', () => {
   })
 
   describe('injectMutationState', () => {
-    test('should return variables after calling mutate', async () => {
+    test('should return variables after calling mutate 1', async () => {
       const mutationKey = ['mutation']
       const variables = 'foo123'
 
@@ -91,7 +91,7 @@ describe('injectMutationState', () => {
       expect(mutationState()).toEqual([variables2])
     })
 
-    test('should return variables after calling mutate', async () => {
+    test('should return variables after calling mutate 2', async () => {
       queryClient.clear()
       const mutationKey = ['mutation']
       const variables = 'bar234'
@@ -172,6 +172,23 @@ describe('injectMutationState', () => {
         .map((span) => span.nativeNode.textContent)
 
       expect(spans).toEqual(['success', 'error'])
+    })
+
+    describe('injection context', () => {
+      test('throws NG0203 with descriptive error outside injection context', () => {
+        expect(() => {
+          injectMutationState()
+        }).toThrowError(/NG0203(.*?)injectMutationState/)
+      })
+
+      test('can be used outside injection context when passing an injector', () => {
+        const injector = TestBed.inject(Injector)
+        expect(
+          injectMutationState(undefined, {
+            injector,
+          }),
+        ).not.toThrow()
+      })
     })
   })
 })

@@ -965,4 +965,75 @@ describe('query', () => {
     await sleep(60) // let it resolve
     expect(spy).toHaveBeenCalledWith('1 - 2')
   })
+
+  it('should have an error log when queryFn data is not serializable', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+
+    consoleMock.mockImplementation(() => undefined)
+
+    const key = queryKey()
+
+    const queryFn = vi.fn()
+
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+
+      const data: Array<{
+        id: number
+        name: string
+        link: null | { id: number; name: string; link: unknown }
+      }> = Array.from({ length: 5 })
+        .fill(null)
+        .map((_, index) => ({
+          id: index,
+          name: `name-${index}`,
+          link: null,
+        }))
+
+      if (data[0] && data[1]) {
+        data[0].link = data[1]
+        data[1].link = data[0]
+      }
+
+      return data
+    })
+
+    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'StructuralSharing requires data to be JSON serializable',
+      ),
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should have an error status when setData has any error inside', async () => {
+    const key = queryKey()
+
+    const queryFn = vi.fn()
+
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+
+      return 'data'
+    })
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn,
+      structuralSharing: () => {
+        throw Error('Any error')
+      },
+    })
+
+    const query = queryCache.find({ queryKey: key })!
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    expect(query.state.status).toBe('error')
+  })
 })

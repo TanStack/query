@@ -1,8 +1,8 @@
-import { describe } from 'node:test'
-import { expectTypeOf, it } from 'vitest'
-import { type InfiniteData, dataTagSymbol } from '@tanstack/query-core'
+import { describe, expectTypeOf, it } from 'vitest'
+import { dataTagSymbol } from '@tanstack/query-core'
 import { createInfiniteQuery } from '../createInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import type { InfiniteData } from '@tanstack/query-core'
 import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
@@ -24,33 +24,21 @@ describe('infiniteQueryOptions', () => {
     })
 
     doNotRun(() => {
-      expectTypeOf<
-        InfiniteData<
-          {
-            wow: boolean
-          },
-          unknown
-        >
-      >(createInfiniteQuery(() => options).data)
+      expectTypeOf(createInfiniteQuery(() => options).data).toEqualTypeOf<
+        InfiniteData<{ wow: boolean }, unknown>
+      >()
 
-      expectTypeOf<
+      expectTypeOf(options).toMatchTypeOf<
         ReturnType<
           DefinedInitialDataInfiniteOptions<
-            {
-              wow: boolean
-            },
+            { wow: boolean },
             Error,
-            InfiniteData<
-              {
-                wow: boolean
-              },
-              unknown
-            >,
+            InfiniteData<{ wow: boolean }, unknown>,
             Array<string>,
             number | undefined
           >
         >
-      >(options)
+      >()
 
       expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<
         InfiniteData<{ wow: boolean }>
@@ -67,35 +55,21 @@ describe('infiniteQueryOptions', () => {
     })
 
     doNotRun(() => {
-      expectTypeOf<
-        () =>
-          | InfiniteData<
-              {
-                wow: boolean
-              },
-              unknown
-            >
-          | undefined
-      >(() => createInfiniteQuery(() => options).data)
+      expectTypeOf(() => createInfiniteQuery(() => options).data).toEqualTypeOf<
+        () => InfiniteData<{ wow: boolean }, unknown> | undefined
+      >()
 
-      expectTypeOf<
+      expectTypeOf(options).toMatchTypeOf<
         ReturnType<
           UndefinedInitialDataInfiniteOptions<
-            {
-              wow: boolean
-            },
+            { wow: boolean },
             Error,
-            InfiniteData<
-              {
-                wow: boolean
-              },
-              unknown
-            >,
+            InfiniteData<{ wow: boolean }, unknown>,
             Array<string>,
             number
           >
         >
-      >(options)
+      >()
 
       expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<
         InfiniteData<{

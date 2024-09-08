@@ -85,7 +85,6 @@ export const rule = createRule({
           }
         }
 
-        const queryKeyValue = queryKeyNode
         const externalRefs = ASTUtils.getExternalRefs({
           scopeManager,
           sourceCode: context.sourceCode,
@@ -101,7 +100,7 @@ export const rule = createRule({
           }),
         )
 
-        const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyValue).map(
+        const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyNode).map(
           (identifier) =>
             ASTUtils.mapKeyNodeToText(identifier, context.sourceCode),
         )
@@ -133,9 +132,12 @@ export const rule = createRule({
             )
             .join(', ')
 
-          const existingWithMissing = context.sourceCode
-            .getText(queryKeyValue)
-            .replace(/\]$/, `, ${missingAsText}]`)
+          const queryKeyValue = context.sourceCode.getText(queryKeyNode)
+
+          const existingWithMissing =
+            queryKeyValue === '[]'
+              ? `[${missingAsText}]`
+              : queryKeyValue.replace(/\]$/, `, ${missingAsText}]`)
 
           const suggestions: TSESLint.ReportSuggestionArray<string> = []
 
@@ -144,7 +146,7 @@ export const rule = createRule({
               messageId: 'fixTo',
               data: { result: existingWithMissing },
               fix(fixer) {
-                return fixer.replaceText(queryKeyValue, existingWithMissing)
+                return fixer.replaceText(queryKeyNode, existingWithMissing)
               },
             })
           }

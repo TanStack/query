@@ -188,7 +188,7 @@ describe('QueryCache', () => {
   })
 
   describe('invalidateQueries', () => {
-    test('should properly unwrap 2 parameter', async () => {
+    test('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.invalidateQueries(
@@ -198,14 +198,63 @@ describe('QueryCache', () => {
         { cancelRefetch: ref(false) },
       )
 
-      await flushPromises()
-
       expect(QueryClientOrigin.prototype.invalidateQueries).toBeCalledWith(
         {
           queryKey: queryKeyUnref,
+          refetchType: 'none',
         },
         { cancelRefetch: false },
       )
+    })
+
+    // #7694
+    test('should call invalidateQueries immediately and refetchQueries after flushPromises', async () => {
+      const invalidateQueries = vi.spyOn(
+        QueryClientOrigin.prototype,
+        'invalidateQueries',
+      )
+      const refetchQueries = vi.spyOn(
+        QueryClientOrigin.prototype,
+        'refetchQueries',
+      )
+
+      const queryClient = new QueryClient()
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyRef,
+      })
+
+      expect(invalidateQueries).toBeCalled()
+      expect(refetchQueries).not.toBeCalled()
+
+      await flushPromises()
+
+      expect(refetchQueries).toBeCalled()
+    })
+
+    test('should call invalidateQueries immediately and not call refetchQueries', async () => {
+      const invalidateQueries = vi.spyOn(
+        QueryClientOrigin.prototype,
+        'invalidateQueries',
+      )
+      const refetchQueries = vi.spyOn(
+        QueryClientOrigin.prototype,
+        'refetchQueries',
+      )
+
+      const queryClient = new QueryClient()
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyRef,
+        refetchType: 'none',
+      })
+
+      expect(invalidateQueries).toBeCalled()
+      expect(refetchQueries).not.toBeCalled()
+
+      await flushPromises()
+
+      expect(refetchQueries).not.toBeCalled()
     })
   })
 

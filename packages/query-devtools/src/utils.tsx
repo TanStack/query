@@ -1,7 +1,7 @@
 import { serialize } from 'superjson'
 import { createSignal, onCleanup, onMount } from 'solid-js'
 import type { Mutation, Query } from '@tanstack/query-core'
-import type { DevtoolsPosition } from './Context'
+import type { DevtoolsPosition } from './contexts'
 
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
