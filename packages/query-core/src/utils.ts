@@ -242,42 +242,54 @@ export function partialMatchKey(a: any, b: any): boolean {
  */
 export function replaceEqualDeep<T>(a: unknown, b: T): T
 export function replaceEqualDeep(a: any, b: any): any {
-  if (a === b) {
-    return a
-  }
+  const seen = new WeakSet()
 
-  const array = isPlainArray(a) && isPlainArray(b)
+  function _replaceEqualDeep(a: any, b: any) {
+    if (a === b) {
+      return a
+    }
+  
+    const array = isPlainArray(a) && isPlainArray(b)
+  
+    if (array || (isPlainObject(a) && isPlainObject(b))) {
+      if (seen.has(a)) {
+        throw new Error('circular reference detected.')
+      }
+      seen.add(a)
 
-  if (array || (isPlainObject(a) && isPlainObject(b))) {
-    const aItems = array ? a : Object.keys(a)
-    const aSize = aItems.length
-    const bItems = array ? b : Object.keys(b)
-    const bSize = bItems.length
-    const copy: any = array ? [] : {}
+      const aItems = array ? a : Object.keys(a)
+      const aSize = aItems.length
+      const bItems = array ? b : Object.keys(b)
+      const bSize = bItems.length
+      const copy: any = array ? [] : {}
+  
+      let equalItems = 0
+  
+      for (let i = 0; i < bSize; i++) {
+        const key = array ? i : bItems[i]
 
-    let equalItems = 0
-
-    for (let i = 0; i < bSize; i++) {
-      const key = array ? i : bItems[i]
-      if (
-        ((!array && aItems.includes(key)) || array) &&
-        a[key] === undefined &&
-        b[key] === undefined
-      ) {
-        copy[key] = undefined
-        equalItems++
-      } else {
-        copy[key] = replaceEqualDeep(a[key], b[key])
-        if (copy[key] === a[key] && a[key] !== undefined) {
+        if (
+          ((!array && aItems.includes(key)) || array) &&
+          a[key] === undefined &&
+          b[key] === undefined
+        ) {
+          copy[key] = undefined
           equalItems++
+        } else {
+          copy[key] = _replaceEqualDeep(a[key], b[key])
+          if (copy[key] === a[key] && a[key] !== undefined) {
+            equalItems++
+          }
         }
       }
+  
+      return aSize === bSize && equalItems === aSize ? a : copy
     }
-
-    return aSize === bSize && equalItems === aSize ? a : copy
+  
+    return b
   }
 
-  return b
+  return _replaceEqualDeep(a, b)
 }
 
 /**
@@ -354,19 +366,15 @@ export function replaceData<
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data) as TData
   } else if (options.structuralSharing !== false) {
-    if (process.env.NODE_ENV !== 'production') {
-      try {
-        JSON.stringify(prevData)
-        JSON.stringify(data)
-      } catch (error) {
-        console.error(
-          `StructuralSharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
-        )
-      }
+    try {
+      // Structurally share data between prev and new data if needed
+      return replaceEqualDeep(prevData, data)
+    } catch (error) {
+      console.error(
+        `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
+      )
+      throw new Error(`Query hash ${options.queryHash} contains non-serializable data. ${error}`)
     }
-
-    // Structurally share data between prev and new data if needed
-    return replaceEqualDeep(prevData, data)
   }
   return data
 }
