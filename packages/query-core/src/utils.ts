@@ -248,9 +248,9 @@ export function replaceEqualDeep(a: any, b: any): any {
     if (a === b) {
       return a
     }
-  
+
     const array = isPlainArray(a) && isPlainArray(b)
-  
+
     if (array || (isPlainObject(a) && isPlainObject(b))) {
       if (seen.has(a)) {
         throw new Error('circular reference detected.')
@@ -262,9 +262,9 @@ export function replaceEqualDeep(a: any, b: any): any {
       const bItems = array ? b : Object.keys(b)
       const bSize = bItems.length
       const copy: any = array ? [] : {}
-  
+
       let equalItems = 0
-  
+
       for (let i = 0; i < bSize; i++) {
         const key = array ? i : bItems[i]
 
@@ -282,10 +282,10 @@ export function replaceEqualDeep(a: any, b: any): any {
           }
         }
       }
-  
+
       return aSize === bSize && equalItems === aSize ? a : copy
     }
-  
+
     return b
   }
 
@@ -373,7 +373,9 @@ export function replaceData<
       console.error(
         `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
       )
-      throw new Error(`Query hash ${options.queryHash} contains non-serializable data. ${error}`)
+      throw new Error(
+        `Query hash ${options.queryHash} contains non-serializable data. ${error}`,
+      )
     }
   }
   return data

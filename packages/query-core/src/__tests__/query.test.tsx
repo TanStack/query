@@ -997,14 +997,22 @@ describe('query', () => {
       return data
     })
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn, initialData: structuredClone(data) })
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn,
+      initialData: structuredClone(data),
+    })
 
     const query = queryCache.find({ queryKey: key })!
 
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     expect(query.state.status).toBe('error')
-    expect(query.state.error?.message.includes('contains non-serializable data. Error: circular reference detected.')).toBeTruthy()
+    expect(
+      query.state.error?.message.includes(
+        'contains non-serializable data. Error: circular reference detected.',
+      ),
+    ).toBeTruthy()
 
     expect(consoleMock).toHaveBeenCalledWith(
       expect.stringContaining(
