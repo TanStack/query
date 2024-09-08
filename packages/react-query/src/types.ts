@@ -10,6 +10,7 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
+  Override,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -167,9 +168,3 @@ export type UseMutationResult<
   TVariables = unknown,
   TContext = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>
-
-type Override<TTargetA, TTargetB> = {
-  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
-    ? TTargetB[AKey]
-    : TTargetA[AKey]
-}
