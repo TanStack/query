@@ -172,7 +172,7 @@ describe('core/utils', () => {
       expect(replaceEqualDeep(object, array)).toBe(array)
     })
 
-    it('should return the next value when the previous value is a circular reference', () => {
+    it('should throw when the value is a circular reference', () => {
       const value: Array<{ foo?: unknown }> = [{}]
       value[0]!.foo = value
 
