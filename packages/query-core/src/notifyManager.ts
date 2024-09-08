@@ -30,7 +30,6 @@ export function createNotifyManager() {
       })
     }
   }
-
   const flush = (): void => {
     const originalQueue = queue
     queue = []
