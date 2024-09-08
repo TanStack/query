@@ -26,7 +26,7 @@ One way to think of this is that even though Server Components also _render_, th
 The first step of any React Query setup is always to create a `queryClient` and wrap your application in a `QueryClientProvider`. With Server Components, this looks mostly the same across frameworks, one difference being the filename conventions:
 
 ```tsx
-// In Next.js, this file would be called: app/providers.jsx
+// In Next.js, this file would be called: app/providers.tsx
 'use client'
 
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
