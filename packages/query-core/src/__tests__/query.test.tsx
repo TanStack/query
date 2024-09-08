@@ -1009,9 +1009,7 @@ describe('query', () => {
 
     expect(query.state.status).toBe('error')
     expect(
-      query.state.error?.message.includes(
-        'contains non-serializable data. Error: circular reference detected.',
-      ),
+      query.state.error?.message.includes('Maximum call stack size exceeded'),
     ).toBeTruthy()
 
     expect(consoleMock).toHaveBeenCalledWith(
