@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { usePrefetchInfiniteQuery, usePrefetchQuery } from '../prefetch'
+import { usePrefetchInfiniteQuery, usePrefetchQuery } from '..'
 
 describe('usePrefetchQuery', () => {
   it('should return nothing', () => {

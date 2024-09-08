@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@tanstack/solid-query": "^5.54.2",
-    "@tanstack/solid-query-devtools": "^5.54.2",
+    "@tanstack/solid-query-devtools": "^5.55.1",
     "solid-js": "^1.8.19"
   },
   "devDependencies": {
