@@ -1875,9 +1875,6 @@ importers:
       typescript:
         specifier: 5.3.3
         version: 5.3.3
-      zone.js:
-        specifier: ^0.14.8
-        version: 0.14.8
 
   packages/angular-query-experimental:
     dependencies:
@@ -1891,9 +1888,6 @@ importers:
       '@analogjs/vite-plugin-angular':
         specifier: ^1.6.4
         version: 1.6.4(@angular-devkit/build-angular@17.3.8(@angular/compiler-cli@17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.3.3))(@types/express@4.17.21)(@types/node@22.0.2)(chokidar@3.6.0)(html-webpack-plugin@5.6.0(webpack@5.93.0(esbuild@0.19.12)))(ng-packagr@17.3.0(@angular/compiler-cli@17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.3.3))(tailwindcss@3.4.7)(tslib@2.6.3)(typescript@5.3.3))(tailwindcss@3.4.7)(typescript@5.3.3))(@ngtools/webpack@17.3.8(@angular/compiler-cli@17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.3.3))(typescript@5.3.3)(webpack@5.93.0(esbuild@0.19.12)))
-      '@angular/common':
-        specifier: ^17.3.12
-        version: 17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1)
       '@angular/compiler':
         specifier: ^17.3.12
         version: 17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))
@@ -1921,9 +1915,6 @@ importers:
       typescript:
         specifier: 5.3.3
         version: 5.3.3
-      zone.js:
-        specifier: ^0.14.8
-        version: 0.14.8
 
   packages/eslint-plugin-query:
     dependencies:
