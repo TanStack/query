@@ -40,7 +40,7 @@ Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [TanStack T
 - Paginated + Cursor-based Queries
 - Load-More + Infinite Scroll Queries w/ Scroll Recovery
 - Request Cancellation
-- [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render Query Prefetching
+- [React Suspense](https://react.dev/reference/react/Suspense) + Fetch-As-You-Render Query Prefetching
 - Dedicated Devtools
 
 ### [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)

@@ -9,6 +9,7 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
+  Override,
   QueryKey,
   QueryObserverResult,
 } from '@tanstack/query-core'
@@ -200,9 +201,3 @@ export type CreateMutationResult<
   TVariables = unknown,
   TContext = unknown,
 > = CreateBaseMutationResult<TData, TError, TVariables, TContext>
-
-type Override<TTargetA, TTargetB> = {
-  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
-    ? TTargetB[AKey]
-    : TTargetA[AKey]
-}

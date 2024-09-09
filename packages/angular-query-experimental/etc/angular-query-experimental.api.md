@@ -22,6 +22,7 @@ import type { MutationObserverOptions } from '@tanstack/query-core';
 import type { MutationObserverResult } from '@tanstack/query-core';
 import type { MutationState } from '@tanstack/query-core';
 import type { OmitKeyof } from '@tanstack/query-core';
+import type { Override } from '@tanstack/query-core';
 import { Provider } from '@angular/core';
 import type { QueriesPlaceholderDataFunction } from '@tanstack/query-core';
 import type { QueryClient } from '@tanstack/query-core';
@@ -60,8 +61,6 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
     isSuccess: (this: CreateBaseQueryResult<TData, TError>) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<'success', TData, TError>>;
 }
 
-// Warning: (ae-forgotten-export) The symbol "Override" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
 export type CreateBaseMutationResult<TData = unknown, TError = DefaultError, TVariables = unknown, TContext = unknown> = Override<MutationObserverResult<TData, TError, TVariables, TContext>, {
     mutate: CreateMutateFunction<TData, TError, TVariables, TContext>;
