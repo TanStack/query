@@ -134,17 +134,14 @@ export function useBaseQuery<
 
   if (!isServer && willFetch(result, isRestoring) && !observer.hasListeners()) {
     // Fetch immediately on mount in order to ensure `.promise` is resolved even if the component is unmounted
-    observer
-      .fetchOptimistic(defaultedOptions)
-      .catch(() => {
-        // noop
-      })
-      .finally(() => {
+    fetchOptimistic(defaultedOptions, observer, errorResetBoundary).finally(
+      () => {
         if (!observer.hasListeners()) {
           // `.updateResult()` will trigger `.#currentThenable` to finalize
           observer.updateResult()
         }
-      })
+      },
+    )
   }
 
   // Handle result property usage tracking
