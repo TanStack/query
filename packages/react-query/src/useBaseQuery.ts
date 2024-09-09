@@ -68,6 +68,9 @@ export function useBaseQuery<
 
   useClearResetErrorBoundary(errorResetBoundary)
 
+  // this needs to be invoked before creating the Observer because that can create a cache entry
+  const isNewCacheEntry = !client.getQueryState(options.queryKey)
+
   const [observer] = React.useState(
     () =>
       new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
@@ -75,9 +78,6 @@ export function useBaseQuery<
         defaultedOptions,
       ),
   )
-
-  // this needs to be invoked before observer.getOptimisticResult because that can create a cache entry
-  const isNewCacheEntry = !client.getQueryState(options.queryKey)
 
   const result = observer.getOptimisticResult(defaultedOptions)
 
