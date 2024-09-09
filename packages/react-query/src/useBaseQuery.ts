@@ -16,6 +16,7 @@ import {
   shouldSuspend,
   willFetch,
 } from './suspense'
+import { noop } from './utils'
 import type {
   QueryClient,
   QueryKey,
@@ -142,7 +143,7 @@ export function useBaseQuery<
       : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
         client.getQueryCache().get(defaultedOptions.queryHash)?.promise
 
-    promise?.finally(() => {
+    promise?.catch(noop).finally(() => {
       if (!observer.hasListeners()) {
         // `.updateResult()` will trigger `.#currentThenable` to finalize
         observer.updateResult()
