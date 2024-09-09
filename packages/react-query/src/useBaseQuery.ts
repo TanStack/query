@@ -76,6 +76,9 @@ export function useBaseQuery<
       ),
   )
 
+  // this needs to be invoked before observer.getOptimisticResult because that can create a cache entry
+  const isNewCacheEntry = !client.getQueryState(options.queryKey)
+
   const result = observer.getOptimisticResult(defaultedOptions)
 
   React.useSyncExternalStore(
@@ -132,7 +135,7 @@ export function useBaseQuery<
     result,
   )
 
-  if (!isServer && willFetch(result, isRestoring) && !observer.hasListeners()) {
+  if (!isServer && willFetch(result, isRestoring) && isNewCacheEntry) {
     // Fetch immediately on mount in order to ensure `.promise` is resolved even if the component is unmounted
     fetchOptimistic(defaultedOptions, observer, errorResetBoundary).finally(
       () => {
