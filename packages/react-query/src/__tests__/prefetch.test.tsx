@@ -310,7 +310,9 @@ describe('usePrefetchInfiniteQuery', () => {
 
     return (
       <div>
-        {state.data.pages.map((page) => props.renderPage(page))}
+        {state.data.pages.map((page, index) => (
+          <div key={index}>{props.renderPage(page)}</div>
+        ))}
         <button onClick={() => state.fetchNextPage()}>Next Page</button>
       </div>
     )
