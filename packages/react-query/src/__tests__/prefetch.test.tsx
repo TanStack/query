@@ -124,6 +124,8 @@ describe('usePrefetchQuery', () => {
   })
 
   it('should let errors fall through and not refetch failed queries', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const queryFn = generateQueryFn('Not an error')
 
     const queryOpts = {
@@ -156,6 +158,8 @@ describe('usePrefetchQuery', () => {
     await waitFor(() => rendered.getByText('Oops!'))
     expect(rendered.queryByText('data: Not an error')).not.toBeInTheDocument()
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
+
+    consoleMock.mockRestore()
   })
 
   it('should not create an endless loop when using inside a suspense boundary', async () => {
@@ -187,6 +191,8 @@ describe('usePrefetchQuery', () => {
   })
 
   it('should be able to recover from errors and try fetching again', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const queryFn = generateQueryFn('This is fine :dog: :fire:')
 
     const queryOpts = {
@@ -230,6 +236,7 @@ describe('usePrefetchQuery', () => {
     fireEvent.click(rendered.getByText('Try again'))
     await waitFor(() => rendered.getByText('data: This is fine :dog: :fire:'))
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
+    consoleMock.mockRestore()
   })
 
   it('should not create a suspense waterfall if prefetch is fired', async () => {
