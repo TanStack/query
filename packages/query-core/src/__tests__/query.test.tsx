@@ -975,36 +975,46 @@ describe('query', () => {
 
     const queryFn = vi.fn()
 
+    const data: Array<{
+      id: number
+      name: string
+      link: null | { id: number; name: string; link: unknown }
+    }> = Array.from({ length: 5 })
+      .fill(null)
+      .map((_, index) => ({
+        id: index,
+        name: `name-${index}`,
+        link: null,
+      }))
+
+    if (data[0] && data[1]) {
+      data[0].link = data[1]
+      data[1].link = data[0]
+    }
+
     queryFn.mockImplementation(async () => {
       await sleep(10)
-
-      const data: Array<{
-        id: number
-        name: string
-        link: null | { id: number; name: string; link: unknown }
-      }> = Array.from({ length: 5 })
-        .fill(null)
-        .map((_, index) => ({
-          id: index,
-          name: `name-${index}`,
-          link: null,
-        }))
-
-      if (data[0] && data[1]) {
-        data[0].link = data[1]
-        data[1].link = data[0]
-      }
-
       return data
     })
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn,
+      initialData: structuredClone(data),
+    })
+
+    const query = queryCache.find({ queryKey: key })!
 
     expect(queryFn).toHaveBeenCalledTimes(1)
 
+    expect(query.state.status).toBe('error')
+    expect(
+      query.state.error?.message.includes('Maximum call stack size exceeded'),
+    ).toBeTruthy()
+
     expect(consoleMock).toHaveBeenCalledWith(
       expect.stringContaining(
-        'StructuralSharing requires data to be JSON serializable',
+        'Structural sharing requires data to be JSON serializable',
       ),
     )
 

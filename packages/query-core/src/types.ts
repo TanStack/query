@@ -20,6 +20,12 @@ export type OmitKeyof<
   TStrictly extends 'strictly' | 'safely' = 'strictly',
 > = Omit<TObject, TKey>
 
+export type Override<TTargetA, TTargetB> = {
+  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
+    ? TTargetB[AKey]
+    : TTargetA[AKey]
+}
+
 export type NoInfer<T> = [T][T extends any ? 0 : never]
 
 export interface Register {
