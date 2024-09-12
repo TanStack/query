@@ -448,6 +448,7 @@ export interface FetchQueryOptions<
     QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
     'queryKey'
   > {
+  initialPageParam?: never
   /**
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
@@ -471,6 +472,22 @@ export interface EnsureQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
+export type EnsureInfiniteQueryDataOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = FetchInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> & {
+  revalidateIfStale?: boolean
+}
+
 type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
   | { pages?: never }
   | {
@@ -484,12 +501,15 @@ export type FetchInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = FetchQueryOptions<
-  TQueryFnData,
-  TError,
-  InfiniteData<TData, TPageParam>,
-  TQueryKey,
-  TPageParam
+> = Omit<
+  FetchQueryOptions<
+    TQueryFnData,
+    TError,
+    InfiniteData<TData, TPageParam>,
+    TQueryKey,
+    TPageParam
+  >,
+  'initialPageParam'
 > &
   InitialPageParam<TPageParam> &
   FetchInfiniteQueryPages<TQueryFnData, TPageParam>
