@@ -13,13 +13,13 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import type { QueryState } from './query'
 import type {
   CancelOptions,
   DataTag,
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
+  EnsureInfiniteQueryDataOptions,
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
@@ -40,6 +40,7 @@ import type {
   ResetOptions,
   SetDataOptions,
 } from './types'
+import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 // TYPES
@@ -404,6 +405,31 @@ export class QueryClient {
     >,
   ): Promise<void> {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
+  }
+
+  ensureInfiniteQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: EnsureInfiniteQueryDataOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<InfiniteData<TData, TPageParam>> {
+    options.behavior = infiniteQueryBehavior<
+      TQueryFnData,
+      TError,
+      TData,
+      TPageParam
+    >(options.pages)
+
+    return this.ensureQueryData(options)
   }
 
   resumePausedMutations(): Promise<unknown> {

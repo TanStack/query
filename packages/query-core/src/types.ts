@@ -471,6 +471,22 @@ export interface EnsureQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
+export type EnsureInfiniteQueryDataOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = FetchInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> & {
+  revalidateIfStale?: boolean
+}
+
 type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
   | { pages?: never }
   | {
