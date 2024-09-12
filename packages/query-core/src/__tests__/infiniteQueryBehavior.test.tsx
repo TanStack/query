@@ -396,4 +396,32 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
   })
+
+  test('should fetch even if initialPageParam is null', async () => {
+    const key = queryKey()
+
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: async () => 'data',
+      getNextPageParam: () => null,
+      initialPageParam: null,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
+
+    const unsubscribe = observer.subscribe((result) => {
+      observerResult = result
+    })
+
+    await waitFor(() =>
+      expect(observerResult).toMatchObject({
+        isFetching: false,
+        data: { pages: ['data'], pageParams: [null] },
+      }),
+    )
+
+    unsubscribe()
+  })
 })

@@ -99,7 +99,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
               currentPage === 0
                 ? (oldPageParams[0] ?? options.initialPageParam)
                 : getNextPageParam(options, result)
-            if (param == null) {
+            if (currentPage > 0 && param == null) {
               break
             }
             result = await fetchPage(result, param)
