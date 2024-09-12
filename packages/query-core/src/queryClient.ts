@@ -386,7 +386,7 @@ export class QueryClient {
       TData,
       TPageParam
     >(options.pages)
-    return this.fetchQuery(options)
+    return this.fetchQuery(options as any)
   }
 
   prefetchInfiniteQuery<
@@ -429,7 +429,7 @@ export class QueryClient {
       TPageParam
     >(options.pages)
 
-    return this.ensureQueryData(options)
+    return this.ensureQueryData(options as any)
   }
 
   resumePausedMutations(): Promise<unknown> {
