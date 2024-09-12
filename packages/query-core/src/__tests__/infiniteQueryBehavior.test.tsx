@@ -329,8 +329,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  // Ensures https://github.com/TanStack/query/issues/8046 is resolved
-  test('InfiniteQueryBehavior should not enter an infinite loop when a page errors while retry is on', async () => {
+  test('InfiniteQueryBehavior should not enter an infinite loop when a page errors while retry is on #8046', async () => {
     let errorCount = 0
     const key = queryKey()
 
@@ -348,17 +347,14 @@ describe('InfiniteQueryBehavior', () => {
 
     const fetchData = async ({ nextToken = 0 }: { nextToken?: number }) =>
       new Promise<TestResponse>((resolve, reject) => {
-        console.log(`getting page ${nextToken}...`)
         setTimeout(() => {
           if (nextToken == 2 && errorCount < 3) {
             errorCount += 1
-            console.error('rate limited!')
             reject({ statusCode: 429 })
             return
           }
           resolve(fakeData[nextToken] as TestResponse)
-          console.log(`got page ${nextToken}`)
-        }, 500)
+        }, 10)
       })
 
     const observer = new InfiniteQueryObserver<
@@ -395,13 +391,9 @@ describe('InfiniteQueryBehavior', () => {
     // infinite loop where the retryer every time restarts from page 1
     // once it reaches the page where it errors.
     // For this to work, we'd need to reset the error count so we actually retry
-    console.log('###################################################')
     errorCount = 0
     const reFetchedData = await observer.refetch()
 
-    // Before resolution (while the bug persists), this will never be reached
-    // and the test will timeout.
     expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
-    console.log(reFetchedData.data?.pageParams)
   })
 })
