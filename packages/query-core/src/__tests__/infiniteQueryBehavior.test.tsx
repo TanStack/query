@@ -2,7 +2,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import { CancelledError, InfiniteQueryObserver } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
-import type { InfiniteData, InfiniteQueryObserverResult, QueryCache , QueryClient} from '..'
+import type {
+  InfiniteData,
+  InfiniteQueryObserverResult,
+  QueryCache,
+  QueryClient,
+} from '..'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
