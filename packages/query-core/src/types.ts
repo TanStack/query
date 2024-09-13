@@ -694,6 +694,55 @@ export interface QueryObserverBaseResult<
   fetchStatus: FetchStatus
   /**
    * A stable promise that will be resolved with the data of the query.
+   * Requires the `experimental_promise` feature flag to be enabled.
+   * @example
+   *
+   * ### Enabling the feature flag
+   * ```ts
+   * const client = new QueryClient({
+   *   defaultOptions: {
+   *     queries: {
+   *       experimental_promise: true,
+   *     },
+   *   },
+   * })
+   * ```
+   *
+   * ### Usage
+   * ```tsx
+   * import { useQuery } from '@tanstack/react-query'
+   * import React from 'react'
+   * import { fetchTodos, type Todo } from './api'
+   *
+   * function TodoItem({ todo }: { todo: Todo }) {
+   *   return <li>{todo.title}</li>
+   * }
+   *
+   * function TodoList({ query }: { query: UseQueryResult<Todo[], Error> }) {
+   *   const data = React.use(query.promise)
+   *
+   *   return (
+   *     <ul>
+   *       {data.map(todo => (
+   *         <TodoItem key={todo.id} todo={todo} />
+   *       ))}
+   *     </ul>
+   *   )
+   * }
+   *
+   * export function App() {
+   *   const query = useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
+   *
+   *   return (
+   *     <>
+   *       <h1>Todos</h1>
+   *       <React.Suspense fallback={<div>Loading...</div>}>
+   *         <TodoList query={query} />
+   *       </React.Suspense>
+   *     </>
+   *   )
+   * }
+   * ```
    */
   promise: Promise<TData>
 }
