@@ -714,17 +714,13 @@ export interface QueryObserverBaseResult<
    * import React from 'react'
    * import { fetchTodos, type Todo } from './api'
    *
-   * function TodoItem({ todo }: { todo: Todo }) {
-   *   return <li>{todo.title}</li>
-   * }
-   *
    * function TodoList({ query }: { query: UseQueryResult<Todo[], Error> }) {
    *   const data = React.use(query.promise)
    *
    *   return (
    *     <ul>
    *       {data.map(todo => (
-   *         <TodoItem key={todo.id} todo={todo} />
+   *         <li key={todo.id}>{todo.title}</li>
    *       ))}
    *     </ul>
    *   )
