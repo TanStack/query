@@ -2,7 +2,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import { CancelledError, InfiniteQueryObserver } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
-import type { InfiniteQueryObserverResult, QueryCache, QueryClient } from '..'
+import type {
+  InfiniteData,
+  InfiniteQueryObserverResult,
+  QueryCache,
+  QueryClient,
+} from '..'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
@@ -320,6 +325,102 @@ describe('InfiniteQueryBehavior', () => {
 
     // Pages should not have been fetched
     expect(queryFnSpy).toHaveBeenCalledTimes(0)
+
+    unsubscribe()
+  })
+
+  test('InfiniteQueryBehavior should not enter an infinite loop when a page errors while retry is on #8046', async () => {
+    let errorCount = 0
+    const key = queryKey()
+
+    interface TestResponse {
+      data: Array<{ id: string }>
+      nextToken?: number
+    }
+
+    const fakeData = [
+      { data: [{ id: 'item-1' }], nextToken: 1 },
+      { data: [{ id: 'item-2' }], nextToken: 2 },
+      { data: [{ id: 'item-3' }], nextToken: 3 },
+      { data: [{ id: 'item-4' }] },
+    ]
+
+    const fetchData = async ({ nextToken = 0 }: { nextToken?: number }) =>
+      new Promise<TestResponse>((resolve, reject) => {
+        setTimeout(() => {
+          if (nextToken == 2 && errorCount < 3) {
+            errorCount += 1
+            reject({ statusCode: 429 })
+            return
+          }
+          resolve(fakeData[nextToken] as TestResponse)
+        }, 10)
+      })
+
+    const observer = new InfiniteQueryObserver<
+      TestResponse,
+      Error,
+      InfiniteData<TestResponse>,
+      TestResponse,
+      typeof key,
+      number
+    >(queryClient, {
+      retry: 5,
+      staleTime: 0,
+      retryDelay: 10,
+
+      queryKey: key,
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => lastPage.nextToken,
+      queryFn: ({ pageParam }) => fetchData({ nextToken: pageParam }),
+    })
+
+    // Fetch Page 1
+    const page1Data = await observer.fetchNextPage()
+    expect(page1Data.data?.pageParams).toEqual([1])
+
+    // Fetch Page 2, as per the queryFn, this will reject 2 times then resolves
+    const page2Data = await observer.fetchNextPage()
+    expect(page2Data.data?.pageParams).toEqual([1, 2])
+
+    // Fetch Page 3
+    const page3Data = await observer.fetchNextPage()
+    expect(page3Data.data?.pageParams).toEqual([1, 2, 3])
+
+    // Now the real deal; re-fetching this query **should not** stamp into an
+    // infinite loop where the retryer every time restarts from page 1
+    // once it reaches the page where it errors.
+    // For this to work, we'd need to reset the error count so we actually retry
+    errorCount = 0
+    const reFetchedData = await observer.refetch()
+
+    expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
+  })
+
+  test('should fetch even if initialPageParam is null', async () => {
+    const key = queryKey()
+
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: async () => 'data',
+      getNextPageParam: () => null,
+      initialPageParam: null,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
+
+    const unsubscribe = observer.subscribe((result) => {
+      observerResult = result
+    })
+
+    await waitFor(() =>
+      expect(observerResult).toMatchObject({
+        isFetching: false,
+        data: { pages: ['data'], pageParams: [null] },
+      }),
+    )
 
     unsubscribe()
   })
