@@ -136,7 +136,12 @@ export function useBaseQuery<
     result,
   )
 
-  if (!isServer && willFetch(result, isRestoring) && !observer.hasListeners()) {
+  if (
+    defaultedOptions.experimental_promise &&
+    !isServer &&
+    willFetch(result, isRestoring) &&
+    !observer.hasListeners()
+  ) {
     const promise = isNewCacheEntry
       ? // Fetch immediately on mount in order to ensure `.promise` is resolved even if the component is unmounted
         fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
