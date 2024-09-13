@@ -101,7 +101,10 @@ export type UseQueryResult<
 export type UseSuspenseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = OmitKeyof<DefinedQueryObserverResult<TData, TError>, 'isPlaceholderData'>
+> = OmitKeyof<
+  DefinedQueryObserverResult<TData, TError>,
+  'isPlaceholderData' | 'promise'
+>
 
 export type DefinedUseQueryResult<
   TData = unknown,
@@ -123,7 +126,7 @@ export type UseSuspenseInfiniteQueryResult<
   TError = DefaultError,
 > = OmitKeyof<
   DefinedInfiniteQueryObserverResult<TData, TError>,
-  'isPlaceholderData'
+  'isPlaceholderData' | 'promise'
 >
 
 export interface UseMutationOptions<
