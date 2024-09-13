@@ -86,6 +86,11 @@ export class QueryObserver<
     this.#client = client
     this.#selectError = null
     this.#currentThenable = pendingThenable()
+    if (!this.options.experimental_promise) {
+      this.#currentThenable.reject(
+        new Error('experimental_promise feature flag is not enabled'),
+      )
+    }
 
     this.bindMethods()
     this.setOptions(options)
@@ -601,46 +606,48 @@ export class QueryObserver<
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
-    const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
-      if (nextResult.status === 'error') {
-        thenable.reject(nextResult.error)
-      } else if (nextResult.data !== undefined) {
-        thenable.resolve(nextResult.data)
-      }
-    }
-
-    /**
-     * Create a new thenable and result promise when the results have changed
-     */
-    const recreateThenable = () => {
-      const pending =
-        (this.#currentThenable =
-        nextResult.promise =
-          pendingThenable())
-
-      finalizeThenableIfPossible(pending)
-    }
-    switch (prevThenable.status) {
-      case 'pending':
-        finalizeThenableIfPossible(prevThenable)
-        break
-      case 'fulfilled': {
-        if (
-          nextResult.data !== prevThenable.value ||
-          nextResult.status === 'error'
-        ) {
-          recreateThenable()
+    if (this.options.experimental_promise) {
+      const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
+        if (nextResult.status === 'error') {
+          thenable.reject(nextResult.error)
+        } else if (nextResult.data !== undefined) {
+          thenable.resolve(nextResult.data)
         }
-        break
       }
-      case 'rejected': {
-        if (
-          nextResult.status !== 'error' ||
-          nextResult.error !== prevThenable.reason
-        ) {
-          recreateThenable()
+
+      /**
+       * Create a new thenable and result promise when the results have changed
+       */
+      const recreateThenable = () => {
+        const pending =
+          (this.#currentThenable =
+          nextResult.promise =
+            pendingThenable())
+
+        finalizeThenableIfPossible(pending)
+      }
+      switch (prevThenable.status) {
+        case 'pending':
+          finalizeThenableIfPossible(prevThenable)
+          break
+        case 'fulfilled': {
+          if (
+            nextResult.data !== prevThenable.value ||
+            nextResult.status === 'error'
+          ) {
+            recreateThenable()
+          }
+          break
         }
-        break
+        case 'rejected': {
+          if (
+            nextResult.status !== 'error' ||
+            nextResult.error !== prevThenable.reason
+          ) {
+            recreateThenable()
+          }
+          break
+        }
       }
     }
     this.#currentResultState = this.#currentQuery.state

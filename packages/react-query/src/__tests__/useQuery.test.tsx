@@ -25,7 +25,14 @@ import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = createQueryClient({
+    queryCache,
+    defaultOptions: {
+      queries: {
+        experimental_promise: true,
+      },
+    },
+  })
 
   it('should return the correct types', () => {
     const key = queryKey()

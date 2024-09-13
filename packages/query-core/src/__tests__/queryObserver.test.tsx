@@ -16,7 +16,13 @@ describe('queryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = createQueryClient()
+    queryClient = createQueryClient({
+      defaultOptions: {
+        queries: {
+          experimental_promise: true,
+        },
+      },
+    })
     queryClient.mount()
   })
 

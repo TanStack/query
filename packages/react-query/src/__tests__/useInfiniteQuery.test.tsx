@@ -42,7 +42,14 @@ const fetchItems = async (
 
 describe('useInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = createQueryClient({
+    queryCache,
+    defaultOptions: {
+      queries: {
+        experimental_promise: true,
+      },
+    },
+  })
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()

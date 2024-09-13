@@ -380,6 +380,11 @@ export interface QueryObserverOptions<
       >
 
   _optimisticResults?: 'optimistic' | 'isRestoring'
+
+  /**
+   * Enable promises on query observer results
+   */
+  experimental_promise?: boolean
 }
 
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
