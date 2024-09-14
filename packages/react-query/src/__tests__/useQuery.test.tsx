@@ -1,4 +1,13 @@
-import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  expectTypeOf,
+  it,
+  test,
+  vi,
+} from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -27,11 +36,6 @@ describe('useQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({
     queryCache,
-    defaultOptions: {
-      queries: {
-        experimental_promise: true,
-      },
-    },
   })
 
   it('should return the correct types', () => {
@@ -6618,6 +6622,14 @@ describe('useQuery', () => {
   })
 
   describe('useQuery().promise', () => {
+    beforeAll(() => {
+      queryClient.setDefaultOptions({ queries: { experimental_promise: true } })
+    })
+    afterAll(() => {
+      queryClient.setDefaultOptions({
+        queries: { experimental_promise: false },
+      })
+    })
     it('should work with a basic test', async () => {
       const key = queryKey()
       let suspenseRenderCount = 0
