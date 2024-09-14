@@ -6810,6 +6810,141 @@ describe('useQuery', () => {
       expect(pageRenderCount).toBe(2)
     })
 
+    it('should not fetch with initial data and staleTime', async () => {
+      const key = queryKey()
+      let suspenseRenderCount = 0
+      const queryFn = vi.fn().mockImplementation(async () => {
+        await sleep(1)
+        return 'test'
+      })
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+      function Loading() {
+        suspenseRenderCount++
+
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn,
+          initialData: 'initial',
+          staleTime: 1000,
+        })
+
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('initial'))
+
+      // Suspense boundary should never be rendered since it has data immediately
+      expect(suspenseRenderCount).toBe(0)
+      // should not call queryFn because of staleTime + initialData combo
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
+
+    it('should work with static placeholderData', async () => {
+      const key = queryKey()
+      let suspenseRenderCount = 0
+      let pageRenderCount = 0
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+      function Loading() {
+        suspenseRenderCount++
+
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(1)
+            return 'test'
+          },
+          placeholderData: 'placeholder',
+        })
+        pageRenderCount++
+
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('placeholder'))
+      await waitFor(() => rendered.getByText('test'))
+
+      // Suspense boundary should never be rendered since it has data immediately
+      expect(suspenseRenderCount).toBe(0)
+      // Page should only be rendered twice since, the promise will get swapped out when new result comes in
+      expect(pageRenderCount).toBe(2)
+    })
+
+    it('should work with placeholderData: keepPreviousData', async () => {
+      const key = queryKey()
+      let suspenseRenderCount = 0
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+      function Loading() {
+        suspenseRenderCount++
+
+        return <>loading..</>
+      }
+      function Page() {
+        const [count, setCount] = React.useState(0)
+        const query = useQuery({
+          queryKey: [...key, count],
+          queryFn: async () => {
+            await sleep(1)
+            return 'test-' + count
+          },
+          placeholderData: keepPreviousData,
+        })
+
+        return (
+          <div>
+            <React.Suspense fallback={<Loading />}>
+              <MyComponent promise={query.promise} />
+            </React.Suspense>
+            <button onClick={() => setCount((c) => c + 1)}>increment</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => rendered.getByText('test-0'))
+
+      // Suspense boundary should only be rendered initially
+      expect(suspenseRenderCount).toBe(1)
+
+      fireEvent.click(rendered.getByRole('button', { name: 'increment' }))
+
+      await waitFor(() => rendered.getByText('test-1'))
+
+      // no more suspense boundary rendering
+      expect(suspenseRenderCount).toBe(1)
+    })
+
     it('should be possible to select a part of the data with select', async () => {
       const key = queryKey()
       let suspenseRenderCount = 0
