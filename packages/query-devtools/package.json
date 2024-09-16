@@ -56,15 +56,15 @@
     "src"
   ],
   "devDependencies": {
-    "@kobalte/core": "^0.13.4",
+    "@kobalte/core": "^0.13.6",
     "@solid-primitives/keyed": "^1.2.2",
     "@solid-primitives/resize-observer": "^2.0.26",
     "@solid-primitives/storage": "^1.3.11",
-    "@tanstack/match-sorter-utils": "^8.15.1",
+    "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/query-core": "workspace:*",
     "clsx": "^2.1.1",
     "goober": "^2.1.14",
-    "solid-js": "^1.8.19",
+    "solid-js": "^1.8.22",
     "solid-transition-group": "^0.2.3",
     "superjson": "^2.2.1",
     "tsup-preset-solid": "^2.2.0",

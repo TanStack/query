@@ -62,7 +62,7 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "solid-js": "^1.8.19",
+    "solid-js": "^1.8.22",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.10.2"
   },

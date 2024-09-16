@@ -11,12 +11,12 @@
     "@tanstack/angular-query-devtools-experimental": "workspace:*",
     "@tanstack/angular-query-experimental": "workspace:*",
     "rxjs": "^7.8.1",
-    "tslib": "^2.6.3",
-    "zone.js": "^0.14.8"
+    "tslib": "^2.7.0",
+    "zone.js": "^0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.3.8",
-    "@angular/cli": "^17.3.8",
+    "@angular-devkit/build-angular": "^17.3.9",
+    "@angular/cli": "^17.3.9",
     "@angular/compiler-cli": "^17.3.12",
     "typescript": "5.3.3"
   }
