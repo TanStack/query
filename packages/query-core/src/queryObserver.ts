@@ -602,16 +602,21 @@ export class QueryObserver<
     const prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
-    const prevThenable = this.#currentThenable
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
     if (this.options.experimental_prefetchInRender) {
+      const prevThenable = this.#currentThenable
+
       const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
         if (nextResult.status === 'error') {
           thenable.reject(nextResult.error)
         } else if (nextResult.data !== undefined) {
           thenable.resolve(nextResult.data)
+        } else if (!nextResult.isFetching) {
+          thenable.reject(
+            new Error('No data or error - query was most likely cancelled'),
+          )
         }
       }
 
