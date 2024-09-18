@@ -7123,5 +7123,144 @@ describe('useQuery', () => {
       // Page should be rendered once since since the promise changed once
       expect(pageRenderCount).toBe(2)
     })
+
+    it('should dedupe when re-fetched with queryClient.fetchQuery while suspending', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn().mockImplementation(async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      const options = {
+        queryKey: key,
+        queryFn,
+      }
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery(options)
+
+        return (
+          <div>
+            <React.Suspense fallback={<Loading />}>
+              <MyComponent promise={query.promise} />
+            </React.Suspense>
+            <button onClick={() => queryClient.fetchQuery(options)}>
+              fetch
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      fireEvent.click(rendered.getByText('fetch'))
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => rendered.getByText('test'))
+
+      expect(queryFn).toHaveBeenCalledOnce()
+    })
+
+    it('should dedupe when re-fetched with refetchQueries while suspending', async () => {
+      const key = queryKey()
+      let count = 0
+      const queryFn = vi.fn().mockImplementation(async () => {
+        await sleep(10)
+        return 'test' + count++
+      })
+
+      const options = {
+        queryKey: key,
+        queryFn,
+      }
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery(options)
+
+        return (
+          <div>
+            <React.Suspense fallback={<Loading />}>
+              <MyComponent promise={query.promise} />
+            </React.Suspense>
+            <button onClick={() => queryClient.refetchQueries(options)}>
+              refetch
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      fireEvent.click(rendered.getByText('refetch'))
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => rendered.getByText('test0'))
+
+      expect(queryFn).toHaveBeenCalledOnce()
+    })
+
+    it('should reject when canceled with cancelQueries while suspending', async () => {
+      const key = queryKey()
+      let count = 0
+      const queryFn = vi.fn().mockImplementation(async () => {
+        await sleep(10)
+        return 'test' + count++
+      })
+
+      const options = {
+        queryKey: key,
+        queryFn,
+      }
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery(options)
+
+        return (
+          <div>
+            <React.Suspense fallback={<Loading />}>
+              <MyComponent promise={query.promise} />
+            </React.Suspense>
+            <button onClick={() => queryClient.cancelQueries(options)}>
+              cancel
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <>error boundary</>}>
+          <Page />
+        </ErrorBoundary>,
+      )
+      fireEvent.click(rendered.getByText('cancel'))
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => rendered.getByText('error boundary'))
+
+      expect(queryFn).toHaveBeenCalledOnce()
+    })
   })
 })
