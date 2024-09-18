@@ -6623,11 +6623,13 @@ describe('useQuery', () => {
 
   describe('useQuery().promise', () => {
     beforeAll(() => {
-      queryClient.setDefaultOptions({ queries: { experimental_promise: true } })
+      queryClient.setDefaultOptions({
+        queries: { experimental_prefetchInRender: true },
+      })
     })
     afterAll(() => {
       queryClient.setDefaultOptions({
-        queries: { experimental_promise: false },
+        queries: { experimental_prefetchInRender: false },
       })
     })
     it('should work with a basic test', async () => {

@@ -137,7 +137,7 @@ export function useBaseQuery<
   )
 
   if (
-    defaultedOptions.experimental_promise &&
+    defaultedOptions.experimental_prefetchInRender &&
     !isServer &&
     willFetch(result, isRestoring) &&
     !observer.hasListeners()

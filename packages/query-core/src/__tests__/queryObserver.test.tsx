@@ -19,7 +19,7 @@ describe('queryObserver', () => {
     queryClient = createQueryClient({
       defaultOptions: {
         queries: {
-          experimental_promise: true,
+          experimental_prefetchInRender: true,
         },
       },
     })

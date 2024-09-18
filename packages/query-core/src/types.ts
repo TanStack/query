@@ -382,9 +382,9 @@ export interface QueryObserverOptions<
   _optimisticResults?: 'optimistic' | 'isRestoring'
 
   /**
-   * Enable promises on query observer results
+   * Enable prefetching during rendering
    */
-  experimental_promise?: boolean
+  experimental_prefetchInRender?: boolean
 }
 
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
@@ -694,7 +694,7 @@ export interface QueryObserverBaseResult<
   fetchStatus: FetchStatus
   /**
    * A stable promise that will be resolved with the data of the query.
-   * Requires the `experimental_promise` feature flag to be enabled.
+   * Requires the `experimental_prefetchInRender` feature flag to be enabled.
    * @example
    *
    * ### Enabling the feature flag
@@ -702,7 +702,7 @@ export interface QueryObserverBaseResult<
    * const client = new QueryClient({
    *   defaultOptions: {
    *     queries: {
-   *       experimental_promise: true,
+   *       experimental_prefetchInRender: true,
    *     },
    *   },
    * })

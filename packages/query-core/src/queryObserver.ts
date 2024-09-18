@@ -86,9 +86,9 @@ export class QueryObserver<
     this.#client = client
     this.#selectError = null
     this.#currentThenable = pendingThenable()
-    if (!this.options.experimental_promise) {
+    if (!this.options.experimental_prefetchInRender) {
       this.#currentThenable.reject(
-        new Error('experimental_promise feature flag is not enabled'),
+        new Error('experimental_prefetchInRender feature flag is not enabled'),
       )
     }
 
@@ -606,7 +606,7 @@ export class QueryObserver<
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
-    if (this.options.experimental_promise) {
+    if (this.options.experimental_prefetchInRender) {
       const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
         if (nextResult.status === 'error') {
           thenable.reject(nextResult.error)

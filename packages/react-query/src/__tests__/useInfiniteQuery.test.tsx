@@ -46,7 +46,7 @@ describe('useInfiniteQuery', () => {
     queryCache,
     defaultOptions: {
       queries: {
-        experimental_promise: true,
+        experimental_prefetchInRender: true,
       },
     },
   })
