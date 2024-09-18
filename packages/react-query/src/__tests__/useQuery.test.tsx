@@ -7262,5 +7262,50 @@ describe('useQuery', () => {
 
       expect(queryFn).toHaveBeenCalledOnce()
     })
+
+    it('should resolve to previous data when canceled with cancelQueries while suspending', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn().mockImplementation(async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      const options = {
+        queryKey: key,
+        queryFn,
+      }
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery(options)
+
+        return (
+          <div>
+            <React.Suspense fallback={<Loading />}>
+              <MyComponent promise={query.promise} />
+            </React.Suspense>
+            <button onClick={() => queryClient.cancelQueries(options)}>
+              cancel
+            </button>
+          </div>
+        )
+      }
+
+      queryClient.setQueryData(key, 'initial')
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      fireEvent.click(rendered.getByText('cancel'))
+      await waitFor(() => rendered.getByText('initial'))
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
   })
 })
