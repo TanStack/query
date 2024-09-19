@@ -1,3 +1,8 @@
+import { focusManager } from './focusManager'
+import { notifyManager } from './notifyManager'
+import { fetchState } from './query'
+import { Subscribable } from './subscribable'
+import { finalizeThenable, isThenableEqual, pendingThenable } from './thenable'
 import {
   isServer,
   isValidTimeout,
@@ -8,14 +13,9 @@ import {
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
-import { notifyManager } from './notifyManager'
-import { focusManager } from './focusManager'
-import { Subscribable } from './subscribable'
-import { fetchState } from './query'
-import { pendingThenable } from './thenable'
-import type { PendingThenable, Thenable } from './thenable'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
+import type { Thenable } from './thenable'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -39,6 +39,10 @@ export interface NotifyOptions {
 interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
+
+const cancellationError = new Error(
+  'No data or error and the query is not fetching - query was most likely cancelled',
+)
 
 export class QueryObserver<
   TQueryFnData = unknown,
@@ -606,55 +610,39 @@ export class QueryObserver<
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
     if (this.options.experimental_prefetchInRender) {
-      const prevThenable = this.#currentThenable
+      const nextThenable = (() => {
+        const thenable = pendingThenable<TData>()
 
-      const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
         if (nextResult.status === 'error') {
           thenable.reject(nextResult.error)
         } else if (nextResult.data !== undefined) {
           thenable.resolve(nextResult.data)
         } else if (!nextResult.isFetching) {
-          thenable.reject(
-            new Error('No data or error - query was most likely cancelled'),
-          )
+          thenable.reject(cancellationError)
         }
-      }
+        return thenable as Thenable<TData>
+      })()
 
-      /**
-       * Create a new thenable and result promise when the results have changed
-       */
-      const recreateThenable = () => {
-        const pending =
-          (this.#currentThenable =
-          nextResult.promise =
-            pendingThenable())
+      const prevThenable = this.#currentThenable
 
-        finalizeThenableIfPossible(pending)
-      }
       switch (prevThenable.status) {
         case 'pending':
-          finalizeThenableIfPossible(prevThenable)
-          break
-        case 'fulfilled': {
-          if (
-            nextResult.data !== prevThenable.value ||
-            nextResult.status === 'error'
-          ) {
-            recreateThenable()
+          if (nextThenable.status !== 'pending') {
+            // Finalize the previous thenable if it is not pending
+            finalizeThenable(prevThenable, nextThenable)
           }
           break
-        }
-        case 'rejected': {
-          if (
-            nextResult.status !== 'error' ||
-            nextResult.error !== prevThenable.reason
-          ) {
-            recreateThenable()
+
+        case 'fulfilled':
+        case 'rejected':
+          if (!isThenableEqual(prevThenable, nextThenable)) {
+            // Replace the thenable and result promise when the results have changed
+            this.#currentThenable = nextResult.promise = nextThenable
           }
           break
-        }
       }
     }
+
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
 
@@ -701,6 +689,7 @@ export class QueryObserver<
       return Object.keys(this.#currentResult).some((key) => {
         const typedKey = key as keyof QueryObserverResult
         const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
+
         return changed && includedProps.has(typedKey)
       })
     }
