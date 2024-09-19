@@ -90,14 +90,3 @@ export function pendingThenable<T>(): PendingThenable<T> {
 export function isThenableEqual<T>(a: Thenable<T>, b: Thenable<T>): boolean {
   return a.status === b.status && a.value === b.value && a.reason === b.reason
 }
-
-export function finalizeThenable<T>(
-  thenable: PendingThenable<T>,
-  data: Fulfilled<T> | Rejected,
-) {
-  if (data.status === 'fulfilled') {
-    thenable.resolve(data.value)
-  } else {
-    thenable.reject(data.reason)
-  }
-}

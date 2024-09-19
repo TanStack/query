@@ -2,7 +2,7 @@ import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
-import { finalizeThenable, isThenableEqual, pendingThenable } from './thenable'
+import { isThenableEqual, pendingThenable } from './thenable'
 import {
   isServer,
   isValidTimeout,
@@ -627,9 +627,10 @@ export class QueryObserver<
 
       switch (prevThenable.status) {
         case 'pending':
-          if (nextThenable.status !== 'pending') {
-            // Finalize the previous thenable if it is pending
-            finalizeThenable(prevThenable, nextThenable)
+          if (nextThenable.status === 'fulfilled') {
+            prevThenable.resolve(nextThenable.value)
+          } else if (nextThenable.status === 'rejected') {
+            prevThenable.reject(nextThenable.reason)
           }
           break
 
