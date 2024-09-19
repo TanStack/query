@@ -24,7 +24,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description:
-        'Disallow putting the result of useMutation directly in a React hook dependency array',
+        'Disallow putting the result of query hooks directly in a React hook dependency array',
       recommended: 'error',
     },
     messages: {
