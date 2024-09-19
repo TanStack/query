@@ -628,7 +628,7 @@ export class QueryObserver<
       switch (prevThenable.status) {
         case 'pending':
           if (nextThenable.status !== 'pending') {
-            // Finalize the previous thenable if it is not pending
+            // Finalize the previous thenable if it is pending
             finalizeThenable(prevThenable, nextThenable)
           }
           break
