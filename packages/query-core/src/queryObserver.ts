@@ -637,7 +637,7 @@ export class QueryObserver<
         case 'fulfilled':
         case 'rejected':
           if (!isThenableEqual(prevThenable, nextThenable)) {
-            // Replace the thenable and result promise when the results have changed
+            // Replace the thenable when the results have changed
             this.#currentThenable = nextResult.promise = nextThenable
           }
           break
