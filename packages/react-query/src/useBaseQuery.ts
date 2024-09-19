@@ -143,7 +143,7 @@ export function useBaseQuery<
     !observer.hasListeners()
   ) {
     const promise = isNewCacheEntry
-      ? // Fetch immediately on mount in order to ensure `.promise` is resolved even if the component is unmounted
+      ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
         fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
       : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
         client.getQueryCache().get(defaultedOptions.queryHash)?.promise
