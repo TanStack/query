@@ -99,6 +99,7 @@ function App() {
             </For>
           </ul>
         </div>
+      </Show>
     </div>
   )
 }
