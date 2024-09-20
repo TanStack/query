@@ -1,6 +1,6 @@
 import { ContextConsumer } from '@lit/context'
 import { QueryObserver } from '@tanstack/query-core'
-import { queryContext } from './context'
+import { QueryContext } from './context'
 import type {
   QueryClient,
   QueryKey,
@@ -57,7 +57,7 @@ export class QueryController<
   /**
    * Promise that is resolved when the query client is set.
    */
-  protected whenQueryClient = (
+  whenQueryClient = (
     Promise as unknown as PromiseWithResolvers
   ).withResolvers<QueryClient>()
 
@@ -91,7 +91,7 @@ export class QueryController<
   /**
    * Promise that resolves when the query observer is created.
    */
-  protected whenQueryObserver = (
+  whenQueryObserver = (
     Promise as unknown as PromiseWithResolvers
   ).withResolvers<
     QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
@@ -120,7 +120,7 @@ export class QueryController<
 
     // Initialize the context
     this.context = new ContextConsumer(this.host as LitElement, {
-      context: queryContext,
+      context: QueryContext,
       subscribe: true,
       callback: (value) => {
         if (value) {
@@ -131,7 +131,7 @@ export class QueryController<
 
     // Observe the query if a query function is provided
     if (this.optionsFn) {
-      this.observeQuery(this.optionsFn())
+      this.observeQuery(this.optionsFn)
     }
   }
 
@@ -142,19 +142,23 @@ export class QueryController<
    * @param optimistic - Get an initial optimistic result. Defaults to true.
    */
   async observeQuery(
-    options: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >,
+    options:
+      | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+      | (() => QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >),
     optimistic: boolean = true,
   ) {
     const queryClient = await this.whenQueryClient.promise
 
     // Initialize the QueryObserver with defaulted options.
-    const defaultedOptions = await this.getDefaultedOptions(options)
+    const defaultedOptions = await this.getDefaultedOptions(
+      typeof options === 'function' ? options() : options,
+    )
     this.queryObserver = new QueryObserver(queryClient, defaultedOptions)
 
     // Get an optimistic result based on the defaulted options.
@@ -190,9 +194,15 @@ export class QueryController<
 
   /**
    * Invoked when the host component is connected.
+   */
+  hostConnected() {
+    this.subscribe()
+  }
+
+  /**
    * Subscribes to the query observer and updates the result.
    */
-  async hostConnected() {
+  async subscribe() {
     const queryObserver = await this.whenQueryObserver.promise
 
     // Unsubscribe any previous subscription before subscribing
@@ -202,6 +212,9 @@ export class QueryController<
       this.result = result
       this.host.requestUpdate()
     })
+
+    queryObserver.updateResult()
+    this.host.requestUpdate()
   }
 
   /**

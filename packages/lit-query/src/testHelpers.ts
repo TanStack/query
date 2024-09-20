@@ -1,6 +1,5 @@
 /* istanbul ignore file */
 import { QueryClient } from '@tanstack/query-core'
-import { setQueryClient } from './queryClientHelper'
 import type { DefaultOptions } from '@tanstack/query-core'
 
 /**
@@ -8,7 +7,7 @@ import type { DefaultOptions } from '@tanstack/query-core'
  * @param options to combine with default options for query client
  * @link [Testing Docs](https://tanstack.com/query/latest/docs/framework/react/guides/testing).
  */
-export const setUpQueryClient = (options: DefaultOptions<Error> = {}) => {
+export const createQueryClient = (options: DefaultOptions<Error> = {}) => {
   const { queries, ...rest } = options
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -20,9 +19,10 @@ export const setUpQueryClient = (options: DefaultOptions<Error> = {}) => {
     },
     ...rest,
   })
-  setQueryClient(queryClient)
+  //setQueryClient(queryClient)
 
   queryClient.clear()
+  return queryClient
 }
 
 export type WithMaybeShadowRoot = { readonly shadowRoot: ShadowRoot | null }

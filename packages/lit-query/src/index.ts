@@ -1,2 +1,2 @@
 export * from './QueryController'
-export * from './queryClientHelper'
+export * from './QueryClientProvider'

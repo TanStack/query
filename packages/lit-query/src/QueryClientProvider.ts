@@ -2,7 +2,7 @@ import { LitElement, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { provide } from '@lit/context'
 import { QueryClient } from '@tanstack/query-core'
-import { queryContext } from './context.js'
+import { QueryContext } from './context.js'
 
 /**
  * Definition for the properties provided by the query client mixin class.
@@ -34,7 +34,7 @@ export const QueryClientMixin = <T extends Constructor<LitElement>>(
      * The query client provided as a context.
      * May be overridden to set a custom configuration.
      */
-    @provide({ context: queryContext })
+    @provide({ context: QueryContext })
     @state()
     queryClient = new QueryClient()
 
