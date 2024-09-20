@@ -18,8 +18,6 @@ import type { InfiniteQueryFunctions } from '../rules/infinite-query-property-or
 
 const ruleTester = new RuleTester()
 
-// reduce the number of test cases by only testing a subset of the checked properties
-
 type CheckedProperties = (typeof checkedProperties)[number]
 const orderIndependentProps = ['queryKey', '...foo'] as const
 type OrderIndependentProps = (typeof orderIndependentProps)[number]
