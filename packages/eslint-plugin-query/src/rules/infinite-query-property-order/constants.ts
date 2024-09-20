@@ -11,3 +11,7 @@ export const checkedProperties = [
   'getPreviousPageParam',
   'getNextPageParam',
 ] as const
+
+export const sortRules = [
+  [['queryFn'], ['getPreviousPageParam', 'getNextPageParam']],
+] as const
