@@ -139,8 +139,7 @@ export function useBaseQuery<
   if (
     defaultedOptions.experimental_prefetchInRender &&
     !isServer &&
-    willFetch(result, isRestoring) &&
-    !observer.hasListeners()
+    willFetch(result, isRestoring)
   ) {
     const promise = isNewCacheEntry
       ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
