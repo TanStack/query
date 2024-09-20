@@ -7246,7 +7246,9 @@ describe('useQuery', () => {
             <button onClick={() => queryClient.cancelQueries(options)}>
               cancel
             </button>
-            <button onClick={() => queryClient.setQueryData(key, 'hello')}>
+            <button
+              onClick={() => queryClient.setQueryData<string>(key, 'hello')}
+            >
               fetch
             </button>
           </div>
