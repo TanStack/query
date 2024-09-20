@@ -40,10 +40,6 @@ interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
 
-const cancellationError = new Error(
-  'No data or error and the query is not fetching - query was most likely cancelled',
-)
-
 export class QueryObserver<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -629,8 +625,6 @@ export class QueryObserver<
           thenable.reject(nextResult.error)
         } else if (nextResult.data !== undefined) {
           thenable.resolve(nextResult.data)
-        } else if (!nextResult.isFetching) {
-          thenable.reject(cancellationError)
         }
         return thenable as Thenable<TData>
       })()

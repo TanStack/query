@@ -7213,7 +7213,7 @@ describe('useQuery', () => {
       expect(queryFn).toHaveBeenCalledOnce()
     })
 
-    it('should reject when canceled with cancelQueries while suspending', async () => {
+    it('should stay pending when canceled with cancelQueries while suspending until refetched', async () => {
       const key = queryKey()
       let count = 0
       const queryFn = vi.fn().mockImplementation(async () => {
@@ -7246,6 +7246,9 @@ describe('useQuery', () => {
             <button onClick={() => queryClient.cancelQueries(options)}>
               cancel
             </button>
+            <button onClick={() => queryClient.setQueryData(key, 'hello')}>
+              fetch
+            </button>
           </div>
         )
       }
@@ -7258,9 +7261,19 @@ describe('useQuery', () => {
       )
       fireEvent.click(rendered.getByText('cancel'))
       await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => rendered.getByText('error boundary'))
+      // await waitFor(() => rendered.getByText('error boundary'))
+      await waitFor(() =>
+        expect(queryClient.getQueryState(key)).toMatchObject({
+          status: 'pending',
+          fetchStatus: 'idle',
+        }),
+      )
 
       expect(queryFn).toHaveBeenCalledOnce()
+
+      fireEvent.click(rendered.getByText('fetch'))
+
+      await waitFor(() => rendered.getByText('hello'))
     })
 
     it('should resolve to previous data when canceled with cancelQueries while suspending', async () => {
