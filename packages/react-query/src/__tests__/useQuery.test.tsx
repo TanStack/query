@@ -7320,5 +7320,45 @@ describe('useQuery', () => {
 
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
+
+    it('should suspend when not enabled', async () => {
+      const key = queryKey()
+
+      const options = (count: number) => ({
+        queryKey: [...key, count],
+        queryFn: async () => {
+          await sleep(10)
+          return 'test' + count
+        },
+      })
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        return <>loading..</>
+      }
+      function Page() {
+        const [count, setCount] = React.useState(0)
+        const query = useQuery({ ...options(count), enabled: count > 0 })
+
+        return (
+          <div>
+            <React.Suspense fallback={<Loading />}>
+              <MyComponent promise={query.promise} />
+            </React.Suspense>
+            <button onClick={() => setCount(1)}>enable</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('loading..'))
+      fireEvent.click(rendered.getByText('enable'))
+      await waitFor(() => rendered.getByText('test1'))
+    })
   })
 })
