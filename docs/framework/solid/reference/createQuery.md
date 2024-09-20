@@ -81,7 +81,6 @@ function App() {
     },
   }))
 
-
   return (
     <div>
       <Show when={todos.isError}>
@@ -94,9 +93,7 @@ function App() {
         <div>
           <div>Todos:</div>
           <ul>
-            <For each={todos.data}>
-              {(todo) => <li>{todo.title}</li>}
-            </For>
+            <For each={todos.data}>{(todo) => <li>{todo.title}</li>}</For>
           </ul>
         </div>
       </Show>
