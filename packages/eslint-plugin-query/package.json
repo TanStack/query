@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/rule-tester": "^8.3.0",
+    "combinate": "^1.1.11",
     "eslint": "^9.9.1"
   },
   "peerDependencies": {

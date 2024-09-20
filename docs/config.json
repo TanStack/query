@@ -796,6 +796,10 @@
         {
           "label": "No Unstable Deps",
           "to": "eslint/no-unstable-deps"
+        },
+        {
+          "label": "Infinite Query Property Order",
+          "to": "eslint/infinite-query-property-order"
         }
       ]
     },

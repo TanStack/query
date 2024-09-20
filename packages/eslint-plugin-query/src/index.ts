@@ -29,6 +29,7 @@ Object.assign(plugin.configs, {
       '@tanstack/query/no-rest-destructuring': 'warn',
       '@tanstack/query/stable-query-client': 'error',
       '@tanstack/query/no-unstable-deps': 'error',
+      '@tanstack/query/infinite-query-property-order': 'error',
     },
   },
   'flat/recommended': [
@@ -41,6 +42,7 @@ Object.assign(plugin.configs, {
         '@tanstack/query/no-rest-destructuring': 'warn',
         '@tanstack/query/stable-query-client': 'error',
         '@tanstack/query/no-unstable-deps': 'error',
+        '@tanstack/query/infinite-query-property-order': 'error',
       },
     },
   ],
