@@ -1,8 +1,9 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { describe, expectTypeOf, it, test } from 'vitest'
 import { QueryClient, dataTagSymbol } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
+import { useQuery } from '../useQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('queryOptions', () => {
@@ -132,5 +133,23 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
     >()
+  })
+
+  test('should not be allowed to be passed to non-infinite query functions', () => {
+    const queryClient = new QueryClient()
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+    // @ts-expect-error cannot pass infinite options to non-infinite query functions
+    useQuery(options)
+    // @ts-expect-error cannot pass infinite options to non-infinite query functions
+    queryClient.ensureQueryData(options)
+    // @ts-expect-error cannot pass infinite options to non-infinite query functions
+    queryClient.fetchQuery(options)
+    // @ts-expect-error cannot pass infinite options to non-infinite query functions
+    queryClient.prefetchQuery(options)
   })
 })

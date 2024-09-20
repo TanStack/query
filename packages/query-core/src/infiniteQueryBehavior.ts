@@ -13,14 +13,15 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 ): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
   return {
     onFetch: (context, query) => {
-      const fetchFn = async () => {
-        const options = context.options as InfiniteQueryPageParamsOptions<TData>
-        const direction = context.fetchOptions?.meta?.fetchMore?.direction
-        const oldPages = context.state.data?.pages || []
-        const oldPageParams = context.state.data?.pageParams || []
-        const empty = { pages: [], pageParams: [] }
-        let cancelled = false
+      const options = context.options as InfiniteQueryPageParamsOptions<TData>
+      const direction = context.fetchOptions?.meta?.fetchMore?.direction
+      const oldPages = context.state.data?.pages || []
+      const oldPageParams = context.state.data?.pageParams || []
+      let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
+      let currentPage = 0
 
+      const fetchFn = async () => {
+        let cancelled = false
         const addSignalProperty = (object: unknown) => {
           Object.defineProperty(object, 'signal', {
             enumerable: true,
@@ -78,8 +79,6 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           }
         }
 
-        let result: InfiniteData<unknown>
-
         // fetch next / previous page?
         if (direction && oldPages.length) {
           const previous = direction === 'backward'
@@ -92,22 +91,20 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 
           result = await fetchPage(oldData, param, previous)
         } else {
-          // Fetch first page
-          result = await fetchPage(
-            empty,
-            oldPageParams[0] ?? options.initialPageParam,
-          )
-
           const remainingPages = pages ?? oldPages.length
 
-          // Fetch remaining pages
-          for (let i = 1; i < remainingPages; i++) {
-            const param = getNextPageParam(options, result)
-            if (param == null) {
+          // Fetch all pages
+          do {
+            const param =
+              currentPage === 0
+                ? (oldPageParams[0] ?? options.initialPageParam)
+                : getNextPageParam(options, result)
+            if (currentPage > 0 && param == null) {
               break
             }
             result = await fetchPage(result, param)
-          }
+            currentPage++
+          } while (currentPage < remainingPages)
         }
 
         return result
