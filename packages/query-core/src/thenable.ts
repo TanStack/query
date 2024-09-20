@@ -10,20 +10,14 @@
 interface Fulfilled<T> {
   status: 'fulfilled'
   value: T
-
-  reason?: never
 }
 interface Rejected {
   status: 'rejected'
   reason: unknown
-
-  value?: never
 }
 interface Pending<T> {
   status: 'pending'
 
-  reason?: never
-  value?: never
   /**
    * Resolve the promise with a value.
    * Will remove the `resolve` and `reject` properties from the promise.
@@ -85,8 +79,4 @@ export function pendingThenable<T>(): PendingThenable<T> {
   }
 
   return thenable
-}
-
-export function isThenableEqual<T>(a: Thenable<T>, b: Thenable<T>): boolean {
-  return a.status === b.status && a.value === b.value && a.reason === b.reason
 }

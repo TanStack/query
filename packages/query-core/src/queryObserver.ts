@@ -2,7 +2,7 @@ import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
-import { isThenableEqual, pendingThenable } from './thenable'
+import { pendingThenable } from './thenable'
 import {
   isServer,
   isValidTimeout,
@@ -15,7 +15,7 @@ import {
 } from './utils'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
-import type { Thenable } from './thenable'
+import type { PendingThenable, Thenable } from './thenable'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -618,33 +618,46 @@ export class QueryObserver<
     }
 
     if (this.options.experimental_prefetchInRender) {
-      const nextThenable = (() => {
-        const thenable = pendingThenable<TData>()
-
+      const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
         if (nextResult.status === 'error') {
           thenable.reject(nextResult.error)
         } else if (nextResult.data !== undefined) {
           thenable.resolve(nextResult.data)
         }
-        return thenable as Thenable<TData>
-      })()
+      }
+
+      /**
+       * Create a new thenable and result promise when the results have changed
+       */
+      const recreateThenable = () => {
+        const pending =
+          (this.#currentThenable =
+          nextResult.promise =
+            pendingThenable())
+
+        finalizeThenableIfPossible(pending)
+      }
 
       const prevThenable = this.#currentThenable
-
       switch (prevThenable.status) {
         case 'pending':
-          if (nextThenable.status === 'fulfilled') {
-            prevThenable.resolve(nextThenable.value)
-          } else if (nextThenable.status === 'rejected') {
-            prevThenable.reject(nextThenable.reason)
+          // Finalize the previous thenable if it was pending
+          finalizeThenableIfPossible(prevThenable)
+          break
+        case 'fulfilled':
+          if (
+            nextResult.status === 'error' ||
+            nextResult.data !== prevThenable.value
+          ) {
+            recreateThenable()
           }
           break
-
-        case 'fulfilled':
         case 'rejected':
-          if (!isThenableEqual(prevThenable, nextThenable)) {
-            // Replace the thenable when the results have changed
-            this.#currentThenable = nextResult.promise = nextThenable
+          if (
+            nextResult.status !== 'error' ||
+            nextResult.error !== prevThenable.reason
+          ) {
+            recreateThenable()
           }
           break
       }
