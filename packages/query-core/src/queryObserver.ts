@@ -609,6 +609,18 @@ export class QueryObserver<
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
+    this.#currentResultState = this.#currentQuery.state
+    this.#currentResultOptions = this.options
+
+    if (this.#currentResultState.data !== undefined) {
+      this.#lastQueryWithDefinedData = this.#currentQuery
+    }
+
+    // Only notify and update result if something has changed
+    if (shallowEqualObjects(nextResult, prevResult)) {
+      return
+    }
+
     if (this.options.experimental_prefetchInRender) {
       const nextThenable = (() => {
         const thenable = pendingThenable<TData>()
@@ -642,18 +654,6 @@ export class QueryObserver<
           }
           break
       }
-    }
-
-    this.#currentResultState = this.#currentQuery.state
-    this.#currentResultOptions = this.options
-
-    if (this.#currentResultState.data !== undefined) {
-      this.#lastQueryWithDefinedData = this.#currentQuery
-    }
-
-    // Only notify and update result if something has changed
-    if (shallowEqualObjects(nextResult, prevResult)) {
-      return
     }
 
     this.#currentResult = nextResult
