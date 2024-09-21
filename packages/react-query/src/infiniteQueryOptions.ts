@@ -2,7 +2,9 @@ import type {
   DataTag,
   DefaultError,
   InfiniteData,
+  OmitKeyof,
   QueryKey,
+  SkipToken,
 } from '@tanstack/query-core'
 import type { UseInfiniteQueryOptions } from './types'
 
@@ -21,6 +23,36 @@ export type UndefinedInitialDataInfiniteOptions<
   TPageParam
 > & {
   initialData?: undefined
+}
+
+export type UnusedSkipTokenInfiniteOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = OmitKeyof<
+  UseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey,
+    TPageParam
+  >,
+  'queryFn'
+> & {
+  queryFn: Exclude<
+    UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey,
+      TPageParam
+    >['queryFn'],
+    SkipToken
+  >
 }
 
 type NonUndefinedGuard<T> = T extends undefined ? never : T
@@ -59,6 +91,30 @@ export function infiniteQueryOptions<
     TPageParam
   >,
 ): DefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> & {
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
+}
+
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UnusedSkipTokenInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+): UnusedSkipTokenInfiniteOptions<
   TQueryFnData,
   TError,
   TData,

@@ -119,6 +119,7 @@ describe('UseSuspenseQueries config object overload', () => {
       queries: [
         {
           queryKey: ['withSkipToken'],
+          // @ts-expect-error TS2345
           queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
         },
       ],
