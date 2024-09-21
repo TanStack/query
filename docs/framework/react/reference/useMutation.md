@@ -25,7 +25,7 @@ const {
     mutationFn,
     gcTime,
     meta,
-    mutationKey,  
+    mutationKey,
     networkMode,
     onError,
     onMutate,
@@ -35,7 +35,7 @@ const {
     retryDelay,
     scope,
     throwOnError,
-  }, 
+  },
   queryClient,
 )
 
