@@ -20,21 +20,24 @@ const {
   status,
   submittedAt,
   variables,
-} = useMutation({
-  mutationFn,
-  gcTime,
-  meta,
-  mutationKey,
-  networkMode,
-  onError,
-  onMutate,
-  onSettled,
-  onSuccess,
-  retry,
-  retryDelay,
-  scope,
-  throwOnError,
-})
+} = useMutation(
+  {
+    mutationFn,
+    gcTime,
+    meta,
+    mutationKey,  
+    networkMode,
+    onError,
+    onMutate,
+    onSettled,
+    onSuccess,
+    retry,
+    retryDelay,
+    scope,
+    throwOnError,
+  }, 
+  queryClient,
+)
 
 mutate(variables, {
   onError,
@@ -43,7 +46,7 @@ mutate(variables, {
 })
 ```
 
-**Options**
+**Parameter1 (Options)**
 
 - `mutationFn: (variables: TVariables) => Promise<TData>`
   - **Required, but only if no default mutation function has been defined**
@@ -98,6 +101,9 @@ mutate(variables, {
 - `meta: Record<string, unknown>`
   - Optional
   - If set, stores additional information on the mutation cache entry that can be used as needed. It will be accessible wherever the `mutation` is available (eg. `onError`, `onSuccess` functions of the `MutationCache`).
+
+**Parameter2 (QueryClient)**
+
 - `queryClient?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
