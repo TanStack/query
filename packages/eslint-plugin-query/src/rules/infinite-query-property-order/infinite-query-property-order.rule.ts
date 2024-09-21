@@ -3,7 +3,7 @@ import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
 import { getDocsUrl } from '../../utils/get-docs-url'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { sortDataByOrder } from './infinite-query-property-order.utils'
-import { checkedProperties, infiniteQueryFunctions } from './constants'
+import { infiniteQueryFunctions, sortRules } from './constants'
 import type { InfiniteQueryFunctions } from './constants'
 import type { ExtraRuleDocs } from '../../types'
 
@@ -50,6 +50,8 @@ export const rule = createRule({
         }
 
         const allProperties = argument.properties
+
+        // no need to sort if there is at max 1 property
         if (allProperties.length < 2) {
           return
         }
@@ -70,11 +72,7 @@ export const rule = createRule({
           return []
         })
 
-        const sortedProperties = sortDataByOrder(
-          properties,
-          checkedProperties,
-          'name',
-        )
+        const sortedProperties = sortDataByOrder(properties, sortRules, 'name')
         if (sortedProperties === null) {
           return
         }

@@ -32,18 +32,60 @@ const validTestMatrix = combinate({
   properties: generatePartialCombinations(checkedProperties, 2),
 })
 
-export function generateInvalidPermutations<T>(
-  arr: ReadonlyArray<T>,
-): Array<{ invalid: Array<T>; valid: Array<T> }> {
+export function generateInvalidPermutations(
+  arr: ReadonlyArray<CheckedProperties>,
+): Array<{
+  invalid: Array<CheckedProperties>
+  valid: Array<CheckedProperties>
+}> {
   const combinations = generatePartialCombinations(arr, 2)
-  const allPermutations: Array<{ invalid: Array<T>; valid: Array<T> }> = []
+  const allPermutations: Array<{
+    invalid: Array<CheckedProperties>
+    valid: Array<CheckedProperties>
+  }> = []
 
   for (const combination of combinations) {
     const permutations = generatePermutations(combination)
     // skip the first permutation as it matches the original combination
     const invalidPermutations = permutations.slice(1)
+
+    if (
+      combination.includes('getNextPageParam') &&
+      combination.includes('getPreviousPageParam')
+    ) {
+      if (
+        combination.indexOf('getNextPageParam') <
+        combination.indexOf('getPreviousPageParam')
+      ) {
+        // since we ignore the relative order of 'getPreviousPageParam' and 'getNextPageParam', we skip this combination (but keep the other one where `getPreviousPageParam` is before `getNextPageParam`)
+
+        continue
+      }
+    }
+
     allPermutations.push(
-      ...invalidPermutations.map((p) => ({ invalid: p, valid: combination })),
+      ...invalidPermutations
+        .map((p) => {
+          // ignore the relative order of 'getPreviousPageParam' and 'getNextPageParam'
+          const correctedValid = [...combination].sort((a, b) => {
+            if (
+              (a === 'getNextPageParam' && b === 'getPreviousPageParam') ||
+              (a === 'getPreviousPageParam' && b === 'getNextPageParam')
+            ) {
+              return p.indexOf(a) - p.indexOf(b)
+            }
+            return checkedProperties.indexOf(a) - checkedProperties.indexOf(b)
+          })
+          return { invalid: p, valid: correctedValid }
+        })
+        .filter(
+          ({ invalid }) =>
+            // if `getPreviousPageParam` and `getNextPageParam` are next to each other and `queryFn` is not present, we skip this invalid permutation
+            Math.abs(
+              invalid.indexOf('getNextPageParam') -
+                invalid.indexOf('getPreviousPageParam'),
+            ) !== 1 && !invalid.includes('queryFn'),
+        ),
     )
   }
 
@@ -121,7 +163,7 @@ const validTestCases = validTestMatrix.map(
 
 const invalidTestCases = invalidTestMatrix.map(
   ({ infiniteQueryFunction, properties }) => ({
-    name: `incorrect property order is detected for ${infiniteQueryFunction} with order: ${properties.invalid.join(', ')}`,
+    name: `incorrect property order is detected for ${infiniteQueryFunction} with invalid order: ${properties.invalid.join(', ')}, valid order: ${properties.valid.join(', ')}`,
     code: getCode({
       infiniteQueryFunction: infiniteQueryFunction,
       properties: properties.invalid,
