@@ -6,7 +6,7 @@ import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import { useQuery } from '../useQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
-describe('queryOptions', () => {
+describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
     infiniteQueryOptions({
       queryKey: ['key'],
