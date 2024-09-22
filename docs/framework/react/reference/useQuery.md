@@ -58,7 +58,7 @@ const {
 )
 ```
 
-**Options**
+**Parameter1 (Options)**
 
 - `queryKey: unknown[]`
   - **Required**
@@ -168,6 +168,9 @@ const {
 - `meta: Record<string, unknown>`
   - Optional
   - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
+
+**Parameter2 (QueryClient)**
+
 - `queryClient?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
