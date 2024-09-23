@@ -19,7 +19,6 @@ export const createQueryClient = (options: DefaultOptions<Error> = {}) => {
     },
     ...rest,
   })
-  //setQueryClient(queryClient)
 
   queryClient.clear()
   return queryClient
