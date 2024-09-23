@@ -65,9 +65,12 @@ export const rule = createRule({
           } else if (p.type === AST_NODE_TYPES.SpreadElement) {
             if (p.argument.type === AST_NODE_TYPES.Identifier) {
               return { name: p.argument.name, property: p }
-            } else {
-              throw new Error('Unsupported spread element')
+            } else if (p.argument.type === AST_NODE_TYPES.CallExpression) {
+              if (p.argument.callee.type === AST_NODE_TYPES.Identifier) {
+                return { name: p.argument.callee.name, property: p }
+              }
             }
+            throw new Error('Unsupported spread element')
           }
           return []
         })
