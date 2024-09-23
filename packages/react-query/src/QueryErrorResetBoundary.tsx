@@ -2,11 +2,14 @@
 import * as React from 'react'
 
 // CONTEXT
+export type QueryErrorResetFunction = () => void
+export type QueryErrorIsResetFunction = () => boolean
+export type QueryErrorClearResetFunction = () => void
 
 export interface QueryErrorResetBoundaryValue {
-  clearReset: () => void
-  isReset: () => boolean
-  reset: () => void
+  clearReset: QueryErrorClearResetFunction
+  isReset: QueryErrorIsResetFunction
+  reset: QueryErrorResetFunction
 }
 
 function createValue(): QueryErrorResetBoundaryValue {
