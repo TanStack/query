@@ -15,13 +15,12 @@ function useTodos(todoId) {
 
 [//]: # 'Example5'
 
-### If your query function depends on a props value, include it in your query key using computed variable
+### If your query function depends on a props value, include it in your query key using getter syntax
 ```js
 <script setup>
   const props = defineProps([todoId])
-  const todoIdValue = computed(()=>return props.todoId)
-  const queryKey = ['todos', todoIdValue]
-  const result = useQuery(queryKey, () => fetchTodoById(todoIdValue.value))
+  const queryKey = ['todos', ()=> props.todoId]
+  const result = useQuery(queryKey, () => fetchTodoById(props.todoId))
 </script>
 ```
 
