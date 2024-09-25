@@ -51,7 +51,7 @@
     "@tanstack/react-query": "workspace:*",
     "@types/react": "npm:types-react@rc",
     "@vitejs/plugin-react": "^4.3.1",
-    "next": "^14.2.5",
+    "next": "^14.2.13",
     "react": "19.0.0-rc-4c2e457c7c-20240522"
   },
   "peerDependencies": {

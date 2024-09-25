@@ -65,15 +65,15 @@
     }
   },
   "dependencies": {
-    "@tanstack/match-sorter-utils": "^8.15.1",
+    "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/query-core": "workspace:*",
-    "@vue/devtools-api": "^6.6.3",
+    "@vue/devtools-api": "^6.6.4",
     "vue-demi": "^0.14.10"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.1.1",
+    "@vitejs/plugin-vue": "^5.1.4",
     "@vue/composition-api": "1.7.2",
-    "eslint-plugin-vue": "^9.27.0",
+    "eslint-plugin-vue": "^9.28.0",
     "vue": "^3.4.27",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"

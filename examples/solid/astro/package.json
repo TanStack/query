@@ -10,16 +10,16 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.8.3",
-    "@astrojs/node": "^8.3.2",
-    "@astrojs/solid-js": "^4.4.0",
-    "@astrojs/tailwind": "^5.1.0",
-    "@astrojs/vercel": "^7.7.2",
+    "@astrojs/check": "^0.9.3",
+    "@astrojs/node": "^8.3.4",
+    "@astrojs/solid-js": "^4.4.2",
+    "@astrojs/tailwind": "^5.1.1",
+    "@astrojs/vercel": "^7.8.1",
     "@tanstack/solid-query": "^5.56.2",
     "@tanstack/solid-query-devtools": "^5.58.0",
-    "astro": "^4.12.2",
-    "solid-js": "^1.8.19",
-    "tailwindcss": "^3.4.7",
+    "astro": "^4.15.9",
+    "solid-js": "^1.9.1",
+    "tailwindcss": "^3.4.13",
     "typescript": "5.3.3"
   }
 }

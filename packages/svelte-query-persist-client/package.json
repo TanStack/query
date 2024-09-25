@@ -44,13 +44,13 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.3.2",
-    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "@sveltejs/package": "^2.3.5",
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@tanstack/svelte-query": "workspace:*",
     "@testing-library/svelte": "^5.2.1",
-    "eslint-plugin-svelte": "^2.43.0",
-    "svelte": "^4.2.18",
-    "svelte-check": "^4.0.0"
+    "eslint-plugin-svelte": "^2.44.0",
+    "svelte": "^4.2.19",
+    "svelte-check": "^4.0.2"
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:^",

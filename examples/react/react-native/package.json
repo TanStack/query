@@ -11,25 +11,25 @@
     "type:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-native-community/netinfo": "^11.3.2",
+    "@react-native-community/netinfo": "^11.4.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-query-devtools": "^5.58.0",
-    "expo": "^51.0.22",
+    "expo": "^51.0.34",
     "expo-constants": "^16.0.2",
     "expo-status-bar": "^1.12.1",
     "react": "19.0.0-rc-4c2e457c7c-20240522",
-    "react-native": "^0.74.3",
-    "react-native-gesture-handler": "^2.17.1",
+    "react-native": "^0.75.3",
+    "react-native-gesture-handler": "^2.19.0",
     "react-native-paper": "^5.12.5",
-    "react-native-reanimated": "^3.14.0",
-    "react-native-safe-area-context": "^4.10.8",
-    "react-native-screens": "^3.32.0",
+    "react-native-reanimated": "^3.15.3",
+    "react-native-safe-area-context": "^4.11.0",
+    "react-native-screens": "^3.34.0",
     "react-native-web": "^0.19.12"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.9",
+    "@babel/core": "^7.25.2",
     "@expo/config": "^9.0.3",
     "typescript": "5.3.3"
   }

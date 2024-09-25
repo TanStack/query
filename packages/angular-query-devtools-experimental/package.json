@@ -44,14 +44,14 @@
   ],
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*",
-    "tslib": "^2.6.3"
+    "tslib": "^2.7.0"
   },
   "devDependencies": {
     "@angular/common": "^17.3.12",
     "@angular/compiler-cli": "^17.3.12",
     "@angular/core": "^17.3.12",
     "@tanstack/angular-query-experimental": "workspace:*",
-    "eslint-plugin-jsdoc": "^50.2.2",
+    "eslint-plugin-jsdoc": "^50.2.4",
     "ng-packagr": "^17.3.0",
     "typescript": "5.3.3"
   },

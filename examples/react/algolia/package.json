@@ -9,7 +9,7 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@algolia/client-search": "5.2.1",
+    "@algolia/client-search": "5.6.0",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-query-devtools": "^5.58.0",
     "react": "19.0.0-rc-4c2e457c7c-20240522",
@@ -21,6 +21,6 @@
     "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.3.1",
     "typescript": "5.3.3",
-    "vite": "^5.3.5"
+    "vite": "^5.4.8"
   }
 }
