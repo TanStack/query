@@ -1,6 +1,7 @@
 import { defineCE, fixture, waitUntil } from '@open-wc/testing-helpers'
 import { when } from 'jest-when'
-import { getNodeFor, setUpQueryClient } from '../testHelpers'
+import { getNodeFor } from '../testHelpers'
+import { QueryClientProvider } from '../QueryClientProvider'
 import {
   ANOTHER_TODO,
   ANOTHER_TODO_ID,
@@ -10,19 +11,21 @@ import {
   getTodoById,
 } from './TodoComponent'
 
-const tag = defineCE(ReadOneTodoComponent)
+const todoTag = defineCE(ReadOneTodoComponent)
 
 describe('QueryController', () => {
-  beforeEach(setUpQueryClient)
+  const provider = new QueryClientProvider()
 
   describe('pending', () => {
     beforeEach(() => {
-      getTodoById.mockImplementationOnce(() => new Promise(() => {}))
+      //getTodoById.mockImplementationOnce(() => new Promise(() => {}))
     })
     it('should set into pending state', async () => {
-      const el = await fixture<ReadOneTodoComponent>(`<${tag}></${tag}>`)
+      const el = await fixture<ReadOneTodoComponent>(
+        `<${todoTag}></${todoTag}>`,
+        { parentNode: provider },
+      )
       await el.updateComplete
-
       expect(getNodeFor('div', el).textContent).toBe('Loading...')
     })
   })
@@ -32,8 +35,16 @@ describe('QueryController', () => {
       getTodoById.mockRejectedValueOnce(new Error('error'))
     })
     it('should set into error state', async () => {
-      const el = await fixture<ReadOneTodoComponent>(`<${tag}></${tag}>`)
+      const el = await fixture<ReadOneTodoComponent>(
+        `<${todoTag}></${todoTag}>`,
+        { parentNode: provider },
+      )
       await el.updateComplete
+      await waitUntil(
+        () => getNodeFor('div', el).textContent == 'Error',
+        undefined,
+        { timeout: 5000 },
+      )
 
       expect(getNodeFor('div', el).textContent).toBe('Error')
     })
@@ -44,9 +55,12 @@ describe('QueryController', () => {
       when(getTodoById).calledWith(A_TODO_ID).mockResolvedValue(A_TODO)
     })
     it('should set into success state', async () => {
-      const el = await fixture<ReadOneTodoComponent>(`<${tag}></${tag}>`)
+      const el = await fixture<ReadOneTodoComponent>(
+        `<${todoTag}></${todoTag}>`,
+        { parentNode: provider },
+      )
       await el.updateComplete
-
+      await waitUntil(() => el.todoQuery.result)
       const { userId, id, title, completed } = A_TODO
       expect(getNodeFor('div', el).textContent).toBe(
         `userId: ${userId}, id: ${id}, title: ${title}, completed: ${completed}`,
@@ -62,11 +76,14 @@ describe('QueryController', () => {
         .mockResolvedValue(ANOTHER_TODO)
     })
     it('should set new todo when property is updated', async () => {
-      const el = await fixture<ReadOneTodoComponent>(`<${tag}></${tag}>`)
+      const el = await fixture<ReadOneTodoComponent>(
+        `<${todoTag}></${todoTag}>`,
+        { parentNode: provider },
+      )
       await el.updateComplete
 
       const { userId, id, title, completed } = A_TODO
-      expect(getNodeFor('div', el).textContent).toBe(
+      expect(getNodeFor('div', el).textContent?.trim()).toBe(
         `userId: ${userId}, id: ${id}, title: ${title}, completed: ${completed}`,
       )
 

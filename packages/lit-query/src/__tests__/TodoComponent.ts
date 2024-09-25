@@ -1,8 +1,7 @@
-import { mockFn } from 'jest-mock-extended'
 import { LitElement, html } from 'lit'
 import { property } from 'lit/decorators.js'
-import { QueryController } from '../QueryController'
 import { vi } from 'vitest'
+import { QueryController } from '../QueryController'
 
 export const A_TODO_ID = 1
 export const A_TODO = {
@@ -32,23 +31,23 @@ export class ReadOneTodoComponent extends LitElement {
   @property({ type: Number })
   todoId = 1
 
-  private todoQuery = new QueryController(this, () => ({
+  todoQuery = new QueryController(this, () => ({
     queryKey: ['todo', this.todoId],
-    queryFn: () => getTodoById(this.todoId),
+    queryFn: async () => getTodoById(this.todoId),
   }))
 
   render() {
     const { result } = this.todoQuery
 
-    if (result.isPending) {
+    if (result?.isPending) {
       return html`<div>Loading...</div>`
     }
 
-    if (result.isError) {
+    if (result?.isError) {
       return html`<div>Error</div>`
     }
 
-    const { userId, id, title, completed } = result.data
+    const { userId, id, title, completed } = result?.data ?? {}
     return html`<div>
       userId: ${userId}, id: ${id}, title: ${title}, completed: ${completed}
     </div>`
