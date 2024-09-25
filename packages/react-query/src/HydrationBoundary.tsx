@@ -54,59 +54,57 @@ export const HydrationBoundary = ({
   // we throw away the fresh data for any existing ones to avoid unexpectedly
   // updating the UI.
   React.useMemo(() => {
-    if (state) {
-      if (typeof state !== 'object') {
-        return
+    if (!state || typeof state !== 'object') {
+      return
+    }
+
+    const queryCache = client.getQueryCache()
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const queries = (state as DehydratedState).queries || []
+
+    const newQueries: DehydratedState['queries'] = []
+    const existingQueries: DehydratedState['queries'] = []
+    for (const dehydratedQuery of queries) {
+      const existingQuery = queryCache.get(dehydratedQuery.queryHash)
+
+      if (!existingQuery) {
+        newQueries.push(dehydratedQuery)
+        continue
       }
+      const hydrationIsNewer =
+        dehydratedQuery.state.dataUpdatedAt > existingQuery.state.dataUpdatedAt
+      const queryAlreadyQueued = hydrationQueue?.find(
+        (query) => query.queryHash === dehydratedQuery.queryHash,
+      )
 
-      const queryCache = client.getQueryCache()
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const queries = (state as DehydratedState).queries || []
-
-      const newQueries: DehydratedState['queries'] = []
-      const existingQueries: DehydratedState['queries'] = []
-      for (const dehydratedQuery of queries) {
-        const existingQuery = queryCache.get(dehydratedQuery.queryHash)
-
-        if (!existingQuery) {
-          newQueries.push(dehydratedQuery)
-        } else {
-          const hydrationIsNewer =
-            dehydratedQuery.state.dataUpdatedAt >
-            existingQuery.state.dataUpdatedAt
-          const queryAlreadyQueued = hydrationQueue?.find(
-            (query) => query.queryHash === dehydratedQuery.queryHash,
-          )
-
-          if (
-            hydrationIsNewer &&
-            (!queryAlreadyQueued ||
-              dehydratedQuery.state.dataUpdatedAt >
-                queryAlreadyQueued.state.dataUpdatedAt)
-          ) {
-            existingQueries.push(dehydratedQuery)
-          }
-        }
+      if (
+        hydrationIsNewer &&
+        (!queryAlreadyQueued ||
+          dehydratedQuery.state.dataUpdatedAt >
+            queryAlreadyQueued.state.dataUpdatedAt)
+      ) {
+        existingQueries.push(dehydratedQuery)
       }
+    }
 
-      if (newQueries.length > 0) {
-        // It's actually fine to call this with queries/state that already exists
-        // in the cache, or is older. hydrate() is idempotent for queries.
-        hydrate(client, { queries: newQueries }, optionsRef.current)
-      }
-      if (existingQueries.length > 0) {
-        setHydrationQueue((prev) =>
-          prev ? [...prev, ...existingQueries] : existingQueries,
-        )
-      }
+    if (newQueries.length > 0) {
+      // It's actually fine to call this with queries/state that already exists
+      // in the cache, or is older. hydrate() is idempotent for queries.
+      hydrate(client, { queries: newQueries }, optionsRef.current)
+    }
+    if (existingQueries.length > 0) {
+      setHydrationQueue((prev) =>
+        prev ? [...prev, ...existingQueries] : existingQueries,
+      )
     }
   }, [client, hydrationQueue, state])
 
   React.useEffect(() => {
-    if (hydrationQueue) {
-      hydrate(client, { queries: hydrationQueue }, optionsRef.current)
-      setHydrationQueue(undefined)
+    if (!hydrationQueue) {
+      return
     }
+    hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+    setHydrationQueue(undefined)
   }, [client, hydrationQueue])
 
   return children as React.ReactElement

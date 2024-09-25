@@ -21,15 +21,16 @@ export const defaultThrowOnError = <
 export const ensureSuspenseTimers = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
 ) => {
-  if (defaultedOptions.suspense) {
-    // Always set stale time when using suspense to prevent
-    // fetching again when directly mounting after suspending
-    if (typeof defaultedOptions.staleTime !== 'number') {
-      defaultedOptions.staleTime = 1000
-    }
-    if (typeof defaultedOptions.gcTime === 'number') {
-      defaultedOptions.gcTime = Math.max(defaultedOptions.gcTime, 1000)
-    }
+  if (!defaultedOptions.suspense) {
+    return
+  }
+  // Always set stale time when using suspense to prevent
+  // fetching again when directly mounting after suspending
+  if (typeof defaultedOptions.staleTime !== 'number') {
+    defaultedOptions.staleTime = 1000
+  }
+  if (typeof defaultedOptions.gcTime === 'number') {
+    defaultedOptions.gcTime = Math.max(defaultedOptions.gcTime, 1000)
   }
 }
 
