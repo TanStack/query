@@ -19,11 +19,19 @@ This module is distributed via [NPM](https://www.npmjs.com/package/react-query-k
 should be installed as one of your project's `dependencies`:
 
 ```bash
-$ npm i react-query-kit
-# or
-$ pnpm add react-query-kit
-# or
-$ yarn add react-query-kit
+npm i react-query-kit
+```
+
+or
+
+```bash
+pnpm add react-query-kit
+```
+
+or
+
+```bash
+yarn add react-query-kit
 ```
 
 ## Quick start with nextjs

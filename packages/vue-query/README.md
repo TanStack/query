@@ -35,11 +35,19 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
 1. Install `vue-query`
 
    ```bash
-   $ npm i @tanstack/vue-query
-   # or
-   $ pnpm add @tanstack/vue-query
-   # or
-   $ yarn add @tanstack/vue-query
+   npm i @tanstack/vue-query
+   ```
+
+   or
+
+   ```bash
+     pnpm add @tanstack/vue-query
+   ```
+
+   or
+
+   ```bash
+     yarn add @tanstack/vue-query
    ```
 
    > If you are using Vue 2.6, make sure to also setup [@vue/composition-api](https://github.com/vuejs/composition-api)

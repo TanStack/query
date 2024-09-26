@@ -10,11 +10,19 @@ Typesafe query key management with auto-completion features. Focus on writing an
 You can install Query Key Factory via [NPM](https://www.npmjs.com/package/@lukemorales/query-key-factory).
 
 ```bash
-$ npm i @lukemorales/query-key-factory
-# or
-$ pnpm add @lukemorales/query-key-factory
-# or
-$ yarn add @lukemorales/query-key-factory
+npm i @lukemorales/query-key-factory
+```
+
+or
+
+```bash
+pnpm add @lukemorales/query-key-factory
+```
+
+or
+
+```bash
+yarn add @lukemorales/query-key-factory
 ```
 
 

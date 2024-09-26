@@ -10,11 +10,19 @@ TanStack Query comes with its own ESLint plugin. This plugin is used to enforce 
 The plugin is a separate package that you need to install:
 
 ```bash
-$ npm i -D @tanstack/eslint-plugin-query@4
-# or
-$ pnpm add -D @tanstack/eslint-plugin-query@4
-# or
-$ yarn add -D @tanstack/eslint-plugin-query@4
+npm i -D @tanstack/eslint-plugin-query@4
+```
+
+or
+
+```bash
+pnpm add -D @tanstack/eslint-plugin-query@4
+```
+
+or
+
+```bash
+yarn add -D @tanstack/eslint-plugin-query@4
 ```
 
 ## Usage
