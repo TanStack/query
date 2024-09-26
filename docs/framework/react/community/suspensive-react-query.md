@@ -14,11 +14,19 @@ You don't even need to use the isSuccess flag.
 You can install @suspensive/react-query via [NPM](https://www.npmjs.com/package/@suspensive/react-query).
 
 ```bash
-$ npm i @suspensive/react-query
-# or
-$ pnpm add @suspensive/react-query
-# or
-$ yarn add @suspensive/react-query
+npm i @suspensive/react-query
+```
+
+or
+
+```bash
+pnpm add @suspensive/react-query
+```
+
+or
+
+```bash
+yarn add @suspensive/react-query
 ```
 
 ### Motivation
