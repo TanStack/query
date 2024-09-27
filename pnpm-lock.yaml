@@ -339,7 +339,7 @@ importers:
         version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.57.2
+        specifier: ^5.58.1
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: npm:types-react@rc
@@ -407,7 +407,7 @@ importers:
         version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.57.2
+        specifier: ^5.58.1
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: npm:types-react@rc
@@ -1230,7 +1230,7 @@ importers:
         version: 1.8.19
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.57.2
+        specifier: ^5.58.1
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.3.3
