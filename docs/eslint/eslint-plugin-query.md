@@ -70,17 +70,17 @@ export default [
 
 ### Recommended setup
 
-To enable all of the recommended rules for our plugin, add `plugin:@tanstack/eslint-plugin-query/recommended` in extends:
+To enable all of the recommended rules for our plugin, add `plugin:@tanstack/query/recommended` in extends:
 
 ```json
 {
-  "extends": ["plugin:@tanstack/eslint-plugin-query/recommended"]
+  "extends": ["plugin:@tanstack/query/recommended"]
 }
 ```
 
 ### Custom setup
 
-Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section, and configure the rules you want to use:
+Alternatively, add `@tanstack/query` to the plugins section, and configure the rules you want to use:
 
 ```json
 {
