@@ -17,3 +17,8 @@ You can generally pass everything to `queryOptions` that you can also pass to [`
 - `queryKey: QueryKey`
   - **Required**
   - The query key to generate options for.
+- `experimental_prefetchInRender?: boolean`
+  - Optional
+  - Defaults to `false`
+  - When set to `true`, enables the experimental `useQuery().promise` functionality
+  - This allows prefetching queries during render, which can be useful for certain optimization scenarios
