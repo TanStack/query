@@ -23,6 +23,7 @@ await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: fetchPosts })
 
 Its available methods are:
 
+- [`QueryClient`](#queryclient)
 - [`queryClient.fetchQuery`](#queryclientfetchquery)
 - [`queryClient.fetchInfiniteQuery`](#queryclientfetchinfinitequery)
 - [`queryClient.prefetchQuery`](#queryclientprefetchquery)
@@ -64,6 +65,12 @@ Its available methods are:
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
   - You can also define defaults to be used for [hydration](../../framework/react/reference/hydration)
+- `experimental_prefetchInRender?: boolean`
+  - Optional
+  - Defaults to `false`
+  - When set to `true`, enables the experimental `useQuery().promise` functionality
+  - This allows prefetching queries during render, which can be useful for certain optimization scenarios
+  - Note: This feature is experimental and may change in future versions
 
 ## `queryClient.fetchQuery`
 
