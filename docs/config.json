@@ -1045,6 +1045,10 @@
             {
               "label": "Angular Router",
               "to": "framework/angular/examples/router"
+            },
+            {
+              "label": "RxJS autocomplete",
+              "to": "framework/angular/examples/rxjs"
             }
           ]
         }
