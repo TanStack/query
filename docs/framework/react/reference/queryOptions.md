@@ -20,5 +20,5 @@ You can generally pass everything to `queryOptions` that you can also pass to [`
 - `experimental_prefetchInRender?: boolean`
   - Optional
   - Defaults to `false`
-  - When set to `true`, enables the experimental `useQuery().promise` functionality
-  - This allows prefetching queries during render, which can be useful for certain optimization scenarios
+  - When set to `true`, queries will be prefetched during render, which can be useful for certain optimization scenarios
+  - Needs to be turned on for the experimental `useQuery().promise` functionality
