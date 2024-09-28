@@ -263,21 +263,21 @@ export class QueryObserver<
     result: QueryObserverResult<TData, TError>,
     onPropTracked?: (key: keyof QueryObserverResult) => void,
   ): QueryObserverResult<TData, TError> {
-    const trackedResult = {} as QueryObserverResult<TData, TError>
+    const handler: ProxyHandler<QueryObserverResult<TData, TError>> = {
+      get: (target, key: keyof QueryObserverResult<TData, TError>) => {
+        if (key in target) {
+          this.trackProp(key)
+          if (onPropTracked) {
+            onPropTracked(key)
+          }
+          return target[key]
+        }
+        // Ensure all paths are covered by explicitly handling "undefined" properties
+        return undefined
+      },
+    }
 
-    Object.keys(result).forEach((key) => {
-      Object.defineProperty(trackedResult, key, {
-        configurable: false,
-        enumerable: true,
-        get: () => {
-          this.trackProp(key as keyof QueryObserverResult)
-          onPropTracked?.(key as keyof QueryObserverResult)
-          return result[key as keyof QueryObserverResult]
-        },
-      })
-    })
-
-    return trackedResult
+    return new Proxy(result, handler)
   }
 
   trackProp(key: keyof QueryObserverResult) {
