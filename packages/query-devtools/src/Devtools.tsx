@@ -1700,6 +1700,8 @@ const QueryDetails = () => {
   const queryClient = useQueryDevtoolsContext().client
 
   const [restoringLoading, setRestoringLoading] = createSignal(false)
+  const [dataMode, setDataMode] = createSignal<'view' | 'edit'>('view')
+  const [dataEditError, setDataEditError] = createSignal<boolean>(false)
 
   const errorTypes = createMemo(() => {
     return useQueryDevtoolsContext().errorTypes || []
@@ -2047,22 +2049,85 @@ const QueryDetails = () => {
           </Show>
         </div>
         <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
-          Data Explorer
+          Data {dataMode() === 'view' ? 'Explorer' : 'Editor'}
         </div>
-        <div
-          style={{
-            padding: tokens.size[2],
-          }}
-          class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
-        >
-          <Explorer
-            label="Data"
-            defaultExpanded={['Data']}
-            value={activeQueryStateData()}
-            editable={true}
-            activeQuery={activeQuery()}
-          />
-        </div>
+        <Show when={dataMode() === 'view'}>
+          <div
+            style={{
+              padding: tokens.size[2],
+            }}
+            class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
+          >
+            <Explorer
+              label="Data"
+              defaultExpanded={['Data']}
+              value={activeQueryStateData()}
+              editable={true}
+              onEdit={() => setDataMode('edit')}
+              activeQuery={activeQuery()}
+            />
+          </div>
+        </Show>
+        <Show when={dataMode() === 'edit'}>
+          <form
+            class={cx(
+              styles().devtoolsEditForm,
+              'tsqd-query-details-data-editor',
+            )}
+            onSubmit={(e) => {
+              e.preventDefault()
+              const formData = new FormData(e.currentTarget)
+              const data = formData.get('data') as string
+              try {
+                const parsedData = JSON.parse(data)
+                activeQuery()!.setState({
+                  ...activeQuery()!.state,
+                  data: parsedData,
+                })
+                setDataMode('view')
+              } catch (error) {
+                setDataEditError(true)
+              }
+            }}
+          >
+            <textarea
+              name="data"
+              class={styles().devtoolsEditTextarea}
+              onFocus={() => setDataEditError(false)}
+              data-error={dataEditError()}
+              value={JSON.stringify(activeQueryStateData(), null, 2)}
+            ></textarea>
+            <div class={styles().devtoolsEditFormActions}>
+              <span class={styles().devtoolsEditFormError}>
+                {dataEditError() ? 'Invalid Value' : ''}
+              </span>
+              <div class={styles().devtoolsEditFormActionContainer}>
+                <button
+                  class={cx(
+                    styles().devtoolsEditFormAction,
+                    css`
+                      color: ${t(colors.gray[600], colors.gray[300])};
+                    `,
+                  )}
+                  type="button"
+                  onClick={() => setDataMode('view')}
+                >
+                  Cancel
+                </button>
+                <button
+                  class={cx(
+                    styles().devtoolsEditFormAction,
+                    css`
+                      color: ${t(colors.blue[600], colors.blue[400])};
+                    `,
+                  )}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </form>
+        </Show>
         <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Query Explorer
         </div>
@@ -3316,6 +3381,74 @@ const stylesFactory = (
         & label {
           padding: 0 ${tokens.size[2]} 0 ${tokens.size[1.5]};
         }
+      }
+    `,
+    devtoolsEditForm: css`
+      padding: ${size[2]};
+      & > [data-error='true'] {
+        outline: 2px solid ${t(colors.red[200], colors.red[800])};
+        outline-offset: 2px;
+        border-radius: ${border.radius.xs};
+      }
+    `,
+    devtoolsEditTextarea: css`
+      width: 100%;
+      max-height: 500px;
+      font-family: 'Fira Code', monospace;
+      font-size: ${font.size.xs};
+      border-radius: ${border.radius.sm};
+      field-sizing: content;
+      padding: ${size[2]};
+      background-color: ${t(colors.gray[100], colors.darkGray[800])};
+      color: ${t(colors.gray[900], colors.gray[100])};
+      border: 1px solid ${t(colors.gray[200], colors.gray[700])};
+      resize: none;
+      &:focus {
+        outline-offset: 2px;
+        border-radius: ${border.radius.xs};
+        outline: 2px solid ${t(colors.blue[200], colors.blue[800])};
+      }
+    `,
+    devtoolsEditFormActions: css`
+      display: flex;
+      justify-content: space-between;
+      gap: ${size[2]};
+      align-items: center;
+      padding-top: ${size[1]};
+      font-size: ${font.size.xs};
+    `,
+    devtoolsEditFormError: css`
+      color: ${t(colors.red[700], colors.red[500])};
+    `,
+    devtoolsEditFormActionContainer: css`
+      display: flex;
+      gap: ${size[2]};
+    `,
+    devtoolsEditFormAction: css`
+      font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
+      font-size: ${font.size.xs};
+      padding: ${size[1]} ${tokens.size[2]};
+      display: flex;
+      border-radius: ${border.radius.sm};
+      background-color: ${t(colors.gray[100], colors.darkGray[600])};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
+      align-items: center;
+      gap: ${size[2]};
+      font-weight: ${font.weight.medium};
+      line-height: ${font.lineHeight.xs};
+      cursor: pointer;
+      &:focus-visible {
+        outline-offset: 2px;
+        border-radius: ${border.radius.xs};
+        outline: 2px solid ${colors.blue[800]};
+      }
+      &:hover {
+        background-color: ${t(colors.gray[200], colors.darkGray[500])};
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
     `,
   }
