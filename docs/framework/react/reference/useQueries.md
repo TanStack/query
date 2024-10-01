@@ -64,4 +64,4 @@ The `combine` function will only re-run if:
 - the `combine` function itself changed referentially
 - any of the query results changed
 
-This means that an inlined `combine` function, as shown above, will run on every render. To avoid this, you can wrap the `combine` function in `useCallback`, or extract it so a stable function reference if it doesn't have any dependencies.
+This means that an inlined `combine` function, as shown above, will run on every render. To avoid this, you can wrap the `combine` function in `useCallback`, or extract it to a stable function reference if it doesn't have any dependencies.
