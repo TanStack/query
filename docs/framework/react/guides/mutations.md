@@ -226,7 +226,7 @@ There is a slight difference in handling `onSuccess`, `onError` and `onSettled` 
 ```tsx
 useMutation({
   mutationFn: addTodo,
-  onSuccess: (data, error, variables, context) => {
+  onSuccess: (data, variables, context) => {
     // Will be called 3 times
   },
 })
@@ -234,7 +234,7 @@ useMutation({
 const todos = ['Todo 1', 'Todo 2', 'Todo 3']
 todos.forEach((todo) => {
   mutate(todo, {
-    onSuccess: (data, error, variables, context) => {
+    onSuccess: (data, variables, context) => {
       // Will execute only once, for the last mutation (Todo 3),
       // regardless which mutation resolves first
     },
