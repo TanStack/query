@@ -1220,7 +1220,6 @@ describe('useSuspenseQueries', () => {
         <React.Suspense fallback="loading">
           <ErrorBoundary
             fallbackRender={() => {
-              console.log('fallback renders')
               return <div>There was an error!</div>
             }}
           >

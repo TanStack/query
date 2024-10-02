@@ -2,10 +2,10 @@
   <div>
     <a routerLink="/" href="#">Back</a>
   </div>
-  @if (postQuery.status() === 'pending') {
+  @if (postQuery.isPending()) {
     Loading...
-  } @else if (postQuery.status() === 'error') {
-    Error: {{ postQuery.error()?.message }}
+  } @else if (postQuery.isError()) {
+    Error: {{ postQuery.error().message }}
   }
   @if (postQuery.data(); as post) {
     <h1>{{ post.title }}</h1>

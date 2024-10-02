@@ -8,6 +8,7 @@ React Query can also be used with React's Suspense for Data Fetching API's. For 
 - [useSuspenseQuery](../../reference/useSuspenseQuery)
 - [useSuspenseInfiniteQuery](../../reference/useSuspenseInfiniteQuery)
 - [useSuspenseQueries](../../reference/useSuspenseQueries)
+- Additionally, you can use the `useQuery().promise` and `React.use()` (Experimental)
 
 When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](https://stackblitz.com/github/TanStack/query/tree/main/examples/react/suspense) for more information on how to set up suspense mode.
 
@@ -172,3 +173,52 @@ export function Providers(props: { children: React.ReactNode }) {
 ```
 
 For more information, check out the [NextJs Suspense Streaming Example](../../examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](../advanced-ssr) guide.
+
+## Using `useQuery().promise` and `React.use()` (Experimental)
+
+> To enable this feature, you need to set the `experimental_prefetchInRender` option to `true` when creating your `QueryClient`
+
+**Example code:**
+
+```tsx
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      experimental_prefetchInRender: true,
+    },
+  },
+})
+```
+
+**Usage:**
+
+```tsx
+import React from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { fetchTodos, type Todo } from './api'
+
+function TodoList({ query }: { query: UseQueryResult<Todo[]> }) {
+  const data = React.use(query.promise)
+
+  return (
+    <ul>
+      {data.map((todo) => (
+        <li key={todo.id}>{todo.title}</li>
+      ))}
+    </ul>
+  )
+}
+
+export function App() {
+  const query = useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
+
+  return (
+    <>
+      <h1>Todos</h1>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <TodoList query={query} />
+      </React.Suspense>
+    </>
+  )
+}
+```

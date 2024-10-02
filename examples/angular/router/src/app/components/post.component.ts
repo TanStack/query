@@ -20,6 +20,9 @@ import { PostsService } from '../services/posts-service'
 export default class PostComponent {
   #postsService = inject(PostsService)
 
+  // The Angular router will automatically bind postId
+  // as `withComponentInputBinding` is added to `provideRouter`.
+  // See https://angular.dev/api/router/withComponentInputBinding
   postId = input.required({
     transform: numberAttribute,
   })
