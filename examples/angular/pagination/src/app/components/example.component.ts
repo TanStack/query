@@ -6,7 +6,6 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import {
   injectQuery,
   injectQueryClient,
@@ -20,7 +19,6 @@ import { ProjectsService } from '../services/projects.service'
   selector: 'example',
   standalone: true,
   templateUrl: './example.component.html',
-  imports: [AngularQueryDevtools],
 })
 export class ExampleComponent {
   queryClient = injectQueryClient()
