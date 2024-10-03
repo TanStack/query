@@ -12,15 +12,7 @@ import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAngularQuery(
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            gcTime: 1000 * 60 * 60 * 24, // 24 hours
-          },
-        },
-      }),
-    ),
+    provideAngularQuery(new QueryClient()),
     provideHttpClient(withInterceptors([projectsMockInterceptor]), withFetch()),
   ],
 }

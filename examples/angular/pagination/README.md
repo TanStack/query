@@ -1,4 +1,4 @@
-# TanStack Query Angular router example
+# TanStack Query Angular pagination example
 
 To run this example:
 
