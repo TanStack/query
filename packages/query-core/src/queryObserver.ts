@@ -1,8 +1,3 @@
-import { focusManager } from './focusManager'
-import { notifyManager } from './notifyManager'
-import { fetchState } from './query'
-import { Subscribable } from './subscribable'
-import { pendingThenable } from './thenable'
 import {
   isServer,
   isValidTimeout,
@@ -13,9 +8,12 @@ import {
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
+import { notifyManager } from './notifyManager'
+import { focusManager } from './focusManager'
+import { Subscribable } from './subscribable'
+import { fetchState } from './query'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
-import type { PendingThenable, Thenable } from './thenable'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -59,7 +57,6 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
-  #currentThenable: Thenable<TData>
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
@@ -85,13 +82,6 @@ export class QueryObserver<
 
     this.#client = client
     this.#selectError = null
-    this.#currentThenable = pendingThenable()
-    if (!this.options.experimental_prefetchInRender) {
-      this.#currentThenable.reject(
-        new Error('experimental_prefetchInRender feature flag is not enabled'),
-      )
-    }
-
     this.bindMethods()
     this.setOptions(options)
   }
@@ -273,21 +263,21 @@ export class QueryObserver<
     result: QueryObserverResult<TData, TError>,
     onPropTracked?: (key: keyof QueryObserverResult) => void,
   ): QueryObserverResult<TData, TError> {
-    const handler: ProxyHandler<QueryObserverResult<TData, TError>> = {
-      get: (target, key: keyof QueryObserverResult<TData, TError>) => {
-        if (key in target) {
-          this.trackProp(key)
-          if (onPropTracked) {
-            onPropTracked(key)
-          }
-          return target[key]
-        }
-        // Ensure all paths are covered by explicitly handling "undefined" properties
-        return undefined
-      },
-    }
+    const trackedResult = {} as QueryObserverResult<TData, TError>
 
-    return new Proxy(result, handler)
+    Object.keys(result).forEach((key) => {
+      Object.defineProperty(trackedResult, key, {
+        configurable: false,
+        enumerable: true,
+        get: () => {
+          this.trackProp(key as keyof QueryObserverResult)
+          onPropTracked?.(key as keyof QueryObserverResult)
+          return result[key as keyof QueryObserverResult]
+        },
+      })
+    })
+
+    return trackedResult
   }
 
   trackProp(key: keyof QueryObserverResult) {
@@ -592,7 +582,6 @@ export class QueryObserver<
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
-      promise: this.#currentThenable,
     }
 
     return result as QueryObserverResult<TData, TError>
@@ -604,7 +593,6 @@ export class QueryObserver<
       | undefined
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
-
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
 
@@ -615,52 +603,6 @@ export class QueryObserver<
     // Only notify and update result if something has changed
     if (shallowEqualObjects(nextResult, prevResult)) {
       return
-    }
-
-    if (this.options.experimental_prefetchInRender) {
-      const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
-        if (nextResult.status === 'error') {
-          thenable.reject(nextResult.error)
-        } else if (nextResult.data !== undefined) {
-          thenable.resolve(nextResult.data)
-        }
-      }
-
-      /**
-       * Create a new thenable and result promise when the results have changed
-       */
-      const recreateThenable = () => {
-        const pending =
-          (this.#currentThenable =
-          nextResult.promise =
-            pendingThenable())
-
-        finalizeThenableIfPossible(pending)
-      }
-
-      const prevThenable = this.#currentThenable
-      switch (prevThenable.status) {
-        case 'pending':
-          // Finalize the previous thenable if it was pending
-          finalizeThenableIfPossible(prevThenable)
-          break
-        case 'fulfilled':
-          if (
-            nextResult.status === 'error' ||
-            nextResult.data !== prevThenable.value
-          ) {
-            recreateThenable()
-          }
-          break
-        case 'rejected':
-          if (
-            nextResult.status !== 'error' ||
-            nextResult.error !== prevThenable.reason
-          ) {
-            recreateThenable()
-          }
-          break
-      }
     }
 
     this.#currentResult = nextResult
@@ -697,7 +639,6 @@ export class QueryObserver<
       return Object.keys(this.#currentResult).some((key) => {
         const typedKey = key as keyof QueryObserverResult
         const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
-
         return changed && includedProps.has(typedKey)
       })
     }
