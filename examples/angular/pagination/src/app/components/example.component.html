@@ -33,7 +33,7 @@
   <!-- Since the last page's data potentially sticks around between page requests, -->
   <!-- we can use `isFetching` to show a background loading -->
   <!-- indicator since our `status === 'pending'` state won't be triggered -->
-  @if(query.isFetching()) {
+  @if (query.isFetching()) {
     <span>Loading...</span>
   }
   <angular-query-devtools initialIsOpen />
