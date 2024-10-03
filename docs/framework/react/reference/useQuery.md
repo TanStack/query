@@ -26,6 +26,7 @@ const {
   isRefetching,
   isStale,
   isSuccess,
+  promise,
   refetch,
   status,
 } = useQuery(
@@ -244,3 +245,6 @@ const {
     - Defaults to `true`
       - Per default, a currently running request will be cancelled before a new request is made
     - When set to `false`, no refetch will be made if there is already a request running.
+- `promise: Promise<TData>`
+  - A stable promise that will be resolved with the data of the query.
+  - Requires the `experimental_prefetchInRender` feature flag to be enabled on the `QueryClient`.
