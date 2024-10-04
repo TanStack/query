@@ -8,7 +8,7 @@ import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimen
 import { injectInfiniteQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 import { ProjectStyleDirective } from '../directives/project-style.directive'
-import { ProjectsService } from '../services/projects-service'
+import { ProjectsService } from '../services/projects.service'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
