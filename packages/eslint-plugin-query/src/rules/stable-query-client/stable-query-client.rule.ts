@@ -68,7 +68,10 @@ export const rule = createRule({
               return
             }
 
-            const nodeText = context.getSourceCode().getText(node)
+            // we need the fallbacks for backwards compat with eslint < 8.37.0
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            const sourceCode = context.sourceCode ?? context.getSourceCode()
+            const nodeText = sourceCode.getText(node)
             const variableName = parent.id.name
 
             return (fixer: TSESLint.RuleFixer) => {
