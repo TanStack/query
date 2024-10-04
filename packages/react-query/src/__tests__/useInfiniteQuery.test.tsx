@@ -42,7 +42,14 @@ const fetchItems = async (
 
 describe('useInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = createQueryClient({
+    queryCache,
+    defaultOptions: {
+      queries: {
+        experimental_prefetchInRender: true,
+      },
+    },
+  })
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
@@ -97,6 +104,7 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
+      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -132,6 +140,7 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
+      promise: expect.any(Promise),
     })
   })
 
@@ -1777,5 +1786,72 @@ describe('useInfiniteQuery', () => {
     const rendered = render(<Page></Page>)
 
     await waitFor(() => rendered.getByText('data: custom client'))
+  })
+
+  it('should work with React.use()', async () => {
+    const key = queryKey()
+
+    let pageRenderCount = 0
+    let suspenseRenderCount = 0
+
+    function Loading() {
+      suspenseRenderCount++
+      return <>loading...</>
+    }
+    function MyComponent() {
+      const fetchCountRef = React.useRef(0)
+      const query = useInfiniteQuery({
+        queryFn: ({ pageParam }) =>
+          fetchItems(pageParam, fetchCountRef.current++),
+        getNextPageParam: (lastPage) => lastPage.nextId,
+        initialPageParam: 0,
+        queryKey: key,
+      })
+      const data = React.use(query.promise)
+      return (
+        <>
+          {data.pages.map((page, index) => (
+            <React.Fragment key={page.ts}>
+              <div>
+                <div>Page: {index + 1}</div>
+              </div>
+              {page.items.map((item) => (
+                <p key={item}>Item: {item}</p>
+              ))}
+            </React.Fragment>
+          ))}
+          <button onClick={() => query.fetchNextPage()}>fetchNextPage</button>
+        </>
+      )
+    }
+    function Page() {
+      pageRenderCount++
+      return (
+        <React.Suspense fallback={<Loading />}>
+          <MyComponent />
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('loading...'))
+
+    await waitFor(() => rendered.getByText('Page: 1'))
+    await waitFor(() => rendered.getByText('Item: 1'))
+
+    expect(rendered.queryByText('Page: 2')).toBeNull()
+    expect(pageRenderCount).toBe(1)
+
+    // click button
+    fireEvent.click(rendered.getByRole('button', { name: 'fetchNextPage' }))
+
+    await waitFor(() => {
+      expect(rendered.queryByText('Page: 2')).not.toBeNull()
+    })
+
+    // Suspense doesn't trigger when fetching next page
+    expect(suspenseRenderCount).toBe(1)
+
+    expect(pageRenderCount).toBe(1)
   })
 })
