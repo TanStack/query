@@ -10,7 +10,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "infinite-query-with-max-pages": {
+    "pagination": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -47,12 +47,12 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/infinite-query-with-max-pages",
+            "outputPath": "dist/pagination",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/mockServiceWorker.js"],
+            "assets": ["src/favicon.ico"],
             "styles": [],
             "scripts": []
           },
@@ -84,10 +84,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "infinite-query-with-max-pages:build:production"
+              "buildTarget": "pagination:build:production"
             },
             "development": {
-              "buildTarget": "infinite-query-with-max-pages:build:development"
+              "buildTarget": "pagination:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -95,7 +95,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "infinite-query-with-max-pages:build"
+            "buildTarget": "pagination:build"
           }
         }
       }
