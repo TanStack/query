@@ -380,6 +380,11 @@ export interface QueryObserverOptions<
       >
 
   _optimisticResults?: 'optimistic' | 'isRestoring'
+
+  /**
+   * Enable prefetching during rendering
+   */
+  experimental_prefetchInRender?: boolean
 }
 
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
@@ -687,6 +692,55 @@ export interface QueryObserverBaseResult<
    * - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
    */
   fetchStatus: FetchStatus
+  /**
+   * A stable promise that will be resolved with the data of the query.
+   * Requires the `experimental_prefetchInRender` feature flag to be enabled.
+   * @example
+   *
+   * ### Enabling the feature flag
+   * ```ts
+   * const client = new QueryClient({
+   *   defaultOptions: {
+   *     queries: {
+   *       experimental_prefetchInRender: true,
+   *     },
+   *   },
+   * })
+   * ```
+   *
+   * ### Usage
+   * ```tsx
+   * import { useQuery } from '@tanstack/react-query'
+   * import React from 'react'
+   * import { fetchTodos, type Todo } from './api'
+   *
+   * function TodoList({ query }: { query: UseQueryResult<Todo[], Error> }) {
+   *   const data = React.use(query.promise)
+   *
+   *   return (
+   *     <ul>
+   *       {data.map(todo => (
+   *         <li key={todo.id}>{todo.title}</li>
+   *       ))}
+   *     </ul>
+   *   )
+   * }
+   *
+   * export function App() {
+   *   const query = useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
+   *
+   *   return (
+   *     <>
+   *       <h1>Todos</h1>
+   *       <React.Suspense fallback={<div>Loading...</div>}>
+   *         <TodoList query={query} />
+   *       </React.Suspense>
+   *     </>
+   *   )
+   * }
+   * ```
+   */
+  promise: Promise<TData>
 }
 
 export interface QueryObserverPendingResult<

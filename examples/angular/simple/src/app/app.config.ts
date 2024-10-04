@@ -7,7 +7,7 @@ import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withFetch()),
     provideAngularQuery(new QueryClient()),
+    provideHttpClient(withFetch()),
   ],
 }

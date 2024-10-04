@@ -1039,12 +1039,20 @@
               "to": "framework/angular/examples/basic"
             },
             {
+              "label": "Pagination",
+              "to": "framework/angular/examples/pagination"
+            },
+            {
               "label": "Infinite query with Max pages",
               "to": "framework/angular/examples/infinite-query-with-max-pages"
             },
             {
               "label": "Angular Router",
               "to": "framework/angular/examples/router"
+            },
+            {
+              "label": "RxJS autocomplete",
+              "to": "framework/angular/examples/rxjs"
             }
           ]
         }

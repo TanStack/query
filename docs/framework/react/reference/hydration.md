@@ -33,7 +33,7 @@ const dehydratedState = dehydrate(queryClient, {
   - `shouldDehydrateQuery: (query: Query) => boolean`
     - Optional
     - Whether to dehydrate queries.
-    - The function, it is called for each query in the cache
+    - The function is called for each query in the cache
       - Return `true` to include this query in dehydration, or `false` otherwise
     - Defaults to only including successful queries
     - If you would like to extend the function while retaining the default behavior, import and execute `defaultShouldDehydrateQuery` as part of the return statement

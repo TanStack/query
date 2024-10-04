@@ -10,7 +10,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "basic": {
+    "infinite-query-with-max-pages": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -47,7 +47,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/basic",
+            "outputPath": "dist/infinite-query-with-max-pages",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -84,10 +84,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "basic:build:production"
+              "buildTarget": "infinite-query-with-max-pages:build:production"
             },
             "development": {
-              "buildTarget": "basic:build:development"
+              "buildTarget": "infinite-query-with-max-pages:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -95,7 +95,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "basic:build"
+            "buildTarget": "infinite-query-with-max-pages:build"
           }
         }
       }
