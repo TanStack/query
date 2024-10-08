@@ -422,6 +422,44 @@ ruleTester.run('exhaustive-deps', rule, {
         });
       `,
     },
+    {
+      name: 'should not fail when queryKey uses arrow function to produce a key',
+      code: normalizeIndent`
+      const obj = reactive<{ boo?: string }>({});
+
+      const query = useQuery({
+        queryKey: ['foo', () => obj.boo],
+        queryFn: () => fetch(\`/mock/getSomething/\${obj.boo}\`),
+        enable: () => !!obj.boo,
+      });
+      `,
+    },
+    {
+      name: 'should not fail when queryKey uses arrow function to produce a key as the body return',
+      code: normalizeIndent`
+      const obj = reactive<{ boo?: string }>({});
+
+      const query = useQuery({
+        queryKey: ['foo', () => { return obj.boo }],
+        queryFn: () => fetch(\`/mock/getSomething/\${obj.boo}\`),
+        enable: () => !!obj.boo,
+      });
+      `,
+    },
+    {
+      name: 'should not fail when queryKey uses function expression to produce a key as the body return',
+      code: normalizeIndent`
+      const obj = reactive<{ boo?: string }>({});
+
+      const query = useQuery({
+        queryKey: ['foo', function() {
+          return obj.boo
+        }],
+        queryFn: () => fetch(\`/mock/getSomething/\${obj.boo}\`),
+        enable: () => !!obj.boo,
+      });
+      `,
+    },
   ],
   invalid: [
     {
