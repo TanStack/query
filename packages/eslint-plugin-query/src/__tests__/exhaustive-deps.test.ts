@@ -414,14 +414,14 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
-      name: "should not fail when queryFn uses nullish coalescing operator",
+      name: 'should not fail when queryFn uses nullish coalescing operator',
       code: normalizeIndent`
         useQuery({
           queryKey: ["foo", options],
           queryFn: () => options?.params ?? options
         });
-      `
-    }
+      `,
+    },
   ],
   invalid: [
     {
