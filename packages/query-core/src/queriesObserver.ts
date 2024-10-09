@@ -38,6 +38,7 @@ export class QueriesObserver<
   #client: QueryClient
   #result!: Array<QueryObserverResult>
   #queries: Array<QueryObserverOptions>
+  #options?: QueriesObserverOptions<TCombinedResult>
   #observers: Array<QueryObserver>
   #combinedResult?: TCombinedResult
   #lastCombine?: CombineFn<TCombinedResult>
@@ -46,11 +47,12 @@ export class QueriesObserver<
   constructor(
     client: QueryClient,
     queries: Array<QueryObserverOptions<any, any, any, any, any>>,
-    _options?: QueriesObserverOptions<TCombinedResult>,
+    options?: QueriesObserverOptions<TCombinedResult>,
   ) {
     super()
 
     this.#client = client
+    this.#options = options
     this.#queries = []
     this.#observers = []
     this.#result = []
@@ -83,10 +85,11 @@ export class QueriesObserver<
 
   setQueries(
     queries: Array<QueryObserverOptions>,
-    _options?: QueriesObserverOptions<TCombinedResult>,
+    options?: QueriesObserverOptions<TCombinedResult>,
     notifyOptions?: NotifyOptions,
   ): void {
     this.#queries = queries
+    this.#options = options
 
     notifyManager.batch(() => {
       const prevObservers = this.#observers
@@ -252,11 +255,21 @@ export class QueriesObserver<
   }
 
   #notify(): void {
-    notifyManager.batch(() => {
-      this.listeners.forEach((listener) => {
-        listener(this.#result)
-      })
-    })
+    if (this.hasListeners()) {
+      const previousResult = this.#combinedResult
+      const newResult = this.#combineResult(
+        this.#result,
+        this.#options?.combine,
+      )
+
+      if (previousResult !== newResult) {
+        notifyManager.batch(() => {
+          this.listeners.forEach((listener) => {
+            listener(this.#result)
+          })
+        })
+      }
+    }
   }
 }
 
