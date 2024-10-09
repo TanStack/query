@@ -2,6 +2,7 @@ import type {
   DataTag,
   DefaultError,
   InfiniteData,
+  InitialDataFunction,
   OmitKeyof,
   QueryKey,
   SkipToken,
@@ -22,7 +23,11 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
-  initialData?: undefined
+  initialData?:
+    | undefined
+    | InitialDataFunction<
+        NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+      >
 }
 
 export type UnusedSkipTokenInfiniteOptions<
