@@ -153,7 +153,7 @@ describe('infiniteQueryOptions', () => {
     queryClient.prefetchQuery(options)
   })
 
-  test('allow optional initialData', () => {
+  test('allow optional initialData function', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: ['example'],
@@ -168,6 +168,27 @@ describe('infiniteQueryOptions', () => {
     queryOptions.initialData
     expectTypeOf(queryOptions.initialData).toMatchTypeOf<
       | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
+      | InfiniteData<{ example: boolean }, number>
+      | undefined
+    >()
+  })
+
+  test('allow optional initialData object', () => {
+    const initialData: { example: boolean } | undefined = { example: true }
+    const queryOptions = infiniteQueryOptions({
+      queryKey: ['example'],
+      queryFn: async () => initialData,
+      // initialData below errors
+      initialData: initialData
+        ? { pages: [initialData], pageParams: [] }
+        : undefined,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+    queryOptions.initialData
+    expectTypeOf(queryOptions.initialData).toMatchTypeOf<
+      | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
+      | InfiniteData<{ example: boolean }, number>
       | undefined
     >()
   })
