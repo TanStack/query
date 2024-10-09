@@ -4971,6 +4971,29 @@ describe('useQuery', () => {
     expect(renders).toBe(hashes)
   })
 
+  it('should hash query keys that contain bigints given a supported query hash function', async () => {
+    const key = [queryKey(), 1n]
+
+    function queryKeyHashFn(x: any) {
+      return JSON.stringify(x, (_, value) => {
+        if (typeof value === 'bigint') return value.toString()
+        return value
+      })
+    }
+
+    function Page() {
+      useQuery({ queryKey: key, queryFn: () => 'test', queryKeyHashFn })
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    const query = queryClient.getQueryCache().get(queryKeyHashFn(key))
+    expect(query?.state.data).toBe('test')
+  })
+
   it('should refetch when changed enabled to true in error state', async () => {
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(async () => {
