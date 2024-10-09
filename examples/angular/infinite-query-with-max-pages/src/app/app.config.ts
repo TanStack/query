@@ -12,7 +12,6 @@ import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withInterceptors([projectsMockInterceptor]), withFetch()),
     provideAngularQuery(
       new QueryClient({
         defaultOptions: {
@@ -22,5 +21,6 @@ export const appConfig: ApplicationConfig = {
         },
       }),
     ),
+    provideHttpClient(withInterceptors([projectsMockInterceptor]), withFetch()),
   ],
 }

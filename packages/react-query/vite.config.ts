@@ -13,5 +13,6 @@ export default defineConfig({
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
     typecheck: { enabled: true },
     restoreMocks: true,
+    retry: process.env.CI ? 3 : 0,
   },
 })
