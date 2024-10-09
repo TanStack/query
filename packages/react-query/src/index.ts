@@ -21,11 +21,13 @@ export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
+  UnusedSkipTokenOptions
 } from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
+  UnusedSkipTokenInfiniteOptions,
 } from './infiniteQueryOptions'
 export {
   QueryClientContext,
