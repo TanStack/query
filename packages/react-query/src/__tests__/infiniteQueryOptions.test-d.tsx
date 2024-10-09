@@ -4,7 +4,7 @@ import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import { useQuery } from '../useQuery'
-import type { InfiniteData } from '@tanstack/query-core'
+import type { InfiniteData, InitialDataFunction } from '@tanstack/query-core'
 
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
@@ -151,5 +151,24 @@ describe('infiniteQueryOptions', () => {
     queryClient.fetchQuery(options)
     // @ts-expect-error cannot pass infinite options to non-infinite query functions
     queryClient.prefetchQuery(options)
+  })
+
+  test('allow optional initialData', () => {
+    const initialData: { example: boolean } | undefined = { example: true }
+    const queryOptions = infiniteQueryOptions({
+      queryKey: ['example'],
+      queryFn: async () => initialData,
+      // initialData below errors
+      initialData: initialData
+        ? () => ({ pages: [initialData], pageParams: [] })
+        : undefined,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+    queryOptions.initialData
+    expectTypeOf(queryOptions.initialData).toMatchTypeOf<
+      | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
+      | undefined
+    >()
   })
 })
