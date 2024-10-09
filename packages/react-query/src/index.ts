@@ -21,7 +21,7 @@ export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
-  UnusedSkipTokenOptions
+  UnusedSkipTokenOptions,
 } from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
