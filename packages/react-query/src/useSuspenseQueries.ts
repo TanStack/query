@@ -192,12 +192,6 @@ export function useSuspenseQueries<
     {
       ...options,
       queries: options.queries.map((query) => {
-        if (process.env.NODE_ENV !== 'production') {
-          if (query.queryFn === skipToken) {
-            console.error('skipToken is not allowed for useSuspenseQueries')
-          }
-        }
-
         return {
           ...query,
           suspense: true,
