@@ -34,7 +34,7 @@ export function useSuspenseInfiniteQuery<
 ): UseSuspenseInfiniteQueryResult<TData, TError> {
   if (process.env.NODE_ENV !== 'production') {
     if ((options.queryFn as any) === skipToken) {
-      console.error('skipToken is not allowed for useSuspenseQuery')
+      console.error('skipToken is not allowed for useSuspenseInfiniteQuery')
     }
   }
 
