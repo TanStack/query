@@ -89,6 +89,47 @@ describe('UseSuspenseQueries config object overload', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
 
+  it('should not allow skipToken in queryFn', () => {
+    useSuspenseQueries({
+      queries: [
+        {
+          queryKey: ['key'],
+          // @ts-expect-error
+          queryFn: skipToken,
+        },
+      ],
+    })
+
+    useSuspenseQueries({
+      queries: [
+        {
+          queryKey: ['key'],
+          // @ts-expect-error
+          queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+        },
+      ],
+    })
+  })
+
+  it('TData should have correct type when conditional skipToken is passed', () => {
+    const queryResults = useSuspenseQueries({
+      queries: [
+        {
+          queryKey: ['withSkipToken'],
+          // @ts-expect-error
+          queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+        },
+      ],
+    })
+
+    const firstResult = queryResults[0]
+
+    expectTypeOf(firstResult).toEqualTypeOf<
+      UseSuspenseQueryResult<number, Error>
+    >()
+    expectTypeOf(firstResult.data).toEqualTypeOf<number>()
+  })
+
   describe('custom hook', () => {
     it('should allow custom hooks using UseQueryOptions', () => {
       type Data = string
@@ -112,23 +153,5 @@ describe('UseSuspenseQueries config object overload', () => {
 
       expectTypeOf(data).toEqualTypeOf<Data>()
     })
-  })
-
-  it('TData should have correct type when conditional skipToken is passed', () => {
-    const queryResults = useSuspenseQueries({
-      queries: [
-        {
-          queryKey: ['withSkipToken'],
-          queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-        },
-      ],
-    })
-
-    const firstResult = queryResults[0]
-
-    expectTypeOf(firstResult).toEqualTypeOf<
-      UseSuspenseQueryResult<number, Error>
-    >()
-    expectTypeOf(firstResult.data).toEqualTypeOf<number>()
   })
 })

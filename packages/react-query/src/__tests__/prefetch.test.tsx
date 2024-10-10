@@ -12,7 +12,11 @@ import {
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
-import type { InfiniteData, UseInfiniteQueryOptions, UseQueryOptions } from '..'
+import type {
+  InfiniteData,
+  UseSuspenseInfiniteQueryOptions,
+  UseSuspenseQueryOptions,
+} from '..'
 import type { Mock } from 'vitest'
 
 const generateQueryFn = (data: string) =>
@@ -56,7 +60,7 @@ describe('usePrefetchQuery', () => {
   const queryClient = createQueryClient({ queryCache })
 
   function Suspended<TData = unknown>(props: {
-    queryOpts: UseQueryOptions<TData, Error, TData, Array<string>>
+    queryOpts: UseSuspenseQueryOptions<TData, Error, TData, Array<string>>
     children?: React.ReactNode
   }) {
     const state = useSuspenseQuery(props.queryOpts)
@@ -303,7 +307,7 @@ describe('usePrefetchInfiniteQuery', () => {
   const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
 
   function Suspended<T = unknown>(props: {
-    queryOpts: UseInfiniteQueryOptions<
+    queryOpts: UseSuspenseInfiniteQueryOptions<
       T,
       Error,
       InfiniteData<T>,
