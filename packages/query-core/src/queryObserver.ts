@@ -374,6 +374,7 @@ export class QueryObserver<
     const timeout = time + 1
 
     this.#staleTimeoutId = setTimeout(() => {
+      this.#staleTimeoutId = undefined
       if (!this.#currentResult.isStale) {
         this.updateResult()
       }
@@ -389,7 +390,7 @@ export class QueryObserver<
   }
 
   #updateRefetchInterval(nextInterval: number | false): void {
-    this.#clearRefetchInterval()
+    const prevInterval = this.#currentRefetchInterval
 
     this.#currentRefetchInterval = nextInterval
 
@@ -399,8 +400,20 @@ export class QueryObserver<
       !isValidTimeout(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
     ) {
+      this.#clearRefetchInterval()
       return
     }
+
+    // Don't bother clearing the interval and re-setting it if
+    // we already have a properly set interval running
+    if (
+      prevInterval == this.#currentRefetchInterval &&
+      this.#refetchIntervalId
+    ) {
+      return
+    }
+
+    this.#clearRefetchInterval()
 
     this.#refetchIntervalId = setInterval(() => {
       if (
