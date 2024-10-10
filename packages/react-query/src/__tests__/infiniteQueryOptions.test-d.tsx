@@ -158,14 +158,12 @@ describe('infiniteQueryOptions', () => {
     const queryOptions = infiniteQueryOptions({
       queryKey: ['example'],
       queryFn: async () => initialData,
-      // initialData below errors
       initialData: initialData
         ? () => ({ pages: [initialData], pageParams: [] })
         : undefined,
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
-    queryOptions.initialData
     expectTypeOf(queryOptions.initialData).toMatchTypeOf<
       | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
       | InfiniteData<{ example: boolean }, number>
@@ -178,14 +176,12 @@ describe('infiniteQueryOptions', () => {
     const queryOptions = infiniteQueryOptions({
       queryKey: ['example'],
       queryFn: async () => initialData,
-      // initialData below errors
       initialData: initialData
         ? { pages: [initialData], pageParams: [] }
         : undefined,
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
-    queryOptions.initialData
     expectTypeOf(queryOptions.initialData).toMatchTypeOf<
       | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
       | InfiniteData<{ example: boolean }, number>
