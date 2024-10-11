@@ -628,7 +628,6 @@ export class QueryObserver<
             nextResult.status === 'error' ||
             nextResult.data !== prevThenable.value
           ) {
-            console.log('recreating thenable')
             recreateThenable()
           }
           break
