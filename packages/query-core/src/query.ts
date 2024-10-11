@@ -3,6 +3,7 @@ import {
   noop,
   replaceData,
   resolveEnabled,
+  skipToken,
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
@@ -256,7 +257,14 @@ export class Query<
   }
 
   isDisabled(): boolean {
-    return this.getObserversCount() > 0 && !this.isActive()
+    if (this.getObserversCount() > 0) {
+      return !this.isActive()
+    }
+    // if a query has no observers, it should still be considered disabled if it never attempted a fetch
+    return (
+      this.options.queryFn === skipToken ||
+      this.state.dataUpdateCount + this.state.errorUpdateCount === 0
+    )
   }
 
   isStale(): boolean {
