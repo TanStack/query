@@ -320,7 +320,6 @@ export class QueryObserver<
     const query = this.#client
       .getQueryCache()
       .build(this.#client, defaultedOptions)
-    query.isFetchingOptimistic = true
 
     return query.fetch().then(() => this.createResult(query, defaultedOptions))
   }
