@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it, test } from 'vitest'
-import { QueryClient, dataTagSymbol } from '@tanstack/query-core'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
@@ -133,6 +133,18 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
     >()
+  })
+  it('should throw a type error when using queryFn with skipToken in a suspense query', () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn:
+        Math.random() > 0.5 ? skipToken : () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+    // @ts-expect-error TS2345
+    const { data } = useSuspenseInfiniteQuery(options)
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
   })
 
   test('should not be allowed to be passed to non-infinite query functions', () => {
