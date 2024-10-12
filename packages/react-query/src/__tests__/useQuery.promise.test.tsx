@@ -836,4 +836,55 @@ describe('useQuery().promise', () => {
 
     await waitFor(() => rendered.getByText('test0'))
   })
+
+  it('should not resolve with intermediate data when keys are switched', async () => {
+    const key = queryKey()
+    const renderedData: Array<string> = []
+
+    function MyComponent(props: { promise: Promise<string> }) {
+      const data = React.use(props.promise)
+
+      renderedData.push(data)
+
+      return <>{data}</>
+    }
+
+    function Loading() {
+      return <>loading..</>
+    }
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const query = useQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          await sleep(10)
+          return 'test' + count
+        },
+        staleTime: Infinity,
+      })
+
+      return (
+        <div>
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+          <button onClick={() => setCount(count + 1)}>inc</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('loading..'))
+    await waitFor(() => rendered.getByText('test0'))
+
+    fireEvent.click(rendered.getByText('inc'))
+    fireEvent.click(rendered.getByText('inc'))
+    fireEvent.click(rendered.getByText('inc'))
+
+    await waitFor(() => rendered.getByText('loading..'))
+
+    await waitFor(() => rendered.getByText('test3'))
+
+    expect(renderedData).toEqual(['test0', 'test3'])
+  })
 })
