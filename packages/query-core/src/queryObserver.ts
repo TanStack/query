@@ -594,27 +594,7 @@ export class QueryObserver<
       promise: this.#currentThenable,
     }
 
-    return result as QueryObserverResult<TData, TError>
-  }
-
-  updateResult(notifyOptions?: NotifyOptions): void {
-    const prevResult = this.#currentResult as
-      | QueryObserverResult<TData, TError>
-      | undefined
-
-    const nextResult = this.createResult(this.#currentQuery, this.options)
-
-    this.#currentResultState = this.#currentQuery.state
-    this.#currentResultOptions = this.options
-
-    if (this.#currentResultState.data !== undefined) {
-      this.#lastQueryWithDefinedData = this.#currentQuery
-    }
-
-    // Only notify and update result if something has changed
-    if (shallowEqualObjects(nextResult, prevResult)) {
-      return
-    }
+    const nextResult = result as QueryObserverResult<TData, TError>
 
     if (this.options.experimental_prefetchInRender) {
       const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
@@ -660,6 +640,28 @@ export class QueryObserver<
           }
           break
       }
+    }
+
+    return nextResult
+  }
+
+  updateResult(notifyOptions?: NotifyOptions): void {
+    const prevResult = this.#currentResult as
+      | QueryObserverResult<TData, TError>
+      | undefined
+
+    const nextResult = this.createResult(this.#currentQuery, this.options)
+
+    this.#currentResultState = this.#currentQuery.state
+    this.#currentResultOptions = this.options
+
+    if (this.#currentResultState.data !== undefined) {
+      this.#lastQueryWithDefinedData = this.#currentQuery
+    }
+
+    // Only notify and update result if something has changed
+    if (shallowEqualObjects(nextResult, prevResult)) {
+      return
     }
 
     this.#currentResult = nextResult

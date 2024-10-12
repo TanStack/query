@@ -7385,5 +7385,92 @@ describe('useQuery', () => {
       fireEvent.click(rendered.getByText('enable'))
       await waitFor(() => rendered.getByText('test1'))
     })
+
+    it('should show correct data when read from cache only (staleTime)', async () => {
+      const key = queryKey()
+      let suspenseRenderCount = 0
+      queryClient.setQueryData(key, 'initial')
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        suspenseRenderCount++
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(1)
+            return 'test'
+          },
+          staleTime: Infinity,
+        })
+
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('initial'))
+
+      expect(suspenseRenderCount).toBe(0)
+    })
+
+    it('should show correct data when switching between cache entries without re-fetches', async () => {
+      const key = queryKey()
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        return <>loading..</>
+      }
+      function Page() {
+        const [count, setCount] = React.useState(0)
+        const query = useQuery({
+          queryKey: [key, count],
+          queryFn: async () => {
+            await sleep(10)
+            return 'test' + count
+          },
+          staleTime: Infinity,
+        })
+
+        return (
+          <div>
+            <React.Suspense fallback={<Loading />}>
+              <MyComponent promise={query.promise} />
+            </React.Suspense>
+            <button onClick={() => setCount(count + 1)}>inc</button>
+            <button onClick={() => setCount(count - 1)}>dec</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => rendered.getByText('test0'))
+
+      fireEvent.click(rendered.getByText('inc'))
+      await waitFor(() => rendered.getByText('loading..'))
+
+      await waitFor(() => rendered.getByText('test1'))
+
+      console.log('---------dec------------')
+      fireEvent.click(rendered.getByText('dec'))
+
+      await waitFor(() => rendered.getByText('test0'))
+    })
   })
 })
