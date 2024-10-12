@@ -12,19 +12,21 @@ import type { EnvironmentProviders } from '@angular/core';
 import type { InfiniteData } from '@tanstack/query-core';
 import type { InfiniteQueryObserverOptions } from '@tanstack/query-core';
 import type { InfiniteQueryObserverResult } from '@tanstack/query-core';
+import type { InitialDataFunction } from '@tanstack/query-core';
 import { InjectOptions } from '@angular/core';
 import { Injector } from '@angular/core';
 import type { MutateFunction } from '@tanstack/query-core';
-import { Mutation } from '@tanstack/query-core';
-import { MutationFilters } from '@tanstack/query-core';
+import type { Mutation } from '@tanstack/query-core';
+import type { MutationFilters } from '@tanstack/query-core';
 import type { MutationObserverOptions } from '@tanstack/query-core';
 import type { MutationObserverResult } from '@tanstack/query-core';
-import { MutationState } from '@tanstack/query-core';
+import type { MutationState } from '@tanstack/query-core';
 import type { OmitKeyof } from '@tanstack/query-core';
+import type { Override } from '@tanstack/query-core';
 import { Provider } from '@angular/core';
 import type { QueriesPlaceholderDataFunction } from '@tanstack/query-core';
 import type { QueryClient } from '@tanstack/query-core';
-import { QueryFilters } from '@tanstack/query-core';
+import type { QueryFilters } from '@tanstack/query-core';
 import type { QueryFunction } from '@tanstack/query-core';
 import type { QueryKey } from '@tanstack/query-core';
 import type { QueryObserverOptions } from '@tanstack/query-core';
@@ -35,15 +37,16 @@ import type { ThrowOnError } from '@tanstack/query-core';
 // @public (undocumented)
 export interface BaseMutationNarrowing<TData = unknown, TError = DefaultError, TVariables = unknown, TContext = unknown> {
     // (undocumented)
-    isError: (this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'error', TData, TError, TVariables, TContext>>;
+    isError: SignalFunction<(this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'error', TData, TError, TVariables, TContext>>>;
     // (undocumented)
-    isIdle: (this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'idle', TData, TError, TVariables, TContext>>;
+    isIdle: SignalFunction<(this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'idle', TData, TError, TVariables, TContext>>>;
     // (undocumented)
-    isPending: (this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'pending', TData, TError, TVariables, TContext>>;
+    isPending: SignalFunction<(this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'pending', TData, TError, TVariables, TContext>>>;
+    // Warning: (ae-forgotten-export) The symbol "SignalFunction" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "CreateStatusBasedMutationResult" needs to be exported by the entry point index.d.ts
     //
     // (undocumented)
-    isSuccess: (this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'success', TData, TError, TVariables, TContext>>;
+    isSuccess: SignalFunction<(this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'success', TData, TError, TVariables, TContext>>>;
 }
 
 // @public (undocumented)
@@ -58,8 +61,6 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
     isSuccess: (this: CreateBaseQueryResult<TData, TError>) => this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<'success', TData, TError>>;
 }
 
-// Warning: (ae-forgotten-export) The symbol "Override" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
 export type CreateBaseMutationResult<TData = unknown, TError = DefaultError, TVariables = unknown, TContext = unknown> = Override<MutationObserverResult<TData, TError, TVariables, TContext>, {
     mutate: CreateMutateFunction<TData, TError, TVariables, TContext>;
@@ -120,20 +121,20 @@ export type DefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultEr
 };
 
 // @public
-export function infiniteQueryOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
-    queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>;
-};
-
-// @public
 export function infiniteQueryOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
     queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>;
 };
 
 // @public
-export function injectInfiniteQuery<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(optionsFn: (client: QueryClient) => UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, injector?: Injector): CreateInfiniteQueryResult<TData, TError>;
+export function infiniteQueryOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
+    queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>;
+};
 
 // @public
 export function injectInfiniteQuery<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(optionsFn: (client: QueryClient) => DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, injector?: Injector): DefinedCreateInfiniteQueryResult<TData, TError>;
+
+// @public
+export function injectInfiniteQuery<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(optionsFn: (client: QueryClient) => UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, injector?: Injector): CreateInfiniteQueryResult<TData, TError>;
 
 // @public
 export function injectInfiniteQuery<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(optionsFn: (client: QueryClient) => CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, TPageParam>, injector?: Injector): CreateInfiniteQueryResult<TData, TError>;
@@ -224,12 +225,12 @@ GetResults<Head>
 ]> : T extends Array<QueryObserverOptionsForCreateQueries<infer TQueryFnData, infer TError, infer TData, any>> ? Array<QueryObserverResult<unknown extends TData ? TQueryFnData : TData, unknown extends TError ? DefaultError : TError>> : Array<QueryObserverResult>;
 
 // @public
-export function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+export function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
     queryKey: DataTag<TQueryKey, TQueryFnData>;
 };
 
 // @public
-export function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+export function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
     queryKey: DataTag<TQueryKey, TQueryFnData>;
 };
 
@@ -240,7 +241,7 @@ export type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultEr
 
 // @public (undocumented)
 export type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-    initialData?: undefined;
+    initialData?: undefined | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>;
 };
 
 

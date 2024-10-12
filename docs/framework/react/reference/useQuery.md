@@ -26,6 +26,7 @@ const {
   isRefetching,
   isStale,
   isSuccess,
+  promise,
   refetch,
   status,
 } = useQuery(
@@ -58,7 +59,7 @@ const {
 )
 ```
 
-**Options**
+**Parameter1 (Options)**
 
 - `queryKey: unknown[]`
   - **Required**
@@ -70,7 +71,7 @@ const {
   - The function that the query will use to request data.
   - Receives a [QueryFunctionContext](../../guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
-- `enabled: boolean`
+- `enabled: boolean | (query: Query) => boolean`
   - Set this to `false` to disable this query from automatically running.
   - Can be used for [Dependent Queries](../../guides/dependent-queries).
 - `networkMode: 'online' | 'always' | 'offlineFirst`
@@ -130,7 +131,7 @@ const {
   - If set to `false`, the query will not refetch on reconnect.
   - If set to `"always"`, the query will always refetch on reconnect.
   - If set to a function, the function will be executed with the query to compute the value
-- `notifyOnChangeProps: string[] | "all" | (() => string[] | "all")`
+- `notifyOnChangeProps: string[] | "all" | (() => string[] | "all" | undefined)`
   - Optional
   - If set, the component will only re-render if any of the listed properties change.
   - If set to `['data', 'error']` for example, the component will only re-render when the `data` or `error` properties change.
@@ -168,6 +169,9 @@ const {
 - `meta: Record<string, unknown>`
   - Optional
   - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
+
+**Parameter2 (QueryClient)**
+
 - `queryClient?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
@@ -241,3 +245,6 @@ const {
     - Defaults to `true`
       - Per default, a currently running request will be cancelled before a new request is made
     - When set to `false`, no refetch will be made if there is already a request running.
+- `promise: Promise<TData>`
+  - A stable promise that will be resolved with the data of the query.
+  - Requires the `experimental_prefetchInRender` feature flag to be enabled on the `QueryClient`.

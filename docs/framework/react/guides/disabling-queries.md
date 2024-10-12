@@ -3,7 +3,7 @@ id: disabling-queries
 title: Disabling/Pausing Queries
 ---
 
-If you ever want to disable a query from automatically running, you can use the `enabled = false` option.
+If you ever want to disable a query from automatically running, you can use the `enabled = false` option. The enabled option also accepts a callback that returns a boolean.
 
 When `enabled` is `false`:
 

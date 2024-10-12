@@ -6,10 +6,7 @@ import {
   numberAttribute,
 } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import {
-  injectQuery,
-  injectQueryClient,
-} from '@tanstack/angular-query-experimental'
+import { injectQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 import { PostsService } from '../services/posts-service'
 
@@ -22,8 +19,10 @@ import { PostsService } from '../services/posts-service'
 })
 export default class PostComponent {
   #postsService = inject(PostsService)
-  queryClient = injectQueryClient()
 
+  // The Angular router will automatically bind postId
+  // as `withComponentInputBinding` is added to `provideRouter`.
+  // See https://angular.dev/api/router/withComponentInputBinding
   postId = input.required({
     transform: numberAttribute,
   })

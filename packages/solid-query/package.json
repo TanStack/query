@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.45.0",
+  "version": "5.59.10",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -13,6 +13,21 @@
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "scripts": {
+    "clean": "rimraf ./build ./coverage",
+    "test:eslint": "eslint ./src",
+    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
+    "test:types:ts49": "node ../../node_modules/typescript49/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts53": "tsc",
+    "test:lib": "vitest --retry=3",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict && attw --pack",
+    "build": "tsup",
+    "build:watch": "tsup --watch"
   },
   "type": "module",
   "main": "./build/index.cjs",
@@ -39,26 +54,15 @@
       "default": "./build/index.cjs"
     }
   },
-  "scripts": {
-    "clean": "rimraf ./build && rimraf ./coverage",
-    "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
-    "test:lib": "vitest --retry=3",
-    "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
-    "build": "tsup",
-    "build:watch": "tsup --watch"
-  },
   "files": [
     "build",
     "src"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "solid-js": "^1.8.17"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
+    "solid-js": "^1.8.19",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.10.2"
   },

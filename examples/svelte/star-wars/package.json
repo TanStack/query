@@ -9,19 +9,19 @@
     "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^5.45.0",
-    "@tanstack/svelte-query-devtools": "^5.45.0"
+    "@tanstack/svelte-query": "^5.59.10",
+    "@tanstack/svelte-query-devtools": "^5.59.10"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^3.2.0",
-    "@sveltejs/kit": "^2.5.9",
-    "@sveltejs/vite-plugin-svelte": "^3.1.0",
+    "@sveltejs/adapter-auto": "^3.2.2",
+    "@sveltejs/kit": "^2.5.18",
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
     "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.35",
-    "svelte": "^4.2.17",
-    "svelte-check": "^3.7.1",
-    "tailwindcss": "^3.4.3",
+    "postcss": "^8.4.40",
+    "svelte": "^4.2.18",
+    "svelte-check": "^4.0.0",
+    "tailwindcss": "^3.4.7",
     "typescript": "5.3.3",
-    "vite": "^5.2.11"
+    "vite": "^5.3.5"
   }
 }

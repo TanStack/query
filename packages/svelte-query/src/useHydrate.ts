@@ -1,9 +1,6 @@
-import {
-  type HydrateOptions,
-  type QueryClient,
-  hydrate,
-} from '@tanstack/query-core'
-import { useQueryClient } from './useQueryClient'
+import { hydrate } from '@tanstack/query-core'
+import { useQueryClient } from './useQueryClient.js'
+import type { HydrateOptions, QueryClient } from '@tanstack/query-core'
 
 export function useHydrate(
   state?: unknown,

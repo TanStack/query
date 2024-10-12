@@ -1,9 +1,12 @@
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
-import { QueryClient } from '@tanstack/query-core'
 import { beforeEach, describe, expect } from 'vitest'
-import { injectIsFetching } from '../inject-is-fetching'
-import { injectQuery } from '../inject-query'
-import { provideAngularQuery } from '../providers'
+import { Injector } from '@angular/core'
+import {
+  QueryClient,
+  injectIsFetching,
+  injectQuery,
+  provideAngularQuery,
+} from '..'
 import { delayedFetcher } from './test-utils'
 
 describe('injectIsFetching', () => {
@@ -32,4 +35,18 @@ describe('injectIsFetching', () => {
     flush()
     expect(isFetching()).toStrictEqual(0)
   }))
+
+  describe('injection context', () => {
+    test('throws NG0203 with descriptive error outside injection context', () => {
+      expect(() => {
+        injectIsFetching()
+      }).toThrowError(/NG0203(.*?)injectIsFetching/)
+    })
+
+    test('can be used outside injection context when passing an injector', () => {
+      expect(
+        injectIsFetching(undefined, TestBed.inject(Injector)),
+      ).not.toThrow()
+    })
+  })
 })

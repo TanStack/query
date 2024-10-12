@@ -10,6 +10,7 @@ import type {
   MutationObserverResult,
   MutationState,
   OmitKeyof,
+  Override,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -89,11 +90,9 @@ export type CreateMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = StoreOrVal<
-  OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted'
-  >
+> = OmitKeyof<
+  MutationObserverOptions<TData, TError, TVariables, TContext>,
+  '_defaulted'
 >
 
 export type CreateMutateFunction<
@@ -131,12 +130,6 @@ export type CreateMutationResult<
   TVariables = unknown,
   TContext = unknown,
 > = Readable<CreateBaseMutationResult<TData, TError, TVariables, TContext>>
-
-type Override<TTargetA, TTargetB> = {
-  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
-    ? TTargetB[AKey]
-    : TTargetA[AKey]
-}
 
 /** Options for useMutationState */
 export type MutationStateOptions<TResult = MutationState> = {

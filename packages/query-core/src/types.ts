@@ -20,6 +20,12 @@ export type OmitKeyof<
   TStrictly extends 'strictly' | 'safely' = 'strictly',
 > = Omit<TObject, TKey>
 
+export type Override<TTargetA, TTargetB> = {
+  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
+    ? TTargetB[AKey]
+    : TTargetA[AKey]
+}
+
 export type NoInfer<T> = [T][T extends any ? 0 : never]
 
 export interface Register {
@@ -53,6 +59,15 @@ export type StaleTime<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = number | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
+
+export type Enabled<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> =
+  | boolean
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean)
 
 export type QueryPersister<
   T = unknown,
@@ -152,7 +167,8 @@ export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 export type NotifyOnChangeProps =
   | Array<keyof InfiniteQueryObserverResult>
   | 'all'
-  | (() => Array<keyof InfiniteQueryObserverResult> | 'all')
+  | undefined
+  | (() => Array<keyof InfiniteQueryObserverResult> | 'all' | undefined)
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -253,11 +269,12 @@ export interface QueryObserverOptions<
     'queryKey'
   > {
   /**
-   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
+   * Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+   * Accepts a boolean or function that returns a boolean.
    * Defaults to `true`.
    */
-  enabled?: boolean
+  enabled?: Enabled<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
@@ -363,6 +380,11 @@ export interface QueryObserverOptions<
       >
 
   _optimisticResults?: 'optimistic' | 'isRestoring'
+
+  /**
+   * Enable prefetching during rendering
+   */
+  experimental_prefetchInRender?: boolean
 }
 
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
@@ -431,6 +453,7 @@ export interface FetchQueryOptions<
     QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
     'queryKey'
   > {
+  initialPageParam?: never
   /**
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
@@ -454,6 +477,22 @@ export interface EnsureQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
+export type EnsureInfiniteQueryDataOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = FetchInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> & {
+  revalidateIfStale?: boolean
+}
+
 type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
   | { pages?: never }
   | {
@@ -467,12 +506,15 @@ export type FetchInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = FetchQueryOptions<
-  TQueryFnData,
-  TError,
-  InfiniteData<TData, TPageParam>,
-  TQueryKey,
-  TPageParam
+> = Omit<
+  FetchQueryOptions<
+    TQueryFnData,
+    TError,
+    InfiniteData<TData, TPageParam>,
+    TQueryKey,
+    TPageParam
+  >,
+  'initialPageParam'
 > &
   InitialPageParam<TPageParam> &
   FetchInfiniteQueryPages<TQueryFnData, TPageParam>
@@ -650,6 +692,55 @@ export interface QueryObserverBaseResult<
    * - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
    */
   fetchStatus: FetchStatus
+  /**
+   * A stable promise that will be resolved with the data of the query.
+   * Requires the `experimental_prefetchInRender` feature flag to be enabled.
+   * @example
+   *
+   * ### Enabling the feature flag
+   * ```ts
+   * const client = new QueryClient({
+   *   defaultOptions: {
+   *     queries: {
+   *       experimental_prefetchInRender: true,
+   *     },
+   *   },
+   * })
+   * ```
+   *
+   * ### Usage
+   * ```tsx
+   * import { useQuery } from '@tanstack/react-query'
+   * import React from 'react'
+   * import { fetchTodos, type Todo } from './api'
+   *
+   * function TodoList({ query }: { query: UseQueryResult<Todo[], Error> }) {
+   *   const data = React.use(query.promise)
+   *
+   *   return (
+   *     <ul>
+   *       {data.map(todo => (
+   *         <li key={todo.id}>{todo.title}</li>
+   *       ))}
+   *     </ul>
+   *   )
+   * }
+   *
+   * export function App() {
+   *   const query = useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
+   *
+   *   return (
+   *     <>
+   *       <h1>Todos</h1>
+   *       <React.Suspense fallback={<div>Loading...</div>}>
+   *         <TodoList query={query} />
+   *       </React.Suspense>
+   *     </>
+   *   )
+   * }
+   * ```
+   */
+  promise: Promise<TData>
 }
 
 export interface QueryObserverPendingResult<
@@ -842,8 +933,6 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   isLoading: false
   isLoadingError: false
   isRefetchError: true
-  isFetchNextPageError: false
-  isFetchPreviousPageError: false
   isSuccess: false
   status: 'error'
 }

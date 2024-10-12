@@ -1,9 +1,12 @@
-import { QueryClient } from '@tanstack/query-core'
 import { beforeEach, describe } from 'vitest'
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { injectIsMutating } from '../inject-is-mutating'
-import { injectMutation } from '../inject-mutation'
-import { provideAngularQuery } from '../providers'
+import { Injector } from '@angular/core'
+import {
+  QueryClient,
+  injectIsMutating,
+  injectMutation,
+  provideAngularQuery,
+} from '..'
 import { successMutator } from './test-utils'
 
 describe('injectIsMutating', () => {
@@ -36,4 +39,18 @@ describe('injectIsMutating', () => {
       expect(isMutating()).toBe(1)
     })
   }))
+
+  describe('injection context', () => {
+    test('throws NG0203 with descriptive error outside injection context', () => {
+      expect(() => {
+        injectIsMutating()
+      }).toThrowError(/NG0203(.*?)injectIsMutating/)
+    })
+
+    test('can be used outside injection context when passing an injector', () => {
+      expect(
+        injectIsMutating(undefined, TestBed.inject(Injector)),
+      ).not.toThrow()
+    })
+  })
 })

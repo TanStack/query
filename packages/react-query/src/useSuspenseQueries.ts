@@ -1,4 +1,5 @@
 'use client'
+import { skipToken } from '@tanstack/query-core'
 import { useQueries } from './useQueries'
 import { defaultThrowOnError } from './suspense'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
@@ -190,13 +191,21 @@ export function useSuspenseQueries<
   return useQueries(
     {
       ...options,
-      queries: options.queries.map((query) => ({
-        ...query,
-        suspense: true,
-        throwOnError: defaultThrowOnError,
-        enabled: true,
-        placeholderData: undefined,
-      })),
+      queries: options.queries.map((query) => {
+        if (process.env.NODE_ENV !== 'production') {
+          if (query.queryFn === skipToken) {
+            console.error('skipToken is not allowed for useSuspenseQueries')
+          }
+        }
+
+        return {
+          ...query,
+          suspense: true,
+          throwOnError: defaultThrowOnError,
+          enabled: true,
+          placeholderData: undefined,
+        }
+      }),
     } as any,
     queryClient,
   )

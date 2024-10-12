@@ -2,8 +2,9 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
-  reactive,
   readonly,
+  shallowReactive,
+  shallowReadonly,
   toRefs,
   watch,
 } from 'vue-demi'
@@ -105,7 +106,7 @@ export function useBaseQuery<
   })
 
   const observer = new Observer(client, defaultedOptions.value)
-  const state = reactive(observer.getCurrentResult())
+  const state = shallowReactive(observer.getCurrentResult())
 
   let unsubscribe = () => {
     // noop
@@ -145,7 +146,7 @@ export function useBaseQuery<
     return new Promise<QueryObserverResult<TData, TError>>(
       (resolve, reject) => {
         let stopWatch = () => {
-          //noop
+          // noop
         }
         const run = () => {
           if (defaultedOptions.value.enabled !== false) {
@@ -201,7 +202,15 @@ export function useBaseQuery<
     },
   )
 
-  const object: any = toRefs(readonly(state))
+  const readonlyState =
+    process.env.NODE_ENV === 'production'
+      ? state
+      : // @ts-expect-error
+        defaultedOptions.value.shallow
+        ? shallowReadonly(state)
+        : readonly(state)
+
+  const object: any = toRefs(readonlyState)
   for (const key in state) {
     if (typeof state[key as keyof typeof state] === 'function') {
       object[key] = state[key as keyof typeof state]

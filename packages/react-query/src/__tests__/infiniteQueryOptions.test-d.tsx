@@ -1,11 +1,12 @@
-import { describe, expectTypeOf, it } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
-import { type InfiniteData, dataTagSymbol } from '@tanstack/query-core'
+import { describe, expectTypeOf, it, test } from 'vitest'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
+import { useQuery } from '../useQuery'
+import type { InfiniteData, InitialDataFunction } from '@tanstack/query-core'
 
-describe('queryOptions', () => {
+describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
     infiniteQueryOptions({
       queryKey: ['key'],
@@ -131,6 +132,72 @@ describe('queryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
+    >()
+  })
+  it('should throw a type error when using queryFn with skipToken in a suspense query', () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn:
+        Math.random() > 0.5 ? skipToken : () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+    // @ts-expect-error TS2345
+    const { data } = useSuspenseInfiniteQuery(options)
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
+  })
+
+  test('should not be allowed to be passed to non-infinite query functions', () => {
+    const queryClient = new QueryClient()
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+    // @ts-expect-error cannot pass infinite options to non-infinite query functions
+    useQuery(options)
+    // @ts-expect-error cannot pass infinite options to non-infinite query functions
+    queryClient.ensureQueryData(options)
+    // @ts-expect-error cannot pass infinite options to non-infinite query functions
+    queryClient.fetchQuery(options)
+    // @ts-expect-error cannot pass infinite options to non-infinite query functions
+    queryClient.prefetchQuery(options)
+  })
+
+  test('allow optional initialData function', () => {
+    const initialData: { example: boolean } | undefined = { example: true }
+    const queryOptions = infiniteQueryOptions({
+      queryKey: ['example'],
+      queryFn: async () => initialData,
+      initialData: initialData
+        ? () => ({ pages: [initialData], pageParams: [] })
+        : undefined,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+    expectTypeOf(queryOptions.initialData).toMatchTypeOf<
+      | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
+      | InfiniteData<{ example: boolean }, number>
+      | undefined
+    >()
+  })
+
+  test('allow optional initialData object', () => {
+    const initialData: { example: boolean } | undefined = { example: true }
+    const queryOptions = infiniteQueryOptions({
+      queryKey: ['example'],
+      queryFn: async () => initialData,
+      initialData: initialData
+        ? { pages: [initialData], pageParams: [] }
+        : undefined,
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+    expectTypeOf(queryOptions.initialData).toMatchTypeOf<
+      | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
+      | InfiniteData<{ example: boolean }, number>
+      | undefined
     >()
   })
 })

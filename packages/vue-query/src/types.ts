@@ -1,4 +1,4 @@
-import type { Ref, UnwrapRef } from 'vue-demi'
+import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null
 type UnwrapLeaf =
@@ -12,7 +12,7 @@ type UnwrapLeaf =
   | Set<any>
   | WeakSet<any>
 
-export type MaybeRef<T> = Ref<T> | T
+export type MaybeRef<T> = Ref<T> | ComputedRef<T> | T
 
 export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
 
@@ -28,11 +28,12 @@ export type MaybeRefDeep<T> = MaybeRef<
 
 export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
 
-export type Equal<TTargetA, TTargetB> = (<T>() => T extends TTargetA
-  ? 1
-  : 2) extends <T>() => T extends TTargetB ? 1 : 2
-  ? true
-  : false
+export type Equal<TTargetA, TTargetB> =
+  (<T>() => T extends TTargetA ? 1 : 2) extends <T>() => T extends TTargetB
+    ? 1
+    : 2
+    ? true
+    : false
 
 export type DeepUnwrapRef<T> = T extends UnwrapLeaf
   ? T

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
-import { QueryObserver, isCancelledError } from '..'
+import { QueryObserver, dehydrate, hydrate, isCancelledError } from '..'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
@@ -155,7 +155,7 @@ describe('query', () => {
     const visibilityMock = mockVisibilityState('hidden')
 
     let count = 0
-    let result
+    let result: unknown
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
@@ -183,8 +183,10 @@ describe('query', () => {
     // Check if the error is set to the cancelled error
     try {
       await promise
+      expect.unreachable()
     } catch {
       expect(isCancelledError(result)).toBe(true)
+      expect(result instanceof Error).toBe(true)
     } finally {
       // Reset visibilityState to original value
       visibilityMock.mockRestore()
@@ -196,8 +198,9 @@ describe('query', () => {
 
     const queryFn = vi
       .fn<
-        [QueryFunctionContext<ReturnType<typeof queryKey>>],
-        Promise<'data'>
+        (
+          context: QueryFunctionContext<ReturnType<typeof queryKey>>,
+        ) => Promise<'data'>
       >()
       .mockResolvedValue('data')
 
@@ -280,10 +283,12 @@ describe('query', () => {
   test('should provide an AbortSignal to the queryFn that provides info about the cancellation state', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<
-      [QueryFunctionContext<ReturnType<typeof queryKey>>],
-      Promise<unknown>
-    >()
+    const queryFn =
+      vi.fn<
+        (
+          context: QueryFunctionContext<ReturnType<typeof queryKey>>,
+        ) => Promise<unknown>
+      >()
     const onAbort = vi.fn()
     const abortListener = vi.fn()
     let error
@@ -330,7 +335,7 @@ describe('query', () => {
   test('should not continue if explicitly cancelled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -362,7 +367,7 @@ describe('query', () => {
   test('should not error if reset while pending', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -386,10 +391,30 @@ describe('query', () => {
     expect(query.state.fetchStatus).toBe('idle') // not be loading any longer
   })
 
+  test('should reset to default state when created from hydration', async () => {
+    const client = createQueryClient()
+    await client.prefetchQuery({
+      queryKey: ['string'],
+      queryFn: () => Promise.resolve('string'),
+    })
+
+    const dehydrated = dehydrate(client)
+
+    const hydrationClient = createQueryClient()
+    hydrate(hydrationClient, dehydrated)
+
+    expect(hydrationClient.getQueryData(['string'])).toBe('string')
+
+    const query = hydrationClient.getQueryCache().find({ queryKey: ['string'] })
+    query?.reset()
+
+    expect(hydrationClient.getQueryData(['string'])).toBe(undefined)
+  })
+
   test('should be able to refetch a cancelled query', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(50)
@@ -895,8 +920,9 @@ describe('query', () => {
 
     const queryFn = vi
       .fn<
-        [QueryFunctionContext<ReturnType<typeof queryKey>>],
-        Promise<unknown>
+        (
+          context: QueryFunctionContext<ReturnType<typeof queryKey>>,
+        ) => Promise<unknown>
       >()
       .mockImplementation(({ signal }) => {
         return new Promise((resolve, reject) => {
@@ -938,5 +964,86 @@ describe('query', () => {
     newObserver.subscribe(({ data }) => spy(data))
     await sleep(60) // let it resolve
     expect(spy).toHaveBeenCalledWith('1 - 2')
+  })
+
+  it('should have an error log when queryFn data is not serializable', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+
+    consoleMock.mockImplementation(() => undefined)
+
+    const key = queryKey()
+
+    const queryFn = vi.fn()
+
+    const data: Array<{
+      id: number
+      name: string
+      link: null | { id: number; name: string; link: unknown }
+    }> = Array.from({ length: 5 })
+      .fill(null)
+      .map((_, index) => ({
+        id: index,
+        name: `name-${index}`,
+        link: null,
+      }))
+
+    if (data[0] && data[1]) {
+      data[0].link = data[1]
+      data[1].link = data[0]
+    }
+
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+      return data
+    })
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn,
+      initialData: structuredClone(data),
+    })
+
+    const query = queryCache.find({ queryKey: key })!
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    expect(query.state.status).toBe('error')
+    expect(
+      query.state.error?.message.includes('Maximum call stack size exceeded'),
+    ).toBeTruthy()
+
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'Structural sharing requires data to be JSON serializable',
+      ),
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should have an error status when setData has any error inside', async () => {
+    const key = queryKey()
+
+    const queryFn = vi.fn()
+
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+
+      return 'data'
+    })
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn,
+      structuralSharing: () => {
+        throw Error('Any error')
+      },
+    })
+
+    const query = queryCache.find({ queryKey: key })!
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    expect(query.state.status).toBe('error')
   })
 })

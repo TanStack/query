@@ -358,7 +358,7 @@ describe('useQueries', () => {
     }
   })
 
-  it('correctly returns types when passing through queryOptions ', () => {
+  it('correctly returns types when passing through queryOptions', () => {
     // @ts-expect-error (Page component is not rendered)
     function Page() {
       // data and results types are correct when using queryOptions
@@ -713,6 +713,7 @@ describe('useQueries', () => {
               queryFn:
                 fn && fn !== skipToken
                   ? (ctx: QueryFunctionContext<TQueryKey>) => {
+                      // eslint-disable-next-line vitest/valid-expect
                       expectTypeOf<TQueryKey>(ctx.queryKey)
                       return fn.call({}, ctx)
                     }
@@ -1429,5 +1430,122 @@ describe('useQueries', () => {
 
     // state changed, re-run combine
     expect(spy).toHaveBeenCalledTimes(4)
+  })
+
+  it('should not re-render if combine returns a stable reference', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const queryFns: Array<string> = []
+    let renders = 0
+
+    function Page() {
+      const data = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: async () => {
+                await sleep(10)
+                queryFns.push('first result')
+                return 'first result'
+              },
+            },
+            {
+              queryKey: [key2],
+              queryFn: async () => {
+                await sleep(20)
+                queryFns.push('second result')
+                return 'second result'
+              },
+            },
+          ],
+          combine: () => 'foo',
+        },
+        client,
+      )
+
+      renders++
+
+      return (
+        <div>
+          <div>data: {data}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('data: foo'))
+
+    await waitFor(() =>
+      expect(queryFns).toEqual(['first result', 'second result']),
+    )
+
+    expect(renders).toBe(1)
+  })
+
+  it('should re-render once combine returns a different reference', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+
+    const client = new QueryClient()
+
+    let renders = 0
+
+    function Page() {
+      const data = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: async () => {
+                await sleep(10)
+                return 'first result'
+              },
+            },
+            {
+              queryKey: [key2],
+              queryFn: async () => {
+                await sleep(15)
+                return 'second result'
+              },
+            },
+            {
+              queryKey: [key3],
+              queryFn: async () => {
+                await sleep(20)
+                return 'third result'
+              },
+            },
+          ],
+          combine: (results) => {
+            const isPending = results.some((res) => res.isPending)
+
+            return isPending ? 'pending' : 'foo'
+          },
+        },
+        client,
+      )
+
+      renders++
+
+      return (
+        <div>
+          <div>data: {data}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('data: pending'))
+    await waitFor(() => rendered.getByText('data: foo'))
+
+    // one with pending, one with foo
+    expect(renders).toBe(2)
   })
 })

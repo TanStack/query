@@ -1,0 +1,24 @@
+{
+  "name": "@tanstack/query-example-svelte-optimistic-updates",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+  },
+  "dependencies": {
+    "@tanstack/svelte-query": "^5.59.10",
+    "@tanstack/svelte-query-devtools": "^5.59.10"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^3.2.2",
+    "@sveltejs/kit": "^2.5.18",
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "svelte": "^4.2.18",
+    "svelte-check": "^4.0.0",
+    "typescript": "5.3.3",
+    "vite": "^5.3.5"
+  }
+}

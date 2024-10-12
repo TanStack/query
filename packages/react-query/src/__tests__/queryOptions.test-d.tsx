@@ -1,9 +1,18 @@
-import { describe, expect, expectTypeOf, it } from 'vitest'
-import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
+import { describe, expectTypeOf, it } from 'vitest'
+import {
+  QueriesObserver,
+  QueryClient,
+  dataTagSymbol,
+  skipToken,
+} from '@tanstack/query-core'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 import { useSuspenseQuery } from '../useSuspenseQuery'
+import type {
+  InitialDataFunction,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
@@ -65,14 +74,12 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
   it('should tag the queryKey with the result type of the QueryFn', () => {
-    expect(() => {
-      const { queryKey } = queryOptions({
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve(5),
-      })
-
-      expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<number>()
+    const { queryKey } = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
     })
+
+    expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<number>()
   })
   it('should tag the queryKey even if no promise is returned', () => {
     const { queryKey } = queryOptions({
@@ -168,5 +175,62 @@ describe('queryOptions', () => {
     const queryClient = new QueryClient()
     const data = queryClient.getQueryData(options.queryKey)
     expectTypeOf(data).toEqualTypeOf<unknown>()
+  })
+
+  it('should throw a type error when using queryFn with skipToken in a suspense query', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+    })
+    // @ts-expect-error TS2345
+    const { data } = useSuspenseQuery(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  it('should return the proper type when passed to QueriesObserver', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const queryClient = new QueryClient()
+    const queriesObserver = new QueriesObserver(queryClient, [options])
+    expectTypeOf(queriesObserver).toEqualTypeOf<
+      QueriesObserver<Array<QueryObserverResult>>
+    >()
+  })
+
+  it('should allow undefined response in initialData', () => {
+    return (id: string | null) =>
+      queryOptions({
+        queryKey: ['todo', id],
+        queryFn: () =>
+          Promise.resolve({
+            id: '1',
+            title: 'Do Laundry',
+          }),
+        initialData: () =>
+          !id
+            ? undefined
+            : {
+                id,
+                title: 'Initial Data',
+              },
+      })
+  })
+
+  it('should allow optional initialData object', () => {
+    const testFn = (id?: string) => {
+      const options = queryOptions({
+        queryKey: ['test'],
+        queryFn: async () => 'something string',
+        initialData: id ? 'initial string' : undefined,
+      })
+      expectTypeOf(options.initialData).toMatchTypeOf<
+        InitialDataFunction<string> | string | undefined
+      >()
+    }
+    testFn('id')
+    testFn()
   })
 })

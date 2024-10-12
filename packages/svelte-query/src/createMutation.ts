@@ -1,12 +1,13 @@
 import { derived, get, readable } from 'svelte/store'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
-import { useQueryClient } from './useQueryClient'
-import { isSvelteStore, noop } from './utils'
+import { useQueryClient } from './useQueryClient.js'
+import { isSvelteStore, noop } from './utils.js'
 import type {
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
-} from './types'
+  StoreOrVal,
+} from './types.js'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 
 export function createMutation<
@@ -15,7 +16,9 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
+  options: StoreOrVal<
+    CreateMutationOptions<TData, TError, TVariables, TContext>
+  >,
   queryClient?: QueryClient,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   const client = useQueryClient(queryClient)

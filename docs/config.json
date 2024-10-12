@@ -663,6 +663,14 @@
               "to": "framework/react/reference/infiniteQueryOptions"
             },
             {
+              "label": "usePrefetchQuery",
+              "to": "framework/react/reference/usePrefetchQuery"
+            },
+            {
+              "label": "usePrefetchInfiniteQuery",
+              "to": "framework/react/reference/usePrefetchInfiniteQuery"
+            },
+            {
               "label": "QueryErrorResetBoundary",
               "to": "framework/react/reference/QueryErrorResetBoundary"
             },
@@ -733,6 +741,40 @@
               "to": "framework/solid/reference/createQuery"
             }
           ]
+        },
+        {
+          "label": "svelte",
+          "children": [
+            {
+              "label": "Svelte Reference",
+              "to": "framework/svelte/reference/index"
+            },
+            {
+              "label": "Functions / createQuery",
+              "to": "framework/svelte/reference/functions/createquery"
+            },
+            {
+              "label": "Functions / createMutation",
+              "to": "framework/svelte/reference/functions/createmutation"
+            }
+          ]
+        },
+        {
+          "label": "angular",
+          "children": [
+            {
+              "label": "Angular Reference",
+              "to": "framework/angular/reference/index"
+            },
+            {
+              "label": "Functions / injectQuery",
+              "to": "framework/angular/reference/functions/injectquery"
+            },
+            {
+              "label": "Functions / injectMutation",
+              "to": "framework/angular/reference/functions/injectmutation"
+            }
+          ]
         }
       ]
     },
@@ -754,6 +796,14 @@
         {
           "label": "No Rest Destructuring",
           "to": "eslint/no-rest-destructuring"
+        },
+        {
+          "label": "No Unstable Deps",
+          "to": "eslint/no-unstable-deps"
+        },
+        {
+          "label": "Infinite Query Property Order",
+          "to": "eslint/infinite-query-property-order"
         }
       ]
     },
@@ -887,6 +937,10 @@
             {
               "label": "Shadow DOM",
               "to": "framework/react/examples/shadow-dom"
+            },
+            {
+              "label": "Devtools Embedded Panel",
+              "to": "framework/react/examples/devtools-panel"
             }
           ]
         },
@@ -899,7 +953,7 @@
             },
             {
               "label": "Basic",
-              "to": "framework/solid/examples/basic-typescript"
+              "to": "framework/solid/examples/basic"
             },
             {
               "label": "Basic w/ GraphQL-Request",
@@ -960,8 +1014,8 @@
               "to": "framework/svelte/examples/ssr"
             },
             {
-              "label": "Optimistic Updates in TypeScript",
-              "to": "framework/svelte/examples/optimistic-updates-typescript"
+              "label": "Optimistic Updates",
+              "to": "framework/svelte/examples/optimistic-updates"
             },
             {
               "label": "Playground",
@@ -989,12 +1043,20 @@
               "to": "framework/angular/examples/basic"
             },
             {
+              "label": "Pagination",
+              "to": "framework/angular/examples/pagination"
+            },
+            {
               "label": "Infinite query with Max pages",
               "to": "framework/angular/examples/infinite-query-with-max-pages"
             },
             {
               "label": "Angular Router",
               "to": "framework/angular/examples/router"
+            },
+            {
+              "label": "RxJS autocomplete",
+              "to": "framework/angular/examples/rxjs"
             }
           ]
         }

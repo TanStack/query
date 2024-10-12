@@ -68,7 +68,7 @@ function Todos() {
         disabled={page === 0}
       >
         Previous Page
-      </button>{' '}
+      </button>
       <button
         onClick={() => {
           if (!isPlaceholderData && data.hasMore) {
@@ -80,7 +80,7 @@ function Todos() {
       >
         Next Page
       </button>
-      {isFetching ? <span> Loading...</span> : null}{' '}
+      {isFetching ? <span> Loading...</span> : null}
     </div>
   )
 }

@@ -1,4 +1,11 @@
-import { ensureQueryFn, noop, replaceData, timeUntilStale } from './utils'
+import {
+  ensureQueryFn,
+  noop,
+  replaceData,
+  resolveEnabled,
+  skipToken,
+  timeUntilStale,
+} from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
@@ -156,7 +163,6 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  isFetchingOptimistic?: boolean
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -176,8 +182,8 @@ export class Query<
     this.#cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.#initialState = config.state || getDefaultState(this.options)
-    this.state = this.#initialState
+    this.#initialState = getDefaultState(this.options)
+    this.state = config.state ?? this.#initialState
     this.scheduleGc()
   }
   get meta(): QueryMeta | undefined {
@@ -244,11 +250,20 @@ export class Query<
   }
 
   isActive(): boolean {
-    return this.observers.some((observer) => observer.options.enabled !== false)
+    return this.observers.some(
+      (observer) => resolveEnabled(observer.options.enabled, this) !== false,
+    )
   }
 
   isDisabled(): boolean {
-    return this.getObserversCount() > 0 && !this.isActive()
+    if (this.getObserversCount() > 0) {
+      return !this.isActive()
+    }
+    // if a query has no observers, it should still be considered disabled if it never attempted a fetch
+    return (
+      this.options.queryFn === skipToken ||
+      this.state.dataUpdateCount + this.state.errorUpdateCount === 0
+    )
   }
 
   isStale(): boolean {
@@ -466,11 +481,8 @@ export class Query<
         )
       }
 
-      if (!this.isFetchingOptimistic) {
-        // Schedule query gc after fetching
-        this.scheduleGc()
-      }
-      this.isFetchingOptimistic = false
+      // Schedule query gc after fetching
+      this.scheduleGc()
     }
 
     // Try to fetch the data
@@ -491,7 +503,12 @@ export class Query<
           return
         }
 
-        this.setData(data)
+        try {
+          this.setData(data)
+        } catch (error) {
+          onError(error as TError)
+          return
+        }
 
         // Notify cache callback
         this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
@@ -501,11 +518,8 @@ export class Query<
           this as Query<any, any, any, any>,
         )
 
-        if (!this.isFetchingOptimistic) {
-          // Schedule query gc after fetching
-          this.scheduleGc()
-        }
-        this.isFetchingOptimistic = false
+        // Schedule query gc after fetching
+        this.scheduleGc()
       },
       onError,
       onFail: (failureCount, error) => {
@@ -569,7 +583,7 @@ export class Query<
             }),
           }
         case 'error':
-          const error = action.error as unknown
+          const error = action.error
 
           if (isCancelledError(error) && error.revert && this.#revertState) {
             return { ...this.#revertState, fetchStatus: 'idle' }
@@ -577,11 +591,11 @@ export class Query<
 
           return {
             ...state,
-            error: error as TError,
+            error,
             errorUpdateCount: state.errorUpdateCount + 1,
             errorUpdatedAt: Date.now(),
             fetchFailureCount: state.fetchFailureCount + 1,
-            fetchFailureReason: error as TError,
+            fetchFailureReason: error,
             fetchStatus: 'idle',
             status: 'error',
           }
@@ -655,7 +669,7 @@ function getDefaultState<
   return {
     data,
     dataUpdateCount: 0,
-    dataUpdatedAt: hasData ? initialDataUpdatedAt ?? Date.now() : 0,
+    dataUpdatedAt: hasData ? (initialDataUpdatedAt ?? Date.now()) : 0,
     error: null,
     errorUpdateCount: 0,
     errorUpdatedAt: 0,

@@ -1,5 +1,6 @@
 import type {
   DefaultError,
+  Enabled,
   FetchStatus,
   MutationKey,
   MutationStatus,
@@ -98,6 +99,18 @@ export function resolveStaleTime<
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
 ): number | undefined {
   return typeof staleTime === 'function' ? staleTime(query) : staleTime
+}
+
+export function resolveEnabled<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  enabled: undefined | Enabled<TQueryFnData, TError, TData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+): boolean | undefined {
+  return typeof enabled === 'function' ? enabled(query) : enabled
 }
 
 export function matchQuery(
@@ -292,6 +305,7 @@ export function isPlainArray(value: unknown) {
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object
+// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
 export function isPlainObject(o: any): o is Object {
   if (!hasObjectPrototype(o)) {
     return false
@@ -327,9 +341,9 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function sleep(ms: number): Promise<void> {
+export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve) => {
-    setTimeout(resolve, ms)
+    setTimeout(resolve, timeout)
   })
 }
 
@@ -340,6 +354,15 @@ export function replaceData<
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data) as TData
   } else if (options.structuralSharing !== false) {
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        return replaceEqualDeep(prevData, data)
+      } catch (error) {
+        console.error(
+          `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
+        )
+      }
+    }
     // Structurally share data between prev and new data if needed
     return replaceEqualDeep(prevData, data)
   }
@@ -365,7 +388,7 @@ export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
 export const skipToken = Symbol()
 export type SkipToken = typeof skipToken
 
-export const ensureQueryFn = <
+export function ensureQueryFn<
   TQueryFnData = unknown,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -374,7 +397,7 @@ export const ensureQueryFn = <
     queryHash?: string
   },
   fetchOptions?: FetchOptions<TQueryFnData>,
-): QueryFunction<TQueryFnData, TQueryKey> => {
+): QueryFunction<TQueryFnData, TQueryKey> {
   if (process.env.NODE_ENV !== 'production') {
     if (options.queryFn === skipToken) {
       console.error(

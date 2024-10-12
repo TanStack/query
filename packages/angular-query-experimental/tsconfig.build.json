@@ -1,15 +1,15 @@
 {
   "extends": "./node_modules/ng-packagr/lib/ts/conf/tsconfig.ngc.json",
   "compilerOptions": {
-    "moduleResolution": "bundler",
     "allowJs": true,
+    "module": "ESNext",
     "moduleDetection": "force",
-    "module": "ESNext"
+    "moduleResolution": "Bundler"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true
   },
-  "include": ["src/**/*.ts", ".eslintrc.cjs"]
+  "include": ["src"]
 }

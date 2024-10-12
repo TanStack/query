@@ -1,19 +1,22 @@
 {
   "name": "@tanstack/query-example-react-infinite-query-with-max-pages",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.45.1",
-    "@tanstack/react-query-devtools": "^5.45.1",
-    "axios": "^1.6.8",
-    "isomorphic-unfetch": "4.0.2",
-    "next": "^14.0.0",
+    "@tanstack/react-query": "^5.59.11",
+    "@tanstack/react-query-devtools": "^5.59.11",
+    "next": "^14.2.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-intersection-observer": "^8.34.0"
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "typescript": "5.3.3"
   }
 }

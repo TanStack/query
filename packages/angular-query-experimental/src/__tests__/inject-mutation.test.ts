@@ -1,10 +1,15 @@
-import { Component, input, signal } from '@angular/core'
-import { QueryClient } from '@tanstack/query-core'
+import {
+  Component,
+  Injectable,
+  Injector,
+  inject,
+  input,
+  signal,
+} from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { injectMutation } from '../inject-mutation'
-import { provideAngularQuery } from '../providers'
+import { QueryClient, injectMutation, provideAngularQuery } from '..'
 import {
   errorMutator,
   expectSignals,
@@ -454,5 +459,69 @@ describe('injectMutation', () => {
     })
 
     await expect(() => mutateAsync()).rejects.toThrowError(err)
+  })
+
+  test('should execute callback in injection context', async () => {
+    const errorSpy = vi.fn()
+    @Injectable()
+    class FakeService {
+      updateData(name: string) {
+        return Promise.resolve(name)
+      }
+    }
+
+    @Component({
+      selector: 'app-fake',
+      template: ``,
+      standalone: true,
+      providers: [FakeService],
+    })
+    class FakeComponent {
+      mutation = injectMutation(() => {
+        try {
+          const service = inject(FakeService)
+          return {
+            mutationFn: (name: string) => service.updateData(name),
+          }
+        } catch (e) {
+          errorSpy(e)
+          throw e
+        }
+      })
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    fixture.detectChanges()
+
+    // check if injection contexts persist in a different task
+    await new Promise<void>((resolve) => queueMicrotask(() => resolve()))
+
+    expect(
+      await fixture.componentInstance.mutation.mutateAsync('test'),
+    ).toEqual('test')
+    expect(errorSpy).not.toHaveBeenCalled()
+  })
+
+  describe('injection context', () => {
+    test('throws NG0203 with descriptive error outside injection context', () => {
+      expect(() => {
+        injectMutation(() => ({
+          mutationKey: ['injectionContextError'],
+          mutationFn: () => Promise.resolve(),
+        }))
+      }).toThrowError(/NG0203(.*?)injectMutation/)
+    })
+
+    test('can be used outside injection context when passing an injector', () => {
+      expect(() => {
+        injectMutation(
+          () => ({
+            mutationKey: ['injectionContextError'],
+            mutationFn: () => Promise.resolve(),
+          }),
+          TestBed.inject(Injector),
+        )
+      }).not.toThrow()
+    })
   })
 })

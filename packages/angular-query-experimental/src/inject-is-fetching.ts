@@ -1,7 +1,8 @@
 import { DestroyRef, NgZone, inject, signal } from '@angular/core'
-import { type QueryFilters, notifyManager } from '@tanstack/query-core'
+import { notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectQueryClient } from './inject-query-client'
+import type { QueryFilters } from '@tanstack/query-core'
 import type { Injector, Signal } from '@angular/core'
 
 /**

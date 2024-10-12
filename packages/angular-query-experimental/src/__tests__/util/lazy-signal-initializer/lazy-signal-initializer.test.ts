@@ -1,15 +1,9 @@
 import { describe, expect, test } from 'vitest'
-import {
-  Component,
-  type Signal,
-  type WritableSignal,
-  effect,
-  input,
-  signal,
-} from '@angular/core'
+import { Component, effect, input, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { lazySignalInitializer } from '../../../util/lazy-signal-initializer/lazy-signal-initializer'
 import { flushQueue, setFixtureSignalInputs } from '../../test-utils'
+import type { Signal, WritableSignal } from '@angular/core'
 
 describe('lazySignalInitializer', () => {
   test('should init lazily in next tick when not accessing manually', async () => {
@@ -46,7 +40,7 @@ describe('lazySignalInitializer', () => {
 
   test('should init lazily and only once', async () => {
     const initCallFn = vi.fn()
-    const registerEffectValue = vi.fn<[number]>()
+    const registerEffectValue = vi.fn<(arg: number) => any>()
 
     let value!: Signal<number>
     const outerSignal = signal(0)

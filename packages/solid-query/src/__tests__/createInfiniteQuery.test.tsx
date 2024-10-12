@@ -120,6 +120,7 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
+      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -155,6 +156,7 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
+      promise: expect.any(Promise),
     })
   })
 
@@ -166,7 +168,7 @@ describe('useInfiniteQuery', () => {
       const start = 1
       const state = createInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
+        queryFn: ({ pageParam }) => {
           if (pageParam === 2) {
             throw new Error('error')
           }
@@ -689,6 +691,7 @@ describe('useInfiniteQuery', () => {
     const states: Array<
       Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
     > = []
+
     let isRefetch = false
 
     function Page() {
@@ -717,7 +720,7 @@ describe('useInfiniteQuery', () => {
           isFetchingNextPage: state.isFetchingNextPage,
           isFetchPreviousPageError: state.isFetchPreviousPageError,
           isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError,
+          isRefetchError: state.isRefetchError as true,
           isRefetching: state.isRefetching,
         })
       })
@@ -828,7 +831,7 @@ describe('useInfiniteQuery', () => {
           isFetchingNextPage: state.isFetchingNextPage,
           isFetchPreviousPageError: state.isFetchPreviousPageError,
           isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError,
+          isRefetchError: state.isRefetchError as true,
           isRefetching: state.isRefetching,
         })
       })
@@ -932,7 +935,7 @@ describe('useInfiniteQuery', () => {
           isFetchingNextPage: state.isFetchingNextPage,
           isFetchPreviousPageError: state.isFetchPreviousPageError,
           isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError,
+          isRefetchError: state.isRefetchError as true,
           isRefetching: state.isRefetching,
         })
       })
@@ -1100,11 +1103,10 @@ describe('useInfiniteQuery', () => {
   it('should silently cancel an ongoing fetchNextPage request when another fetchNextPage is invoked', async () => {
     const key = queryKey()
     const start = 10
-    const onAborts: Array<Mock<any, any>> = []
-    const abortListeners: Array<Mock<any, any>> = []
+    const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
+    const abortListeners: Array<Mock<(...args: Array<any>) => any>> = []
     const fetchPage = vi.fn<
-      [QueryFunctionContext<typeof key, number>],
-      Promise<number>
+      (context: QueryFunctionContext<typeof key, number>) => Promise<number>
     >(async ({ pageParam, signal }) => {
       const onAbort = vi.fn()
       const abortListener = vi.fn()
@@ -1179,14 +1181,13 @@ describe('useInfiniteQuery', () => {
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
   })
 
-  it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used ', async () => {
+  it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used', async () => {
     const key = queryKey()
     const start = 10
-    const onAborts: Array<Mock<any, any>> = []
-    const abortListeners: Array<Mock<any, any>> = []
+    const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
+    const abortListeners: Array<Mock<(...args: Array<any>) => any>> = []
     const fetchPage = vi.fn<
-      [QueryFunctionContext<typeof key, number>],
-      Promise<number>
+      (context: QueryFunctionContext<typeof key, number>) => Promise<number>
     >(async ({ pageParam, signal }) => {
       const onAbort = vi.fn()
       const abortListener = vi.fn()
@@ -2055,7 +2056,10 @@ describe('useInfiniteQuery', () => {
 
     const rendered = render(() => <Page />)
 
-    await waitFor(() => rendered.getByText('Status: custom client'))
+    await waitFor(() => {
+      const statusElement = rendered.getByText('Status: custom client')
+      expect(statusElement).toBeInTheDocument()
+    })
   })
 
   it('should work with infiniteQueryOptions', async () => {
@@ -2081,6 +2085,9 @@ describe('useInfiniteQuery', () => {
 
     const rendered = render(() => <Page />)
 
-    await waitFor(() => rendered.getByText('Status: 220'))
+    await waitFor(() => {
+      const statusElement = rendered.getByText('Status: 220')
+      expect(statusElement).toBeInTheDocument()
+    })
   })
 })

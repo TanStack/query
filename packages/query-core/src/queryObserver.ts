@@ -1,18 +1,21 @@
+import { focusManager } from './focusManager'
+import { notifyManager } from './notifyManager'
+import { fetchState } from './query'
+import { Subscribable } from './subscribable'
+import { pendingThenable } from './thenable'
 import {
   isServer,
   isValidTimeout,
   noop,
   replaceData,
+  resolveEnabled,
   resolveStaleTime,
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
-import { notifyManager } from './notifyManager'
-import { focusManager } from './focusManager'
-import { Subscribable } from './subscribable'
-import { fetchState } from './query'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
+import type { PendingThenable, Thenable } from './thenable'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -33,7 +36,7 @@ export interface NotifyOptions {
   listeners?: boolean
 }
 
-export interface ObserverFetchOptions extends FetchOptions {
+interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
 
@@ -56,6 +59,7 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
+  #currentThenable: Thenable<TData>
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
@@ -81,6 +85,13 @@ export class QueryObserver<
 
     this.#client = client
     this.#selectError = null
+    this.#currentThenable = pendingThenable()
+    if (!this.options.experimental_prefetchInRender) {
+      this.#currentThenable.reject(
+        new Error('experimental_prefetchInRender feature flag is not enabled'),
+      )
+    }
+
     this.bindMethods()
     this.setOptions(options)
   }
@@ -149,9 +160,14 @@ export class QueryObserver<
 
     if (
       this.options.enabled !== undefined &&
-      typeof this.options.enabled !== 'boolean'
+      typeof this.options.enabled !== 'boolean' &&
+      typeof this.options.enabled !== 'function' &&
+      typeof resolveEnabled(this.options.enabled, this.#currentQuery) !==
+        'boolean'
     ) {
-      throw new Error('Expected enabled to be a boolean')
+      throw new Error(
+        'Expected enabled to be a boolean or a callback that returns a boolean',
+      )
     }
 
     this.#updateQuery()
@@ -190,7 +206,8 @@ export class QueryObserver<
     if (
       mounted &&
       (this.#currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
+        resolveEnabled(this.options.enabled, this.#currentQuery) !==
+          resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
         resolveStaleTime(this.options.staleTime, this.#currentQuery) !==
           resolveStaleTime(prevOptions.staleTime, this.#currentQuery))
     ) {
@@ -203,7 +220,8 @@ export class QueryObserver<
     if (
       mounted &&
       (this.#currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
+        resolveEnabled(this.options.enabled, this.#currentQuery) !==
+          resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
         nextRefetchInterval !== this.#currentRefetchInterval)
     ) {
       this.#updateRefetchInterval(nextRefetchInterval)
@@ -302,7 +320,6 @@ export class QueryObserver<
     const query = this.#client
       .getQueryCache()
       .build(this.#client, defaultedOptions)
-    query.isFetchingOptimistic = true
 
     return query.fetch().then(() => this.createResult(query, defaultedOptions))
   }
@@ -377,7 +394,7 @@ export class QueryObserver<
 
     if (
       isServer ||
-      this.options.enabled === false ||
+      resolveEnabled(this.options.enabled, this.#currentQuery) === false ||
       !isValidTimeout(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
     ) {
@@ -574,6 +591,7 @@ export class QueryObserver<
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
+      promise: this.#currentThenable,
     }
 
     return result as QueryObserverResult<TData, TError>
@@ -585,6 +603,7 @@ export class QueryObserver<
       | undefined
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
+
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
 
@@ -595,6 +614,52 @@ export class QueryObserver<
     // Only notify and update result if something has changed
     if (shallowEqualObjects(nextResult, prevResult)) {
       return
+    }
+
+    if (this.options.experimental_prefetchInRender) {
+      const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
+        if (nextResult.status === 'error') {
+          thenable.reject(nextResult.error)
+        } else if (nextResult.data !== undefined) {
+          thenable.resolve(nextResult.data)
+        }
+      }
+
+      /**
+       * Create a new thenable and result promise when the results have changed
+       */
+      const recreateThenable = () => {
+        const pending =
+          (this.#currentThenable =
+          nextResult.promise =
+            pendingThenable())
+
+        finalizeThenableIfPossible(pending)
+      }
+
+      const prevThenable = this.#currentThenable
+      switch (prevThenable.status) {
+        case 'pending':
+          // Finalize the previous thenable if it was pending
+          finalizeThenableIfPossible(prevThenable)
+          break
+        case 'fulfilled':
+          if (
+            nextResult.status === 'error' ||
+            nextResult.data !== prevThenable.value
+          ) {
+            recreateThenable()
+          }
+          break
+        case 'rejected':
+          if (
+            nextResult.status !== 'error' ||
+            nextResult.error !== prevThenable.reason
+          ) {
+            recreateThenable()
+          }
+          break
+      }
     }
 
     this.#currentResult = nextResult
@@ -631,6 +696,7 @@ export class QueryObserver<
       return Object.keys(this.#currentResult).some((key) => {
         const typedKey = key as keyof QueryObserverResult
         const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
+
         return changed && includedProps.has(typedKey)
       })
     }
@@ -692,7 +758,7 @@ function shouldLoadOnMount(
   options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
+    resolveEnabled(options.enabled, query) !== false &&
     query.state.data === undefined &&
     !(query.state.status === 'error' && options.retryOnMount === false)
   )
@@ -716,7 +782,7 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (options.enabled !== false) {
+  if (resolveEnabled(options.enabled, query) !== false) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))
@@ -731,7 +797,8 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    (query !== prevQuery || prevOptions.enabled === false) &&
+    (query !== prevQuery ||
+      resolveEnabled(prevOptions.enabled, query) === false) &&
     (!options.suspense || query.state.status !== 'error') &&
     isStale(query, options)
   )
@@ -742,7 +809,7 @@ function isStale(
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
+    resolveEnabled(options.enabled, query) !== false &&
     query.isStaleByTime(resolveStaleTime(options.staleTime, query))
   )
 }

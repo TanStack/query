@@ -29,6 +29,7 @@ Its available methods are:
 - [`queryClient.prefetchInfiniteQuery`](#queryclientprefetchinfinitequery)
 - [`queryClient.getQueryData`](#queryclientgetquerydata)
 - [`queryClient.ensureQueryData`](#queryclientensurequerydata)
+- [`queryClient.ensureInfiniteQueryData`](#queryclientensureinfinitequerydata)
 - [`queryClient.getQueriesData`](#queryclientgetqueriesdata)
 - [`queryClient.setQueryData`](#queryclientsetquerydata)
 - [`queryClient.getQueryState`](#queryclientgetquerystate)
@@ -62,7 +63,7 @@ Its available methods are:
 - `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
-  - You can also define defaults to be used for [hydration](../../framework/react/reference/hydration.md)
+  - You can also define defaults to be used for [hydration](../../framework/react/reference/hydration)
 
 ## `queryClient.fetchQuery`
 
@@ -199,6 +200,31 @@ const data = await queryClient.ensureQueryData({ queryKey, queryFn })
 **Returns**
 
 - `Promise<TData>`
+
+## `queryClient.ensureInfiniteQueryData`
+
+`ensureInfiniteQueryData` is an asynchronous function that can be used to get an existing infinite query's cached data. If the query does not exist, `queryClient.fetchInfiniteQuery` will be called and its results returned.
+
+```tsx
+const data = await queryClient.ensureInfiniteQueryData({
+  queryKey,
+  queryFn,
+  initialPageParam,
+  getNextPageParam,
+})
+```
+
+**Options**
+
+- the same options as [`fetchInfiniteQuery`](#queryclientfetchinfinitequery)
+- `revalidateIfStale: boolean`
+  - Optional
+  - Defaults to `false`
+  - If set to `true`, stale data will be refetched in the background, but cached data will be returned immediately.
+
+**Returns**
+
+- `Promise<InfiniteData<TData, TPageParam>>`
 
 ## `queryClient.getQueriesData`
 

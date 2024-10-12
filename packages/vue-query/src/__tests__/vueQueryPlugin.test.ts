@@ -14,9 +14,11 @@ vi.mock('../devtools/devtools')
 vi.mock('../useQueryClient')
 vi.mock('../useBaseQuery')
 
+type UnmountCallback = () => void
+
 interface TestApp extends App {
-  onUnmount: Function
-  _unmount: Function
+  onUnmount: UnmountCallback
+  _unmount: UnmountCallback
   _mixin: ComponentOptions
   _provided: Record<string, any>
   $root: TestApp
@@ -29,11 +31,11 @@ function getAppMock(withUnmountHook = false): TestApp {
     provide: vi.fn(),
     unmount: vi.fn(),
     onUnmount: withUnmountHook
-      ? vi.fn((u: Function) => {
+      ? vi.fn((u: UnmountCallback) => {
           mock._unmount = u
         })
       : undefined,
-    mixin: (m: ComponentOptions): any => {
+    mixin: (m: ComponentOptions) => {
       mock._mixin = m
     },
   } as unknown as TestApp
@@ -241,7 +243,7 @@ describe('VueQueryPlugin', () => {
           queryClientConfig: config,
         })
 
-        const client = (appMock.provide as Mock).mock.calls[0][1]
+        const client = (appMock.provide as Mock).mock.calls[0]?.[1]
         const defaultOptions = client.getDefaultOptions()
 
         expect(defaultOptions).toEqual(config.defaultOptions)

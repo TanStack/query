@@ -143,3 +143,34 @@ function MyComponent() {
   return <Text>DataUpdatedAt: {dataUpdatedAt}</Text>
 }
 ```
+
+## Disable queries on out of focus screens
+
+Enabled can also be set to a callback to support disabling queries on out of focus screens without state and re-rendering on navigation, similar to how notifyOnChangeProps works but in addition it wont trigger refetching when invalidating queries with refetchType active.
+
+```tsx
+import React from 'react'
+import { useFocusEffect } from '@react-navigation/native'
+
+export function useQueryFocusAware(notifyOnChangeProps?: NotifyOnChangeProps) {
+  const focusedRef = React.useRef(true)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      focusedRef.current = true
+
+      return () => {
+        focusedRef.current = false
+      }
+    }, []),
+  )
+
+  return () => focusedRef.current
+
+  useQuery({
+    queryKey: ['key'],
+    queryFn: () => fetch(...),
+    enabled: () => focusedRef.current,
+  })
+}
+```

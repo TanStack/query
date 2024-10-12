@@ -1,10 +1,6 @@
 import { isPlatformBrowser } from '@angular/common'
 import * as queryDevtools from '@tanstack/query-devtools'
 import {
-  injectQueryClient,
-  onlineManager,
-} from '@tanstack/angular-query-experimental'
-import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -14,7 +10,11 @@ import {
   booleanAttribute,
   inject,
 } from '@angular/core'
-import { QueryClient } from '@tanstack/angular-query-experimental'
+import {
+  QueryClient,
+  injectQueryClient,
+  onlineManager,
+} from '@tanstack/angular-query-experimental'
 import type {
   AfterViewInit,
   OnChanges,
@@ -22,7 +22,7 @@ import type {
   SimpleChanges,
 } from '@angular/core'
 import type {
-  DevToolsErrorType,
+  DevtoolsErrorType,
   TanstackQueryDevtools,
 } from '@tanstack/query-devtools'
 
@@ -91,7 +91,7 @@ export class AngularQueryDevtools
   /**
    * Use this so you can define custom errors that can be shown in the devtools.
    */
-  @Input() errorTypes?: Array<DevToolsErrorType>
+  @Input() errorTypes?: Array<DevtoolsErrorType>
 
   @ViewChild('ref') ref!: ElementRef
 

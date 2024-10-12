@@ -1,4 +1,4 @@
-/* eslint-disable @cspell/spellchecker */
+/* eslint-disable cspell/spellchecker */
 /**
  * The code in this file is adapted from NG Extension Platform at https://ngxtension.netlify.app.
  *
@@ -14,7 +14,7 @@
 import { TestBed } from '@angular/core/testing'
 import { createNoopInjectionToken } from './create-injection-token'
 
-describe(createNoopInjectionToken.name, () => {
+describe('createNoopInjectionToken', () => {
   describe('given an injection token', () => {
     const [injectFn, provideFn] = createNoopInjectionToken<number, true>(
       'noop',

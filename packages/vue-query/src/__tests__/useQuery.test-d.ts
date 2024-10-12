@@ -1,12 +1,12 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { reactive } from 'vue-demi'
+import { computed, reactive, ref } from 'vue-demi'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
 import { simpleFetcher } from './test-utils'
 import type { OmitKeyof } from '..'
 import type { UseQueryOptions } from '../useQuery'
 
-describe('initialData', () => {
+describe('useQuery', () => {
   describe('Config object overload', () => {
     it('TData should always be defined when initialData is provided as an object', () => {
       const { data } = reactive(
@@ -43,7 +43,7 @@ describe('initialData', () => {
       expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
     })
 
-    it('it should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
+    it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
       const options = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(1),
@@ -222,6 +222,49 @@ describe('initialData', () => {
 
       if (query.isError) {
         expectTypeOf(query.error).toEqualTypeOf<Error>()
+      }
+    })
+  })
+
+  describe('accept ref options', () => {
+    it('should accept ref options', () => {
+      const options = ref({
+        queryKey: ['key'],
+        queryFn: simpleFetcher,
+      })
+
+      const query = reactive(useQuery(options))
+
+      if (query.isSuccess) {
+        expectTypeOf(query.data).toEqualTypeOf<string>()
+      }
+    })
+
+    it('should accept computed options', () => {
+      const options = computed(() => ({
+        queryKey: ['key'],
+        queryFn: simpleFetcher,
+      }))
+
+      const query = reactive(useQuery(options))
+
+      if (query.isSuccess) {
+        expectTypeOf(query.data).toEqualTypeOf<string>()
+      }
+    })
+
+    it('should accept computed query options', () => {
+      const options = computed(() =>
+        queryOptions({
+          queryKey: ['key'],
+          queryFn: simpleFetcher,
+        }),
+      )
+
+      const query = reactive(useQuery(options))
+
+      if (query.isSuccess) {
+        expectTypeOf(query.data).toEqualTypeOf<string>()
       }
     })
   })

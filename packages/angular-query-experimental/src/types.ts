@@ -10,10 +10,12 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
+  Override,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { Signal } from '@angular/core'
 import type { MapToSignals } from './signal-proxy'
 
 /**
@@ -221,6 +223,8 @@ type CreateStatusBasedMutationResult<
   { status: TStatus }
 >
 
+type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>
+
 /**
  * @public
  */
@@ -230,59 +234,73 @@ export interface BaseMutationNarrowing<
   TVariables = unknown,
   TContext = unknown,
 > {
-  isSuccess: (
-    this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ) => this is CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TContext,
-    CreateStatusBasedMutationResult<
-      'success',
+  isSuccess: SignalFunction<
+    (
+      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+    ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext
+      TContext,
+      CreateStatusBasedMutationResult<
+        'success',
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
     >
   >
-  isError: (
-    this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ) => this is CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TContext,
-    CreateStatusBasedMutationResult<
-      'error',
+  isError: SignalFunction<
+    (
+      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+    ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext
+      TContext,
+      CreateStatusBasedMutationResult<
+        'error',
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
     >
   >
-  isPending: (
-    this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ) => this is CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TContext,
-    CreateStatusBasedMutationResult<
-      'pending',
+  isPending: SignalFunction<
+    (
+      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+    ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext
+      TContext,
+      CreateStatusBasedMutationResult<
+        'pending',
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
     >
   >
-  isIdle: (
-    this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ) => this is CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TContext,
-    CreateStatusBasedMutationResult<'idle', TData, TError, TVariables, TContext>
+  isIdle: SignalFunction<
+    (
+      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+    ) => this is CreateMutationResult<
+      TData,
+      TError,
+      TVariables,
+      TContext,
+      CreateStatusBasedMutationResult<
+        'idle',
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
+    >
   >
 }
 
@@ -303,12 +321,6 @@ export type CreateMutationResult<
   >,
 > = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
   MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
-
-type Override<TTargetA, TTargetB> = {
-  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
-    ? TTargetB[AKey]
-    : TTargetA[AKey]
-}
 
 /**
  * @public

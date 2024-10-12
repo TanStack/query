@@ -111,6 +111,24 @@ export const ASTUtils = {
       identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
     }
 
+    if (node.type === AST_NODE_TYPES.ArrowFunctionExpression) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
+    }
+
+    if (node.type === AST_NODE_TYPES.FunctionExpression) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
+    }
+
+    if (node.type === AST_NODE_TYPES.BlockStatement) {
+      identifiers.push(
+        ...node.body.map((body) => ASTUtils.getNestedIdentifiers(body)).flat(),
+      )
+    }
+
+    if (node.type === AST_NODE_TYPES.ReturnStatement && node.argument) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
+    }
+
     return identifiers
   },
   isAncestorIsCallee(identifier: TSESTree.Node) {
@@ -248,10 +266,16 @@ export const ASTUtils = {
   }) {
     const { node, context } = params
 
-    const resolvedNode = context
-      .getScope()
-      .references.find((ref) => ref.identifier === node)?.resolved?.defs[0]
-      ?.node
+    // we need the fallbacks for backwards compat with eslint < 8.37.0
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const sourceCode = context.sourceCode ?? context.getSourceCode()
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const scope = context.sourceCode.getScope(node)
+      ? sourceCode.getScope(node)
+      : context.getScope()
+
+    const resolvedNode = scope.references.find((ref) => ref.identifier === node)
+      ?.resolved?.defs[0]?.node
 
     if (resolvedNode?.type !== AST_NODE_TYPES.VariableDeclarator) {
       return null

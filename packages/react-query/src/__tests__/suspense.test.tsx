@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, waitFor } from '@testing-library/react'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
@@ -123,7 +123,7 @@ describe('useSuspenseQuery', () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, string>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -1191,5 +1191,120 @@ describe('useSuspenseQueries', () => {
     await waitFor(() => rendered.getByText('Pending...'))
 
     await waitFor(() => rendered.getByText('data1'))
+  })
+
+  it('should show error boundary even with gcTime:0 (#7853)', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+    let count = 0
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: async () => {
+          count++
+          console.log('queryFn')
+          throw new Error('Query failed')
+        },
+        gcTime: 0,
+        retry: false,
+      })
+
+      return null
+    }
+
+    function App() {
+      return (
+        <React.Suspense fallback="loading">
+          <ErrorBoundary
+            fallbackRender={() => {
+              return <div>There was an error!</div>
+            }}
+          >
+            <Page />
+          </ErrorBoundary>
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('There was an error!'))
+    expect(count).toBe(1)
+    consoleMock.mockRestore()
+  })
+
+  describe('gc (with fake timers)', () => {
+    beforeAll(() => {
+      vi.useFakeTimers()
+    })
+
+    afterAll(() => {
+      vi.useRealTimers()
+    })
+
+    it('should gc when unmounted while fetching with low gcTime (#8159)', async () => {
+      const key = queryKey()
+
+      function Page() {
+        return (
+          <React.Suspense fallback="loading">
+            <Component />
+          </React.Suspense>
+        )
+      }
+
+      function Component() {
+        const { data } = useSuspenseQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(3000)
+            return 'data'
+          },
+          gcTime: 1000,
+        })
+
+        return <div>{data}</div>
+      }
+
+      function Page2() {
+        return <div>page2</div>
+      }
+
+      function App() {
+        const [show, setShow] = React.useState(true)
+        return (
+          <div>
+            {show ? <Page /> : <Page2 />}
+            <button onClick={() => setShow(false)}>hide</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <App />)
+
+      await act(() => vi.advanceTimersByTimeAsync(200))
+
+      rendered.getByText('loading')
+
+      // unmount while still fetching
+      fireEvent.click(rendered.getByText('hide'))
+
+      await act(() => vi.advanceTimersByTimeAsync(800))
+
+      rendered.getByText('page2')
+
+      // wait for query to be resolved
+      await act(() => vi.advanceTimersByTimeAsync(2000))
+
+      expect(queryClient.getQueryData(key)).toBe('data')
+
+      // wait for gc
+      await act(() => vi.advanceTimersByTimeAsync(1000))
+
+      expect(queryClient.getQueryData(key)).toBe(undefined)
+    })
   })
 })

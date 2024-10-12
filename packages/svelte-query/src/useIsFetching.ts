@@ -1,11 +1,8 @@
-import {
-  type QueryClient,
-  type QueryFilters,
-  notifyManager,
-} from '@tanstack/query-core'
+import { notifyManager } from '@tanstack/query-core'
 import { readable } from 'svelte/store'
-import { useQueryClient } from './useQueryClient'
+import { useQueryClient } from './useQueryClient.js'
 import type { Readable } from 'svelte/store'
+import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 
 export function useIsFetching(
   filters?: QueryFilters,

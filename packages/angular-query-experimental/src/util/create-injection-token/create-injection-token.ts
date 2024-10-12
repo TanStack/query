@@ -1,4 +1,4 @@
-/* eslint-disable @cspell/spellchecker */
+/* eslint-disable cspell/spellchecker */
 /**
  * The code in this file is adapted from NG Extension Platform at https://ngxtension.netlify.app.
  *
@@ -11,22 +11,20 @@
  */
 /* eslint-enable */
 
-import {
-  type EnvironmentProviders,
-  type FactoryProvider,
-  type Host,
-  type InjectOptions,
-  InjectionToken,
-  type Injector,
-  type Optional,
-  type Provider,
-  type Self,
-  type SkipSelf,
-  type Type,
-  inject,
-  runInInjectionContext,
-} from '@angular/core'
+import { InjectionToken, inject, runInInjectionContext } from '@angular/core'
 import { assertInjector } from '../assert-injector/assert-injector'
+import type {
+  EnvironmentProviders,
+  FactoryProvider,
+  Host,
+  InjectOptions,
+  Injector,
+  Optional,
+  Provider,
+  Self,
+  SkipSelf,
+  Type,
+} from '@angular/core'
 
 type CreateInjectionTokenDep<TTokenType> =
   | Type<TTokenType>

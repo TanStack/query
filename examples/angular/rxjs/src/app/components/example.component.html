@@ -1,0 +1,13 @@
+<h1>Search for a programming language</h1>
+
+<form [formGroup]="form">
+  <input type="text" formControlName="term" />
+
+  @if (query.isSuccess() && query.data().suggestions.length) {
+    <ul>
+      @for (suggestion of query.data().suggestions; track suggestion) {
+        <li>{{ suggestion }}</li>
+      }
+    </ul>
+  }
+</form>
