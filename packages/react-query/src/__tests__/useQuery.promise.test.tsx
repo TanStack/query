@@ -791,6 +791,7 @@ describe('useQuery().promise', () => {
 
   it('should show correct data when switching between cache entries without re-fetches', async () => {
     const key = queryKey()
+    let suspenseRenderCount = 0
 
     function MyComponent(props: { promise: Promise<string> }) {
       const data = React.use(props.promise)
@@ -799,6 +800,7 @@ describe('useQuery().promise', () => {
     }
 
     function Loading() {
+      suspenseRenderCount++
       return <>loading..</>
     }
     function Page() {
@@ -827,14 +829,19 @@ describe('useQuery().promise', () => {
     await waitFor(() => rendered.getByText('loading..'))
     await waitFor(() => rendered.getByText('test0'))
 
+    expect(suspenseRenderCount).toBe(1)
+
     fireEvent.click(rendered.getByText('inc'))
     await waitFor(() => rendered.getByText('loading..'))
-
     await waitFor(() => rendered.getByText('test1'))
 
-    fireEvent.click(rendered.getByText('dec'))
+    expect(suspenseRenderCount).toBe(2)
 
+    fireEvent.click(rendered.getByText('dec'))
     await waitFor(() => rendered.getByText('test0'))
+
+    // no more suspending when going back to test0
+    expect(suspenseRenderCount).toBe(2)
   })
 
   it('should not resolve with intermediate data when keys are switched', async () => {

@@ -598,12 +598,10 @@ export class QueryObserver<
 
     if (this.options.experimental_prefetchInRender) {
       const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
-        if (query.queryHash === prevQuery.queryHash) {
-          if (nextResult.status === 'error') {
-            thenable.reject(nextResult.error)
-          } else if (nextResult.data !== undefined) {
-            thenable.resolve(nextResult.data)
-          }
+        if (nextResult.status === 'error') {
+          thenable.reject(nextResult.error)
+        } else if (nextResult.data !== undefined) {
+          thenable.resolve(nextResult.data)
         }
       }
 
@@ -623,7 +621,10 @@ export class QueryObserver<
       switch (prevThenable.status) {
         case 'pending':
           // Finalize the previous thenable if it was pending
-          finalizeThenableIfPossible(prevThenable)
+          // and we are still observing the same query
+          if (query.queryHash === prevQuery.queryHash) {
+            finalizeThenableIfPossible(prevThenable)
+          }
           break
         case 'fulfilled':
           if (
