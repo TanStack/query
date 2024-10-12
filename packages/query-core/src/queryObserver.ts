@@ -621,7 +621,10 @@ export class QueryObserver<
       switch (prevThenable.status) {
         case 'pending':
           // Finalize the previous thenable if it was pending
-          finalizeThenableIfPossible(prevThenable)
+          // and we are still observing the same query
+          if (query.queryHash === prevQuery.queryHash) {
+            finalizeThenableIfPossible(prevThenable)
+          }
           break
         case 'fulfilled':
           if (
