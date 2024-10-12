@@ -56,20 +56,13 @@ export const rule = createRule({
           return
         }
 
-        const properties = allProperties.flatMap((p) => {
+        const properties = allProperties.flatMap((p, index) => {
           if (
             p.type === AST_NODE_TYPES.Property &&
             p.key.type === AST_NODE_TYPES.Identifier
           ) {
             return { name: p.key.name, property: p }
-          } else if (p.type === AST_NODE_TYPES.SpreadElement) {
-            if (p.argument.type === AST_NODE_TYPES.Identifier) {
-              return { name: p.argument.name, property: p }
-            } else {
-              throw new Error('Unsupported spread element')
-            }
-          }
-          return []
+          } else return { name: `_property_${index}`, property: p }
         })
 
         const sortedProperties = sortDataByOrder(properties, sortRules, 'name')
@@ -83,11 +76,11 @@ export const rule = createRule({
           fix(fixer) {
             const sourceCode = context.sourceCode
 
-            const text = sortedProperties.reduce(
+            const reorderedText = sortedProperties.reduce(
               (sourceText, specifier, index) => {
-                let text = ''
+                let textBetweenProperties = ''
                 if (index < allProperties.length - 1) {
-                  text = sourceCode
+                  textBetweenProperties = sourceCode
                     .getText()
                     .slice(
                       allProperties[index]!.range[1],
@@ -95,14 +88,16 @@ export const rule = createRule({
                     )
                 }
                 return (
-                  sourceText + sourceCode.getText(specifier.property) + text
+                  sourceText +
+                  sourceCode.getText(specifier.property) +
+                  textBetweenProperties
                 )
               },
               '',
             )
             return fixer.replaceTextRange(
               [allProperties[0]!.range[0], allProperties.at(-1)!.range[1]],
-              text,
+              reorderedText,
             )
           },
         })

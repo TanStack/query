@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
+import { skipToken } from '@tanstack/query-core'
 import { useSuspenseQuery } from '../useSuspenseQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
-import type { UseSuspenseQueryOptions } from '..'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('useSuspenseQuery', () => {
@@ -21,6 +21,20 @@ describe('useSuspenseQuery', () => {
     })
 
     expectTypeOf(status).toEqualTypeOf<'error' | 'success'>()
+  })
+
+  it('should not allow skipToken in queryFn', () => {
+    useSuspenseQuery({
+      queryKey: ['key'],
+      // @ts-expect-error
+      queryFn: skipToken,
+    })
+
+    useSuspenseQuery({
+      queryKey: ['key'],
+      // @ts-expect-error
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+    })
   })
 
   it('should not allow placeholderData, enabled or throwOnError props', () => {
@@ -68,6 +82,20 @@ describe('useSuspenseInfiniteQuery', () => {
     })
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+  })
+
+  it('should not allow skipToken in queryFn', () => {
+    useSuspenseInfiniteQuery({
+      queryKey: ['key'],
+      // @ts-expect-error
+      queryFn: skipToken,
+    })
+
+    useSuspenseInfiniteQuery({
+      queryKey: ['key'],
+      // @ts-expect-error
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+    })
   })
 
   it('should not have pending status', () => {
@@ -121,15 +149,5 @@ describe('useSuspenseInfiniteQuery', () => {
 
     // @ts-expect-error TS2339
     query.isPlaceholderData
-  })
-
-  it('should not accept skipToken type for queryFn in useSuspenseQuery', () => {
-    const query: UseSuspenseQueryOptions = {
-      // @ts-expect-error
-      queryFn: skipToken,
-      queryKey: [1],
-    }
-
-    return query
   })
 })

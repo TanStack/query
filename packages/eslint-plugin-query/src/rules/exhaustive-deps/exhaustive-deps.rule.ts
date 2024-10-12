@@ -115,7 +115,7 @@ export const rule = createRule({
               !ref.isTypeReference &&
               !ASTUtils.isAncestorIsCallee(ref.identifier) &&
               !existingKeys.some((existingKey) => existingKey === text) &&
-              !existingKeys.includes(text.split('.')[0] ?? '')
+              !existingKeys.includes(text.split(/[?.]/)[0] ?? '')
             )
           })
           .map(({ ref, text }) => ({

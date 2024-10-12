@@ -111,6 +111,24 @@ export const ASTUtils = {
       identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
     }
 
+    if (node.type === AST_NODE_TYPES.ArrowFunctionExpression) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
+    }
+
+    if (node.type === AST_NODE_TYPES.FunctionExpression) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
+    }
+
+    if (node.type === AST_NODE_TYPES.BlockStatement) {
+      identifiers.push(
+        ...node.body.map((body) => ASTUtils.getNestedIdentifiers(body)).flat(),
+      )
+    }
+
+    if (node.type === AST_NODE_TYPES.ReturnStatement && node.argument) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
+    }
+
     return identifiers
   },
   isAncestorIsCallee(identifier: TSESTree.Node) {

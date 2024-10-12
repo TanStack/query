@@ -3,6 +3,7 @@ import {
   noop,
   replaceData,
   resolveEnabled,
+  skipToken,
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
@@ -162,7 +163,6 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  isFetchingOptimistic?: boolean
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -256,7 +256,14 @@ export class Query<
   }
 
   isDisabled(): boolean {
-    return this.getObserversCount() > 0 && !this.isActive()
+    if (this.getObserversCount() > 0) {
+      return !this.isActive()
+    }
+    // if a query has no observers, it should still be considered disabled if it never attempted a fetch
+    return (
+      this.options.queryFn === skipToken ||
+      this.state.dataUpdateCount + this.state.errorUpdateCount === 0
+    )
   }
 
   isStale(): boolean {
@@ -474,11 +481,8 @@ export class Query<
         )
       }
 
-      if (!this.isFetchingOptimistic) {
-        // Schedule query gc after fetching
-        this.scheduleGc()
-      }
-      this.isFetchingOptimistic = false
+      // Schedule query gc after fetching
+      this.scheduleGc()
     }
 
     // Try to fetch the data
@@ -514,11 +518,8 @@ export class Query<
           this as Query<any, any, any, any>,
         )
 
-        if (!this.isFetchingOptimistic) {
-          // Schedule query gc after fetching
-          this.scheduleGc()
-        }
-        this.isFetchingOptimistic = false
+        // Schedule query gc after fetching
+        this.scheduleGc()
       },
       onError,
       onFail: (failureCount, error) => {

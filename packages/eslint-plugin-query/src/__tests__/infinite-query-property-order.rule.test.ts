@@ -13,13 +13,19 @@ import {
   generateInterleavedCombinations,
   generatePartialCombinations,
   generatePermutations,
+  normalizeIndent,
 } from './test-utils'
 import type { InfiniteQueryFunctions } from '../rules/infinite-query-property-order/constants'
 
 const ruleTester = new RuleTester()
 
 type CheckedProperties = (typeof checkedProperties)[number]
-const orderIndependentProps = ['queryKey', '...foo'] as const
+const orderIndependentProps = [
+  'queryKey',
+  '...objectExpressionSpread',
+  '...callExpressionSpread',
+  '...memberCallExpressionSpread',
+] as const
 type OrderIndependentProps = (typeof orderIndependentProps)[number]
 
 interface TestCase {
@@ -84,7 +90,7 @@ export function generateInvalidPermutations(
             Math.abs(
               invalid.indexOf('getNextPageParam') -
                 invalid.indexOf('getPreviousPageParam'),
-            ) !== 1 && !invalid.includes('queryFn'),
+            ) !== 1,
         ),
     )
   }
@@ -122,6 +128,14 @@ const invalidTestMatrix = combinate({
   properties: interleavedInvalidPermutations,
 })
 
+const callExpressionSpread = normalizeIndent`
+        ...communitiesQuery({
+          filters: {
+            ...fieldValues,
+            placementFormats: [],
+          },
+        })`
+
 function getCode({
   infiniteQueryFunction: infiniteQueryFunction,
   properties,
@@ -129,10 +143,13 @@ function getCode({
   function getPropertyCode(
     property: CheckedProperties | OrderIndependentProps,
   ) {
-    if (property.startsWith('...')) {
-      return property
-    }
     switch (property) {
+      case '...objectExpressionSpread':
+        return `...objectExpressionSpread`
+      case '...callExpressionSpread':
+        return callExpressionSpread
+      case '...memberCallExpressionSpread':
+        return '...myOptions.infiniteQueryOptions()'
       case 'queryKey':
         return `queryKey: ['projects']`
       case 'queryFn':
@@ -142,8 +159,6 @@ function getCode({
       case 'getNextPageParam':
         return 'getNextPageParam: (lastPage) => lastPage.nextId ?? undefined'
     }
-
-    return `${property}: () => null`
   }
   return `
     import { ${infiniteQueryFunction} } from '@tanstack/react-query'
@@ -180,3 +195,28 @@ ruleTester.run(name, rule, {
   valid: validTestCases,
   invalid: invalidTestCases,
 })
+
+// regression tests
+
+const regressionTestCases = {
+  valid: [
+    {
+      name: 'should pass with call expression spread',
+      code: normalizeIndent`
+      import { useInfiniteQuery } from '@tanstack/react-query'
+      const { data, isFetching, isLoading, hasNextPage, fetchNextPage } =
+      useInfiniteQuery({
+        ...communitiesQuery({
+          filters: {
+            ...fieldValues,
+            placementFormats: [],
+          },
+        }),
+        refetchOnMount: false,
+      })`,
+    },
+  ],
+  invalid: [],
+}
+
+ruleTester.run(name, rule, regressionTestCases)
