@@ -598,10 +598,12 @@ export class QueryObserver<
 
     if (this.options.experimental_prefetchInRender) {
       const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
-        if (nextResult.status === 'error') {
-          thenable.reject(nextResult.error)
-        } else if (nextResult.data !== undefined) {
-          thenable.resolve(nextResult.data)
+        if (query.queryHash === prevQuery.queryHash) {
+          if (nextResult.status === 'error') {
+            thenable.reject(nextResult.error)
+          } else if (nextResult.data !== undefined) {
+            thenable.resolve(nextResult.data)
+          }
         }
       }
 

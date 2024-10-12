@@ -7467,7 +7467,6 @@ describe('useQuery', () => {
 
       await waitFor(() => rendered.getByText('test1'))
 
-      console.log('---------dec------------')
       fireEvent.click(rendered.getByText('dec'))
 
       await waitFor(() => rendered.getByText('test0'))
