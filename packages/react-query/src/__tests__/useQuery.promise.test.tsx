@@ -894,4 +894,74 @@ describe('useQuery().promise', () => {
 
     expect(renderedData).toEqual(['test0', 'test3'])
   })
+
+  it('should not resolve with intermediate data when keys are switched (with background updates)', async () => {
+    const key = queryKey()
+    const renderedData: Array<string> = []
+    let modifier = ''
+
+    function MyComponent(props: { promise: Promise<string> }) {
+      const data = React.use(props.promise)
+
+      renderedData.push(data)
+
+      return <>{data}</>
+    }
+
+    function Loading() {
+      return <>loading..</>
+    }
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const query = useQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          await sleep(10)
+          return 'test' + count + modifier
+        },
+      })
+
+      return (
+        <div>
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+          <button onClick={() => setCount(count + 1)}>inc</button>
+          <button onClick={() => setCount(count - 1)}>dec</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('loading..'))
+    await waitFor(() => rendered.getByText('test0'))
+
+    fireEvent.click(rendered.getByText('inc'))
+    await sleep(1)
+    fireEvent.click(rendered.getByText('inc'))
+    await sleep(7)
+    fireEvent.click(rendered.getByText('inc'))
+    await sleep(5)
+
+    await waitFor(() => rendered.getByText('loading..'))
+
+    await waitFor(() => rendered.getByText('test3'))
+
+    modifier = 'new'
+
+    fireEvent.click(rendered.getByText('dec'))
+    fireEvent.click(rendered.getByText('dec'))
+    fireEvent.click(rendered.getByText('dec'))
+
+    await waitFor(() => rendered.getByText('test0new'))
+
+    expect(renderedData).toEqual([
+      'test0', // fresh data
+      'test3', // fresh data
+      'test2', // stale data
+      'test1', // stale data
+      'test0', // stale data
+      'test0new', // fresh data, background refetch, only for latest
+    ])
+  })
 })
