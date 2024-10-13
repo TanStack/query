@@ -382,6 +382,46 @@ describe('useSuspenseQuery', () => {
     await waitFor(() => rendered.getByText('fetching: false'))
   })
 
+  it('should set staleTime when having passed a function', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Component() {
+      const result = useSuspenseQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(5)
+          count++
+          return count
+        },
+        staleTime: () => 60 * 1000,
+      })
+      return (
+        <div>
+          <span>data: {result.data}</span>
+        </div>
+      )
+    }
+
+    function Page() {
+      return (
+        <React.Suspense fallback="Loading...">
+          <Component />
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('data: 1'))
+
+    expect(
+      typeof queryClient.getQueryCache().find({ queryKey: key })?.observers[0]
+        ?.options.staleTime,
+    ).toBe('function')
+  })
+
   it('should suspend when switching to a new query', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
