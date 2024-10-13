@@ -416,10 +416,12 @@ describe('useSuspenseQuery', () => {
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('data: 1'))
 
-    expect(
-      typeof queryClient.getQueryCache().getAll()[0]?.observers[0]?.options
-        .staleTime,
-    ).toBe('function')
+    await waitFor(() =>
+      expect(
+        typeof queryClient.getQueryCache().getAll()[0]?.observers[0]?.options
+          .staleTime,
+      ).toBe('function'),
+    )
   })
 
   it('should suspend when switching to a new query', async () => {
