@@ -48,7 +48,7 @@ export type UnusedSkipTokenInfiniteOptions<
   >,
   'queryFn'
 > & {
-  queryFn: Exclude<
+  queryFn?: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
       TError,

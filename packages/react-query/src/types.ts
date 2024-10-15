@@ -50,7 +50,7 @@ export interface UseSuspenseQueryOptions<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
   > {
-  queryFn: Exclude<
+  queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
     SkipToken
   >
@@ -93,7 +93,7 @@ export interface UseSuspenseInfiniteQueryOptions<
     >,
     'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
   > {
-  queryFn: Exclude<
+  queryFn?: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
       TError,
