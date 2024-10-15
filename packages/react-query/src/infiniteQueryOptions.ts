@@ -57,7 +57,7 @@ export type UnusedSkipTokenInfiniteOptions<
       TQueryKey,
       TPageParam
     >['queryFn'],
-    SkipToken
+    SkipToken | undefined
   >
 }
 
