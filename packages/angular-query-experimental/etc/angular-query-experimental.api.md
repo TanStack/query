@@ -146,6 +146,19 @@ export function injectIsFetching(filters?: QueryFilters, injector?: Injector): S
 export function injectIsMutating(filters?: MutationFilters, injector?: Injector): Signal<number>;
 
 // @public
+export const injectIsRestoring: {
+    (): Signal<boolean>;
+    (injectOptions: InjectOptions & {
+        optional?: false;
+    } & {
+        injector?: Injector;
+    }): Signal<boolean>;
+    (injectOptions: InjectOptions & {
+        injector?: Injector;
+    }): Signal<boolean>;
+};
+
+// @public
 export function injectMutation<TData = unknown, TError = DefaultError, TVariables = void, TContext = unknown>(optionsFn: (client: QueryClient) => CreateMutationOptions<TData, TError, TVariables, TContext>, injector?: Injector): CreateMutationResult<TData, TError, TVariables, TContext>;
 
 // Warning: (ae-forgotten-export) The symbol "MutationStateOptions" needs to be exported by the entry point index.d.ts
@@ -192,6 +205,9 @@ export type NonUndefinedGuard<T> = T extends undefined ? never : T;
 
 // @public
 export function provideAngularQuery(queryClient: QueryClient): EnvironmentProviders;
+
+// @public
+export const provideIsRestoring: ((value: Signal<boolean> | (() => Signal<boolean>)) => Provider) & ((value: Signal<boolean> | (() => Signal<boolean>), isFunctionValue: boolean) => Provider);
 
 // @public
 export const provideQueryClient: ((value: QueryClient | (() => QueryClient)) => Provider) & ((value: QueryClient | (() => QueryClient)) => Provider);
