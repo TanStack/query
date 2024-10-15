@@ -31,7 +31,7 @@ export type UnusedSkipTokenOptions<
 > & {
   queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
-    SkipToken
+    SkipToken | undefined
   >
 }
 
