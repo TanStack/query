@@ -205,8 +205,6 @@ function ArticleLayout({ id }) {
   usePrefetchQuery({
     queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
-    // Optional optimization to avoid rerenders when this query changes:
-    notifyOnChangeProps: [],
   })
 
   return (
