@@ -63,9 +63,9 @@ Place the following code as high in your Svelte app as you can. The closer it is
   - If `relative`, the button is placed in the location that you render the devtools.
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
-  - The position of the Angular Query devtools panel
+  - The position of the Svelte Query devtools panel
 - `client?: QueryClient`,
-  - Use this to use a custom QueryClient. Otherwise, the QueryClient provided through provideAngularQuery() will be injected.
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 - `styleNonce?: string`
