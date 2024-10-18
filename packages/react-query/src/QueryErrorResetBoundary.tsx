@@ -2,11 +2,14 @@
 import * as React from 'react'
 
 // CONTEXT
+export type QueryErrorResetFunction = () => void
+export type QueryErrorIsResetFunction = () => boolean
+export type QueryErrorClearResetFunction = () => void
 
 export interface QueryErrorResetBoundaryValue {
-  clearReset: () => void
-  isReset: () => boolean
-  reset: () => void
+  clearReset: QueryErrorClearResetFunction
+  isReset: QueryErrorIsResetFunction
+  reset: QueryErrorResetFunction
 }
 
 function createValue(): QueryErrorResetBoundaryValue {
@@ -33,10 +36,12 @@ export const useQueryErrorResetBoundary = () =>
 
 // COMPONENT
 
+export type QueryErrorResetBoundaryFunction = (
+  value: QueryErrorResetBoundaryValue,
+) => React.ReactNode
+
 export interface QueryErrorResetBoundaryProps {
-  children:
-    | ((value: QueryErrorResetBoundaryValue) => React.ReactNode)
-    | React.ReactNode
+  children: QueryErrorResetBoundaryFunction | React.ReactNode
 }
 
 export const QueryErrorResetBoundary = ({
@@ -45,9 +50,7 @@ export const QueryErrorResetBoundary = ({
   const [value] = React.useState(() => createValue())
   return (
     <QueryErrorResetBoundaryContext.Provider value={value}>
-      {typeof children === 'function'
-        ? (children as Function)(value)
-        : children}
+      {typeof children === 'function' ? children(value) : children}
     </QueryErrorResetBoundaryContext.Provider>
   )
 }

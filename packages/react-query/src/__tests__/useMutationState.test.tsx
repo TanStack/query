@@ -59,7 +59,19 @@ describe('useIsMutating', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     await sleep(10)
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 2, 1, 0]))
+
+    // we don't really care if this yields
+    // [ +0, 1, 2, +0 ]
+    // or
+    // [ +0, 1, 2, 1, +0 ]
+    // our batching strategy might yield different results
+
+    await waitFor(() => expect(isMutatingArray[0]).toEqual(0))
+    await waitFor(() => expect(isMutatingArray[1]).toEqual(1))
+    await waitFor(() => expect(isMutatingArray[2]).toEqual(2))
+    await waitFor(() =>
+      expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0),
+    )
   })
 
   it('should filter correctly by mutationKey', async () => {
