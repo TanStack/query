@@ -8,6 +8,7 @@ export * from './types.js'
 export * from './context.js'
 
 export { createQuery } from './createQuery.js'
+export { createPrefetchQuery } from './createPrefetchQuery.js'
 export type { QueriesResults, QueriesOptions } from './createQueries.js'
 export type {
   DefinedInitialDataOptions,
@@ -16,6 +17,7 @@ export type {
 export { queryOptions } from './queryOptions.js'
 export { createQueries } from './createQueries.js'
 export { createInfiniteQuery } from './createInfiniteQuery.js'
+export { createPrefetchInfiniteQuery } from './createPrefetchInfiniteQuery.js'
 export { infiniteQueryOptions } from './infiniteQueryOptions.js'
 export { createMutation } from './createMutation.js'
 export { useMutationState } from './useMutationState.js'
