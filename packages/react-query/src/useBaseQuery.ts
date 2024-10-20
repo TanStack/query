@@ -70,7 +70,9 @@ export function useBaseQuery<
   useClearResetErrorBoundary(errorResetBoundary)
 
   // this needs to be invoked before creating the Observer because that can create a cache entry
-  const isNewCacheEntry = !client.getQueryState(options.queryKey)
+  const isNewCacheEntry = !client
+    .getQueryCache()
+    .get(defaultedOptions.queryHash)
 
   const [observer] = React.useState(
     () =>

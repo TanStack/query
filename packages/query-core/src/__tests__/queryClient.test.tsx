@@ -1409,6 +1409,46 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(2)
     })
 
+    test('should not refetch disabled inactive queries even if "refetchType" is "all', async () => {
+      const queryFn = vi
+        .fn<(...args: Array<unknown>) => string>()
+        .mockReturnValue('data1')
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: queryFn,
+        staleTime: Infinity,
+        enabled: false,
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+      unsubscribe()
+      await queryClient.invalidateQueries({
+        refetchType: 'all',
+      })
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
+
+    test('should not refetch inactive queries that have a skipToken queryFn even if "refetchType" is "all', async () => {
+      const key = queryKey()
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: skipToken,
+        staleTime: Infinity,
+      })
+
+      queryClient.setQueryData(key, 'data1')
+
+      const unsubscribe = observer.subscribe(() => undefined)
+      unsubscribe()
+
+      expect(queryClient.getQueryState(key)?.dataUpdateCount).toBe(1)
+
+      await queryClient.invalidateQueries({
+        refetchType: 'all',
+      })
+
+      expect(queryClient.getQueryState(key)?.dataUpdateCount).toBe(1)
+    })
+
     test('should cancel ongoing fetches if cancelRefetch option is set (default value)', async () => {
       const key = queryKey()
       const abortFn = vi.fn()

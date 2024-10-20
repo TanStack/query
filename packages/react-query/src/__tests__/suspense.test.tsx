@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, waitFor } from '@testing-library/react'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
@@ -380,6 +380,46 @@ describe('useSuspenseQuery', () => {
     await waitFor(() => rendered.getByText('fetching: true'))
     await waitFor(() => rendered.getByText('data: 2'))
     await waitFor(() => rendered.getByText('fetching: false'))
+  })
+
+  it('should set staleTime when having passed a function', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Component() {
+      const result = useSuspenseQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(5)
+          count++
+          return count
+        },
+        staleTime: () => 60 * 1000,
+      })
+      return (
+        <div>
+          <span>data: {result.data}</span>
+        </div>
+      )
+    }
+
+    function Page() {
+      return (
+        <React.Suspense fallback="Loading...">
+          <Component />
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('data: 1'))
+
+    expect(
+      typeof queryClient.getQueryCache().find({ queryKey: key })?.observers[0]
+        ?.options.staleTime,
+    ).toBe('function')
   })
 
   it('should suspend when switching to a new query', async () => {
@@ -1234,5 +1274,77 @@ describe('useSuspenseQueries', () => {
     await waitFor(() => rendered.getByText('There was an error!'))
     expect(count).toBe(1)
     consoleMock.mockRestore()
+  })
+
+  describe('gc (with fake timers)', () => {
+    beforeAll(() => {
+      vi.useFakeTimers()
+    })
+
+    afterAll(() => {
+      vi.useRealTimers()
+    })
+
+    it('should gc when unmounted while fetching with low gcTime (#8159)', async () => {
+      const key = queryKey()
+
+      function Page() {
+        return (
+          <React.Suspense fallback="loading">
+            <Component />
+          </React.Suspense>
+        )
+      }
+
+      function Component() {
+        const { data } = useSuspenseQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(3000)
+            return 'data'
+          },
+          gcTime: 1000,
+        })
+
+        return <div>{data}</div>
+      }
+
+      function Page2() {
+        return <div>page2</div>
+      }
+
+      function App() {
+        const [show, setShow] = React.useState(true)
+        return (
+          <div>
+            {show ? <Page /> : <Page2 />}
+            <button onClick={() => setShow(false)}>hide</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <App />)
+
+      await act(() => vi.advanceTimersByTimeAsync(200))
+
+      rendered.getByText('loading')
+
+      // unmount while still fetching
+      fireEvent.click(rendered.getByText('hide'))
+
+      await act(() => vi.advanceTimersByTimeAsync(800))
+
+      rendered.getByText('page2')
+
+      // wait for query to be resolved
+      await act(() => vi.advanceTimersByTimeAsync(2000))
+
+      expect(queryClient.getQueryData(key)).toBe('data')
+
+      // wait for gc
+      await act(() => vi.advanceTimersByTimeAsync(1000))
+
+      expect(queryClient.getQueryData(key)).toBe(undefined)
+    })
   })
 })

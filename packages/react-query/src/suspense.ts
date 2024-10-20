@@ -24,7 +24,7 @@ export const ensureSuspenseTimers = (
   if (defaultedOptions.suspense) {
     // Always set stale time when using suspense to prevent
     // fetching again when directly mounting after suspending
-    if (typeof defaultedOptions.staleTime !== 'number') {
+    if (defaultedOptions.staleTime === undefined) {
       defaultedOptions.staleTime = 1000
     }
     if (typeof defaultedOptions.gcTime === 'number') {
