@@ -2,6 +2,7 @@ import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectQueryClient } from './inject-query-client'
+import { injectIsRestoring } from './inject-is-restoring'
 import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
@@ -201,12 +202,16 @@ export function injectQueries<
   return assertInjector(injectQueries, injector, () => {
     const queryClient = injectQueryClient()
     const destroyRef = inject(DestroyRef)
+    const isRestoring =
+      injectIsRestoring({ injector, optional: true }) ?? computed(() => false)
 
     const defaultedQueries = computed(() => {
       return queries().map((opts) => {
         const defaultedOptions = queryClient.defaultQueryOptions(opts)
         // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = 'optimistic'
+        defaultedOptions._optimisticResults = isRestoring()
+          ? 'isRestoring'
+          : 'optimistic'
 
         return defaultedOptions as QueryObserverOptions
       })
@@ -235,8 +240,12 @@ export function injectQueries<
 
     const result = signal(getCombinedResult() as any)
 
-    const unsubscribe = observer.subscribe(notifyManager.batchCalls(result.set))
-    destroyRef.onDestroy(unsubscribe)
+    effect(() => {
+      const unsubscribe = isRestoring()
+        ? () => undefined
+        : observer.subscribe(notifyManager.batchCalls(result.set))
+      destroyRef.onDestroy(unsubscribe)
+    })
 
     return result
   })

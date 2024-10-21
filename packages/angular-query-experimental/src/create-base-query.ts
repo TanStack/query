@@ -14,6 +14,7 @@ import { signalProxy } from './signal-proxy'
 import { shouldThrowError } from './util'
 import { lazyInit } from './util/lazy-init/lazy-init'
 import { injectQueryClient } from './inject-query-client'
+import { injectIsRestoring } from './inject-is-restoring'
 import type {
   QueryClient,
   QueryKey,
@@ -48,6 +49,8 @@ export function createBaseQuery<
     const ngZone = injector.get(NgZone)
     const destroyRef = injector.get(DestroyRef)
     const queryClient = injectQueryClient({ injector })
+    const isRestoring =
+      injectIsRestoring({ injector, optional: true }) ?? computed(() => false)
 
     /**
      * Signal that has the default options from query client applied
@@ -60,7 +63,9 @@ export function createBaseQuery<
         optionsFn(queryClient),
       )
       const defaultedOptions = queryClient.defaultQueryOptions(options)
-      defaultedOptions._optimisticResults = 'optimistic'
+      defaultedOptions._optimisticResults = isRestoring()
+        ? 'isRestoring'
+        : 'optimistic'
       return defaultedOptions
     })
 
@@ -94,25 +99,36 @@ export function createBaseQuery<
     )
 
     // observer.trackResult is not used as this optimization is not needed for Angular
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls((state: QueryObserverResult<TData, TError>) => {
-        ngZone.run(() => {
-          if (
-            state.isError &&
-            !state.isFetching &&
-            // !isRestoring() && // todo: enable when client persistence is implemented
-            shouldThrowError(observer.options.throwOnError, [
-              state.error,
-              observer.getCurrentQuery(),
-            ])
-          ) {
-            throw state.error
-          }
-          resultSignal.set(state)
-        })
-      }),
+    effect(
+      () => {
+        const unsubscribe = isRestoring()
+          ? () => undefined
+          : observer.subscribe(
+              notifyManager.batchCalls(
+                (state: QueryObserverResult<TData, TError>) => {
+                  ngZone.run(() => {
+                    if (
+                      state.isError &&
+                      !state.isFetching &&
+                      shouldThrowError(observer.options.throwOnError, [
+                        state.error,
+                        observer.getCurrentQuery(),
+                      ])
+                    ) {
+                      throw state.error
+                    }
+                    untracked(() => resultSignal.set(state))
+                  })
+                },
+              ),
+            )
+
+        destroyRef.onDestroy(unsubscribe)
+      },
+      {
+        injector,
+      },
     )
-    destroyRef.onDestroy(unsubscribe)
 
     return signalProxy(resultSignal) as CreateBaseQueryResult<TData, TError>
   })
