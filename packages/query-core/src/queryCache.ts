@@ -197,7 +197,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       : queries
   }
 
-  notify(event: QueryCacheNotifyEvent) {
+  notify(event: QueryCacheNotifyEvent): void {
     notifyManager.batch(() => {
       this.listeners.forEach((listener) => {
         listener(event)
