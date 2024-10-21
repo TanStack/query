@@ -19,8 +19,8 @@ function useTodos(todoId) {
 
 ```js
 <script setup>
-  const props = defineProps([todoId])
-  const queryKey = ['todos', ()=> props.todoId]
-  const result = useQuery(queryKey, () => fetchTodoById(props.todoId))
+  const props = defineProps([todoId]) const queryKey = ['todos', ()=>
+  props.todoId] const result = useQuery(queryKey, () =>
+  fetchTodoById(props.todoId))
 </script>
 ```
