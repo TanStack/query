@@ -1,6 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '@tanstack/query-core'
-
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
