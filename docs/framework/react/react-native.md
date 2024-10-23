@@ -166,7 +166,6 @@ export function useQueryFocusAware(notifyOnChangeProps?: NotifyOnChangeProps) {
   )
 
   return () => focusedRef.current
-
 }
 ```
 
