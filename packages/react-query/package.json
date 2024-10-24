@@ -62,6 +62,7 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
+    "@tanstack/query-persist-client-core": "workspace:*",
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
     "@vitejs/plugin-react": "^4.3.1",
