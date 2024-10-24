@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
       - name: Start Nx Agents
@@ -50,7 +50,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ inputs.tag }}
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           directory: packages
         env:

@@ -15,8 +15,8 @@
     "match-sorter": "^6.3.4",
     "react": "19.0.0-rc-4c2e457c7c-20240522",
     "react-dom": "19.0.0-rc-4c2e457c7c-20240522",
-    "react-router": "^6.25.1",
-    "react-router-dom": "^6.25.1",
+    "react-router": "^6.27.0",
+    "react-router-dom": "^6.27.0",
     "rooks": "^7.14.1",
     "sort-by": "^1.2.0"
   },
@@ -24,8 +24,8 @@
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@types/sort-by": "^1.2.3",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
     "typescript": "5.3.3",
-    "vite": "^5.3.5"
+    "vite": "^5.4.10"
   }
 }

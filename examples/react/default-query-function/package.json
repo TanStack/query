@@ -14,8 +14,8 @@
     "react-dom": "19.0.0-rc-4c2e457c7c-20240522"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
     "typescript": "5.3.3",
-    "vite": "^5.3.5"
+    "vite": "^5.4.10"
   }
 }

@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
       - name: Start Nx Agents
@@ -29,7 +29,7 @@ jobs:
       - name: Setup Tools
         uses: tanstack/config/.github/setup@main
       - name: Get base and head commits for `nx affected`
-        uses: nrwl/nx-set-shas@v4.0.6
+        uses: nrwl/nx-set-shas@v4.1.1
         with:
           main-branch-name: main
       - name: Run Checks
@@ -38,7 +38,7 @@ jobs:
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           directory: packages
         env:
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
       - name: Setup Tools
