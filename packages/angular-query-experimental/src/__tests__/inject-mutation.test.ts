@@ -9,7 +9,7 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { QueryClient, injectMutation, provideAngularQuery } from '..'
+import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import {
   errorMutator,
   expectSignals,
@@ -28,7 +28,7 @@ describe('injectMutation', () => {
     queryClient = new QueryClient()
     vi.useFakeTimers()
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [provideTanStackQuery(queryClient)],
     })
   })
 

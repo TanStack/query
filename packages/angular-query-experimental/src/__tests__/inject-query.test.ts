@@ -10,7 +10,7 @@ import {
 } from '@angular/core'
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { describe, expect, vi } from 'vitest'
-import { QueryCache, QueryClient, injectQuery, provideAngularQuery } from '..'
+import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
 import {
   delayedFetcher,
   getSimpleFetcherWithReturnData,
@@ -28,7 +28,7 @@ describe('injectQuery', () => {
     queryCache = new QueryCache()
     queryClient = new QueryClient({ queryCache })
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [provideTanStackQuery(queryClient)],
     })
   })
 

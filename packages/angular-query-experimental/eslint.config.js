@@ -8,6 +8,14 @@ export default [
   pluginJsdoc.configs['flat/recommended-typescript'],
   {
     rules: {
+      'cspell/spellchecker': [
+        'warn',
+        {
+          cspell: {
+            ignoreRegExpList: ['\\ɵ.+'],
+          },
+        },
+      ],
       'jsdoc/require-hyphen-before-param-description': 1,
       'jsdoc/sort-tags': 1,
       'jsdoc/require-throws': 1,
@@ -18,6 +26,9 @@ export default [
           typed: false,
         },
       ],
+      // This JavaScript rule gives wrong errors for TypeScript enums
+      'no-shadow': 'off',
+      '@typescript-eslint/no-shadow': 'warn',
     },
   },
 ]

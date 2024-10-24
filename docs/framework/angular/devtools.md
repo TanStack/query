@@ -3,62 +3,65 @@ id: devtools
 title: Devtools
 ---
 
-## Install and Import the Devtools
+## Enable developer tools
 
-The devtools are a separate package that you need to install:
+The developer tools help you debug and inspect your queries and mutations. You can enable the developer tools by adding `withDeveloperTools` to `provideTanStackQuery`.
 
-```bash
-npm i @tanstack/angular-query-devtools-experimental
-```
-
-or
-
-```bash
-pnpm add @tanstack/angular-query-devtools-experimental
-```
-
-or
-
-```bash
-yarn add @tanstack/angular-query-devtools-experimental
-```
-
-or
-
-```bash
-bun add @tanstack/angular-query-devtools-experimental
-```
-
-You can import the devtools like this:
+By default, the developer tools are enabled when Angular [`isDevMode`](https://angular.dev/api/core/isDevMode) returns true. So you don't need to worry about excluding them during a production build. The tools are lazily loaded and not included in bundled code.
 
 ```ts
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
+import {
+  QueryClient,
+  provideTanStackQuery,
+  withDeveloperTools,
+} from '@tanstack/angular-query-experimental'
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideTanStackQuery(new QueryClient(), withDeveloperTools())],
+}
 ```
 
-## Floating Mode
+## Configuring if developer tools are loaded
 
-Floating Mode will mount the devtools as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
+As by default developer tools are only loaded in development mode you usually don't have to configure anything. However, if you need more control over when developer tools are loaded, you can use the `loadDeveloperTools` option. This is particularly useful if you want to load development tools based on environment configurations. For instance, you might have a test environment running in production mode but still require developer tools to be available.
 
-Place the following code as high in your Angular app as you can. The closer it is to the root of the page, the better it will work!
+When not setting the option or setting it to 'enabledInDevelopmentMode', the developer tools will be loaded when Angular is in development mode.
 
-```angular-ts
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
-import { Component } from '@angular/core';
+```ts
+provideTanStackQuery(new QueryClient(), withDeveloperTools())
 
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [AngularQueryDevtools],
-  template: `
-   <angular-query-devtools initialIsOpen />
-  `,
-})
+// which is equivalent to
+provideTanStackQuery(
+  new QueryClient(),
+  withDeveloperTools({ loadDeveloperTools: 'enabledInDevelopmentMode' }),
+)
+```
+
+When setting the option to 'enabled', the developer tools will be loaded in both development and production mode.
+
+```ts
+provideTanStackQuery(
+  new QueryClient(),
+  withDeveloperTools({ loadDeveloperTools: 'enabled' }),
+)
+```
+
+When setting the option to 'disabled', the developer tools will not be loaded.
+
+```ts
+provideTanStackQuery(
+  new QueryClient(),
+  withDeveloperTools({ loadDeveloperTools: 'disabled' }),
+)
 ```
 
 ### Options
 
-- `initialIsOpen: Boolean`
-  - Set this `true` if you want the dev tools to default to being open
+- `loadDeveloperTools?: 'enabled' | 'enabledInDevelopmentMode' | 'disabled'`
+  - Defaults to 'enabledInDevelopmentMode'
+  - Use this to control when the developer tools are loaded.
+- `initialIsOpen?: Boolean`
+  - Set this to `true` if you want the tools to default to being open
 - `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
   - Defaults to `bottom-right`
   - The position of the TanStack logo to open and close the devtools panel
@@ -67,8 +70,8 @@ import { Component } from '@angular/core';
   - Defaults to `bottom`
   - The position of the Angular Query devtools panel
 - `client?: QueryClient`,
-  - Use this to use a custom QueryClient. Otherwise, the QueryClient provided through provideAngularQuery() will be injected.
-- `errorTypes?: { name: string; initializer: (query: Query) => TError}`
+  - Use this to use a custom QueryClient. Otherwise, the QueryClient provided through `provideTanStackQuery` will be injected.
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 - `styleNonce?: string`
   - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.

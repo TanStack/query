@@ -5,7 +5,7 @@ import {
   QueryClient,
   injectIsFetching,
   injectQuery,
-  provideAngularQuery,
+  provideTanStackQuery,
 } from '..'
 import { delayedFetcher } from './test-utils'
 
@@ -16,7 +16,7 @@ describe('injectIsFetching', () => {
     queryClient = new QueryClient()
 
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [provideTanStackQuery(queryClient)],
     })
   })
 

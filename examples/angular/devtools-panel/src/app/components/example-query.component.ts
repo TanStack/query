@@ -13,11 +13,27 @@ interface Response {
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'simple-example',
+  selector: 'example-query',
   standalone: true,
-  templateUrl: './simple-example.component.html',
+  template: `
+    <div style="padding-bottom: 20px">
+      @if (query.isPending()) {
+        <div>Loading...</div>
+      }
+      @if (query.isError()) {
+        <div>An error has occurred: {{ query.error().message }}</div>
+      }
+      @if (query.data(); as data) {
+        <h1>{{ data.name }}</h1>
+        <p>{{ data.description }}</p>
+        <strong>👀 {{ data.subscribers_count }}</strong>
+        <strong>✨ {{ data.stargazers_count }}</strong>
+        <strong>🍴 {{ data.forks_count }}</strong>
+      }
+    </div>
+  `,
 })
-export class SimpleExampleComponent {
+export class ExampleQueryComponent {
   #http = inject(HttpClient)
 
   query = injectQuery(() => ({

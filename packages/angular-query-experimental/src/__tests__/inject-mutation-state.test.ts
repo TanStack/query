@@ -6,7 +6,7 @@ import {
   QueryClient,
   injectMutation,
   injectMutationState,
-  provideAngularQuery,
+  provideTanStackQuery,
 } from '..'
 import { setFixtureSignalInputs, successMutator } from './test-utils'
 
@@ -21,7 +21,7 @@ describe('injectMutationState', () => {
     queryClient = new QueryClient()
     vi.useFakeTimers()
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [provideTanStackQuery(queryClient)],
     })
   })
 
