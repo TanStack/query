@@ -1,0 +1,38 @@
+{
+  "name": "@tanstack/query-example-angular-persister",
+  "type": "module",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^17.3.12",
+    "@angular/compiler": "^17.3.12",
+    "@angular/core": "^17.3.12",
+    "@angular/forms": "^18.2.8",
+    "@angular/platform-browser": "^17.3.12",
+    "@angular/platform-browser-dynamic": "^17.3.12",
+    "@angular/router": "^17.3.12",
+    "@tanstack/angular-query-experimental": "^5.54.1",
+    "@tanstack/angular-query-persist-client-experimental": "^5.54.1",
+    "@tanstack/query-sync-storage-persister": "^5.54.1",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.3",
+    "zone.js": "^0.14.8"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.3.8",
+    "@angular/cli": "^17.3.8",
+    "@angular/compiler-cli": "^17.3.12",
+    "@tanstack/angular-query-devtools-experimental": "^5.54.1",
+    "typescript": "5.3.3"
+  },
+  "msw": {
+    "workerDirectory": [
+      "src"
+    ]
+  }
+}
