@@ -62,6 +62,7 @@
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
+    "@tanstack/query-devtools": "workspace:*",
     "tslib": "^2.6.3"
   },
   "devDependencies": {
@@ -77,6 +78,7 @@
     "typescript": "5.3.3"
   },
   "peerDependencies": {
+    "@angular/common": ">=16.0.0",
     "@angular/core": ">=16.0.0"
   }
 }

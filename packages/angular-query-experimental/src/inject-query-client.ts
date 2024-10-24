@@ -16,10 +16,12 @@ const tokens = createNoopInjectionToken<QueryClient>('QueryClientToken')
 export const injectQueryClient = tokens[0]
 
 /**
- * Usually {@link provideAngularQuery} is used once to set up TanStack Query and the
+ * Usually {@link provideTanStackQuery} is used once to set up TanStack Query and the
  * {@link https://tanstack.com/query/latest/docs/reference/QueryClient|QueryClient}
  * for the entire application. You can use `provideQueryClient` to provide a
  * different `QueryClient` instance for a part of the application.
  * @public
  */
 export const provideQueryClient = tokens[1]
+
+export const QUERY_CLIENT = tokens[2]

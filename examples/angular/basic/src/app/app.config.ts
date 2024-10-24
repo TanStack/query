@@ -1,13 +1,15 @@
 import { provideHttpClient, withFetch } from '@angular/common/http'
 import {
   QueryClient,
-  provideAngularQuery,
+  provideTanStackQuery,
+  withDeveloperTools,
 } from '@tanstack/angular-query-experimental'
 import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAngularQuery(
+    provideHttpClient(withFetch()),
+    provideTanStackQuery(
       new QueryClient({
         defaultOptions: {
           queries: {
@@ -15,7 +17,7 @@ export const appConfig: ApplicationConfig = {
           },
         },
       }),
+      withDeveloperTools(),
     ),
-    provideHttpClient(withFetch()),
   ],
 }
