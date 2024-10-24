@@ -36,7 +36,7 @@ function setupPersister(
 
   const queryFn = vi.fn()
 
-  const persisterFn = experimental_createPersister(persisterOptions)
+  const { persisterFn } = experimental_createPersister(persisterOptions)
 
   const query = new Query({
     cache: new QueryCache(),
@@ -202,7 +202,7 @@ describe('createPersister', () => {
       storageKey,
       JSON.stringify({
         buster: '',
-        state: { dataUpdatedAt },
+        state: { dataUpdatedAt, data: '' },
       }),
     )
 
@@ -231,7 +231,7 @@ describe('createPersister', () => {
       storageKey,
       JSON.stringify({
         buster: '',
-        state: { dataUpdatedAt: Date.now() },
+        state: { dataUpdatedAt: Date.now(), data: '' },
       }),
     )
 
@@ -325,7 +325,7 @@ describe('createPersister', () => {
       storageKey,
       JSON.stringify({
         buster: '',
-        state: { dataUpdatedAt: Date.now() },
+        state: { dataUpdatedAt: Date.now(), data: '' },
       }),
     )
 
