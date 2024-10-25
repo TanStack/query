@@ -1,11 +1,12 @@
 import {
   DestroyRef,
   ENVIRONMENT_INITIALIZER,
+  PLATFORM_ID,
   inject,
   makeEnvironmentProviders,
 } from '@angular/core'
 import { onlineManager } from '@tanstack/query-core'
-import { DOCUMENT } from '@angular/common'
+import { DOCUMENT, isPlatformBrowser } from '@angular/common'
 import { QUERY_CLIENT, provideQueryClient } from './inject-query-client'
 import { isDevMode } from './util/is-dev-mode/is-dev-mode'
 import type { QueryClient } from '@tanstack/query-core'
@@ -234,6 +235,7 @@ export function withDevtools(
         multi: true,
         useFactory: () => {
           return () => {
+            if (!isPlatformBrowser(inject(PLATFORM_ID))) return
             const doc = inject(DOCUMENT)
             const destroyRef = inject(DestroyRef)
             const el = doc.body.appendChild(document.createElement('div'))
