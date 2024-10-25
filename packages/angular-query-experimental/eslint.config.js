@@ -26,9 +26,6 @@ export default [
           typed: false,
         },
       ],
-      // This JavaScript rule gives wrong errors for TypeScript enums
-      'no-shadow': 'off',
-      '@typescript-eslint/no-shadow': 'warn',
     },
   },
 ]

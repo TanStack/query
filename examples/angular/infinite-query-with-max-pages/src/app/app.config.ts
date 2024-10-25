@@ -6,7 +6,7 @@ import {
 import {
   QueryClient,
   provideTanStackQuery,
-  withDeveloperTools,
+  withDevtools,
 } from '@tanstack/angular-query-experimental'
 import { projectsMockInterceptor } from './api/projects-mock.interceptor'
 import type { ApplicationConfig } from '@angular/core'
@@ -22,7 +22,7 @@ export const appConfig: ApplicationConfig = {
           },
         },
       }),
-      withDeveloperTools(),
+      withDevtools(),
     ),
   ],
 }

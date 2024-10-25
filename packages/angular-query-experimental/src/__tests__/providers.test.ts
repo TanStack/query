@@ -3,7 +3,7 @@ import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import { ENVIRONMENT_INITIALIZER } from '@angular/core'
 import { isDevMode } from '../util/is-dev-mode/is-dev-mode'
-import { provideTanStackQuery, withDeveloperTools } from '../providers'
+import { provideTanStackQuery, withDevtools } from '../providers'
 import type { DeveloperToolsOptions } from '../providers'
 import type { Mock } from 'vitest'
 
@@ -22,7 +22,7 @@ vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: mockTanstackQueryDevtools,
 }))
 
-describe('withDeveloperTools feature', () => {
+describe('withDevtools feature', () => {
   let isDevModeMock: Mock
 
   beforeEach(() => {
@@ -96,10 +96,10 @@ describe('withDeveloperTools feature', () => {
         provideTanStackQuery(
           new QueryClient(),
           loadingMode !== undefined
-            ? withDeveloperTools({
+            ? withDevtools({
                 loadingMode,
               } as DeveloperToolsOptions)
-            : withDeveloperTools(),
+            : withDevtools(),
         ),
       ]
 

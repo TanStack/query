@@ -51,19 +51,19 @@ import type {
  * export class AppModule {}
  * ```
  *
- * You can also enable optional developer tools by adding `withDeveloperTools`. By
+ * You can also enable optional developer tools by adding `withDevtools`. By
  * default the tools will then be loaded when your app is in development mode.
  * ```ts
  * import {
  *   provideTanStackQuery,
- *   withDeveloperTools
+ *   withDevtools
  *   QueryClient,
  * } from '@tanstack/angular-query-experimental'
  *
  * bootstrapApplication(AppComponent,
  *   {
  *     providers: [
- *       provideTanStackQuery(new QueryClient(), withDeveloperTools())
+ *       provideTanStackQuery(new QueryClient(), withDevtools())
  *     ]
  *   }
  * )
@@ -73,7 +73,7 @@ import type {
  * @returns A set of providers to set up TanStack Query.
  * @public
  * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
- * @see withDeveloperTools
+ * @see withDevtools
  */
 export function provideTanStackQuery(
   queryClient: QueryClient,
@@ -133,9 +133,9 @@ function queryFeature<TFeatureKind extends QueryFeatureKind>(
 
 /**
  * A type alias that represents a feature which enables developer tools.
- * The type is used to describe the return value of the `withDeveloperTools` function.
+ * The type is used to describe the return value of the `withDevtools` function.
  * @public
- * @see {@link withDeveloperTools}
+ * @see {@link withDevtools}
  */
 export type DeveloperToolsFeature = QueryFeature<'DeveloperTools'>
 
@@ -203,7 +203,7 @@ export interface DeveloperToolsOptions {
  * ```ts
  * export const appConfig: ApplicationConfig = {
  *   providers: [
- *     provideTanStackQuery(new QueryClient(), withDeveloperTools())
+ *     provideTanStackQuery(new QueryClient(), withDevtools())
  *   ]
  * }
  *
@@ -220,7 +220,7 @@ export interface DeveloperToolsOptions {
  * @see {@link provideTanStackQuery}
  * @see {@link DeveloperToolsOptions}
  */
-export function withDeveloperTools(
+export function withDevtools(
   options: DeveloperToolsOptions = {},
 ): DeveloperToolsFeature {
   let providers: Array<Provider> = []

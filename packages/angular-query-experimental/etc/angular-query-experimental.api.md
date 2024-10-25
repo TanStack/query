@@ -287,7 +287,7 @@ export type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = Default
 };
 
 // @public
-export function withDeveloperTools(options?: DeveloperToolsOptions): DeveloperToolsFeature;
+export function withDevtools(options?: DeveloperToolsOptions): DeveloperToolsFeature;
 
 
 export * from "@tanstack/query-core";
