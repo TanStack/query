@@ -128,7 +128,7 @@ export type DefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultEr
 export type DeveloperToolsFeature = QueryFeature<'DeveloperTools'>;
 
 // @public
-export interface DeveloperToolsOptions {
+export interface DevtoolsOptions {
     buttonPosition?: DevtoolsButtonPosition;
     client?: QueryClient;
     errorTypes?: Array<DevtoolsErrorType>;
@@ -287,7 +287,7 @@ export type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = Default
 };
 
 // @public
-export function withDevtools(options?: DeveloperToolsOptions): DeveloperToolsFeature;
+export function withDevtools(options?: DevtoolsOptions): DeveloperToolsFeature;
 
 
 export * from "@tanstack/query-core";

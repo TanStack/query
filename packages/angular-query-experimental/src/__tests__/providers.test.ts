@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing'
 import { ENVIRONMENT_INITIALIZER } from '@angular/core'
 import { isDevMode } from '../util/is-dev-mode/is-dev-mode'
 import { provideTanStackQuery, withDevtools } from '../providers'
-import type { DeveloperToolsOptions } from '../providers'
+import type { DevtoolsOptions } from '../providers'
 import type { Mock } from 'vitest'
 
 vi.mock('../util/is-dev-mode/is-dev-mode', () => ({
@@ -98,7 +98,7 @@ describe('withDevtools feature', () => {
           loadingMode !== undefined
             ? withDevtools({
                 loadingMode,
-              } as DeveloperToolsOptions)
+              } as DevtoolsOptions)
             : withDevtools(),
         ),
       ]

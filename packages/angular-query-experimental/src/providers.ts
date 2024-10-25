@@ -143,9 +143,9 @@ export type DeveloperToolsFeature = QueryFeature<'DeveloperTools'>
  * Options for configuring the TanStack Query devtools.
  * @public
  */
-export interface DeveloperToolsOptions {
+export interface DevtoolsOptions {
   /**
-   * Set this true if you want the dev tools to default to being open
+   * Set this true if you want the devtools to default to being open
    */
   initialIsOpen?: boolean
   /**
@@ -179,9 +179,9 @@ export interface DeveloperToolsOptions {
 
   /**
    * Whether the developer tools should load.
-   * - `auto`- (Default) Lazily loads dev tools when in development mode. Skips loading in production mode.
-   * - `always`- Always load the dev tools, regardless of the environment.
-   * - `never`- Never load the dev tools, regardless of the environment.
+   * - `auto`- (Default) Lazily loads devtools when in development mode. Skips loading in production mode.
+   * - `always`- Always load the devtools, regardless of the environment.
+   * - `never`- Never load the devtools, regardless of the environment.
    *
    * You can use `always` and `never` to override loading developer tools from an environment file.
    * For example, a test environment might run in production mode but you may want to load developer tools.
@@ -214,14 +214,14 @@ export interface DeveloperToolsOptions {
  * the tools inside your own developer tools.
  *
  * @param options - Set of configuration parameters to customize the developer tools, see
- *     `DeveloperToolsOptions` for additional information.
+ *     `DevtoolsOptions` for additional information.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  * @see {@link provideTanStackQuery}
- * @see {@link DeveloperToolsOptions}
+ * @see {@link DevtoolsOptions}
  */
 export function withDevtools(
-  options: DeveloperToolsOptions = {},
+  options: DevtoolsOptions = {},
 ): DeveloperToolsFeature {
   let providers: Array<Provider> = []
   if (
