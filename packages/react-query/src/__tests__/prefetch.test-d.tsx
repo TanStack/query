@@ -56,21 +56,21 @@ describe('useInfinitePrefetchQuery', () => {
   })
 
   it('should not allow refetchInterval, enabled or throwOnError options', () => {
-    usePrefetchQuery({
+    usePrefetchInfiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
       // @ts-expect-error TS2345
       refetchInterval: 1000,
     })
 
-    usePrefetchQuery({
+    usePrefetchInfiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
       // @ts-expect-error TS2345
       enabled: true,
     })
 
-    usePrefetchQuery({
+    usePrefetchInfiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
       // @ts-expect-error TS2345
