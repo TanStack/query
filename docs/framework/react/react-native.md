@@ -152,7 +152,7 @@ Enabled can also be set to a callback to support disabling queries on out of foc
 import React from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 
-export function useQueryFocusAware(notifyOnChangeProps?: NotifyOnChangeProps) {
+export function useQueryFocusAware() {
   const focusedRef = React.useRef(true)
 
   useFocusEffect(
