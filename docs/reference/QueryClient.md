@@ -321,15 +321,15 @@ queryClient.setQueriesData(filters, updater)
 
 The `invalidateQueries` method can be used to invalidate and refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, all matching queries are immediately marked as invalid and active queries are refetched in the background.
 
-- If you **do not want active queries to refetch**, and simply be marked as invalid, you can use the `refetchType: 'none'` option.
-- If you **want inactive queries to refetch** as well, use the `refetchType: 'all'` option
+- If you **do not want active queries to refetch**, and simply be marked as invalid, you can use the `type: 'none'` option.
+- If you **want inactive queries to refetch** as well, use the `type: 'all'` option
 
 ```tsx
 await queryClient.invalidateQueries(
   {
     queryKey: ['posts'],
     exact,
-    refetchType: 'active',
+    type: 'active',
   },
   { throwOnError, cancelRefetch },
 )
@@ -339,7 +339,7 @@ await queryClient.invalidateQueries(
 
 - `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters#query-filters)
   - `queryKey?: QueryKey`: [Query Keys](../../framework/react/guides/query-keys)
-  - `refetchType?: 'active' | 'inactive' | 'all' | 'none'`
+  - `type?: 'active' | 'inactive' | 'all' | 'none'`
     - Defaults to `'active'`
     - When set to `active`, only queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will be refetched in the background.
     - When set to `inactive`, only queries that match the refetch predicate and are NOT actively being rendered via `useQuery` and friends will be refetched in the background.
