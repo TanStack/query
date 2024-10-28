@@ -96,9 +96,12 @@ describe('withDevtools feature', () => {
         provideTanStackQuery(
           new QueryClient(),
           loadingMode !== undefined
-            ? withDevtools({
-                loadingMode,
-              } as DevtoolsOptions)
+            ? withDevtools(
+                () =>
+                  ({
+                    loadingMode,
+                  }) as DevtoolsOptions,
+              )
             : withDevtools(),
         ),
       ]

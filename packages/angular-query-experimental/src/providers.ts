@@ -1,20 +1,25 @@
 import {
   DestroyRef,
   ENVIRONMENT_INITIALIZER,
+  Injector,
   PLATFORM_ID,
+  computed,
+  effect,
   inject,
   makeEnvironmentProviders,
+  runInInjectionContext,
+  untracked,
 } from '@angular/core'
 import { onlineManager } from '@tanstack/query-core'
 import { DOCUMENT, isPlatformBrowser } from '@angular/common'
-import { QUERY_CLIENT, provideQueryClient } from './inject-query-client'
+import { injectQueryClient, provideQueryClient } from './inject-query-client'
 import { isDevMode } from './util/is-dev-mode/is-dev-mode'
 import type { QueryClient } from '@tanstack/query-core'
-import type { EnvironmentProviders, Provider } from '@angular/core'
+import type { EnvironmentProviders, Provider, Signal } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
-  DevtoolsPosition,
+  DevtoolsPosition, TanstackQueryDevtools,
 } from '@tanstack/query-devtools'
 
 /**
@@ -214,53 +219,130 @@ export interface DevtoolsOptions {
  * For example: loading and unloading on keyboard events, multiple independent instances during application lifetime, or rendering
  * the tools inside your own developer tools.
  *
- * @param options - Set of configuration parameters to customize the developer tools, see
  *     `DevtoolsOptions` for additional information.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  * @see {@link provideTanStackQuery}
  * @see {@link DevtoolsOptions}
+ * @param optionsFn
  */
 export function withDevtools(
-  options: DevtoolsOptions = {},
+  optionsFn?: () => DevtoolsOptions,
 ): DeveloperToolsFeature {
   let providers: Array<Provider> = []
-  if (
-    (isDevMode() && options.loadingMode !== 'never') ||
-    options.loadingMode === 'always'
-  ) {
+  if (!isDevMode() && !optionsFn) {
+    providers = []
+  } else {
+    // TODO: load this dynamically as much as possible
     providers = [
       {
         provide: ENVIRONMENT_INITIALIZER,
         multi: true,
         useFactory: () => {
-          return () => {
-            if (!isPlatformBrowser(inject(PLATFORM_ID))) return
-            const doc = inject(DOCUMENT)
-            const destroyRef = inject(DestroyRef)
+          if (!isPlatformBrowser(inject(PLATFORM_ID))) return () => {}
+          const injector = inject(Injector)
+          const options = computed(() => {
+            return runInInjectionContext(injector, () => {
+              return optionsFn?.() ?? {}
+            })
+          })
+
+          const shouldLoadToolsSignal = computed(() => {
+            return options().loadingMode === 'always'
+              ? true
+              : options().loadingMode === 'never'
+                ? false
+                : isDevMode()
+          })
+
+          const split = <TSignal, TKey extends keyof TSignal>(
+            signal: Signal<TSignal>,
+            key: TKey,
+          ): Signal<TSignal[TKey]> => {
+            return computed(() => signal()[key])
+          }
+
+          const clientSignal = split(options, 'client'),
+            positionSignal = split(options, 'position'),
+            errorTypesSignal = split(options, 'errorTypes'),
+            buttonPositionSignal = split(options, 'buttonPosition'),
+            initialIsOpenSignal = split(options, 'initialIsOpen')
+
+          const doc = inject(DOCUMENT)
+          const destroyRef = inject(DestroyRef)
+
+          const getAppliedQueryClient = () => {
+            const injectedClient = injectQueryClient({
+              optional: true,
+              injector,
+            })
+            const client = options().client ?? injectedClient
+            if (!client) {
+              throw new Error('No QueryClient found')
+            }
+            return client
+          }
+
+          let devtools: TanstackQueryDevtools | null = null
+
+          return () => effect(() => {
+            const shouldLoadTools = shouldLoadToolsSignal()
+            if (devtools && !shouldLoadTools) {
+              devtools.unmount()
+              devtools = null
+              return
+            } else if (!shouldLoadTools) {
+              return
+            }
+
             const el = doc.body.appendChild(document.createElement('div'))
             el.classList.add('tsqd-parent-container')
-            const client = inject(QUERY_CLIENT)
-            import('@tanstack/query-devtools').then((queryDevtools) => {
-              const devtools = new queryDevtools.TanstackQueryDevtools({
-                ...options,
-                client,
-                queryFlavor: 'Angular Query',
-                version: '5',
-                onlineManager,
-              })
-              // Unmount the devtools on application destroy
-              destroyRef.onDestroy(() => {
-                devtools.unmount()
-              })
-              devtools.mount(el)
-            })
-          }
+
+            import('@tanstack/query-devtools').then((queryDevtools) =>
+              runInInjectionContext(injector, () => {
+                const devtools = new queryDevtools.TanstackQueryDevtools({
+                  ...options(),
+                  client: getAppliedQueryClient(),
+                  queryFlavor: 'Angular Query',
+                  version: '5',
+                  onlineManager,
+                })
+
+                effect(() => {
+                  const value = clientSignal()
+                  value && untracked(() => devtools.setClient(value))
+                })
+
+                effect(() => {
+                  const value = positionSignal()
+                  value && untracked(() => devtools.setPosition(value))
+                })
+
+                effect(() => {
+                  const value = errorTypesSignal()
+                  value && untracked(() => devtools.setErrorTypes(value))
+                })
+
+                effect(() => {
+                  const value = buttonPositionSignal()
+                  value && untracked(() => devtools.setButtonPosition(value))
+                })
+
+                effect(() => {
+                  const value = initialIsOpenSignal()
+                  value && untracked(() => devtools.setInitialIsOpen(value))
+                })
+
+                devtools.mount(el)
+
+                // Unmount the devtools on application destroy
+                destroyRef.onDestroy(devtools.unmount)
+              }),
+            )
+          })
         },
       },
     ]
-  } else {
-    providers = []
   }
   return queryFeature('DeveloperTools', providers)
 }
