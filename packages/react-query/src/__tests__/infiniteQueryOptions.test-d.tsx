@@ -169,7 +169,7 @@ describe('infiniteQueryOptions', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: ['example'],
-      queryFn: async () => initialData,
+      queryFn: () => initialData,
       initialData: initialData
         ? () => ({ pages: [initialData], pageParams: [] })
         : undefined,
@@ -187,7 +187,7 @@ describe('infiniteQueryOptions', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: ['example'],
-      queryFn: async () => initialData,
+      queryFn: () => initialData,
       initialData: initialData
         ? { pages: [initialData], pageParams: [] }
         : undefined,
