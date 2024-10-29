@@ -33,23 +33,24 @@ import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 export function injectDevtoolsPanel(
   options: DevtoolsPanelOptions,
 ): DevtoolsPanelRef {
-  const isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
-  let devtools: TanstackQueryDevtoolsPanel | null = null
-
-  const destroy = () => {
-    devtools?.unmount()
-    devtools = null
-  }
-
-  if (!isBrowser)
-    return {
-      destroy,
-    }
-
   !options.injector && assertInInjectionContext(injectDevtoolsPanel)
   const injector = options.injector ?? inject(Injector)
 
   return runInInjectionContext(injector, () => {
+    let devtools: TanstackQueryDevtoolsPanel | null = null
+
+    const isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
+
+    const destroy = () => {
+      devtools?.unmount()
+      devtools = null
+    }
+
+    if (!isBrowser)
+      return {
+        destroy,
+      }
+
     const destroyRef = inject(DestroyRef)
 
     const onSignalChange = <T>(

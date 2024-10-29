@@ -220,11 +220,11 @@ export interface DevtoolsOptions {
  * the tools inside your own developer tools.
  *
  *     `DevtoolsOptions` for additional information.
+ * @param optionsFn - A function that returns `DevtoolsOptions`.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  * @see {@link provideTanStackQuery}
  * @see {@link DevtoolsOptions}
- * @param optionsFn
  */
 export function withDevtools(
   optionsFn?: () => DevtoolsOptions,
@@ -300,7 +300,7 @@ export function withDevtools(
 
             import('@tanstack/query-devtools').then((queryDevtools) =>
               runInInjectionContext(injector, () => {
-                const devtools = new queryDevtools.TanstackQueryDevtools({
+                devtools = new queryDevtools.TanstackQueryDevtools({
                   ...options(),
                   client: getAppliedQueryClient(),
                   queryFlavor: 'Angular Query',
@@ -310,27 +310,27 @@ export function withDevtools(
 
                 effect(() => {
                   const value = clientSignal()
-                  value && untracked(() => devtools.setClient(value))
+                  value && untracked(() => devtools?.setClient(value))
                 })
 
                 effect(() => {
                   const value = positionSignal()
-                  value && untracked(() => devtools.setPosition(value))
+                  value && untracked(() => devtools?.setPosition(value))
                 })
 
                 effect(() => {
                   const value = errorTypesSignal()
-                  value && untracked(() => devtools.setErrorTypes(value))
+                  value && untracked(() => devtools?.setErrorTypes(value))
                 })
 
                 effect(() => {
                   const value = buttonPositionSignal()
-                  value && untracked(() => devtools.setButtonPosition(value))
+                  value && untracked(() => devtools?.setButtonPosition(value))
                 })
 
                 effect(() => {
                   const value = initialIsOpenSignal()
-                  value && untracked(() => devtools.setInitialIsOpen(value))
+                  value && untracked(() => devtools?.setInitialIsOpen(value))
                 })
 
                 devtools.mount(el)
