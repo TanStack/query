@@ -48,58 +48,58 @@ describe('withDevtools feature', () => {
       expectedCalled: false,
     },
     {
-      description: `should provide developer tools in development mode when 'loadDeveloperTools' is set to 'enabledInDevelopmentMode'`,
+      description: `should provide developer tools in development mode when 'loadDeveloperTools' is set to 'auto'`,
       isDevModeValue: true,
-      loadingMode: 'auto',
+      loadDevtools: 'auto',
       expectedCalled: true,
     },
     {
-      description: `should not provide developer tools in production mode when 'loadDeveloperTools' is set to 'enabledInDevelopmentMode'`,
+      description: `should not provide developer tools in production mode when 'loadDeveloperTools' is set to 'auto'`,
       isDevModeValue: false,
-      loadingMode: 'auto',
+      loadDevtools: 'auto',
       expectedCalled: false,
     },
     {
       description:
-        "should provide developer tools in development mode when 'loadDeveloperTools' is set to 'enabled'",
+        "should provide developer tools in development mode when 'loadDevtools' is set to true",
       isDevModeValue: true,
-      loadingMode: 'always',
+      loadDevtools: true,
       expectedCalled: true,
     },
     {
       description:
-        "should provide developer tools in production mode when 'loadingMode' is set to 'always'",
+        "should provide developer tools in production mode when 'loadDevtools' is set to true",
       isDevModeValue: false,
-      loadingMode: 'always',
+      loadDevtools: true,
       expectedCalled: true,
     },
     {
       description:
-        "should not provide developer tools in development mode when 'loadingMode' is set to 'never'",
+        "should not provide developer tools in development mode when 'loadDevtools' is set to false",
       isDevModeValue: true,
-      loadingMode: 'never',
+      loadDevtools: false,
       expectedCalled: false,
     },
     {
       description:
-        "should not provide developer tools in production mode when 'loadingMode' is set to 'never'",
+        "should not provide developer tools in production mode when 'loadDevtools' is set to false",
       isDevModeValue: false,
-      loadingMode: 'never',
+      loadDevtools: false,
       expectedCalled: false,
     },
   ])(
     '$description',
-    async ({ isDevModeValue, loadingMode, expectedCalled }) => {
+    async ({ isDevModeValue, loadDevtools, expectedCalled }) => {
       isDevModeMock.mockReturnValue(isDevModeValue)
 
       const providers = [
         provideTanStackQuery(
           new QueryClient(),
-          loadingMode !== undefined
+          loadDevtools !== undefined
             ? withDevtools(
                 () =>
                   ({
-                    loadingMode,
+                    loadDevtools,
                   }) as DevtoolsOptions,
               )
             : withDevtools(),

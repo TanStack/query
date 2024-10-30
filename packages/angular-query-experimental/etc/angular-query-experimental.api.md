@@ -133,7 +133,7 @@ export interface DevtoolsOptions {
     client?: QueryClient;
     errorTypes?: Array<DevtoolsErrorType>;
     initialIsOpen?: boolean;
-    loadingMode?: 'auto' | 'always' | 'never';
+    loadDevtools?: 'auto' | boolean;
     position?: DevtoolsPosition;
     shadowDOMTarget?: ShadowRoot;
     styleNonce?: string;

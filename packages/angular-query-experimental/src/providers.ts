@@ -19,7 +19,8 @@ import type { EnvironmentProviders, Provider, Signal } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
-  DevtoolsPosition, TanstackQueryDevtools,
+  DevtoolsPosition,
+  TanstackQueryDevtools,
 } from '@tanstack/query-devtools'
 
 /**
@@ -118,7 +119,6 @@ export function provideAngularQuery(
 
 /**
  * Helper type to represent a Query feature.
- * @public
  */
 export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
   ɵkind: TFeatureKind
@@ -129,6 +129,7 @@ export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
  * Helper function to create an object that represents a Query feature.
  * @param kind -
  * @param providers -
+ * @returns A Query feature.
  */
 function queryFeature<TFeatureKind extends QueryFeatureKind>(
   kind: TFeatureKind,
@@ -186,13 +187,24 @@ export interface DevtoolsOptions {
   /**
    * Whether the developer tools should load.
    * - `auto`- (Default) Lazily loads devtools when in development mode. Skips loading in production mode.
-   * - `always`- Always load the devtools, regardless of the environment.
-   * - `never`- Never load the devtools, regardless of the environment.
+   * - `true`- Always load the devtools, regardless of the environment.
+   * - `false`- Never load the devtools, regardless of the environment.
    *
-   * You can use `always` and `never` to override loading developer tools from an environment file.
+   * You can use `true` and `false` to override loading developer tools from an environment file.
    * For example, a test environment might run in production mode but you may want to load developer tools.
+   *
+   * Additionally, you can use a signal in the callback to dynamically load the devtools based on a condition. For example,
+   * a signal created from a RxJS observable that listens for a keyboard shortcut.
+   *
+   * **Example**
+   * ```ts
+   *    withDevtools(() => ({
+   *      initialIsOpen: true,
+   *      loadDevtools: inject(ExampleService).loadDevtools()
+   *    }))
+   *  ```
    */
-  loadingMode?: 'auto' | 'always' | 'never'
+  loadDevtools?: 'auto' | boolean
 }
 
 /**
@@ -212,14 +224,11 @@ export interface DevtoolsOptions {
  *     provideTanStackQuery(new QueryClient(), withDevtools())
  *   ]
  * }
- *
  * ```
+ * If you need more control over when devtools are loaded, you can use the `loadDevtools` option. This is particularly useful if you want to load devtools based on environment configurations. For instance, you might have a test environment running in production mode but still require devtools to be available.
  *
- * If you need more programmatic control over the developer tools, consider `injectDevtoolsPanel`
- * For example: loading and unloading on keyboard events, multiple independent instances during application lifetime, or rendering
- * the tools inside your own developer tools.
+ * When not setting the option or setting it to 'auto', the devtools will be loaded when Angular is in development mode.
  *
- *     `DevtoolsOptions` for additional information.
  * @param optionsFn - A function that returns `DevtoolsOptions`.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
@@ -233,7 +242,6 @@ export function withDevtools(
   if (!isDevMode() && !optionsFn) {
     providers = []
   } else {
-    // TODO: load this dynamically as much as possible
     providers = [
       {
         provide: ENVIRONMENT_INITIALIZER,
@@ -248,11 +256,10 @@ export function withDevtools(
           })
 
           const shouldLoadToolsSignal = computed(() => {
-            return options().loadingMode === 'always'
-              ? true
-              : options().loadingMode === 'never'
-                ? false
-                : isDevMode()
+            const loadDevtools = options().loadDevtools
+            return typeof loadDevtools === 'boolean'
+              ? loadDevtools
+              : isDevMode()
           })
 
           const split = <TSignal, TKey extends keyof TSignal>(
@@ -285,61 +292,62 @@ export function withDevtools(
 
           let devtools: TanstackQueryDevtools | null = null
 
-          return () => effect(() => {
-            const shouldLoadTools = shouldLoadToolsSignal()
-            if (devtools && !shouldLoadTools) {
-              devtools.unmount()
-              devtools = null
-              return
-            } else if (!shouldLoadTools) {
-              return
-            }
+          return () =>
+            effect(() => {
+              const shouldLoadTools = shouldLoadToolsSignal()
+              if (devtools && !shouldLoadTools) {
+                devtools.unmount()
+                devtools = null
+                return
+              } else if (!shouldLoadTools) {
+                return
+              }
 
-            const el = doc.body.appendChild(document.createElement('div'))
-            el.classList.add('tsqd-parent-container')
+              const el = doc.body.appendChild(document.createElement('div'))
+              el.classList.add('tsqd-parent-container')
 
-            import('@tanstack/query-devtools').then((queryDevtools) =>
-              runInInjectionContext(injector, () => {
-                devtools = new queryDevtools.TanstackQueryDevtools({
-                  ...options(),
-                  client: getAppliedQueryClient(),
-                  queryFlavor: 'Angular Query',
-                  version: '5',
-                  onlineManager,
-                })
+              import('@tanstack/query-devtools').then((queryDevtools) =>
+                runInInjectionContext(injector, () => {
+                  devtools = new queryDevtools.TanstackQueryDevtools({
+                    ...options(),
+                    client: getAppliedQueryClient(),
+                    queryFlavor: 'Angular Query',
+                    version: '5',
+                    onlineManager,
+                  })
 
-                effect(() => {
-                  const value = clientSignal()
-                  value && untracked(() => devtools?.setClient(value))
-                })
+                  effect(() => {
+                    const value = clientSignal()
+                    value && untracked(() => devtools?.setClient(value))
+                  })
 
-                effect(() => {
-                  const value = positionSignal()
-                  value && untracked(() => devtools?.setPosition(value))
-                })
+                  effect(() => {
+                    const value = positionSignal()
+                    value && untracked(() => devtools?.setPosition(value))
+                  })
 
-                effect(() => {
-                  const value = errorTypesSignal()
-                  value && untracked(() => devtools?.setErrorTypes(value))
-                })
+                  effect(() => {
+                    const value = errorTypesSignal()
+                    value && untracked(() => devtools?.setErrorTypes(value))
+                  })
 
-                effect(() => {
-                  const value = buttonPositionSignal()
-                  value && untracked(() => devtools?.setButtonPosition(value))
-                })
+                  effect(() => {
+                    const value = buttonPositionSignal()
+                    value && untracked(() => devtools?.setButtonPosition(value))
+                  })
 
-                effect(() => {
-                  const value = initialIsOpenSignal()
-                  value && untracked(() => devtools?.setInitialIsOpen(value))
-                })
+                  effect(() => {
+                    const value = initialIsOpenSignal()
+                    value && untracked(() => devtools?.setInitialIsOpen(value))
+                  })
 
-                devtools.mount(el)
+                  devtools.mount(el)
 
-                // Unmount the devtools on application destroy
-                destroyRef.onDestroy(devtools.unmount)
-              }),
-            )
-          })
+                  // Unmount the devtools on application destroy
+                  destroyRef.onDestroy(devtools.unmount)
+                }),
+              )
+            })
         },
       },
     ]
