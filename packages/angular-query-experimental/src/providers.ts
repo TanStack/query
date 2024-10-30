@@ -227,8 +227,7 @@ export interface DevtoolsOptions {
  * ```
  * If you need more control over when devtools are loaded, you can use the `loadDevtools` option. This is particularly useful if you want to load devtools based on environment configurations. For instance, you might have a test environment running in production mode but still require devtools to be available.
  *
- * When not setting the option or setting it to 'auto', the devtools will be loaded when Angular is in development mode.
- *
+ * When not setting the option or setting it to 'auto', the devtools will be loaded when Angular runs in development mode.
  * @param optionsFn - A function that returns `DevtoolsOptions`.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
@@ -254,6 +253,9 @@ export function withDevtools(
               return optionsFn?.() ?? {}
             })
           })
+
+          let devtools: TanstackQueryDevtools | null = null
+          let el: HTMLElement | null = null
 
           const shouldLoadToolsSignal = computed(() => {
             const loadDevtools = options().loadDevtools
@@ -290,20 +292,23 @@ export function withDevtools(
             return client
           }
 
-          let devtools: TanstackQueryDevtools | null = null
+          const destroyDevtools = () => {
+            devtools?.unmount()
+            el?.remove()
+            devtools = null
+          }
 
           return () =>
             effect(() => {
               const shouldLoadTools = shouldLoadToolsSignal()
               if (devtools && !shouldLoadTools) {
-                devtools.unmount()
-                devtools = null
+                destroyDevtools()
                 return
               } else if (!shouldLoadTools) {
                 return
               }
 
-              const el = doc.body.appendChild(document.createElement('div'))
+              el = doc.body.appendChild(document.createElement('div'))
               el.classList.add('tsqd-parent-container')
 
               import('@tanstack/query-devtools').then((queryDevtools) =>
@@ -341,10 +346,10 @@ export function withDevtools(
                     value && untracked(() => devtools?.setInitialIsOpen(value))
                   })
 
-                  devtools.mount(el)
+                  el && devtools.mount(el)
 
                   // Unmount the devtools on application destroy
-                  destroyRef.onDestroy(devtools.unmount)
+                  destroyRef.onDestroy(destroyDevtools)
                 }),
               )
             })
