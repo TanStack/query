@@ -1057,6 +1057,10 @@
             {
               "label": "RxJS autocomplete",
               "to": "framework/angular/examples/rxjs"
+            },
+            {
+              "label": "Query options from a service",
+              "to": "framework/angular/examples/query-options-from-a-service"
             }
           ]
         }

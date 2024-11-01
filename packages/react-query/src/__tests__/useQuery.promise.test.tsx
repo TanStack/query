@@ -964,4 +964,64 @@ describe('useQuery().promise', () => {
       'test0new', // fresh data, background refetch, only for latest
     ])
   })
+
+  it('should not suspend indefinitely with multiple, nested observers)', async () => {
+    const key = queryKey()
+
+    function MyComponent({ input }: { input: string }) {
+      const query = useTheQuery(input)
+      const data = React.use(query.promise)
+
+      return <>{data}</>
+    }
+
+    function useTheQuery(input: string) {
+      return useQuery({
+        staleTime: Infinity,
+        queryKey: [key, input],
+        queryFn: async () => {
+          await sleep(1)
+          return input + ' response'
+        },
+      })
+    }
+
+    function Page() {
+      const [input, setInput] = React.useState('defaultInput')
+      useTheQuery(input)
+
+      return (
+        <div>
+          <button onClick={() => setInput('someInput')}>setInput</button>
+          <React.Suspense fallback="loading..">
+            <MyComponent input={input} />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('loading..'))
+    await waitFor(() => rendered.getByText('defaultInput response'))
+
+    expect(
+      queryClient.getQueryCache().find({ queryKey: [key, 'defaultInput'] })!
+        .observers.length,
+    ).toBe(2)
+
+    fireEvent.click(rendered.getByText('setInput'))
+
+    await waitFor(() => rendered.getByText('loading..'))
+    await waitFor(() => rendered.getByText('someInput response'))
+
+    expect(
+      queryClient.getQueryCache().find({ queryKey: [key, 'defaultInput'] })!
+        .observers.length,
+    ).toBe(0)
+
+    expect(
+      queryClient.getQueryCache().find({ queryKey: [key, 'someInput'] })!
+        .observers.length,
+    ).toBe(2)
+  })
 })

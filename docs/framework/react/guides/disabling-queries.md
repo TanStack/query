@@ -14,7 +14,7 @@ When `enabled` is `false`:
 - The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
 - `refetch` returned from `useQuery` can be used to manually trigger the query to fetch. However, it will not work with `skipToken`.
 
-> Typescript users may prefer to use [skipToken](#typesafe-disabling-of-queries-using-skiptoken) as an alternative to `enabled = false`.
+> TypeScript users may prefer to use [skipToken](#typesafe-disabling-of-queries-using-skiptoken) as an alternative to `enabled = false`.
 
 [//]: # 'Example'
 

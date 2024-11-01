@@ -150,10 +150,8 @@ export function useBaseQuery<
         client.getQueryCache().get(defaultedOptions.queryHash)?.promise
 
     promise?.catch(noop).finally(() => {
-      if (!observer.hasListeners()) {
-        // `.updateResult()` will trigger `.#currentThenable` to finalize
-        observer.updateResult()
-      }
+      // `.updateResult()` will trigger `.#currentThenable` to finalize
+      observer.updateResult()
     })
   }
 
