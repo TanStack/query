@@ -56,24 +56,30 @@ describe('useInfinitePrefetchQuery', () => {
   })
 
   it('should not allow refetchInterval, enabled or throwOnError options', () => {
-    usePrefetchQuery({
+    usePrefetchInfiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
-      // @ts-expect-error TS2345
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+      // @ts-expect-error TS2353
       refetchInterval: 1000,
     })
 
-    usePrefetchQuery({
+    usePrefetchInfiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
-      // @ts-expect-error TS2345
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+      // @ts-expect-error TS2353
       enabled: true,
     })
 
-    usePrefetchQuery({
+    usePrefetchInfiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
-      // @ts-expect-error TS2345
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+      // @ts-expect-error TS2353
       throwOnError: true,
     })
   })
