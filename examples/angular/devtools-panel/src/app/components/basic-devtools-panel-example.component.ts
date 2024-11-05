@@ -37,7 +37,7 @@ export default class BasicDevtoolsPanelExampleComponent {
     this.isOpen.update((prev) => !prev)
   }
 
-  devtools = injectDevtoolsPanel({
-    hostElement: this.divEl,
-  })
+  devtools = injectDevtoolsPanel(() => ({
+    hostElement: this.divEl(),
+  }))
 }

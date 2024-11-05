@@ -280,12 +280,12 @@ export function withDevtools(
           const doc = inject(DOCUMENT)
           const destroyRef = inject(DestroyRef)
 
-          const getAppliedQueryClient = () => {
+          const getResolvedQueryClient = () => {
             const injectedClient = injectQueryClient({
               optional: true,
               injector,
             })
-            const client = options().client ?? injectedClient
+            const client = clientSignal() ?? injectedClient
             if (!client) {
               throw new Error('No QueryClient found')
             }
@@ -315,7 +315,7 @@ export function withDevtools(
                 runInInjectionContext(injector, () => {
                   devtools = new queryDevtools.TanstackQueryDevtools({
                     ...options(),
-                    client: getAppliedQueryClient(),
+                    client: getResolvedQueryClient(),
                     queryFlavor: 'Angular Query',
                     version: '5',
                     onlineManager,

@@ -3,9 +3,9 @@ import {
   Injector,
   PLATFORM_ID,
   assertInInjectionContext,
+  computed,
   effect,
   inject,
-  isSignal,
   runInInjectionContext,
   untracked,
 } from '@angular/core'
@@ -16,7 +16,7 @@ import {
 } from '@tanstack/angular-query-experimental'
 import { isPlatformBrowser } from '@angular/common'
 import type { QueryClient } from '@tanstack/angular-query-experimental'
-import type { ElementRef, Signal } from '@angular/core'
+import type { ElementRef } from '@angular/core'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 
 /**
@@ -25,18 +25,23 @@ import type { DevtoolsErrorType } from '@tanstack/query-devtools'
  * Devtools panel allows programmatic control over the devtools, for example if you want to render
  * the devtools as part of your own devtools.
  *
- * Consider `withDeveloperTools` instead if you don't need this.
- * @param options - A set of options to setup the devtools panel
+ * Consider `withDevtools` instead if you don't need this.
+ * @param optionsFn - A function that returns devtools panel options.
+ * @param injector - The Angular injector to use.
  * @returns DevtoolsPanelRef
  * @see https://tanstack.com/query/v5/docs/framework/angular/devtools
  */
 export function injectDevtoolsPanel(
-  options: DevtoolsPanelOptions,
+  optionsFn: () => DevtoolsPanelOptions,
+  injector?: Injector,
 ): DevtoolsPanelRef {
-  !options.injector && assertInInjectionContext(injectDevtoolsPanel)
-  const injector = options.injector ?? inject(Injector)
+  !injector && assertInInjectionContext(injectDevtoolsPanel)
+  const currentInjector = injector ?? inject(Injector)
 
-  return runInInjectionContext(injector, () => {
+  return runInInjectionContext(currentInjector, () => {
+    const options = computed(
+      optionsFn,
+    )
     let devtools: TanstackQueryDevtoolsPanel | null = null
 
     const isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
@@ -53,83 +58,37 @@ export function injectDevtoolsPanel(
 
     const destroyRef = inject(DestroyRef)
 
-    const onSignalChange = <T>(
-      signal: Signal<T>,
-      callback: (value: NonNullable<T>) => void,
-    ) => {
-      const effectOnSecondChange = () => {
-        let isFirstRun = true
-
-        effect(() => {
-          const value = signal()
-
-          if (isFirstRun) {
-            isFirstRun = false
-            return
-          }
-
-          untracked(() => {
-            if (devtools && value) {
-              callback(value)
-            }
-          })
-        })
-      }
-      return effectOnSecondChange()
-    }
-
-    const getAppliedQueryClient = () => {
-      const injectedClient = injectQueryClient({
-        optional: true,
-        injector,
-      }) as QueryClient | null
-      const client = isSignal(options.client)
-        ? options.client()
-        : (options.client ?? injectedClient)
-      if (!client) {
-        throw new Error('No QueryClient found')
-      }
-      return client
-    }
-
-    const getErrorTypes = () => {
-      return isSignal(options.errorTypes)
-        ? options.errorTypes()
-        : (options.errorTypes ?? [])
-    }
-
-    if (isSignal(options.client)) {
-      onSignalChange(options.client, (value) => {
-        devtools!.setClient(value)
-      })
-    }
-
-    if (isSignal(options.errorTypes)) {
-      onSignalChange(options.errorTypes, (value) => {
-        devtools!.setErrorTypes(value)
-      })
-    }
-
     effect(() => {
-      if (!isSignal(options.hostElement)) return
-      const hostElement = options.hostElement()
+      const injectedClient = injectQueryClient({ optional: true, injector: currentInjector })
+      const {
+        client = injectedClient,
+        errorTypes = [],
+        styleNonce,
+        shadowDOMTarget,
+        onClose,
+        hostElement,
+      } = options()
 
       untracked(() => {
         if (!devtools && hostElement) {
           devtools = new TanstackQueryDevtoolsPanel({
-            client: getAppliedQueryClient(),
+            client,
             queryFlavor: 'Angular Query',
             version: '5',
             buttonPosition: 'bottom-left',
             position: 'bottom',
             initialIsOpen: true,
-            errorTypes: getErrorTypes(),
-            styleNonce: options.styleNonce,
-            shadowDOMTarget: options.shadowDOMTarget,
-            onClose: options.onClose,
+            errorTypes,
+            styleNonce,
+            shadowDOMTarget,
+            onClose,
             onlineManager,
           })
           devtools.mount(hostElement.nativeElement)
+        } else if (devtools && hostElement) {
+          devtools.setClient(client)
+          devtools.setErrorTypes(errorTypes)
+          onClose && devtools.setOnClose(onClose)
         } else if (devtools && !hostElement) {
           destroy()
         }
@@ -158,11 +117,11 @@ export interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient
    */
-  client?: QueryClient | Signal<QueryClient>
+  client?: QueryClient
   /**
    * Use this so you can define custom errors that can be shown in the devtools.
    */
-  errorTypes?: Array<DevtoolsErrorType> | Signal<Array<DevtoolsErrorType>>
+  errorTypes?: Array<DevtoolsErrorType>
   /**
    * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
    */
@@ -181,10 +140,5 @@ export interface DevtoolsPanelOptions {
    * Element where to render the devtools panel. When set to undefined or null, the devtools panel will not be created, or destroyed if existing.
    * If changed from undefined to a ElementRef, the devtools panel will be created.
    */
-  hostElement: ElementRef | Signal<ElementRef | undefined>
-
-  /**
-   * Custom injector to use for the devtools panel.
-   */
-  injector?: Injector
+  hostElement?: ElementRef
 }

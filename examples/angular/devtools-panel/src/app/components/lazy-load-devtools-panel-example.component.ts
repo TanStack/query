@@ -57,9 +57,8 @@ export default class LazyLoadDevtoolsPanelExampleComponent {
     const { injectDevtoolsPanel } = await import(
       '@tanstack/angular-query-devtools-experimental'
     )
-    this.devtools = injectDevtoolsPanel({
-      hostElement: this.divEl,
-      injector: this.injector,
-    })
+    this.devtools = injectDevtoolsPanel(() => ({
+      hostElement: this.divEl()
+    }), this.injector)
   }
 }
