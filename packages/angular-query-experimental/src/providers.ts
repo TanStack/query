@@ -8,14 +8,13 @@ import {
   inject,
   makeEnvironmentProviders,
   runInInjectionContext,
-  untracked,
 } from '@angular/core'
 import { onlineManager } from '@tanstack/query-core'
 import { DOCUMENT, isPlatformBrowser } from '@angular/common'
 import { injectQueryClient, provideQueryClient } from './inject-query-client'
 import { isDevMode } from './util/is-dev-mode/is-dev-mode'
 import type { QueryClient } from '@tanstack/query-core'
-import type { EnvironmentProviders, Provider, Signal } from '@angular/core'
+import type { EnvironmentProviders, Provider } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
@@ -248,11 +247,11 @@ export function withDevtools(
         useFactory: () => {
           if (!isPlatformBrowser(inject(PLATFORM_ID))) return () => {}
           const injector = inject(Injector)
-          const options = computed(() => {
-            return runInInjectionContext(injector, () => {
+          const options = computed(() =>
+            runInInjectionContext(injector, () => {
               return optionsFn?.() ?? {}
-            })
-          })
+            }),
+          )
 
           let devtools: TanstackQueryDevtools | null = null
           let el: HTMLElement | null = null
@@ -264,19 +263,6 @@ export function withDevtools(
               : isDevMode()
           })
 
-          const split = <TSignal, TKey extends keyof TSignal>(
-            signal: Signal<TSignal>,
-            key: TKey,
-          ): Signal<TSignal[TKey]> => {
-            return computed(() => signal()[key])
-          }
-
-          const clientSignal = split(options, 'client'),
-            positionSignal = split(options, 'position'),
-            errorTypesSignal = split(options, 'errorTypes'),
-            buttonPositionSignal = split(options, 'buttonPosition'),
-            initialIsOpenSignal = split(options, 'initialIsOpen')
-
           const doc = inject(DOCUMENT)
           const destroyRef = inject(DestroyRef)
 
@@ -285,7 +271,7 @@ export function withDevtools(
               optional: true,
               injector,
             })
-            const client = clientSignal() ?? injectedClient
+            const client = options().client ?? injectedClient
             if (!client) {
               throw new Error('No QueryClient found')
             }
@@ -304,6 +290,20 @@ export function withDevtools(
               if (devtools && !shouldLoadTools) {
                 destroyDevtools()
                 return
+              } else if (devtools && shouldLoadTools) {
+                const {
+                  client,
+                  position,
+                  errorTypes,
+                  buttonPosition,
+                  initialIsOpen,
+                } = options()
+                client && devtools.setClient(client)
+                position && devtools.setPosition(position)
+                errorTypes && devtools.setErrorTypes(errorTypes)
+                buttonPosition && devtools.setButtonPosition(buttonPosition)
+                initialIsOpen && devtools.setInitialIsOpen(initialIsOpen)
+                return
               } else if (!shouldLoadTools) {
                 return
               }
@@ -319,31 +319,6 @@ export function withDevtools(
                     queryFlavor: 'Angular Query',
                     version: '5',
                     onlineManager,
-                  })
-
-                  effect(() => {
-                    const value = clientSignal()
-                    value && untracked(() => devtools?.setClient(value))
-                  })
-
-                  effect(() => {
-                    const value = positionSignal()
-                    value && untracked(() => devtools?.setPosition(value))
-                  })
-
-                  effect(() => {
-                    const value = errorTypesSignal()
-                    value && untracked(() => devtools?.setErrorTypes(value))
-                  })
-
-                  effect(() => {
-                    const value = buttonPositionSignal()
-                    value && untracked(() => devtools?.setButtonPosition(value))
-                  })
-
-                  effect(() => {
-                    const value = initialIsOpenSignal()
-                    value && untracked(() => devtools?.setInitialIsOpen(value))
                   })
 
                   el && devtools.mount(el)
