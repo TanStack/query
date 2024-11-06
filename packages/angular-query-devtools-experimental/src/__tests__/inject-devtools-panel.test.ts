@@ -9,6 +9,7 @@ const mockDevtoolsPanelInstance = {
   unmount: vi.fn(),
   setClient: vi.fn(),
   setErrorTypes: vi.fn(),
+  setOnClose: vi.fn(),
 }
 
 const mocks = vi.hoisted(() => {
@@ -75,6 +76,92 @@ describe('injectDevtoolsPanel', () => {
     result.destroy()
 
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(1)
+  }))
+
+  it('should destroy TanstackQueryDevtoolsPanel when hostElement is removed', fakeAsync(() => {
+    const hostElement = signal<ElementRef>(mockElementRef)
+
+    TestBed.runInInjectionContext(() => {
+      return injectDevtoolsPanel(() => ({
+        hostElement: hostElement()
+      }))
+    })
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(0)
+
+    hostElement.set(null as unknown as ElementRef)
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(1)
+  }))
+
+  it('should update client', fakeAsync(() => {
+    const client = signal(new QueryClient())
+
+    TestBed.runInInjectionContext(() => {
+      return injectDevtoolsPanel(() => ({
+        hostElement: TestBed.inject(ElementRef),
+        client: client(),
+      }))
+    })
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsPanelInstance.setClient).toHaveBeenCalledTimes(0)
+
+    client.set(new QueryClient())
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsPanelInstance.setClient).toHaveBeenCalledTimes(1)
+  }))
+
+  it('should update error types', fakeAsync(() => {
+    const errorTypes = signal([])
+
+    TestBed.runInInjectionContext(() => {
+      return injectDevtoolsPanel(() => ({
+        hostElement: TestBed.inject(ElementRef),
+        errorTypes: errorTypes(),
+      }))
+    })
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(0)
+
+    errorTypes.set([])
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(1)
+  }))
+
+  it('should update onclose', fakeAsync(() => {
+    const functionA = () => {}
+    const functionB = () => {}
+
+    const onClose = signal(functionA)
+
+    TestBed.runInInjectionContext(() => {
+      return injectDevtoolsPanel(() => ({
+        hostElement: TestBed.inject(ElementRef),
+        onClose: onClose(),
+      }))
+    })
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(0)
+
+    onClose.set(functionB)
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(1)
   }))
 
 })
