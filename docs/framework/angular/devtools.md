@@ -55,8 +55,8 @@ provideTanStackQuery(
 )
 ```
 
-The `withDevtools` options are returned from a callback to support reactivity through signals. In the following example
-a signal is created from a RxJS observable that listens to a keyboard event. When the event is triggered, the devtools are lazily loaded.
+The `withDevtools` options are returned from a callback function to support reactivity through signals. In the following example
+a signal is created from a RxJS observable that listens for a keyboard shortcut. When the event is triggered, the devtools are lazily loaded.
 Using this technique allows you to support on-demand loading of the devtools even in production mode, without including the full tools in the bundled code.
 
 ```ts

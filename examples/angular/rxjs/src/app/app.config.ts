@@ -5,14 +5,18 @@ import {
 } from '@angular/common/http'
 import {
   QueryClient,
-  provideAngularQuery,
+  provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 import { autocompleteMockInterceptor } from './api/autocomplete-mock.interceptor'
 import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAngularQuery(
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([autocompleteMockInterceptor]),
+    ),
+    provideTanStackQuery(
       new QueryClient({
         defaultOptions: {
           queries: {
@@ -20,10 +24,6 @@ export const appConfig: ApplicationConfig = {
           },
         },
       }),
-    ),
-    provideHttpClient(
-      withFetch(),
-      withInterceptors([autocompleteMockInterceptor]),
     ),
   ],
 }
