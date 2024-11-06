@@ -53,7 +53,8 @@
   },
   "files": [
     "build",
-    "src"
+    "src",
+    "!src/__tests__"
   ],
   "devDependencies": {
     "@kobalte/core": "^0.13.4",

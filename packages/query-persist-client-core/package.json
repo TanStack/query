@@ -47,7 +47,8 @@
   "sideEffects": false,
   "files": [
     "build",
-    "src"
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*"

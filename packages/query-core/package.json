@@ -50,6 +50,7 @@
   "sideEffects": false,
   "files": [
     "build",
-    "src"
+    "src",
+    "!src/__tests__"
   ]
 }

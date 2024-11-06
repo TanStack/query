@@ -35,7 +35,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*",

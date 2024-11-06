@@ -53,7 +53,8 @@
   "sideEffects": false,
   "files": [
     "build",
-    "src"
+    "src",
+    "!src/__tests__"
   ],
   "nx": {
     "targets": {

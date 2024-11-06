@@ -53,6 +53,7 @@
   "files": [
     "build",
     "src",
+    "!src/__tests__",
     "!build/codemods/node_modules",
     "!build/codemods/vite.config.ts",
     "!build/codemods/**/__testfixtures__",
