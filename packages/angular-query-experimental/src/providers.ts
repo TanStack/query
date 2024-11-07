@@ -27,7 +27,7 @@ import type {
  *
  * Allows to configure a `QueryClient` and optional features such as developer tools.
  *
- * **Example - standalone**`
+ * **Example - standalone**
  *
  * ```ts
  * import {
