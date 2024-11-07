@@ -248,16 +248,14 @@ export function withDevtools(
           if (!isPlatformBrowser(inject(PLATFORM_ID))) return () => {}
           const injector = inject(Injector)
           const options = computed(() =>
-            runInInjectionContext(injector, () => {
-              return optionsFn?.() ?? {}
-            }),
+            runInInjectionContext(injector, () => optionsFn?.() ?? {}),
           )
 
           let devtools: TanstackQueryDevtools | null = null
           let el: HTMLElement | null = null
 
           const shouldLoadToolsSignal = computed(() => {
-            const loadDevtools = options().loadDevtools
+            const { loadDevtools } = options()
             return typeof loadDevtools === 'boolean'
               ? loadDevtools
               : isDevMode()
@@ -287,17 +285,18 @@ export function withDevtools(
           return () =>
             effect(() => {
               const shouldLoadTools = shouldLoadToolsSignal()
+              const {
+                client,
+                position,
+                errorTypes,
+                buttonPosition,
+                initialIsOpen,
+              } = options()
+
               if (devtools && !shouldLoadTools) {
                 destroyDevtools()
                 return
               } else if (devtools && shouldLoadTools) {
-                const {
-                  client,
-                  position,
-                  errorTypes,
-                  buttonPosition,
-                  initialIsOpen,
-                } = options()
                 client && devtools.setClient(client)
                 position && devtools.setPosition(position)
                 errorTypes && devtools.setErrorTypes(errorTypes)

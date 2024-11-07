@@ -1,11 +1,16 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
-import { ENVIRONMENT_INITIALIZER } from '@angular/core'
+import { ENVIRONMENT_INITIALIZER, signal } from '@angular/core'
 import { isDevMode } from '../util/is-dev-mode/is-dev-mode'
 import { provideTanStackQuery, withDevtools } from '../providers'
 import type { DevtoolsOptions } from '../providers'
 import type { Mock } from 'vitest'
+import type {
+  DevtoolsButtonPosition,
+  DevtoolsErrorType,
+  DevtoolsPosition,
+} from '@tanstack/query-devtools'
 
 vi.mock('../util/is-dev-mode/is-dev-mode', () => ({
   isDevMode: vi.fn(),
@@ -14,6 +19,11 @@ vi.mock('../util/is-dev-mode/is-dev-mode', () => ({
 const mockDevtoolsInstance = {
   mount: vi.fn(),
   unmount: vi.fn(),
+  setClient: vi.fn(),
+  setPosition: vi.fn(),
+  setErrorTypes: vi.fn(),
+  setButtonPosition: vi.fn(),
+  setInitialIsOpen: vi.fn(),
 }
 
 const mockTanstackQueryDevtools = vi.fn(() => mockDevtoolsInstance)
@@ -120,4 +130,183 @@ describe('withDevtools feature', () => {
       }
     },
   )
+
+  it('should update error types', async () => {
+    const errorTypes = signal([] as Array<DevtoolsErrorType>)
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            errorTypes: errorTypes(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledTimes(0)
+
+    errorTypes.set([
+      {
+        name: '',
+        initializer: () => new Error(),
+      },
+    ])
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledTimes(1)
+  })
+
+  it('should update client', async () => {
+    const client = signal(new QueryClient())
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            client: client(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setClient).toHaveBeenCalledTimes(0)
+
+    client.set(new QueryClient())
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setClient).toHaveBeenCalledTimes(1)
+  })
+
+  it('should update position', async () => {
+    const position = signal<DevtoolsPosition>('top')
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            position: position(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledTimes(0)
+
+    position.set('left')
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledTimes(1)
+  })
+
+  it('should update button position', async () => {
+    const buttonPosition = signal<DevtoolsButtonPosition>('bottom-left')
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            buttonPosition: buttonPosition(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledTimes(0)
+
+    buttonPosition.set('bottom-right')
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledTimes(1)
+  })
+
+  it('should update initialIsOpen', async () => {
+    const initialIsOpen = signal(false)
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+            initialIsOpen: initialIsOpen(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(0)
+
+    initialIsOpen.set(true)
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(1)
+  })
+
+  it('should destroy devtools', async () => {
+    const loadDevtools = signal(true)
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: loadDevtools(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)
+
+    loadDevtools.set(false)
+
+    TestBed.flushEffects()
+
+    expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(1)
+  })
 })
