@@ -39,9 +39,7 @@ export function injectDevtoolsPanel(
   const currentInjector = injector ?? inject(Injector)
 
   return runInInjectionContext(currentInjector, () => {
-    const options = computed(
-      optionsFn,
-    )
+    const options = computed(optionsFn)
     let devtools: TanstackQueryDevtoolsPanel | null = null
 
     const isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
@@ -59,7 +57,10 @@ export function injectDevtoolsPanel(
     const destroyRef = inject(DestroyRef)
 
     effect(() => {
-      const injectedClient = injectQueryClient({ optional: true, injector: currentInjector })
+      const injectedClient = injectQueryClient({
+        optional: true,
+        injector: currentInjector,
+      })
       const {
         client = injectedClient,
         errorTypes = [],

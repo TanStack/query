@@ -218,9 +218,11 @@ export interface DevtoolsOptions {
  *   ]
  * }
  * ```
+ * By default the devtools will be loaded when Angular runs in development mode and rendered in `<body>`.
+ *
  * If you need more control over when devtools are loaded, you can use the `loadDevtools` option. This is particularly useful if you want to load devtools based on environment configurations. For instance, you might have a test environment running in production mode but still require devtools to be available.
  *
- * When not setting the option or setting it to 'auto', the devtools will be loaded when Angular runs in development mode.
+ * If you need more control over where devtools are rendered, consider `injectDevtoolsPanel`. This allows rendering devtools inside your own devtools for example.
  * @param optionsFn - A function that returns `DevtoolsOptions`.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public

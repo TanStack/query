@@ -1,6 +1,9 @@
 import { ElementRef, signal } from '@angular/core'
 import { TestBed, fakeAsync } from '@angular/core/testing'
-import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query-experimental'
+import {
+  QueryClient,
+  provideTanStackQuery,
+} from '@tanstack/angular-query-experimental'
 import { beforeEach, describe, expect, vi } from 'vitest'
 import { injectDevtoolsPanel } from '../inject-devtools-panel'
 
@@ -14,7 +17,7 @@ const mockDevtoolsPanelInstance = {
 
 const mocks = vi.hoisted(() => {
   return {
-    mockTanstackQueryDevtoolsPanel: vi.fn(() => mockDevtoolsPanelInstance)
+    mockTanstackQueryDevtoolsPanel: vi.fn(() => mockDevtoolsPanelInstance),
   }
 })
 
@@ -30,7 +33,8 @@ describe('injectDevtoolsPanel', () => {
     queryClient = new QueryClient()
     mockElementRef = new ElementRef(document.createElement('div'))
     TestBed.configureTestingModule({
-      providers: [provideTanStackQuery(queryClient),
+      providers: [
+        provideTanStackQuery(queryClient),
         { provide: ElementRef, useValue: signal(mockElementRef) },
       ],
     })
@@ -61,7 +65,7 @@ describe('injectDevtoolsPanel', () => {
 
     TestBed.flushEffects()
 
-    expect (mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
+    expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
   }))
 
   it('should destroy TanstackQueryDevtoolsPanel', fakeAsync(() => {
@@ -83,7 +87,7 @@ describe('injectDevtoolsPanel', () => {
 
     TestBed.runInInjectionContext(() => {
       return injectDevtoolsPanel(() => ({
-        hostElement: hostElement()
+        hostElement: hostElement(),
       }))
     })
 
@@ -163,5 +167,4 @@ describe('injectDevtoolsPanel', () => {
 
     expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(1)
   }))
-
 })
