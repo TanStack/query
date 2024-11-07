@@ -207,12 +207,6 @@ export interface DevtoolsOptions {
 }
 
 /**
- * Adds developer tools.
- * @param options
- * @see `provideTanStackQuery`
- */
-
-/**
  * Enables developer tools.
  *
  * **Example**
