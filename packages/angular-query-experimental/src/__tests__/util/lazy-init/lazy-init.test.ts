@@ -44,8 +44,6 @@ describe('lazyInit', () => {
       })
 
       lazySignal.data()
-
-      console.log(lazySignal)
     })
 
     expect(mockFn).toHaveBeenCalled()

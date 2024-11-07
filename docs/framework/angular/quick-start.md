@@ -14,12 +14,12 @@ If you're looking for a fully functioning example, please have a look at our [ba
 ```ts
 import { provideHttpClient } from '@angular/common/http'
 import {
-  provideAngularQuery,
+  provideTanStackQuery,
   QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 bootstrapApplication(AppComponent, {
-  providers: [provideHttpClient(), provideAngularQuery(new QueryClient())],
+  providers: [provideHttpClient(), provideTanStackQuery(new QueryClient())],
 })
 ```
 
@@ -28,14 +28,14 @@ or in a NgModule-based app
 ```ts
 import { provideHttpClient } from '@angular/common/http'
 import {
-  provideAngularQuery,
+  provideTanStackQuery,
   QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule],
-  providers: [provideAngularQuery(new QueryClient())],
+  providers: [provideTanStackQuery(new QueryClient())],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
