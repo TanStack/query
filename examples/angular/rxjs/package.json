@@ -16,7 +16,7 @@
     "@angular/forms": "17.3.12",
     "@angular/platform-browser": "^17.3.12",
     "@angular/platform-browser-dynamic": "^17.3.12",
-    "@tanstack/angular-query-experimental": "^5.59.13",
+    "@tanstack/angular-query-experimental": "^5.60.0",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.3",
     "zone.js": "^0.14.8"
@@ -25,7 +25,7 @@
     "@angular-devkit/build-angular": "^17.3.8",
     "@angular/cli": "^17.3.8",
     "@angular/compiler-cli": "^17.3.12",
-    "@tanstack/angular-query-devtools-experimental": "^5.59.13",
+    "@tanstack/angular-query-devtools-experimental": "^5.60.0",
     "typescript": "5.3.3"
   }
 }

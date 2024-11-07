@@ -166,11 +166,21 @@ export function useQueryFocusAware(notifyOnChangeProps?: NotifyOnChangeProps) {
   )
 
   return () => focusedRef.current
+}
+```
 
-  useQuery({
+Example usage:
+
+```tsx
+function MyComponent() {
+  const isFocused = useQueryFocusAware()
+
+  const { dataUpdatedAt } = useQuery({
     queryKey: ['key'],
     queryFn: () => fetch(...),
-    enabled: () => focusedRef.current,
+    enabled: isFocused,
   })
+
+  return <Text>DataUpdatedAt: {dataUpdatedAt}</Text>
 }
 ```

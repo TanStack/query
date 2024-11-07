@@ -1,0 +1,19 @@
+<div>
+  <div>
+    <a routerLink="/" href="#">Back</a>
+  </div>
+  @if (postQuery.isPending()) {
+    Loading...
+  } @else if (postQuery.isError()) {
+    Error: {{ postQuery.error().message }}
+  }
+  @if (postQuery.data(); as post) {
+    <h1>{{ post.title }}</h1>
+    <div>
+      <p>{{ post.body }}</p>
+    </div>
+    @if (postQuery.isFetching()) {
+      Background Updating...
+    }
+  }
+</div>
