@@ -64,7 +64,7 @@ function getQueryClient() {
   }
 }
 
-export default function Providers({ children }) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial
@@ -78,10 +78,10 @@ export default function Providers({ children }) {
 ```
 
 ```tsx
-// In Next.js, this file would be called: app/layout.jsx
+// In Next.js, this file would be called: app/layout.tsx
 import Providers from './providers'
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head />
@@ -100,7 +100,7 @@ This part is pretty similar to what we did in the SSR guide, we just need to spl
 Let's next look at how to actually prefetch data and dehydrate and hydrate it. This is what it looked like using the **Next.js pages router**:
 
 ```tsx
-// pages/posts.jsx
+// pages/posts.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -157,7 +157,7 @@ export default function PostsRoute({ dehydratedState }) {
 Converting this to the app router actually looks pretty similar, we just need to move things around a bit. First, we'll create a Server Component to do the prefetching part:
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -186,7 +186,7 @@ export default async function PostsPage() {
 Next, we'll look at what the Client Component part looks like:
 
 ```tsx
-// app/posts/posts.jsx
+// app/posts/posts.tsx
 'use client'
 
 export default function Posts() {
@@ -221,7 +221,7 @@ In the SSR guide, we noted that you could get rid of the boilerplate of having `
 A nice thing about Server Components is that they can be nested and exist on many levels in the React tree, making it possible to prefetch data closer to where it's actually used instead of only at the top of the application (just like Remix loaders). This can be as simple as a Server Component rendering another Server Component (we'll leave the Client Components out in this example for brevity):
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -246,7 +246,7 @@ export default async function PostsPage() {
   )
 }
 
-// app/posts/comments-server.jsx
+// app/posts/comments-server.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -290,7 +290,7 @@ As more frameworks start supporting Server Components, they might have other rou
 In the example above, we create a new `queryClient` for each Server Component that fetches data. This is the recommended approach, but if you want to, you can alternatively create a single one that is reused across all Server Components:
 
 ```tsx
-// app/getQueryClient.jsx
+// app/getQueryClient.tsx
 import { QueryClient } from '@tanstack/react-query'
 import { cache } from 'react'
 
@@ -310,7 +310,7 @@ Next.js already dedupes requests that utilize `fetch()`, but if you are using so
 With Server Components, it's important to think about data ownership and revalidation. To explain why, let's look at a modified example from above:
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -367,7 +367,7 @@ As of React Query v5.40.0, you don't have to `await` all prefetches for this to 
 
 To make this work, we have to instruct the `queryClient` to also `dehydrate` pending Queries. We can do this globally, or by passing that option directly to `dehydrate`.
 
-We will also need to move the `getQueryClient()` function out of our `app/providers.jsx` file as we want to use it in our server component and our client provider.
+We will also need to move the `getQueryClient()` function out of our `app/providers.tsx` file as we want to use it in our server component and our client provider.
 
 ```tsx
 // app/get-query-client.ts
@@ -415,7 +415,7 @@ export function getQueryClient() {
 Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `await` prefetches anymore:
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from './get-query-client'
 import Posts from './posts'
