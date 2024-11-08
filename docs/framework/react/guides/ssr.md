@@ -214,7 +214,7 @@ export default function MyApp({ Component, pageProps }) {
 In each route:
 
 ```tsx
-// pages/posts.jsx
+// pages/posts.tsx
 import {
   dehydrate,
   HydrationBoundary,
