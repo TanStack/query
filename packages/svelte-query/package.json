@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query",
-  "version": "5.59.16",
+  "version": "5.59.20",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -38,7 +38,8 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "src"
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*"

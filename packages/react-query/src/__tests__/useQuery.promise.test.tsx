@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { keepPreviousData, useQuery } from '..'
+import { QueryErrorResetBoundary, keepPreviousData, useQuery } from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
@@ -433,22 +433,27 @@ describe('useQuery().promise', () => {
 
     const rendered = renderWithClient(
       queryClient,
-      <ErrorBoundary
-        fallbackRender={(props) => (
-          <>
-            error boundary{' '}
-            <button
-              onClick={() => {
-                props.resetErrorBoundary()
-              }}
-            >
-              resetErrorBoundary
-            </button>
-          </>
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ resetErrorBoundary }) => (
+              <div>
+                <div>error boundary</div>
+                <button
+                  onClick={() => {
+                    resetErrorBoundary()
+                  }}
+                >
+                  resetErrorBoundary
+                </button>
+              </div>
+            )}
+          >
+            <Page />
+          </ErrorBoundary>
         )}
-      >
-        <Page />
-      </ErrorBoundary>,
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('loading..'))
@@ -462,6 +467,48 @@ describe('useQuery().promise', () => {
     await waitFor(() => rendered.getByText('data'))
 
     expect(queryCount).toBe(2)
+  })
+
+  it('should throw error if the promise fails (colocate suspense and promise)', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const key = queryKey()
+
+    function MyComponent() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(1)
+          throw new Error('Error test')
+        },
+        retry: false,
+      })
+      const data = React.use(query.promise)
+
+      return <>{data}</>
+    }
+
+    function Page() {
+      return (
+        <React.Suspense fallback="loading..">
+          <MyComponent />
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await waitFor(() => rendered.getByText('loading..'))
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
   })
 
   it('should recreate promise with data changes', async () => {
