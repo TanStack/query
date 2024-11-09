@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { usePrefetchInfiniteQuery } from '..'
 
-describe('useInfinitePrefetchQuery', () => {
+describe('usePrefetchInfiniteQuery', () => {
   it('should return nothing', () => {
     const result = usePrefetchInfiniteQuery({
       queryKey: ['key'],
