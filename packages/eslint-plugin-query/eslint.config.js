@@ -14,6 +14,12 @@ export default [
           assertFunctionNames: ['expect', 'expectArrayEqualIgnoreOrder'],
         },
       ],
+      'cspell/spell-checker': [
+        'warn',
+        {
+          ignoreWords: ['combinate'],
+        },
+      ],
     },
   },
 ]
