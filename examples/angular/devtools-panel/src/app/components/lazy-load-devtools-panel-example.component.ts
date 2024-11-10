@@ -2,9 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   Injector,
-  effect,
+  computed,
   inject,
-  signal,
   viewChild,
 } from '@angular/core'
 import { ExampleQueryComponent } from './example-query.component'
@@ -20,48 +19,35 @@ import type { DevtoolsPanelRef } from '@tanstack/angular-query-devtools-experime
     <h1>Lazy load devtools panel example</h1>
     <p>
       In this example, the devtools panel is loaded programmatically when the
-      button is clicked. In addition, the code is lazy loaded
+      button is clicked. In addition, the code is lazy loaded.
     </p>
     <button type="button" (click)="toggleDevtools()">
-      {{ isOpen() ? 'Close' : 'Open' }} the devtools panel
+      {{ isOpen ? 'Close' : 'Open' }} the devtools panel
     </button>
-    @if (isOpen()) {
+    @if (isOpen) {
       <div #div style="height: 500px"></div>
     }
   `,
   imports: [ExampleQueryComponent],
 })
 export default class LazyLoadDevtoolsPanelExampleComponent {
-  isOpen = signal(false)
-  divEl = viewChild<ElementRef>('div')
-  devtools?: DevtoolsPanelRef
+  isOpen = false
+  devtools?: Promise<DevtoolsPanelRef>
   injector = inject(Injector)
 
+  divEl = viewChild<ElementRef>('div')
+  devToolsOptions = computed(() => ({
+    hostElement: this.divEl(),
+  }))
+
   toggleDevtools() {
-    this.isOpen.update((prev) => !prev)
-  }
-
-  constructor() {
-    effect(() => {
-      const isOpen = this.isOpen()
-      if (!isOpen || this.devtools) return
-      void this.lazyInitDevtools()
-    })
-  }
-
-  async lazyInitDevtools() {
-    // As the import is dynamic, it will not be included in the main bundle
-    // and will be lazy loaded only when the button is clicked
-    // Instead of a button you could also define a keyboard shortcut to
-    // load the devtools panel on demand
-    const { injectDevtoolsPanel } = await import(
-      '@tanstack/angular-query-devtools-experimental'
-    )
-    this.devtools = injectDevtoolsPanel(
-      () => ({
-        hostElement: this.divEl(),
-      }),
-      this.injector,
-    )
+    this.isOpen = !this.isOpen
+    if (!this.devtools) {
+      this.devtools = import(
+        '@tanstack/angular-query-devtools-experimental'
+      ).then(({ injectDevtoolsPanel }) =>
+        injectDevtoolsPanel(this.devToolsOptions, this.injector),
+      )
+    }
   }
 }
