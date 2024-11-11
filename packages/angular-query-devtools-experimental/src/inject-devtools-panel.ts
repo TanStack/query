@@ -71,6 +71,7 @@ export function injectDevtoolsPanel(
       } = options()
 
       untracked(() => {
+        if (!client) throw new Error('No QueryClient found')
         if (!devtools && hostElement) {
           devtools = new TanstackQueryDevtoolsPanel({
             client,

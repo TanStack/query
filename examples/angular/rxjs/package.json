@@ -9,7 +9,6 @@
     "watch": "ng build --watch --configuration development"
   },
   "dependencies": {
-    "@angular/cdk": "17.3.10",
     "@angular/common": "^17.3.12",
     "@angular/compiler": "^17.3.12",
     "@angular/core": "^17.3.12",
@@ -25,7 +24,6 @@
     "@angular-devkit/build-angular": "^17.3.8",
     "@angular/cli": "^17.3.8",
     "@angular/compiler-cli": "^17.3.12",
-    "@tanstack/angular-query-devtools-experimental": "^5.60.0",
     "typescript": "5.3.3"
   }
 }

@@ -10,7 +10,7 @@ import {
   runInInjectionContext,
 } from '@angular/core'
 import { onlineManager } from '@tanstack/query-core'
-import { DOCUMENT, isPlatformBrowser } from '@angular/common'
+import { isPlatformBrowser } from '@angular/common'
 import { injectQueryClient, provideQueryClient } from './inject-query-client'
 import { isDevMode } from './util/is-dev-mode/is-dev-mode'
 import type { QueryClient } from '@tanstack/query-core'
@@ -257,7 +257,6 @@ export function withDevtools(
               : isDevMode()
           })
 
-          const doc = inject(DOCUMENT)
           const destroyRef = inject(DestroyRef)
 
           const getResolvedQueryClient = () => {
@@ -303,7 +302,7 @@ export function withDevtools(
                 return
               }
 
-              el = doc.body.appendChild(document.createElement('div'))
+              el = document.body.appendChild(document.createElement('div'))
               el.classList.add('tsqd-parent-container')
 
               import('@tanstack/query-devtools').then((queryDevtools) =>
