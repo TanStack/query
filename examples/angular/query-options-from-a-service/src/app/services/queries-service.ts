@@ -1,19 +1,29 @@
 import { Injectable, inject } from '@angular/core'
 import { lastValueFrom } from 'rxjs'
 import { queryOptions } from '@tanstack/angular-query-experimental'
-import { PostsService } from './posts-service'
+import { HttpClient } from '@angular/common/http'
+
+export interface Post {
+  id: number
+  title: string
+  body: string
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class QueriesService {
-  private postsService = inject(PostsService)
+  private http = inject(HttpClient)
 
   post(postId: number) {
     return queryOptions({
       queryKey: ['post', postId],
       queryFn: () => {
-        return lastValueFrom(this.postsService.postById$(postId))
+        return lastValueFrom(
+          this.http.get<Post>(
+            `https://jsonplaceholder.typicode.com/posts/${postId}`,
+          ),
+        )
       },
     })
   }
@@ -21,7 +31,12 @@ export class QueriesService {
   posts() {
     return queryOptions({
       queryKey: ['posts'],
-      queryFn: () => lastValueFrom(this.postsService.allPosts$()),
+      queryFn: () =>
+        lastValueFrom(
+          this.http.get<Array<Post>>(
+            'https://jsonplaceholder.typicode.com/posts',
+          ),
+        ),
     })
   }
 }
