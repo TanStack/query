@@ -6,5 +6,5 @@ export default defineConfig({
   clean: true,
   format: ['esm'],
   dts: true,
-  outDir: "build"
+  outDir: 'build',
 })
