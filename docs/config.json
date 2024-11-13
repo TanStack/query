@@ -1047,7 +1047,7 @@
               "to": "framework/angular/examples/pagination"
             },
             {
-              "label": "Infinite query with Max pages",
+              "label": "Infinite query with maxPages",
               "to": "framework/angular/examples/infinite-query-with-max-pages"
             },
             {
@@ -1061,6 +1061,10 @@
             {
               "label": "Query options from a service",
               "to": "framework/angular/examples/query-options-from-a-service"
+            },
+            {
+              "label": "Devtools embedded panel",
+              "to": "framework/angular/examples/devtools-panel"
             }
           ]
         }
