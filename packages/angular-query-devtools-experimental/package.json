@@ -46,8 +46,7 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@tanstack/query-devtools": "workspace:*",
-    "tslib": "^2.6.3"
+    "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^1.6.4",

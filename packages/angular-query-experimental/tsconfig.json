@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "importHelpers": true,
     "moduleResolution": "Bundler",
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
