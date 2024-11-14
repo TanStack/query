@@ -11,7 +11,7 @@ interface Response {
 })
 export class AutocompleteService {
   #http = inject(HttpClient)
-  getSuggestions = (term: string) =>
+  getSuggestions = (term: string = '') =>
     term.trim() === ''
       ? of({ suggestions: [] })
       : this.#http.get<Response>(`/api/autocomplete?term=${term}`)
