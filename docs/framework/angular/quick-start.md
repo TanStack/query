@@ -51,7 +51,6 @@ import { lastValueFrom } from 'rxjs'
 import {
   injectMutation,
   injectQuery,
-  injectQueryClient,
 } from '@tanstack/angular-query-experimental'
 
 @Component({
@@ -70,7 +69,7 @@ import {
 })
 export class TodosComponent {
   todoService = inject(TodoService)
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 
   query = injectQuery(() => ({
     queryKey: ['todos'],

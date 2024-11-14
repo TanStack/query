@@ -7,8 +7,8 @@ import {
   untracked,
 } from '@angular/core'
 import {
+  QueryClient,
   injectQuery,
-  injectQueryClient,
   keepPreviousData,
 } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
@@ -21,7 +21,7 @@ import { ProjectsService } from '../services/projects.service'
   templateUrl: './example.component.html',
 })
 export class ExampleComponent {
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
   projectsService = inject(ProjectsService)
   page = signal(0)
 

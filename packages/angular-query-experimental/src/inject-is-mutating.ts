@@ -1,7 +1,6 @@
 import { DestroyRef, NgZone, inject, signal } from '@angular/core'
-import { notifyManager } from '@tanstack/query-core'
+import { QueryClient, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import { injectQueryClient } from './inject-query-client'
 import type { MutationFilters } from '@tanstack/query-core'
 import type { Injector, Signal } from '@angular/core'
 
@@ -19,9 +18,9 @@ export function injectIsMutating(
   injector?: Injector,
 ): Signal<number> {
   return assertInjector(injectIsMutating, injector, () => {
-    const queryClient = injectQueryClient()
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
+    const queryClient = inject(QueryClient)
 
     const cache = queryClient.getMutationCache()
     // isMutating is the prev value initialized on mount *
