@@ -1,9 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import {
-  injectQuery,
-  injectQueryClient,
-} from '@tanstack/angular-query-experimental'
+import { QueryClient, injectQuery } from '@tanstack/angular-query-experimental'
 import { QueriesService } from '../services/queries-service'
 
 @Component({
@@ -17,5 +14,5 @@ export default class PostsComponent {
   private queries = inject(QueriesService)
 
   postsQuery = injectQuery(() => this.queries.posts())
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 }

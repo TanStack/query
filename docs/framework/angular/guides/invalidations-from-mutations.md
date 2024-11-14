@@ -19,10 +19,10 @@ class TodoItemComponent {
 [//]: # 'Example2'
 
 ```ts
-import { injectMutation } from '@tanstack/angular-query-experimental'
+import { injectMutation, QueryClient } from '@tanstack/angular-query-experimental'
 
 export class TodosComponent {
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 
   // When this mutation succeeds, invalidate any queries with the `todos` or `reminders` query key
   mutation = injectMutation((client) => ({

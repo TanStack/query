@@ -10,11 +10,11 @@ replace: { 'useQuery': 'injectQuery', 'hooks': 'functions' }
 ```ts
 import {
   injectQuery,
-  injectQueryClient,
+  QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 class QueryInvalidationExample {
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 
   invalidateQueries() {
     this.queryClient.invalidateQueries({ queryKey: ['todos'] })
