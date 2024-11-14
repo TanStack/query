@@ -19,7 +19,10 @@ class TodoItemComponent {
 [//]: # 'Example2'
 
 ```ts
-import { injectMutation, QueryClient } from '@tanstack/angular-query-experimental'
+import {
+  injectMutation,
+  QueryClient,
+} from '@tanstack/angular-query-experimental'
 
 export class TodosComponent {
   queryClient = inject(QueryClient)

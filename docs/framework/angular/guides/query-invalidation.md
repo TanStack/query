@@ -8,10 +8,7 @@ replace: { 'useQuery': 'injectQuery', 'hooks': 'functions' }
 [//]: # 'Example2'
 
 ```ts
-import {
-  injectQuery,
-  QueryClient,
-} from '@tanstack/angular-query-experimental'
+import { injectQuery, QueryClient } from '@tanstack/angular-query-experimental'
 
 class QueryInvalidationExample {
   queryClient = inject(QueryClient)
