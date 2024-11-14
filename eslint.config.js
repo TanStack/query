@@ -19,6 +19,7 @@ export default [
           cspell: {
             words: [
               'codemod', // We support our codemod
+              'combinate', // Library name
               'extralight', // Our public interface
               'jscodeshift',
               'Promisable', // Our public interface
