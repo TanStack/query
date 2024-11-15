@@ -8,18 +8,17 @@ import {
   runInInjectionContext,
   signal,
 } from '@angular/core'
-import { MutationObserver, notifyManager } from '@tanstack/query-core'
+import {
+  MutationObserver,
+  QueryClient,
+  notifyManager,
+} from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
-import { injectQueryClient } from './inject-query-client'
 import { noop, shouldThrowError } from './util'
 
 import { lazyInit } from './util/lazy-init/lazy-init'
-import type {
-  DefaultError,
-  MutationObserverResult,
-  QueryClient,
-} from '@tanstack/query-core'
+import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
   CreateMutationOptions,
@@ -47,10 +46,10 @@ export function injectMutation<
   injector?: Injector,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   return assertInjector(injectMutation, injector, () => {
-    const queryClient = injectQueryClient()
     const currentInjector = inject(Injector)
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
+    const queryClient = inject(QueryClient)
 
     return lazyInit(() =>
       runInInjectionContext(currentInjector, () => {

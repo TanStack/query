@@ -6,9 +6,12 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
+import {
+  QueryClient,
+  notifyManager,
+  replaceEqualDeep,
+} from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import { injectQueryClient } from './inject-query-client'
 import { lazySignalInitializer } from './util/lazy-signal-initializer/lazy-signal-initializer'
 import type { Injector, Signal } from '@angular/core'
 import type {
@@ -55,8 +58,8 @@ export function injectMutationState<TResult = MutationState>(
 ): Signal<Array<TResult>> {
   return assertInjector(injectMutationState, options?.injector, () => {
     const destroyRef = inject(DestroyRef)
-    const queryClient = injectQueryClient()
     const ngZone = inject(NgZone)
+    const queryClient = inject(QueryClient)
 
     const mutationCache = queryClient.getMutationCache()
 
