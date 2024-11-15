@@ -71,7 +71,7 @@ class MyComponent {
 ```
 
 [//]: # 'TypeInference3'
-[//]: # 'TypeInference4'
+[//]: # 'TypeNarrowing'
 
 ```angular-ts
 @Component({
@@ -93,7 +93,7 @@ class MyComponent {
 
 > TypeScript currently does not support discriminated unions on object methods. Narrowing on signal fields on objects such as query results only works on signals returning a boolean. Prefer using `isSuccess()` and similar boolean status signals over `status() === 'success'`.
 
-[//]: # 'TypeInference4'
+[//]: # 'TypeNarrowing'
 [//]: # 'TypingError'
 
 ```angular-ts
