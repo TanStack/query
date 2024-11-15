@@ -146,6 +146,10 @@
               "to": "framework/angular/devtools"
             },
             {
+              "label": "TypeScript",
+              "to": "framework/angular/typescript"
+            },
+            {
               "label": "Zoneless",
               "to": "framework/angular/zoneless"
             }
