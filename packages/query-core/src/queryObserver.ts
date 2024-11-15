@@ -6,7 +6,6 @@ import { pendingThenable } from './thenable'
 import {
   isServer,
   isValidTimeout,
-  noop,
   replaceData,
   resolveEnabled,
   resolveStaleTime,
