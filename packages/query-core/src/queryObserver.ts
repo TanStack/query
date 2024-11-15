@@ -6,6 +6,7 @@ import { pendingThenable } from './thenable'
 import {
   isServer,
   isValidTimeout,
+  noop,
   replaceData,
   resolveEnabled,
   resolveStaleTime,
@@ -348,7 +349,7 @@ export class QueryObserver<
     )
 
     if (!fetchOptions?.throwOnError) {
-      promise = promise.catch(() => undefined)
+      promise = promise.catch(noop)
     }
 
     return promise
