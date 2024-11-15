@@ -12,6 +12,7 @@ replace:
     'React Query': 'TanStack Query',
     '`success`': '`isSuccess()`',
     'function:': 'function.',
+    'separate function': 'separate function or a service',
   }
 ---
 
@@ -70,6 +71,7 @@ class MyComponent {
 ```
 
 [//]: # 'TypeInference3'
+[//]: # 'TypeInference4'
 [//]: # 'TypeNarrowing'
 
 ```angular-ts
@@ -92,6 +94,7 @@ class MyComponent {
 
 > TypeScript currently does not support discriminated unions on object methods. Narrowing on signal fields on objects such as query results only works on signals returning a boolean. Prefer using `isSuccess()` and similar boolean status signals over `status() === 'success'`.
 
+[//]: # 'TypeInference4'
 [//]: # 'TypeNarrowing'
 [//]: # 'TypingError'
 
@@ -153,8 +156,7 @@ import '@tanstack/angular-query-experimental'
 
 declare module '@tanstack/angular-query-experimental' {
   interface Register {
-    // Use unknown so call sites must narrow explicitly.
-    defaultError: unknown
+    defaultError: AxiosError
   }
 }
 
@@ -165,7 +167,7 @@ const query = injectQuery(() => ({
 
 computed(() => {
   const error = query.error()
-  //      ^? error: unknown | null
+  //      ^? error: AxiosError | null
 })
 ```
 
