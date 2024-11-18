@@ -1,4 +1,4 @@
-import { noop, returnUndefined } from './utils'
+import { noop } from './utils'
 import type {
   PersistRetryer,
   PersistedClient,
@@ -88,7 +88,7 @@ export function createSyncStoragePersister({
 
   return {
     persistClient: noop,
-    restoreClient: returnUndefined,
+    restoreClient: noop,
     removeClient: noop,
   }
 }

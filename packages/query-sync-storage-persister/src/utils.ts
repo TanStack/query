@@ -1,3 +1,3 @@
-export function noop(): void {}
-
-export const returnUndefined = noop as () => undefined
+export function noop(): void
+export function noop(): undefined
+export function noop() {}
