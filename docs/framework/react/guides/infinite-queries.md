@@ -110,7 +110,7 @@ To ensure a seamless querying process without conflicts, it's highly recommended
 [//]: # 'Example1'
 
 ```jsx
-<List onEndReached={() => !isFetching && fetchNextPage()} />
+<List onEndReached={() => !isFetchingNextPage && fetchNextPage()} />
 ```
 
 [//]: # 'Example1'
