@@ -295,7 +295,7 @@ export class Query<
   }
 
   isStale(): boolean {
-    return this.state.isInvalidated
+    return this.state.isInvalidated || this.state.data === undefined
   }
 
   onFocus(): void {
@@ -653,19 +653,22 @@ export class Query<
       return
     }
 
-    if (this.isStale() && staleTime > 0) {
-      this.#dispatch({ type: 'setState', state: { isInvalidated: false } })
-    }
-
     const time = timeUntilStale(this.state.dataUpdatedAt, staleTime)
 
-    // The timeout is sometimes triggered 1 ms before the stale time expiration.
-    // To mitigate this issue we always add 1 ms to the timeout.
-    const timeout = time + 1
+    const newInvalidated = time === 0
+    if (this.state.isInvalidated !== newInvalidated) {
+      this.#dispatch({ type: 'setState', state: { isInvalidated: time === 0 } })
+    }
 
-    this.#staleTimeoutId = setTimeout(() => {
-      this.invalidate()
-    }, timeout)
+    if (time > 0) {
+      // The timeout is sometimes triggered 1 ms before the stale time expiration.
+      // To mitigate this issue we always add 1 ms to the timeout.
+      const timeout = time + 1
+
+      this.#staleTimeoutId = setTimeout(() => {
+        this.invalidate()
+      }, timeout)
+    }
   }
 
   #clearStaleTimeout(): void {

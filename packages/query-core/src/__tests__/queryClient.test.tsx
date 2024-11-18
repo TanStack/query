@@ -669,36 +669,40 @@ describe('queryClient', () => {
     test('should only fetch if the data is older then the given stale time', async () => {
       const key = queryKey()
 
-      let count = 0
-      const fetchFn = () => ++count
+      const fetchFn = vi.fn().mockImplementation(() => null)
 
-      queryClient.setQueryData(key, count)
-      const first = await queryClient.fetchQuery({
+      queryClient.setQueryData(key, 'data')
+      await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
         staleTime: 100,
       })
+      console.log(queryClient.getQueryState(key))
+      // no fetch because we have fresh data (not older than 100ms)
+      expect(fetchFn).toHaveBeenCalledTimes(0)
       await sleep(11)
-      const second = await queryClient.fetchQuery({
+      await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
         staleTime: 10,
       })
-      const third = await queryClient.fetchQuery({
+      // fetch because staleTime is now 10ms and we have waited 11ms already
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+      await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
         staleTime: 10,
       })
+      // no additional fetch because the data is still fresh
+      expect(fetchFn).toHaveBeenCalledTimes(1)
       await sleep(11)
-      const fourth = await queryClient.fetchQuery({
+      await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
         staleTime: 10,
       })
-      expect(first).toBe(0)
-      expect(second).toBe(1)
-      expect(third).toBe(1)
-      expect(fourth).toBe(2)
+      // another fetch after another sleep because the data is now stale
+      expect(fetchFn).toHaveBeenCalledTimes(2)
     })
   })
 
