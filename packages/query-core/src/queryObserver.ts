@@ -355,8 +355,7 @@ export class QueryObserver<
     if (
       isServer ||
       resolveEnabled(this.options.enabled, this.#currentQuery) === false ||
-      !isValidTimeout(this.#currentRefetchInterval) ||
-      this.#currentRefetchInterval === 0
+      !isValidTimeout(this.#currentRefetchInterval)
     ) {
       return
     }
