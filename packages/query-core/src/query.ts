@@ -649,8 +649,6 @@ export class Query<
   #updateStaleTimeout(staleTime: number): void {
     this.#clearStaleTimeout()
 
-    console.log('setting stale timer', staleTime)
-
     if (isServer || this.isStale() || !isValidTimeout(staleTime)) {
       return
     }
