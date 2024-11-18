@@ -5,7 +5,6 @@ import {
   noop,
   replaceData,
   resolveEnabled,
-  resolveStaleTime,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -25,6 +24,7 @@ import type {
   QueryOptions,
   QueryStatus,
   SetDataOptions,
+  StaleTime,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
@@ -191,7 +191,7 @@ export class Query<
 
     this.scheduleGc()
 
-    const nextStaleTime = resolveStaleTime(this.options.staleTime, this)
+    const nextStaleTime = this.#resolveStaleTime(this.options.staleTime)
     if (nextStaleTime === 0) {
       this.#initialState.isInvalidated = true
     } else {
@@ -221,10 +221,10 @@ export class Query<
     const prevStaleTime = this.options?.staleTime
     this.#initOptions(nextOptions)
 
-    const nextStaleTime = resolveStaleTime(nextOptions?.staleTime, this)
+    const nextStaleTime = this.#resolveStaleTime(nextOptions?.staleTime)
 
     // Update stale interval if needed
-    if (nextStaleTime !== resolveStaleTime(prevStaleTime, this)) {
+    if (nextStaleTime !== this.#resolveStaleTime(prevStaleTime)) {
       this.#updateStaleTimeout(nextStaleTime)
     }
   }
@@ -624,7 +624,7 @@ export class Query<
 
     this.state = reducer(this.state)
 
-    const nextStaleTime = resolveStaleTime(this.options.staleTime, this)
+    const nextStaleTime = this.#resolveStaleTime(this.options.staleTime)
     if (nextStaleTime === 0) {
       this.state.isInvalidated = true
     } else if (!this.isStale()) {
@@ -638,6 +638,12 @@ export class Query<
 
       this.#cache.notify({ query: this, type: 'updated', action })
     })
+  }
+
+  #resolveStaleTime(
+    staleTime: StaleTime<TQueryFnData, TError, TData, TQueryKey> | undefined,
+  ): number {
+    return typeof staleTime === 'function' ? staleTime(this) : (staleTime ?? 0)
   }
 
   #updateStaleTimeout(staleTime: number): void {
