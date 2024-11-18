@@ -192,7 +192,7 @@ export class Query<
     this.scheduleGc()
 
     const nextStaleTime = resolveStaleTime(this.options.staleTime, this)
-    if (nextStaleTime === undefined || nextStaleTime === 0) {
+    if (nextStaleTime === 0) {
       this.#initialState.isInvalidated = true
     } else {
       this.#updateStaleTimeout(nextStaleTime)
@@ -625,7 +625,7 @@ export class Query<
     this.state = reducer(this.state)
 
     const nextStaleTime = resolveStaleTime(this.options.staleTime, this)
-    if (nextStaleTime === undefined || nextStaleTime === 0) {
+    if (nextStaleTime === 0) {
       this.state.isInvalidated = true
     } else if (!this.isStale()) {
       this.#updateStaleTimeout(nextStaleTime)
@@ -640,8 +640,10 @@ export class Query<
     })
   }
 
-  #updateStaleTimeout(staleTime = 0): void {
+  #updateStaleTimeout(staleTime: number): void {
     this.#clearStaleTimeout()
+
+    console.log('setting stale timer', staleTime)
 
     if (isServer || this.isStale() || !isValidTimeout(staleTime)) {
       return

@@ -97,8 +97,8 @@ export function resolveStaleTime<
 >(
   staleTime: undefined | StaleTime<TQueryFnData, TError, TData, TQueryKey>,
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): number | undefined {
-  return typeof staleTime === 'function' ? staleTime(query) : staleTime
+): number {
+  return typeof staleTime === 'function' ? staleTime(query) : (staleTime ?? 0)
 }
 
 export function resolveEnabled<
