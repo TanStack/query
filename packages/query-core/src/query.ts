@@ -649,10 +649,6 @@ export class Query<
   #updateStaleTimeout(staleTime: number): void {
     this.#clearStaleTimeout()
 
-    if (isServer || !isValidTimeout(staleTime)) {
-      return
-    }
-
     const time = timeUntilStale(this.state.dataUpdatedAt, staleTime)
 
     const newInvalidated = time === 0
@@ -660,15 +656,15 @@ export class Query<
       this.#dispatch({ type: 'setState', state: { isInvalidated: time === 0 } })
     }
 
-    if (time > 0) {
-      // The timeout is sometimes triggered 1 ms before the stale time expiration.
-      // To mitigate this issue we always add 1 ms to the timeout.
-      const timeout = time + 1
-
-      this.#staleTimeoutId = setTimeout(() => {
-        this.invalidate()
-      }, timeout)
+    if (isServer || !isValidTimeout(staleTime) || time < 1) {
+      return
     }
+
+    // The timeout is sometimes triggered 1 ms before the stale time expiration.
+    // To mitigate this issue we always add 1 ms to the timeout.
+    this.#staleTimeoutId = setTimeout(() => {
+      this.invalidate()
+    }, time + 1)
   }
 
   #clearStaleTimeout(): void {
