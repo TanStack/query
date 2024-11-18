@@ -70,9 +70,7 @@ export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 
 export function noop(): void {}
 
-export function returnUndefined(): undefined {
-  return undefined
-}
+export const returnUndefined = noop as () => undefined
 
 export function functionalUpdate<TInput, TOutput>(
   updater: Updater<TInput, TOutput>,
