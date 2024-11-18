@@ -663,12 +663,12 @@ describe('queryObserver', () => {
       results.push(x)
     })
     observer.setOptions({ queryKey: key, enabled: false, staleTime: 10 })
-    await queryClient.fetchQuery({ queryKey: key, queryFn })
+    await queryClient.fetchQuery({ queryKey: key, queryFn, staleTime: 1000 })
     await sleep(20)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(results.length).toBe(2)
-    expect(results[0]).toMatchObject({ isStale: false, data: undefined })
+    expect(results[0]).toMatchObject({ isStale: true, data: undefined })
     expect(results[1]).toMatchObject({ isStale: false, data: 'data' })
   })
 
@@ -1102,7 +1102,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  test('disabled observers should not be stale', async () => {
+  test('disabled observers should also be stale', async () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1111,7 +1111,7 @@ describe('queryObserver', () => {
     })
 
     const result = observer.getCurrentResult()
-    expect(result.isStale).toBe(false)
+    expect(result.isStale).toBe(true)
   })
 
   test('should allow staleTime as a function', async () => {
