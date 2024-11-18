@@ -655,7 +655,7 @@ describe('queryClient', () => {
       const key = queryKey()
 
       queryClient.setQueryData(key, 'og')
-      const fetchFn = () => Promise.resolve('new')
+      const fetchFn = vi.fn().mockImplementation(() => Promise.resolve('new'))
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -663,6 +663,7 @@ describe('queryClient', () => {
         staleTime: 100,
       })
       expect(first).toBe('og')
+      expect(fetchFn).toHaveBeenCalledTimes(0)
     })
 
     test('should only fetch if the data is older then the given stale time', async () => {

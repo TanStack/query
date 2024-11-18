@@ -649,8 +649,12 @@ export class Query<
   #updateStaleTimeout(staleTime: number): void {
     this.#clearStaleTimeout()
 
-    if (isServer || this.isStale() || !isValidTimeout(staleTime)) {
+    if (isServer || !isValidTimeout(staleTime)) {
       return
+    }
+
+    if (this.isStale() && staleTime > 0) {
+      this.#dispatch({ type: 'setState', state: { isInvalidated: false } })
     }
 
     const time = timeUntilStale(this.state.dataUpdatedAt, staleTime)
