@@ -1094,14 +1094,23 @@ describe('queryClient', () => {
     test('should be able to refetch all stale queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
+      const key3 = queryKey()
       const queryFn1 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data1')
       const queryFn2 = vi
         .fn<(...args: Array<unknown>) => string>()
         .mockReturnValue('data2')
+      const queryFn3 = vi
+        .fn<(...args: Array<unknown>) => string>()
+        .mockReturnValue('data3')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
+      await queryClient.fetchQuery({
+        queryKey: key3,
+        queryFn: queryFn3,
+        staleTime: 1,
+      })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1112,7 +1121,10 @@ describe('queryClient', () => {
       unsubscribe()
       // fetchQuery, observer mount, invalidation (cancels observer mount) and refetch
       expect(queryFn1).toHaveBeenCalledTimes(4)
-      expect(queryFn2).toHaveBeenCalledTimes(1)
+      // fetchQuery, refetch
+      expect(queryFn2).toHaveBeenCalledTimes(2)
+      // fetchQuery
+      expect(queryFn3).toHaveBeenCalledTimes(1)
     })
 
     test('should be able to refetch all stale and active queries', async () => {

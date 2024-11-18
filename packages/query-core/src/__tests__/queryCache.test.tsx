@@ -166,6 +166,7 @@ describe('queryCache', () => {
       await queryClient.prefetchQuery({
         queryKey: key1,
         queryFn: () => 'data1',
+        staleTime: 100,
       })
       await queryClient.prefetchQuery({
         queryKey: key2,
@@ -174,6 +175,7 @@ describe('queryCache', () => {
       await queryClient.prefetchQuery({
         queryKey: [{ a: 'a', b: 'b' }],
         queryFn: () => 'data3',
+        staleTime: 100,
       })
       await queryClient.prefetchQuery({
         queryKey: ['posts', 1],
