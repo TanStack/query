@@ -891,7 +891,7 @@ describe('dehydration and rehydration', () => {
         fetchFailureReason: null,
         fetchMeta: null,
         fetchStatus: 'fetching',
-        isInvalidated: false,
+        isInvalidated: true,
         status: 'pending',
       },
     )
@@ -910,7 +910,7 @@ describe('dehydration and rehydration', () => {
         fetchFailureReason: null,
         fetchMeta: null,
         fetchStatus: 'idle',
-        isInvalidated: false,
+        isInvalidated: true,
         status: 'success',
       }),
     )
