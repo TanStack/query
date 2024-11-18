@@ -636,7 +636,9 @@ export class Query<
         observer.onQueryUpdate()
       })
 
-      this.#cache.notify({ query: this, type: 'updated', action })
+      if (this.#cache.get(this.queryHash)) {
+        this.#cache.notify({ query: this, type: 'updated', action })
+      }
     })
   }
 
