@@ -9,6 +9,7 @@ import {
   replaceData,
   resolveEnabled,
   resolveStaleTime,
+  returnUndefined,
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
@@ -348,7 +349,7 @@ export class QueryObserver<
     )
 
     if (!fetchOptions?.throwOnError) {
-      promise = promise.catch(() => undefined)
+      promise = promise.catch(returnUndefined)
     }
 
     return promise
