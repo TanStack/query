@@ -143,7 +143,6 @@ describe('query', () => {
     // Promise should eventually be resolved
     await promise
 
-    console.log('has finished')
     expect(result).toBe('data3')
     onlineMock.mockRestore()
   })

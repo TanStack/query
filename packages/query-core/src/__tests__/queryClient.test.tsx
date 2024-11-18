@@ -677,7 +677,6 @@ describe('queryClient', () => {
         queryFn: fetchFn,
         staleTime: 100,
       })
-      console.log(queryClient.getQueryState(key))
       // no fetch because we have fresh data (not older than 100ms)
       expect(fetchFn).toHaveBeenCalledTimes(0)
       await sleep(11)
