@@ -193,6 +193,12 @@ export interface QueryOptions<
    * Setting it to `Infinity` will disable garbage collection.
    */
   gcTime?: number
+  /**
+   * The time in milliseconds after data is considered stale.
+   * If set to `Infinity`, the data will never be considered stale.
+   * If set to a function, the function will be executed with the query to compute a `staleTime`.
+   */
+  staleTime?: StaleTime<TQueryFnData, TError, TData, TQueryKey>
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
   persister?: QueryPersister<
     NoInfer<TQueryFnData>,
@@ -275,12 +281,6 @@ export interface QueryObserverOptions<
    * Defaults to `true`.
    */
   enabled?: Enabled<TQueryFnData, TError, TQueryData, TQueryKey>
-  /**
-   * The time in milliseconds after data is considered stale.
-   * If set to `Infinity`, the data will never be considered stale.
-   * If set to a function, the function will be executed with the query to compute a `staleTime`.
-   */
-  staleTime?: StaleTime<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency

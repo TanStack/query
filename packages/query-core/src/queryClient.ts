@@ -4,7 +4,6 @@ import {
   hashQueryKeyByOptions,
   noop,
   partialMatchKey,
-  resolveStaleTime,
   skipToken,
 } from './utils'
 import { QueryCache } from './queryCache'
@@ -144,10 +143,7 @@ export class QueryClient {
       const defaultedOptions = this.defaultQueryOptions(options)
       const query = this.#queryCache.build(this, defaultedOptions)
 
-      if (
-        options.revalidateIfStale &&
-        query.isStaleByTime(resolveStaleTime(defaultedOptions.staleTime, query))
-      ) {
+      if (options.revalidateIfStale && query.isStale()) {
         void this.prefetchQuery(defaultedOptions)
       }
 
@@ -347,9 +343,7 @@ export class QueryClient {
 
     const query = this.#queryCache.build(this, defaultedOptions)
 
-    return query.isStaleByTime(
-      resolveStaleTime(defaultedOptions.staleTime, query),
-    )
+    return query.isStale()
       ? query.fetch(defaultedOptions)
       : Promise.resolve(query.state.data as TData)
   }

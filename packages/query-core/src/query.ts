@@ -1,8 +1,11 @@
 import {
   ensureQueryFn,
+  isServer,
+  isValidTimeout,
   noop,
   replaceData,
   resolveEnabled,
+  resolveStaleTime,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -171,20 +174,29 @@ export class Query<
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
+  #staleTimeoutId?: ReturnType<typeof setTimeout>
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.setOptions(config.options)
+    this.#initOptions(config.options)
     this.observers = []
     this.#cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
+
     this.scheduleGc()
+
+    const nextStaleTime = resolveStaleTime(this.options.staleTime, this)
+    if (nextStaleTime === undefined || nextStaleTime === 0) {
+      this.#initialState.isInvalidated = true
+    } else {
+      this.#updateStaleTimeout(nextStaleTime)
+    }
   }
   get meta(): QueryMeta | undefined {
     return this.options.meta
@@ -194,12 +206,27 @@ export class Query<
     return this.#retryer?.promise
   }
 
-  setOptions(
+  #initOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
 
     this.updateGcTime(this.options.gcTime)
+  }
+
+  setOptions(
+    nextOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  ): void {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const prevStaleTime = this.options?.staleTime
+    this.#initOptions(nextOptions)
+
+    const nextStaleTime = resolveStaleTime(nextOptions?.staleTime, this)
+
+    // Update stale interval if needed
+    if (nextStaleTime !== resolveStaleTime(prevStaleTime, this)) {
+      this.#updateStaleTimeout(nextStaleTime)
+    }
   }
 
   protected optionalRemove() {
@@ -241,6 +268,7 @@ export class Query<
   destroy(): void {
     super.destroy()
 
+    this.#clearStaleTimeout()
     this.cancel({ silent: true })
   }
 
@@ -267,25 +295,7 @@ export class Query<
   }
 
   isStale(): boolean {
-    if (this.state.isInvalidated) {
-      return true
-    }
-
-    if (this.getObserversCount() > 0) {
-      return this.observers.some(
-        (observer) => observer.getCurrentResult().isStale,
-      )
-    }
-
-    return this.state.data === undefined
-  }
-
-  isStaleByTime(staleTime = 0): boolean {
-    return (
-      this.state.isInvalidated ||
-      this.state.data === undefined ||
-      !timeUntilStale(this.state.dataUpdatedAt, staleTime)
-    )
+    return this.state.isInvalidated
   }
 
   onFocus(): void {
@@ -614,6 +624,13 @@ export class Query<
 
     this.state = reducer(this.state)
 
+    const nextStaleTime = resolveStaleTime(this.options.staleTime, this)
+    if (nextStaleTime === undefined || nextStaleTime === 0) {
+      this.state.isInvalidated = true
+    } else if (!this.isStale()) {
+      this.#updateStaleTimeout(nextStaleTime)
+    }
+
     notifyManager.batch(() => {
       this.observers.forEach((observer) => {
         observer.onQueryUpdate()
@@ -621,6 +638,31 @@ export class Query<
 
       this.#cache.notify({ query: this, type: 'updated', action })
     })
+  }
+
+  #updateStaleTimeout(staleTime = 0): void {
+    this.#clearStaleTimeout()
+
+    if (isServer || this.isStale() || !isValidTimeout(staleTime)) {
+      return
+    }
+
+    const time = timeUntilStale(this.state.dataUpdatedAt, staleTime)
+
+    // The timeout is sometimes triggered 1 ms before the stale time expiration.
+    // To mitigate this issue we always add 1 ms to the timeout.
+    const timeout = time + 1
+
+    this.#staleTimeoutId = setTimeout(() => {
+      this.invalidate()
+    }, timeout)
+  }
+
+  #clearStaleTimeout(): void {
+    if (this.#staleTimeoutId) {
+      clearTimeout(this.#staleTimeoutId)
+      this.#staleTimeoutId = undefined
+    }
   }
 }
 

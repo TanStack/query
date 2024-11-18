@@ -9,9 +9,7 @@ import {
   noop,
   replaceData,
   resolveEnabled,
-  resolveStaleTime,
   shallowEqualObjects,
-  timeUntilStale,
 } from './utils'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
@@ -66,7 +64,6 @@ export class QueryObserver<
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
-  #staleTimeoutId?: ReturnType<typeof setTimeout>
   #refetchIntervalId?: ReturnType<typeof setInterval>
   #currentRefetchInterval?: number | false
   #trackedProps = new Set<keyof QueryObserverResult>()
@@ -138,7 +135,6 @@ export class QueryObserver<
 
   destroy(): void {
     this.listeners = new Set()
-    this.#clearStaleTimeout()
     this.#clearRefetchInterval()
     this.#currentQuery.removeObserver(this)
   }
@@ -201,18 +197,6 @@ export class QueryObserver<
 
     // Update result
     this.updateResult(notifyOptions)
-
-    // Update stale interval if needed
-    if (
-      mounted &&
-      (this.#currentQuery !== prevQuery ||
-        resolveEnabled(this.options.enabled, this.#currentQuery) !==
-          resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
-        resolveStaleTime(this.options.staleTime, this.#currentQuery) !==
-          resolveStaleTime(prevOptions.staleTime, this.#currentQuery))
-    ) {
-      this.#updateStaleTimeout()
-    }
 
     const nextRefetchInterval = this.#computeRefetchInterval()
 
@@ -355,30 +339,6 @@ export class QueryObserver<
     return promise
   }
 
-  #updateStaleTimeout(): void {
-    this.#clearStaleTimeout()
-    const staleTime = resolveStaleTime(
-      this.options.staleTime,
-      this.#currentQuery,
-    )
-
-    if (isServer || this.#currentResult.isStale || !isValidTimeout(staleTime)) {
-      return
-    }
-
-    const time = timeUntilStale(this.#currentResult.dataUpdatedAt, staleTime)
-
-    // The timeout is sometimes triggered 1 ms before the stale time expiration.
-    // To mitigate this issue we always add 1 ms to the timeout.
-    const timeout = time + 1
-
-    this.#staleTimeoutId = setTimeout(() => {
-      if (!this.#currentResult.isStale) {
-        this.updateResult()
-      }
-    }, timeout)
-  }
-
   #computeRefetchInterval() {
     return (
       (typeof this.options.refetchInterval === 'function'
@@ -412,15 +372,7 @@ export class QueryObserver<
   }
 
   #updateTimers(): void {
-    this.#updateStaleTimeout()
     this.#updateRefetchInterval(this.#computeRefetchInterval())
-  }
-
-  #clearStaleTimeout(): void {
-    if (this.#staleTimeoutId) {
-      clearTimeout(this.#staleTimeoutId)
-      this.#staleTimeoutId = undefined
-    }
   }
 
   #clearRefetchInterval(): void {
@@ -589,7 +541,7 @@ export class QueryObserver<
       isPaused: newState.fetchStatus === 'paused',
       isPlaceholderData,
       isRefetchError: isError && hasData,
-      isStale: isStale(query, options),
+      isStale: query.isStale(),
       refetch: this.refetch,
       promise: this.#currentThenable,
     }
@@ -790,7 +742,7 @@ function shouldFetchOn(
   if (resolveEnabled(options.enabled, query) !== false) {
     const value = typeof field === 'function' ? field(query) : field
 
-    return value === 'always' || (value !== false && isStale(query, options))
+    return value === 'always' || (value !== false && query.isStale())
   }
   return false
 }
@@ -805,17 +757,7 @@ function shouldFetchOptionally(
     (query !== prevQuery ||
       resolveEnabled(prevOptions.enabled, query) === false) &&
     (!options.suspense || query.state.status !== 'error') &&
-    isStale(query, options)
-  )
-}
-
-function isStale(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>,
-): boolean {
-  return (
-    resolveEnabled(options.enabled, query) !== false &&
-    query.isStaleByTime(resolveStaleTime(options.staleTime, query))
+    query.isStale()
   )
 }
 

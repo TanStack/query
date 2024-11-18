@@ -85,8 +85,8 @@ export function isValidTimeout(value: unknown): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
 }
 
-export function timeUntilStale(updatedAt: number, staleTime?: number): number {
-  return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
+export function timeUntilStale(updatedAt: number, staleTime: number): number {
+  return Math.max(updatedAt + staleTime - Date.now(), 0)
 }
 
 export function resolveStaleTime<
