@@ -126,8 +126,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         defaultOptions: client.getQueryDefaults(queryKey),
       })
       this.add(query)
-    } else {
-      query.setOptions(defaultedOptions)
     }
 
     return query
