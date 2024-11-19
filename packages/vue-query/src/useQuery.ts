@@ -15,7 +15,7 @@ import type {
 } from './types'
 import type { QueryClient } from './queryClient'
 
-type NonUndefinedGuard<T> = T extends undefined ? never : T
+export type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type UseQueryOptions<
   TQueryFnData = unknown,
