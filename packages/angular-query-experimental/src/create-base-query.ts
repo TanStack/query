@@ -30,9 +30,7 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => CreateBaseQueryOptions<
+  optionsFn: () => CreateBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -54,9 +52,7 @@ export function createBaseQuery<
      * are preserved and can keep being applied after signal changes
      */
     const defaultedOptionsSignal = computed(() => {
-      const options = runInInjectionContext(injector, () =>
-        optionsFn(queryClient),
-      )
+      const options = runInInjectionContext(injector, () => optionsFn())
       const defaultedOptions = queryClient.defaultQueryOptions(options)
       defaultedOptions._optimisticResults = 'optimistic'
       return defaultedOptions
