@@ -11,6 +11,7 @@ export type {
 } from './query-options'
 export { queryOptions } from './query-options'
 export { mutationOptions } from './mutation-options'
+export type { CreateMutationOptions } from './mutation-options'
 
 export type {
   DefinedInitialDataInfiniteOptions,
