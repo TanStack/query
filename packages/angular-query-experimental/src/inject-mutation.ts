@@ -40,9 +40,7 @@ export function injectMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => CreateMutationOptions<TData, TError, TVariables, TContext>,
+  optionsFn: () => CreateMutationOptions<TData, TError, TVariables, TContext>,
   injector?: Injector,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   return assertInjector(injectMutation, injector, () => {
@@ -58,7 +56,7 @@ export function injectMutation<
           TError,
           TVariables,
           TContext
-        >(queryClient, optionsFn(queryClient))
+        >(queryClient, optionsFn())
         const mutate: CreateMutateFunction<
           TData,
           TError,
@@ -70,9 +68,7 @@ export function injectMutation<
 
         effect(() => {
           observer.setOptions(
-            runInInjectionContext(currentInjector, () =>
-              optionsFn(queryClient),
-            ),
+            runInInjectionContext(currentInjector, () => optionsFn()),
           )
         })
 

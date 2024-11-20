@@ -77,14 +77,10 @@ export class TodosComponent {
     queryFn: () => this.todoService.getTodos(),
   }))
 
-  mutation = injectMutation((client) => ({
+  mutation = injectMutation(() => ({
     mutationFn: (todo: Todo) => this.todoService.addTodo(todo),
     onSuccess: () => {
-      // Invalidate and refetch by using the client directly
-      client.invalidateQueries({ queryKey: ['todos'] })
-
-      // OR use the queryClient that is injected into the component
-      // this.queryClient.invalidateQueries({ queryKey: ['todos'] })
+      this.queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   }))
 
