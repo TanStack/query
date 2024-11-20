@@ -655,7 +655,10 @@ export class Query<
 
     const newInvalidated = time === 0
     if (this.state.isInvalidated !== newInvalidated) {
-      this.#dispatch({ type: 'setState', state: { isInvalidated: time === 0 } })
+      this.#dispatch({
+        type: 'setState',
+        state: { isInvalidated: newInvalidated },
+      })
     }
 
     if (isServer || !isValidTimeout(staleTime) || time < 1) {
