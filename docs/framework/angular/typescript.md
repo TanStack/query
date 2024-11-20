@@ -12,7 +12,6 @@ replace:
     'React Query': 'TanStack Query',
     '`success`': '`isSuccess()`',
     'function:': 'function.',
-    'separate function': 'separate function or a service',
   }
 ---
 
@@ -170,5 +169,90 @@ computed(() => {
 ```
 
 [//]: # 'RegisterErrorType'
+[//]: # 'TypingQueryOptions'
+
+## Typing Query Options
+
+If you inline query options into `injectQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `injectQuery` and e.g. `prefetchQuery` or manage them in a service. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
+
+```ts
+@Injectable({
+  providedIn: 'root',
+})
+export class QueriesService {
+  private http = inject(HttpClient)
+
+  post(postId: number) {
+    return queryOptions({
+      queryKey: ['post', postId],
+      queryFn: () => {
+        return lastValueFrom(
+          this.http.get<Post>(
+            `https://jsonplaceholder.typicode.com/posts/${postId}`,
+          ),
+        )
+      },
+    })
+  }
+}
+
+@Component({
+  // ...
+})
+export class Component {
+  queryClient = inject(QueryClient)
+
+  postId = signal(1)
+
+  queries = inject(QueriesService)
+  optionsSignal = computed(() => this.queries.post(this.postId()))
+
+  postQuery = injectQuery(() => this.queries.post(1))
+  postQuery = injectQuery(() => this.queries.post(this.postId()))
+
+  // You can also pass a signal which returns query options
+  postQuery = injectQuery(this.optionsSignal)
+
+  someMethod() {
+    this.queryClient.prefetchQuery(this.queries.post(23))
+  }
+}
+```
+
+Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:
+
+```ts
+data = this.queryClient.getQueryData(groupOptions().queryKey)
+// ^? data: Post | undefined
+```
+
+Without `queryOptions`, the type of data would be unknown, unless we'd pass a type parameter:
+
+```ts
+data = queryClient.getQueryData<Post>(['post', 1])
+```
+
+## Typing Mutation Options
+
+Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation options into a separate function:
+
+```ts
+export class QueriesService {
+  private http = inject(HttpClient)
+
+  updatePost(id: number) {
+    return mutationOptions({
+      mutationFn: (post: Post) => Promise.resolve(post),
+      mutationKey: ['updatePost', id],
+      onSuccess: (newPost) => {
+        //           ^? newPost: Post
+        this.queryClient.setQueryData(['posts', id], newPost)
+      },
+    })
+  }
+}
+```
+
+[//]: # 'TypingQueryOptions'
 [//]: # 'Materials'
 [//]: # 'Materials'
