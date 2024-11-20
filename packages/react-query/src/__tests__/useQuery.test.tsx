@@ -3985,8 +3985,7 @@ describe('useQuery', () => {
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject({ data: 'initial', isStale: true })
     expect(results[1]).toMatchObject({ data: 'fetched data', isStale: true })
-    // disabled observers are not stale
-    expect(results[2]).toMatchObject({ data: 'fetched data', isStale: false })
+    expect(results[2]).toMatchObject({ data: 'fetched data', isStale: true })
   })
 
   it('should support enabled:false in query object syntax', async () => {
@@ -4910,14 +4909,14 @@ describe('useQuery', () => {
       isPending: true,
       isFetching: false,
       isSuccess: false,
-      isStale: false,
+      isStale: true,
     })
     expect(states[1]).toMatchObject({
       data: undefined,
       isPending: true,
       isFetching: true,
       isSuccess: false,
-      isStale: false,
+      isStale: true,
     })
     expect(states[2]).toMatchObject({
       data: 1,
@@ -4931,7 +4930,7 @@ describe('useQuery', () => {
       isPending: true,
       isFetching: false,
       isSuccess: false,
-      isStale: false,
+      isStale: true,
     })
   })
 
