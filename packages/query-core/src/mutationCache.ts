@@ -88,7 +88,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   constructor(public config: MutationCacheConfig = {}) {
     super()
     this.#mutations = new Map()
-    this.#mutationId = Date.now()
+    this.#mutationId = performance.timeOrigin + performance.now()
   }
 
   build<TData, TError, TVariables, TContext>(
