@@ -1045,4 +1045,60 @@ describe('query', () => {
 
     expect(query.state.status).toBe('error')
   })
+
+  it('should warn when multiple observers have different staleTimes when mounted at the same time', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+    const key = queryKey()
+    const observer1 = new QueryObserver(queryClient, {
+      queryKey: key,
+      initialData: 5,
+      staleTime: 1000,
+    })
+
+    const unsubscribe1 = observer1.subscribe(() => undefined)
+
+    const observer2 = new QueryObserver(queryClient, {
+      queryKey: key,
+      initialData: 5,
+      staleTime: 2000,
+    })
+
+    const unsubscribe2 = observer2.subscribe(() => undefined)
+
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenCalledWith(
+      `Multiple observers with different staleTimes are attached to the this query: ["${key}"]. The staleTime of the query will be determined by the last observer.`,
+    )
+    unsubscribe1()
+    unsubscribe2()
+    consoleMock.mockRestore()
+  })
+
+  it('should not warn when multiple observers have different staleTimes but not mounted at the same time', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+    const key = queryKey()
+    const observer1 = new QueryObserver(queryClient, {
+      queryKey: key,
+      initialData: 5,
+      staleTime: 1000,
+    })
+
+    const unsubscribe1 = observer1.subscribe(() => undefined)
+
+    unsubscribe1()
+
+    const observer2 = new QueryObserver(queryClient, {
+      queryKey: key,
+      initialData: 5,
+      staleTime: 2000,
+    })
+
+    const unsubscribe2 = observer2.subscribe(() => undefined)
+
+    expect(consoleMock).toHaveBeenCalledTimes(0)
+    unsubscribe2()
+    consoleMock.mockRestore()
+  })
 })

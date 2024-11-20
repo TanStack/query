@@ -653,6 +653,19 @@ export class Query<
 
     const time = timeUntilStale(this.state.dataUpdatedAt, staleTime)
 
+    if (process.env.NODE_ENV !== 'production') {
+      const staleTimes = this.observers.map((observer) =>
+        this.#resolveStaleTime(observer.options.staleTime),
+      )
+      staleTimes.push(staleTime)
+
+      if (new Set(staleTimes).size > 1) {
+        console.error(
+          `Multiple observers with different staleTimes are attached to the this query: ${this.queryHash}. The staleTime of the query will be determined by the last observer.`,
+        )
+      }
+    }
+
     const newInvalidated = time === 0
     if (this.state.isInvalidated !== newInvalidated) {
       this.#dispatch({
