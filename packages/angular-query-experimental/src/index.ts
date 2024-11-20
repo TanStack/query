@@ -10,6 +10,7 @@ export type {
   UndefinedInitialDataOptions,
 } from './query-options'
 export { queryOptions } from './query-options'
+export { mutationOptions } from './mutation-options'
 
 export type {
   DefinedInitialDataInfiniteOptions,

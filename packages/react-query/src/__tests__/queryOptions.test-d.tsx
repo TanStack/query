@@ -9,6 +9,7 @@ import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 import { useSuspenseQuery } from '../useSuspenseQuery'
+import type { UseQueryOptions } from '../types'
 import type {
   InitialDataFunction,
   QueryObserverResult,
@@ -232,5 +233,18 @@ describe('queryOptions', () => {
     }
     testFn('id')
     testFn()
+  })
+
+  it('should be passable to UseQueryOptions', () => {
+    function somethingWithQueryOptions(options: UseQueryOptions<number>) {
+      return options.queryKey
+    }
+
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(1),
+    })
+
+    somethingWithQueryOptions(options)
   })
 })
