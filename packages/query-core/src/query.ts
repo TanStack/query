@@ -194,9 +194,9 @@ export class Query<
     const nextStaleTime = this.#resolveStaleTime(this.options.staleTime)
     if (nextStaleTime === 0) {
       this.#initialState.isInvalidated = true
-    } else {
-      this.#updateStaleTimeout(nextStaleTime)
     }
+
+    this.#updateStaleTimeout(nextStaleTime)
   }
   get meta(): QueryMeta | undefined {
     return this.options.meta
@@ -661,7 +661,7 @@ export class Query<
       })
     }
 
-    if (isServer || !isValidTimeout(staleTime) || time < 1) {
+    if (isServer || !isValidTimeout(staleTime) || newInvalidated) {
       return
     }
 
@@ -732,7 +732,7 @@ function getDefaultState<
     fetchFailureCount: 0,
     fetchFailureReason: null,
     fetchMeta: null,
-    isInvalidated: false,
+    isInvalidated: !hasData,
     status: hasData ? 'success' : 'pending',
     fetchStatus: 'idle',
   }
