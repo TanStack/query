@@ -1254,7 +1254,7 @@ describe('useQuery', () => {
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: false,
+      isStale: true,
     })
   })
 
@@ -1294,7 +1294,7 @@ describe('useQuery', () => {
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: false,
+      isStale: true,
     })
   })
 
