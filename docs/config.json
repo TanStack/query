@@ -523,6 +523,10 @@
               "to": "framework/angular/guides/mutations"
             },
             {
+              "label": "Mutation Options",
+              "to": "framework/angular/guides/mutation-options"
+            },
+            {
               "label": "Query Invalidation",
               "to": "framework/angular/guides/query-invalidation"
             },
