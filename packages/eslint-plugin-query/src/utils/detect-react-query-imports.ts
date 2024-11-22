@@ -55,7 +55,6 @@ export function detectTanstackQueryImports(create: EnhancedCreate): Create {
       ImportDeclaration(node) {
         if (
           node.specifiers.length > 0 &&
-          // Change condition to check for undefined or 'value'
           (node.importKind === 'value' || node.importKind === undefined) &&
           node.source.value.startsWith('@tanstack/') &&
           node.source.value.endsWith('-query')
