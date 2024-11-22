@@ -703,6 +703,38 @@ describe('queryClient', () => {
       // another fetch after another sleep because the data is now stale
       expect(fetchFn).toHaveBeenCalledTimes(2)
     })
+
+    test('should fetch if data has been manually invalidated', async () => {
+      const key = queryKey()
+
+      const fetchFn = vi.fn().mockImplementation(() => null)
+
+      queryClient.setQueryDefaults(key, { staleTime: Infinity })
+      queryClient.setQueryData(key, 'data')
+
+      await queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: fetchFn,
+        staleTime: 100,
+      })
+      // no fetch because we have fresh data (not older than 100ms)
+      expect(fetchFn).toHaveBeenCalledTimes(0)
+
+      // mark query as invalidated
+      await queryClient.invalidateQueries({
+        queryKey: key,
+        refetchType: 'none',
+      })
+
+      await queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: fetchFn,
+        staleTime: 100,
+      })
+
+      // fetch because even if not stale by time, it's manually invalidated
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('fetchInfiniteQuery', () => {
