@@ -82,7 +82,7 @@ export function detectTanstackQueryImports(create: EnhancedCreate): Create {
 
         // TODO: canReportErrors()
         if (ruleInstructions[instruction]) {
-          return ruleInstructions[instruction]?.(node)
+          return ruleInstructions[instruction](node)
         }
 
         return undefined
