@@ -32,14 +32,14 @@ onlineManager.setEventListener((setOnline) => {
 or
 
 ```tsx
-import { onlineManager } from '@tanstack/react-query';
-import * as Network from 'expo-network';
+import { onlineManager } from '@tanstack/react-query'
+import * as Network from 'expo-network'
 
 onlineManager.setEventListener((setOnline) => {
   return Network.addNetworkStateListener((state) => {
-    setOnline(state.isConnected);
+    setOnline(state.isConnected)
   })
-});
+})
 ```
 
 ## Refetch on App focus
