@@ -42,7 +42,10 @@ export const ASTUtils = {
     properties: Array<TSESTree.ObjectLiteralElement>,
     key: string,
   ): TSESTree.Property | undefined {
-    return properties.find((x) => ASTUtils.isPropertyWithIdentifierKey(x, key))
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+    return properties.find((x) =>
+      ASTUtils.isPropertyWithIdentifierKey(x, key),
+    ) as TSESTree.Property | undefined
   },
   getNestedIdentifiers(node: TSESTree.Node): Array<TSESTree.Identifier> {
     const identifiers: Array<TSESTree.Identifier> = []
