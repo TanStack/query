@@ -19,11 +19,8 @@ import { noop, shouldThrowError } from './util'
 
 import { lazyInit } from './util/lazy-init/lazy-init'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
-import type {
-  CreateMutateFunction,
-  CreateMutationOptions,
-  CreateMutationResult,
-} from './types'
+import type { CreateMutateFunction, CreateMutationResult } from './types'
+import type { CreateMutationOptions } from './mutation-options'
 
 /**
  * Injects a mutation: an imperative function that can be invoked which typically performs server side effects.
@@ -40,9 +37,7 @@ export function injectMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => CreateMutationOptions<TData, TError, TVariables, TContext>,
+  optionsFn: () => CreateMutationOptions<TData, TError, TVariables, TContext>,
   injector?: Injector,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   return assertInjector(injectMutation, injector, () => {
@@ -58,7 +53,7 @@ export function injectMutation<
           TError,
           TVariables,
           TContext
-        >(queryClient, optionsFn(queryClient))
+        >(queryClient, optionsFn())
         const mutate: CreateMutateFunction<
           TData,
           TError,
@@ -70,9 +65,7 @@ export function injectMutation<
 
         effect(() => {
           observer.setOptions(
-            runInInjectionContext(currentInjector, () =>
-              optionsFn(queryClient),
-            ),
+            runInInjectionContext(currentInjector, () => optionsFn()),
           )
         })
 

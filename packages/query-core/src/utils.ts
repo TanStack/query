@@ -68,9 +68,9 @@ export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 
-export function noop(): undefined {
-  return undefined
-}
+export function noop(): void
+export function noop(): undefined
+export function noop() {}
 
 export function functionalUpdate<TInput, TOutput>(
   updater: Updater<TInput, TOutput>,

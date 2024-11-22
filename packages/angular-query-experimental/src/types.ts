@@ -7,7 +7,6 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
-  MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
   Override,
@@ -158,19 +157,6 @@ export type DefinedCreateInfiniteQueryResult<
     TError
   >,
 > = MapToSignals<TDefinedInfiniteQueryObserver>
-
-/**
- * @public
- */
-export interface CreateMutationOptions<
-  TData = unknown,
-  TError = DefaultError,
-  TVariables = void,
-  TContext = unknown,
-> extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted'
-  > {}
 
 /**
  * @public

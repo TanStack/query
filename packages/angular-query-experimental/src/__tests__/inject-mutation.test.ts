@@ -36,23 +36,6 @@ describe('injectMutation', () => {
     vi.useRealTimers()
   })
 
-  describe('callback helpers', () => {
-    test('can access client from options callback', async () => {
-      const mutation = TestBed.runInInjectionContext(() => {
-        return injectMutation((client) => ({
-          mutationFn: () => {
-            expect(client).toBe(queryClient)
-            return Promise.resolve()
-          },
-        }))
-      })
-
-      mutation.mutate()
-      vi.advanceTimersByTime(1)
-      expect(mutation.status()).toBe('pending')
-    })
-  })
-
   test('should be in idle state initially', () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({

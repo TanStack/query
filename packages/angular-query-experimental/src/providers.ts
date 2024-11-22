@@ -12,6 +12,7 @@ import {
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { isPlatformBrowser } from '@angular/common'
 import { isDevMode } from './util/is-dev-mode/is-dev-mode'
+import { noop } from './util'
 import type { EnvironmentProviders, Provider } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
@@ -251,7 +252,7 @@ export function withDevtools(
         provide: ENVIRONMENT_INITIALIZER,
         multi: true,
         useFactory: () => {
-          if (!isPlatformBrowser(inject(PLATFORM_ID))) return () => {}
+          if (!isPlatformBrowser(inject(PLATFORM_ID))) return noop
           const injector = inject(Injector)
           const options = computed(() =>
             runInInjectionContext(injector, () => optionsFn?.() ?? {}),
