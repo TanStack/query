@@ -26,6 +26,7 @@ const {
   isRefetching,
   isStale,
   isSuccess,
+  promise,
   refetch,
   status,
 } = useQuery(
@@ -58,7 +59,7 @@ const {
 )
 ```
 
-**Options**
+**Parameter1 (Options)**
 
 - `queryKey: unknown[]`
   - **Required**
@@ -168,6 +169,9 @@ const {
 - `meta: Record<string, unknown>`
   - Optional
   - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
+
+**Parameter2 (QueryClient)**
+
 - `queryClient?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
@@ -241,3 +245,6 @@ const {
     - Defaults to `true`
       - Per default, a currently running request will be cancelled before a new request is made
     - When set to `false`, no refetch will be made if there is already a request running.
+- `promise: Promise<TData>`
+  - A stable promise that will be resolved with the data of the query.
+  - Requires the `experimental_prefetchInRender` feature flag to be enabled on the `QueryClient`.

@@ -36,7 +36,6 @@ export const PersistQueryClientProvider = ({
     }
     if (!didRestore.current) {
       didRestore.current = true
-      setIsRestoring(true)
       persistQueryClientRestore(options).then(async () => {
         try {
           await refs.current.onSuccess?.()

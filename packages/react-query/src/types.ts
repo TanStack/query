@@ -10,9 +10,11 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
+  Override,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  SkipToken,
 } from '@tanstack/query-core'
 
 export interface UseBaseQueryOptions<
@@ -46,8 +48,13 @@ export interface UseSuspenseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'enabled' | 'throwOnError' | 'placeholderData'
-  > {}
+    'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  > {
+  queryFn?: Exclude<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
+    SkipToken
+  >
+}
 
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -84,8 +91,20 @@ export interface UseSuspenseInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >,
-    'enabled' | 'throwOnError' | 'placeholderData'
-  > {}
+    'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  > {
+  queryFn?: Exclude<
+    UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >['queryFn'],
+    SkipToken
+  >
+}
 
 export type UseBaseQueryResult<
   TData = unknown,
@@ -100,7 +119,10 @@ export type UseQueryResult<
 export type UseSuspenseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = OmitKeyof<DefinedQueryObserverResult<TData, TError>, 'isPlaceholderData'>
+> = OmitKeyof<
+  DefinedQueryObserverResult<TData, TError>,
+  'isPlaceholderData' | 'promise'
+>
 
 export type DefinedUseQueryResult<
   TData = unknown,
@@ -122,7 +144,7 @@ export type UseSuspenseInfiniteQueryResult<
   TError = DefaultError,
 > = OmitKeyof<
   DefinedInfiniteQueryObserverResult<TData, TError>,
-  'isPlaceholderData'
+  'isPlaceholderData' | 'promise'
 >
 
 export interface UseMutationOptions<
@@ -167,9 +189,3 @@ export type UseMutationResult<
   TVariables = unknown,
   TContext = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>
-
-type Override<TTargetA, TTargetB> = {
-  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
-    ? TTargetB[AKey]
-    : TTargetA[AKey]
-}

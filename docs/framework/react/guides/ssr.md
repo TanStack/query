@@ -214,7 +214,7 @@ export default function MyApp({ Component, pageProps }) {
 In each route:
 
 ```tsx
-// pages/posts.jsx
+// pages/posts.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -520,7 +520,7 @@ Amazing, we've mostly flattened our waterfalls! There's a catch though. Let's ca
 
 This is because with SPA's, server rendering only works for the initial page load, not for any subsequent navigation.
 
-Modern frameworks often tries to solve this by fetching the initial code and data in parallel, so if you were using Next.js or Remix with the prefetching patterns we outlined in this guide, including how to prefetch dependent queries, it would actually look like this instead:
+Modern frameworks often try to solve this by fetching the initial code and data in parallel, so if you were using Next.js or Remix with the prefetching patterns we outlined in this guide, including how to prefetch dependent queries, it would actually look like this instead:
 
 ```
 1. |> JS for <Feed>

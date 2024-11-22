@@ -479,6 +479,69 @@ describe('queryClient', () => {
     })
   })
 
+  describe('ensureInfiniteQueryData', () => {
+    test('should return the cached query data if the query is found', async () => {
+      const key = queryKey()
+      const queryFn = () => Promise.resolve('data')
+
+      queryClient.setQueryData([key, 'id'], { pages: ['bar'], pageParams: [0] })
+
+      await expect(
+        queryClient.ensureInfiniteQueryData({
+          queryKey: [key, 'id'],
+          queryFn,
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+        }),
+      ).resolves.toEqual({ pages: ['bar'], pageParams: [0] })
+    })
+
+    test('should fetch the query and return its results if the query is not found', async () => {
+      const key = queryKey()
+      const queryFn = () => Promise.resolve('data')
+
+      await expect(
+        queryClient.ensureInfiniteQueryData({
+          queryKey: [key, 'id'],
+          queryFn,
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+        }),
+      ).resolves.toEqual({ pages: ['data'], pageParams: [1] })
+    })
+
+    test('should return the cached query data if the query is found and preFetchQuery in the background when revalidateIfStale is set', async () => {
+      const TIMEOUT = 10
+      const key = queryKey()
+      queryClient.setQueryData([key, 'id'], { pages: ['old'], pageParams: [0] })
+
+      const queryFn = () =>
+        new Promise((resolve) => {
+          setTimeout(() => resolve('new'), TIMEOUT)
+        })
+
+      await expect(
+        queryClient.ensureInfiniteQueryData({
+          queryKey: [key, 'id'],
+          queryFn,
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          revalidateIfStale: true,
+        }),
+      ).resolves.toEqual({ pages: ['old'], pageParams: [0] })
+      await sleep(TIMEOUT + 10)
+      await expect(
+        queryClient.ensureInfiniteQueryData({
+          queryKey: [key, 'id'],
+          queryFn,
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          revalidateIfStale: true,
+        }),
+      ).resolves.toEqual({ pages: ['new'], pageParams: [0] })
+    })
+  })
+
   describe('getQueriesData', () => {
     test('should return the query data for all matched queries', () => {
       const key1 = queryKey()
@@ -1344,6 +1407,46 @@ describe('queryClient', () => {
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(2)
+    })
+
+    test('should not refetch disabled inactive queries even if "refetchType" is "all', async () => {
+      const queryFn = vi
+        .fn<(...args: Array<unknown>) => string>()
+        .mockReturnValue('data1')
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: queryFn,
+        staleTime: Infinity,
+        enabled: false,
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+      unsubscribe()
+      await queryClient.invalidateQueries({
+        refetchType: 'all',
+      })
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
+
+    test('should not refetch inactive queries that have a skipToken queryFn even if "refetchType" is "all', async () => {
+      const key = queryKey()
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: skipToken,
+        staleTime: Infinity,
+      })
+
+      queryClient.setQueryData(key, 'data1')
+
+      const unsubscribe = observer.subscribe(() => undefined)
+      unsubscribe()
+
+      expect(queryClient.getQueryState(key)?.dataUpdateCount).toBe(1)
+
+      await queryClient.invalidateQueries({
+        refetchType: 'all',
+      })
+
+      expect(queryClient.getQueryState(key)?.dataUpdateCount).toBe(1)
     })
 
     test('should cancel ongoing fetches if cancelRefetch option is set (default value)', async () => {

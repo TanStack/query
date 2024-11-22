@@ -25,7 +25,9 @@ import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = createQueryClient({
+    queryCache,
+  })
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -41,6 +43,7 @@ describe('useQuery', () => {
       const fromQueryFn = useQuery({ queryKey: key, queryFn: () => 'test' })
       expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
       expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
+      expectTypeOf(fromQueryFn.promise).toEqualTypeOf<Promise<string>>()
 
       // it should be possible to specify the result type
       const withResult = useQuery<string>({
@@ -270,6 +273,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
+      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -297,18 +301,22 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
+      promise: expect.any(Promise),
     })
+
+    expect(states[0]!.promise).toEqual(states[1]!.promise)
   })
 
   it('should return the correct states for an unsuccessful query', async () => {
     const key = queryKey()
 
     const states: Array<UseQueryResult> = []
+    let index = 0
 
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject(new Error('rejected')),
+        queryFn: () => Promise.reject(new Error(`rejected #${++index}`)),
 
         retry: 1,
         retryDelay: 1,
@@ -354,6 +362,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
+      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -362,7 +371,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 1,
-      failureReason: new Error('rejected'),
+      failureReason: new Error('rejected #1'),
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -381,15 +390,16 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
+      promise: expect.any(Promise),
     })
 
     expect(states[2]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
-      error: new Error('rejected'),
+      error: new Error('rejected #2'),
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,
-      failureReason: new Error('rejected'),
+      failureReason: new Error('rejected #2'),
       errorUpdateCount: 1,
       isError: true,
       isFetched: true,
@@ -408,7 +418,11 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
+      promise: expect.any(Promise),
     })
+
+    expect(states[0]!.promise).toEqual(states[1]!.promise)
+    expect(states[1]!.promise).toEqual(states[2]!.promise)
   })
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
@@ -659,7 +673,7 @@ describe('useQuery', () => {
         },
 
         gcTime: 0,
-        notifyOnChangeProps: 'all',
+        notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
       })
 
       states.push(state)
@@ -697,13 +711,29 @@ describe('useQuery', () => {
 
     expect(states.length).toBe(4)
     // First load
-    expect(states[0]).toMatchObject({ isPending: true, isSuccess: false })
+    expect(states[0]).toMatchObject({
+      isPending: true,
+      isSuccess: false,
+      data: undefined,
+    })
     // First success
-    expect(states[1]).toMatchObject({ isPending: false, isSuccess: true })
+    expect(states[1]).toMatchObject({
+      isPending: false,
+      isSuccess: true,
+      data: 'data',
+    })
     // Remove
-    expect(states[2]).toMatchObject({ isPending: true, isSuccess: false })
+    expect(states[2]).toMatchObject({
+      isPending: true,
+      isSuccess: false,
+      data: undefined,
+    })
     // Second success
-    expect(states[3]).toMatchObject({ isPending: false, isSuccess: true })
+    expect(states[3]).toMatchObject({
+      isPending: false,
+      isSuccess: true,
+      data: 'data',
+    })
   })
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
@@ -4930,6 +4960,29 @@ describe('useQuery', () => {
     await sleep(10)
 
     expect(renders).toBe(hashes)
+  })
+
+  it('should hash query keys that contain bigints given a supported query hash function', async () => {
+    const key = [queryKey(), 1n]
+
+    function queryKeyHashFn(x: any) {
+      return JSON.stringify(x, (_, value) => {
+        if (typeof value === 'bigint') return value.toString()
+        return value
+      })
+    }
+
+    function Page() {
+      useQuery({ queryKey: key, queryFn: () => 'test', queryKeyHashFn })
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    const query = queryClient.getQueryCache().get(queryKeyHashFn(key))
+    expect(query?.state.data).toBe('test')
   })
 
   it('should refetch when changed enabled to true in error state', async () => {

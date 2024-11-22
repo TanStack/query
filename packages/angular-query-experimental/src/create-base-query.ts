@@ -9,12 +9,11 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import { notifyManager } from '@tanstack/query-core'
+import { QueryClient, notifyManager } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { shouldThrowError } from './util'
 import { lazyInit } from './util/lazy-init/lazy-init'
-import { injectQueryClient } from './inject-query-client'
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import type { QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 /**
@@ -27,9 +26,7 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => CreateBaseQueryOptions<
+  optionsFn: () => CreateBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -42,7 +39,7 @@ export function createBaseQuery<
   return lazyInit(() => {
     const ngZone = injector.get(NgZone)
     const destroyRef = injector.get(DestroyRef)
-    const queryClient = injectQueryClient({ injector })
+    const queryClient = injector.get(QueryClient)
 
     /**
      * Signal that has the default options from query client applied
@@ -51,9 +48,7 @@ export function createBaseQuery<
      * are preserved and can keep being applied after signal changes
      */
     const defaultedOptionsSignal = computed(() => {
-      const options = runInInjectionContext(injector, () =>
-        optionsFn(queryClient),
-      )
+      const options = runInInjectionContext(injector, () => optionsFn())
       const defaultedOptions = queryClient.defaultQueryOptions(options)
       defaultedOptions._optimisticResults = 'optimistic'
       return defaultedOptions

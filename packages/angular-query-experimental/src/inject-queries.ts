@@ -1,4 +1,3 @@
-import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import {
   DestroyRef,
   Injector,
@@ -10,24 +9,23 @@ import {
   signal,
   untracked,
 } from '@angular/core'
+import { QueriesObserver, QueryClient, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import { injectQueryClient } from './inject-query-client'
 import { lazySignalInitializer } from './util/lazy-signal-initializer/lazy-signal-initializer'
 import type { CreateQueryOptions } from './types'
-import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
-  QueryClient,
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  ThrowOnError,
+  ThrowOnError
 } from '@tanstack/query-core'
+import type { Signal } from '@angular/core'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -215,6 +213,9 @@ export type QueriesResults<
             Array<QueryObserverResult>
 
 /**
+ * @param root0
+ * @param root0.queriesFn
+ * @param injector
  * @public
  */
 export function injectQueries<
@@ -233,7 +234,8 @@ export function injectQueries<
     const currentInjector = inject(Injector)
     const ngZone = currentInjector.get(NgZone)
     const destroyRef = currentInjector.get(DestroyRef)
-    const queryClient = injectQueryClient({ injector })
+    const queryClient = inject(QueryClient)
+
 
     return lazySignalInitializer(() => {
       const defaultedQueriesOptionsSignal = computed(() => {

@@ -1,15 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Output,
-  inject,
-} from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import {
-  injectQuery,
-  injectQueryClient,
-} from '@tanstack/angular-query-experimental'
+import { QueryClient, injectQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 import { PostsService } from '../services/posts-service'
 
@@ -28,5 +19,5 @@ export default class PostsComponent {
     queryFn: () => lastValueFrom(this.#postsService.allPosts$()),
   }))
 
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 }

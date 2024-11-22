@@ -70,7 +70,7 @@ const result = injectQuery(() => ({
 })
 export class PaginationExampleComponent {
   page = signal(0)
-  #queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 
   query = injectQuery(() => ({
     queryKey: ['projects', this.page()],

@@ -1,5 +1,6 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
+import { pendingThenable } from './thenable'
 import { isServer, sleep } from './utils'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
@@ -75,13 +76,8 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   let failureCount = 0
   let isResolved = false
   let continueFn: ((value?: unknown) => void) | undefined
-  let promiseResolve: (data: TData) => void
-  let promiseReject: (error: TError) => void
 
-  const promise = new Promise<TData>((outerResolve, outerReject) => {
-    promiseResolve = outerResolve
-    promiseReject = outerReject
-  })
+  const thenable = pendingThenable<TData>()
 
   const cancel = (cancelOptions?: CancelOptions): void => {
     if (!isResolved) {
@@ -110,7 +106,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       isResolved = true
       config.onSuccess?.(value)
       continueFn?.()
-      promiseResolve(value)
+      thenable.resolve(value)
     }
   }
 
@@ -119,7 +115,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       isResolved = true
       config.onError?.(value)
       continueFn?.()
-      promiseReject(value)
+      thenable.reject(value)
     }
   }
 
@@ -207,11 +203,11 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   }
 
   return {
-    promise,
+    promise: thenable,
     cancel,
     continue: () => {
       continueFn?.()
-      return promise
+      return thenable
     },
     cancelRetry,
     continueRetry,
@@ -223,7 +219,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       } else {
         pause().then(run)
       }
-      return promise
+      return thenable
     },
   }
 }

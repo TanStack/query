@@ -13,13 +13,13 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import type { QueryState } from './query'
 import type {
   CancelOptions,
   DataTag,
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
+  EnsureInfiniteQueryDataOptions,
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
@@ -40,6 +40,7 @@ import type {
   ResetOptions,
   SetDataOptions,
 } from './types'
+import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 // TYPES
@@ -385,7 +386,7 @@ export class QueryClient {
       TData,
       TPageParam
     >(options.pages)
-    return this.fetchQuery(options)
+    return this.fetchQuery(options as any)
   }
 
   prefetchInfiniteQuery<
@@ -404,6 +405,31 @@ export class QueryClient {
     >,
   ): Promise<void> {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
+  }
+
+  ensureInfiniteQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: EnsureInfiniteQueryDataOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<InfiniteData<TData, TPageParam>> {
+    options.behavior = infiniteQueryBehavior<
+      TQueryFnData,
+      TError,
+      TData,
+      TPageParam
+    >(options.pages)
+
+    return this.ensureQueryData(options as any)
   }
 
   resumePausedMutations(): Promise<unknown> {
@@ -429,10 +455,18 @@ export class QueryClient {
     this.#defaultOptions = options
   }
 
-  setQueryDefaults(
+  setQueryDefaults<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+  >(
     queryKey: QueryKey,
     options: Partial<
-      OmitKeyof<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+      OmitKeyof<
+        QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>,
+        'queryKey'
+      >
     >,
   ): void {
     this.#queryDefaults.set(hashKey(queryKey), {
@@ -459,10 +493,15 @@ export class QueryClient {
     return result
   }
 
-  setMutationDefaults(
+  setMutationDefaults<
+    TData = unknown,
+    TError = DefaultError,
+    TVariables = void,
+    TContext = unknown,
+  >(
     mutationKey: MutationKey,
     options: OmitKeyof<
-      MutationObserverOptions<any, any, any, any>,
+      MutationObserverOptions<TData, TError, TVariables, TContext>,
       'mutationKey'
     >,
   ): void {

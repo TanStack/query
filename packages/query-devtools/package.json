@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.52.3",
+  "version": "5.59.20",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -53,7 +53,8 @@
   },
   "files": [
     "build",
-    "src"
+    "src",
+    "!src/__tests__"
   ],
   "devDependencies": {
     "@kobalte/core": "^0.13.4",

@@ -8,18 +8,21 @@ import {
   runInInjectionContext,
   signal,
 } from '@angular/core'
-import { MutationObserver, notifyManager } from '@tanstack/query-core'
-import { assertInjector } from './util/assert-injector/assert-injector'
+import {
+  MutationObserver,
+  QueryClient,
+  notifyManager,
+} from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { injectQueryClient } from './inject-query-client'
 import { noop, shouldThrowError } from './util'
+import { assertInjector } from './util/assert-injector/assert-injector'
 
 import { lazyInit } from './util/lazy-init/lazy-init'
-import type { DefaultError, QueryClient } from '@tanstack/query-core'
+import type { DefaultError } from '@tanstack/query-core'
+import type { CreateMutationOptions } from './mutation-options'
 import type {
   CreateMutateFunction,
-  CreateMutationOptions,
-  CreateMutationResult,
+  CreateMutationResult
 } from './types'
 
 /**
@@ -37,16 +40,14 @@ export function injectMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => CreateMutationOptions<TData, TError, TVariables, TContext>,
+  optionsFn: () => CreateMutationOptions<TData, TError, TVariables, TContext>,
   injector?: Injector,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   return assertInjector(injectMutation, injector, () => {
-    const queryClient = injectQueryClient()
     const currentInjector = inject(Injector)
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
+    const queryClient = inject(QueryClient)
 
     return lazyInit(() =>
       runInInjectionContext(currentInjector, () => {
@@ -55,7 +56,7 @@ export function injectMutation<
           TError,
           TVariables,
           TContext
-        >(queryClient, optionsFn(queryClient))
+        >(queryClient, optionsFn())
         const mutate: CreateMutateFunction<
           TData,
           TError,
@@ -67,9 +68,7 @@ export function injectMutation<
 
         effect(() => {
           observer.setOptions(
-            runInInjectionContext(currentInjector, () =>
-              optionsFn(queryClient),
-            ),
+            runInInjectionContext(currentInjector, () => optionsFn()),
           )
         })
 

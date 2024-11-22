@@ -1431,4 +1431,194 @@ describe('useQueries', () => {
     // state changed, re-run combine
     expect(spy).toHaveBeenCalledTimes(4)
   })
+
+  it('should not re-render if combine returns a stable reference', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const queryFns: Array<string> = []
+    let renders = 0
+
+    function Page() {
+      const data = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: async () => {
+                await sleep(10)
+                queryFns.push('first result')
+                return 'first result'
+              },
+            },
+            {
+              queryKey: [key2],
+              queryFn: async () => {
+                await sleep(20)
+                queryFns.push('second result')
+                return 'second result'
+              },
+            },
+          ],
+          combine: () => 'foo',
+        },
+        client,
+      )
+
+      renders++
+
+      return (
+        <div>
+          <div>data: {data}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('data: foo'))
+
+    await waitFor(() =>
+      expect(queryFns).toEqual(['first result', 'second result']),
+    )
+
+    expect(renders).toBe(1)
+  })
+
+  it('should re-render once combine returns a different reference', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+
+    const client = new QueryClient()
+
+    let renders = 0
+
+    function Page() {
+      const data = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: async () => {
+                await sleep(10)
+                return 'first result'
+              },
+            },
+            {
+              queryKey: [key2],
+              queryFn: async () => {
+                await sleep(15)
+                return 'second result'
+              },
+            },
+            {
+              queryKey: [key3],
+              queryFn: async () => {
+                await sleep(20)
+                return 'third result'
+              },
+            },
+          ],
+          combine: (results) => {
+            const isPending = results.some((res) => res.isPending)
+
+            return isPending ? 'pending' : 'foo'
+          },
+        },
+        client,
+      )
+
+      renders++
+
+      return (
+        <div>
+          <div>data: {data}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('data: pending'))
+    await waitFor(() => rendered.getByText('data: foo'))
+
+    // one with pending, one with foo
+    expect(renders).toBe(2)
+  })
+
+  it('should track properties correctly with combine', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+
+    const client = new QueryClient()
+
+    function Page() {
+      const data = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: async () => {
+                await sleep(10)
+                return 'first result'
+              },
+            },
+            {
+              queryKey: [key2],
+              queryFn: async () => {
+                await sleep(15)
+                return 'second result'
+              },
+            },
+            {
+              queryKey: [key3],
+              queryFn: async () => {
+                await sleep(20)
+                return 'third result'
+              },
+            },
+          ],
+          combine: (results) => {
+            if (results.find((r) => r.isPending)) {
+              return 'pending'
+            }
+            return results.map((r) => r.data).join(', ')
+          },
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>data: {data}</div>
+          <button
+            onClick={() => {
+              client.setQueryData([key1], 'first result updated')
+            }}
+          >
+            update
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('data: pending'))
+    await waitFor(() =>
+      rendered.getByText('data: first result, second result, third result'),
+    )
+
+    fireEvent.click(rendered.getByRole('button', { name: /update/i }))
+
+    await waitFor(() =>
+      rendered.getByText(
+        'data: first result updated, second result, third result',
+      ),
+    )
+  })
 })

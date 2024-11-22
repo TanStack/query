@@ -5,7 +5,8 @@ import {
 } from '@angular/common/http'
 import {
   QueryClient,
-  provideAngularQuery,
+  provideTanStackQuery,
+  withDevtools,
 } from '@tanstack/angular-query-experimental'
 import { projectsMockInterceptor } from './api/projects-mock.interceptor'
 import type { ApplicationConfig } from '@angular/core'
@@ -13,7 +14,7 @@ import type { ApplicationConfig } from '@angular/core'
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptors([projectsMockInterceptor]), withFetch()),
-    provideAngularQuery(
+    provideTanStackQuery(
       new QueryClient({
         defaultOptions: {
           queries: {
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
           },
         },
       }),
+      withDevtools(),
     ),
   ],
 }

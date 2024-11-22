@@ -38,6 +38,7 @@ export class QueriesObserver<
   #client: QueryClient
   #result!: Array<QueryObserverResult>
   #queries: Array<QueryObserverOptions>
+  #options?: QueriesObserverOptions<TCombinedResult>
   #observers: Array<QueryObserver>
   #combinedResult?: TCombinedResult
   #lastCombine?: CombineFn<TCombinedResult>
@@ -46,11 +47,12 @@ export class QueriesObserver<
   constructor(
     client: QueryClient,
     queries: Array<QueryObserverOptions<any, any, any, any, any>>,
-    _options?: QueriesObserverOptions<TCombinedResult>,
+    options?: QueriesObserverOptions<TCombinedResult>,
   ) {
     super()
 
     this.#client = client
+    this.#options = options
     this.#queries = []
     this.#observers = []
     this.#result = []
@@ -83,10 +85,20 @@ export class QueriesObserver<
 
   setQueries(
     queries: Array<QueryObserverOptions>,
-    _options?: QueriesObserverOptions<TCombinedResult>,
+    options?: QueriesObserverOptions<TCombinedResult>,
     notifyOptions?: NotifyOptions,
   ): void {
     this.#queries = queries
+    this.#options = options
+
+    if (process.env.NODE_ENV !== 'production') {
+      const queryHashes = queries.map((query) => query.queryHash)
+      if (new Set(queryHashes).size !== queryHashes.length) {
+        console.warn(
+          '[QueriesObserver]: Duplicate Queries found. This might result in unexpected behavior.',
+        )
+      }
+    }
 
     notifyManager.batch(() => {
       const prevObservers = this.#observers
@@ -163,19 +175,28 @@ export class QueriesObserver<
         return this.#combineResult(r ?? result, combine)
       },
       () => {
-        return matches.map((match, index) => {
-          const observerResult = result[index]!
-          return !match.defaultedQueryOptions.notifyOnChangeProps
-            ? match.observer.trackResult(observerResult, (accessedProp) => {
-                // track property on all observers to ensure proper (synchronized) tracking (#7000)
-                matches.forEach((m) => {
-                  m.observer.trackProp(accessedProp)
-                })
-              })
-            : observerResult
-        })
+        return this.#trackResult(result, queries)
       },
     ]
+  }
+
+  #trackResult(
+    result: Array<QueryObserverResult>,
+    queries: Array<QueryObserverOptions>,
+  ) {
+    const matches = this.#findMatchingObservers(queries)
+
+    return matches.map((match, index) => {
+      const observerResult = result[index]!
+      return !match.defaultedQueryOptions.notifyOnChangeProps
+        ? match.observer.trackResult(observerResult, (accessedProp) => {
+            // track property on all observers to ensure proper (synchronized) tracking (#7000)
+            matches.forEach((m) => {
+              m.observer.trackProp(accessedProp)
+            })
+          })
+        : observerResult
+    })
   }
 
   #combineResult(
@@ -204,59 +225,43 @@ export class QueriesObserver<
   #findMatchingObservers(
     queries: Array<QueryObserverOptions>,
   ): Array<QueryObserverMatch> {
-    const prevObservers = this.#observers
     const prevObserversMap = new Map(
-      prevObservers.map((observer) => [observer.options.queryHash, observer]),
+      this.#observers.map((observer) => [observer.options.queryHash, observer]),
     )
 
-    const defaultedQueryOptions = queries.map((options) =>
-      this.#client.defaultQueryOptions(options),
-    )
+    const observers: Array<QueryObserverMatch> = []
 
-    const matchingObservers: Array<QueryObserverMatch> =
-      defaultedQueryOptions.flatMap((defaultedOptions) => {
-        const match = prevObserversMap.get(defaultedOptions.queryHash)
-        if (match != null) {
-          return [{ defaultedQueryOptions: defaultedOptions, observer: match }]
-        }
-        return []
-      })
-
-    const matchedQueryHashes = new Set(
-      matchingObservers.map((match) => match.defaultedQueryOptions.queryHash),
-    )
-    const unmatchedQueries = defaultedQueryOptions.filter(
-      (defaultedOptions) => !matchedQueryHashes.has(defaultedOptions.queryHash),
-    )
-
-    const getObserver = (options: QueryObserverOptions): QueryObserver => {
+    queries.forEach((options) => {
       const defaultedOptions = this.#client.defaultQueryOptions(options)
-      const currentObserver = this.#observers.find(
-        (o) => o.options.queryHash === defaultedOptions.queryHash,
-      )
+      const match = prevObserversMap.get(defaultedOptions.queryHash)
+      if (match) {
+        observers.push({
+          defaultedQueryOptions: defaultedOptions,
+          observer: match,
+        })
+      } else {
+        const existingObserver = this.#observers.find(
+          (o) => o.options.queryHash === defaultedOptions.queryHash,
+        )
+        observers.push({
+          defaultedQueryOptions: defaultedOptions,
+          observer:
+            existingObserver ??
+            new QueryObserver(this.#client, defaultedOptions),
+        })
+      }
+    })
+
+    return observers.sort((a, b) => {
       return (
-        currentObserver ?? new QueryObserver(this.#client, defaultedOptions)
+        queries.findIndex(
+          (q) => q.queryHash === a.defaultedQueryOptions.queryHash,
+        ) -
+        queries.findIndex(
+          (q) => q.queryHash === b.defaultedQueryOptions.queryHash,
+        )
       )
-    }
-
-    const newOrReusedObservers: Array<QueryObserverMatch> =
-      unmatchedQueries.map((options) => {
-        return {
-          defaultedQueryOptions: options,
-          observer: getObserver(options),
-        }
-      })
-
-    const sortMatchesByOrderOfQueries = (
-      a: QueryObserverMatch,
-      b: QueryObserverMatch,
-    ): number =>
-      defaultedQueryOptions.indexOf(a.defaultedQueryOptions) -
-      defaultedQueryOptions.indexOf(b.defaultedQueryOptions)
-
-    return matchingObservers
-      .concat(newOrReusedObservers)
-      .sort(sortMatchesByOrderOfQueries)
+    })
   }
 
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
@@ -268,11 +273,21 @@ export class QueriesObserver<
   }
 
   #notify(): void {
-    notifyManager.batch(() => {
-      this.listeners.forEach((listener) => {
-        listener(this.#result)
-      })
-    })
+    if (this.hasListeners()) {
+      const previousResult = this.#combinedResult
+      const newResult = this.#combineResult(
+        this.#trackResult(this.#result, this.#queries),
+        this.#options?.combine,
+      )
+
+      if (previousResult !== newResult) {
+        notifyManager.batch(() => {
+          this.listeners.forEach((listener) => {
+            listener(this.#result)
+          })
+        })
+      }
+    }
   }
 }
 
