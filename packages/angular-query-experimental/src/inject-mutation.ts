@@ -20,10 +20,7 @@ import { assertInjector } from './util/assert-injector/assert-injector'
 import { lazyInit } from './util/lazy-init/lazy-init'
 import type { DefaultError } from '@tanstack/query-core'
 import type { CreateMutationOptions } from './mutation-options'
-import type {
-  CreateMutateFunction,
-  CreateMutationResult
-} from './types'
+import type { CreateMutateFunction, CreateMutationResult } from './types'
 
 /**
  * Injects a mutation: an imperative function that can be invoked which typically performs server side effects.

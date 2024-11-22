@@ -9,7 +9,11 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import { QueriesObserver, QueryClient, notifyManager } from '@tanstack/query-core'
+import {
+  QueriesObserver,
+  QueryClient,
+  notifyManager,
+} from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { lazySignalInitializer } from './util/lazy-signal-initializer/lazy-signal-initializer'
 import type { CreateQueryOptions } from './types'
@@ -23,7 +27,7 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  ThrowOnError
+  ThrowOnError,
 } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
 
@@ -235,7 +239,6 @@ export function injectQueries<
     const ngZone = currentInjector.get(NgZone)
     const destroyRef = currentInjector.get(DestroyRef)
     const queryClient = inject(QueryClient)
-
 
     return lazySignalInitializer(() => {
       const defaultedQueriesOptionsSignal = computed(() => {
