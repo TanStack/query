@@ -454,11 +454,6 @@ export interface FetchQueryOptions<
     'queryKey'
   > {
   initialPageParam?: never
-  /**
-   * The time in milliseconds after data is considered stale.
-   * If the data is fresh it will be returned from the cache.
-   */
-  staleTime?: StaleTime<TQueryFnData, TError, TData, TQueryKey>
 }
 
 export interface EnsureQueryDataOptions<
