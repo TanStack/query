@@ -14,5 +14,7 @@ export class AutocompleteService {
   getSuggestions = (term: string = '') =>
     term.trim() === ''
       ? of({ suggestions: [] })
-      : this.#http.get<Response>(`/api/autocomplete?term=${term}`)
+      : this.#http.get<Response>(
+          `/api/autocomplete?term=${encodeURIComponent(term)}`,
+        )
 }
