@@ -241,7 +241,13 @@ export const ASTUtils = {
     node: TSESTree.Node,
   ) {
     for (const ancestor of sourceCode.getAncestors(node)) {
-      if (ancestor.type === AST_NODE_TYPES.FunctionDeclaration) {
+      if (
+        ASTUtils.isNodeOfOneOf(ancestor, [
+          AST_NODE_TYPES.FunctionDeclaration,
+          AST_NODE_TYPES.FunctionExpression,
+          AST_NODE_TYPES.ArrowFunctionExpression,
+        ])
+      ) {
         return ancestor
       }
 
