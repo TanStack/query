@@ -88,23 +88,27 @@ export function createBaseQuery<
     )
 
     // observer.trackResult is not used as this optimization is not needed for Angular
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls((state: QueryObserverResult<TData, TError>) => {
-        ngZone.run(() => {
-          if (
-            state.isError &&
-            !state.isFetching &&
-            // !isRestoring() && // todo: enable when client persistence is implemented
-            shouldThrowError(observer.options.throwOnError, [
-              state.error,
-              observer.getCurrentQuery(),
-            ])
-          ) {
-            throw state.error
-          }
-          resultSignal.set(state)
-        })
-      }),
+    const unsubscribe = ngZone.runOutsideAngular(() =>
+      observer.subscribe(
+        notifyManager.batchCalls(
+          (state: QueryObserverResult<TData, TError>) => {
+            ngZone.run(() => {
+              if (
+                state.isError &&
+                !state.isFetching &&
+                // !isRestoring() && // todo: enable when client persistence is implemented
+                shouldThrowError(observer.options.throwOnError, [
+                  state.error,
+                  observer.getCurrentQuery(),
+                ])
+              ) {
+                throw state.error
+              }
+              resultSignal.set(state)
+            })
+          },
+        ),
+      ),
     )
     destroyRef.onDestroy(unsubscribe)
 

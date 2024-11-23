@@ -28,17 +28,19 @@ export function injectIsMutating(
 
     const result = signal(isMutating)
 
-    const unsubscribe = cache.subscribe(
-      notifyManager.batchCalls(() => {
-        const newIsMutating = queryClient.isMutating(filters)
-        if (isMutating !== newIsMutating) {
-          // * and update with each change
-          isMutating = newIsMutating
-          ngZone.run(() => {
-            result.set(isMutating)
-          })
-        }
-      }),
+    const unsubscribe = ngZone.runOutsideAngular(() =>
+      cache.subscribe(
+        notifyManager.batchCalls(() => {
+          const newIsMutating = queryClient.isMutating(filters)
+          if (isMutating !== newIsMutating) {
+            // * and update with each change
+            isMutating = newIsMutating
+            ngZone.run(() => {
+              result.set(isMutating)
+            })
+          }
+        }),
+      ),
     )
 
     destroyRef.onDestroy(unsubscribe)
