@@ -471,8 +471,8 @@ ruleTester.run('exhaustive-deps', rule, {
           queryFn: () => Promise.resolve(EXTERNAL),
         }),
       };  
-      `
-    }
+      `,
+    },
   ],
   invalid: [
     {

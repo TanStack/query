@@ -13,7 +13,7 @@ export const ExhaustiveDepsUtils = {
     const component = ASTUtils.getFunctionAncestor(sourceCode, node)
 
     if (component === undefined) {
-        return false
+      return false
     }
 
     if (
