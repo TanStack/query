@@ -534,17 +534,21 @@ export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> extends QueryFilters<TQueryFnData,
-    TError,
-    TData,
-    TQueryKey> {
+export interface InvalidateQueryFilters<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {
   refetchType?: QueryTypeFilter | 'none'
 }
 
-export interface RefetchQueryFilters<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> extends QueryFilters<TQueryFnData,
-    TError,
-    TData,
-    TQueryKey> {}
+export interface RefetchQueryFilters<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {}
 
 export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}

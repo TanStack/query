@@ -15,7 +15,12 @@ import type { FetchOptions, Query } from './query'
 
 // TYPES
 
-export interface QueryFilters<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> {
+export interface QueryFilters<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> {
   /**
    * Filter to active queries, inactive queries or all queries
    */
@@ -27,14 +32,13 @@ export interface QueryFilters<TQueryFnData = unknown, TError = Error, TData = TQ
   /**
    * Include queries matching this predicate function
    */
-  predicate?: (query: Query<TQueryFnData,
-    TError,
-    TData,
-    TQueryKey>) => boolean
+  predicate?: (query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean
   /**
    * Include queries matching this query key
    */
-  queryKey?: unknown extends TQueryFnData ? QueryKey : (QueryKey & DataTag<unknown, TQueryFnData>)
+  queryKey?: unknown extends TQueryFnData
+    ? QueryKey
+    : QueryKey & DataTag<unknown, TQueryFnData>
   /**
    * Include or exclude stale queries
    */
