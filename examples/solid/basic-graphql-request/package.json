@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@tanstack/solid-query": "^5.60.6",
-    "@tanstack/solid-query-devtools": "^5.60.6",
+    "@tanstack/solid-query-devtools": "^5.61.3",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
     "solid-js": "^1.8.19"
