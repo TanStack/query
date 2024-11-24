@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
     "typescript": "5.3.3",
     "vite": "^5.3.5"
   }
