@@ -1909,6 +1909,19 @@ importers:
 
   integrations/react-webpack-4:
     dependencies:
+      '@tanstack/react-query':
+        specifier: workspace:*
+        version: link:../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/react-query-devtools
+      react:
+        specifier: 19.0.0-rc-4c2e457c7c-20240522
+        version: 19.0.0-rc-4c2e457c7c-20240522
+      react-dom:
+        specifier: 19.0.0-rc-4c2e457c7c-20240522
+        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+    devDependencies:
       '@babel/core':
         specifier: ^7.26.0
         version: 7.26.0
@@ -1918,37 +1931,37 @@ importers:
       '@babel/preset-react':
         specifier: ^7.25.9
         version: 7.25.9(@babel/core@7.26.0)
-      '@tanstack/react-query':
-        specifier: workspace:*
-        version: link:../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: workspace:*
-        version: link:../../packages/react-query-devtools
       babel-loader:
         specifier: ^8.3.0
         version: 8.3.0(@babel/core@7.26.0)(webpack@4.44.2)
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
       html-webpack-plugin:
         specifier: ^4.5.2
         version: 4.5.2(webpack@4.44.2)
-      react:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       webpack:
         specifier: ^4.44.2
         version: 4.44.2(webpack-cli@4.10.0)
       webpack-cli:
         specifier: ^4.10.0
         version: 4.10.0(webpack@4.44.2)
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
 
   integrations/react-webpack-5:
     dependencies:
+      '@tanstack/react-query':
+        specifier: workspace:*
+        version: link:../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/react-query-devtools
+      react:
+        specifier: 19.0.0-rc-4c2e457c7c-20240522
+        version: 19.0.0-rc-4c2e457c7c-20240522
+      react-dom:
+        specifier: 19.0.0-rc-4c2e457c7c-20240522
+        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+    devDependencies:
       '@babel/core':
         specifier: ^7.26.0
         version: 7.26.0
@@ -1958,34 +1971,21 @@ importers:
       '@babel/preset-react':
         specifier: ^7.25.9
         version: 7.25.9(@babel/core@7.26.0)
-      '@tanstack/react-query':
-        specifier: workspace:*
-        version: link:../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: workspace:*
-        version: link:../../packages/react-query-devtools
       babel-loader:
         specifier: ^9.2.1
         version: 9.2.1(@babel/core@7.26.0)(webpack@5.96.1)
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
       html-webpack-plugin:
         specifier: ^5.6.3
         version: 5.6.3(webpack@5.96.1)
-      react:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       webpack:
         specifier: ^5.96.1
         version: 5.96.1(esbuild@0.21.5)(webpack-cli@5.1.4)
       webpack-cli:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.96.1)
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
 
   integrations/solid-vite:
     dependencies:
