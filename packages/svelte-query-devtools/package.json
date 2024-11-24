@@ -40,7 +40,7 @@
   ],
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*",
-    "esm-env": "^1.0.0"
+    "esm-env": "^1.1.4"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.3.2",
