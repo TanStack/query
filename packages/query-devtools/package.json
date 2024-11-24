@@ -65,7 +65,7 @@
     "@tanstack/query-core": "workspace:*",
     "clsx": "^2.1.1",
     "goober": "^2.1.16",
-    "solid-js": "^1.8.19",
+    "solid-js": "^1.9.3",
     "solid-transition-group": "^0.2.3",
     "superjson": "^2.2.1",
     "tsup-preset-solid": "^2.2.0",

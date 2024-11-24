@@ -76,6 +76,7 @@
   },
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
+    "@testing-library/react": "^16.0.1",
     "@types/react": "npm:types-react@rc",
     "@vitejs/plugin-react": "^4.3.3",
     "react": "19.0.0-rc-4c2e457c7c-20240522"

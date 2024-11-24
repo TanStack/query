@@ -61,8 +61,9 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
+    "@solidjs/testing-library": "^0.8.10",
     "@tanstack/solid-query": "workspace:*",
-    "solid-js": "^1.8.19",
+    "solid-js": "^1.9.3",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.10.2"
   },
