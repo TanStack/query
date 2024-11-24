@@ -12,8 +12,11 @@ export const ExhaustiveDepsUtils = {
     const { sourceCode, reference, scopeManager, node } = params
     const component = ASTUtils.getFunctionAncestor(sourceCode, node)
 
+    if (component === undefined) {
+      return false
+    }
+
     if (
-      component !== undefined &&
       !ASTUtils.isDeclaredInNode({
         scopeManager,
         reference,

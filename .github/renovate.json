@@ -24,7 +24,6 @@
     "node",
     "react",
     "react-dom",
-    "react-scripts",
     "tsup",
     "typescript",
     "typescript47",
@@ -36,6 +35,7 @@
     "vue",
     "vue-tsc",
     "vue2",
-    "vue2.7"
+    "vue2.7",
+    "webpack"
   ]
 }
