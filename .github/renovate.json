@@ -24,7 +24,6 @@
     "node",
     "react",
     "react-dom",
-    "react-scripts",
     "tsup",
     "typescript",
     "typescript47",
