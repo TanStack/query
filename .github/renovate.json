@@ -35,6 +35,7 @@
     "vue",
     "vue-tsc",
     "vue2",
-    "vue2.7"
+    "vue2.7",
+    "webpack"
   ]
 }
