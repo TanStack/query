@@ -18,7 +18,7 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
+import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
@@ -38,7 +38,7 @@ export function createBaseQuery<
     TQueryKey
   >,
   Observer: typeof QueryObserver,
-): CreateBaseQueryResult<TData, TError> {
+) {
   const injector = inject(Injector)
   return lazyInit(() => {
     const ngZone = injector.get(NgZone)
@@ -112,6 +112,6 @@ export function createBaseQuery<
     )
     destroyRef.onDestroy(unsubscribe)
 
-    return signalProxy(resultSignal) as CreateBaseQueryResult<TData, TError>
+    return signalProxy(resultSignal)
   })
 }
