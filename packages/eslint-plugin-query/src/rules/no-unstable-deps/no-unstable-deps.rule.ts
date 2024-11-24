@@ -77,6 +77,7 @@ export const rule = createRule({
           node.specifiers.forEach((specifier) => {
             if (
               specifier.type === AST_NODE_TYPES.ImportSpecifier &&
+              specifier.imported.type === AST_NODE_TYPES.Identifier &&
               reactHookNames.includes(specifier.imported.name)
             ) {
               // Track alias or direct import
