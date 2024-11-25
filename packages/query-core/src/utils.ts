@@ -82,11 +82,11 @@ export function functionalUpdate<TInput, TOutput>(
 }
 
 export function isValidTimeout(value: unknown): value is number {
-  return typeof value === 'number' && value >= 0 && value !== Infinity
+  return typeof value === 'number' && value > 0 && value !== Infinity
 }
 
-export function timeUntilStale(updatedAt: number, staleTime?: number): number {
-  return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
+export function timeUntilStale(updatedAt: number, staleTime: number): number {
+  return Math.max(updatedAt + staleTime - Date.now(), 0)
 }
 
 export function resolveStaleTime<
@@ -97,8 +97,8 @@ export function resolveStaleTime<
 >(
   staleTime: undefined | StaleTime<TQueryFnData, TError, TData, TQueryKey>,
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): number | undefined {
-  return typeof staleTime === 'function' ? staleTime(query) : staleTime
+): number {
+  return typeof staleTime === 'function' ? staleTime(query) : (staleTime ?? 0)
 }
 
 export function resolveEnabled<

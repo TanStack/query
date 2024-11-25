@@ -1,8 +1,11 @@
 import {
   ensureQueryFn,
+  isServer,
+  isValidTimeout,
   noop,
   replaceData,
   resolveEnabled,
+  resolveStaleTime,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -171,6 +174,7 @@ export class Query<
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
+  #staleTimeoutId?: ReturnType<typeof setTimeout>
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
@@ -185,6 +189,8 @@ export class Query<
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
     this.scheduleGc()
+
+    this.updateStaleTimer()
   }
   get meta(): QueryMeta | undefined {
     return this.options.meta
@@ -241,6 +247,7 @@ export class Query<
   destroy(): void {
     super.destroy()
 
+    this.#clearStaleTimeout()
     this.cancel({ silent: true })
   }
 
@@ -266,26 +273,61 @@ export class Query<
     )
   }
 
-  isStale(): boolean {
-    if (this.state.isInvalidated) {
-      return true
-    }
+  staleTime(): number {
+    const staleTimes = this.observers.map((observer) =>
+      resolveStaleTime(observer.options.staleTime, this),
+    )
 
-    if (this.getObserversCount() > 0) {
-      return this.observers.some(
-        (observer) => observer.getCurrentResult().isStale,
-      )
-    }
-
-    return this.state.data === undefined
+    return Math.min(...staleTimes)
   }
 
-  isStaleByTime(staleTime = 0): boolean {
+  isStale(): boolean {
+    return this.isStaleByTime(this.staleTime())
+  }
+
+  isStaleByTime(staleTime: number): boolean {
     return (
       this.state.isInvalidated ||
       this.state.data === undefined ||
       !timeUntilStale(this.state.dataUpdatedAt, staleTime)
     )
+  }
+
+  updateStaleTimer(): void {
+    this.#clearStaleTimeout()
+    const staleTime = this.staleTime()
+
+    const time = timeUntilStale(this.state.dataUpdatedAt, staleTime)
+
+    const triggerStale = () => {
+      this.#dispatch({
+        type: 'setState',
+        state: {},
+      })
+    }
+
+    if (time === 0) {
+      // no timer necessary,
+      triggerStale()
+      return
+    }
+
+    if (isServer || !isValidTimeout(staleTime)) {
+      return
+    }
+
+    // The timeout is sometimes triggered 1 ms before the stale time expiration.
+    // To mitigate this issue we always add 1 ms to the timeout.
+    this.#staleTimeoutId = setTimeout(() => {
+      triggerStale()
+    }, time + 1)
+  }
+
+  #clearStaleTimeout(): void {
+    if (this.#staleTimeoutId) {
+      clearTimeout(this.#staleTimeoutId)
+      this.#staleTimeoutId = undefined
+    }
   }
 
   onFocus(): void {
@@ -613,6 +655,10 @@ export class Query<
     }
 
     this.state = reducer(this.state)
+
+    if (!this.isStale()) {
+      this.updateStaleTimer()
+    }
 
     notifyManager.batch(() => {
       this.observers.forEach((observer) => {
