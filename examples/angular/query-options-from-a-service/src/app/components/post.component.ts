@@ -12,7 +12,6 @@ import { QueriesService } from '../services/queries-service'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'post',
-  standalone: true,
   templateUrl: './post.component.html',
   imports: [RouterLink],
 })

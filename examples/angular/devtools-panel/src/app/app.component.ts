@@ -5,7 +5,6 @@ import { ExampleQueryComponent } from './components/example-query.component'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
-  standalone: true,
   template: `
     <ul>
       <li>
