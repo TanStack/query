@@ -278,16 +278,21 @@ describe('queriesObserver', () => {
     ])
 
     const results: Array<Array<QueryObserverResult>> = []
-    results.push(observer.getOptimisticResult([
-      { queryKey: key1, queryFn: queryFn1 },
-      { queryKey: key2, queryFn: queryFn2 },
-      { queryKey: key1, queryFn: queryFn1 },
-    ], undefined)[0])
-    
+    results.push(
+      observer.getOptimisticResult(
+        [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+          { queryKey: key1, queryFn: queryFn1 },
+        ],
+        undefined,
+      )[0],
+    )
+
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    
+
     await sleep(1)
     unsubscribe()
 
@@ -322,7 +327,7 @@ describe('queriesObserver', () => {
       { status: 'success', fetchStatus: 'idle', data: 2 },
       { status: 'success', fetchStatus: 'idle', data: 1 },
     ])
-    
+
     // Verify that queryFn1 was only called once despite being used twice
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(1)
