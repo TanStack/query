@@ -5,7 +5,6 @@ import { PostsComponent } from './components/posts.component'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'basic-example',
-  standalone: true,
   templateUrl: './app.component.html',
   imports: [PostComponent, PostsComponent],
 })

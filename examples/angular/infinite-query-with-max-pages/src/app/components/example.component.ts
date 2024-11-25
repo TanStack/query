@@ -12,7 +12,6 @@ import { ProjectsService } from '../services/projects.service'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example',
-  standalone: true,
   templateUrl: './example.component.html',
   imports: [ProjectStyleDirective],
 })
