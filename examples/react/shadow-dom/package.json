@@ -18,7 +18,7 @@
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
     "@vitejs/plugin-react": "^4.3.3",
-    "typescript": "5.3.3",
+    "typescript": "5.7.2",
     "vite": "^5.3.5"
   }
 }
