@@ -126,6 +126,10 @@ interface InvalidateAction {
   type: 'invalidate'
 }
 
+interface StaleAction {
+  type: 'stale'
+}
+
 interface PauseAction {
   type: 'pause'
 }
@@ -147,6 +151,7 @@ export type Action<TData, TError> =
   | FetchAction
   | InvalidateAction
   | PauseAction
+  | StaleAction
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
 
@@ -301,8 +306,7 @@ export class Query<
 
     const triggerStale = () => {
       this.#dispatch({
-        type: 'setState',
-        state: {},
+        type: 'stale',
       })
     }
 
@@ -651,12 +655,17 @@ export class Query<
             ...state,
             ...action.state,
           }
+        case 'stale': {
+          return state
+        }
       }
     }
 
     this.state = reducer(this.state)
 
-    if (!this.isStale()) {
+    // prevent calling updateStaleTimer() again for stale marking actions
+    // this will just result in #dispatch being called, so we wind up here again
+    if (action.type !== 'stale' && !this.isStale()) {
       this.updateStaleTimer()
     }
 
