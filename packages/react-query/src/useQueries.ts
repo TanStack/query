@@ -272,8 +272,14 @@ export function useQueries<
       ),
   )
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  // note: this must be called before useSyncExternalStore
+  const [optimisticResult, getCombinedResult, trackResult] =
+    observer.getOptimisticResult(
+      defaultedQueries,
+      (options as QueriesObserverOptions<TCombinedResult>).combine,
+    )
 
+  const shouldSubscribe = !isRestoring && options.subscribed !== false
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
@@ -297,12 +303,6 @@ export function useQueries<
       },
     )
   }, [defaultedQueries, options, observer])
-
-  const [optimisticResult, getCombinedResult, trackResult] =
-    observer.getOptimisticResult(
-      defaultedQueries,
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
-    )
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result),

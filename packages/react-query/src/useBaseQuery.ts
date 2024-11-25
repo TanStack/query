@@ -82,8 +82,10 @@ export function useBaseQuery<
       ),
   )
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
+  // note: this must be called before useSyncExternalStore
+  const result = observer.getOptimisticResult(defaultedOptions)
 
+  const shouldSubscribe = !isRestoring && options.subscribed !== false
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
@@ -108,8 +110,6 @@ export function useBaseQuery<
     // these changes should already be reflected in the optimistic result.
     observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
-
-  const result = observer.getOptimisticResult(defaultedOptions)
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
