@@ -13,7 +13,9 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UnwrapRef<UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>> & {
+): UnwrapRef<
+  UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+> & {
   queryKey: DataTag<TQueryKey, TQueryFnData>
 }
 
@@ -24,10 +26,13 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UnwrapRef<DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>> & {
-    queryKey: DataTag<TQueryKey, TQueryFnData>;
-    initialData: | NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>);
+): UnwrapRef<
+  DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData>
+  initialData:
+    | NonUndefinedGuard<TQueryFnData>
+    | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
 export function queryOptions(options: unknown) {
