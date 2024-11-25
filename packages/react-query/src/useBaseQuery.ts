@@ -82,14 +82,14 @@ export function useBaseQuery<
       ),
   )
 
-  const result = observer.getOptimisticResult(defaultedOptions)
+  const shouldSubscribe = !isRestoring && options.subscribed !== false
 
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
-        const unsubscribe = isRestoring
-          ? noop
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange))
+        const unsubscribe = shouldSubscribe
+          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
+          : noop
 
         // Update result to make sure we did not miss any query updates
         // between creating the observer and subscribing to it.
@@ -97,7 +97,7 @@ export function useBaseQuery<
 
         return unsubscribe
       },
-      [observer, isRestoring],
+      [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
@@ -108,6 +108,8 @@ export function useBaseQuery<
     // these changes should already be reflected in the optimistic result.
     observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
+
+  const result = observer.getOptimisticResult(defaultedOptions)
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
