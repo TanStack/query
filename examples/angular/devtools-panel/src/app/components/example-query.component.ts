@@ -14,7 +14,6 @@ interface Response {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example-query',
-  standalone: true,
   template: `
     <div style="padding-bottom: 20px">
       @if (query.isPending()) {

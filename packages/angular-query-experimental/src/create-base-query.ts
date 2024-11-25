@@ -18,7 +18,7 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
+import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
@@ -38,7 +38,7 @@ export function createBaseQuery<
     TQueryKey
   >,
   Observer: typeof QueryObserver,
-): CreateBaseQueryResult<TData, TError> {
+) {
   const injector = inject(Injector)
   return lazyInit(() => {
     const ngZone = injector.get(NgZone)
@@ -88,26 +88,30 @@ export function createBaseQuery<
     )
 
     // observer.trackResult is not used as this optimization is not needed for Angular
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls((state: QueryObserverResult<TData, TError>) => {
-        ngZone.run(() => {
-          if (
-            state.isError &&
-            !state.isFetching &&
-            // !isRestoring() && // todo: enable when client persistence is implemented
-            shouldThrowError(observer.options.throwOnError, [
-              state.error,
-              observer.getCurrentQuery(),
-            ])
-          ) {
-            throw state.error
-          }
-          resultSignal.set(state)
-        })
-      }),
+    const unsubscribe = ngZone.runOutsideAngular(() =>
+      observer.subscribe(
+        notifyManager.batchCalls(
+          (state: QueryObserverResult<TData, TError>) => {
+            ngZone.run(() => {
+              if (
+                state.isError &&
+                !state.isFetching &&
+                // !isRestoring() && // todo: enable when client persistence is implemented
+                shouldThrowError(observer.options.throwOnError, [
+                  state.error,
+                  observer.getCurrentQuery(),
+                ])
+              ) {
+                throw state.error
+              }
+              resultSignal.set(state)
+            })
+          },
+        ),
+      ),
     )
     destroyRef.onDestroy(unsubscribe)
 
-    return signalProxy(resultSignal) as CreateBaseQueryResult<TData, TError>
+    return signalProxy(resultSignal)
   })
 }

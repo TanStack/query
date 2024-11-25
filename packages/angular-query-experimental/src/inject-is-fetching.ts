@@ -29,17 +29,19 @@ export function injectIsFetching(
 
     const result = signal(isFetching)
 
-    const unsubscribe = cache.subscribe(
-      notifyManager.batchCalls(() => {
-        const newIsFetching = queryClient.isFetching(filters)
-        if (isFetching !== newIsFetching) {
-          // * and update with each change
-          isFetching = newIsFetching
-          ngZone.run(() => {
-            result.set(isFetching)
-          })
-        }
-      }),
+    const unsubscribe = ngZone.runOutsideAngular(() =>
+      cache.subscribe(
+        notifyManager.batchCalls(() => {
+          const newIsFetching = queryClient.isFetching(filters)
+          if (isFetching !== newIsFetching) {
+            // * and update with each change
+            isFetching = newIsFetching
+            ngZone.run(() => {
+              result.set(isFetching)
+            })
+          }
+        }),
+      ),
     )
 
     destroyRef.onDestroy(unsubscribe)

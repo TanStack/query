@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { Component, effect, input, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { lazySignalInitializer } from '../../../util/lazy-signal-initializer/lazy-signal-initializer'
-import { flushQueue, setFixtureSignalInputs } from '../../test-utils'
+import { setFixtureSignalInputs } from '../../test-utils'
 import type { Signal, WritableSignal } from '@angular/core'
 
 describe('lazySignalInitializer', () => {
@@ -61,17 +61,19 @@ describe('lazySignalInitializer', () => {
 
     value()
 
-    await flushQueue()
+    TestBed.flushEffects()
 
     expect(outerSignal).toBeDefined()
     expect(innerSignal).toBeDefined()
 
+    expect(registerEffectValue).toHaveBeenCalledTimes(1)
+
     expect(initCallFn).toHaveBeenCalledTimes(1)
 
     innerSignal.set(1)
-    await flushQueue()
     outerSignal.set(2)
-    await flushQueue()
+
+    TestBed.flushEffects()
 
     expect(initCallFn).toHaveBeenCalledTimes(1)
     expect(registerEffectValue).toHaveBeenCalledTimes(2)

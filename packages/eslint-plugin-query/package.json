@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.60.1",
+  "version": "5.61.3",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -21,7 +21,11 @@
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
-    "test:types:ts53": "tsc",
+    "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js",
+    "test:types:ts57": "tsc",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
@@ -51,12 +55,12 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^8.3.0"
+    "@typescript-eslint/utils": "^8.15.0"
   },
   "devDependencies": {
-    "@typescript-eslint/rule-tester": "^8.3.0",
+    "@typescript-eslint/rule-tester": "^8.15.0",
     "combinate": "^1.1.11",
-    "eslint": "^9.9.1"
+    "eslint": "^9.15.0"
   },
   "peerDependencies": {
     "eslint": "^8.57.0 || ^9.0.0"

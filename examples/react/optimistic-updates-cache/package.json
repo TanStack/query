@@ -9,15 +9,15 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.61.0",
-    "@tanstack/react-query-devtools": "^5.61.0",
-    "next": "^14.2.5",
+    "@tanstack/react-query": "^5.61.3",
+    "@tanstack/react-query-devtools": "^5.61.3",
+    "next": "^14.2.18",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
-    "typescript": "5.3.3"
+    "typescript": "5.7.2"
   }
 }

@@ -14,7 +14,6 @@ interface Response {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'simple-example',
-  standalone: true,
   templateUrl: './simple-example.component.html',
 })
 export class SimpleExampleComponent {

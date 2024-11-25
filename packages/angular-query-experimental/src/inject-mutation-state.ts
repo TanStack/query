@@ -80,18 +80,20 @@ export function injectMutationState<TResult = MutationState>(
         { injector },
       )
 
-      const unsubscribe = mutationCache.subscribe(
-        notifyManager.batchCalls(() => {
-          const nextResult = replaceEqualDeep(
-            result(),
-            getResult(mutationCache, mutationStateOptionsFn()),
-          )
-          if (result() !== nextResult) {
-            ngZone.run(() => {
-              result.set(nextResult)
-            })
-          }
-        }),
+      const unsubscribe = ngZone.runOutsideAngular(() =>
+        mutationCache.subscribe(
+          notifyManager.batchCalls(() => {
+            const nextResult = replaceEqualDeep(
+              result(),
+              getResult(mutationCache, mutationStateOptionsFn()),
+            )
+            if (result() !== nextResult) {
+              ngZone.run(() => {
+                result.set(nextResult)
+              })
+            }
+          }),
+        ),
       )
 
       destroyRef.onDestroy(unsubscribe)
