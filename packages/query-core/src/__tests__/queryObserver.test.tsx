@@ -667,9 +667,12 @@ describe('queryObserver', () => {
     await sleep(20)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(results.length).toBe(2)
-    expect(results[0]).toMatchObject({ isStale: false, data: undefined })
+    console.log(results)
+    expect(results.length).toBe(3)
+    expect(results[0]).toMatchObject({ isStale: true, data: undefined })
     expect(results[1]).toMatchObject({ isStale: false, data: 'data' })
+    // transitions to stale after 10ms
+    expect(results[2]).toMatchObject({ isStale: true, data: 'data' })
   })
 
   test('should be able to handle multiple subscribers', async () => {
