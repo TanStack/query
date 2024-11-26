@@ -667,7 +667,6 @@ describe('queryObserver', () => {
     await sleep(20)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    console.log(results)
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject({ isStale: true, data: undefined })
     expect(results[1]).toMatchObject({ isStale: false, data: 'data' })
@@ -1003,10 +1002,12 @@ describe('queryObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(results.length).toBe(4)
-    expect(keys.length).toBe(3)
+    expect(keys.length).toBe(4)
     expect(keys[0]).toBe(null) // First Query - status: 'pending', fetchStatus: 'idle'
     expect(keys[1]).toBe(null) // First Query - status: 'pending', fetchStatus: 'fetching'
-    expect(keys[2]).toBe(key1) // Second Query - status: 'pending', fetchStatus: 'fetching'
+    // we call placeholderData again when result is created due to stale transition
+    expect(keys[2]).toBe(null)
+    expect(keys[3]).toBe(key1) // Second Query - status: 'pending', fetchStatus: 'fetching'
 
     expect(results[0]).toMatchObject({
       data: undefined,
@@ -1105,7 +1106,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  test('disabled observers should not be stale', async () => {
+  test('disabled observers should also be stale', async () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1114,7 +1115,7 @@ describe('queryObserver', () => {
     })
 
     const result = observer.getCurrentResult()
-    expect(result.isStale).toBe(false)
+    expect(result.isStale).toBe(true)
   })
 
   test('should allow staleTime as a function', async () => {
