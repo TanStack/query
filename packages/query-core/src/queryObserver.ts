@@ -548,7 +548,7 @@ export class QueryObserver<
       isPaused: newState.fetchStatus === 'paused',
       isPlaceholderData,
       isRefetchError: isError && hasData,
-      isStale: query.isStale(),
+      isStale: isStale(query, options),
       refetch: this.refetch,
       promise: this.#currentThenable,
     }
@@ -749,23 +749,7 @@ function shouldFetchOn(
   if (resolveEnabled(options.enabled, query) !== false) {
     const value = typeof field === 'function' ? field(query) : field
 
-    if (value === 'always') {
-      return true
-    }
-
-    if (value === false) {
-      return false
-    }
-
-    // true || undefined
-
-    // usually, a query is stale by its observers, which gets checked by `query.isStale()`
-    // however, THIS observer might not be attached yet, so in case the query is not stale
-    // we still have to check the staleTime of this observer separately
-    return (
-      query.isStale() ||
-      query.isStaleByTime(resolveStaleTime(options.staleTime, query))
-    )
+    return value === 'always' || (value !== false && isStale(query, options))
   }
   return false
 }
@@ -781,7 +765,20 @@ function shouldFetchOptionally(
       resolveEnabled(prevOptions.enabled, query) === false) &&
     (!options.suspense || query.state.status !== 'error') &&
     resolveEnabled(options.enabled, query) !== false &&
-    query.isStale()
+    isStale(query, options)
+  )
+}
+
+function isStale(
+  query: Query<any, any, any, any>,
+  options: QueryObserverOptions<any, any, any, any, any>,
+): boolean {
+  // usually, a query is stale by its observers, which gets checked by `query.isStale()`
+  // however, THIS observer might not be attached yet, so in case the query is not stale
+  // we still have to check the staleTime of this observer separately
+  return (
+    query.isStale() ||
+    query.isStaleByTime(resolveStaleTime(options.staleTime, query))
   )
 }
 
