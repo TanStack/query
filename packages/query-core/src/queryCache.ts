@@ -42,7 +42,7 @@ interface NotifyEventQueryRemoved extends NotifyEvent {
 interface NotifyEventQueryUpdated extends NotifyEvent {
   type: 'updated'
   query: Query<any, any, any, any>
-  action: Action<any, any>
+  action: Action<any, any> | { type: 'stale' }
 }
 
 interface NotifyEventQueryObserverAdded extends NotifyEvent {
