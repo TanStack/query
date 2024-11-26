@@ -9,6 +9,7 @@ import {
   noop,
   replaceData,
   resolveEnabled,
+  resolveStaleTime,
   shallowEqualObjects,
 } from './utils'
 import type { FetchOptions, Query, QueryState } from './query'
@@ -748,7 +749,23 @@ function shouldFetchOn(
   if (resolveEnabled(options.enabled, query) !== false) {
     const value = typeof field === 'function' ? field(query) : field
 
-    return value === 'always' || (value !== false && query.isStale())
+    if (value === 'always') {
+      return true
+    }
+
+    if (value === false) {
+      return false
+    }
+
+    // true || undefined
+
+    // usually, a query is stale by its observers, which gets checked by `query.isStale()`
+    // however, THIS observer might not be attached yet, so in case the query is not stale
+    // we still have to check the staleTime of this observer separately
+    return (
+      query.isStale() ||
+      query.isStaleByTime(resolveStaleTime(options.staleTime, query))
+    )
   }
   return false
 }
