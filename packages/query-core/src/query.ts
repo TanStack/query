@@ -294,11 +294,11 @@ export class Query<
     )
   }
 
-  updateStaleTimer(): void {
+  updateStaleTimer(opts?: { force: boolean }): void {
     const staleTime = this.staleTime()
 
     // same staleTime as last time, so we have nothing to do
-    if (staleTime === this.#currentStaleTime) {
+    if (!opts?.force && staleTime === this.#currentStaleTime) {
       return
     }
 
@@ -658,10 +658,13 @@ export class Query<
       }
     }
 
-    this.state = reducer(this.state)
+    const prevState = this.state
+    this.state = reducer(prevState)
 
     if (!this.isStale()) {
-      this.updateStaleTimer()
+      this.updateStaleTimer({
+        force: prevState.dataUpdatedAt !== this.state.dataUpdatedAt,
+      })
     }
 
     this.#notify(action)
