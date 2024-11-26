@@ -763,6 +763,7 @@ function shouldFetchOptionally(
     (query !== prevQuery ||
       resolveEnabled(prevOptions.enabled, query) === false) &&
     (!options.suspense || query.state.status !== 'error') &&
+    resolveEnabled(options.enabled, query) !== false &&
     query.isStale()
   )
 }
