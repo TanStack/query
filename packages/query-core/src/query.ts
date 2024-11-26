@@ -310,9 +310,8 @@ export class Query<
     const triggerStale = () => {
       this.#notify({ type: 'stale' })
     }
-    if (time === 0 && !this.isStaleByTime(staleTime)) {
-      // no timer necessary, time zero is always stale,
-      // but we aren't currently stale, so we instantly trigger it
+    if (time === 0) {
+      // no timer necessary, time zero is always stale, so we instantly trigger it
       triggerStale()
       return
     }
