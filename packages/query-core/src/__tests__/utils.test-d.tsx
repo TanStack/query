@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import type { QueryFilters } from '../utils'
-import { DataTag } from '../types'
+import type { DataTag } from '../types'
 
 describe('QueryFilters', () => {
   it('should be typed if generics are passed', () => {
