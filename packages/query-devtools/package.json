@@ -61,8 +61,8 @@
     "!src/__tests__"
   ],
   "devDependencies": {
-    "@kobalte/core": "^0.13.4",
-    "@solid-primitives/keyed": "^1.2.2",
+    "@kobalte/core": "^0.13.7",
+    "@solid-primitives/keyed": "^1.2.3",
     "@solid-primitives/resize-observer": "^2.0.26",
     "@solid-primitives/storage": "^1.3.11",
     "@tanstack/match-sorter-utils": "^8.19.4",
