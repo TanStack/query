@@ -1002,10 +1002,12 @@ describe('queryObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(results.length).toBe(4)
-    expect(keys.length).toBe(3)
+    expect(keys.length).toBe(4)
     expect(keys[0]).toBe(null) // First Query - status: 'pending', fetchStatus: 'idle'
     expect(keys[1]).toBe(null) // First Query - status: 'pending', fetchStatus: 'fetching'
-    expect(keys[2]).toBe(key1) // Second Query - status: 'pending', fetchStatus: 'fetching'
+    // we call placeholderData again when result is created due to stale transition
+    expect(keys[2]).toBe(null)
+    expect(keys[3]).toBe(key1) // Second Query - status: 'pending', fetchStatus: 'fetching'
 
     expect(results[0]).toMatchObject({
       data: undefined,
