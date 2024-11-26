@@ -217,9 +217,6 @@ export type QueriesResults<
             Array<QueryObserverResult>
 
 /**
- * @param root0
- * @param root0.queriesFn
- * @param injector
  * @public
  */
 export function injectQueries<
@@ -238,7 +235,7 @@ export function injectQueries<
     const currentInjector = inject(Injector)
     const ngZone = currentInjector.get(NgZone)
     const destroyRef = currentInjector.get(DestroyRef)
-    const queryClient = inject(QueryClient)
+    const queryClient = currentInjector.get(QueryClient)
 
     return lazySignalInitializer(() => {
       const defaultedQueriesOptionsSignal = computed(() => {
