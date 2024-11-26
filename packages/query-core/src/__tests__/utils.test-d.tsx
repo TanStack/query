@@ -7,13 +7,13 @@ describe('QueryFilters', () => {
   it('should be typed if generics are passed', () => {
     type TData = { a: number; b: string }
     type TError = { message: string }
-    
+
     const a: QueryFilters<TData, TError> = {
       predicate(query) {
-        expectTypeOf(query.setData({a: 1, b: '1'})).toEqualTypeOf<TData>()
+        expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
         return true
       },
-      queryKey: ['key'] as DataTag<undefined, TData>
+      queryKey: ['key'] as DataTag<undefined, TData>,
     }
 
     const queryClient = new QueryClient()
@@ -28,10 +28,10 @@ describe('QueryFilters', () => {
   it('should be loose typed if generics are defaults', () => {
     const a: QueryFilters = {
       predicate(query) {
-        expectTypeOf(query.setData({a: 1, b: '1'})).toEqualTypeOf<unknown>()
+        expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<unknown>()
         return true
       },
-      queryKey: ['key']
+      queryKey: ['key'],
     }
 
     const queryClient = new QueryClient()
