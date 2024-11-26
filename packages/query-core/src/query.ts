@@ -175,6 +175,7 @@ export class Query<
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
   #staleTimeoutId?: ReturnType<typeof setTimeout>
+  #currentStaleTime?: number
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
@@ -294,17 +295,24 @@ export class Query<
   }
 
   updateStaleTimer(): void {
-    this.#clearStaleTimeout()
     const staleTime = this.staleTime()
+
+    // same staleTime as last time, so we have nothing to do
+    if (staleTime === this.#currentStaleTime) {
+      return
+    }
+
+    this.#clearStaleTimeout()
+    this.#currentStaleTime = staleTime
 
     const time = timeUntilStale(this.state.dataUpdatedAt, staleTime)
 
     const triggerStale = () => {
       this.#notify({ type: 'stale' })
     }
-
-    if (time === 0) {
-      // no timer necessary,
+    if (time === 0 && !this.isStaleByTime(staleTime)) {
+      // no timer necessary, time zero is always stale,
+      // but we aren't currently stale, so we instantly trigger it
       triggerStale()
       return
     }
