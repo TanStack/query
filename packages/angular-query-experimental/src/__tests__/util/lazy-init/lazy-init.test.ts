@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { flushQueue, setFixtureSignalInputs } from '../../test-utils'
+import { setFixtureSignalInputs } from '../../test-utils'
 import { lazyInit } from '../../../util/lazy-init/lazy-init'
 import type { WritableSignal } from '@angular/core'
 
@@ -70,18 +70,17 @@ describe('lazyInit', () => {
 
     value.data()
 
-    await flushQueue()
-
     expect(outerSignal).toBeDefined()
 
     expect(initCallFn).toHaveBeenCalledTimes(1)
 
     outerSignal.set(1)
-    await flushQueue()
+
+    TestBed.flushEffects()
+
     outerSignal.set(2)
-    await flushQueue()
     value.data.set(4)
-    await flushQueue()
+    TestBed.flushEffects()
 
     expect(initCallFn).toHaveBeenCalledTimes(1)
     expect(registerDataValue).toHaveBeenCalledTimes(2)
@@ -109,7 +108,6 @@ describe('lazyInit', () => {
 
     setFixtureSignalInputs(fixture, { title: 'newValue' })
     expect(fixture.debugElement.nativeElement.textContent).toBe('0 - newValue')
-    await flushQueue()
 
     setFixtureSignalInputs(fixture, { title: 'updatedValue' })
     expect(fixture.debugElement.nativeElement.textContent).toBe(

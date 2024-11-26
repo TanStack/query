@@ -4,7 +4,6 @@ import { ExampleQueryComponent } from './example-query.component'
 import type { ElementRef } from '@angular/core'
 
 @Component({
-  standalone: true,
   selector: 'basic-devtools-panel-example',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

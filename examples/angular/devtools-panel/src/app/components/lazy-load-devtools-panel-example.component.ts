@@ -11,7 +11,6 @@ import type { ElementRef } from '@angular/core'
 import type { DevtoolsPanelRef } from '@tanstack/angular-query-devtools-experimental'
 
 @Component({
-  standalone: true,
   selector: 'lazy-load-devtools-panel-example',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

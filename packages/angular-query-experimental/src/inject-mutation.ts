@@ -71,26 +71,30 @@ export function injectMutation<
 
         const result = signal(observer.getCurrentResult())
 
-        const unsubscribe = observer.subscribe(
-          notifyManager.batchCalls(
-            (
-              state: MutationObserverResult<
-                TData,
-                TError,
-                TVariables,
-                TContext
-              >,
-            ) => {
-              ngZone.run(() => {
-                if (
-                  state.isError &&
-                  shouldThrowError(observer.options.throwOnError, [state.error])
-                ) {
-                  throw state.error
-                }
-                result.set(state)
-              })
-            },
+        const unsubscribe = ngZone.runOutsideAngular(() =>
+          observer.subscribe(
+            notifyManager.batchCalls(
+              (
+                state: MutationObserverResult<
+                  TData,
+                  TError,
+                  TVariables,
+                  TContext
+                >,
+              ) => {
+                ngZone.run(() => {
+                  if (
+                    state.isError &&
+                    shouldThrowError(observer.options.throwOnError, [
+                      state.error,
+                    ])
+                  ) {
+                    throw state.error
+                  }
+                  result.set(state)
+                })
+              },
+            ),
           ),
         )
 
