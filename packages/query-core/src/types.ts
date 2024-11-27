@@ -43,8 +43,10 @@ export type DefaultError = Register extends {
 export type QueryKey = ReadonlyArray<unknown>
 
 export declare const dataTagSymbol: unique symbol
-export type DataTag<TType, TValue> = TType & {
+export declare const dataTagErrorSymbol: unique symbol
+export type DataTag<TType, TValue, TError = unknown> = TType & {
   [dataTagSymbol]: TValue
+  [dataTagErrorSymbol]: TError
 }
 
 export type QueryFunction<

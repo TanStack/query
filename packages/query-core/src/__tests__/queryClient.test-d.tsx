@@ -1,5 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
+import type { QueryState } from '../query'
 import type { DataTag, InfiniteData, QueryKey } from '../types'
 
 describe('getQueryData', () => {
@@ -98,6 +99,33 @@ describe('setQueryData', () => {
     const data = queryClient.setQueryData<string>(queryKey, 'foo')
 
     expectTypeOf(data).toEqualTypeOf<string | undefined>()
+  })
+})
+
+describe('getQueryState', () => {
+  it('should be loose typed without tag', () => {
+    const queryKey = ['key'] as const
+    const queryClient = new QueryClient()
+    const data = queryClient.getQueryState(queryKey)
+
+    expectTypeOf(data).toEqualTypeOf<QueryState<unknown, Error> | undefined>()
+  })
+
+  it('should be typed if key is tagged', () => {
+    const queryKey = ['key'] as DataTag<Array<string>, number>
+    const queryClient = new QueryClient()
+    const data = queryClient.getQueryState(queryKey)
+
+    expectTypeOf(data).toEqualTypeOf<QueryState<number, Error> | undefined>()
+  })
+
+  it('should be typed including error if key is tagged', () => {
+    type CustomError = Error & {customError: string}
+    const queryKey = ['key'] as DataTag<Array<string>, number, CustomError>
+    const queryClient = new QueryClient()
+    const data = queryClient.getQueryState(queryKey)
+
+    expectTypeOf(data).toEqualTypeOf<QueryState<number, CustomError> | undefined>()
   })
 })
 
