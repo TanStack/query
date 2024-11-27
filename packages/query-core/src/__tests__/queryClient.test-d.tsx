@@ -120,12 +120,14 @@ describe('getQueryState', () => {
   })
 
   it('should be typed including error if key is tagged', () => {
-    type CustomError = Error & {customError: string}
+    type CustomError = Error & { customError: string }
     const queryKey = ['key'] as DataTag<Array<string>, number, CustomError>
     const queryClient = new QueryClient()
     const data = queryClient.getQueryState(queryKey)
 
-    expectTypeOf(data).toEqualTypeOf<QueryState<number, CustomError> | undefined>()
+    expectTypeOf(data).toEqualTypeOf<
+      QueryState<number, CustomError> | undefined
+    >()
   })
 })
 
