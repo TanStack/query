@@ -21,7 +21,7 @@ describe('QueryFilters', () => {
     expectTypeOf(data).toEqualTypeOf<TData | undefined>()
 
     const error = queryClient.getQueryState(a.queryKey!)?.error
-    expectTypeOf(error).toEqualTypeOf<Error | null | undefined>() // maybe one day this can return TError
+    expectTypeOf(error).toEqualTypeOf<Error | null | undefined>()
   })
 
   it('should be typed if generics are passed including an error type', () => {
@@ -42,7 +42,7 @@ describe('QueryFilters', () => {
     expectTypeOf(data).toEqualTypeOf<TData | undefined>()
 
     const error = queryClient.getQueryState(a.queryKey!)?.error
-    expectTypeOf(error).toEqualTypeOf<TError | null | undefined>() // maybe one day this can return TError
+    expectTypeOf(error).toEqualTypeOf<TError | null | undefined>()
   })
 
   it('should be loose typed if generics are defaults', () => {
