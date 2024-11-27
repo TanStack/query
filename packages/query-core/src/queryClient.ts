@@ -229,7 +229,7 @@ export class QueryClient {
     >
       ? TaggedValue
       : TQueryFnData,
-    TInferredErrorData = TTaggedQueryKey extends DataTag<
+    TInferredError = TTaggedQueryKey extends DataTag<
       unknown,
       unknown,
       infer TaggedError
@@ -240,9 +240,9 @@ export class QueryClient {
       : TError,
   >(
     queryKey: TTaggedQueryKey,
-  ): QueryState<TInferredQueryFnData, TInferredErrorData> | undefined {
+  ): QueryState<TInferredQueryFnData, TInferredError> | undefined {
     const options = this.defaultQueryOptions({ queryKey })
-    return this.#queryCache.get<TInferredQueryFnData, TInferredErrorData>(
+    return this.#queryCache.get<TInferredQueryFnData, TInferredError>(
       options.queryHash,
     )?.state
   }
