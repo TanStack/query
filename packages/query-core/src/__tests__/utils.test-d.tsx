@@ -6,9 +6,8 @@ import type { DataTag } from '../types'
 describe('QueryFilters', () => {
   it('should be typed if generics are passed', () => {
     type TData = { a: number; b: string }
-    type TError = { message: string }
 
-    const a: QueryFilters<TData, TError> = {
+    const a: QueryFilters<TData> = {
       predicate(query) {
         expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
         return true
@@ -23,6 +22,27 @@ describe('QueryFilters', () => {
 
     const error = queryClient.getQueryState(a.queryKey!)?.error
     expectTypeOf(error).toEqualTypeOf<Error | null | undefined>() // maybe one day this can return TError
+  })
+
+  it('should be typed if generics are passed including an error type', () => {
+    type TData = { a: number; b: string }
+    type TError = Error & { message: string }
+
+    const a: QueryFilters<TData, TError> = {
+      predicate(query) {
+        expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
+        return true
+      },
+      queryKey: ['key'] as DataTag<undefined, TData, TError>,
+    }
+
+    const queryClient = new QueryClient()
+
+    const data = queryClient.getQueryData(a.queryKey!)
+    expectTypeOf(data).toEqualTypeOf<TData | undefined>()
+
+    const error = queryClient.getQueryState(a.queryKey!)?.error
+    expectTypeOf(error).toEqualTypeOf<TError | null | undefined>() // maybe one day this can return TError
   })
 
   it('should be loose typed if generics are defaults', () => {
