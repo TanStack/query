@@ -109,13 +109,11 @@ export class QueryObserver<
       }
 
       this.#updateTimers()
-      this.#currentQuery.updateStaleTimer()
     }
   }
 
   protected onUnsubscribe(): void {
     if (!this.hasListeners()) {
-      this.#currentQuery.updateStaleTimer()
       this.destroy()
     }
   }

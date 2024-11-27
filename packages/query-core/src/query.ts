@@ -358,6 +358,7 @@ export class Query<
 
       // Stop the query from being garbage collected
       this.clearGcTimeout()
+      this.updateStaleTimer()
 
       this.#cache.notify({ type: 'observerAdded', query: this, observer })
     }
@@ -380,6 +381,7 @@ export class Query<
 
         this.scheduleGc()
       }
+      this.updateStaleTimer()
 
       this.#cache.notify({ type: 'observerRemoved', query: this, observer })
     }
