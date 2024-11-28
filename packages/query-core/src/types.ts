@@ -44,7 +44,9 @@ export type QueryKey = ReadonlyArray<unknown>
 
 export declare const dataTagSymbol: unique symbol
 export declare const dataTagErrorSymbol: unique symbol
-export type DataTag<TType, TValue, TError = unknown> = TType & {
+export declare const unsetMarker: unique symbol
+export type UnsetMarket = typeof unsetMarker
+export type DataTag<TType, TValue, TError = UnsetMarket> = TType & {
   [dataTagSymbol]: TValue
   [dataTagErrorSymbol]: TError
 }

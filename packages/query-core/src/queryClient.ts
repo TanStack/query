@@ -39,6 +39,7 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   SetDataOptions,
+  UnsetMarket,
 } from './types'
 import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
@@ -119,7 +120,8 @@ export class QueryClient {
     TTaggedQueryKey extends QueryKey = QueryKey,
     TInferredQueryFnData = TTaggedQueryKey extends DataTag<
       unknown,
-      infer TaggedValue
+      infer TaggedValue,
+      unknown
     >
       ? TaggedValue
       : TQueryFnData,
@@ -169,7 +171,8 @@ export class QueryClient {
     TTaggedQueryKey extends QueryKey = QueryKey,
     TInferredQueryFnData = TTaggedQueryKey extends DataTag<
       unknown,
-      infer TaggedValue
+      infer TaggedValue,
+      unknown
     >
       ? TaggedValue
       : TQueryFnData,
@@ -225,7 +228,8 @@ export class QueryClient {
     TTaggedQueryKey extends QueryKey = QueryKey,
     TInferredQueryFnData = TTaggedQueryKey extends DataTag<
       unknown,
-      infer TaggedValue
+      infer TaggedValue,
+      unknown
     >
       ? TaggedValue
       : TQueryFnData,
@@ -234,7 +238,7 @@ export class QueryClient {
       unknown,
       infer TaggedError
     >
-      ? unknown extends TaggedError
+      ? TaggedError extends UnsetMarket
         ? TError
         : TaggedError
       : TError,
