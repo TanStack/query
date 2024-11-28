@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-devtools-experimental",
-  "version": "5.61.5",
+  "version": "5.61.6",
   "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -31,13 +31,11 @@
   },
   "type": "module",
   "types": "build/index.d.ts",
-  "module": "build/index.js",
+  "module": "build/index.mjs",
   "exports": {
     ".": {
-      "import": {
-        "types": "./build/index.d.ts",
-        "default": "./build/index.js"
-      }
+      "types": "./build/index.d.ts",
+      "default": "./build/index.mjs"
     },
     "./package.json": {
       "default": "./package.json"
