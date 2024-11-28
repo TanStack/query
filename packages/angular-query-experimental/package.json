@@ -46,13 +46,11 @@
   },
   "type": "module",
   "types": "build/index.d.ts",
-  "module": "build/index.js",
+  "module": "build/index.mjs",
   "exports": {
     ".": {
-      "import": {
-        "types": "./build/index.d.ts",
-        "default": "./build/index.js"
-      }
+      "types": "./build/index.d.ts",
+      "default": "./build/index.mjs"
     },
     "./package.json": {
       "default": "./package.json"
