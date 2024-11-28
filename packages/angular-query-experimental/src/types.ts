@@ -135,8 +135,9 @@ export type CreateQueryResult<
 export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
-  TDefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
-> = MapToSignals<TDefinedQueryObserver>
+  TState = DefinedQueryObserverResult<TData, TError>,
+> = BaseQueryNarrowing<TData, TError> &
+  MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
 /**
  * @public

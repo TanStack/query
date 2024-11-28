@@ -6,6 +6,7 @@ import {
 import {
   QueryClient,
   provideTanStackQuery,
+  withDevtools,
 } from '@tanstack/angular-query-experimental'
 import { autocompleteMockInterceptor } from './api/autocomplete-mock.interceptor'
 import type { ApplicationConfig } from '@angular/core'
@@ -24,6 +25,7 @@ export const appConfig: ApplicationConfig = {
           },
         },
       }),
+      withDevtools(),
     ),
   ],
 }
