@@ -39,7 +39,7 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   SetDataOptions,
-  UnsetMarket,
+  UnsetMarker,
 } from './types'
 import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
@@ -238,7 +238,7 @@ export class QueryClient {
       unknown,
       infer TaggedError
     >
-      ? TaggedError extends UnsetMarket
+      ? TaggedError extends UnsetMarker
         ? TError
         : TaggedError
       : TError,
