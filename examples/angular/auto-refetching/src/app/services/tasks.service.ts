@@ -26,7 +26,6 @@ export class TasksService {
             mutationKey: ["tasks"],
             onSuccess: () => {
                 this.#queryClient.invalidateQueries({ queryKey: ["tasks"] });
-                this.#queryClient.refetchQueries({ queryKey: ["tasks"] });
             },
         });
     }
@@ -41,7 +40,6 @@ export class TasksService {
             mutationKey: ["clearTasks"],
             onSuccess: () => {
                 this.#queryClient.invalidateQueries({ queryKey: ["tasks"] });
-                this.#queryClient.refetchQueries({ queryKey: ["tasks"] });
             },
         });
     }
