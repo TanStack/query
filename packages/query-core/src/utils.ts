@@ -17,7 +17,7 @@ import type { FetchOptions, Query } from './query'
 
 export interface QueryFilters<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > {

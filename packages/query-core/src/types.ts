@@ -538,7 +538,7 @@ export interface RefetchOptions extends ResultOptions {
 
 export interface InvalidateQueryFilters<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {
@@ -547,7 +547,7 @@ export interface InvalidateQueryFilters<
 
 export interface RefetchQueryFilters<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {}
