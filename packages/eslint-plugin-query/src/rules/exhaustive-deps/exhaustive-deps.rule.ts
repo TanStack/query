@@ -108,7 +108,10 @@ export const rule = createRule({
         const missingRefs = relevantRefs
           .map((ref) => ({
             ref: ref,
-            text: ASTUtils.mapKeyNodeToBaseText(ref.identifier, context.sourceCode),
+            text: ASTUtils.mapKeyNodeToBaseText(
+              ref.identifier,
+              context.sourceCode,
+            ),
           }))
           .filter(({ ref, text }) => {
             return (
