@@ -106,7 +106,7 @@ export class QueryClient extends QC {
   ): Array<[QueryKey, TData | undefined]> {
     return super.getQueriesData(cloneDeepUnref(filters))
   }
-// 
+
   setQueryData<
     TQueryFnData,
     TTaggedQueryKey extends QueryKey,
