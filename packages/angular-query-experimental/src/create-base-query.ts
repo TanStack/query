@@ -95,32 +95,36 @@ export function createBaseQuery<
 
     effect(
       () => {
-        // observer.trackResult is not used as this optimization is not needed for Angular
-        const unsubscribe = isRestoring()
-          ? () => undefined
-          : ngZone.runOutsideAngular(() =>
-              observer.subscribe(
-                notifyManager.batchCalls(
-                  (state: QueryObserverResult<TData, TError>) => {
-                    ngZone.run(() => {
-                      if (
-                        state.isError &&
-                        !state.isFetching &&
-                        !isRestoring() &&
-                        shouldThrowError(observer.options.throwOnError, [
-                          state.error,
-                          observer.getCurrentQuery(),
-                        ])
-                      ) {
-                        throw state.error
-                      }
-                      resultSignal.set(state)
-                    })
-                  },
+        const _isRestoring = isRestoring()
+
+        untracked(() => {
+          const unsubscribe = _isRestoring
+            ? () => undefined
+            : ngZone.runOutsideAngular(() =>
+                // observer.trackResult is not used as this optimization is not needed for Angular
+                observer.subscribe(
+                  notifyManager.batchCalls(
+                    (state: QueryObserverResult<TData, TError>) => {
+                      ngZone.run(() => {
+                        if (
+                          state.isError &&
+                          !state.isFetching &&
+                          !_isRestoring &&
+                          shouldThrowError(observer.options.throwOnError, [
+                            state.error,
+                            observer.getCurrentQuery(),
+                          ])
+                        ) {
+                          throw state.error
+                        }
+                        resultSignal.set(state)
+                      })
+                    },
+                  ),
                 ),
-              ),
-            )
-        destroyRef.onDestroy(unsubscribe)
+              )
+          destroyRef.onDestroy(unsubscribe)
+        })
       },
       {
         injector,
