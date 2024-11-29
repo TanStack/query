@@ -17,7 +17,7 @@ import type { FetchOptions, Query } from './query'
 
 export interface QueryFilters<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > {
@@ -38,7 +38,7 @@ export interface QueryFilters<
    */
   queryKey?: unknown extends TQueryFnData
     ? QueryKey
-    : QueryKey & DataTag<unknown, TQueryFnData>
+    : QueryKey & DataTag<unknown, TQueryFnData, TError>
   /**
    * Include or exclude stale queries
    */
