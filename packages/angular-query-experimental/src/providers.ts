@@ -1,12 +1,12 @@
 import {
   DestroyRef,
-  ENVIRONMENT_INITIALIZER,
   Injector,
   PLATFORM_ID,
   computed,
   effect,
   inject,
   makeEnvironmentProviders,
+  provideEnvironmentInitializer,
   runInInjectionContext,
 } from '@angular/core'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
@@ -20,6 +20,8 @@ import type {
   DevtoolsPosition,
   TanstackQueryDevtools,
 } from '@tanstack/query-devtools'
+
+type Providers = Provider | EnvironmentProviders
 
 /**
  * Usually {@link provideTanStackQuery} is used once to set up TanStack Query and the
@@ -98,15 +100,11 @@ export function provideTanStackQuery(
 ): EnvironmentProviders {
   return makeEnvironmentProviders([
     provideQueryClient(queryClient),
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue: () => {
-        queryClient.mount()
-        // Unmount the query client on application destroy
-        inject(DestroyRef).onDestroy(() => queryClient.unmount())
-      },
-    },
+    provideEnvironmentInitializer(() => {
+      queryClient.mount()
+      // Unmount the query client on application destroy
+      inject(DestroyRef).onDestroy(() => queryClient.unmount())
+    }),
     features.map((feature) => feature.ɵproviders),
   ])
 }
@@ -132,7 +130,7 @@ export function provideAngularQuery(
  */
 export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
   ɵkind: TFeatureKind
-  ɵproviders: Array<Provider>
+  ɵproviders: Providers
 }
 
 /**
@@ -143,7 +141,7 @@ export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
  */
 export function queryFeature<TFeatureKind extends QueryFeatureKind>(
   kind: TFeatureKind,
-  providers: Array<Provider>,
+  providers: Providers,
 ): QueryFeature<TFeatureKind> {
   return { ɵkind: kind, ɵproviders: providers }
 }
@@ -250,95 +248,89 @@ export interface DevtoolsOptions {
 export function withDevtools(
   optionsFn?: () => DevtoolsOptions,
 ): DeveloperToolsFeature {
-  let providers: Array<Provider> = []
+  let providers: Providers = []
   if (!isDevMode() && !optionsFn) {
     providers = []
   } else {
     providers = [
-      {
-        provide: ENVIRONMENT_INITIALIZER,
-        multi: true,
-        useFactory: () => {
-          if (!isPlatformBrowser(inject(PLATFORM_ID))) return noop
-          const injector = inject(Injector)
-          const options = computed(() =>
-            runInInjectionContext(injector, () => optionsFn?.() ?? {}),
-          )
+      provideEnvironmentInitializer(() => {
+        if (!isPlatformBrowser(inject(PLATFORM_ID))) return noop
+        const injector = inject(Injector)
+        const options = computed(() =>
+          runInInjectionContext(injector, () => optionsFn?.() ?? {}),
+        )
 
-          let devtools: TanstackQueryDevtools | null = null
-          let el: HTMLElement | null = null
+        let devtools: TanstackQueryDevtools | null = null
+        let el: HTMLElement | null = null
 
-          const shouldLoadToolsSignal = computed(() => {
-            const { loadDevtools } = options()
-            return typeof loadDevtools === 'boolean'
-              ? loadDevtools
-              : isDevMode()
-          })
+        const shouldLoadToolsSignal = computed(() => {
+          const { loadDevtools } = options()
+          return typeof loadDevtools === 'boolean' ? loadDevtools : isDevMode()
+        })
 
-          const destroyRef = inject(DestroyRef)
+        const destroyRef = inject(DestroyRef)
 
-          const getResolvedQueryClient = () => {
-            const injectedClient = injector.get(QueryClient, null)
-            const client = options().client ?? injectedClient
-            if (!client) {
-              throw new Error('No QueryClient found')
+        const getResolvedQueryClient = () => {
+          const injectedClient = injector.get(QueryClient, null)
+          const client = options().client ?? injectedClient
+          if (!client) {
+            throw new Error('No QueryClient found')
+          }
+          return client
+        }
+
+        const destroyDevtools = () => {
+          devtools?.unmount()
+          el?.remove()
+          devtools = null
+        }
+
+        return () =>
+          effect(() => {
+            const shouldLoadTools = shouldLoadToolsSignal()
+            const {
+              client,
+              position,
+              errorTypes,
+              buttonPosition,
+              initialIsOpen,
+            } = options()
+
+            if (devtools && !shouldLoadTools) {
+              destroyDevtools()
+              return
+            } else if (devtools && shouldLoadTools) {
+              client && devtools.setClient(client)
+              position && devtools.setPosition(position)
+              errorTypes && devtools.setErrorTypes(errorTypes)
+              buttonPosition && devtools.setButtonPosition(buttonPosition)
+              initialIsOpen && devtools.setInitialIsOpen(initialIsOpen)
+              return
+            } else if (!shouldLoadTools) {
+              return
             }
-            return client
-          }
 
-          const destroyDevtools = () => {
-            devtools?.unmount()
-            el?.remove()
-            devtools = null
-          }
+            el = document.body.appendChild(document.createElement('div'))
+            el.classList.add('tsqd-parent-container')
 
-          return () =>
-            effect(() => {
-              const shouldLoadTools = shouldLoadToolsSignal()
-              const {
-                client,
-                position,
-                errorTypes,
-                buttonPosition,
-                initialIsOpen,
-              } = options()
+            import('@tanstack/query-devtools').then((queryDevtools) =>
+              runInInjectionContext(injector, () => {
+                devtools = new queryDevtools.TanstackQueryDevtools({
+                  ...options(),
+                  client: getResolvedQueryClient(),
+                  queryFlavor: 'Angular Query',
+                  version: '5',
+                  onlineManager,
+                })
 
-              if (devtools && !shouldLoadTools) {
-                destroyDevtools()
-                return
-              } else if (devtools && shouldLoadTools) {
-                client && devtools.setClient(client)
-                position && devtools.setPosition(position)
-                errorTypes && devtools.setErrorTypes(errorTypes)
-                buttonPosition && devtools.setButtonPosition(buttonPosition)
-                initialIsOpen && devtools.setInitialIsOpen(initialIsOpen)
-                return
-              } else if (!shouldLoadTools) {
-                return
-              }
+                el && devtools.mount(el)
 
-              el = document.body.appendChild(document.createElement('div'))
-              el.classList.add('tsqd-parent-container')
-
-              import('@tanstack/query-devtools').then((queryDevtools) =>
-                runInInjectionContext(injector, () => {
-                  devtools = new queryDevtools.TanstackQueryDevtools({
-                    ...options(),
-                    client: getResolvedQueryClient(),
-                    queryFlavor: 'Angular Query',
-                    version: '5',
-                    onlineManager,
-                  })
-
-                  el && devtools.mount(el)
-
-                  // Unmount the devtools on application destroy
-                  destroyRef.onDestroy(destroyDevtools)
-                }),
-              )
-            })
-        },
-      },
+                // Unmount the devtools on application destroy
+                destroyRef.onDestroy(destroyDevtools)
+              }),
+            )
+          })
+      }),
     ]
   }
   return queryFeature('DeveloperTools', providers)
