@@ -1,4 +1,4 @@
-# TanStack Query Angular basic example
+# TanStack Query Angular basic persister example
 
 To run this example:
 
