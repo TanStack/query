@@ -5,9 +5,9 @@ import {
 } from '@tanstack/angular-query-experimental'
 import {
   DestroyRef,
+  ENVIRONMENT_INITIALIZER,
   PLATFORM_ID,
   inject,
-  provideEnvironmentInitializer,
   signal,
 } from '@angular/core'
 import { isPlatformBrowser } from '@angular/common'
@@ -60,31 +60,35 @@ export function withPersistQueryClient(
   const isRestoring = signal(false)
   const providers = [
     provideIsRestoring(isRestoring.asReadonly()),
-    provideEnvironmentInitializer(() => {
-      if (!isPlatformBrowser(inject(PLATFORM_ID))) return
-      const destroyRef = inject(DestroyRef)
-      const queryClient = injectQueryClient()
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      multi: true,
+      useValue: () => {
+        if (!isPlatformBrowser(inject(PLATFORM_ID))) return
+        const destroyRef = inject(DestroyRef)
+        const queryClient = injectQueryClient()
 
-      isRestoring.set(true)
-      const restorations = persistQueryClientOptions.map(
-        ({ onSuccess, persistOptions }) => {
-          const options = { queryClient, ...persistOptions }
-          return persistQueryClientRestore(options).then(async () => {
-            try {
-              if (onSuccess) {
-                await onSuccess()
+        isRestoring.set(true)
+        const restorations = persistQueryClientOptions.map(
+          ({ onSuccess, persistOptions }) => {
+            const options = { queryClient, ...persistOptions }
+            return persistQueryClientRestore(options).then(async () => {
+              try {
+                if (onSuccess) {
+                  await onSuccess()
+                }
+              } finally {
+                const cleanup = persistQueryClientSubscribe(options)
+                destroyRef.onDestroy(cleanup)
               }
-            } finally {
-              const cleanup = persistQueryClientSubscribe(options)
-              destroyRef.onDestroy(cleanup)
-            }
-          })
-        },
-      )
-      Promise.all(restorations).finally(() => {
-        isRestoring.set(false)
-      })
-    }),
+            })
+          },
+        )
+        Promise.all(restorations).finally(() => {
+          isRestoring.set(false)
+        })
+      },
+    },
   ]
   return queryFeature('PersistQueryClient', providers)
 }
