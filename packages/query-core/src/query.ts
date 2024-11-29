@@ -175,7 +175,7 @@ export class Query<
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
   #staleTimeoutId?: ReturnType<typeof setTimeout>
-  #currentStaleTime?: number
+  #currentStaleTime = Infinity
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
@@ -190,8 +190,6 @@ export class Query<
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
     this.scheduleGc()
-
-    this.updateStaleTimer()
   }
   get meta(): QueryMeta | undefined {
     return this.options.meta
@@ -274,16 +272,16 @@ export class Query<
     )
   }
 
-  staleTime(): number {
+  updateStaleTime() {
     const staleTimes = this.observers.map((observer) =>
       resolveStaleTime(observer.options.staleTime, this),
     )
 
-    return Math.min(...staleTimes)
+    this.#runStaleTimer(Math.min(...staleTimes))
   }
 
   isStale(): boolean {
-    return this.isStaleByTime(this.staleTime())
+    return this.isStaleByTime(this.#currentStaleTime)
   }
 
   isStaleByTime(staleTime: number): boolean {
@@ -294,18 +292,24 @@ export class Query<
     )
   }
 
-  updateStaleTimer(opts?: { force: boolean }): void {
-    const staleTime = this.staleTime()
-
+  #runStaleTimer(newStaleTimeOrForce: number | true): void {
     // same staleTime as last time, so we have nothing to do
-    if (!opts?.force && staleTime === this.#currentStaleTime) {
+    if (
+      typeof newStaleTimeOrForce === 'number' &&
+      newStaleTimeOrForce === this.#currentStaleTime
+    ) {
       return
     }
 
     this.#clearStaleTimeout()
-    this.#currentStaleTime = staleTime
+    if (typeof newStaleTimeOrForce === 'number') {
+      this.#currentStaleTime = newStaleTimeOrForce
+    }
 
-    const time = timeUntilStale(this.state.dataUpdatedAt, staleTime)
+    const time = timeUntilStale(
+      this.state.dataUpdatedAt,
+      this.#currentStaleTime,
+    )
 
     const triggerStale = () => {
       this.#notify({ type: 'stale' })
@@ -316,7 +320,7 @@ export class Query<
       return
     }
 
-    if (isServer || !isValidTimeout(staleTime)) {
+    if (isServer || !isValidTimeout(this.#currentStaleTime)) {
       return
     }
 
@@ -358,7 +362,13 @@ export class Query<
 
       // Stop the query from being garbage collected
       this.clearGcTimeout()
-      this.updateStaleTimer()
+
+      // conditionally update staleTime
+      // since "lowest wins", we only need to re-run if the new staleTime is lower
+      const staleTime = resolveStaleTime(observer.options.staleTime, this)
+      if (staleTime < this.#currentStaleTime) {
+        this.#runStaleTimer(staleTime)
+      }
 
       this.#cache.notify({ type: 'observerAdded', query: this, observer })
     }
@@ -381,7 +391,9 @@ export class Query<
 
         this.scheduleGc()
       }
-      this.updateStaleTimer()
+
+      // re-calc everything because the removed observer could've been the lowest
+      this.updateStaleTime()
 
       this.#cache.notify({ type: 'observerRemoved', query: this, observer })
     }
@@ -664,9 +676,7 @@ export class Query<
     this.state = reducer(prevState)
 
     if (!this.isStale()) {
-      this.updateStaleTimer({
-        force: prevState.dataUpdatedAt !== this.state.dataUpdatedAt,
-      })
+      this.#runStaleTimer(true)
     }
 
     this.#notify(action)

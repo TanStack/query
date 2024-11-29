@@ -201,7 +201,7 @@ export class QueryObserver<
 
     // Update stale interval if needed
     if (mounted && this.#currentQuery !== prevQuery) {
-      this.#currentQuery.updateStaleTimer()
+      this.#currentQuery.updateStaleTime()
     }
 
     const nextRefetchInterval = this.#computeRefetchInterval()
