@@ -1,5 +1,4 @@
 import {
-  DestroyRef,
   Injector,
   NgZone,
   computed,
@@ -45,7 +44,6 @@ export function createBaseQuery<
   const injector = inject(Injector)
   return lazyInit(() => {
     const ngZone = injector.get(NgZone)
-    const destroyRef = injector.get(DestroyRef)
     const queryClient = injector.get(QueryClient)
     const isRestoring = injectIsRestoring(injector)
 
@@ -94,11 +92,10 @@ export function createBaseQuery<
     )
 
     effect(
-      () => {
+      (onCleanup) => {
         const _isRestoring = isRestoring()
-
-        untracked(() => {
-          const unsubscribe = _isRestoring
+        const cleanup = untracked(() =>
+          _isRestoring
             ? () => undefined
             : ngZone.runOutsideAngular(() =>
                 // observer.trackResult is not used as this optimization is not needed for Angular
@@ -121,9 +118,9 @@ export function createBaseQuery<
                     },
                   ),
                 ),
-              )
-          destroyRef.onDestroy(unsubscribe)
-        })
+              ),
+        )
+        onCleanup(cleanup)
       },
       {
         injector,
