@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/react'
+import { waitFor } from '@testing-library/dom'
 import { QueriesObserver } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
@@ -263,5 +263,73 @@ describe('queriesObserver', () => {
 
     // Clean-up
     unsubscribe2()
+  })
+
+  test('should handle duplicate query keys in different positions', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+      { queryKey: key1, queryFn: queryFn1 },
+    ])
+
+    const results: Array<Array<QueryObserverResult>> = []
+    results.push(
+      observer.getOptimisticResult(
+        [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+          { queryKey: key1, queryFn: queryFn1 },
+        ],
+        undefined,
+      )[0],
+    )
+
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await sleep(1)
+    unsubscribe()
+
+    expect(results.length).toBe(6)
+    expect(results[0]).toMatchObject([
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+    ])
+    expect(results[1]).toMatchObject([
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+    ])
+    expect(results[2]).toMatchObject([
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+    ])
+    expect(results[3]).toMatchObject([
+      { status: 'success', fetchStatus: 'idle', data: 1 },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+    ])
+    expect(results[4]).toMatchObject([
+      { status: 'success', fetchStatus: 'idle', data: 1 },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'success', fetchStatus: 'idle', data: 1 },
+    ])
+    expect(results[5]).toMatchObject([
+      { status: 'success', fetchStatus: 'idle', data: 1 },
+      { status: 'success', fetchStatus: 'idle', data: 2 },
+      { status: 'success', fetchStatus: 'idle', data: 1 },
+    ])
+
+    // Verify that queryFn1 was only called once despite being used twice
+    expect(queryFn1).toHaveBeenCalledTimes(1)
+    expect(queryFn2).toHaveBeenCalledTimes(1)
   })
 })

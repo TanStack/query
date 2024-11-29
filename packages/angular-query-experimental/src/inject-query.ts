@@ -207,5 +207,5 @@ export function injectQuery(
 ) {
   return assertInjector(injectQuery, injector, () =>
     createBaseQuery(optionsFn, QueryObserver),
-  )
+  ) as unknown as CreateQueryResult
 }

@@ -80,9 +80,11 @@ export function detectTanstackQueryImports(create: EnhancedCreate): Create {
           detectionInstructions[instruction]?.(node)
         }
 
+        const ruleInstruction = ruleInstructions[instruction]
+
         // TODO: canReportErrors()
-        if (ruleInstructions[instruction]) {
-          return ruleInstructions[instruction]?.(node)
+        if (ruleInstruction) {
+          return ruleInstruction(node)
         }
 
         return undefined

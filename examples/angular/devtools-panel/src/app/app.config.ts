@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router'
 import {
   QueryClient,
   provideTanStackQuery,
+  withDevtools,
 } from '@tanstack/angular-query-experimental'
 import { routes } from './app.routes'
 import type { ApplicationConfig } from '@angular/core'
@@ -12,6 +13,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withFetch()),
     provideRouter(routes),
-    provideTanStackQuery(new QueryClient()),
+    provideTanStackQuery(new QueryClient(), withDevtools()),
   ],
 }

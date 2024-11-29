@@ -7,4 +7,7 @@ export default defineConfig({
   format: ['esm'],
   dts: true,
   outDir: 'build',
+  outExtension({ format }) {
+    return format === 'esm' ? { js: '.mjs' } : { js: '.js' }
+  },
 })
