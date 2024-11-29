@@ -12,6 +12,7 @@ import {
   signal,
 } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
+import { injectIsRestoring } from './inject-is-restoring'
 import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
@@ -24,7 +25,6 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import { injectIsRestoring } from './inject-is-restoring'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
