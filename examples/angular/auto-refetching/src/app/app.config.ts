@@ -1,12 +1,17 @@
-import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  HttpClientModule,
+  provideHttpClient,
+  withFetch,
+} from '@angular/common/http'
 import {
   QueryClient,
   provideTanStackQuery,
   withDevtools,
-} from '@tanstack/angular-query-experimental';
-import {  importProvidersFrom } from '@angular/core';
-import { MockApiInterceptor } from './interceptor/mock-api.interceptor';
-import type {ApplicationConfig} from '@angular/core';
+} from '@tanstack/angular-query-experimental'
+import { importProvidersFrom } from '@angular/core'
+import { MockApiInterceptor } from './interceptor/mock-api.interceptor'
+import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,6 +33,5 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
     importProvidersFrom(HttpClientModule),
-
   ],
-};
+}

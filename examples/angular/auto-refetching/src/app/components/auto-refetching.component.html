@@ -1,29 +1,23 @@
 <div>
-  <h1>Auto Refetch with stale-time set to {{intervalMs()}}ms</h1>
+  <h1>Auto Refetch with stale-time set to {{ intervalMs() }}ms</h1>
   <p>
     This example is best experienced on your own machine, where you can open
-    multiple tabs to the same localhost server and see your changes
-    propagate between the two.
+    multiple tabs to the same localhost server and see your changes propagate
+    between the two.
   </p>
   <label>
     Query Interval speed (ms):
     <input [value]="intervalMs()" (input)="inputChange($event)" />
-
-
   </label>
   <h2>Todo List</h2>
 
-  <input placeholder="Enter something" (keydown.enter)="addItem($event)"/>
+  <input placeholder="Enter something" (keydown.enter)="addItem($event)" />
   <ul>
     @for (item of tasks.data(); track item) {
-    <li>{{item}}</li>
+      <li>{{ item }}</li>
     }
-
-
   </ul>
   <div>
-    <button (click)="clearTasks()">
-      Clear All
-    </button>
+    <button (click)="clearTasks()">Clear All</button>
   </div>
 </div>

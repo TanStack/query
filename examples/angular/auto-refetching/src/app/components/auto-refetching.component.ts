@@ -1,8 +1,15 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core'
-import { injectMutation, injectQuery } from '@tanstack/angular-query-experimental'
-import { fromEvent, lastValueFrom, takeUntil } from 'rxjs';
-import { TasksService } from '../services/tasks.service';
-
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core'
+import {
+  injectMutation,
+  injectQuery,
+} from '@tanstack/angular-query-experimental'
+import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
+import { TasksService } from '../services/tasks.service'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,28 +37,22 @@ export class AutoRefetchingExampleComponent {
     refetchInterval: this.intervalMs(),
   }))
 
-
   addMutation = injectMutation(() => this.#tasksService.addTask())
   clearMutation = injectMutation(() => this.#tasksService.clearAllTasks())
 
-
   clearTasks() {
-    this.clearMutation.mutate();
+    this.clearMutation.mutate()
   }
 
   inputChange($event: Event) {
-    const target = $event.target as HTMLInputElement;
-    this.intervalMs.set(Number(target.value));
+    const target = $event.target as HTMLInputElement
+    this.intervalMs.set(Number(target.value))
   }
 
   addItem($event: Event) {
-    const target = ($event.target as HTMLInputElement);
-    const value = target.value;
-    this.addMutation.mutate(value);
-    target.value = '';
-
+    const target = $event.target as HTMLInputElement
+    const value = target.value
+    this.addMutation.mutate(value)
+    target.value = ''
   }
-
 }
-
-
