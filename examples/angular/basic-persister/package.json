@@ -15,6 +15,7 @@
     "@angular/platform-browser": "^19.0.1",
     "@angular/platform-browser-dynamic": "^19.0.1",
     "@tanstack/angular-query-experimental": "5.61.6",
+    "@tanstack/angular-query-persist-client-experimental": "5.61.6",
     "@tanstack/query-sync-storage-persister": "^5.60.6",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.3",
