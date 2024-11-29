@@ -12,7 +12,7 @@ export function queryOptions<
 >(
   options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData>
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
 export function queryOptions<
@@ -23,7 +23,7 @@ export function queryOptions<
 >(
   options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData>
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
 export function queryOptions(options: unknown) {

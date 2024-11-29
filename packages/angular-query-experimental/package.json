@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.61.3",
+  "version": "5.62.0",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -46,13 +46,11 @@
   },
   "type": "module",
   "types": "build/index.d.ts",
-  "module": "build/index.js",
+  "module": "build/index.mjs",
   "exports": {
     ".": {
-      "import": {
-        "types": "./build/index.d.ts",
-        "default": "./build/index.js"
-      }
+      "types": "./build/index.d.ts",
+      "default": "./build/index.mjs"
     },
     "./package.json": {
       "default": "./package.json"
@@ -70,10 +68,10 @@
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^1.6.4",
-    "@angular/compiler": "^17.3.12",
-    "@angular/core": "^17.3.12",
-    "@angular/platform-browser": "^17.3.12",
-    "@angular/platform-browser-dynamic": "^17.3.12",
+    "@angular/compiler": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/platform-browser": "^19.0.0",
+    "@angular/platform-browser-dynamic": "^19.0.0",
     "@microsoft/api-extractor": "^7.48.0",
     "eslint-plugin-jsdoc": "^50.5.0",
     "tsup": "8.0.2",

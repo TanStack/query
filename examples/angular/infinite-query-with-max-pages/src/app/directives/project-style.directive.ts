@@ -1,7 +1,6 @@
 import { Directive, HostBinding, Input } from '@angular/core'
 
 @Directive({
-  standalone: true,
   selector: '[projectStyle]',
 })
 export class ProjectStyleDirective {
