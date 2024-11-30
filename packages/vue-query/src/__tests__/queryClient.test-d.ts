@@ -141,8 +141,8 @@ describe('fetchInfiniteQuery', () => {
   })
 })
 
-describe('errors usage', () => {
-  it('type-checks various methods with an error included in the type', () => {
+describe('fully typed usage', () => {
+  it('type-checks various methods with data & error included in the type', () => {
     type Data = { foo: string }
     type Error = DefaultError & { bar: string }
     const queryOptions: EnsureQueryDataOptions<Data, Error> = {
@@ -155,14 +155,13 @@ describe('errors usage', () => {
     }
     const mutationOptions: MutationOptions<Data, Error> = {}
     const filters: QueryFilters<Data, Error> = {}
-    const invalidateFilters: InvalidateQueryFilters<Data, Error> = {}
     const mutationKey = mutationOptions.mutationKey!
     const queryKey = filters.queryKey!
 
     const queryClient = new QueryClient()
 
     queryClient.getQueryState(queryKey)
-    queryClient.invalidateQueries(invalidateFilters)
+    queryClient.invalidateQueries(filters)
     queryClient.isFetching(filters)
     queryClient.isMutating(filters)
     queryClient.getQueryData(queryKey)
