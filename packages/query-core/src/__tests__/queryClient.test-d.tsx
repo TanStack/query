@@ -2,7 +2,15 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import type { MutationFilters, QueryFilters } from '../utils'
 import type { QueryState } from '../query'
-import type { DataTag, DefaultError, EnsureQueryDataOptions, FetchInfiniteQueryOptions, InfiniteData, MutationOptions, QueryKey } from '../types'
+import type {
+  DataTag,
+  DefaultError,
+  EnsureQueryDataOptions,
+  FetchInfiniteQueryOptions,
+  InfiniteData,
+  MutationOptions,
+  QueryKey,
+} from '../types'
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
@@ -186,7 +194,6 @@ describe('defaultOptions', () => {
   })
 })
 
-
 describe('fully typed usage', () => {
   it('type-checks various methods with data & error included in the type', () => {
     type Data = { foo: string }
@@ -215,7 +222,7 @@ describe('fully typed usage', () => {
     queryClient.ensureQueryData(queryOptions)
     queryClient.getQueriesData(filters)
     queryClient.setQueryData(queryKey, { foo: '' })
-    queryClient.setQueriesData(filters, {foo: ''}) // TODO: types here are wrong and coming up undefined
+    queryClient.setQueriesData(filters, { foo: '' }) // TODO: types here are wrong and coming up undefined
     queryClient.getQueryState(queryKey)
     queryClient.removeQueries(filters)
     queryClient.resetQueries(filters)
