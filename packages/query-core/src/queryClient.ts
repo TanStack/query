@@ -109,6 +109,7 @@ export class QueryClient {
   isFetching<TQueryFilters extends QueryFilters<any, any>>(
     filters: TQueryFilters,
   ): number
+  isFetching(filters?: QueryFilters): number
   isFetching(filters?: QueryFilters): number {
     return this.#queryCache.findAll({ ...filters, fetchStatus: 'fetching' })
       .length
@@ -117,6 +118,7 @@ export class QueryClient {
   isMutating<TMutationFilters extends MutationFilters<any, any>>(
     filters: TMutationFilters,
   ): number
+  isMutating(filters?: MutationFilters): number
   isMutating(filters?: MutationFilters): number {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
@@ -174,6 +176,9 @@ export class QueryClient {
       ? TData
       : never,
   >(filters: TQueryFilters): Array<[QueryKey, TInferredQueryFnData | undefined]>
+  getQueriesData<TQueryFnData = unknown>(
+    filters: QueryFilters,
+  ): Array<[QueryKey, TQueryFnData | undefined]>
   getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
   ): Array<[QueryKey, TQueryFnData | undefined]> {
@@ -243,6 +248,11 @@ export class QueryClient {
     filters: QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
+  ): Array<[QueryKey, TQueryFnData | undefined]>
+  setQueriesData<TQueryFnData>(
+    filters: QueryFilters,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
+    options?: SetDataOptions,
   ): Array<[QueryKey, TQueryFnData | undefined]> {
     return notifyManager.batch(() =>
       this.#queryCache
@@ -286,6 +296,7 @@ export class QueryClient {
   removeQueries<TQueryFilters extends QueryFilters<any, any>>(
     filters: TQueryFilters,
   ): void
+  removeQueries(filters?: QueryFilters): void
   removeQueries(filters?: QueryFilters): void {
     const queryCache = this.#queryCache
     notifyManager.batch(() => {
@@ -299,6 +310,7 @@ export class QueryClient {
     filters: TQueryFilters,
     options?: ResetOptions,
   ): Promise<void>
+  resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void>
   resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void> {
     const queryCache = this.#queryCache
 
@@ -320,6 +332,10 @@ export class QueryClient {
     cancelOptions?: CancelOptions,
   ): Promise<void>
   cancelQueries(
+    filters: QueryFilters,
+    cancelOptions: CancelOptions,
+  ): Promise<void>
+  cancelQueries(
     filters: QueryFilters = {},
     cancelOptions: CancelOptions = {},
   ): Promise<void> {
@@ -338,6 +354,10 @@ export class QueryClient {
     TInvalidateQueryFilters extends InvalidateQueryFilters<any, any>,
   >(
     filters: TInvalidateQueryFilters,
+    options?: InvalidateOptions,
+  ): Promise<void>
+  invalidateQueries(
+    filters?: InvalidateQueryFilters,
     options?: InvalidateOptions,
   ): Promise<void>
   invalidateQueries(
@@ -362,6 +382,10 @@ export class QueryClient {
 
   refetchQueries<TRefetchQueryFilters extends RefetchQueryFilters<any, any>>(
     filters: TRefetchQueryFilters,
+    options?: RefetchOptions,
+  ): Promise<void>
+  refetchQueries(
+    filters?: RefetchQueryFilters,
     options?: RefetchOptions,
   ): Promise<void>
   refetchQueries(
@@ -543,27 +567,30 @@ export class QueryClient {
   }
 
   getQueryDefaults<
-    TQueryKey extends QueryKey,
+    TQueryKey extends QueryKey & DataTag<any, any, any>,
     TInferredQueryData = TQueryKey extends DataTag<
       unknown,
       infer TData,
       unknown
     >
       ? TData
-      : never,
+      : any,
     TInferredQueryError = TQueryKey extends DataTag<
       unknown,
       unknown,
       infer TData
     >
       ? TData
-      : never,
+      : any,
   >(
     queryKey: TQueryKey,
   ): OmitKeyof<
     QueryObserverOptions<TInferredQueryData, TInferredQueryError>,
     'queryKey'
   >
+  getQueryDefaults(
+    queryKey: QueryKey,
+  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'>
   getQueryDefaults(
     queryKey: QueryKey,
   ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
