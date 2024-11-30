@@ -543,7 +543,7 @@ export class QueryClient {
   }
 
   getQueryDefaults<
-    TQueryKey extends QueryKey & DataTag<any, any, any>,
+    TQueryKey extends QueryKey,
     TInferredQueryData = TQueryKey extends DataTag<
       unknown,
       infer TData,
