@@ -326,8 +326,8 @@ export class QueryClient {
     cancelOptions?: CancelOptions,
   ): Promise<void>
   cancelQueries(
-    filters: QueryFilters,
-    cancelOptions: CancelOptions,
+    filters?: QueryFilters,
+    cancelOptions?: CancelOptions,
   ): Promise<void>
   cancelQueries(
     filters: QueryFilters = {},
@@ -561,7 +561,7 @@ export class QueryClient {
   }
 
   getQueryDefaults<
-    TQueryKey extends QueryKey & DataTag<any, any, any>,
+    TQueryKey extends QueryKey,
     TInferredQueryData = TQueryKey extends DataTag<
       unknown,
       infer TData,
@@ -572,14 +572,21 @@ export class QueryClient {
     TInferredQueryError = TQueryKey extends DataTag<
       unknown,
       unknown,
-      infer TData
+      infer TError
     >
-      ? TData
+      ? TError
       : any,
   >(
     queryKey: TQueryKey,
   ): OmitKeyof<
-    QueryObserverOptions<TInferredQueryData, TInferredQueryError>,
+    QueryObserverOptions<
+      TInferredQueryData,
+      TInferredQueryError,
+      TInferredQueryData,
+      TInferredQueryData,
+      TQueryKey,
+      any
+    >,
     'queryKey'
   >
   getQueryDefaults(
