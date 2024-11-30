@@ -1,7 +1,8 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
+import type { QueryFilters } from '../utils'
 import type { QueryState } from '../query'
-import type { DataTag, InfiniteData, QueryKey } from '../types'
+import type { DataTag, DefaultError, EnsureQueryDataOptions, FetchInfiniteQueryOptions, InfiniteData, MutationOptions, QueryKey } from '../types'
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
@@ -182,5 +183,54 @@ describe('defaultOptions', () => {
         },
       },
     })
+  })
+})
+
+
+describe('fully typed usage', () => {
+  it('type-checks various methods with data & error included in the type', () => {
+    type Data = { foo: string }
+    type Error = DefaultError & { bar: string }
+    const queryOptions: EnsureQueryDataOptions<Data, Error> = {
+      queryKey: ['key'] as any,
+    }
+    const fetchInfiniteQueryOptions: FetchInfiniteQueryOptions<Data, Error> = {
+      queryKey: ['key'] as any,
+      getNextPageParam() {},
+      initialPageParam: 0,
+    }
+    const mutationOptions: MutationOptions<Data, Error> = {}
+    const filters: QueryFilters<Data, Error> = {}
+    const mutationKey = mutationOptions.mutationKey!
+    const queryKey = filters.queryKey!
+
+    const queryClient = new QueryClient()
+
+    queryClient.getQueryState(queryKey)
+    queryClient.invalidateQueries(filters)
+    queryClient.isFetching(filters)
+    queryClient.isMutating(filters)
+    queryClient.getQueryData(queryKey)
+    queryClient.ensureQueryData(queryOptions)
+    queryClient.getQueriesData(filters)
+    queryClient.setQueryData(queryKey, { foo: '' })
+    queryClient.setQueriesData(filters, () => ({ foo: '' }))
+    queryClient.getQueryState(queryKey)
+    queryClient.removeQueries(filters)
+    queryClient.resetQueries(filters)
+    queryClient.cancelQueries(filters)
+    queryClient.invalidateQueries(filters)
+    queryClient.refetchQueries(filters)
+    queryClient.fetchQuery(queryOptions)
+    queryClient.prefetchQuery(queryOptions)
+    queryClient.fetchInfiniteQuery(fetchInfiniteQueryOptions)
+    queryClient.prefetchInfiniteQuery(fetchInfiniteQueryOptions)
+    queryClient.ensureInfiniteQueryData(fetchInfiniteQueryOptions)
+    queryClient.setQueryDefaults(queryKey, {} as any)
+    queryClient.getQueryDefaults(queryKey)
+    queryClient.setMutationDefaults(mutationKey, {})
+    queryClient.getMutationDefaults(mutationKey)
+    queryClient.defaultQueryOptions(queryOptions)
+    queryClient.defaultMutationOptions(mutationOptions)
   })
 })
