@@ -106,11 +106,17 @@ export class QueryClient {
     this.#unsubscribeOnline = undefined
   }
 
+  isFetching<TQueryFilters extends QueryFilters<any, any>>(
+    filters?: TQueryFilters,
+  ): number
   isFetching(filters?: QueryFilters): number {
     return this.#queryCache.findAll({ ...filters, fetchStatus: 'fetching' })
       .length
   }
 
+  isMutating<TMutationFilters extends MutationFilters<any, any>>(
+    filters?: TMutationFilters,
+  ): number
   isMutating(filters?: MutationFilters): number {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
@@ -157,6 +163,10 @@ export class QueryClient {
     }
   }
 
+  getQueriesData<
+    TQueryFnData = unknown,
+    TQueryFilters extends QueryFilters<any, any> = QueryFilters,
+  >(filters: TQueryFilters): Array<[QueryKey, TQueryFnData | undefined]>
   getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
   ): Array<[QueryKey, TQueryFnData | undefined]> {
@@ -207,6 +217,16 @@ export class QueryClient {
       .setData(data, { ...options, manual: true })
   }
 
+  setQueriesData<
+    TQueryFilters extends QueryFilters<any, any>,
+    TQueryFnData = TQueryFilters extends QueryFilters<infer TData, unknown>
+      ? TData
+      : never,
+  >(
+    filters: TQueryFilters,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
+    options?: SetDataOptions,
+  ): Array<[QueryKey, TQueryFnData | undefined]>
   setQueriesData<TQueryFnData>(
     filters: QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
@@ -251,6 +271,9 @@ export class QueryClient {
     )?.state
   }
 
+  removeQueries<TQueryFilters extends QueryFilters<any, any>>(
+    filters?: TQueryFilters,
+  ): void
   removeQueries(filters?: QueryFilters): void {
     const queryCache = this.#queryCache
     notifyManager.batch(() => {
@@ -260,6 +283,10 @@ export class QueryClient {
     })
   }
 
+  resetQueries<TQueryFilters extends QueryFilters<any, any>>(
+    filters?: TQueryFilters,
+    options?: ResetOptions,
+  ): Promise<void>
   resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void> {
     const queryCache = this.#queryCache
 
@@ -276,6 +303,10 @@ export class QueryClient {
     })
   }
 
+  cancelQueries<TQueryFilters extends QueryFilters<any, any>>(
+    filters: TQueryFilters,
+    cancelOptions?: CancelOptions,
+  ): Promise<void>
   cancelQueries(
     filters: QueryFilters = {},
     cancelOptions: CancelOptions = {},
@@ -291,6 +322,12 @@ export class QueryClient {
     return Promise.all(promises).then(noop).catch(noop)
   }
 
+  invalidateQueries<
+    TInvalidateQueryFilters extends InvalidateQueryFilters<any, any>,
+  >(
+    filters: TInvalidateQueryFilters,
+    options?: InvalidateOptions,
+  ): Promise<void>
   invalidateQueries(
     filters: InvalidateQueryFilters = {},
     options: InvalidateOptions = {},
@@ -311,6 +348,10 @@ export class QueryClient {
     })
   }
 
+  refetchQueries<TRefetchQueryFilters extends RefetchQueryFilters<any, any>>(
+    filters: TRefetchQueryFilters,
+    options?: RefetchOptions,
+  ): Promise<void>
   refetchQueries(
     filters: RefetchQueryFilters = {},
     options?: RefetchOptions,

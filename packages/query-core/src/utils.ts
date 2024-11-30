@@ -49,7 +49,12 @@ export interface QueryFilters<
   fetchStatus?: FetchStatus
 }
 
-export interface MutationFilters {
+export interface MutationFilters<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TContext = unknown,
+> {
   /**
    * Match mutation key exactly
    */
@@ -57,7 +62,9 @@ export interface MutationFilters {
   /**
    * Include mutations matching this predicate function
    */
-  predicate?: (mutation: Mutation<any, any, any>) => boolean
+  predicate?: (
+    mutation: Mutation<TData, TError, TVariables, TContext>,
+  ) => boolean
   /**
    * Include mutations matching this mutation key
    */

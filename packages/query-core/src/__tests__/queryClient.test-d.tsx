@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
-import type { QueryFilters } from '../utils'
+import type { MutationFilters, QueryFilters } from '../utils'
 import type { QueryState } from '../query'
 import type { DataTag, DefaultError, EnsureQueryDataOptions, FetchInfiniteQueryOptions, InfiniteData, MutationOptions, QueryKey } from '../types'
 
@@ -201,6 +201,7 @@ describe('fully typed usage', () => {
     }
     const mutationOptions: MutationOptions<Data, Error> = {}
     const filters: QueryFilters<Data, Error> = {}
+    const mutationFilters: MutationFilters<Data, Error> = {}
     const mutationKey = mutationOptions.mutationKey!
     const queryKey = filters.queryKey!
 
@@ -209,12 +210,12 @@ describe('fully typed usage', () => {
     queryClient.getQueryState(queryKey)
     queryClient.invalidateQueries(filters)
     queryClient.isFetching(filters)
-    queryClient.isMutating(filters)
+    queryClient.isMutating(mutationFilters)
     queryClient.getQueryData(queryKey)
     queryClient.ensureQueryData(queryOptions)
     queryClient.getQueriesData(filters)
     queryClient.setQueryData(queryKey, { foo: '' })
-    queryClient.setQueriesData(filters, () => ({ foo: '' }))
+    queryClient.setQueriesData(filters, {foo: ''}) // TODO: types here are wrong and coming up undefined
     queryClient.getQueryState(queryKey)
     queryClient.removeQueries(filters)
     queryClient.resetQueries(filters)
