@@ -230,36 +230,30 @@ export class QueryClient {
   }
 
   setQueriesData<
+    TQueryFnData,
     TQueryFilters extends QueryFilters<any, any>,
-    TQueryFnData = TQueryFilters extends QueryFilters<
+    TInferredQueryFnData = TQueryFilters extends QueryFilters<
       infer TData,
       any,
       any,
       any
     >
       ? TData
-      : never,
+      : TQueryFnData,
   >(
     filters: TQueryFilters,
-    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
+    updater: Updater<
+      NoInfer<TInferredQueryFnData> | undefined,
+      NoInfer<TInferredQueryFnData> | undefined
+    >,
     options?: SetDataOptions,
-  ): Array<[QueryKey, TQueryFnData | undefined]>
-  setQueriesData<TQueryFnData>(
-    filters: QueryFilters,
-    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
-    options?: SetDataOptions,
-  ): Array<[QueryKey, TQueryFnData | undefined]>
-  setQueriesData<TQueryFnData>(
-    filters: QueryFilters,
-    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
-    options?: SetDataOptions,
-  ): Array<[QueryKey, TQueryFnData | undefined]> {
+  ): Array<[QueryKey, TInferredQueryFnData | undefined]> {
     return notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
         .map(({ queryKey }) => [
           queryKey,
-          this.setQueryData<TQueryFnData>(queryKey, updater, options),
+          this.setQueryData<TInferredQueryFnData>(queryKey, updater, options),
         ]),
     )
   }

@@ -274,7 +274,7 @@ describe('fully typed usage', () => {
 
     const queriesData2 = queryClient.setQueriesData(queryFilters, { foo: '' }) // TODO: types here are wrong and coming up undefined
     type SetQueriesDataUpdaterArg = Parameters<
-      typeof queryClient.setQueriesData<typeof queryFilters>
+      typeof queryClient.setQueriesData<unknown, typeof queryFilters>
     >[1]
 
     expectTypeOf(null as unknown as SetQueriesDataUpdaterArg).toEqualTypeOf<
@@ -416,10 +416,10 @@ describe('fully typed usage', () => {
 
     const queriesData2 = queryClient.setQueriesData(queryFilters, { foo: '' }) // TODO: types here are wrong and coming up undefined
     type SetQueriesDataUpdaterArg = Parameters<
-      typeof queryClient.setQueriesData<typeof queryFilters>
+      typeof queryClient.setQueriesData<unknown, typeof queryFilters>
     >[1]
 
-    expectTypeOf(null as unknown as SetQueriesDataUpdaterArg).toEqualTypeOf<
+    expectTypeOf(null as SetQueriesDataUpdaterArg).toEqualTypeOf<
       Updater<unknown, unknown>
     >()
     expectTypeOf(queriesData2).toEqualTypeOf<Array<[QueryKey, unknown]>>()
@@ -462,19 +462,18 @@ describe('fully typed usage', () => {
       MutationOptions<unknown, DefaultError, void, unknown>
     >()
 
-    // TODO: should we DataTag MutationKey?
     queryClient.setMutationDefaults(mutationKey, {
-      // onSettled(data, error, variables, context) {
-      //   expectTypeOf(data).toEqualTypeOf<unknown >()
-      //   expectTypeOf(error).toEqualTypeOf<DefaultError | null>()
-      //   expectTypeOf(variables).toEqualTypeOf<unknown>()
-      //   expectTypeOf(context).toEqualTypeOf<{ queryKey: QueryKey }>()
-      // },
+      onSettled(data, error, variables, context) {
+        expectTypeOf(data).toEqualTypeOf<unknown>()
+        expectTypeOf(error).toEqualTypeOf<DefaultError | null>()
+        expectTypeOf(variables).toEqualTypeOf<void>()
+        expectTypeOf(context).toEqualTypeOf<unknown>()
+      },
     })
 
     const queryDefaults = queryClient.getQueryDefaults(queryKey)
     expectTypeOf(queryDefaults).toEqualTypeOf<
-      OmitKeyof<QueryObserverOptions<unknown, DefaultError>, 'queryKey'>
+      OmitKeyof<QueryObserverOptions<any, any>, 'queryKey'>
     >()
 
     // Voids and Untyped returns
