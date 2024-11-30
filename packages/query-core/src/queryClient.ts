@@ -107,7 +107,7 @@ export class QueryClient {
   }
 
   isFetching<TQueryFilters extends QueryFilters<any, any>>(
-    filters?: TQueryFilters,
+    filters: TQueryFilters,
   ): number
   isFetching(filters?: QueryFilters): number {
     return this.#queryCache.findAll({ ...filters, fetchStatus: 'fetching' })
@@ -115,7 +115,7 @@ export class QueryClient {
   }
 
   isMutating<TMutationFilters extends MutationFilters<any, any>>(
-    filters?: TMutationFilters,
+    filters: TMutationFilters,
   ): number
   isMutating(filters?: MutationFilters): number {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
@@ -272,7 +272,7 @@ export class QueryClient {
   }
 
   removeQueries<TQueryFilters extends QueryFilters<any, any>>(
-    filters?: TQueryFilters,
+    filters: TQueryFilters,
   ): void
   removeQueries(filters?: QueryFilters): void {
     const queryCache = this.#queryCache
@@ -284,7 +284,7 @@ export class QueryClient {
   }
 
   resetQueries<TQueryFilters extends QueryFilters<any, any>>(
-    filters?: TQueryFilters,
+    filters: TQueryFilters,
     options?: ResetOptions,
   ): Promise<void>
   resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void> {
