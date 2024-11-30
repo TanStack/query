@@ -164,9 +164,16 @@ export class QueryClient {
   }
 
   getQueriesData<
-    TQueryFnData = unknown,
     TQueryFilters extends QueryFilters<any, any> = QueryFilters,
-  >(filters: TQueryFilters): Array<[QueryKey, TQueryFnData | undefined]>
+    TInferredQueryFnData = TQueryFilters extends QueryFilters<
+      infer TData,
+      any,
+      any,
+      any
+    >
+      ? TData
+      : never,
+  >(filters: TQueryFilters): Array<[QueryKey, TInferredQueryFnData | undefined]>
   getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
   ): Array<[QueryKey, TQueryFnData | undefined]> {
@@ -219,7 +226,12 @@ export class QueryClient {
 
   setQueriesData<
     TQueryFilters extends QueryFilters<any, any>,
-    TQueryFnData = TQueryFilters extends QueryFilters<infer TData, unknown>
+    TQueryFnData = TQueryFilters extends QueryFilters<
+      infer TData,
+      any,
+      any,
+      any
+    >
       ? TData
       : never,
   >(
@@ -530,6 +542,28 @@ export class QueryClient {
     })
   }
 
+  getQueryDefaults<
+    TQueryKey extends QueryKey & DataTag<any, any, any>,
+    TInferredQueryData = TQueryKey extends DataTag<
+      unknown,
+      infer TData,
+      unknown
+    >
+      ? TData
+      : never,
+    TInferredQueryError = TQueryKey extends DataTag<
+      unknown,
+      unknown,
+      infer TData
+    >
+      ? TData
+      : never,
+  >(
+    queryKey: TQueryKey,
+  ): OmitKeyof<
+    QueryObserverOptions<TInferredQueryData, TInferredQueryError>,
+    'queryKey'
+  >
   getQueryDefaults(
     queryKey: QueryKey,
   ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {

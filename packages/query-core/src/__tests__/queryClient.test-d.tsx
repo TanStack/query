@@ -1,15 +1,19 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
-import type { MutationFilters, QueryFilters } from '../utils'
-import type { QueryState } from '../query'
+import type { MutationFilters, QueryFilters, Updater } from '../utils'
+import type { Mutation } from '../mutation'
+import type { Query, QueryState } from '../query'
 import type {
   DataTag,
   DefaultError,
+  DefaultedQueryObserverOptions,
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   InfiniteData,
   MutationOptions,
+  OmitKeyof,
   QueryKey,
+  QueryObserverOptions,
 } from '../types'
 
 describe('getQueryData', () => {
@@ -195,50 +199,149 @@ describe('defaultOptions', () => {
 })
 
 describe('fully typed usage', () => {
-  it('type-checks various methods with data & error included in the type', () => {
-    type Data = { foo: string }
-    type Error = DefaultError & { bar: string }
-    const queryOptions: EnsureQueryDataOptions<Data, Error> = {
-      queryKey: ['key'] as any,
-    }
-    const fetchInfiniteQueryOptions: FetchInfiniteQueryOptions<Data, Error> = {
-      queryKey: ['key'] as any,
-      getNextPageParam() {},
-      initialPageParam: 0,
-    }
-    const mutationOptions: MutationOptions<Data, Error> = {}
-    const filters: QueryFilters<Data, Error> = {}
-    const mutationFilters: MutationFilters<Data, Error> = {}
-    const mutationKey = mutationOptions.mutationKey!
-    const queryKey = filters.queryKey!
-
+  it('type-checks various methods with data & error included in the type', async () => {
     const queryClient = new QueryClient()
 
-    queryClient.getQueryState(queryKey)
-    queryClient.invalidateQueries(filters)
-    queryClient.isFetching(filters)
-    queryClient.isMutating(mutationFilters)
-    queryClient.getQueryData(queryKey)
-    queryClient.ensureQueryData(queryOptions)
-    queryClient.getQueriesData(filters)
-    queryClient.setQueryData(queryKey, { foo: '' })
-    queryClient.setQueriesData(filters, { foo: '' }) // TODO: types here are wrong and coming up undefined
-    queryClient.getQueryState(queryKey)
-    queryClient.removeQueries(filters)
-    queryClient.resetQueries(filters)
-    queryClient.cancelQueries(filters)
-    queryClient.invalidateQueries(filters)
-    queryClient.refetchQueries(filters)
-    queryClient.fetchQuery(queryOptions)
+    type TData = { foo: string }
+    type TError = DefaultError & { bar: string }
+
+    //
+    // Construct typed arguments
+    //
+
+    const queryOptions: EnsureQueryDataOptions<TData, TError> = {
+      queryKey: ['key'] as any,
+    }
+    const fetchInfiniteQueryOptions: FetchInfiniteQueryOptions<TData, TError> =
+      {
+        queryKey: ['key'] as any,
+        pages: 5,
+        getNextPageParam: (lastPage) => {
+          expectTypeOf(lastPage).toEqualTypeOf<TData>()
+          return 0
+        },
+        initialPageParam: 0,
+      }
+    const mutationOptions: MutationOptions<TData, TError> = {}
+
+    const queryFilters: QueryFilters<TData, TError> = {
+      predicate(query) {
+        expectTypeOf(query).toEqualTypeOf<Query<TData, TError>>()
+        expectTypeOf(query.state.data).toEqualTypeOf<TData | undefined>()
+        expectTypeOf(query.state.error).toEqualTypeOf<TError | null>()
+        return false
+      },
+    }
+    const queryKey = queryFilters.queryKey!
+
+    const mutationFilters: MutationFilters<TData, TError> = {
+      predicate(mutation) {
+        expectTypeOf(mutation).toEqualTypeOf<Mutation<TData, TError>>()
+        expectTypeOf(mutation.state.data).toEqualTypeOf<TData | undefined>()
+        expectTypeOf(mutation.state.error).toEqualTypeOf<TError | null>()
+        return false
+      },
+    }
+    const mutationKey = mutationOptions.mutationKey!
+
+    //
+    // Method type tests
+    //
+
+    const state = queryClient.getQueryState(queryKey)
+    expectTypeOf(state).toEqualTypeOf<QueryState<TData, TError> | undefined>()
+
+    const queryData1 = queryClient.getQueryData(queryKey)
+    expectTypeOf(queryData1).toEqualTypeOf<TData | undefined>()
+
+    const queryData2 = await queryClient.ensureQueryData(queryOptions)
+    expectTypeOf(queryData2).toEqualTypeOf<TData>()
+
+    const queriesData = queryClient.getQueriesData(queryFilters)
+    expectTypeOf(queriesData).toEqualTypeOf<
+      Array<[QueryKey, TData | undefined]>
+    >()
+
+    const queryData3 = queryClient.setQueryData(queryKey, { foo: '' })
+    type SetQueryDataUpdaterArg = Parameters<
+      typeof queryClient.setQueryData<unknown, typeof queryKey>
+    >[1]
+
+    expectTypeOf(null as unknown as SetQueryDataUpdaterArg).toEqualTypeOf<
+      Updater<TData | undefined, TData | undefined>
+    >()
+    expectTypeOf(queryData3).toEqualTypeOf<TData | undefined>()
+
+    const queriesData2 = queryClient.setQueriesData(queryFilters, { foo: '' }) // TODO: types here are wrong and coming up undefined
+    type SetQueriesDataUpdaterArg = Parameters<
+      typeof queryClient.setQueriesData<typeof queryFilters>
+    >[1]
+
+    expectTypeOf(null as unknown as SetQueriesDataUpdaterArg).toEqualTypeOf<
+      Updater<TData | undefined, TData | undefined>
+    >()
+    expectTypeOf(queriesData2).toEqualTypeOf<
+      Array<[QueryKey, TData | undefined]>
+    >()
+
+    const queryState = queryClient.getQueryState(queryKey)
+    expectTypeOf(queryState).toEqualTypeOf<
+      QueryState<TData, TError> | undefined
+    >()
+
+    const fetchedQuery = await queryClient.fetchQuery(queryOptions)
+    expectTypeOf(fetchedQuery).toEqualTypeOf<TData>()
+
     queryClient.prefetchQuery(queryOptions)
-    queryClient.fetchInfiniteQuery(fetchInfiniteQueryOptions)
+
+    const infiniteQuery = await queryClient.fetchInfiniteQuery(
+      fetchInfiniteQueryOptions,
+    )
+    expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
+
+    const infiniteQueryData = await queryClient.ensureInfiniteQueryData(
+      fetchInfiniteQueryOptions,
+    )
+    expectTypeOf(infiniteQueryData).toEqualTypeOf<
+      InfiniteData<TData, unknown>
+    >()
+
+    const defaultQueryOptions = queryClient.defaultQueryOptions(queryOptions)
+    expectTypeOf(defaultQueryOptions).toEqualTypeOf<
+      DefaultedQueryObserverOptions<TData, TError, TData, TData, QueryKey>
+    >()
+
+    const mutationOptions2 = queryClient.defaultMutationOptions(mutationOptions)
+    expectTypeOf(mutationOptions2).toEqualTypeOf<
+      MutationOptions<TData, TError, void, unknown>
+    >()
+
+    // TODO: should we DataTag MutationKey?
+    queryClient.setMutationDefaults(mutationKey, {
+      // onSettled(data, error, variables, context) {
+      //   expectTypeOf(data).toEqualTypeOf<TData | undefined>()
+      //   expectTypeOf(error).toEqualTypeOf<TError | null>()
+      //   expectTypeOf(variables).toEqualTypeOf<unknown>()
+      //   expectTypeOf(context).toEqualTypeOf<{ queryKey: QueryKey }>()
+      // },
+    })
+
+    const queryDefaults = queryClient.getQueryDefaults(queryKey)
+    expectTypeOf(queryDefaults).toEqualTypeOf<
+      OmitKeyof<QueryObserverOptions<TData, TError>, 'queryKey'>
+    >()
+
+    // Voids and Untyped returns
+    queryClient.invalidateQueries(queryFilters)
+    queryClient.isFetching(queryFilters)
+    queryClient.isMutating(mutationFilters)
+    queryClient.removeQueries(queryFilters)
+    queryClient.resetQueries(queryFilters)
+    queryClient.cancelQueries(queryFilters)
+    queryClient.invalidateQueries(queryFilters)
+    queryClient.refetchQueries(queryFilters)
     queryClient.prefetchInfiniteQuery(fetchInfiniteQueryOptions)
-    queryClient.ensureInfiniteQueryData(fetchInfiniteQueryOptions)
     queryClient.setQueryDefaults(queryKey, {} as any)
-    queryClient.getQueryDefaults(queryKey)
-    queryClient.setMutationDefaults(mutationKey, {})
     queryClient.getMutationDefaults(mutationKey)
-    queryClient.defaultQueryOptions(queryOptions)
-    queryClient.defaultMutationOptions(mutationOptions)
   })
 })
