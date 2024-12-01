@@ -181,20 +181,12 @@ export class QueryClient {
     >
       ? TData
       : TQueryFnData,
-    TInferredQueryKey = TQueryFilters extends QueryFilters<
-      any,
-      any,
-      any,
-      infer TQueryKey
-    >
-      ? TQueryKey
-      : QueryKey,
   >(
     filters: TQueryFilters,
-  ): Array<[TInferredQueryKey, TInferredQueryFnData | undefined]> {
+  ): Array<[QueryKey, TInferredQueryFnData | undefined]> {
     return this.#queryCache.findAll(filters).map(({ queryKey, state }) => {
       const data = state.data as TInferredQueryFnData | undefined
-      return [queryKey as TInferredQueryKey, data]
+      return [queryKey, data]
     })
   }
 
@@ -576,11 +568,11 @@ export class QueryClient {
 
   getQueryDefaults(
     queryKey: QueryKey,
-  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any, any>, 'queryKey'> {
+  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
     const defaults = [...this.#queryDefaults.values()]
 
     const result: OmitKeyof<
-      QueryObserverOptions<any, any, any, any, any, any>,
+      QueryObserverOptions<any, any, any, any, any>,
       'queryKey'
     > = {}
 

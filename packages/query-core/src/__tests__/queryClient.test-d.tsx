@@ -271,7 +271,7 @@ describe('fully typed usage', () => {
 
     const queriesData = queryClient.getQueriesData(queryFilters)
     expectTypeOf(queriesData).toEqualTypeOf<
-      Array<[QueryKey & DataTag<unknown, TData, TError>, TData | undefined]>
+      Array<[QueryKey, TData | undefined]>
     >()
 
     const queryData3 = queryClient.setQueryData(queryKey, { foo: '' })
@@ -340,7 +340,7 @@ describe('fully typed usage', () => {
 
     const queryDefaults = queryClient.getQueryDefaults(queryKey)
     expectTypeOf(queryDefaults).toEqualTypeOf<
-      OmitKeyof<QueryObserverOptions<any, any, any, any, any, any>, 'queryKey'>
+      OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'>
     >()
 
     // Voids and Untyped returns
@@ -485,7 +485,7 @@ describe('fully typed usage', () => {
 
     const queryDefaults = queryClient.getQueryDefaults(queryKey)
     expectTypeOf(queryDefaults).toEqualTypeOf<
-      OmitKeyof<QueryObserverOptions<any, any, any, any, any, any>, 'queryKey'>
+      OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'>
     >()
 
     // Voids and Untyped returns
