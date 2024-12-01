@@ -328,14 +328,13 @@ describe('fully typed usage', () => {
       MutationOptions<TData, TError, void, unknown>
     >()
 
-    // TODO: should we DataTag MutationKey?
     queryClient.setMutationDefaults(mutationKey, {
-      // onSettled(data, error, variables, context) {
-      //   expectTypeOf(data).toEqualTypeOf<TData | undefined>()
-      //   expectTypeOf(error).toEqualTypeOf<TError | null>()
-      //   expectTypeOf(variables).toEqualTypeOf<unknown>()
-      //   expectTypeOf(context).toEqualTypeOf<{ queryKey: QueryKey }>()
-      // },
+      onSettled(data, error, variables, context) {
+        expectTypeOf(data).toEqualTypeOf<unknown>()
+        expectTypeOf(error).toEqualTypeOf<DefaultError | null>()
+        expectTypeOf(variables).toEqualTypeOf<void>()
+        expectTypeOf(context).toEqualTypeOf<unknown>()
+      },
     })
 
     const queryDefaults = queryClient.getQueryDefaults(queryKey)
