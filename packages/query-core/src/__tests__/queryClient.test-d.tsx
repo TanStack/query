@@ -224,9 +224,21 @@ describe('fully typed usage', () => {
       }
     const mutationOptions: MutationOptions<TData, TError> = {}
 
-    const queryFilters: QueryFilters<TData, TError> = {
+    const queryFilters: QueryFilters<
+      TData,
+      TError,
+      TData,
+      QueryKey & DataTag<unknown, TData, TError>
+    > = {
       predicate(query) {
-        expectTypeOf(query).toEqualTypeOf<Query<TData, TError>>()
+        expectTypeOf(query).toEqualTypeOf<
+          Query<
+            TData,
+            TError,
+            TData,
+            QueryKey & DataTag<unknown, TData, TError>
+          >
+        >()
         expectTypeOf(query.state.data).toEqualTypeOf<TData | undefined>()
         expectTypeOf(query.state.error).toEqualTypeOf<TError | null>()
         return false
@@ -259,7 +271,7 @@ describe('fully typed usage', () => {
 
     const queriesData = queryClient.getQueriesData(queryFilters)
     expectTypeOf(queriesData).toEqualTypeOf<
-      Array<[QueryKey, TData | undefined]>
+      Array<[QueryKey & DataTag<unknown, TData, TError>, TData | undefined]>
     >()
 
     const queryData3 = queryClient.setQueryData(queryKey, { foo: '' })
@@ -277,7 +289,7 @@ describe('fully typed usage', () => {
       typeof queryClient.setQueriesData<unknown, typeof queryFilters>
     >[1]
 
-    expectTypeOf(null as unknown as SetQueriesDataUpdaterArg).toEqualTypeOf<
+    expectTypeOf(null as any as SetQueriesDataUpdaterArg).toEqualTypeOf<
       Updater<TData | undefined, TData | undefined>
     >()
     expectTypeOf(queriesData2).toEqualTypeOf<

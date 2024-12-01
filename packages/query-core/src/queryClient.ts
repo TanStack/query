@@ -106,7 +106,7 @@ export class QueryClient {
     this.#unsubscribeOnline = undefined
   }
 
-  isFetching<TQueryFilters extends QueryFilters<any, any>>(
+  isFetching<TQueryFilters extends QueryFilters<any, any, any, any>>(
     filters: TQueryFilters,
   ): number
   isFetching(filters?: QueryFilters): number
@@ -166,7 +166,13 @@ export class QueryClient {
   }
 
   getQueriesData<
-    TQueryFilters extends QueryFilters<any, any> = QueryFilters,
+    TQueryFnData = unknown,
+    TQueryFilters extends QueryFilters<
+      any,
+      any,
+      any,
+      any
+    > = QueryFilters<TQueryFnData>,
     TInferredQueryFnData = TQueryFilters extends QueryFilters<
       infer TData,
       any,
@@ -174,17 +180,21 @@ export class QueryClient {
       any
     >
       ? TData
-      : never,
-  >(filters: TQueryFilters): Array<[QueryKey, TInferredQueryFnData | undefined]>
-  getQueriesData<TQueryFnData = unknown>(
-    filters: QueryFilters,
-  ): Array<[QueryKey, TQueryFnData | undefined]>
-  getQueriesData<TQueryFnData = unknown>(
-    filters: QueryFilters,
-  ): Array<[QueryKey, TQueryFnData | undefined]> {
+      : TQueryFnData,
+    TInferredQueryKey = TQueryFilters extends QueryFilters<
+      any,
+      any,
+      any,
+      infer TQueryKey
+    >
+      ? TQueryKey
+      : QueryKey,
+  >(
+    filters: TQueryFilters,
+  ): Array<[TInferredQueryKey, TInferredQueryFnData | undefined]> {
     return this.#queryCache.findAll(filters).map(({ queryKey, state }) => {
-      const data = state.data as TQueryFnData | undefined
-      return [queryKey, data]
+      const data = state.data as TInferredQueryFnData | undefined
+      return [queryKey as TInferredQueryKey, data]
     })
   }
 
@@ -231,7 +241,12 @@ export class QueryClient {
 
   setQueriesData<
     TQueryFnData,
-    TQueryFilters extends QueryFilters<any, any>,
+    TQueryFilters extends QueryFilters<
+      any,
+      any,
+      any,
+      any
+    > = QueryFilters<TQueryFnData>,
     TInferredQueryFnData = TQueryFilters extends QueryFilters<
       infer TData,
       any,
@@ -287,7 +302,7 @@ export class QueryClient {
     )?.state
   }
 
-  removeQueries<TQueryFilters extends QueryFilters<any, any>>(
+  removeQueries<TQueryFilters extends QueryFilters<any, any, any, any>>(
     filters: TQueryFilters,
   ): void
   removeQueries(filters?: QueryFilters): void
@@ -300,7 +315,7 @@ export class QueryClient {
     })
   }
 
-  resetQueries<TQueryFilters extends QueryFilters<any, any>>(
+  resetQueries<TQueryFilters extends QueryFilters<any, any, any, any>>(
     filters: TQueryFilters,
     options?: ResetOptions,
   ): Promise<void>
@@ -321,7 +336,7 @@ export class QueryClient {
     })
   }
 
-  cancelQueries<TQueryFilters extends QueryFilters<any, any>>(
+  cancelQueries<TQueryFilters extends QueryFilters<any, any, any, any>>(
     filters: TQueryFilters,
     cancelOptions?: CancelOptions,
   ): Promise<void>
@@ -345,7 +360,7 @@ export class QueryClient {
   }
 
   invalidateQueries<
-    TInvalidateQueryFilters extends InvalidateQueryFilters<any, any>,
+    TInvalidateQueryFilters extends InvalidateQueryFilters<any, any, any, any>,
   >(
     filters: TInvalidateQueryFilters,
     options?: InvalidateOptions,
@@ -374,10 +389,9 @@ export class QueryClient {
     })
   }
 
-  refetchQueries<TRefetchQueryFilters extends RefetchQueryFilters<any, any>>(
-    filters: TRefetchQueryFilters,
-    options?: RefetchOptions,
-  ): Promise<void>
+  refetchQueries<
+    TRefetchQueryFilters extends RefetchQueryFilters<any, any, any, any>,
+  >(filters: TRefetchQueryFilters, options?: RefetchOptions): Promise<void>
   refetchQueries(
     filters?: RefetchQueryFilters,
     options?: RefetchOptions,

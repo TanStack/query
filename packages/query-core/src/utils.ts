@@ -36,9 +36,10 @@ export interface QueryFilters<
   /**
    * Include queries matching this query key
    */
-  queryKey?: unknown extends TQueryFnData
-    ? QueryKey
-    : QueryKey & DataTag<unknown, TQueryFnData, TError>
+  queryKey?: TQueryKey
+  // queryKey?: unknown extends TQueryFnData
+  //   ? QueryKey
+  //   : QueryKey & DataTag<unknown, TQueryFnData, TError>
   /**
    * Include or exclude stale queries
    */
