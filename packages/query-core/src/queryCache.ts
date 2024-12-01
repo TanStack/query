@@ -114,7 +114,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     const queryHash =
       options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
     let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
-    const a = client.getQueryDefaults(queryKey)
+
     if (!query) {
       query = new Query({
         cache: this,

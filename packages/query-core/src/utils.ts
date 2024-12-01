@@ -1,5 +1,4 @@
 import type {
-  DataTag,
   DefaultError,
   Enabled,
   FetchStatus,
