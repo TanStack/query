@@ -7,7 +7,7 @@ describe('QueryFilters', () => {
   it('should be typed if generics are passed', () => {
     type TData = { a: number; b: string }
 
-    const a: QueryFilters<
+    const filters: QueryFilters<
       TData,
       Error,
       TData,
@@ -22,10 +22,10 @@ describe('QueryFilters', () => {
 
     const queryClient = new QueryClient()
 
-    const data = queryClient.getQueryData(a.queryKey!)
+    const data = queryClient.getQueryData(filters.queryKey!)
     expectTypeOf(data).toEqualTypeOf<TData | undefined>()
 
-    const error = queryClient.getQueryState(a.queryKey!)?.error
+    const error = queryClient.getQueryState(filters.queryKey!)?.error
     expectTypeOf(error).toEqualTypeOf<Error | null | undefined>()
   })
 
@@ -33,7 +33,7 @@ describe('QueryFilters', () => {
     type TData = { a: number; b: string }
     type TError = Error & { message: string }
 
-    const a: QueryFilters<
+    const filters: QueryFilters<
       TData,
       TError,
       TData,
@@ -48,10 +48,10 @@ describe('QueryFilters', () => {
 
     const queryClient = new QueryClient()
 
-    const data = queryClient.getQueryData(a.queryKey!)
+    const data = queryClient.getQueryData(filters.queryKey!)
     expectTypeOf(data).toEqualTypeOf<TData | undefined>()
 
-    const error = queryClient.getQueryState(a.queryKey!)?.error
+    const error = queryClient.getQueryState(filters.queryKey!)?.error
     expectTypeOf(error).toEqualTypeOf<TError | null | undefined>()
   })
 
