@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, it } from 'vitest'
+import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
 import type { Mutation } from '../mutation'
