@@ -340,10 +340,7 @@ describe('fully typed usage', () => {
 
     const queryDefaults = queryClient.getQueryDefaults(queryKey)
     expectTypeOf(queryDefaults).toEqualTypeOf<
-      OmitKeyof<
-        QueryObserverOptions<TData, TError, TData, TData, typeof queryKey, any>,
-        'queryKey'
-      >
+      OmitKeyof<QueryObserverOptions<any, any, any, any, any, any>, 'queryKey'>
     >()
 
     // Voids and Untyped returns
@@ -488,10 +485,7 @@ describe('fully typed usage', () => {
 
     const queryDefaults = queryClient.getQueryDefaults(queryKey)
     expectTypeOf(queryDefaults).toEqualTypeOf<
-      OmitKeyof<
-        QueryObserverOptions<any, any, any, any, typeof queryKey, any>,
-        'queryKey'
-      >
+      OmitKeyof<QueryObserverOptions<any, any, any, any, any, any>, 'queryKey'>
     >()
 
     // Voids and Untyped returns

@@ -1,13 +1,18 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import type { QueryFilters } from '../utils'
-import type { DataTag } from '../types'
+import type { DataTag, QueryKey } from '../types'
 
 describe('QueryFilters', () => {
   it('should be typed if generics are passed', () => {
     type TData = { a: number; b: string }
 
-    const a: QueryFilters<TData> = {
+    const a: QueryFilters<
+      TData,
+      Error,
+      TData,
+      QueryKey & DataTag<unknown, TData>
+    > = {
       predicate(query) {
         expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
         return true
@@ -28,7 +33,12 @@ describe('QueryFilters', () => {
     type TData = { a: number; b: string }
     type TError = Error & { message: string }
 
-    const a: QueryFilters<TData, TError> = {
+    const a: QueryFilters<
+      TData,
+      TError,
+      TData,
+      QueryKey & DataTag<unknown, TData, TError>
+    > = {
       predicate(query) {
         expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
         return true

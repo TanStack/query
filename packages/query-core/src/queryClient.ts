@@ -574,51 +574,19 @@ export class QueryClient {
     })
   }
 
-  getQueryDefaults<
-    TQueryKey extends QueryKey,
-    TInferredQueryData = TQueryKey extends DataTag<
-      unknown,
-      infer TData,
-      unknown
-    >
-      ? TData
-      : any,
-    TInferredQueryError = TQueryKey extends DataTag<
-      unknown,
-      unknown,
-      infer TError
-    >
-      ? TError
-      : any,
-  >(
-    queryKey: TQueryKey,
-  ): OmitKeyof<
-    QueryObserverOptions<
-      TInferredQueryData,
-      TInferredQueryError,
-      TInferredQueryData,
-      TInferredQueryData,
-      TQueryKey,
-      any
-    >,
-    'queryKey'
-  >
   getQueryDefaults(
     queryKey: QueryKey,
-  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'>
-  getQueryDefaults(
-    queryKey: QueryKey,
-  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
+  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any, any>, 'queryKey'> {
     const defaults = [...this.#queryDefaults.values()]
 
-    let result: OmitKeyof<
-      QueryObserverOptions<any, any, any, any, any>,
+    const result: OmitKeyof<
+      QueryObserverOptions<any, any, any, any, any, any>,
       'queryKey'
     > = {}
 
     defaults.forEach((queryDefault) => {
       if (partialMatchKey(queryKey, queryDefault.queryKey)) {
-        result = { ...result, ...queryDefault.defaultOptions }
+        Object.assign(result, queryDefault.defaultOptions)
       }
     })
     return result
