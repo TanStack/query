@@ -7,6 +7,7 @@ import {
 import {
   injectMutation,
   injectQuery,
+  QueryFunctionContext,
 } from '@tanstack/angular-query-experimental'
 import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
 import { TasksService } from '../services/tasks.service'
@@ -23,19 +24,7 @@ export class AutoRefetchingExampleComponent {
 
   intervalMs = signal(1000)
 
-  tasks = injectQuery(() => ({
-    queryKey: ['tasks'],
-    queryFn: async (context) => {
-      // Cancels the request when component is destroyed before the request finishes
-      const abort$ = fromEvent(context.signal, 'abort')
-
-      return lastValueFrom(
-        this.#tasksService.allTasks$().pipe(takeUntil(abort$)),
-      )
-    },
-    // Refetch the data every second
-    refetchInterval: this.intervalMs(),
-  }))
+  tasks = injectQuery(() => this.#tasksService.allTasks(this.intervalMs()))
 
   addMutation = injectMutation(() => this.#tasksService.addTask())
   clearMutation = injectMutation(() => this.#tasksService.clearAllTasks())
