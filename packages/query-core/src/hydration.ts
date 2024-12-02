@@ -177,9 +177,11 @@ export function hydrate(
     const data =
       state.data === undefined ? state.data : deserializeData(state.data)
 
+    console.log('data', data)
+    console.log('query', query)
+
     // Do not hydrate if an existing query exists with newer data
     if (query) {
-      console.log('query', query)
       if (query.state.dataUpdatedAt < state.dataUpdatedAt) {
         // omit fetchStatus from dehydrated state
         // so that query stays in its current fetchStatus
