@@ -1067,7 +1067,7 @@ describe('dehydration and rehydration', () => {
     serverQueryClient.clear()
   })
 
-  test.only('should overwrite data when a new promise is streamed in', async () => {
+  test('should overwrite data when a new promise is streamed in', async () => {
     const serializeDataMock = vi.fn((data: any) => data)
     const countRef = { current: 0 }
     // --- server ---
