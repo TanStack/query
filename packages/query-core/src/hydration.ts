@@ -80,7 +80,8 @@ function dehydrateQuery(
     },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
-    ...(query.state.status === 'pending' && {
+    ...((query.state.status === 'pending' ||
+      query.state.fetchStatus === 'fetching') && {
       promise: query.promise?.then(serializeData).catch((error) => {
         if (process.env.NODE_ENV !== 'production') {
           console.error(
@@ -143,6 +144,7 @@ export function hydrate(
   dehydratedState: unknown,
   options?: HydrateOptions,
 ): void {
+  console.log('[hydrate] dehydratedState', dehydratedState)
   if (typeof dehydratedState !== 'object' || dehydratedState === null) {
     return
   }
@@ -177,8 +179,8 @@ export function hydrate(
     const data =
       state.data === undefined ? state.data : deserializeData(state.data)
 
-    console.log('data', data)
-    console.log('query', query)
+    console.log('[hydrate] data', data)
+    console.log('[hydrate] query', query)
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
