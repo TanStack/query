@@ -7,7 +7,6 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
-  MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
   Override,
@@ -136,8 +135,9 @@ export type CreateQueryResult<
 export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
-  TDefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
-> = MapToSignals<TDefinedQueryObserver>
+  TState = DefinedQueryObserverResult<TData, TError>,
+> = BaseQueryNarrowing<TData, TError> &
+  MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
 /**
  * @public
@@ -158,19 +158,6 @@ export type DefinedCreateInfiniteQueryResult<
     TError
   >,
 > = MapToSignals<TDefinedInfiniteQueryObserver>
-
-/**
- * @public
- */
-export interface CreateMutationOptions<
-  TData = unknown,
-  TError = DefaultError,
-  TVariables = void,
-  TContext = unknown,
-> extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted'
-  > {}
 
 /**
  * @public

@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.60.5",
+  "version": "5.62.0",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/angular-query-experimental"
   },
   "homepage": "https://tanstack.com/query",
@@ -33,7 +33,11 @@
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
-    "test:types:ts53": "tsc",
+    "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js",
+    "test:types:ts57": "tsc",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
@@ -42,13 +46,11 @@
   },
   "type": "module",
   "types": "build/index.d.ts",
-  "module": "build/index.js",
+  "module": "build/index.mjs",
   "exports": {
     ".": {
-      "import": {
-        "types": "./build/index.d.ts",
-        "default": "./build/index.js"
-      }
+      "types": "./build/index.d.ts",
+      "default": "./build/index.mjs"
     },
     "./package.json": {
       "default": "./package.json"
@@ -66,14 +68,14 @@
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^1.6.4",
-    "@angular/compiler": "^17.3.12",
-    "@angular/core": "^17.3.12",
-    "@angular/platform-browser": "^17.3.12",
-    "@angular/platform-browser-dynamic": "^17.3.12",
-    "@microsoft/api-extractor": "^7.47.4",
-    "eslint-plugin-jsdoc": "^50.2.2",
+    "@angular/compiler": "^19.1.0-next.0",
+    "@angular/core": "^19.1.0-next.0",
+    "@angular/platform-browser": "^19.1.0-next.0",
+    "@angular/platform-browser-dynamic": "^19.1.0-next.0",
+    "@microsoft/api-extractor": "^7.48.0",
+    "eslint-plugin-jsdoc": "^50.5.0",
     "tsup": "8.0.2",
-    "typescript": "5.3.3"
+    "typescript": "5.7.2"
   },
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
