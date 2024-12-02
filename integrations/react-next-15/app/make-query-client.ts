@@ -39,9 +39,15 @@ export function makeQueryClient() {
           console.log('serializeData', data)
           return tson.serialize(data)
         },
-        shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) ||
-          query.state.status === 'pending',
+        shouldDehydrateQuery: (query) => {
+          const shouldDehydrate =
+            defaultShouldDehydrateQuery(query) ||
+            query.state.status === 'pending'
+
+          console.log('shouldDehydrateQuery', query.queryKey, shouldDehydrate)
+
+          return shouldDehydrate
+        },
       },
     },
   })
