@@ -1,4 +1,4 @@
 {
   "name": "Node.js",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:18"
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22"
 }

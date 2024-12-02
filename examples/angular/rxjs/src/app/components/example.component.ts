@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms'
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import {
   injectQuery,
   keepPreviousData,
@@ -12,9 +11,8 @@ import { AutocompleteService } from '../services/autocomplete-service'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example',
-  standalone: true,
   templateUrl: './example.component.html',
-  imports: [AngularQueryDevtools, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
 })
 export class ExampleComponent {
   #autocompleteService = inject(AutocompleteService)

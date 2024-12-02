@@ -42,7 +42,7 @@ export class BlogPostComponent {
     this.postId.set(value)
   }
   postId = signal(0)
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 
   result = injectQuery(() => ({
     queryKey: ['blogPost', this.postId()],

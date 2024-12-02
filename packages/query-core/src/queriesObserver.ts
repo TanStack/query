@@ -175,19 +175,28 @@ export class QueriesObserver<
         return this.#combineResult(r ?? result, combine)
       },
       () => {
-        return matches.map((match, index) => {
-          const observerResult = result[index]!
-          return !match.defaultedQueryOptions.notifyOnChangeProps
-            ? match.observer.trackResult(observerResult, (accessedProp) => {
-                // track property on all observers to ensure proper (synchronized) tracking (#7000)
-                matches.forEach((m) => {
-                  m.observer.trackProp(accessedProp)
-                })
-              })
-            : observerResult
-        })
+        return this.#trackResult(result, queries)
       },
     ]
+  }
+
+  #trackResult(
+    result: Array<QueryObserverResult>,
+    queries: Array<QueryObserverOptions>,
+  ) {
+    const matches = this.#findMatchingObservers(queries)
+
+    return matches.map((match, index) => {
+      const observerResult = result[index]!
+      return !match.defaultedQueryOptions.notifyOnChangeProps
+        ? match.observer.trackResult(observerResult, (accessedProp) => {
+            // track property on all observers to ensure proper (synchronized) tracking (#7000)
+            matches.forEach((m) => {
+              m.observer.trackProp(accessedProp)
+            })
+          })
+        : observerResult
+    })
   }
 
   #combineResult(
@@ -231,28 +240,14 @@ export class QueriesObserver<
           observer: match,
         })
       } else {
-        const existingObserver = this.#observers.find(
-          (o) => o.options.queryHash === defaultedOptions.queryHash,
-        )
         observers.push({
           defaultedQueryOptions: defaultedOptions,
-          observer:
-            existingObserver ??
-            new QueryObserver(this.#client, defaultedOptions),
+          observer: new QueryObserver(this.#client, defaultedOptions),
         })
       }
     })
 
-    return observers.sort((a, b) => {
-      return (
-        queries.findIndex(
-          (q) => q.queryHash === a.defaultedQueryOptions.queryHash,
-        ) -
-        queries.findIndex(
-          (q) => q.queryHash === b.defaultedQueryOptions.queryHash,
-        )
-      )
-    })
+    return observers
   }
 
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
@@ -267,7 +262,7 @@ export class QueriesObserver<
     if (this.hasListeners()) {
       const previousResult = this.#combinedResult
       const newResult = this.#combineResult(
-        this.#result,
+        this.#trackResult(this.#result, this.#queries),
         this.#options?.combine,
       )
 

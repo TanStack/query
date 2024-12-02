@@ -11,11 +11,10 @@ import {
 } from '@angular/core'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import {
-  injectQueryClient,
+  QueryClient,
   onlineManager,
 } from '@tanstack/angular-query-experimental'
 import { isPlatformBrowser } from '@angular/common'
-import type { QueryClient } from '@tanstack/angular-query-experimental'
 import type { ElementRef } from '@angular/core'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 
@@ -57,10 +56,7 @@ export function injectDevtoolsPanel(
     const destroyRef = inject(DestroyRef)
 
     effect(() => {
-      const injectedClient = injectQueryClient({
-        optional: true,
-        injector: currentInjector,
-      })
+      const injectedClient = currentInjector.get(QueryClient, null)
       const {
         client = injectedClient,
         errorTypes = [],
@@ -71,6 +67,7 @@ export function injectDevtoolsPanel(
       } = options()
 
       untracked(() => {
+        if (!client) throw new Error('No QueryClient found')
         if (!devtools && hostElement) {
           devtools = new TanstackQueryDevtoolsPanel({
             client,

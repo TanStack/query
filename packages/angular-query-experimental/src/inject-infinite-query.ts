@@ -5,7 +5,6 @@ import type { Injector } from '@angular/core'
 import type {
   DefaultError,
   InfiniteData,
-  QueryClient,
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
@@ -34,9 +33,7 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => DefinedInitialDataInfiniteOptions<
+  optionsFn: () => DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
@@ -61,9 +58,7 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => UndefinedInitialDataInfiniteOptions<
+  optionsFn: () => UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
@@ -88,9 +83,7 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => CreateInfiniteQueryOptions<
+  optionsFn: () => CreateInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -110,7 +103,7 @@ export function injectInfiniteQuery<
  * @public
  */
 export function injectInfiniteQuery(
-  optionsFn: (client: QueryClient) => CreateInfiniteQueryOptions,
+  optionsFn: () => CreateInfiniteQueryOptions,
   injector?: Injector,
 ) {
   return assertInjector(injectInfiniteQuery, injector, () =>

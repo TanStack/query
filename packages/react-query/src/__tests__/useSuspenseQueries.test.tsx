@@ -556,7 +556,6 @@ describe('useSuspenseQueries 2', () => {
         queryKey: key,
         queryFn: async () => {
           count++
-          console.log('queryFn')
           throw new Error('Query failed')
         },
         gcTime: 0,

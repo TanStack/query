@@ -1,4 +1,3 @@
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { ChangeDetectionStrategy, Component } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
@@ -13,9 +12,8 @@ import { injectQuery } from '@tanstack/angular-query-experimental'
     <div *ngIf="query.data()">
       {{ query.data() }}
     </div>
-    <angular-query-devtools initialIsOpen />
   `,
-  imports: [AngularQueryDevtools, CommonModule],
+  imports: [CommonModule],
 })
 export class AppComponent {
   /**

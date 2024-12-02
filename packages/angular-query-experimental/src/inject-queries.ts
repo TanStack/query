@@ -1,7 +1,17 @@
-import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
+import {
+  QueriesObserver,
+  QueryClient,
+  notifyManager,
+} from '@tanstack/query-core'
+import {
+  DestroyRef,
+  NgZone,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import { injectQueryClient } from './inject-query-client'
 import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
@@ -199,8 +209,9 @@ export function injectQueries<
   injector?: Injector,
 ): Signal<TCombinedResult> {
   return assertInjector(injectQueries, injector, () => {
-    const queryClient = injectQueryClient()
     const destroyRef = inject(DestroyRef)
+    const ngZone = inject(NgZone)
+    const queryClient = inject(QueryClient)
 
     const defaultedQueries = computed(() => {
       return queries().map((opts) => {
@@ -235,7 +246,9 @@ export function injectQueries<
 
     const result = signal(getCombinedResult() as any)
 
-    const unsubscribe = observer.subscribe(notifyManager.batchCalls(result.set))
+    const unsubscribe = ngZone.runOutsideAngular(() =>
+      observer.subscribe(notifyManager.batchCalls(result.set)),
+    )
     destroyRef.onDestroy(unsubscribe)
 
     return result

@@ -39,6 +39,7 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   SetDataOptions,
+  UnsetMarker,
 } from './types'
 import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
@@ -119,7 +120,8 @@ export class QueryClient {
     TTaggedQueryKey extends QueryKey = QueryKey,
     TInferredQueryFnData = TTaggedQueryKey extends DataTag<
       unknown,
-      infer TaggedValue
+      infer TaggedValue,
+      unknown
     >
       ? TaggedValue
       : TQueryFnData,
@@ -169,7 +171,8 @@ export class QueryClient {
     TTaggedQueryKey extends QueryKey = QueryKey,
     TInferredQueryFnData = TTaggedQueryKey extends DataTag<
       unknown,
-      infer TaggedValue
+      infer TaggedValue,
+      unknown
     >
       ? TaggedValue
       : TQueryFnData,
@@ -225,16 +228,27 @@ export class QueryClient {
     TTaggedQueryKey extends QueryKey = QueryKey,
     TInferredQueryFnData = TTaggedQueryKey extends DataTag<
       unknown,
-      infer TaggedValue
+      infer TaggedValue,
+      unknown
     >
       ? TaggedValue
       : TQueryFnData,
+    TInferredError = TTaggedQueryKey extends DataTag<
+      unknown,
+      unknown,
+      infer TaggedError
+    >
+      ? TaggedError extends UnsetMarker
+        ? TError
+        : TaggedError
+      : TError,
   >(
     queryKey: TTaggedQueryKey,
-  ): QueryState<TInferredQueryFnData, TError> | undefined {
+  ): QueryState<TInferredQueryFnData, TInferredError> | undefined {
     const options = this.defaultQueryOptions({ queryKey })
-    return this.#queryCache.get<TInferredQueryFnData, TError>(options.queryHash)
-      ?.state
+    return this.#queryCache.get<TInferredQueryFnData, TInferredError>(
+      options.queryHash,
+    )?.state
   }
 
   removeQueries(filters?: QueryFilters): void {

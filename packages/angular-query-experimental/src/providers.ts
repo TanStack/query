@@ -9,11 +9,10 @@ import {
   makeEnvironmentProviders,
   runInInjectionContext,
 } from '@angular/core'
-import { onlineManager } from '@tanstack/query-core'
-import { DOCUMENT, isPlatformBrowser } from '@angular/common'
-import { injectQueryClient, provideQueryClient } from './inject-query-client'
+import { QueryClient, onlineManager } from '@tanstack/query-core'
+import { isPlatformBrowser } from '@angular/common'
 import { isDevMode } from './util/is-dev-mode/is-dev-mode'
-import type { QueryClient } from '@tanstack/query-core'
+import { noop } from './util'
 import type { EnvironmentProviders, Provider } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
@@ -21,6 +20,18 @@ import type {
   DevtoolsPosition,
   TanstackQueryDevtools,
 } from '@tanstack/query-devtools'
+
+/**
+ * Usually {@link provideTanStackQuery} is used once to set up TanStack Query and the
+ * {@link https://tanstack.com/query/latest/docs/reference/QueryClient|QueryClient}
+ * for the entire application. You can use `provideQueryClient` to provide a
+ * different `QueryClient` instance for a part of the application.
+ * @param queryClient - the `QueryClient` instance to provide.
+ * @public
+ */
+export function provideQueryClient(queryClient: QueryClient) {
+  return { provide: QueryClient, useValue: queryClient }
+}
 
 /**
  * Sets up providers necessary to enable TanStack Query functionality for Angular applications.
@@ -241,7 +252,7 @@ export function withDevtools(
         provide: ENVIRONMENT_INITIALIZER,
         multi: true,
         useFactory: () => {
-          if (!isPlatformBrowser(inject(PLATFORM_ID))) return () => {}
+          if (!isPlatformBrowser(inject(PLATFORM_ID))) return noop
           const injector = inject(Injector)
           const options = computed(() =>
             runInInjectionContext(injector, () => optionsFn?.() ?? {}),
@@ -257,14 +268,10 @@ export function withDevtools(
               : isDevMode()
           })
 
-          const doc = inject(DOCUMENT)
           const destroyRef = inject(DestroyRef)
 
           const getResolvedQueryClient = () => {
-            const injectedClient = injectQueryClient({
-              optional: true,
-              injector,
-            })
+            const injectedClient = injector.get(QueryClient, null)
             const client = options().client ?? injectedClient
             if (!client) {
               throw new Error('No QueryClient found')
@@ -303,7 +310,7 @@ export function withDevtools(
                 return
               }
 
-              el = doc.body.appendChild(document.createElement('div'))
+              el = document.body.appendChild(document.createElement('div'))
               el.classList.add('tsqd-parent-container')
 
               import('@tanstack/query-devtools').then((queryDevtools) =>

@@ -150,6 +150,10 @@
               "to": "framework/angular/devtools"
             },
             {
+              "label": "TypeScript",
+              "to": "framework/angular/typescript"
+            },
+            {
               "label": "Zoneless",
               "to": "framework/angular/zoneless"
             }
@@ -521,6 +525,10 @@
             {
               "label": "Mutations",
               "to": "framework/angular/guides/mutations"
+            },
+            {
+              "label": "Mutation Options",
+              "to": "framework/angular/guides/mutation-options"
             },
             {
               "label": "Query Invalidation",
