@@ -97,3 +97,4 @@ Alternatively, add `@tanstack/query` to the plugins section, and configure the r
 - [@tanstack/query/no-rest-destructuring](../no-rest-destructuring)
 - [@tanstack/query/stable-query-client](../stable-query-client)
 - [@tanstack/query/no-unstable-deps](../no-unstable-deps)
+- [@tanstack/query/infinite-query-property-order](../infinite-query-property-order)

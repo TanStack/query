@@ -1,13 +1,14 @@
 import { provideHttpClient, withFetch } from '@angular/common/http'
 import {
   QueryClient,
-  provideAngularQuery,
+  provideTanStackQuery,
+  withDevtools,
 } from '@tanstack/angular-query-experimental'
 import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAngularQuery(new QueryClient()),
     provideHttpClient(withFetch()),
+    provideTanStackQuery(new QueryClient(), withDevtools()),
   ],
 }

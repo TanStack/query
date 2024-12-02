@@ -1548,4 +1548,77 @@ describe('useQueries', () => {
     // one with pending, one with foo
     expect(renders).toBe(2)
   })
+
+  it('should track properties correctly with combine', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+
+    const client = new QueryClient()
+
+    function Page() {
+      const data = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: async () => {
+                await sleep(10)
+                return 'first result'
+              },
+            },
+            {
+              queryKey: [key2],
+              queryFn: async () => {
+                await sleep(15)
+                return 'second result'
+              },
+            },
+            {
+              queryKey: [key3],
+              queryFn: async () => {
+                await sleep(20)
+                return 'third result'
+              },
+            },
+          ],
+          combine: (results) => {
+            if (results.find((r) => r.isPending)) {
+              return 'pending'
+            }
+            return results.map((r) => r.data).join(', ')
+          },
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>data: {data}</div>
+          <button
+            onClick={() => {
+              client.setQueryData([key1], 'first result updated')
+            }}
+          >
+            update
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('data: pending'))
+    await waitFor(() =>
+      rendered.getByText('data: first result, second result, third result'),
+    )
+
+    fireEvent.click(rendered.getByRole('button', { name: /update/i }))
+
+    await waitFor(() =>
+      rendered.getByText(
+        'data: first result updated, second result, third result',
+      ),
+    )
+  })
 })

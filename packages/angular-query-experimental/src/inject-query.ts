@@ -2,7 +2,7 @@ import { QueryObserver } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { createBaseQuery } from './create-base-query'
 import type { Injector } from '@angular/core'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+import type { DefaultError, QueryKey } from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -56,9 +56,12 @@ export function injectQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  optionsFn: () => DefinedInitialDataOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  >,
   injector?: Injector,
 ): DefinedCreateQueryResult<TData, TError>
 
@@ -105,9 +108,12 @@ export function injectQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  optionsFn: () => UndefinedInitialDataOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  >,
   injector?: Injector,
 ): CreateQueryResult<TData, TError>
 
@@ -154,9 +160,7 @@ export function injectQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  optionsFn: (
-    client: QueryClient,
-  ) => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  optionsFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   injector?: Injector,
 ): CreateQueryResult<TData, TError>
 
@@ -198,10 +202,10 @@ export function injectQuery<
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */
 export function injectQuery(
-  optionsFn: (client: QueryClient) => CreateQueryOptions,
+  optionsFn: () => CreateQueryOptions,
   injector?: Injector,
 ) {
   return assertInjector(injectQuery, injector, () =>
     createBaseQuery(optionsFn, QueryObserver),
-  )
+  ) as unknown as CreateQueryResult
 }

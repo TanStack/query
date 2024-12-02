@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { keepPreviousData, useQuery } from '..'
+import { QueryErrorResetBoundary, keepPreviousData, useQuery } from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
@@ -433,22 +433,27 @@ describe('useQuery().promise', () => {
 
     const rendered = renderWithClient(
       queryClient,
-      <ErrorBoundary
-        fallbackRender={(props) => (
-          <>
-            error boundary{' '}
-            <button
-              onClick={() => {
-                props.resetErrorBoundary()
-              }}
-            >
-              resetErrorBoundary
-            </button>
-          </>
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ resetErrorBoundary }) => (
+              <div>
+                <div>error boundary</div>
+                <button
+                  onClick={() => {
+                    resetErrorBoundary()
+                  }}
+                >
+                  resetErrorBoundary
+                </button>
+              </div>
+            )}
+          >
+            <Page />
+          </ErrorBoundary>
         )}
-      >
-        <Page />
-      </ErrorBoundary>,
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('loading..'))
@@ -462,6 +467,48 @@ describe('useQuery().promise', () => {
     await waitFor(() => rendered.getByText('data'))
 
     expect(queryCount).toBe(2)
+  })
+
+  it('should throw error if the promise fails (colocate suspense and promise)', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const key = queryKey()
+
+    function MyComponent() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(1)
+          throw new Error('Error test')
+        },
+        retry: false,
+      })
+      const data = React.use(query.promise)
+
+      return <>{data}</>
+    }
+
+    function Page() {
+      return (
+        <React.Suspense fallback="loading..">
+          <MyComponent />
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await waitFor(() => rendered.getByText('loading..'))
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
   })
 
   it('should recreate promise with data changes', async () => {
@@ -963,5 +1010,65 @@ describe('useQuery().promise', () => {
       'test0', // stale data
       'test0new', // fresh data, background refetch, only for latest
     ])
+  })
+
+  it('should not suspend indefinitely with multiple, nested observers)', async () => {
+    const key = queryKey()
+
+    function MyComponent({ input }: { input: string }) {
+      const query = useTheQuery(input)
+      const data = React.use(query.promise)
+
+      return <>{data}</>
+    }
+
+    function useTheQuery(input: string) {
+      return useQuery({
+        staleTime: Infinity,
+        queryKey: [key, input],
+        queryFn: async () => {
+          await sleep(1)
+          return input + ' response'
+        },
+      })
+    }
+
+    function Page() {
+      const [input, setInput] = React.useState('defaultInput')
+      useTheQuery(input)
+
+      return (
+        <div>
+          <button onClick={() => setInput('someInput')}>setInput</button>
+          <React.Suspense fallback="loading..">
+            <MyComponent input={input} />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('loading..'))
+    await waitFor(() => rendered.getByText('defaultInput response'))
+
+    expect(
+      queryClient.getQueryCache().find({ queryKey: [key, 'defaultInput'] })!
+        .observers.length,
+    ).toBe(2)
+
+    fireEvent.click(rendered.getByText('setInput'))
+
+    await waitFor(() => rendered.getByText('loading..'))
+    await waitFor(() => rendered.getByText('someInput response'))
+
+    expect(
+      queryClient.getQueryCache().find({ queryKey: [key, 'defaultInput'] })!
+        .observers.length,
+    ).toBe(0)
+
+    expect(
+      queryClient.getQueryCache().find({ queryKey: [key, 'someInput'] })!
+        .observers.length,
+    ).toBe(2)
   })
 })

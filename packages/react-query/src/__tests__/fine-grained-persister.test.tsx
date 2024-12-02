@@ -2,11 +2,11 @@ import { describe, expect, it, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { QueryCache, hashKey } from '@tanstack/query-core'
-import { useQuery } from '..'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createPersister,
-} from '../../../query-persist-client-core/src'
+} from '@tanstack/query-persist-client-core'
+import { useQuery } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
 describe('fine grained persister', () => {

@@ -5,7 +5,7 @@ import {
   QueryClient,
   injectIsMutating,
   injectMutation,
-  provideAngularQuery,
+  provideTanStackQuery,
 } from '..'
 import { successMutator } from './test-utils'
 
@@ -16,7 +16,7 @@ describe('injectIsMutating', () => {
     queryClient = new QueryClient()
 
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [provideTanStackQuery(queryClient)],
     })
   })
 

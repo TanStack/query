@@ -1,3 +1,7 @@
 {
-  "ignoreRules": ["cjs-resolves-to-esm", "internal-resolution-error"]
+  "ignoreRules": [
+    "cjs-resolves-to-esm",
+    "internal-resolution-error",
+    "no-resolution"
+  ]
 }

@@ -7,7 +7,14 @@ import type { ExtraRuleDocs } from '../../types'
 
 export const name = 'no-rest-destructuring'
 
-const queryHooks = ['useQuery', 'useQueries', 'useInfiniteQuery']
+const queryHooks = [
+  'useQuery',
+  'useQueries',
+  'useInfiniteQuery',
+  'useSuspenseQuery',
+  'useSuspenseQueries',
+  'useSuspenseInfiniteQuery',
+]
 
 const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
@@ -38,7 +45,10 @@ export const rule = createRule({
         }
 
         const returnValue = node.parent.id
-        if (node.callee.name !== 'useQueries') {
+        if (
+          node.callee.name !== 'useQueries' &&
+          node.callee.name !== 'useSuspenseQueries'
+        ) {
           if (NoRestDestructuringUtils.isObjectRestDestructuring(returnValue)) {
             context.report({
               node: node.parent,
