@@ -1066,4 +1066,57 @@ describe('dehydration and rehydration', () => {
     clientQueryClient.clear()
     serverQueryClient.clear()
   })
+
+  test('should overwrite data when a new promise is streamed in', async () => {
+    const countRef = { current: 0 }
+    // --- server ---
+    const serverQueryClient = createQueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+
+    const query = {
+      queryKey: ['data'],
+      queryFn: async () => {
+        await sleep(10)
+        return countRef.current
+      },
+    }
+
+    const promise = serverQueryClient.prefetchQuery(query)
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    // --- client ---
+
+    const clientQueryClient = createQueryClient()
+
+    hydrate(clientQueryClient, dehydrated)
+
+    await promise
+    await waitFor(() =>
+      expect(clientQueryClient.getQueryData(['data'])).toBe(0),
+    )
+
+    // --- server ---
+    countRef.current++
+    const promise2 = serverQueryClient.prefetchQuery(query)
+
+    const dehydrated2 = dehydrate(serverQueryClient)
+
+    // --- client ---
+
+    hydrate(clientQueryClient, dehydrated2)
+
+    await promise2
+    await waitFor(() =>
+      expect(clientQueryClient.getQueryData(['data'])).toBe(1),
+    )
+
+    clientQueryClient.clear()
+    serverQueryClient.clear()
+  })
 })

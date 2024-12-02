@@ -179,6 +179,7 @@ export function hydrate(
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
+      console.log('query', query)
       if (query.state.dataUpdatedAt < state.dataUpdatedAt) {
         // omit fetchStatus from dehydrated state
         // so that query stays in its current fetchStatus
