@@ -129,14 +129,16 @@ export function dehydrate(
     client.getDefaultOptions().dehydrate?.serializeData ??
     defaultTransformerFn
 
-  const queries = client
-    .getQueryCache()
-    .getAll()
-    .flatMap((query) =>
-      filterQuery(query) ? [dehydrateQuery(query, serializeData)] : [],
-    )
+  const queries = client.getQueryCache().getAll()
 
-  return { mutations, queries }
+  const filteredQueries = queries.flatMap((query) =>
+    filterQuery(query) ? [dehydrateQuery(query, serializeData)] : [],
+  )
+
+  console.log('[dehydrate] queries', queries)
+  console.log('[dehydrate] filteredQueries', filteredQueries)
+
+  return { mutations, queries: filteredQueries }
 }
 
 export function hydrate(
