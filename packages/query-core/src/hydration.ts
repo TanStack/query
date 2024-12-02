@@ -80,8 +80,7 @@ function dehydrateQuery(
     },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
-    ...((query.state.status === 'pending' ||
-      query.state.fetchStatus === 'fetching') && {
+    ...(query.state.fetchStatus === 'fetching' && {
       promise: query.promise?.then(serializeData).catch((error) => {
         if (process.env.NODE_ENV !== 'production') {
           console.error(

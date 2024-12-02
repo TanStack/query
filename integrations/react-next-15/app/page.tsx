@@ -27,9 +27,13 @@ export default function Home() {
     },
   })
 
+  const state = dehydrate(queryClient)
+
+  console.log('state', state)
+
   return (
     <main>
-      <HydrationBoundary state={dehydrate(queryClient)}>
+      <HydrationBoundary state={state}>
         <ClientComponent />
       </HydrationBoundary>
       <form action={queryExampleAction}>
