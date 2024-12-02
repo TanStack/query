@@ -1069,6 +1069,8 @@ describe('dehydration and rehydration', () => {
 
   test('should overwrite data when a new promise is streamed in', async () => {
     const serializeDataMock = vi.fn((data: any) => data)
+    const deserializeDataMock = vi.fn((data: any) => data)
+
     const countRef = { current: 0 }
     // --- server ---
     const serverQueryClient = createQueryClient({
@@ -1094,7 +1096,7 @@ describe('dehydration and rehydration', () => {
     let dehydrated = dehydrate(serverQueryClient)
 
     // --- client ---
-    const deserializeDataMock = vi.fn((data: any) => data)
+
     const clientQueryClient = createQueryClient({
       defaultOptions: {
         hydrate: {
