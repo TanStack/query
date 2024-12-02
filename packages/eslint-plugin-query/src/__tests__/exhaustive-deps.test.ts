@@ -497,6 +497,18 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
+    {
+      name: 'should pass with optional chaining as key and non-null assertion at the end of the variable in queryFn',
+      code: `
+        function useTest(data?: any) {
+          return useQuery({
+            queryKey: ['query-name', data?.address],
+            queryFn: async () => sendQuery(data!.address!),
+            enabled: !!data?.address,
+          })
+        }
+      `,
+    },
   ],
   invalid: [
     {
