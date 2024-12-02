@@ -279,7 +279,7 @@ describe('fully typed usage', () => {
       typeof queryClient.setQueryData<unknown, typeof queryKey>
     >[1]
 
-    expectTypeOf(null as unknown as SetQueryDataUpdaterArg).toEqualTypeOf<
+    expectTypeOf<SetQueryDataUpdaterArg>().toEqualTypeOf<
       Updater<TData | undefined, TData | undefined>
     >()
     expectTypeOf(queryData3).toEqualTypeOf<TData | undefined>()
@@ -289,7 +289,7 @@ describe('fully typed usage', () => {
       typeof queryClient.setQueriesData<unknown, typeof queryFilters>
     >[1]
 
-    expectTypeOf(null as any as SetQueriesDataUpdaterArg).toEqualTypeOf<
+    expectTypeOf<SetQueriesDataUpdaterArg>().toEqualTypeOf<
       Updater<TData | undefined, TData | undefined>
     >()
     expectTypeOf(queriesData2).toEqualTypeOf<
@@ -420,7 +420,7 @@ describe('fully typed usage', () => {
       typeof queryClient.setQueryData<unknown, typeof queryKey>
     >[1]
 
-    expectTypeOf(null as SetQueryDataUpdaterArg).toEqualTypeOf<
+    expectTypeOf<SetQueryDataUpdaterArg>().toEqualTypeOf<
       Updater<unknown, unknown>
     >()
     expectTypeOf(queryData3).toEqualTypeOf<unknown>()
@@ -430,7 +430,7 @@ describe('fully typed usage', () => {
       typeof queryClient.setQueriesData<unknown, typeof queryFilters>
     >[1]
 
-    expectTypeOf(null as SetQueriesDataUpdaterArg).toEqualTypeOf<
+    expectTypeOf<SetQueriesDataUpdaterArg>().toEqualTypeOf<
       Updater<unknown, unknown>
     >()
     expectTypeOf(queriesData2).toEqualTypeOf<Array<[QueryKey, unknown]>>()
