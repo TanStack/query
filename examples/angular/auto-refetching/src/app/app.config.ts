@@ -32,6 +32,5 @@ export const appConfig: ApplicationConfig = {
       useClass: MockApiInterceptor,
       multi: true,
     },
-    importProvidersFrom(HttpClientModule),
   ],
 }
