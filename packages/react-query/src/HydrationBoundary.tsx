@@ -98,6 +98,8 @@ export const HydrationBoundary = ({
             existingQuery.state.promiseDehydratedAt,
             // @ts-expect-error
             dehydratedQuery.promise?.status,
+            // @ts-expect-error
+            existingQuery.promise?.status,
           )
 
           const queryAlreadyQueued = hydrationQueue?.find(
@@ -127,13 +129,6 @@ export const HydrationBoundary = ({
       }
     }
   }, [client, hydrationQueue, state])
-
-  React.useEffect(() => {
-    console.log(
-      'hydrationQueue changed',
-      JSON.stringify(hydrationQueue, null, 2),
-    )
-  }, [hydrationQueue])
 
   React.useEffect(() => {
     if (hydrationQueue) {
