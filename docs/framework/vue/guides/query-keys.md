@@ -11,7 +11,7 @@ function useTodos(todoId) {
   const queryKey = ['todos', todoId]
   return useQuery({
     queryKey,
-    queryFn: () => fetchTodoById(todoId.value)
+    queryFn: () => fetchTodoById(todoId.value),
   })
 }
 ```
