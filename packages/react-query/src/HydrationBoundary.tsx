@@ -68,20 +68,29 @@ export const HydrationBoundary = ({
       for (const dehydratedQuery of queries) {
         const existingQuery = queryCache.get(dehydratedQuery.queryHash)
 
-        console.log('existingQuery', existingQuery)
+        console.log(
+          '[HydrationBoundary] existingQuery',
+          JSON.stringify(existingQuery?.state, null, 2),
+        )
+        console.log(
+          '[HydrationBoundary] dehydratedQuery',
+          JSON.stringify(dehydratedQuery.state, null, 2),
+        )
         if (!existingQuery) {
           newQueries.push(dehydratedQuery)
         } else {
           const hydrationIsNewer =
             dehydratedQuery.state.dataUpdatedAt >
-            existingQuery.state.dataUpdatedAt
+              existingQuery.state.dataUpdatedAt ||
+            dehydratedQuery.state.promiseDehydratedAt >
+              existingQuery.state.promiseDehydratedAt
 
           console.log(
-            'hydrationIsNewer',
+            '[HydrationBoundary] hydrationIsNewer',
             dehydratedQuery.queryKey,
             hydrationIsNewer,
-            dehydratedQuery.state.dataUpdatedAt,
-            existingQuery.state.dataUpdatedAt,
+            dehydratedQuery.state.promiseDehydratedAt,
+            existingQuery.state.promiseDehydratedAt,
           )
 
           const queryAlreadyQueued = hydrationQueue?.find(
@@ -98,10 +107,6 @@ export const HydrationBoundary = ({
           }
         }
       }
-
-      console.log('queries', queries)
-      console.log('newQueries', newQueries)
-      console.log('existingQueries', existingQueries)
 
       if (newQueries.length > 0) {
         // It's actually fine to call this with queries/state that already exists

@@ -27,7 +27,6 @@ export function makeQueryClient() {
          * promise, before the query data is put into the cache.
          */
         deserializeData: (data) => {
-          console.log('deserializeData', data)
           return tson.deserialize(data)
         },
       },
@@ -36,7 +35,6 @@ export function makeQueryClient() {
       },
       dehydrate: {
         serializeData: (data) => {
-          console.log('serializeData', data)
           return tson.serialize(data)
         },
         shouldDehydrateQuery: (query) => {

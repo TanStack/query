@@ -77,6 +77,9 @@ function dehydrateQuery(
       ...(query.state.data !== undefined && {
         data: serializeData(query.state.data),
       }),
+      ...(query.state.fetchStatus === 'fetching' && {
+        promiseDehydratedAt: Date.now(),
+      }),
     },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
@@ -128,16 +131,14 @@ export function dehydrate(
     client.getDefaultOptions().dehydrate?.serializeData ??
     defaultTransformerFn
 
-  const queries = client.getQueryCache().getAll()
+  const queries = client
+    .getQueryCache()
+    .getAll()
+    .flatMap((query) =>
+      filterQuery(query) ? [dehydrateQuery(query, serializeData)] : [],
+    )
 
-  const filteredQueries = queries.flatMap((query) =>
-    filterQuery(query) ? [dehydrateQuery(query, serializeData)] : [],
-  )
-
-  console.log('[dehydrate] queries', queries)
-  console.log('[dehydrate] filteredQueries', filteredQueries)
-
-  return { mutations, queries: filteredQueries }
+  return { mutations, queries }
 }
 
 export function hydrate(
@@ -145,7 +146,6 @@ export function hydrate(
   dehydratedState: unknown,
   options?: HydrateOptions,
 ): void {
-  console.log('[hydrate] dehydratedState', dehydratedState)
   if (typeof dehydratedState !== 'object' || dehydratedState === null) {
     return
   }
@@ -180,8 +180,7 @@ export function hydrate(
     const data =
       state.data === undefined ? state.data : deserializeData(state.data)
 
-    console.log('[hydrate] data', data)
-    console.log('[hydrate] query', query)
+    console.log('[hydrate] query', query?.state)
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
