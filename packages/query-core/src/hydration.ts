@@ -71,6 +71,7 @@ function dehydrateQuery(
   query: Query,
   serializeData: TransformerFn,
 ): DehydratedQuery {
+  // console.log('[dehydrateQuery] query', query.queryKey)
   return {
     state: {
       ...query.state,
@@ -180,7 +181,7 @@ export function hydrate(
     const data =
       state.data === undefined ? state.data : deserializeData(state.data)
 
-    console.log('[hydrate] query', query?.state)
+    // console.log('[hydrate] query', JSON.stringify(query?.state, null, 2))
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {

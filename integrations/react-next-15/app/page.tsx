@@ -29,6 +29,8 @@ export default function Home() {
 
   const state = dehydrate(queryClient)
 
+  console.log('[page] state', state)
+
   return (
     <main>
       <HydrationBoundary state={state}>

@@ -6,7 +6,7 @@ import { makeQueryClient } from '@/app/make-query-client'
 
 let queryClientSingleton: QueryClient | undefined
 const getQueryClientSingleton = () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window === 'undefined') {
     return makeQueryClient()
   }
   return (queryClientSingleton ??= makeQueryClient())

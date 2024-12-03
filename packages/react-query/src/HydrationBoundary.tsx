@@ -35,6 +35,11 @@ export const HydrationBoundary = ({
     DehydratedState['queries'] | undefined
   >()
 
+  // console.log(
+  //   '[HydrationBoundary] rendering with state',
+  //   JSON.stringify(state, null, 2),
+  // )
+
   const optionsRef = React.useRef(options)
   optionsRef.current = options
 
@@ -68,22 +73,22 @@ export const HydrationBoundary = ({
       for (const dehydratedQuery of queries) {
         const existingQuery = queryCache.get(dehydratedQuery.queryHash)
 
-        console.log(
-          '[HydrationBoundary] existingQuery',
-          JSON.stringify(existingQuery?.state, null, 2),
-        )
-        console.log(
-          '[HydrationBoundary] dehydratedQuery',
-          JSON.stringify(dehydratedQuery.state, null, 2),
-        )
+        // console.log(
+        //   '[HydrationBoundary] existingQuery',
+        //   JSON.stringify(existingQuery?.state, null, 2),
+        // )
+        // console.log(
+        //   '[HydrationBoundary] dehydratedQuery',
+        //   JSON.stringify(dehydratedQuery.state, null, 2),
+        // )
         if (!existingQuery) {
           newQueries.push(dehydratedQuery)
         } else {
           const hydrationIsNewer =
             dehydratedQuery.state.dataUpdatedAt >
               existingQuery.state.dataUpdatedAt ||
-            dehydratedQuery.state.promiseDehydratedAt >
-              existingQuery.state.promiseDehydratedAt
+            // @ts-expect-error
+            dehydratedQuery.promise?.status !== existingQuery.promise?.status
 
           console.log(
             '[HydrationBoundary] hydrationIsNewer',
@@ -91,6 +96,8 @@ export const HydrationBoundary = ({
             hydrationIsNewer,
             dehydratedQuery.state.promiseDehydratedAt,
             existingQuery.state.promiseDehydratedAt,
+            // @ts-expect-error
+            dehydratedQuery.promise?.status,
           )
 
           const queryAlreadyQueued = hydrationQueue?.find(
@@ -120,6 +127,13 @@ export const HydrationBoundary = ({
       }
     }
   }, [client, hydrationQueue, state])
+
+  React.useEffect(() => {
+    console.log(
+      'hydrationQueue changed',
+      JSON.stringify(hydrationQueue, null, 2),
+    )
+  }, [hydrationQueue])
 
   React.useEffect(() => {
     if (hydrationQueue) {
