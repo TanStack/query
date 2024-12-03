@@ -1,9 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
     "moduleResolution": "Bundler",
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -12,11 +9,5 @@
     "target": "ES2022",
     "types": ["vitest/globals"]
   },
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  },
-  "include": ["src", "eslint.config.js", "vite.config.ts"]
+  "include": ["src", "eslint.config.js", "tsup.config.js", "vite.config.ts"]
 }

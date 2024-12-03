@@ -147,6 +147,144 @@ ruleTester.run('no-rest-destructuring', rule, {
           }
         `,
     },
+    {
+      name: 'useSuspenseQuery is not captured',
+      code: normalizeIndent`
+        import { useSuspenseQuery } from '@tanstack/react-query'
+
+        function Component() {
+          useSuspenseQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseQuery is not destructured',
+      code: normalizeIndent`
+        import { useSuspenseQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const query = useSuspenseQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseQuery is destructured without rest',
+      code: normalizeIndent`
+        import { useSuspenseQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const { data, isLoading, isError } = useSuspenseQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseInfiniteQuery is not captured',
+      code: normalizeIndent`
+        import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
+
+        function Component() {
+          useSuspenseInfiniteQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseInfiniteQuery is not destructured',
+      code: normalizeIndent`
+        import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const query = useSuspenseInfiniteQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseInfiniteQuery is destructured without rest',
+      code: normalizeIndent`
+        import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const { data, isLoading, isError } = useSuspenseInfiniteQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseQueries is not captured',
+      code: normalizeIndent`
+        import { useSuspenseQueries } from '@tanstack/react-query'
+
+        function Component() {
+          useSuspenseQueries([])
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseQueries is not destructured',
+      code: normalizeIndent`
+        import { useSuspenseQueries } from '@tanstack/react-query'
+
+        function Component() {
+          const queries = useSuspenseQueries([])
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseQueries array has no rest destructured element',
+      code: normalizeIndent`
+        import { useSuspenseQueries } from '@tanstack/react-query'
+
+        function Component() {
+          const [query1, { data, isLoading }] = useSuspenseQueries([
+            { queryKey: ['key1'], queryFn: () => {} },
+            { queryKey: ['key2'], queryFn: () => {} },
+          ])
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseQuery is destructured with rest but not from tanstack query',
+      code: normalizeIndent`
+        import { useSuspenseQuery } from 'other-package'
+
+        function Component() {
+          const { data, ...rest } = useSuspenseQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseInfiniteQuery is destructured with rest but not from tanstack query',
+      code: normalizeIndent`
+        import { useSuspenseInfiniteQuery } from 'other-package'
+
+        function Component() {
+          const { data, ...rest } = useSuspenseInfiniteQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useSuspenseQueries array has rest destructured element but not from tanstack query',
+      code: normalizeIndent`
+        import { useSuspenseQueries } from 'other-package'
+
+        function Component() {
+          const [query1, { data, ...rest }] = useSuspenseQueries([
+            { queryKey: ['key1'], queryFn: () => {} },
+            { queryKey: ['key2'], queryFn: () => {} },
+          ])
+          return
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -186,6 +324,45 @@ ruleTester.run('no-rest-destructuring', rule, {
             return
           }
         `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'useSuspenseQuery is destructured with rest',
+      code: normalizeIndent`
+        import { useSuspenseQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const { data, ...rest } = useSuspenseQuery()
+          return
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'useSuspenseInfiniteQuery is destructured with rest',
+      code: normalizeIndent`
+        import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const { data, ...rest } = useSuspenseInfiniteQuery()
+          return
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'useSuspenseQueries is destructured with rest',
+      code: normalizeIndent`
+        import { useSuspenseQueries } from '@tanstack/react-query'
+
+        function Component() {
+          const [query1, { data, ...rest }] = useSuspenseQueries([
+            { queryKey: ['key1'], queryFn: () => {} },
+            { queryKey: ['key2'], queryFn: () => {} },
+          ])
+          return
+        }
+      `,
       errors: [{ messageId: 'objectRestDestructure' }],
     },
   ],

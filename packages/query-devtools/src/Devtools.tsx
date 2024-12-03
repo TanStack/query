@@ -1789,15 +1789,20 @@ const QueryDetails = () => {
   const restoreQueryAfterLoadingOrError = () => {
     const activeQueryVal = activeQuery()!
     const previousState = activeQueryVal.state
-    const previousOptions = (activeQueryVal.state.fetchMeta as any)
-      .__previousQueryOptions
+    const previousOptions = activeQueryVal.state.fetchMeta
+      ? (activeQueryVal.state.fetchMeta as any).__previousQueryOptions
+      : null
+
     activeQueryVal.cancel({ silent: true })
     activeQueryVal.setState({
       ...previousState,
       fetchStatus: 'idle',
       fetchMeta: null,
     })
-    activeQueryVal.fetch(previousOptions)
+
+    if (previousOptions) {
+      activeQueryVal.fetch(previousOptions)
+    }
   }
 
   createEffect(() => {

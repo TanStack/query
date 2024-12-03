@@ -14,7 +14,12 @@ import type { FetchOptions, Query } from './query'
 
 // TYPES
 
-export interface QueryFilters {
+export interface QueryFilters<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> {
   /**
    * Filter to active queries, inactive queries or all queries
    */
@@ -26,11 +31,11 @@ export interface QueryFilters {
   /**
    * Include queries matching this predicate function
    */
-  predicate?: (query: Query) => boolean
+  predicate?: (query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean
   /**
    * Include queries matching this query key
    */
-  queryKey?: QueryKey
+  queryKey?: TQueryKey
   /**
    * Include or exclude stale queries
    */
@@ -41,7 +46,12 @@ export interface QueryFilters {
   fetchStatus?: FetchStatus
 }
 
-export interface MutationFilters {
+export interface MutationFilters<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TContext = unknown,
+> {
   /**
    * Match mutation key exactly
    */
@@ -49,7 +59,9 @@ export interface MutationFilters {
   /**
    * Include mutations matching this predicate function
    */
-  predicate?: (mutation: Mutation<any, any, any>) => boolean
+  predicate?: (
+    mutation: Mutation<TData, TError, TVariables, TContext>,
+  ) => boolean
   /**
    * Include mutations matching this mutation key
    */
@@ -68,9 +80,9 @@ export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 
-export function noop(): undefined {
-  return undefined
-}
+export function noop(): void
+export function noop(): undefined
+export function noop() {}
 
 export function functionalUpdate<TInput, TOutput>(
   updater: Updater<TInput, TOutput>,

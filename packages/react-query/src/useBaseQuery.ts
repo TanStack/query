@@ -88,7 +88,7 @@ export function useBaseQuery<
     React.useCallback(
       (onStoreChange) => {
         const unsubscribe = isRestoring
-          ? () => undefined
+          ? noop
           : observer.subscribe(notifyManager.batchCalls(onStoreChange))
 
         // Update result to make sure we did not miss any query updates
@@ -150,10 +150,8 @@ export function useBaseQuery<
         client.getQueryCache().get(defaultedOptions.queryHash)?.promise
 
     promise?.catch(noop).finally(() => {
-      if (!observer.hasListeners()) {
-        // `.updateResult()` will trigger `.#currentThenable` to finalize
-        observer.updateResult()
-      }
+      // `.updateResult()` will trigger `.#currentThenable` to finalize
+      observer.updateResult()
     })
   }
 

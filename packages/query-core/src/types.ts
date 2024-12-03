@@ -43,8 +43,12 @@ export type DefaultError = Register extends {
 export type QueryKey = ReadonlyArray<unknown>
 
 export declare const dataTagSymbol: unique symbol
-export type DataTag<TType, TValue> = TType & {
+export declare const dataTagErrorSymbol: unique symbol
+export declare const unsetMarker: unique symbol
+export type UnsetMarker = typeof unsetMarker
+export type DataTag<TType, TValue, TError = UnsetMarker> = TType & {
   [dataTagSymbol]: TValue
+  [dataTagErrorSymbol]: TError
 }
 
 export type QueryFunction<
@@ -534,11 +538,21 @@ export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters extends QueryFilters {
+export interface InvalidateQueryFilters<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {
   refetchType?: QueryTypeFilter | 'none'
 }
 
-export interface RefetchQueryFilters extends QueryFilters {}
+export interface RefetchQueryFilters<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {}
 
 export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}

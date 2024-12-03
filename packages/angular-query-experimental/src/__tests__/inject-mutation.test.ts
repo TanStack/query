@@ -9,7 +9,7 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { QueryClient, injectMutation, provideAngularQuery } from '..'
+import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import {
   errorMutator,
   expectSignals,
@@ -28,29 +28,12 @@ describe('injectMutation', () => {
     queryClient = new QueryClient()
     vi.useFakeTimers()
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [provideTanStackQuery(queryClient)],
     })
   })
 
   afterEach(() => {
     vi.useRealTimers()
-  })
-
-  describe('callback helpers', () => {
-    test('can access client from options callback', async () => {
-      const mutation = TestBed.runInInjectionContext(() => {
-        return injectMutation((client) => ({
-          mutationFn: () => {
-            expect(client).toBe(queryClient)
-            return Promise.resolve()
-          },
-        }))
-      })
-
-      mutation.mutate()
-      vi.advanceTimersByTime(1)
-      expect(mutation.status()).toBe('pending')
-    })
   })
 
   test('should be in idle state initially', () => {
