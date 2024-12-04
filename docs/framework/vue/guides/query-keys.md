@@ -9,7 +9,10 @@ ref: docs/framework/react/guides/query-keys.md
 ```js
 function useTodos(todoId) {
   const queryKey = ['todos', todoId]
-  return useQuery(queryKey, () => fetchTodoById(todoId.value))
+  return useQuery({
+    queryKey,
+    queryFn: () => fetchTodoById(todoId.value),
+  })
 }
 ```
 

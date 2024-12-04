@@ -57,7 +57,7 @@ export class QueryClient extends QC {
   getQueryData<TData = unknown, TTaggedQueryKey extends QueryKey = QueryKey>(
     queryKey: TTaggedQueryKey,
   ):
-    | (TTaggedQueryKey extends DataTag<unknown, infer TaggedValue>
+    | (TTaggedQueryKey extends DataTag<unknown, infer TaggedValue, unknown>
         ? TaggedValue
         : TData)
     | undefined
@@ -110,7 +110,7 @@ export class QueryClient extends QC {
   setQueryData<
     TQueryFnData,
     TTaggedQueryKey extends QueryKey,
-    TData = TTaggedQueryKey extends DataTag<unknown, infer TaggedValue>
+    TData = TTaggedQueryKey extends DataTag<unknown, infer TaggedValue, unknown>
       ? TaggedValue
       : TQueryFnData,
   >(
