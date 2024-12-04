@@ -13,7 +13,6 @@ import type { UseQueryOptions } from '../types'
 import type {
   DataTag,
   InitialDataFunction,
-  QueryKey,
   QueryObserverResult,
 } from '@tanstack/query-core'
 
