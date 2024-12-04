@@ -6,12 +6,10 @@
  * - DELETE: Clears all tasks from localStorage.
  * Simulated responses include a delay to mimic network latency.
  */
-import { Injectable } from '@angular/core'
 import { HttpResponse } from '@angular/common/http'
 import { delay, of } from 'rxjs'
 import type {
   HttpEvent,
-  HttpHandler,
   HttpHandlerFn,
   HttpInterceptorFn,
   HttpRequest,

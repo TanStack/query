@@ -7,9 +7,8 @@ import {
 import {
   injectMutation,
   injectQuery,
-  QueryFunctionContext,
 } from '@tanstack/angular-query-experimental'
-import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
+import { NgStyle } from '@angular/common'
 import { TasksService } from '../services/tasks.service'
 
 @Component({
@@ -17,7 +16,7 @@ import { TasksService } from '../services/tasks.service'
   selector: 'auto-refetching-example',
   standalone: true,
   templateUrl: './auto-refetching.component.html',
-  imports: [],
+  imports: [NgStyle],
 })
 export class AutoRefetchingExampleComponent {
   #tasksService = inject(TasksService)

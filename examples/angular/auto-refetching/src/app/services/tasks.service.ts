@@ -2,12 +2,11 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
 import {
   QueryClient,
-  QueryFunctionContext,
   mutationOptions,
   queryOptions,
 } from '@tanstack/angular-query-experimental'
 
-import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
+import { lastValueFrom } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',

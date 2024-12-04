@@ -8,6 +8,18 @@
   <label>
     Query Interval speed (ms):
     <input [value]="intervalMs()" (input)="inputChange($event)" />
+    <span
+      [ngStyle]="{
+        display: 'inline-block',
+        marginLeft: '.5rem',
+        width: '10px',
+        height: '10px',
+        background: tasks.isFetching() ? 'green' : 'transparent',
+        transition: !tasks.isFetching() ? 'all .3s ease' : 'none',
+        borderRadius: '100%',
+        transform: 'scale(2)',
+      }"
+    ></span>
   </label>
   <h2>Todo List</h2>
 
