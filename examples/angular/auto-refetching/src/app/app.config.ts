@@ -13,10 +13,7 @@ import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(
-      withFetch(),
-      withInterceptors([mockInterceptor]),
-    ),
+    provideHttpClient(withFetch(), withInterceptors([mockInterceptor])),
     provideTanStackQuery(
       new QueryClient({
         defaultOptions: {
