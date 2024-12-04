@@ -68,4 +68,3 @@ export const fetchOptimistic = <
   observer.fetchOptimistic(defaultedOptions).catch(() => {
     errorResetBoundary.clearReset()
   })
-
