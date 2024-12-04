@@ -238,7 +238,9 @@ describe('queryOptions', () => {
   })
 
   it('should be passable to UseQueryOptions', () => {
-    function somethingWithQueryOptions(options: UseQueryOptions<number>) {
+    function somethingWithQueryOptions(
+      options: UseQueryOptions<number, any, any, Array<string>>,
+    ) {
       return options.queryKey
     }
 
