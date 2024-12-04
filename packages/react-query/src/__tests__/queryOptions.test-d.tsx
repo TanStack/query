@@ -243,7 +243,7 @@ describe('queryOptions', () => {
     }
 
     const options = queryOptions({
-      queryKey: ['key'] as Array<string>,
+      queryKey: ['key'],
       queryFn: () => Promise.resolve(1),
     })
 
