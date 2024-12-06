@@ -234,8 +234,8 @@ export const ASTUtils = {
     sourceCode: Readonly<TSESLint.SourceCode>,
   ) {
     return ASTUtils.mapKeyNodeToText(node, sourceCode).replace(
-      /(\?\.|!\.)/g,
-      '.',
+      /(?:\?(\.)|!)/g,
+      '$1',
     )
   },
   isValidReactComponentOrHookName(
