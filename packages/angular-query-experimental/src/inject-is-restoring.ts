@@ -19,7 +19,7 @@ export function injectIsRestoring(injector?: Injector): Signal<boolean> {
 }
 
 /**
- * Used by angular query persist client plugin to provide the signal that tracks the restore state
+ * Used by TanStack Query Angular persist client plugin to provide the signal that tracks the restore state
  * @param isRestoring - a readonly signal that returns a boolean
  * @returns Provider for the `isRestoring` signal
  * @public
