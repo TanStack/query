@@ -9,14 +9,13 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^19.0.1",
-    "@angular/compiler": "^19.0.1",
-    "@angular/core": "^19.0.1",
-    "@angular/platform-browser": "^19.0.1",
-    "@angular/platform-browser-dynamic": "^19.0.1",
-    "@tanstack/angular-query-experimental": "5.61.6",
+    "@angular/common": "^19.1.0-next.0",
+    "@angular/compiler": "^19.1.0-next.0",
+    "@angular/core": "^19.1.0-next.0",
+    "@angular/platform-browser": "^19.1.0-next.0",
+    "@angular/platform-browser-dynamic": "^19.1.0-next.0",
+    "@tanstack/angular-query-experimental": "^5.62.0",
     "@tanstack/angular-query-persist-client-experimental": "5.61.6",
-    "@tanstack/query-sync-storage-persister": "^5.60.6",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.3",
     "zone.js": "^0.15.0"
@@ -24,7 +23,7 @@
   "devDependencies": {
     "@angular/build": "^19.0.2",
     "@angular/cli": "^19.0.2",
-    "@angular/compiler-cli": "^19.0.1",
-    "typescript": "5.5.4"
+    "@angular/compiler-cli": "^19.1.0-next.0",
+    "typescript": "5.7.2"
   }
 }
