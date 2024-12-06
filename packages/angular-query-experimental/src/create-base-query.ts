@@ -22,8 +22,6 @@ import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
- * @param optionsFn
- * @param Observer
  */
 export function createBaseQuery<
   TQueryFnData,
