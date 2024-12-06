@@ -231,6 +231,9 @@ importers:
       '@tanstack/angular-query-persist-client-experimental':
         specifier: ^5.62.3
         version: link:../../../packages/angular-persist-query-client-experimental
+      '@tanstack/query-sync-storage-persister':
+        specifier: ^5.62.3
+        version: link:../../../packages/query-sync-storage-persister
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
