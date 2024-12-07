@@ -8,11 +8,21 @@ import {
   partialMatchKey,
   replaceEqualDeep,
   shallowEqualObjects,
+  timeUntilStale,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
 
 describe('core/utils', () => {
+  describe('timeUntilStale', () => {
+    it('should work with Infinity', () => {
+      expect(timeUntilStale(25, Infinity)).toBe(Infinity)
+    })
+    it('should never go below zero', () => {
+      expect(timeUntilStale(25, -1)).toBe(0)
+      expect(timeUntilStale(25, -Infinity)).toBe(0)
+    })
+  })
   describe('shallowEqualObjects', () => {
     it('should return `true` for shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toEqual(true)
