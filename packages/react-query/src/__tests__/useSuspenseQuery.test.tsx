@@ -17,7 +17,11 @@ import type {
   UseSuspenseInfiniteQueryResult,
   UseSuspenseQueryResult,
 } from '..'
-import { createRenderStream, disableActEnvironment, cleanup } from '@testing-library/react-render-stream'
+import {
+  createRenderStream,
+  disableActEnvironment,
+  cleanup,
+} from '@testing-library/react-render-stream'
 
 // should probably end up in some setup file
 afterEach(cleanup)
@@ -31,7 +35,9 @@ describe('useSuspenseQuery', () => {
 
     const key = queryKey()
 
-    const renderStream = createRenderStream<UseSuspenseQueryResult<number> | undefined>({ snapshotDOM: true })
+    const renderStream = createRenderStream<
+      UseSuspenseQueryResult<number> | undefined
+    >({ snapshotDOM: true })
 
     let count = 0
 
@@ -62,37 +68,43 @@ describe('useSuspenseQuery', () => {
         <Page />
       </React.Suspense>,
       {
-        wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      }
+        wrapper: ({ children }) => (
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        ),
+      },
     )
 
     {
       const { snapshot, withinDOM } = await renderStream.takeRender()
       // Page didn't render yet, so no call to `replaceSnapshot` yet
       expect(snapshot).toBeUndefined() // I'd probably skip this assertion
-      withinDOM().getByText("loading")
+      withinDOM().getByText('loading')
     }
     {
       const { snapshot, withinDOM } = await renderStream.takeRender()
       expect(snapshot).toMatchObject({ data: 1, status: 'success' })
-      withinDOM().getByText("data: 1") // I'd probably skip this assertion
+      withinDOM().getByText('data: 1') // I'd probably skip this assertion
     }
     fireEvent.click(rendered.getByLabelText('toggle'))
     {
       const { snapshot, withinDOM } = await renderStream.takeRender()
       // Page is suspended so it doesn't replace the snapshot yet
       expect(snapshot).toMatchObject({ data: 1, status: 'success' }) // I'd probably skip this assertion
-      withinDOM().getByText("loading")
+      withinDOM().getByText('loading')
     }
     {
       const { snapshot, withinDOM } = await renderStream.takeRender()
       expect(snapshot).toMatchObject({ data: 2, status: 'success' })
-      withinDOM().getByText("data: 2") // I'd probably skip this assertion
+      withinDOM().getByText('data: 2') // I'd probably skip this assertion
     }
-    
+
     // this would require setup of this matcher, seems that automatically only works with jest
     // expect(renderStream).not.toRerender()
-    await expect(renderStream.takeRender).rejects.toMatchObject({message: expect.stringMatching(/Exceeded timeout/)})
+    await expect(renderStream.takeRender).rejects.toMatchObject({
+      message: expect.stringMatching(/Exceeded timeout/),
+    })
   })
 
   it('should return the correct states for a successful infinite query', async () => {
@@ -900,7 +912,7 @@ describe('useSuspenseQuery', () => {
   it('should log an error when skipToken is passed as queryFn', () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => { })
+      .mockImplementation(() => {})
     const key = queryKey()
 
     function Page() {
