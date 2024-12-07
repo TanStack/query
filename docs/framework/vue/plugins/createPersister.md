@@ -1,6 +1,6 @@
 ---
 id: createPersister
-title: experimental_createPersister
+title: experimental_createQueryPersister
 ---
 
 ## Installation
@@ -31,8 +31,8 @@ bun add @tanstack/query-persist-client-core
 
 ## Usage
 
-- Import the `experimental_createPersister` function
-- Create a new `experimental_createPersister`
+- Import the `experimental_createQueryPersister` function
+- Create a new `experimental_createQueryPersister`
   - you can pass any `storage` to it that adheres to the `AsyncStorage` or `Storage` interface
 - Pass that `persister` as an option to your Query. This can be done either by passing it to the `defaultOptions` of the `QueryClient` or to any `useQuery` hook instance.
   - If you pass this `persister` as `defaultOptions`, all queries will be persisted to the provided `storage`. You can additionally narrow this down by passing `filters`. In contrast to the `persistClient` plugin, this will not persist the whole query client as a single item, but each query separately. As a key, the query hash is used.
@@ -44,16 +44,18 @@ Garbage collecting a Query from memory **does not** affect the persisted data. T
 
 ```tsx
 import { QueryClient } from '@tanstack/vue-query'
-import { experimental_createPersister } from '@tanstack/query-persist-client-core'
+import { experimental_createQueryPersister } from '@tanstack/query-persist-client-core'
+
+const persister = experimental_createQueryPersister({
+  storage: AsyncStorage,
+  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+})
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       gcTime: 1000 * 30, // 30 seconds
-      persister: experimental_createPersister({
-        storage: localStorage,
-        maxAge: 1000 * 60 * 60 * 12, // 12 hours
-      }),
+      persister: persister.persisterFn,
     },
   },
 })
@@ -65,10 +67,10 @@ The `createPersister` plugin technically wraps the `queryFn`, so it doesn't rest
 
 ## API
 
-### `experimental_createPersister`
+### `experimental_createQueryPersister`
 
 ```tsx
-experimental_createPersister(options: StoragePersisterOptions)
+experimental_createQueryPersister(options: StoragePersisterOptions)
 ```
 
 #### `Options`
