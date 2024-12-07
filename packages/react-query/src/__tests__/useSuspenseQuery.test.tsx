@@ -4,6 +4,7 @@ import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
   QueryCache,
+  QueryClientProvider,
   QueryErrorResetBoundary,
   skipToken,
   useQueryErrorResetBoundary,
@@ -16,21 +17,22 @@ import type {
   UseSuspenseInfiniteQueryResult,
   UseSuspenseQueryResult,
 } from '..'
+import { createRenderStream, disableActEnvironment } from '@testing-library/react-render-stream'
 
 describe('useSuspenseQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
   it('should render the correct amount of times in Suspense mode', async () => {
+    using _disabledAct = disableActEnvironment()
+
     const key = queryKey()
-    const states: Array<UseSuspenseQueryResult<number>> = []
+
+    const renderStream = createRenderStream<UseSuspenseQueryResult<number> | undefined>({ snapshotDOM: true })
 
     let count = 0
-    let renders = 0
 
     function Page() {
-      renders++
-
       const [stateKey, setStateKey] = React.useState(key)
 
       const state = useSuspenseQuery({
@@ -42,7 +44,7 @@ describe('useSuspenseQuery', () => {
         },
       })
 
-      states.push(state)
+      renderStream.replaceSnapshot(state)
 
       return (
         <div>
@@ -52,22 +54,42 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
-      queryClient,
+    const rendered = await renderStream.render(
       <React.Suspense fallback="loading">
         <Page />
       </React.Suspense>,
+      {
+        wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      }
     )
 
-    await waitFor(() => rendered.getByText('data: 1'))
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      // Page didn't render yet, so no call to `replaceSnapshot` yet
+      expect(snapshot).toBeUndefined() // I'd probably skip this assertion
+      withinDOM().getByText("loading")
+    }
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({ data: 1, status: 'success' })
+      withinDOM().getByText("data: 1") // I'd probably skip this assertion
+    }
     fireEvent.click(rendered.getByLabelText('toggle'))
-
-    await waitFor(() => rendered.getByText('data: 2'))
-
-    expect(renders).toBe(4)
-    expect(states.length).toBe(2)
-    expect(states[0]).toMatchObject({ data: 1, status: 'success' })
-    expect(states[1]).toMatchObject({ data: 2, status: 'success' })
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      // Page is suspended so it doesn't replace the snapshot yet
+      expect(snapshot).toMatchObject({ data: 1, status: 'success' }) // I'd probably skip this assertion
+      withinDOM().getByText("loading")
+    }
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({ data: 2, status: 'success' })
+      withinDOM().getByText("data: 2") // I'd probably skip this assertion
+    }
+    
+    // this would require setup of this matcher, seems that automatically only works with jest
+    // expect(renderStream).not.toRerender()
+    await expect(renderStream.takeRender).rejects.toMatchObject({message: expect.stringMatching(/Exceeded timeout/)})
   })
 
   it('should return the correct states for a successful infinite query', async () => {
@@ -875,7 +897,7 @@ describe('useSuspenseQuery', () => {
   it('should log an error when skipToken is passed as queryFn', () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => { })
     const key = queryKey()
 
     function Page() {
