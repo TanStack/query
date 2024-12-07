@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -17,7 +17,10 @@ import type {
   UseSuspenseInfiniteQueryResult,
   UseSuspenseQueryResult,
 } from '..'
-import { createRenderStream, disableActEnvironment } from '@testing-library/react-render-stream'
+import { createRenderStream, disableActEnvironment, cleanup } from '@testing-library/react-render-stream'
+
+// should probably end up in some setup file
+afterEach(cleanup)
 
 describe('useSuspenseQuery', () => {
   const queryCache = new QueryCache()
