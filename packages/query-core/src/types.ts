@@ -40,7 +40,7 @@ export type DefaultError = Register extends {
   ? TError
   : Error
 
-export type QueryKey = ReadonlyArray<unknown>
+export type QueryKey = ReadonlyArray<any>
 
 export declare const dataTagSymbol: unique symbol
 export declare const dataTagErrorSymbol: unique symbol
@@ -994,7 +994,7 @@ export type InfiniteQueryObserverResult<
   | InfiniteQueryObserverLoadingResult<TData, TError>
   | InfiniteQueryObserverPendingResult<TData, TError>
 
-export type MutationKey = ReadonlyArray<unknown>
+export type MutationKey = ReadonlyArray<any>
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
