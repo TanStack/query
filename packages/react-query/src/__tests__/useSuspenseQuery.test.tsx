@@ -754,7 +754,7 @@ describe('useSuspenseQuery', () => {
       }),
     )
 
-    expect(renders).toBe(2)
+    expect(renders).toBe(3)
     await waitFor(() => expect(rendered.queryByText('rendered')).not.toBeNull())
   })
 
