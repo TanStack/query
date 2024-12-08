@@ -53,8 +53,8 @@ export function createBaseQuery<
     const options = runInInjectionContext(injector, () => optionsFn())
     const defaultedOptions = queryClient.defaultQueryOptions(options)
     defaultedOptions._optimisticResults = isRestoring()
-        ? 'isRestoring'
-        : 'optimistic'
+      ? 'isRestoring'
+      : 'optimistic'
     return defaultedOptions
   })
 
@@ -105,27 +105,29 @@ export function createBaseQuery<
   effect((onCleanup) => {
     // observer.trackResult is not used as this optimization is not needed for Angular
     const observer = observerSignal()
-    const unsubscribe = isRestoring() ? () => undefined : untracked(() => {
-      return ngZone.runOutsideAngular(() =>
-        observer.subscribe(
-          notifyManager.batchCalls((state) => {
-            ngZone.run(() => {
-              if (
-                state.isError &&
-                !state.isFetching &&
-                shouldThrowError(observer.options.throwOnError, [
-                  state.error,
-                  observer.getCurrentQuery(),
-                ])
-              ) {
-                throw state.error
-              }
-              resultFromSubscriberSignal.set(state)
-            })
-          }),
-        ),
-      )
-    })
+    const unsubscribe = isRestoring()
+      ? () => undefined
+      : untracked(() =>
+          ngZone.runOutsideAngular(() =>
+            observer.subscribe(
+              notifyManager.batchCalls((state) => {
+                ngZone.run(() => {
+                  if (
+                    state.isError &&
+                    !state.isFetching &&
+                    shouldThrowError(observer.options.throwOnError, [
+                      state.error,
+                      observer.getCurrentQuery(),
+                    ])
+                  ) {
+                    throw state.error
+                  }
+                  resultFromSubscriberSignal.set(state)
+                })
+              }),
+            ),
+          ),
+        )
     onCleanup(unsubscribe)
   })
 
