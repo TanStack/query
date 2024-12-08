@@ -11,7 +11,6 @@ import {
 import { QueryClient, notifyManager } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { shouldThrowError } from './util'
-import { lazyInit } from './util/lazy-init/lazy-init'
 import { injectIsRestoring } from './inject-is-restoring'
 import type {
   QueryKey,
@@ -40,91 +39,101 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ) {
   const injector = inject(Injector)
-  return lazyInit(() => {
-    const ngZone = injector.get(NgZone)
-    const queryClient = injector.get(QueryClient)
-    const isRestoring = injectIsRestoring(injector)
+  const ngZone = injector.get(NgZone)
+  const queryClient = injector.get(QueryClient)
+  const isRestoring = injectIsRestoring(injector)
 
-    /**
-     * Signal that has the default options from query client applied
-     * computed() is used so signals can be inserted into the options
-     * making it reactive. Wrapping options in a function ensures embedded expressions
-     * are preserved and can keep being applied after signal changes
-     */
-    const defaultedOptionsSignal = computed(() => {
-      const options = runInInjectionContext(injector, () => optionsFn())
-      const defaultedOptions = queryClient.defaultQueryOptions(options)
-      defaultedOptions._optimisticResults = isRestoring()
+  /**
+   * Signal that has the default options from query client applied
+   * computed() is used so signals can be inserted into the options
+   * making it reactive. Wrapping options in a function ensures embedded expressions
+   * are preserved and can keep being applied after signal changes
+   */
+  const defaultedOptionsSignal = computed(() => {
+    const options = runInInjectionContext(injector, () => optionsFn())
+    const defaultedOptions = queryClient.defaultQueryOptions(options)
+    defaultedOptions._optimisticResults = isRestoring()
         ? 'isRestoring'
         : 'optimistic'
-      return defaultedOptions
-    })
+    return defaultedOptions
+  })
 
-    const observer = new Observer<
+  const observerSignal = (() => {
+    let instance: QueryObserver<
       TQueryFnData,
       TError,
       TData,
       TQueryData,
       TQueryKey
-    >(queryClient, defaultedOptionsSignal())
+    > | null = null
 
-    const resultSignal = signal(
-      observer.getOptimisticResult(defaultedOptionsSignal()),
-    )
+    return computed(() => {
+      return (instance ||= new Observer(queryClient, defaultedOptionsSignal()))
+    })
+  })()
 
-    effect(
-      () => {
-        const defaultedOptions = defaultedOptionsSignal()
+  const optimisticResultSignal = computed(() =>
+    observerSignal().getOptimisticResult(defaultedOptionsSignal()),
+  )
+
+  const resultFromSubscriberSignal = signal<QueryObserverResult<
+    TData,
+    TError
+  > | null>(null)
+
+  effect(
+    (onCleanup) => {
+      const observer = observerSignal()
+      const defaultedOptions = defaultedOptionsSignal()
+
+      untracked(() => {
         observer.setOptions(defaultedOptions, {
           // Do not notify on updates because of changes in the options because
           // these changes should already be reflected in the optimistic result.
           listeners: false,
         })
-        untracked(() => {
-          resultSignal.set(observer.getOptimisticResult(defaultedOptions))
-        })
-      },
-      {
-        injector,
-      },
-    )
+      })
+      onCleanup(() => {
+        resultFromSubscriberSignal.set(null)
+      })
+    },
+    {
+      injector,
+    },
+  )
 
-    effect(
-      (onCleanup) => {
-        const _isRestoring = isRestoring()
-        const cleanup = untracked(() =>
-          _isRestoring
-            ? () => undefined
-            : ngZone.runOutsideAngular(() =>
-                // observer.trackResult is not used as this optimization is not needed for Angular
-                observer.subscribe(
-                  notifyManager.batchCalls(
-                    (state: QueryObserverResult<TData, TError>) => {
-                      ngZone.run(() => {
-                        if (
-                          state.isError &&
-                          !state.isFetching &&
-                          shouldThrowError(observer.options.throwOnError, [
-                            state.error,
-                            observer.getCurrentQuery(),
-                          ])
-                        ) {
-                          throw state.error
-                        }
-                        resultSignal.set(state)
-                      })
-                    },
-                  ),
-                ),
-              ),
-        )
-        onCleanup(cleanup)
-      },
-      {
-        injector,
-      },
-    )
-
-    return signalProxy(resultSignal)
+  effect((onCleanup) => {
+    // observer.trackResult is not used as this optimization is not needed for Angular
+    const observer = observerSignal()
+    const unsubscribe = isRestoring() ? () => undefined : untracked(() => {
+      return ngZone.runOutsideAngular(() =>
+        observer.subscribe(
+          notifyManager.batchCalls((state) => {
+            ngZone.run(() => {
+              if (
+                state.isError &&
+                !state.isFetching &&
+                shouldThrowError(observer.options.throwOnError, [
+                  state.error,
+                  observer.getCurrentQuery(),
+                ])
+              ) {
+                throw state.error
+              }
+              resultFromSubscriberSignal.set(state)
+            })
+          }),
+        ),
+      )
+    })
+    onCleanup(unsubscribe)
   })
+
+  return signalProxy(
+    computed(() => {
+      const subscriberResult = resultFromSubscriberSignal()
+      const optimisticResult = optimisticResultSignal()
+      return subscriberResult ?? optimisticResult
+    }),
+  )
 }

@@ -99,6 +99,7 @@ export function provideTanStackQuery(
   return makeEnvironmentProviders([
     provideQueryClient(queryClient),
     {
+      // Do not use provideEnvironmentInitializer to support Angular < v19
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
       useValue: () => {

@@ -78,7 +78,7 @@ describe('injectQuery', () => {
     const withResultInfer = TestBed.runInInjectionContext(() =>
       injectQuery(() => ({
         queryKey: key,
-        queryFn: async () => true,
+        queryFn: () => true,
       })),
     )
     expectTypeOf(withResultInfer.data()).toEqualTypeOf<boolean | undefined>()
@@ -263,8 +263,6 @@ describe('injectQuery', () => {
     expect(query.isFetching()).toBe(true)
     expect(query.isStale()).toBe(true)
     expect(query.isFetched()).toBe(false)
-
-    flush()
   }))
 
   test('should resolve to success and update signal: injectQuery()', fakeAsync(() => {
@@ -275,7 +273,7 @@ describe('injectQuery', () => {
       }))
     })
 
-    flush()
+    tick()
 
     expect(query.status()).toBe('success')
     expect(query.data()).toBe('result2')
@@ -294,7 +292,7 @@ describe('injectQuery', () => {
       }))
     })
 
-    flush()
+    tick()
 
     expect(query.status()).toBe('error')
     expect(query.data()).toBe(undefined)
@@ -316,7 +314,7 @@ describe('injectQuery', () => {
         queryFn: spy,
       }))
     })
-    flush()
+    tick()
     expect(spy).toHaveBeenCalledTimes(1)
 
     expect(query.status()).toBe('success')
@@ -331,7 +329,6 @@ describe('injectQuery', () => {
       queryKey: ['key8'],
       signal: expect.anything(),
     })
-    flush()
   }))
 
   test('should only run query once enabled signal is set to true', fakeAsync(() => {
@@ -350,8 +347,7 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('pending')
 
     enabled.set(true)
-    TestBed.flushEffects()
-    flush()
+    tick()
     expect(spy).toHaveBeenCalledTimes(1)
     expect(query.status()).toBe('success')
   }))
@@ -381,7 +377,6 @@ describe('injectQuery', () => {
     expect(dependentQueryFn).not.toHaveBeenCalled()
 
     tick()
-    TestBed.flushEffects()
 
     expect(query1.data()).toStrictEqual('Some data')
     expect(query2.fetchStatus()).toStrictEqual('fetching')
@@ -419,7 +414,7 @@ describe('injectQuery', () => {
       )
     })
 
-    flush()
+    tick()
 
     keySignal.set('key12')
 
@@ -433,8 +428,6 @@ describe('injectQuery', () => {
         }),
       )
     })
-
-    flush()
   }))
 
   describe('throwOnError', () => {
@@ -471,7 +464,6 @@ describe('injectQuery', () => {
       expect(() => {
         flush()
       }).toThrowError('Some error')
-      flush()
     }))
 
     test('should throw when throwOnError function returns true', fakeAsync(() => {
@@ -486,7 +478,6 @@ describe('injectQuery', () => {
       expect(() => {
         flush()
       }).toThrowError('Some error')
-      flush()
     }))
   })
 
@@ -501,12 +492,12 @@ describe('injectQuery', () => {
 
     expect(query.status()).toBe('pending')
 
-    flush()
+    tick()
 
     expect(query.status()).toBe('error')
   }))
 
-  test('should render with required signal inputs', fakeAsync(async () => {
+  test('should render with required signal inputs', fakeAsync(() => {
     @Component({
       selector: 'app-fake',
       template: `{{ query.data() }}`,
@@ -517,7 +508,7 @@ describe('injectQuery', () => {
 
       query = injectQuery(() => ({
         queryKey: ['fake', this.name()],
-        queryFn: () => Promise.resolve(this.name()),
+        queryFn: () => this.name(),
       }))
     }
 
@@ -526,10 +517,10 @@ describe('injectQuery', () => {
       name: 'signal-input-required-test',
     })
 
-    flush()
     fixture.detectChanges()
+    tick()
 
-    expect(fixture.debugElement.nativeElement.textContent).toEqual(
+    expect(fixture.componentInstance.query.data()).toEqual(
       'signal-input-required-test',
     )
   }))
@@ -565,13 +556,13 @@ describe('injectQuery', () => {
 
     const fixture = TestBed.createComponent(FakeComponent)
     fixture.detectChanges()
-    flush()
+    tick()
 
     expect(fixture.componentInstance.query.data()).toEqual('test name')
 
     fixture.componentInstance.name.set('test name 2')
     fixture.detectChanges()
-    flush()
+    tick()
 
     expect(fixture.componentInstance.query.data()).toEqual('test name 2')
   }))
@@ -608,13 +599,13 @@ describe('injectQuery', () => {
 
     const fixture = TestBed.createComponent(FakeComponent)
     fixture.detectChanges()
-    flush()
+    tick()
 
     expect(fixture.componentInstance.query.data()).toEqual('test name')
 
     fixture.componentInstance.name.set('test name 2')
     fixture.detectChanges()
-    flush()
+    tick()
 
     expect(fixture.componentInstance.query.data()).toEqual('test name 2')
   }))
