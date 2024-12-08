@@ -1,8 +1,25 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { QueryErrorResetBoundary, keepPreviousData, useQuery } from '..'
+import {
+  cleanup,
+  createRenderStream,
+} from '@testing-library/react-render-stream'
+import {
+  QueryClientProvider,
+  QueryErrorResetBoundary,
+  keepPreviousData,
+  useQuery,
+} from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
@@ -22,10 +39,13 @@ describe('useQuery().promise', () => {
       queries: { experimental_prefetchInRender: false },
     })
   })
+
+  afterEach(cleanup)
+
   it('should work with a basic test', async () => {
     const key = queryKey()
-    let suspenseRenderCount = 0
-    let pageRenderCount = 0
+
+    const renderStream = createRenderStream({ snapshotDOM: true })
 
     function MyComponent(props: { promise: Promise<string> }) {
       const data = React.use(props.promise)
@@ -34,7 +54,6 @@ describe('useQuery().promise', () => {
     }
 
     function Loading() {
-      suspenseRenderCount++
       return <>loading..</>
     }
     function Page() {
@@ -46,7 +65,6 @@ describe('useQuery().promise', () => {
         },
       })
 
-      pageRenderCount++
       return (
         <React.Suspense fallback={<Loading />}>
           <MyComponent promise={query.promise} />
@@ -54,15 +72,21 @@ describe('useQuery().promise', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() => rendered.getByText('loading..'))
-    await waitFor(() => rendered.getByText('test'))
+    await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
 
-    // Suspense should rendered once since `.promise` is the only watched property
-    expect(suspenseRenderCount).toBe(1)
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+    }
 
-    // Page should be rendered once since since the promise do not change
-    expect(pageRenderCount).toBe(1)
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test')
+    }
   })
 
   it('colocate suspense and promise', async () => {
