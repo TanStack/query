@@ -11,7 +11,7 @@ describe('QueryFilters', () => {
       TData,
       Error,
       TData,
-      QueryKey & DataTag<unknown, TData>
+      DataTag<QueryKey, TData>
     > = {
       predicate(query) {
         expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
@@ -37,7 +37,7 @@ describe('QueryFilters', () => {
       TData,
       TError,
       TData,
-      QueryKey & DataTag<unknown, TData, TError>
+      DataTag<QueryKey, TData, TError>
     > = {
       predicate(query) {
         expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
