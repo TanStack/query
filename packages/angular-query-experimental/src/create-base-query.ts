@@ -92,10 +92,12 @@ export function createBaseQuery<
         })
       })
       onCleanup(() => {
-        resultFromSubscriberSignal.set(null)
+        ngZone.run(() => resultFromSubscriberSignal.set(null))
       })
     },
     {
+      // Set allowSignalWrites to support Angular < v19
+      allowSignalWrites: true,
       injector,
     },
   )
