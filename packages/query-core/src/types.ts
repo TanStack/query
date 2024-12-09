@@ -40,16 +40,26 @@ export type DefaultError = Register extends {
   ? TError
   : Error
 
-export type QueryKey = ReadonlyArray<unknown>
+export type QueryKey = ReadonlyArray<any>
 
 export declare const dataTagSymbol: unique symbol
 export declare const dataTagErrorSymbol: unique symbol
 export declare const unsetMarker: unique symbol
 export type UnsetMarker = typeof unsetMarker
-export type DataTag<TType, TValue, TError = UnsetMarker> = TType & {
-  [dataTagSymbol]: TValue
-  [dataTagErrorSymbol]: TError
+export type AnyDataTag = {
+  [dataTagSymbol]: any
+  [dataTagErrorSymbol]: any
 }
+export type DataTag<
+  TType,
+  TValue,
+  TError = UnsetMarker,
+> = TType extends AnyDataTag
+  ? TType
+  : TType & {
+      [dataTagSymbol]: TValue
+      [dataTagErrorSymbol]: TError
+    }
 
 export type QueryFunction<
   T = unknown,
@@ -984,7 +994,7 @@ export type InfiniteQueryObserverResult<
   | InfiniteQueryObserverLoadingResult<TData, TError>
   | InfiniteQueryObserverPendingResult<TData, TError>
 
-export type MutationKey = ReadonlyArray<unknown>
+export type MutationKey = ReadonlyArray<any>
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
