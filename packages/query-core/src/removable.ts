@@ -11,7 +11,7 @@ export abstract class Removable {
   protected scheduleGc(): void {
     this.clearGcTimeout()
 
-    if (isValidTimeout(this.gcTime)) {
+    if (isValidTimeout(this.gcTime) || this.gcTime === 0) {
       this.#gcTimeout = setTimeout(() => {
         this.optionalRemove()
       }, this.gcTime)
