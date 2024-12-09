@@ -2,6 +2,7 @@ import {
   DestroyRef,
   Injector,
   NgZone,
+  VERSION,
   computed,
   effect,
   inject,
@@ -97,7 +98,8 @@ export function createBaseQuery<
     },
     {
       // Set allowSignalWrites to support Angular < v19
-      allowSignalWrites: true,
+      // Set to undefined to avoid warning on newer versions
+      allowSignalWrites: VERSION.major < '19' || undefined,
       injector,
     },
   )
