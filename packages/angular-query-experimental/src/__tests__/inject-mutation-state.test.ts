@@ -30,7 +30,7 @@ describe('injectMutationState', () => {
   })
 
   describe('injectMutationState', () => {
-    test('should return variables after calling mutate 1', async () => {
+    test('should return variables after calling mutate 1', () => {
       const mutationKey = ['mutation']
       const variables = 'foo123'
 
@@ -53,7 +53,7 @@ describe('injectMutationState', () => {
       expect(mutationState()).toEqual([variables])
     })
 
-    test('reactive options should update injectMutationState', async () => {
+    test('reactive options should update injectMutationState', () => {
       const mutationKey1 = ['mutation1']
       const mutationKey2 = ['mutation2']
       const variables1 = 'foo123'
@@ -87,11 +87,10 @@ describe('injectMutationState', () => {
       expect(mutationState()).toEqual([variables1])
 
       filterKey.set(mutationKey2)
-      TestBed.flushEffects()
       expect(mutationState()).toEqual([variables2])
     })
 
-    test('should return variables after calling mutate 2', async () => {
+    test('should return variables after calling mutate 2', () => {
       queryClient.clear()
       const mutationKey = ['mutation']
       const variables = 'bar234'
@@ -155,8 +154,6 @@ describe('injectMutationState', () => {
       const fixture = TestBed.createComponent(FakeComponent)
       const { debugElement } = fixture
       setFixtureSignalInputs(fixture, { name: fakeName })
-
-      fixture.detectChanges()
 
       let spans = debugElement
         .queryAll(By.css('span'))

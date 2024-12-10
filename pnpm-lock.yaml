@@ -140,7 +140,7 @@ importers:
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -183,7 +183,7 @@ importers:
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -229,10 +229,10 @@ importers:
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -275,7 +275,7 @@ importers:
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -318,7 +318,7 @@ importers:
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -364,7 +364,7 @@ importers:
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -410,7 +410,7 @@ importers:
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -456,7 +456,7 @@ importers:
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -499,7 +499,7 @@ importers:
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.62.3
+        specifier: ^5.62.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -2096,7 +2096,7 @@ importers:
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: ^1.6.4
-        version: 1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.9.3)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.94.0(esbuild@0.23.0)))
+        version: 1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.9.3)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.24.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.24.0)))
       '@angular/core':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)
@@ -2111,7 +2111,7 @@ importers:
         version: 50.5.0(eslint@9.15.0(jiti@2.4.0))
       tsup:
         specifier: 8.0.2
-        version: 8.0.2(@microsoft/api-extractor@7.48.0(@types/node@22.9.3))(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@microsoft/api-extractor@7.48.0(@types/node@22.9.3))(postcss@8.4.49)(typescript@5.7.2)
       typescript:
         specifier: 5.7.2
         version: 5.7.2
@@ -2130,7 +2130,7 @@ importers:
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: ^1.6.4
-        version: 1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.9.3)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.24.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.24.0)))
+        version: 1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.9.3)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.94.0(esbuild@0.23.0)))
       '@angular/compiler':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))
@@ -2151,7 +2151,7 @@ importers:
         version: 50.5.0(eslint@9.15.0(jiti@2.4.0))
       tsup:
         specifier: 8.0.2
-        version: 8.0.2(@microsoft/api-extractor@7.48.0(@types/node@22.9.3))(postcss@8.4.49)(typescript@5.7.2)
+        version: 8.0.2(@microsoft/api-extractor@7.48.0(@types/node@22.9.3))(postcss@8.4.41)(typescript@5.7.2)
       typescript:
         specifier: 5.7.2
         version: 5.7.2
