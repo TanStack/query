@@ -1,16 +1,7 @@
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
-  cleanup,
   createRenderStream,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
@@ -39,8 +30,6 @@ describe('useQuery().promise', () => {
       queries: { experimental_prefetchInRender: false },
     })
   })
-
-  afterEach(cleanup)
 
   it('should work with a basic test', async () => {
     const key = queryKey()

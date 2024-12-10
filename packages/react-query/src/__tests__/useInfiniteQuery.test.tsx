@@ -1,7 +1,16 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { QueryCache, keepPreviousData, useInfiniteQuery } from '..'
+import {
+  createRenderStream,
+  useTrackRenders,
+} from '@testing-library/react-render-stream'
+import {
+  QueryCache,
+  QueryClientProvider,
+  keepPreviousData,
+  useInfiniteQuery,
+} from '..'
 import {
   createQueryClient,
   queryKey,
@@ -1791,14 +1800,14 @@ describe('useInfiniteQuery', () => {
   it('should work with React.use()', async () => {
     const key = queryKey()
 
-    let pageRenderCount = 0
-    let suspenseRenderCount = 0
+    const renderStream = createRenderStream({ snapshotDOM: true })
 
     function Loading() {
-      suspenseRenderCount++
+      useTrackRenders()
       return <>loading...</>
     }
     function MyComponent() {
+      useTrackRenders()
       const fetchCountRef = React.useRef(0)
       const query = useInfiniteQuery({
         queryFn: ({ pageParam }) =>
@@ -1825,7 +1834,7 @@ describe('useInfiniteQuery', () => {
       )
     }
     function Page() {
-      pageRenderCount++
+      useTrackRenders()
       return (
         <React.Suspense fallback={<Loading />}>
           <MyComponent />
@@ -1833,25 +1842,32 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() => rendered.getByText('loading...'))
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
 
-    await waitFor(() => rendered.getByText('Page: 1'))
-    await waitFor(() => rendered.getByText('Item: 1'))
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading...')
+      expect(renderedComponents).toEqual([Page, Loading])
+    }
 
-    expect(rendered.queryByText('Page: 2')).toBeNull()
-    expect(pageRenderCount).toBe(1)
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('Page: 1')
+      withinDOM().getByText('Item: 1')
+      expect(renderedComponents).toEqual([MyComponent])
+    }
 
     // click button
-    fireEvent.click(rendered.getByRole('button', { name: 'fetchNextPage' }))
+    rendered.getByRole('button', { name: 'fetchNextPage' }).click()
 
-    await waitFor(() => {
-      expect(rendered.queryByText('Page: 2')).not.toBeNull()
-    })
-
-    // Suspense doesn't trigger when fetching next page
-    expect(suspenseRenderCount).toBe(1)
-
-    expect(pageRenderCount).toBe(1)
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('Page: 1')
+      expect(renderedComponents).toEqual([MyComponent])
+    }
   })
 })
