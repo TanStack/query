@@ -1,8 +1,11 @@
 import {
   ensureQueryFn,
+  isServer,
+  isValidTimeout,
   noop,
   replaceData,
   resolveEnabled,
+  resolveStaleTime,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -23,7 +26,7 @@ import type {
   QueryStatus,
   SetDataOptions,
 } from './types'
-import type { QueryCache } from './queryCache'
+import type { QueryCache, QueryCacheNotifyEvent } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
 
@@ -171,6 +174,8 @@ export class Query<
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
+  #staleTimeoutId?: ReturnType<typeof setTimeout>
+  #currentStaleTime = Infinity
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
@@ -241,6 +246,7 @@ export class Query<
   destroy(): void {
     super.destroy()
 
+    this.#clearStaleTimeout()
     this.cancel({ silent: true })
   }
 
@@ -266,26 +272,70 @@ export class Query<
     )
   }
 
-  isStale(): boolean {
-    if (this.state.isInvalidated) {
-      return true
-    }
+  updateStaleTime() {
+    const staleTimes = this.observers.map((observer) =>
+      resolveStaleTime(observer.options.staleTime, this),
+    )
 
-    if (this.getObserversCount() > 0) {
-      return this.observers.some(
-        (observer) => observer.getCurrentResult().isStale,
-      )
-    }
-
-    return this.state.data === undefined
+    this.#runStaleTimer(Math.min(...staleTimes))
   }
 
-  isStaleByTime(staleTime = 0): boolean {
+  isStale(): boolean {
+    return this.isStaleByTime(this.#currentStaleTime)
+  }
+
+  isStaleByTime(staleTime: number): boolean {
     return (
       this.state.isInvalidated ||
       this.state.data === undefined ||
       !timeUntilStale(this.state.dataUpdatedAt, staleTime)
     )
+  }
+
+  #runStaleTimer(newStaleTimeOrForce: number | true): void {
+    // same staleTime as last time, so we have nothing to do
+    if (
+      typeof newStaleTimeOrForce === 'number' &&
+      newStaleTimeOrForce === this.#currentStaleTime
+    ) {
+      return
+    }
+
+    this.#clearStaleTimeout()
+    if (typeof newStaleTimeOrForce === 'number') {
+      this.#currentStaleTime = newStaleTimeOrForce
+    }
+
+    const time = timeUntilStale(
+      this.state.dataUpdatedAt,
+      this.#currentStaleTime,
+    )
+
+    const triggerStale = () => {
+      this.#notify({ type: 'stale' })
+    }
+    if (time === 0) {
+      // no timer necessary, time zero is always stale, so we instantly trigger it
+      triggerStale()
+      return
+    }
+
+    if (isServer || !isValidTimeout(this.#currentStaleTime)) {
+      return
+    }
+
+    // The timeout is sometimes triggered 1 ms before the stale time expiration.
+    // To mitigate this issue we always add 1 ms to the timeout.
+    this.#staleTimeoutId = setTimeout(() => {
+      triggerStale()
+    }, time + 1)
+  }
+
+  #clearStaleTimeout(): void {
+    if (this.#staleTimeoutId) {
+      clearTimeout(this.#staleTimeoutId)
+      this.#staleTimeoutId = undefined
+    }
   }
 
   onFocus(): void {
@@ -313,6 +363,13 @@ export class Query<
       // Stop the query from being garbage collected
       this.clearGcTimeout()
 
+      // conditionally update staleTime
+      // since "lowest wins", we only need to re-run if the new staleTime is lower
+      const staleTime = resolveStaleTime(observer.options.staleTime, this)
+      if (staleTime < this.#currentStaleTime) {
+        this.#runStaleTimer(staleTime)
+      }
+
       this.#cache.notify({ type: 'observerAdded', query: this, observer })
     }
   }
@@ -334,6 +391,9 @@ export class Query<
 
         this.scheduleGc()
       }
+
+      // re-calc everything because the removed observer could've been the lowest
+      this.updateStaleTime()
 
       this.#cache.notify({ type: 'observerRemoved', query: this, observer })
     }
@@ -612,8 +672,19 @@ export class Query<
       }
     }
 
-    this.state = reducer(this.state)
+    const prevState = this.state
+    this.state = reducer(prevState)
 
+    if (!this.isStale()) {
+      this.#runStaleTimer(true)
+    }
+
+    this.#notify(action)
+  }
+
+  #notify(
+    action: Extract<QueryCacheNotifyEvent, { type: 'updated' }>['action'],
+  ) {
     notifyManager.batch(() => {
       this.observers.forEach((observer) => {
         observer.onQueryUpdate()

@@ -11,7 +11,6 @@ import {
   resolveEnabled,
   resolveStaleTime,
   shallowEqualObjects,
-  timeUntilStale,
 } from './utils'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
@@ -66,7 +65,6 @@ export class QueryObserver<
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
-  #staleTimeoutId?: ReturnType<typeof setTimeout>
   #refetchIntervalId?: ReturnType<typeof setInterval>
   #currentRefetchInterval?: number | false
   #trackedProps = new Set<keyof QueryObserverResult>()
@@ -138,7 +136,6 @@ export class QueryObserver<
 
   destroy(): void {
     this.listeners = new Set()
-    this.#clearStaleTimeout()
     this.#clearRefetchInterval()
     this.#currentQuery.removeObserver(this)
   }
@@ -203,15 +200,8 @@ export class QueryObserver<
     this.updateResult(notifyOptions)
 
     // Update stale interval if needed
-    if (
-      mounted &&
-      (this.#currentQuery !== prevQuery ||
-        resolveEnabled(this.options.enabled, this.#currentQuery) !==
-          resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
-        resolveStaleTime(this.options.staleTime, this.#currentQuery) !==
-          resolveStaleTime(prevOptions.staleTime, this.#currentQuery))
-    ) {
-      this.#updateStaleTimeout()
+    if (mounted && this.#currentQuery !== prevQuery) {
+      this.#currentQuery.updateStaleTime()
     }
 
     const nextRefetchInterval = this.#computeRefetchInterval()
@@ -355,30 +345,6 @@ export class QueryObserver<
     return promise
   }
 
-  #updateStaleTimeout(): void {
-    this.#clearStaleTimeout()
-    const staleTime = resolveStaleTime(
-      this.options.staleTime,
-      this.#currentQuery,
-    )
-
-    if (isServer || this.#currentResult.isStale || !isValidTimeout(staleTime)) {
-      return
-    }
-
-    const time = timeUntilStale(this.#currentResult.dataUpdatedAt, staleTime)
-
-    // The timeout is sometimes triggered 1 ms before the stale time expiration.
-    // To mitigate this issue we always add 1 ms to the timeout.
-    const timeout = time + 1
-
-    this.#staleTimeoutId = setTimeout(() => {
-      if (!this.#currentResult.isStale) {
-        this.updateResult()
-      }
-    }, timeout)
-  }
-
   #computeRefetchInterval() {
     return (
       (typeof this.options.refetchInterval === 'function'
@@ -395,8 +361,7 @@ export class QueryObserver<
     if (
       isServer ||
       resolveEnabled(this.options.enabled, this.#currentQuery) === false ||
-      !isValidTimeout(this.#currentRefetchInterval) ||
-      this.#currentRefetchInterval === 0
+      !isValidTimeout(this.#currentRefetchInterval)
     ) {
       return
     }
@@ -412,15 +377,7 @@ export class QueryObserver<
   }
 
   #updateTimers(): void {
-    this.#updateStaleTimeout()
     this.#updateRefetchInterval(this.#computeRefetchInterval())
-  }
-
-  #clearStaleTimeout(): void {
-    if (this.#staleTimeoutId) {
-      clearTimeout(this.#staleTimeoutId)
-      this.#staleTimeoutId = undefined
-    }
   }
 
   #clearRefetchInterval(): void {
@@ -805,6 +762,7 @@ function shouldFetchOptionally(
     (query !== prevQuery ||
       resolveEnabled(prevOptions.enabled, query) === false) &&
     (!options.suspense || query.state.status !== 'error') &&
+    resolveEnabled(options.enabled, query) !== false &&
     isStale(query, options)
   )
 }
@@ -813,8 +771,11 @@ function isStale(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
+  // usually, a query is stale by its observers, which gets checked by `query.isStale()`
+  // however, THIS observer might not be attached yet, so in case the query is not stale
+  // we still have to check the staleTime of this observer separately
   return (
-    resolveEnabled(options.enabled, query) !== false &&
+    query.isStale() ||
     query.isStaleByTime(resolveStaleTime(options.staleTime, query))
   )
 }
