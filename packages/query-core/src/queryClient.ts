@@ -151,16 +151,16 @@ export class QueryClient {
 
     if (cachedData === undefined) {
       return this.fetchQuery(options)
-    } else {
-      if (
-        options.revalidateIfStale &&
-        query.isStaleByTime(resolveStaleTime(defaultedOptions.staleTime, query))
-      ) {
-        void this.prefetchQuery(defaultedOptions)
-      }
-
-      return Promise.resolve(cachedData)
     }
+
+    if (
+      options.revalidateIfStale &&
+      query.isStaleByTime(resolveStaleTime(defaultedOptions.staleTime, query))
+    ) {
+      void this.prefetchQuery(defaultedOptions)
+    }
+
+    return Promise.resolve(cachedData)
   }
 
   getQueriesData<
