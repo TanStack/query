@@ -11,6 +11,7 @@ import { useQueries } from '../useQueries'
 import { useSuspenseQuery } from '../useSuspenseQuery'
 import type { UseQueryOptions } from '../types'
 import type {
+  DataTag,
   InitialDataFunction,
   QueryObserverResult,
 } from '@tanstack/query-core'
@@ -246,5 +247,35 @@ describe('queryOptions', () => {
     })
 
     somethingWithQueryOptions(options)
+  })
+
+  it('should return a custom query key type', () => {
+    type MyQueryKey = [Array<string>, { type: 'foo' }]
+
+    const options = queryOptions({
+      queryKey: [['key'], { type: 'foo' }] as MyQueryKey,
+      queryFn: () => Promise.resolve(1),
+    })
+
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      DataTag<MyQueryKey, number, Error>
+    >()
+  })
+
+  it('should return a custom query key type with datatag', () => {
+    type MyQueryKey = DataTag<
+      [Array<string>, { type: 'foo' }],
+      number,
+      Error & { myMessage: string }
+    >
+
+    const options = queryOptions({
+      queryKey: [['key'], { type: 'foo' }] as MyQueryKey,
+      queryFn: () => Promise.resolve(1),
+    })
+
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      DataTag<MyQueryKey, number, Error & { myMessage: string }>
+    >()
   })
 })
