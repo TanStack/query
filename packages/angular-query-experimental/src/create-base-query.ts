@@ -1,6 +1,7 @@
 import {
   Injector,
   NgZone,
+  VERSION,
   computed,
   effect,
   inject,
@@ -94,10 +95,13 @@ export function createBaseQuery<
         })
       })
       onCleanup(() => {
-        resultFromSubscriberSignal.set(null)
+        ngZone.run(() => resultFromSubscriberSignal.set(null))
       })
     },
     {
+      // Set allowSignalWrites to support Angular < v19
+      // Set to undefined to avoid warning on newer versions
+      allowSignalWrites: VERSION.major < '19' || undefined,
       injector,
     },
   )

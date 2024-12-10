@@ -64,7 +64,7 @@ describe('useSuspenseQuery', () => {
 
     await waitFor(() => rendered.getByText('data: 2'))
 
-    expect(renders).toBe(4)
+    expect(renders).toBe(6)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: 1, status: 'success' })
     expect(states[1]).toMatchObject({ data: 2, status: 'success' })
@@ -754,7 +754,7 @@ describe('useSuspenseQuery', () => {
       }),
     )
 
-    expect(renders).toBe(2)
+    expect(renders).toBe(3)
     await waitFor(() => expect(rendered.queryByText('rendered')).not.toBeNull())
   })
 
