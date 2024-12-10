@@ -7,7 +7,7 @@ import {
   it,
   vi,
 } from 'vitest'
-import { act, fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
@@ -572,11 +572,7 @@ describe('useQuery().promise', () => {
 
     consoleMock.mockRestore()
 
-    // fireEvent.click(rendered.getByText('resetErrorBoundary'))
-    await act(() => fireEvent.click(rendered.getByText('resetErrorBoundary')))
-
-    // resetErrorBoundary render
-    await renderStream.takeRender()
+    rendered.getByText('resetErrorBoundary').click()
 
     {
       const { withinDOM } = await renderStream.takeRender()
