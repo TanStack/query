@@ -7,7 +7,7 @@ import {
   it,
   vi,
 } from 'vitest'
-import { fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
@@ -22,7 +22,7 @@ import {
   useQuery,
 } from '..'
 import { QueryCache } from '../index'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
@@ -944,6 +944,7 @@ describe('useQuery().promise', () => {
   })
 
   it('should suspend when not enabled', async () => {
+    const renderStream = createRenderStream({ snapshotDOM: true })
     const key = queryKey()
 
     const options = (count: number) => ({
@@ -977,16 +978,37 @@ describe('useQuery().promise', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() => rendered.getByText('loading..'))
-    fireEvent.click(rendered.getByText('enable'))
-    await waitFor(() => rendered.getByText('test1'))
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+    }
+
+    rendered.getByText('enable').click()
+
+    // loading re-render with enabled
+    await renderStream.takeRender()
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test1')
+    }
   })
 
   it('should show correct data when read from cache only (staleTime)', async () => {
     const key = queryKey()
-    let suspenseRenderCount = 0
+    const renderStream = createRenderStream({ snapshotDOM: true })
     queryClient.setQueryData(key, 'initial')
+
+    const queryFn = vi.fn().mockImplementation(async () => {
+      await sleep(1)
+      return 'test'
+    })
 
     function MyComponent(props: { promise: Promise<string> }) {
       const data = React.use(props.promise)
@@ -995,16 +1017,12 @@ describe('useQuery().promise', () => {
     }
 
     function Loading() {
-      suspenseRenderCount++
       return <>loading..</>
     }
     function Page() {
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(1)
-          return 'test'
-        },
+        queryFn,
         staleTime: Infinity,
       })
 
@@ -1015,27 +1033,37 @@ describe('useQuery().promise', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() => rendered.getByText('initial'))
+    await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
 
-    expect(suspenseRenderCount).toBe(0)
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('initial')
+    }
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
   it('should show correct data when switching between cache entries without re-fetches', async () => {
     const key = queryKey()
-    let suspenseRenderCount = 0
+    const renderStream = createRenderStream({ snapshotDOM: true })
 
     function MyComponent(props: { promise: Promise<string> }) {
+      useTrackRenders()
       const data = React.use(props.promise)
 
       return <>{data}</>
     }
 
     function Loading() {
-      suspenseRenderCount++
+      useTrackRenders()
       return <>loading..</>
     }
     function Page() {
+      useTrackRenders()
       const [count, setCount] = React.useState(0)
       const query = useQuery({
         queryKey: [key, count],
@@ -1057,33 +1085,57 @@ describe('useQuery().promise', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() => rendered.getByText('loading..'))
-    await waitFor(() => rendered.getByText('test0'))
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
 
-    expect(suspenseRenderCount).toBe(1)
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+      expect(renderedComponents).toEqual([Page, Loading])
+    }
 
-    fireEvent.click(rendered.getByText('inc'))
-    await waitFor(() => rendered.getByText('loading..'))
-    await waitFor(() => rendered.getByText('test1'))
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test0')
+      expect(renderedComponents).toEqual([MyComponent])
+    }
 
-    expect(suspenseRenderCount).toBe(2)
+    rendered.getByText('inc').click()
 
-    fireEvent.click(rendered.getByText('dec'))
-    await waitFor(() => rendered.getByText('test0'))
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+      expect(renderedComponents).toEqual([Page, Loading])
+    }
 
-    // no more suspending when going back to test0
-    expect(suspenseRenderCount).toBe(2)
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test1')
+      expect(renderedComponents).toEqual([MyComponent])
+    }
+
+    rendered.getByText('dec').click()
+
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test0')
+      expect(renderedComponents).toEqual([Page, MyComponent])
+    }
   })
 
   it('should not resolve with intermediate data when keys are switched', async () => {
     const key = queryKey()
-    const renderedData: Array<string> = []
+    const renderStream = createRenderStream<{ data: string }>({
+      snapshotDOM: true,
+    })
 
     function MyComponent(props: { promise: Promise<string> }) {
       const data = React.use(props.promise)
 
-      renderedData.push(data)
+      renderStream.replaceSnapshot({ data })
 
       return <>{data}</>
     }
@@ -1112,30 +1164,54 @@ describe('useQuery().promise', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() => rendered.getByText('loading..'))
-    await waitFor(() => rendered.getByText('test0'))
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
 
-    fireEvent.click(rendered.getByText('inc'))
-    fireEvent.click(rendered.getByText('inc'))
-    fireEvent.click(rendered.getByText('inc'))
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+    }
 
-    await waitFor(() => rendered.getByText('loading..'))
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test0')
+      expect(snapshot).toMatchObject({ data: 'test0' })
+    }
 
-    await waitFor(() => rendered.getByText('test3'))
+    rendered.getByText('inc').click()
 
-    expect(renderedData).toEqual(['test0', 'test3'])
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+    }
+
+    rendered.getByText('inc').click()
+    await renderStream.takeRender()
+
+    rendered.getByText('inc').click()
+    await renderStream.takeRender()
+
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test3')
+      expect(snapshot).toMatchObject({ data: 'test3' })
+    }
   })
 
   it('should not resolve with intermediate data when keys are switched (with background updates)', async () => {
     const key = queryKey()
-    const renderedData: Array<string> = []
+    const renderStream = createRenderStream<{ data: string }>({
+      snapshotDOM: true,
+    })
     let modifier = ''
 
     function MyComponent(props: { promise: Promise<string> }) {
       const data = React.use(props.promise)
 
-      renderedData.push(data)
+      renderStream.replaceSnapshot({ data })
 
       return <>{data}</>
     }
@@ -1164,41 +1240,79 @@ describe('useQuery().promise', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() => rendered.getByText('loading..'))
-    await waitFor(() => rendered.getByText('test0'))
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
 
-    fireEvent.click(rendered.getByText('inc'))
-    await sleep(1)
-    fireEvent.click(rendered.getByText('inc'))
-    await sleep(7)
-    fireEvent.click(rendered.getByText('inc'))
-    await sleep(5)
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+    }
 
-    await waitFor(() => rendered.getByText('loading..'))
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test0')
+      expect(snapshot).toMatchObject({ data: 'test0' })
+    }
 
-    await waitFor(() => rendered.getByText('test3'))
+    rendered.getByText('inc').click()
+    {
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({ data: 'test0' })
+    }
+
+    rendered.getByText('inc').click()
+    {
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({ data: 'test0' })
+    }
+
+    rendered.getByText('inc').click()
+
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+      expect(snapshot).toMatchObject({ data: 'test0' })
+    }
+
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test3')
+      expect(snapshot).toMatchObject({ data: 'test3' })
+    }
 
     modifier = 'new'
 
-    fireEvent.click(rendered.getByText('dec'))
-    fireEvent.click(rendered.getByText('dec'))
-    fireEvent.click(rendered.getByText('dec'))
+    rendered.getByText('dec').click()
+    {
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({ data: 'test2' })
+    }
 
-    await waitFor(() => rendered.getByText('test0new'))
+    rendered.getByText('dec').click()
+    {
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({ data: 'test1' })
+    }
 
-    expect(renderedData).toEqual([
-      'test0', // fresh data
-      'test3', // fresh data
-      'test2', // stale data
-      'test1', // stale data
-      'test0', // stale data
-      'test0new', // fresh data, background refetch, only for latest
-    ])
+    rendered.getByText('dec').click()
+    {
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({ data: 'test0' })
+    }
+
+    {
+      const { snapshot, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test0new')
+      expect(snapshot).toMatchObject({ data: 'test0new' })
+    }
   })
 
   it('should not suspend indefinitely with multiple, nested observers)', async () => {
     const key = queryKey()
+    const renderStream = createRenderStream({ snapshotDOM: true })
 
     function MyComponent({ input }: { input: string }) {
       const query = useTheQuery(input)
@@ -1232,19 +1346,38 @@ describe('useQuery().promise', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() => rendered.getByText('loading..'))
-    await waitFor(() => rendered.getByText('defaultInput response'))
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+    }
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('defaultInput response')
+    }
 
     expect(
       queryClient.getQueryCache().find({ queryKey: [key, 'defaultInput'] })!
         .observers.length,
     ).toBe(2)
 
-    fireEvent.click(rendered.getByText('setInput'))
+    rendered.getByText('setInput').click()
 
-    await waitFor(() => rendered.getByText('loading..'))
-    await waitFor(() => rendered.getByText('someInput response'))
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+    }
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('someInput response')
+    }
 
     expect(
       queryClient.getQueryCache().find({ queryKey: [key, 'defaultInput'] })!
