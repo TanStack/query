@@ -7,7 +7,6 @@ import {
   it,
   vi,
 } from 'vitest'
-import { fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
@@ -423,10 +422,10 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test-0')
-      expect(renderedComponents).toEqual([Page, MyComponent])
+      expect(renderedComponents).toEqual([MyComponent])
     }
 
-    fireEvent.click(rendered.getByRole('button', { name: 'increment' }))
+    rendered.getByRole('button', { name: 'increment' }).click()
 
     // re-render because of the increment
     {
@@ -491,7 +490,7 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test')
-      expect(renderedComponents).toEqual([Page, MyComponent])
+      expect(renderedComponents).toEqual([MyComponent])
     }
   })
 
@@ -685,7 +684,7 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test1')
-      expect(renderedComponents).toEqual([Page, MyComponent])
+      expect(renderedComponents).toEqual([MyComponent])
     }
 
     queryClient.setQueryData(key, 'test2')
@@ -743,7 +742,7 @@ describe('useQuery().promise', () => {
       withinDOM().getByText('loading..')
     }
 
-    fireEvent.click(rendered.getByText('fetch'))
+    rendered.getByText('fetch').click()
 
     {
       const { withinDOM } = await renderStream.takeRender()
@@ -802,7 +801,7 @@ describe('useQuery().promise', () => {
       withinDOM().getByText('loading..')
     }
 
-    fireEvent.click(rendered.getByText('refetch'))
+    rendered.getByText('refetch').click()
 
     {
       const { withinDOM } = await renderStream.takeRender()
@@ -868,7 +867,7 @@ describe('useQuery().promise', () => {
       withinDOM().getByText('loading..')
     }
 
-    fireEvent.click(rendered.getByText('cancel'))
+    rendered.getByText('cancel').click()
 
     {
       await renderStream.takeRender()
@@ -880,7 +879,7 @@ describe('useQuery().promise', () => {
 
     expect(queryFn).toHaveBeenCalledOnce()
 
-    fireEvent.click(rendered.getByText('fetch'))
+    rendered.getByText('fetch').click()
 
     {
       const { withinDOM } = await renderStream.takeRender()
@@ -933,7 +932,7 @@ describe('useQuery().promise', () => {
       </QueryClientProvider>,
     )
 
-    fireEvent.click(rendered.getByText('cancel'))
+    rendered.getByText('cancel').click()
 
     {
       const { withinDOM } = await renderStream.takeRender()
