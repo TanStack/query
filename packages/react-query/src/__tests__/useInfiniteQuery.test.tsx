@@ -1236,7 +1236,9 @@ describe('useInfiniteQuery', () => {
 
   it('should only refetch the first page when initialData is provided', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+
+    const renderStream =
+      createRenderStream<UseInfiniteQueryResult<InfiniteData<number>>>()
 
     function Page() {
       const state = useInfiniteQuery({
@@ -1251,52 +1253,63 @@ describe('useInfiniteQuery', () => {
         notifyOnChangeProps: 'all',
       })
 
-      states.push(state)
+      renderStream.replaceSnapshot(state)
 
-      const { fetchNextPage } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchNextPage()
-        }, 20)
-      }, [fetchNextPage])
-
-      return null
+      return (
+        <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
 
-    await sleep(100)
+    {
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({
+        data: { pages: [1] },
+        hasNextPage: true,
+        isFetching: true,
+        isFetchingNextPage: false,
+        isSuccess: true,
+      })
+    }
 
-    expect(states.length).toBe(4)
-    expect(states[0]).toMatchObject({
-      data: { pages: [1] },
-      hasNextPage: true,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: { pages: [1] },
-      hasNextPage: true,
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[2]).toMatchObject({
-      data: { pages: [1] },
-      hasNextPage: true,
-      isFetching: true,
-      isFetchingNextPage: true,
-      isSuccess: true,
-    })
-    expect(states[3]).toMatchObject({
-      data: { pages: [1, 2] },
-      hasNextPage: true,
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
+    {
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({
+        data: { pages: [1] },
+        hasNextPage: true,
+        isFetching: false,
+        isFetchingNextPage: false,
+        isSuccess: true,
+      })
+    }
+
+    rendered.getByText('fetchNextPage').click()
+
+    {
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({
+        data: { pages: [1] },
+        hasNextPage: true,
+        isFetching: true,
+        isFetchingNextPage: true,
+        isSuccess: true,
+      })
+    }
+    {
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({
+        data: { pages: [1, 2] },
+        hasNextPage: true,
+        isFetching: false,
+        isFetchingNextPage: false,
+        isSuccess: true,
+      })
+    }
   })
 
   it('should set hasNextPage to false if getNextPageParam returns undefined', async () => {
