@@ -31,6 +31,7 @@
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm build:tsup && pnpm build:codemods",
     "build:tsup": "tsup",
+    "build:tsup:dev": "tsup --watch",
     "build:codemods": "cpy ../query-codemods/* ./build/codemods"
   },
   "type": "module",
