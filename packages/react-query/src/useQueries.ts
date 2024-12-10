@@ -47,7 +47,7 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData'
+  'placeholderData' | 'subscribed'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
@@ -231,6 +231,7 @@ export function useQueries<
   }: {
     queries: readonly [...QueriesOptions<T>]
     combine?: (result: QueriesResults<T>) => TCombinedResult
+    subscribed?: boolean
   },
   queryClient?: QueryClient,
 ): TCombinedResult {
@@ -271,19 +272,21 @@ export function useQueries<
       ),
   )
 
+  // note: this must be called before useSyncExternalStore
   const [optimisticResult, getCombinedResult, trackResult] =
     observer.getOptimisticResult(
       defaultedQueries,
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
 
+  const shouldSubscribe = !isRestoring && options.subscribed !== false
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
-        isRestoring
-          ? noop
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer, isRestoring],
+        shouldSubscribe
+          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
+          : noop,
+      [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
