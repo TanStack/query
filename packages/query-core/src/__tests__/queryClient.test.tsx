@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/react'
+import { waitFor } from '@testing-library/dom'
 
 import {
   MutationObserver,
@@ -476,6 +476,21 @@ describe('queryClient', () => {
           revalidateIfStale: true,
         }),
       ).resolves.toEqual('new')
+    })
+
+    test('should not fetch with initialDat', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn().mockImplementation(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.ensureQueryData({
+          queryKey: [key, 'id'],
+          queryFn,
+          initialData: 'initial',
+        }),
+      ).resolves.toEqual('initial')
+
+      expect(queryFn).toHaveBeenCalledTimes(0)
     })
   })
 

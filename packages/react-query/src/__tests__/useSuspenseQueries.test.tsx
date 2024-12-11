@@ -10,7 +10,7 @@ import {
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { useSuspenseQueries, useSuspenseQuery } from '..'
+import { skipToken, useSuspenseQueries, useSuspenseQuery } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
 
@@ -556,7 +556,6 @@ describe('useSuspenseQueries 2', () => {
         queryKey: key,
         queryFn: async () => {
           count++
-          console.log('queryFn')
           throw new Error('Query failed')
         },
         gcTime: 0,
@@ -657,5 +656,41 @@ describe('useSuspenseQueries 2', () => {
 
       expect(queryClient.getQueryData(key)).toBe(undefined)
     })
+  })
+
+  it('should log an error when skipToken is passed as queryFn', () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key,
+            // @ts-expect-error
+            queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
+          },
+        ],
+      })
+
+      return null
+    }
+
+    function App() {
+      return (
+        <React.Suspense fallback="Loading...">
+          <Page />
+        </React.Suspense>
+      )
+    }
+
+    renderWithClient(queryClient, <App />)
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'skipToken is not allowed for useSuspenseQueries',
+    )
+    consoleErrorSpy.mockRestore()
   })
 })

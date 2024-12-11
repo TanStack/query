@@ -29,6 +29,19 @@ onlineManager.setEventListener((setOnline) => {
 })
 ```
 
+or
+
+```tsx
+import { onlineManager } from '@tanstack/react-query'
+import * as Network from 'expo-network'
+
+onlineManager.setEventListener((setOnline) => {
+  return Network.addNetworkStateListener((state) => {
+    setOnline(state.isConnected)
+  })
+})
+```
+
 ## Refetch on App focus
 
 Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":

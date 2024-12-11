@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.59.16",
+  "version": "5.62.7",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -21,7 +21,11 @@
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
-    "test:types:ts53": "tsc",
+    "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js",
+    "test:types:ts57": "tsc",
     "test:build": "publint --strict && attw --pack",
     "build": "tsup",
     "build:dev": "tsup --watch"
@@ -51,14 +55,15 @@
   },
   "files": [
     "build",
-    "src"
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
     "@tanstack/solid-query": "workspace:*",
-    "solid-js": "^1.8.19",
+    "solid-js": "^1.9.3",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.10.2"
   },

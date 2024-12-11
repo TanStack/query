@@ -9,23 +9,36 @@ ref: docs/framework/react/guides/query-options.md
 ```ts
 import { queryOptions } from '@tanstack/angular-query-experimental'
 
-groupOptions = (id: number) => {
-  return () =>
-    queryOptions({
-      queryKey: ['groups', id],
-      queryFn: () => fetchGroups(id),
-      staleTime: 5 * 1000,
+@Injectable({
+  providedIn: 'root',
+})
+export class QueriesService {
+  private http = inject(HttpClient)
+
+  post(postId: number) {
+    return queryOptions({
+      queryKey: ['post', postId],
+      queryFn: () => {
+        return lastValueFrom(
+          this.http.get<Post>(
+            `https://jsonplaceholder.typicode.com/posts/${postId}`,
+          ),
+        )
+      },
     })
+  }
 }
 
 // usage:
 
-injectQuery(groupOptions(1))
+queries = inject(QueriesService)
+
+injectQuery(this.queries.post(1))
 injectQueries({
-  queries: [groupOptions(1), groupOptions(2)],
+  queries: [this.queries.post(1), this.queries.post(2)],
 })
-queryClient.prefetchQuery(groupOptions(23))
-queryClient.setQueryData(groupOptions(42).queryKey, newGroups)
+queryClient.prefetchQuery(this.queries.post(23))
+queryClient.setQueryData(this.queries.post(42).queryKey, newGroups)
 ```
 
 [//]: # 'Example1'

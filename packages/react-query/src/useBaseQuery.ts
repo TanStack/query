@@ -88,7 +88,7 @@ export function useBaseQuery<
     React.useCallback(
       (onStoreChange) => {
         const unsubscribe = isRestoring
-          ? () => undefined
+          ? noop
           : observer.subscribe(notifyManager.batchCalls(onStoreChange))
 
         // Update result to make sure we did not miss any query updates

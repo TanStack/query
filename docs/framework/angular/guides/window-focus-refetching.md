@@ -10,7 +10,7 @@ replace: { '@tanstack/react-query': '@tanstack/angular-query-experimental' }
 ```ts
 bootstrapApplication(AppComponent, {
   providers: [
-    provideAngularQuery(
+    provideTanStackQuery(
       new QueryClient({
         defaultOptions: {
           queries: {

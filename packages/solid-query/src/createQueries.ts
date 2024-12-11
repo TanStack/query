@@ -13,6 +13,7 @@ import {
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
+import { noop } from './utils'
 import type { CreateQueryResult, SolidQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
@@ -305,10 +306,10 @@ export function createQueries<
       })
     })
 
-  let unsubscribe: () => void = () => undefined
+  let unsubscribe = noop
   createComputed<() => void>((cleanup) => {
     cleanup?.()
-    unsubscribe = isRestoring() ? () => undefined : subscribeToObserver()
+    unsubscribe = isRestoring() ? noop : subscribeToObserver()
     // cleanup needs to be scheduled after synchronous effects take place
     return () => queueMicrotask(unsubscribe)
   })

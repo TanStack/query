@@ -71,8 +71,6 @@ Its available methods are:
 
 If the query exists and the data is not invalidated or older than the given `staleTime`, then the data from the cache will be returned. Otherwise it will try to fetch the latest data.
 
-> The difference between using `fetchQuery` and `setQueryData` is that `fetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
-
 ```tsx
 try {
   const data = await queryClient.fetchQuery({ queryKey, queryFn })

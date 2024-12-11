@@ -20,6 +20,7 @@ import {
   shouldSuspend,
   willFetch,
 } from './suspense'
+import { noop } from './utils'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -280,7 +281,7 @@ export function useQueries<
     React.useCallback(
       (onStoreChange) =>
         isRestoring
-          ? () => undefined
+          ? noop
           : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
       [observer, isRestoring],
     ),
