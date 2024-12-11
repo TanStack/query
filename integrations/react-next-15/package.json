@@ -15,8 +15,8 @@
     "tupleson": "0.23.1"
   },
   "devDependencies": {
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
     "typescript": "5.7.2"
   }
 }
