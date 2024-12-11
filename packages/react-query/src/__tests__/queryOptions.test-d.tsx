@@ -9,7 +9,7 @@ import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 import { useSuspenseQuery } from '../useSuspenseQuery'
-import type { AnyUseQueryOptions, UseQueryOptions } from '../types'
+import type { AnyUseQueryOptions } from '../types'
 import type {
   DataTag,
   InitialDataFunction,
