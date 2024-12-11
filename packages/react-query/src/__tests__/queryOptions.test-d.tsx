@@ -9,7 +9,7 @@ import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 import { useSuspenseQuery } from '../useSuspenseQuery'
-import type { UseQueryOptions } from '../types'
+import type { AnyUseQueryOptions, UseQueryOptions } from '../types'
 import type {
   DataTag,
   InitialDataFunction,
@@ -237,8 +237,8 @@ describe('queryOptions', () => {
   })
 
   it('should be passable to UseQueryOptions', () => {
-    function somethingWithQueryOptions(
-      options: UseQueryOptions<number, any, any, Array<string>>,
+    function somethingWithQueryOptions<TQueryOpts extends AnyUseQueryOptions>(
+      options: TQueryOpts,
     ) {
       return options.queryKey
     }
