@@ -224,8 +224,18 @@ export const ASTUtils = {
     return sourceCode.getText(
       ASTUtils.traverseUpOnly(node, [
         AST_NODE_TYPES.MemberExpression,
+        AST_NODE_TYPES.TSNonNullExpression,
         AST_NODE_TYPES.Identifier,
       ]),
+    )
+  },
+  mapKeyNodeToBaseText(
+    node: TSESTree.Node,
+    sourceCode: Readonly<TSESLint.SourceCode>,
+  ) {
+    return ASTUtils.mapKeyNodeToText(node, sourceCode).replace(
+      /(?:\?(\.)|!)/g,
+      '$1',
     )
   },
   isValidReactComponentOrHookName(
