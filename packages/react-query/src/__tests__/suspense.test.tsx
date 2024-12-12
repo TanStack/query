@@ -1,11 +1,55 @@
 import { act, render, waitFor } from '@testing-library/react'
 import { Suspense } from 'react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
-import { queryKey, renderWithClient, sleep } from './utils'
+import { queryKey } from './utils'
+import type { QueryKey } from '..'
+
+function renderWithSuspense(client: QueryClient, ui: React.ReactNode) {
+  return render(
+    <QueryClientProvider client={client}>
+      <Suspense fallback="loading">{ui}</Suspense>
+    </QueryClientProvider>,
+  )
+}
+
+function createTestQuery(options: {
+  fetchCount: { count: number }
+  queryKey: QueryKey
+  staleTime?: number | (() => number)
+}) {
+  return function TestComponent() {
+    const { data } = useSuspenseQuery({
+      queryKey: options.queryKey,
+      queryFn: () => {
+        options.fetchCount.count++
+        return 'data'
+      },
+      staleTime: options.staleTime,
+    })
+    return <div>data: {data}</div>
+  }
+}
 
 describe('Suspense Timer Tests', () => {
   let queryClient: QueryClient
+  let fetchCount: { count: number }
+
+  beforeAll(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+  })
+
+  afterAll(() => {
+    vi.useRealTimers()
+  })
 
   beforeEach(() => {
     queryClient = new QueryClient({
@@ -15,25 +59,21 @@ describe('Suspense Timer Tests', () => {
         },
       },
     })
+    fetchCount = { count: 0 }
   })
 
   it('should enforce minimum staleTime of 1000ms when using suspense with number', async () => {
-    const shortStaleTime = 10
-    let fetchCount = 0
+    const TestComponent = createTestQuery({
+      fetchCount,
+      queryKey: ['test'],
+      staleTime: 10,
+    })
 
-    function TestComponent() {
-      const { data } = useSuspenseQuery({
-        queryKey: ['test'],
-        queryFn: () => {
-          fetchCount++
-          return 'data'
-        },
-        staleTime: shortStaleTime,
-      })
-      return <div>{data}</div>
-    }
+    const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
-    const wrapper = render(
+    await waitFor(() => rendered.getByText('data: data'))
+
+    rendered.rerender(
       <QueryClientProvider client={queryClient}>
         <Suspense fallback="loading">
           <TestComponent />
@@ -41,42 +81,25 @@ describe('Suspense Timer Tests', () => {
       </QueryClientProvider>,
     )
 
-    await waitFor(() => {
-      expect(wrapper.getByText('data')).toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(100)
     })
 
-    wrapper.rerender(
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <TestComponent />
-        </Suspense>
-      </QueryClientProvider>,
-    )
-
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100))
-    })
-
-    expect(fetchCount).toBe(1)
+    expect(fetchCount.count).toBe(1)
   })
 
   it('should enforce minimum staleTime of 1000ms when using suspense with function', async () => {
-    let fetchCount = 0
-    const staleTimeFunc = () => 10
+    const TestComponent = createTestQuery({
+      fetchCount,
+      queryKey: ['test-func'],
+      staleTime: () => 10,
+    })
 
-    function TestComponent() {
-      const { data } = useSuspenseQuery({
-        queryKey: ['test-func'],
-        queryFn: () => {
-          fetchCount++
-          return 'data'
-        },
-        staleTime: staleTimeFunc,
-      })
-      return <div>{data}</div>
-    }
+    const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
-    const wrapper = render(
+    await waitFor(() => rendered.getByText('data: data'))
+
+    rendered.rerender(
       <QueryClientProvider client={queryClient}>
         <Suspense fallback="loading">
           <TestComponent />
@@ -84,148 +107,88 @@ describe('Suspense Timer Tests', () => {
       </QueryClientProvider>,
     )
 
-    await waitFor(() => {
-      expect(wrapper.getByText('data')).toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(100)
     })
 
-    wrapper.rerender(
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <TestComponent />
-        </Suspense>
-      </QueryClientProvider>,
-    )
-
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100))
-    })
-
-    expect(fetchCount).toBe(1)
+    expect(fetchCount.count).toBe(1)
   })
 
   it('should respect staleTime when value is greater than 1000ms', async () => {
-    const key = queryKey()
-    const staleTime = 2000
-    let fetchCount = 0
+    const TestComponent = createTestQuery({
+      fetchCount,
+      queryKey: queryKey(),
+      staleTime: 2000,
+    })
 
-    function Component() {
-      const result = useSuspenseQuery({
-        queryKey: key,
-        queryFn: async () => {
-          fetchCount++
-          await sleep(10)
-          return 'data'
-        },
-        staleTime,
-      })
-      return <div>data: {result.data}</div>
-    }
-
-    const rendered = renderWithClient(
-      queryClient,
-      <Suspense fallback="loading">
-        <Component />
-      </Suspense>,
-    )
+    const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
     await waitFor(() => rendered.getByText('data: data'))
 
-    // Manually trigger a remount
     rendered.rerender(
-      <Suspense fallback="loading">
-        <Component />
-      </Suspense>,
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback="loading">
+          <TestComponent />
+        </Suspense>
+      </QueryClientProvider>,
     )
 
-    // Wait longer than 1000ms but less than staleTime
-    await act(async () => {
-      await sleep(1500)
+    act(() => {
+      vi.advanceTimersByTime(1500)
     })
 
-    // Should not refetch as we're still within the staleTime
-    expect(fetchCount).toBe(1)
+    expect(fetchCount.count).toBe(1)
   })
 
   it('should enforce minimum staleTime when undefined is provided', async () => {
-    const key = queryKey()
-    let fetchCount = 0
+    const TestComponent = createTestQuery({
+      fetchCount,
+      queryKey: queryKey(),
+      staleTime: undefined,
+    })
 
-    function Component() {
-      const result = useSuspenseQuery({
-        queryKey: key,
-        queryFn: async () => {
-          fetchCount++
-          await sleep(10)
-          return 'data'
-        },
-        // Explicitly set staleTime as undefined
-        staleTime: undefined,
-      })
-      return <div>data: {result.data}</div>
-    }
-
-    const rendered = renderWithClient(
-      queryClient,
-      <Suspense fallback="loading">
-        <Component />
-      </Suspense>,
-    )
+    const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
     await waitFor(() => rendered.getByText('data: data'))
 
     rendered.rerender(
-      <Suspense fallback="loading">
-        <Component />
-      </Suspense>,
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback="loading">
+          <TestComponent />
+        </Suspense>
+      </QueryClientProvider>,
     )
 
-    // Wait less than enforced 1000ms
-    await act(async () => {
-      await sleep(500)
+    act(() => {
+      vi.advanceTimersByTime(500)
     })
 
-    // Should not refetch as minimum staleTime of 1000ms is enforced
-    expect(fetchCount).toBe(1)
+    expect(fetchCount.count).toBe(1)
   })
 
   it('should respect staleTime when function returns value greater than 1000ms', async () => {
-    const key = queryKey()
-    let fetchCount = 0
+    const TestComponent = createTestQuery({
+      fetchCount,
+      queryKey: queryKey(),
+      staleTime: () => 3000,
+    })
 
-    function Component() {
-      const result = useSuspenseQuery({
-        queryKey: key,
-        queryFn: async () => {
-          fetchCount++
-          await sleep(10)
-          return 'data'
-        },
-        staleTime: () => 3000,
-      })
-      return <div>data: {result.data}</div>
-    }
-
-    const rendered = renderWithClient(
-      queryClient,
-      <Suspense fallback="loading">
-        <Component />
-      </Suspense>,
-    )
+    const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
     await waitFor(() => rendered.getByText('data: data'))
 
     rendered.rerender(
-      <Suspense fallback="loading">
-        <Component />
-      </Suspense>,
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback="loading">
+          <TestComponent />
+        </Suspense>
+      </QueryClientProvider>,
     )
 
-    // Wait longer than 1000ms but less than returned staleTime
-    await act(async () => {
-      await sleep(2000)
+    act(() => {
+      vi.advanceTimersByTime(2000)
     })
 
-    // Should not refetch as we're still within the returned staleTime
-    expect(fetchCount).toBe(1)
+    expect(fetchCount.count).toBe(1)
   })
 })
