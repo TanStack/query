@@ -82,8 +82,6 @@ export function useBaseQuery<
       ),
   )
 
-  
-
   const [_, setForceRender] = React.useState(0)
   const result = observer.getOptimisticResult(defaultedOptions)
 
