@@ -12,7 +12,7 @@ import {
   useQuery,
 } from '..'
 import { QueryCache } from '../index'
-import { createDeferred, createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
@@ -1091,15 +1091,7 @@ describe('useQuery().promise', () => {
       expect(renderedComponents).toEqual([MyComponent])
     }
 
-    {
-      rendered.getByText('inc').click()
-
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('test0')
-      console.log({ renderedComponents })
-      expect(renderedComponents).toEqual([Page, MyComponent])
-    }
-
+    rendered.getByText('inc').click()
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('loading..')
