@@ -701,6 +701,7 @@ export class QueryObserver<
       return [...includedProps].some((key) => {
         const typedKey = key as keyof QueryObserverResult
         const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
+
         return changed
       })
     }
