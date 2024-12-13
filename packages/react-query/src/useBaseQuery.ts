@@ -82,33 +82,50 @@ export function useBaseQuery<
       ),
   )
 
-  const result = observer.getOptimisticResult(defaultedOptions)
+  const [result, setResult] = React.useState(() => observer.getOptimisticResult(defaultedOptions))
 
-  React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) => {
-        const unsubscribe = isRestoring
-          ? noop
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange))
+  // console.log('result', result)
+  React.useEffect(() => {
+    if (isRestoring) {
+      return
+    }
+    console.log('subscribing to observer')
+    
 
-        // Update result to make sure we did not miss any query updates
-        // between creating the observer and subscribing to it.
-        observer.updateResult()
+    const unsubscribe = observer.subscribe(
+      notifyManager.batchCalls((newResult) => {
+        
+        setResult((prev) => {
+          console.log('got new result', {
+            prev,
+            newResult,
+          })
+          return newResult
 
-        return unsubscribe
-      },
-      [observer, isRestoring],
-    ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
-  )
+
+        })
+      })
+    )
+
+    // Update result to make sure we did not miss any query updates
+    // between creating the observer and subscribing to it.
+    observer.updateResult()
+
+    return unsubscribe
+  }, [observer, isRestoring])
+
 
   React.useEffect(() => {
+    
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
 
+
+  React.useEffect(() => {
+    console.log('new query key', defaultedOptions.queryHash)
+  }, [defaultedOptions.queryHash])
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
