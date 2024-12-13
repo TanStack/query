@@ -5,8 +5,8 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
-  arrayPick,
   Blink,
+  arrayPick,
   createQueryClient,
   mockOnlineManagerIsOnline,
   mockVisibilityState,
