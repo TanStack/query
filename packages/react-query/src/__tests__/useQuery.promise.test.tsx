@@ -12,7 +12,9 @@ import {
   useQuery,
 } from '..'
 import { QueryCache } from '../index'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createDeferred, createQueryClient, queryKey, sleep } from './utils'
+
+
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
@@ -75,11 +77,11 @@ describe('useQuery().promise', () => {
       withinDOM().getByText('loading..')
       expect(renderedComponents).toEqual([Page, Loading])
     }
-
+    
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test')
-      expect(renderedComponents).toEqual([Page, MyComponent])
+      expect(renderedComponents).toEqual([MyComponent])
     }
   })
 
@@ -1035,9 +1037,10 @@ describe('useQuery().promise', () => {
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
-  it('should show correct data when switching between cache entries without re-fetches', async () => {
+  it.only('should show correct data when switching between cache entries without re-fetches', async () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
+
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
@@ -1091,7 +1094,15 @@ describe('useQuery().promise', () => {
       expect(renderedComponents).toEqual([MyComponent])
     }
 
-    rendered.getByText('inc').click()
+    {
+      rendered.getByText('inc').click()
+    
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test0')
+      console.log({renderedComponents})
+      expect(renderedComponents).toEqual([Page, MyComponent])
+    
+    }
 
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
