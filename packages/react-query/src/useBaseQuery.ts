@@ -110,7 +110,9 @@ export function useBaseQuery<
   console.log('result', result.promise)
 
   React.useEffect(() => {
-    observer.setOptions(defaultedOptions)
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
 
   React.useEffect(() => {
