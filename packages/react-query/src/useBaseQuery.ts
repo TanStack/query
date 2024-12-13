@@ -113,9 +113,7 @@ export function useBaseQuery<
   }, [observer, isRestoring])
 
   React.useEffect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setOptions(defaultedOptions, { listeners: false })
+    observer.setOptions(defaultedOptions)
   }, [defaultedOptions, observer])
 
   React.useEffect(() => {
