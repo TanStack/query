@@ -87,12 +87,10 @@ export function useBaseQuery<
   const result =
     observer.getOptimisticResult(defaultedOptions)
 
-  // console.log('result', result)
   React.useEffect(() => {
     if (isRestoring) {
       return
     }
-    console.log('subscribing to observer')
 
     const unsubscribe = observer.subscribe(
       notifyManager.batchCalls(() => {

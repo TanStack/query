@@ -1096,7 +1096,6 @@ describe('useQuery().promise', () => {
 
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      console.log('renderedComponents', renderedComponents)
       withinDOM().getByText('loading..')
       expect(renderedComponents).toEqual([Page, Loading])
     }

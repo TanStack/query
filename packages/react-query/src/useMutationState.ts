@@ -3,7 +3,7 @@
 'use client'
 import * as React from 'react'
 
-import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
+import { replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   Mutation,
