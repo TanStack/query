@@ -3,8 +3,11 @@ import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import {
   createRenderStream,
+  disableActEnvironment,
   useTrackRenders,
+  
 } from '@testing-library/react-render-stream'
+import {userEvent} from '@testing-library/user-event'
 import {
   QueryClientProvider,
   QueryErrorResetBoundary,
@@ -13,6 +16,7 @@ import {
 } from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, sleep } from './utils'
+
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
@@ -1035,7 +1039,8 @@ describe('useQuery().promise', () => {
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
-  it('should show correct data when switching between cache entries without re-fetches', async () => {
+  it.only('should show correct data when switching between cache entries without re-fetches', async () => {
+
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
 
@@ -1091,9 +1096,12 @@ describe('useQuery().promise', () => {
       expect(renderedComponents).toEqual([MyComponent])
     }
 
-    rendered.getByText('inc').click()
+
+    await userEvent.click(rendered.getByText('inc'))
+    
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      console.log('renderedComponents', renderedComponents)
       withinDOM().getByText('loading..')
       expect(renderedComponents).toEqual([Page, Loading])
     }
@@ -1104,7 +1112,7 @@ describe('useQuery().promise', () => {
       expect(renderedComponents).toEqual([MyComponent])
     }
 
-    rendered.getByText('dec').click()
+    await userEvent.click(rendered.getByText('dec'))
 
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()

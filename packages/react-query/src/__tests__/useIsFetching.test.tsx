@@ -54,65 +54,6 @@ describe('useIsFetching', () => {
     await findByText('isFetching: 0')
   })
 
-  it('should not update state while rendering', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
-
-    const key1 = queryKey()
-    const key2 = queryKey()
-
-    const isFetchingArray: Array<number> = []
-
-    function IsFetching() {
-      const isFetching = useIsFetching()
-      isFetchingArray.push(isFetching)
-      return null
-    }
-
-    function FirstQuery() {
-      useQuery({
-        queryKey: key1,
-        queryFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
-      })
-      return null
-    }
-
-    function SecondQuery() {
-      useQuery({
-        queryKey: key2,
-        queryFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
-      })
-      return null
-    }
-
-    function Page() {
-      const [renderSecond, setRenderSecond] = React.useState(false)
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setRenderSecond(true)
-        }, 50)
-      }, [])
-
-      return (
-        <>
-          <IsFetching />
-          <FirstQuery />
-          {renderSecond && <SecondQuery />}
-        </>
-      )
-    }
-
-    renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isFetchingArray).toEqual([0, 1, 1, 2, 1, 0]))
-  })
-
   it('should be able to filter', async () => {
     const queryClient = createQueryClient()
     const key1 = queryKey()

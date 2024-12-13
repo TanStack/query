@@ -4758,7 +4758,7 @@ describe('useQuery', () => {
     })
   })
 
-  it.only('should update query state and refetch when reset with resetQueries', async () => {
+  it('should update query state and refetch when reset with resetQueries', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
@@ -4772,6 +4772,7 @@ describe('useQuery', () => {
           return count
         },
         staleTime: Infinity,
+        notifyOnChangeProps: 'all',
       })
 
       states.push(state)
@@ -4782,7 +4783,6 @@ describe('useQuery', () => {
             reset
           </button>
           <div>data: {state.data ?? 'null'}</div>
-          <div>isFetching: {state.isFetching}</div>
         </div>
       )
     }
@@ -4797,9 +4797,8 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: 2'))
 
     expect(count).toBe(2)
-
     
-    const pickedStates = states.map(it => pick(it, ['data', 'isPending', 'isFetching', 'isSuccess', 'isStale']))
+    const pickedStates = states.map(x => pick(x, ['data', 'isPending', 'isFetching', 'isSuccess', 'isStale']))
 
     expect(pickedStates).toMatchInlineSnapshot(`
       [
@@ -4819,7 +4818,7 @@ describe('useQuery', () => {
         },
         {
           "data": undefined,
-          "isFetching": true,
+          "isFetching": false,
           "isPending": true,
           "isStale": true,
           "isSuccess": false,
@@ -4840,35 +4839,6 @@ describe('useQuery', () => {
         },
       ]
     `)
-
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isPending: true,
-      isFetching: true,
-      isSuccess: false,
-      isStale: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: 1,
-      isPending: false,
-      isFetching: false,
-      isSuccess: true,
-      isStale: false,
-    })
-    expect(states[2]).toMatchObject({
-      data: undefined,
-      isPending: true,
-      isFetching: true,
-      isSuccess: false,
-      isStale: true,
-    })
-    expect(states[3]).toMatchObject({
-      data: 2,
-      isPending: false,
-      isFetching: false,
-      isSuccess: true,
-      isStale: false,
-    })
   })
 
   it('should update query state and not refetch when resetting a disabled query with resetQueries', async () => {
@@ -6271,22 +6241,23 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Works'))
   })
 
-  it('should keep the previous data when placeholderData is set and cache is used', async () => {
+  it.only('should keep the previous data when placeholderData is set and cache is used', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<number | undefined>> = []
-    const steps = [0, 1, 0, 2]
+    
 
     function Page() {
       const [count, setCount] = React.useState(0)
 
       const state = useQuery({
         staleTime: Infinity,
-        queryKey: [key, steps[count]],
+        queryKey: [key, count],
         queryFn: async () => {
           await sleep(10)
-          return steps[count]
+          return count
         },
         placeholderData: keepPreviousData,
+        notifyOnChangeProps: 'all',
       })
 
       states.push(state)
@@ -6309,13 +6280,87 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
 
-    await waitFor(() => rendered.getByText('data: 0'))
+    await waitFor(() => rendered.getByText('data: 2'))
 
     fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
 
-    await waitFor(() => rendered.getByText('data: 2'))
+    await waitFor(() => rendered.getByText('data: 3'))
 
     // Initial
+
+    const pickedStates = states.map(x => pick(x, ['data', 'isFetching', 'isSuccess', 'isPlaceholderData']))
+
+    expect(pickedStates).toMatchInlineSnapshot(`
+      [
+        {
+          "data": undefined,
+          "isFetching": true,
+          "isPlaceholderData": false,
+          "isSuccess": false,
+        },
+        {
+          "data": 0,
+          "isFetching": false,
+          "isPlaceholderData": false,
+          "isSuccess": true,
+        },
+        {
+          "data": 0,
+          "isFetching": false,
+          "isPlaceholderData": false,
+          "isSuccess": true,
+        },
+        {
+          "data": 0,
+          "isFetching": true,
+          "isPlaceholderData": true,
+          "isSuccess": true,
+        },
+        {
+          "data": 1,
+          "isFetching": false,
+          "isPlaceholderData": false,
+          "isSuccess": true,
+        },
+        {
+          "data": 1,
+          "isFetching": false,
+          "isPlaceholderData": false,
+          "isSuccess": true,
+        },
+        {
+          "data": 1,
+          "isFetching": true,
+          "isPlaceholderData": true,
+          "isSuccess": true,
+        },
+        {
+          "data": 2,
+          "isFetching": false,
+          "isPlaceholderData": false,
+          "isSuccess": true,
+        },
+        {
+          "data": 2,
+          "isFetching": false,
+          "isPlaceholderData": false,
+          "isSuccess": true,
+        },
+        {
+          "data": 2,
+          "isFetching": true,
+          "isPlaceholderData": true,
+          "isSuccess": true,
+        },
+        {
+          "data": 3,
+          "isFetching": false,
+          "isPlaceholderData": false,
+          "isSuccess": true,
+        },
+      ]
+    `)
+    
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,

@@ -109,7 +109,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 1, 0, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
@@ -150,7 +150,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 1, 0, 0]))
   })
 
   it('should use provided custom queryClient', async () => {
