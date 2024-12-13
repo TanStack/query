@@ -1,24 +1,24 @@
 import { describe, expect, test, vi } from 'vitest'
 import {
+  QueryClient,
   injectQuery,
   provideTanStackQuery,
-  QueryClient,
 } from '@tanstack/angular-query-experimental'
-import type {
-  PersistedClient,
-  Persister,
-} from '@tanstack/query-persist-client-core'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { Component, effect } from '@angular/core'
 import { render, screen, waitFor } from '@testing-library/angular'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import { queryKey, sleep } from './utils'
+import type {
+  PersistedClient,
+  Persister,
+} from '@tanstack/query-persist-client-core'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
   return {
-    async persistClient(persistClient: PersistedClient) {
+    persistClient(persistClient: PersistedClient) {
       storedState = persistClient
     },
     async restoreClient() {
