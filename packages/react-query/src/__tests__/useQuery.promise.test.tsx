@@ -3,7 +3,6 @@ import {
   disableActEnvironment,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
-import { userEvent } from '@testing-library/user-event'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
@@ -1101,7 +1100,7 @@ describe('useQuery().promise', () => {
       expect(renderedComponents).toEqual([MyComponent])
     }
 
-    await userEvent.click(rendered.getByText('inc'))
+    rendered.getByText('inc').click()
 
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
@@ -1115,7 +1114,7 @@ describe('useQuery().promise', () => {
       expect(renderedComponents).toEqual([MyComponent])
     }
 
-    await userEvent.click(rendered.getByText('dec'))
+    rendered.getByText('dec').click()
 
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
