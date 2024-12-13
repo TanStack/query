@@ -1,12 +1,7 @@
+import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { describe, expect, it, vi } from 'vitest'
-import type {
-  InfiniteData,
-  UseSuspenseInfiniteQueryResult,
-  UseSuspenseQueryResult,
-} from '..'
 import {
   QueryCache,
   QueryErrorResetBoundary,
@@ -15,13 +10,12 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
-import {
-  arrayPick,
-  createQueryClient,
-  queryKey,
-  renderWithClient,
-  sleep,
-} from './utils'
+import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import type {
+  InfiniteData,
+  UseSuspenseInfiniteQueryResult,
+  UseSuspenseQueryResult,
+} from '..'
 
 describe('useSuspenseQuery', () => {
   const queryCache = new QueryCache()
@@ -66,34 +60,14 @@ describe('useSuspenseQuery', () => {
     )
 
     await waitFor(() => rendered.getByText('data: 1'))
-    expect(states.length).toBe(1)
-
     fireEvent.click(rendered.getByLabelText('toggle'))
 
     await waitFor(() => rendered.getByText('data: 2'))
 
-    expect(renders).toBe(8)
-
-    // The suspense is triggered after setting the setting the new result, which is why this is 3 instead of 2
-    expect(states.length).toBe(3)
-
-    const pickedStates = arrayPick(states, ['data', 'status'])
-    expect(pickedStates).toMatchInlineSnapshot(`
-      [
-        {
-          "data": 1,
-          "status": "success",
-        },
-        {
-          "data": 1,
-          "status": "success",
-        },
-        {
-          "data": 2,
-          "status": "success",
-        },
-      ]
-    `)
+    expect(renders).toBe(6)
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 1, status: 'success' })
+    expect(states[1]).toMatchObject({ data: 2, status: 'success' })
   })
 
   it('should return the correct states for a successful infinite query', async () => {
@@ -139,9 +113,8 @@ describe('useSuspenseQuery', () => {
     fireEvent.click(rendered.getByText('next'))
     await waitFor(() => rendered.getByText('data: 2'))
 
-    // The suspense is triggered after setting the setting the new result, which is why this is 3 instead of 2
-    expect(states.length).toBe(3)
-    expect(states[2]).toMatchObject({
+    expect(states.length).toBe(2)
+    expect(states[1]).toMatchObject({
       data: { pages: [2], pageParams: [1] },
       status: 'success',
     })
