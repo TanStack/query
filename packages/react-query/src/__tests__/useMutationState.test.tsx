@@ -123,7 +123,7 @@ describe('useIsMutating', () => {
         predicate: (mutation) =>
           mutation.options.mutationKey?.[0] === 'mutation1',
       })
-      
+
       React.useEffect(() => {
         isMutatingArray.push(isMutating)
       }, [isMutating])
