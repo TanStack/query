@@ -107,11 +107,15 @@ export function createDeferred<TValue>() {
 }
 export type Deferred<TValue> = ReturnType<typeof createDeferred<TValue>>
 
-
-
-export function pick<T extends object, K extends keyof T>(obj: T, keys: Array<K>): Pick<T, K> {
-  return keys.reduce((acc, key) => {
-    acc[key] = obj[key]
-    return acc
-  }, {} as Pick<T, K>)
+export function pick<T extends object, K extends keyof T>(
+  obj: T,
+  keys: Array<K>,
+): Pick<T, K> {
+  return keys.reduce(
+    (acc, key) => {
+      acc[key] = obj[key]
+      return acc
+    },
+    {} as Pick<T, K>,
+  )
 }
