@@ -51,22 +51,22 @@ export function useMutationState<TResult = MutationState>(
     optionsRef.current = options
   })
 
+  const [result, setResult] = React.useState<Array<TResult>>(() =>
+    getResult(mutationCache, options),
+  )
 
-  const [result, setResult] = React.useState<Array<TResult>>(() => getResult(mutationCache, options))
-
-  
   React.useEffect(() => {
     const sub = mutationCache.subscribe(() => {
-      setResult(prevResult => {
+      setResult((prevResult) => {
         const nextResult = replaceEqualDeep(
           prevResult,
           getResult(mutationCache, optionsRef.current),
         )
         return nextResult
       })
-    });
+    })
     return sub
   }, [mutationCache])
-  
-  return result;
+
+  return result
 }

@@ -11,8 +11,10 @@ export function useIsFetching(
 ): number {
   const client = useQueryClient(queryClient)
   const queryCache = client.getQueryCache()
-  
-  const [number, setNumber] = React.useState<number>(() => client.isFetching(filters))
+
+  const [number, setNumber] = React.useState<number>(() =>
+    client.isFetching(filters),
+  )
 
   const filtersRef = React.useRef(filters)
   React.useEffect(() => {
@@ -25,10 +27,12 @@ export function useIsFetching(
     // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setNumber(client.isFetching(filtersRef.current))
 
-    return queryCache.subscribe(notifyManager.batchCalls(() => {
-      setNumber(client.isFetching(filtersRef.current))
-    }))
+    return queryCache.subscribe(
+      notifyManager.batchCalls(() => {
+        setNumber(client.isFetching(filtersRef.current))
+      }),
+    )
   }, [client, queryCache])
 
-  return number;
+  return number
 }

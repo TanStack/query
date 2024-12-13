@@ -82,7 +82,9 @@ export function useBaseQuery<
       ),
   )
 
-  const [result, setResult] = React.useState(() => observer.getOptimisticResult(defaultedOptions))
+  const [result, setResult] = React.useState(() =>
+    observer.getOptimisticResult(defaultedOptions),
+  )
 
   // console.log('result', result)
   React.useEffect(() => {
@@ -103,7 +105,6 @@ export function useBaseQuery<
 
     return unsubscribe
   }, [observer, isRestoring])
-
 
   React.useEffect(() => {
     observer.setOptions(defaultedOptions)

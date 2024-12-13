@@ -4797,8 +4797,10 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: 2'))
 
     expect(count).toBe(2)
-    
-    const pickedStates = states.map(x => pick(x, ['data', 'isPending', 'isFetching', 'isSuccess', 'isStale']))
+
+    const pickedStates = states.map((x) =>
+      pick(x, ['data', 'isPending', 'isFetching', 'isSuccess', 'isStale']),
+    )
 
     expect(pickedStates).toMatchInlineSnapshot(`
       [
@@ -6244,7 +6246,6 @@ describe('useQuery', () => {
   it.only('should keep the previous data when placeholderData is set and cache is used', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<number | undefined>> = []
-    
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -6288,7 +6289,9 @@ describe('useQuery', () => {
 
     // Initial
 
-    const pickedStates = states.map(x => pick(x, ['data', 'isFetching', 'isSuccess', 'isPlaceholderData']))
+    const pickedStates = states.map((x) =>
+      pick(x, ['data', 'isFetching', 'isSuccess', 'isPlaceholderData']),
+    )
 
     expect(pickedStates).toMatchInlineSnapshot(`
       [
@@ -6360,7 +6363,7 @@ describe('useQuery', () => {
         },
       ]
     `)
-    
+
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,
