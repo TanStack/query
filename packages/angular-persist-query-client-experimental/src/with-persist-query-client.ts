@@ -56,7 +56,7 @@ type PersistQueryClientOptions = {
 export function withPersistQueryClient(
   persistQueryClientOptions: Array<PersistQueryClientOptions>,
 ): PersistQueryClientFeature {
-  const isRestoring = signal(true)
+  const isRestoring = signal(false)
   const providers = [
     provideIsRestoring(isRestoring.asReadonly()),
     {
@@ -67,6 +67,7 @@ export function withPersistQueryClient(
         const destroyRef = inject(DestroyRef)
         const queryClient = injectQueryClient()
 
+        isRestoring.set(true)
         const restorations = persistQueryClientOptions.map(
           ({ onSuccess, persistOptions }) => {
             const options = { queryClient, ...persistOptions }
