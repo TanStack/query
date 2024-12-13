@@ -123,6 +123,7 @@ export function createHydrationStreamProvider<TShape>() {
       if (!stream.length) {
         return null
       }
+      // console.log(`pushing ${stream.length} entries`)
       const serializedCacheArgs = stream
         .map((entry) => transformer.serialize(entry))
         .map((entry) => JSON.stringify(entry))
