@@ -1,5 +1,6 @@
 import {
   createRenderStream,
+  disableActEnvironment,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
 import { userEvent } from '@testing-library/user-event'
@@ -14,6 +15,14 @@ import {
 } from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, sleep } from './utils'
+
+let disableActReturn: ReturnType<typeof disableActEnvironment>
+beforeAll(() => {
+  disableActReturn = disableActEnvironment()
+})
+afterAll(() => {
+  disableActReturn.cleanup()
+})
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
