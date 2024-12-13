@@ -82,9 +82,10 @@ export function useBaseQuery<
       ),
   )
 
-  const [result, setResult] = React.useState(() =>
-    observer.getOptimisticResult(defaultedOptions),
-  )
+  const [_, setForceUpdate] = React.useState(0)
+
+  const result =
+    observer.getOptimisticResult(defaultedOptions)
 
   // console.log('result', result)
   React.useEffect(() => {
@@ -94,8 +95,8 @@ export function useBaseQuery<
     console.log('subscribing to observer')
 
     const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls((newResult) => {
-        setResult(newResult)
+      notifyManager.batchCalls(() => {
+        setForceUpdate(n => n + 1)
       }),
     )
 
@@ -106,8 +107,11 @@ export function useBaseQuery<
     return unsubscribe
   }, [observer, isRestoring])
 
+
   React.useEffect(() => {
-    observer.setOptions(defaultedOptions)
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
 
   // Handle suspense

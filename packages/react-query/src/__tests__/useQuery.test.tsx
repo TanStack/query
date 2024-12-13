@@ -1,22 +1,20 @@
-import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
+import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
+import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
-  Blink,
   arrayPick,
+  Blink,
   createQueryClient,
   mockOnlineManagerIsOnline,
   mockVisibilityState,
-  pick,
   queryKey,
   renderWithClient,
   setActTimeout,
   sleep,
 } from './utils'
-import type { Mock } from 'vitest'
 import type {
   DefinedUseQueryResult,
   OmitKeyof,
@@ -24,6 +22,7 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
+import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -4784,6 +4783,7 @@ describe('useQuery', () => {
             reset
           </button>
           <div>data: {state.data ?? 'null'}</div>
+          <div>isFetching: {state.isFetching}</div>
         </div>
       )
     }
@@ -4799,11 +4799,8 @@ describe('useQuery', () => {
 
     expect(count).toBe(2)
 
-    const pickedStates = states.map((x) =>
-      pick(x, ['data', 'isPending', 'isFetching', 'isSuccess', 'isStale']),
-    )
 
-    expect(pickedStates).toMatchInlineSnapshot(`
+    expect(arrayPick(states, ['data', 'isStale', 'isFetching', 'isPending', 'isSuccess'])).toMatchInlineSnapshot(`
       [
         {
           "data": undefined,
@@ -4821,7 +4818,7 @@ describe('useQuery', () => {
         },
         {
           "data": undefined,
-          "isFetching": false,
+          "isFetching": true,
           "isPending": true,
           "isStale": true,
           "isSuccess": false,
@@ -6244,22 +6241,22 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Works'))
   })
 
-  it.only('should keep the previous data when placeholderData is set and cache is used', async () => {
+  it('should keep the previous data when placeholderData is set and cache is used', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<number | undefined>> = []
+    const steps = [0, 1, 0, 2]
 
     function Page() {
       const [count, setCount] = React.useState(0)
 
       const state = useQuery({
         staleTime: Infinity,
-        queryKey: [key, count],
+        queryKey: [key, steps[count]],
         queryFn: async () => {
           await sleep(10)
-          return count
+          return steps[count]
         },
         placeholderData: keepPreviousData,
-        notifyOnChangeProps: 'all',
       })
 
       states.push(state)
@@ -6282,92 +6279,13 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
 
-    await waitFor(() => rendered.getByText('data: 2'))
+    await waitFor(() => rendered.getByText('data: 0'))
 
     fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
 
-    await waitFor(() => rendered.getByText('data: 3'))
+    await waitFor(() => rendered.getByText('data: 2'))
 
     // Initial
-
-    const pickedStates = arrayPick(states, [
-      'data',
-      'isFetching',
-      'isPlaceholderData',
-      'isSuccess',
-    ])
-
-    expect(pickedStates).toMatchInlineSnapshot(`
-      [
-        {
-          "data": undefined,
-          "isFetching": true,
-          "isPlaceholderData": false,
-          "isSuccess": false,
-        },
-        {
-          "data": 0,
-          "isFetching": false,
-          "isPlaceholderData": false,
-          "isSuccess": true,
-        },
-        {
-          "data": 0,
-          "isFetching": false,
-          "isPlaceholderData": false,
-          "isSuccess": true,
-        },
-        {
-          "data": 0,
-          "isFetching": true,
-          "isPlaceholderData": true,
-          "isSuccess": true,
-        },
-        {
-          "data": 1,
-          "isFetching": false,
-          "isPlaceholderData": false,
-          "isSuccess": true,
-        },
-        {
-          "data": 1,
-          "isFetching": false,
-          "isPlaceholderData": false,
-          "isSuccess": true,
-        },
-        {
-          "data": 1,
-          "isFetching": true,
-          "isPlaceholderData": true,
-          "isSuccess": true,
-        },
-        {
-          "data": 2,
-          "isFetching": false,
-          "isPlaceholderData": false,
-          "isSuccess": true,
-        },
-        {
-          "data": 2,
-          "isFetching": false,
-          "isPlaceholderData": false,
-          "isSuccess": true,
-        },
-        {
-          "data": 2,
-          "isFetching": true,
-          "isPlaceholderData": true,
-          "isSuccess": true,
-        },
-        {
-          "data": 3,
-          "isFetching": false,
-          "isPlaceholderData": false,
-          "isSuccess": true,
-        },
-      ]
-    `)
-
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,

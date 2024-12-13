@@ -1036,7 +1036,7 @@ describe('useQuery().promise', () => {
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
-  it.only('should show correct data when switching between cache entries without re-fetches', async () => {
+  it('should show correct data when switching between cache entries without re-fetches', async () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
 
