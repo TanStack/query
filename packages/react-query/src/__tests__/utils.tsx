@@ -95,7 +95,7 @@ export function setIsServer(isServer: boolean) {
 
 export const doNotExecute = (_func: () => void) => true
 
-export function pick<T extends object, TKey extends keyof T>(
+function pick<T extends object, TKey extends keyof T>(
   obj: T,
   keys: Array<TKey>,
 ): Pick<T, TKey> {
