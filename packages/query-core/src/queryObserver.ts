@@ -610,7 +610,11 @@ export class QueryObserver<
        * Create a new thenable and result promise when the results have changed
        */
       const recreateThenable = () => {
-        console.log('-----------recreateThenable()', 'queryHash:', query.queryHash)
+        console.log(
+          '-----------recreateThenable()',
+          'queryHash:',
+          query.queryHash,
+        )
         const pending =
           (this.#currentThenable =
           nextResult.promise =
@@ -704,8 +708,8 @@ export class QueryObserver<
         const typedKey = key as keyof QueryObserverResult
         const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
         console.log(`changed key "${typedKey}"?`, changed, {
-          prev: this.#currentResult[typedKey], 
-          next: prevResult[typedKey]
+          prev: this.#currentResult[typedKey],
+          next: prevResult[typedKey],
         })
         return changed
       })

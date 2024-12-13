@@ -4798,8 +4798,9 @@ describe('useQuery', () => {
 
     expect(count).toBe(2)
 
-    
-    const pickedStates = states.map(it => pick(it, ['data', 'isPending', 'isFetching', 'isSuccess', 'isStale']))
+    const pickedStates = states.map((it) =>
+      pick(it, ['data', 'isPending', 'isFetching', 'isSuccess', 'isStale']),
+    )
 
     expect(pickedStates).toMatchInlineSnapshot(`
       [
