@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@tanstack/query-persist-client-core": "workspace:*",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/react": "^16.0.1",
     "@testing-library/react-render-stream": "^2.0.0",
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
