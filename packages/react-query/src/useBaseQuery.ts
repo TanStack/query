@@ -84,8 +84,7 @@ export function useBaseQuery<
 
   const [_, setForceUpdate] = React.useState(0)
 
-  const result =
-    observer.getOptimisticResult(defaultedOptions)
+  const result = observer.getOptimisticResult(defaultedOptions)
 
   React.useEffect(() => {
     if (isRestoring) {
@@ -94,7 +93,7 @@ export function useBaseQuery<
 
     const unsubscribe = observer.subscribe(
       notifyManager.batchCalls(() => {
-        setForceUpdate(n => n + 1)
+        setForceUpdate((n) => n + 1)
       }),
     )
 
@@ -104,7 +103,6 @@ export function useBaseQuery<
 
     return unsubscribe
   }, [observer, isRestoring])
-
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
