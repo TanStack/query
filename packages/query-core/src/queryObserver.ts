@@ -199,6 +199,7 @@ export class QueryObserver<
       this.#executeFetch()
     }
 
+    console.log('updating result due to setOptions()', notifyOptions)
     // Update result
     this.updateResult(notifyOptions)
 
@@ -609,6 +610,7 @@ export class QueryObserver<
        * Create a new thenable and result promise when the results have changed
        */
       const recreateThenable = () => {
+        console.log('-----------recreateThenable()', 'queryHash:', query.queryHash)
         const pending =
           (this.#currentThenable =
           nextResult.promise =
@@ -698,11 +700,14 @@ export class QueryObserver<
         includedProps.add('error')
       }
 
-      return Object.keys(this.#currentResult).some((key) => {
+      return [...includedProps].some((key) => {
         const typedKey = key as keyof QueryObserverResult
         const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
-
-        return changed && includedProps.has(typedKey)
+        console.log(`changed key "${typedKey}"?`, changed, {
+          prev: this.#currentResult[typedKey], 
+          next: prevResult[typedKey]
+        })
+        return changed
       })
     }
 

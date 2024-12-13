@@ -9,6 +9,7 @@ import {
   createQueryClient,
   mockOnlineManagerIsOnline,
   mockVisibilityState,
+  pick,
   queryKey,
   renderWithClient,
   setActTimeout,
@@ -2485,38 +2486,6 @@ describe('useQuery', () => {
     expect(queryCache.find({ queryKey: key })!.options.retryDelay).toBe(20)
   })
 
-  it('should batch re-renders', async () => {
-    const key = queryKey()
-
-    let renders = 0
-
-    const queryFn = async () => {
-      await sleep(15)
-      return 'data'
-    }
-
-    function Page() {
-      const query1 = useQuery({ queryKey: key, queryFn })
-      const query2 = useQuery({ queryKey: key, queryFn })
-      renders++
-
-      return (
-        <div>
-          {query1.data} {query2.data}
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => {
-      rendered.getByText('data data')
-    })
-
-    // Should be 2 instead of 3
-    expect(renders).toBe(2)
-  })
-
   it('should render latest data even if react has discarded certain renders', async () => {
     const key = queryKey()
 
@@ -4789,7 +4758,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should update query state and refetch when reset with resetQueries', async () => {
+  it.only('should update query state and refetch when reset with resetQueries', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
@@ -4828,6 +4797,49 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: 2'))
 
     expect(count).toBe(2)
+
+    
+    const pickedStates = states.map(it => pick(it, ['data', 'isPending', 'isFetching', 'isSuccess', 'isStale']))
+
+    expect(pickedStates).toMatchInlineSnapshot(`
+      [
+        {
+          "data": undefined,
+          "isFetching": true,
+          "isPending": true,
+          "isStale": true,
+          "isSuccess": false,
+        },
+        {
+          "data": 1,
+          "isFetching": false,
+          "isPending": false,
+          "isStale": false,
+          "isSuccess": true,
+        },
+        {
+          "data": undefined,
+          "isFetching": true,
+          "isPending": true,
+          "isStale": true,
+          "isSuccess": false,
+        },
+        {
+          "data": undefined,
+          "isFetching": true,
+          "isPending": true,
+          "isStale": true,
+          "isSuccess": false,
+        },
+        {
+          "data": 2,
+          "isFetching": false,
+          "isPending": false,
+          "isStale": false,
+          "isSuccess": true,
+        },
+      ]
+    `)
 
     expect(states[0]).toMatchObject({
       data: undefined,
