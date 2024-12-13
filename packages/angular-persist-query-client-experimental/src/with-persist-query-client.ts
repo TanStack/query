@@ -30,23 +30,23 @@ type PersistQueryClientOptions = {
  *
  * ```ts
  * const localStoragePersister = createSyncStoragePersister({
- * storage: window.localStorage,
+ *  storage: window.localStorage,
  * })
  *
  * export const appConfig: ApplicationConfig = {
- * providers: [
- * provideTanStackQuery(
- * new QueryClient(),
- * withPersistQueryClient([
- * {
- * persistOptions: {
- * persister: localStoragePersister,
- * },
- * onSuccess: () => console.log('Restoration completed successfully.'),
- * },
- * ])
- * )
- * ]
+ *  providers: [
+ *    provideTanStackQuery(
+ *      new QueryClient(),
+ *      withPersistQueryClient([
+ *        {
+ *          persistOptions: {
+ *            persister: localStoragePersister,
+ *          },
+ *          onSuccess: () => console.log('Restoration completed successfully.'),
+ *        },
+ *      ])
+ *    )
+ *  ]
  * }
  * ```
  * @param persistQueryClientOptions - An array of objects containing persistOptions and an onSuccess callback which gets called when the restoration process is complete.
