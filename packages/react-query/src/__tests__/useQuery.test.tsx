@@ -1,11 +1,12 @@
-import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
+import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
+import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
+  arrayPick,
   createQueryClient,
   mockOnlineManagerIsOnline,
   mockVisibilityState,
@@ -15,6 +16,7 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
+import type { Mock } from 'vitest'
 import type {
   DefinedUseQueryResult,
   OmitKeyof,
@@ -22,7 +24,6 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -6289,9 +6290,12 @@ describe('useQuery', () => {
 
     // Initial
 
-    const pickedStates = states.map((x) =>
-      pick(x, ['data', 'isFetching', 'isSuccess', 'isPlaceholderData']),
-    )
+    const pickedStates = arrayPick(states, [
+      'data',
+      'isFetching',
+      'isPlaceholderData',
+      'isSuccess',
+    ])
 
     expect(pickedStates).toMatchInlineSnapshot(`
       [

@@ -146,7 +146,6 @@ describe('useSuspenseQueries', () => {
   it('should only call combine after resolving', async () => {
     const spy = vi.fn()
     const key = queryKey()
-
     function Page() {
       const data = useSuspenseQueries({
         queries: [1, 2, 3].map((value) => ({

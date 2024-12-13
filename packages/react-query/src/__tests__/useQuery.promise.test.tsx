@@ -1,12 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
 import {
   createRenderStream,
-  disableActEnvironment,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
 import { userEvent } from '@testing-library/user-event'
+import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import {
   QueryClientProvider,
   QueryErrorResetBoundary,

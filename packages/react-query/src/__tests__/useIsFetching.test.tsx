@@ -1,14 +1,8 @@
-import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
+import { describe, expect, it } from 'vitest'
 import { QueryCache, useIsFetching, useQuery } from '..'
-import {
-  createQueryClient,
-  queryKey,
-  renderWithClient,
-  setActTimeout,
-  sleep,
-} from './utils'
+import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
