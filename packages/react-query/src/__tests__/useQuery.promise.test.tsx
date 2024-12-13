@@ -14,8 +14,6 @@ import {
 import { QueryCache } from '../index'
 import { createDeferred, createQueryClient, queryKey, sleep } from './utils'
 
-
-
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({
@@ -77,7 +75,7 @@ describe('useQuery().promise', () => {
       withinDOM().getByText('loading..')
       expect(renderedComponents).toEqual([Page, Loading])
     }
-    
+
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test')
@@ -1041,7 +1039,6 @@ describe('useQuery().promise', () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
 
-
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
       const data = React.use(props.promise)
@@ -1096,12 +1093,11 @@ describe('useQuery().promise', () => {
 
     {
       rendered.getByText('inc').click()
-    
+
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test0')
-      console.log({renderedComponents})
+      console.log({ renderedComponents })
       expect(renderedComponents).toEqual([Page, MyComponent])
-    
     }
 
     {

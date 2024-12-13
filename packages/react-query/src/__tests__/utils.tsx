@@ -95,15 +95,14 @@ export function setIsServer(isServer: boolean) {
 
 export const doNotExecute = (_func: () => void) => true
 
-
 export function createDeferred<TValue>() {
-  let resolve: (value: TValue) => void;
-  let reject: (error: unknown) => void;
+  let resolve: (value: TValue) => void
+  let reject: (error: unknown) => void
   const promise = new Promise<TValue>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
+    resolve = res
+    reject = rej
+  })
 
-  return { promise, resolve: resolve!, reject: reject! };
+  return { promise, resolve: resolve!, reject: reject! }
 }
-export type Deferred<TValue> = ReturnType<typeof createDeferred<TValue>>;
+export type Deferred<TValue> = ReturnType<typeof createDeferred<TValue>>

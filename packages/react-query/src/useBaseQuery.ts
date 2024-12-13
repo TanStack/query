@@ -82,7 +82,9 @@ export function useBaseQuery<
       ),
   )
 
-  const [result, setResult] = React.useState(() => observer.getOptimisticResult(defaultedOptions))
+  const [result, setResult] = React.useState(() =>
+    observer.getOptimisticResult(defaultedOptions),
+  )
 
   // console.log('result', result)
   React.useEffect(() => {
@@ -90,21 +92,17 @@ export function useBaseQuery<
       return
     }
     console.log('subscribing to observer')
-    
 
     const unsubscribe = observer.subscribe(
       notifyManager.batchCalls((newResult) => {
-        
         setResult((prev) => {
           console.log('got new result', {
             prev,
             newResult,
           })
           return newResult
-
-
         })
-      })
+      }),
     )
 
     // Update result to make sure we did not miss any query updates
@@ -114,14 +112,11 @@ export function useBaseQuery<
     return unsubscribe
   }, [observer, isRestoring])
 
-
   React.useEffect(() => {
-    
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
-
 
   React.useEffect(() => {
     console.log('new query key', defaultedOptions.queryHash)
