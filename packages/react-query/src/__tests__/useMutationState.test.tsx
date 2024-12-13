@@ -80,7 +80,9 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating({ mutationKey: ['mutation1'] })
-      isMutatingArray.push(isMutating)
+      React.useEffect(() => {
+        isMutatingArray.push(isMutating)
+      }, [isMutating])
       return null
     }
 
@@ -109,7 +111,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 1, 0, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
@@ -121,7 +123,10 @@ describe('useIsMutating', () => {
         predicate: (mutation) =>
           mutation.options.mutationKey?.[0] === 'mutation1',
       })
-      isMutatingArray.push(isMutating)
+      
+      React.useEffect(() => {
+        isMutatingArray.push(isMutating)
+      }, [isMutating])
       return null
     }
 
@@ -150,7 +155,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 1, 0, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
   })
 
   it('should use provided custom queryClient', async () => {
