@@ -4799,8 +4799,15 @@ describe('useQuery', () => {
 
     expect(count).toBe(2)
 
-
-    expect(arrayPick(states, ['data', 'isStale', 'isFetching', 'isPending', 'isSuccess'])).toMatchInlineSnapshot(`
+    expect(
+      arrayPick(states, [
+        'data',
+        'isStale',
+        'isFetching',
+        'isPending',
+        'isSuccess',
+      ]),
+    ).toMatchInlineSnapshot(`
       [
         {
           "data": undefined,
