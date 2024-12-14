@@ -33,27 +33,39 @@ export class TasksService {
    */
   addTask() {
     return mutationOptions({
-      mutationFn: ({ task, failMutation = false }: { task: string; failMutation: boolean }) =>
-        lastValueFrom(this.#http.post(`/api/tasks${failMutation ? '-wrong-url' : ''}`, task)),
+      mutationFn: ({
+        task,
+        failMutation = false,
+      }: {
+        task: string
+        failMutation: boolean
+      }) =>
+        lastValueFrom(
+          this.#http.post(
+            `/api/tasks${failMutation ? '-wrong-url' : ''}`,
+            task,
+          ),
+        ),
       mutationKey: ['tasks'],
       onSuccess: () => {
         this.#queryClient.invalidateQueries({ queryKey: ['tasks'] })
       },
       onMutate: async ({ task }) => {
-
         // Cancel any outgoing refetches
         // (so they don't overwrite our optimistic update)
         await this.#queryClient.cancelQueries({ queryKey: ['tasks'] })
 
         // Snapshot the previous value
-        const previousTodos = this.#queryClient.getQueryData<Array<string>>(['tasks'])
+        const previousTodos = this.#queryClient.getQueryData<Array<string>>([
+          'tasks',
+        ])
 
         // Optimistically update to the new value
         if (previousTodos) {
-          this.#queryClient.setQueryData<Array<string>>(['tasks'], [
-            ...previousTodos,
-            task,
-          ])
+          this.#queryClient.setQueryData<Array<string>>(
+            ['tasks'],
+            [...previousTodos, task],
+          )
         }
 
         return previousTodos
@@ -69,5 +81,4 @@ export class TasksService {
       },
     })
   }
-
 }

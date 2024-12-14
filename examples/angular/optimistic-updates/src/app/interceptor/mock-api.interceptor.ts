@@ -26,12 +26,19 @@ export const mockInterceptor: HttpInterceptorFn = (
       case 'GET':
         return respondWith(
           200,
-          JSON.parse(sessionStorage.getItem('optimistic-updates-tasks') || '[]'),
+          JSON.parse(
+            sessionStorage.getItem('optimistic-updates-tasks') || '[]',
+          ),
         )
       case 'POST':
-        const tasks = JSON.parse(sessionStorage.getItem('optimistic-updates-tasks') || '[]')
+        const tasks = JSON.parse(
+          sessionStorage.getItem('optimistic-updates-tasks') || '[]',
+        )
         tasks.push(req.body)
-        sessionStorage.setItem('optimistic-updates-tasks', JSON.stringify(tasks))
+        sessionStorage.setItem(
+          'optimistic-updates-tasks',
+          JSON.stringify(tasks),
+        )
         return respondWith(201, {
           status: 'success',
           task: req.body,
@@ -42,7 +49,6 @@ export const mockInterceptor: HttpInterceptorFn = (
     return respondWith(500, {
       status: 'error',
     })
-
   }
 
   return next(req)
