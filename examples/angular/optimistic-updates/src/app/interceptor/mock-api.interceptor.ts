@@ -3,7 +3,6 @@
  * It handles the following operations:
  * - GET: Fetches all tasks from sessionStorage.
  * - POST: Adds a new task to sessionStorage.
- * - DELETE: Clears all tasks from sessionStorage.
  * Simulated responses include a delay to mimic network latency.
  */
 import { HttpResponse } from '@angular/common/http'
