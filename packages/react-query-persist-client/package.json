@@ -40,12 +40,14 @@
     "build:types": "tsc --build"
   },
   "devDependencies": {
-    "@types/react": "^18.0.14",
-    "@types/react-dom": "^18.0.5",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "react": "^18.2.0",
     "react-17": "npm:react@^17.0.2",
+    "react-18": "npm:react@^18.0.14",
     "react-dom": "^18.2.0",
     "react-dom-17": "npm:react-dom@^17.0.2",
+    "react-dom-18": "npm:react-dom@^18.0.5",
     "@tanstack/react-query": "workspace:*"
   },
   "dependencies": {
