@@ -55,12 +55,12 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^8.15.0"
+    "@typescript-eslint/utils": "^8.18.0"
   },
   "devDependencies": {
-    "@typescript-eslint/rule-tester": "^8.15.0",
+    "@typescript-eslint/rule-tester": "^8.18.0",
     "combinate": "^1.1.11",
-    "eslint": "^9.15.0"
+    "eslint": "^9.17.0"
   },
   "peerDependencies": {
     "eslint": "^8.57.0 || ^9.0.0"

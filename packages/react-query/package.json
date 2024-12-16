@@ -65,11 +65,11 @@
   },
   "devDependencies": {
     "@tanstack/query-persist-client-core": "workspace:*",
-    "@testing-library/react": "^16.0.1",
+    "@testing-library/react": "^16.1.0",
     "@testing-library/react-render-stream": "^2.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^4.3.4",
     "eslint-plugin-react-compiler": "19.0.0-beta-0dec889-20241115",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

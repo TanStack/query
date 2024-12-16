@@ -13,15 +13,15 @@
     "@tanstack/react-query": "^5.62.7",
     "@tanstack/react-query-devtools": "^5.62.7",
     "@tanstack/react-query-persist-client": "^5.62.7",
-    "msw": "^2.6.6",
+    "msw": "^2.6.8",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^4.3.4",
     "typescript": "5.7.2",
-    "vite": "^5.3.5"
+    "vite": "^5.4.11"
   },
   "msw": {
     "workerDirectory": [

@@ -69,7 +69,7 @@
     "@solidjs/testing-library": "^0.8.10",
     "solid-js": "^1.9.3",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.10.2"
+    "vite-plugin-solid": "^2.11.0"
   },
   "peerDependencies": {
     "solid-js": "^1.6.0"
