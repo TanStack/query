@@ -67,13 +67,13 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^1.6.4",
-    "@angular/compiler": "^19.1.0-next.0",
-    "@angular/core": "^19.1.0-next.0",
-    "@angular/platform-browser": "^19.1.0-next.0",
-    "@angular/platform-browser-dynamic": "^19.1.0-next.0",
-    "@microsoft/api-extractor": "^7.48.0",
-    "eslint-plugin-jsdoc": "^50.5.0",
+    "@analogjs/vite-plugin-angular": "^1.10.1",
+    "@angular/compiler": "^19.1.0-next.3",
+    "@angular/core": "^19.1.0-next.3",
+    "@angular/platform-browser": "^19.1.0-next.3",
+    "@angular/platform-browser-dynamic": "^19.1.0-next.3",
+    "@microsoft/api-extractor": "^7.48.1",
+    "eslint-plugin-jsdoc": "^50.6.1",
     "tsup": "8.0.2",
     "typescript": "5.7.2"
   },
