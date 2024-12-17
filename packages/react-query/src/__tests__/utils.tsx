@@ -94,3 +94,23 @@ export function setIsServer(isServer: boolean) {
 }
 
 export const doNotExecute = (_func: () => void) => true
+
+function pick<T extends object, TKey extends keyof T>(
+  obj: T,
+  keys: Array<TKey>,
+): Pick<T, TKey> {
+  return keys.reduce(
+    (acc, key) => {
+      acc[key] = obj[key]
+      return acc
+    },
+    {} as Pick<T, TKey>,
+  )
+}
+
+export function arrayPick<T extends object, TKey extends keyof T>(
+  list: Array<T>,
+  keys: Array<TKey>,
+): Array<Pick<T, TKey>> {
+  return list.map((item) => pick(item, keys))
+}

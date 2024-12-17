@@ -1,10 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
 import {
   createRenderStream,
+  disableActEnvironment,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
+import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import {
   QueryClientProvider,
   QueryErrorResetBoundary,
@@ -13,6 +14,14 @@ import {
 } from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, sleep } from './utils'
+
+let disableActReturn: ReturnType<typeof disableActEnvironment>
+beforeAll(() => {
+  disableActReturn = disableActEnvironment()
+})
+afterAll(() => {
+  disableActReturn.cleanup()
+})
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
@@ -79,7 +88,7 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test')
-      expect(renderedComponents).toEqual([Page, MyComponent])
+      expect(renderedComponents).toEqual([MyComponent])
     }
   })
 
