@@ -82,14 +82,14 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 // CLASS
 
 export class MutationCache extends Subscribable<MutationCacheListener> {
-  #unscopedMutations: Set<Mutation<any, any, any, any>>
-  #scopedMutations: Map<string, Array<Mutation<any, any, any, any>>>
+  #mutations: Set<Mutation<any, any, any, any>>
+  #scopes: Map<string, Array<Mutation<any, any, any, any>>>
   #mutationId: number
 
   constructor(public config: MutationCacheConfig = {}) {
     super()
-    this.#unscopedMutations = new Set()
-    this.#scopedMutations = new Map()
+    this.#mutations = new Set()
+    this.#scopes = new Map()
     this.#mutationId = 0
   }
 
@@ -111,40 +111,47 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   add(mutation: Mutation<any, any, any, any>): void {
-    const scope = scopeFor(mutation)
+    this.#mutations.add(mutation);
+    const scope = scopeFor(mutation);
     if (typeof scope === 'string') {
-      const mutations = this.#scopedMutations.get(scope) ?? []
-      mutations.push(mutation)
-      this.#scopedMutations.set(scope, mutations)
-    } else {
-      this.#unscopedMutations.add(mutation)
+      const scopedMutations = this.#scopes.get(scope);
+      if (scopedMutations) {
+        scopedMutations.push(mutation);;
+      } else {
+        this.#scopes.set(scope, [mutation]);
+      }
     }
     this.notify({ type: 'added', mutation })
   }
 
   remove(mutation: Mutation<any, any, any, any>): void {
-    const scope = scopeFor(mutation)
-    if (typeof scope === 'string') {
-      const mutations = this.#scopedMutations.get(scope);
-      if (mutations) {
-        if (mutations.length > 1) {
-          this.#scopedMutations.set(scope, mutations.filter((x) => x !== mutation))
-        } else {
-          this.#scopedMutations.delete(scope)
+    if (this.#mutations.delete(mutation)) {
+      const scope = scopeFor(mutation)
+      if (typeof scope === 'string') {
+        const scopedMutations = this.#scopes.get(scope);
+        if (scopedMutations) {
+          if (scopedMutations.length > 1) {
+            const index = scopedMutations.indexOf(mutation);
+            if (index !== -1) {
+              scopedMutations.splice(index, 1);
+            }
+          } else if (scopedMutations[0] === mutation) {
+            this.#scopes.delete(scope);
+          }
         }
       }
-    } else {
-      this.#unscopedMutations.delete(mutation)
     }
 
+    // Currently we notify the removal even if the mutation was already removed.
+    // Consider making this an error or not notifying of the removal depending on the desired semantics.
     this.notify({ type: 'removed', mutation })
   }
 
   canRun(mutation: Mutation<any, any, any, any>): boolean {
     const scope = scopeFor(mutation)
     if (typeof scope === 'string') {
-      const mutations = this.#scopedMutations.get(scope)
-      const firstPendingMutation = mutations?.find(m => m.state.status === 'pending')
+      const mutationsWithSameScope = this.#scopes.get(scope)
+      const firstPendingMutation = mutationsWithSameScope?.find(m => m.state.status === 'pending')
       // we can run if there is no current pending mutation (start use-case)
       // or if WE are the first pending mutation (continue use-case)
       return !firstPendingMutation || firstPendingMutation === mutation
@@ -158,7 +165,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
     const scope = scopeFor(mutation)
     if (typeof scope === 'string') {
-      const foundMutation = this.#scopedMutations
+      const foundMutation = this.#scopes
       .get(scope)
       ?.find((m) => m !== mutation && m.state.isPaused)
 
@@ -170,14 +177,16 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   clear(): void {
     notifyManager.batch(() => {
-      this.getAll().forEach((mutation) => {
-        this.remove(mutation)
+      this.#mutations.forEach((mutation) => {
+        this.notify({ type: 'removed', mutation })
       })
+      this.#mutations.clear()
+      this.#scopes.clear()
     })
   }
 
   getAll(): Array<Mutation> {
-    return [...this.#unscopedMutations, ...this.#scopedMutations.values()].flat()
+    return Array.from(this.#mutations)
   }
 
   find<
