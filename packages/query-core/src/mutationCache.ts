@@ -82,13 +82,15 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 // CLASS
 
 export class MutationCache extends Subscribable<MutationCacheListener> {
-  #mutations: Map<string, Array<Mutation<any, any, any, any>>>
+  #unscopedMutations: Set<Mutation<any, any, any, any>>
+  #scopedMutations: Map<string, Array<Mutation<any, any, any, any>>>
   #mutationId: number
 
   constructor(public config: MutationCacheConfig = {}) {
     super()
-    this.#mutations = new Map()
-    this.#mutationId = Date.now()
+    this.#unscopedMutations = new Set()
+    this.#scopedMutations = new Map()
+    this.#mutationId = 0
   }
 
   build<TData, TError, TVariables, TContext>(
@@ -110,46 +112,60 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   add(mutation: Mutation<any, any, any, any>): void {
     const scope = scopeFor(mutation)
-    const mutations = this.#mutations.get(scope) ?? []
-    mutations.push(mutation)
-    this.#mutations.set(scope, mutations)
+    if (typeof scope === 'string') {
+      const mutations = this.#scopedMutations.get(scope) ?? []
+      mutations.push(mutation)
+      this.#scopedMutations.set(scope, mutations)
+    } else {
+      this.#unscopedMutations.add(mutation)
+    }
     this.notify({ type: 'added', mutation })
   }
 
   remove(mutation: Mutation<any, any, any, any>): void {
     const scope = scopeFor(mutation)
-    if (this.#mutations.has(scope)) {
-      const mutations = this.#mutations
-        .get(scope)
-        ?.filter((x) => x !== mutation)
+    if (typeof scope === 'string') {
+      const mutations = this.#scopedMutations.get(scope);
       if (mutations) {
-        if (mutations.length === 0) {
-          this.#mutations.delete(scope)
+        if (mutations.length > 1) {
+          this.#scopedMutations.set(scope, mutations.filter((x) => x !== mutation))
         } else {
-          this.#mutations.set(scope, mutations)
+          this.#scopedMutations.delete(scope)
         }
       }
+    } else {
+      this.#unscopedMutations.delete(mutation)
     }
 
     this.notify({ type: 'removed', mutation })
   }
 
   canRun(mutation: Mutation<any, any, any, any>): boolean {
-    const firstPendingMutation = this.#mutations
-      .get(scopeFor(mutation))
-      ?.find((m) => m.state.status === 'pending')
-
-    // we can run if there is no current pending mutation (start use-case)
-    // or if WE are the first pending mutation (continue use-case)
-    return !firstPendingMutation || firstPendingMutation === mutation
+    const scope = scopeFor(mutation)
+    if (typeof scope === 'string') {
+      const mutations = this.#scopedMutations.get(scope)
+      const firstPendingMutation = mutations?.find(m => m.state.status === 'pending')
+      // we can run if there is no current pending mutation (start use-case)
+      // or if WE are the first pending mutation (continue use-case)
+      return !firstPendingMutation || firstPendingMutation === mutation
+    } else {
+      // For unscoped mutations there are never any pending mutations in front of the
+      // current mutation
+      return true
+    }
   }
 
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
-    const foundMutation = this.#mutations
-      .get(scopeFor(mutation))
+    const scope = scopeFor(mutation)
+    if (typeof scope === 'string') {
+      const foundMutation = this.#scopedMutations
+      .get(scope)
       ?.find((m) => m !== mutation && m.state.isPaused)
 
-    return foundMutation?.continue() ?? Promise.resolve()
+      return foundMutation?.continue() ?? Promise.resolve()
+    } else {
+      return Promise.resolve()
+    }
   }
 
   clear(): void {
@@ -161,7 +177,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   getAll(): Array<Mutation> {
-    return [...this.#mutations.values()].flat()
+    return [...this.#unscopedMutations, ...this.#scopedMutations.values()].flat()
   }
 
   find<
@@ -203,5 +219,5 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 }
 
 function scopeFor(mutation: Mutation<any, any, any, any>) {
-  return mutation.options.scope?.id ?? String(mutation.mutationId)
+  return mutation.options.scope?.id
 }
