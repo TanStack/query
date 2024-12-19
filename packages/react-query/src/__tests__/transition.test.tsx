@@ -44,6 +44,7 @@ describe('react transitions', () => {
           await sleep(10)
           return 'test' + count
         },
+        staleTime: 1000, // prevent data from being fetched on second mount after suspense
       })
 
       const data = React.use(query.promise)
@@ -81,12 +82,6 @@ describe('react transitions', () => {
     }
 
     rendered.getByRole('button', { name: 'increment' }).click()
-
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('data: test0')
-      expect(renderedComponents).toEqual([Page])
-    }
 
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
