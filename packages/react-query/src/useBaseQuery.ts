@@ -82,8 +82,9 @@ export function useBaseQuery<
       ),
   )
 
-
-  const [result, setResult] = React.useState(() => observer.getOptimisticResult(defaultedOptions))
+  const [result, setResult] = React.useState(() =>
+    observer.getOptimisticResult(defaultedOptions),
+  )
 
   React.useEffect(() => {
     if (isRestoring) {
