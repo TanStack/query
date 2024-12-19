@@ -82,7 +82,7 @@ export function useBaseQuery<
       ),
   )
 
-  const [_, setForceUpdate] = React.useState(0)
+  const [_, setForceUpdate] = React.useState({})
 
   const result = observer.getOptimisticResult(defaultedOptions)
 
@@ -93,7 +93,7 @@ export function useBaseQuery<
 
     const unsubscribe = observer.subscribe(
       notifyManager.batchCalls(() => {
-        setForceUpdate((n) => n + 1)
+        setForceUpdate({})
       }),
     )
 
