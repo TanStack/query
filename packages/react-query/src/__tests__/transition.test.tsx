@@ -100,131 +100,127 @@ describe('react transitions', () => {
     return { promise, resolve: resolve!, reject: reject! }
   }
 
-  it.only(
-    'should handle parallel queries with shared parent key in transition',
-    { repeats: 10 },
-    async () => {
-      const renderStream = createRenderStream({ snapshotDOM: true })
+  it.only('should handle parallel queries with shared parent key in transition', async () => {
+    const renderStream = createRenderStream({ snapshotDOM: true })
 
-      let deferredA = createDeferred<void>()
-      let deferredB = createDeferred<void>()
+    
 
-      function ComponentA(props: { parentId: number }) {
-        useTrackRenders()
-        const query = useQuery({
-          queryKey: ['A', props.parentId],
-          queryFn: async () => {
-            await deferredA.promise
-            deferredA = createDeferred()
+    let deferredA = createDeferred<void>()
+    let deferredB = createDeferred<void>()
 
-            return `A-${props.parentId}`
-          },
-          staleTime: 1000,
-        })
+    function ComponentA(props: { parentId: number }) {
+      useTrackRenders()
+      const query = useQuery({
+        queryKey: ['A', props.parentId],
+        queryFn: async () => {
+          await deferredA.promise
+          deferredA = createDeferred()
 
-        const data = React.use(query.promise)
+          return `A-${props.parentId}`
+        },
+        staleTime: 1000,
+      })
 
-        return <div>A data: {data}</div>
-      }
+      const data = React.use(query.promise)
 
-      function ComponentALoading() {
-        useTrackRenders()
-        return <div>A loading..</div>
-      }
+      console.log(props.parentId, query.promise)
 
-      function ComponentB(props: { parentId: number }) {
-        useTrackRenders()
-        const query = useQuery({
-          queryKey: ['B', props.parentId],
-          queryFn: async () => {
-            await deferredB.promise
+      return <div>A data: {data}</div>
+    }
 
-            deferredB = createDeferred()
-            return `B-${props.parentId}`
-          },
-          staleTime: 1000,
-        })
+    function ComponentALoading() {
+      useTrackRenders()
+      return <div>A loading..</div>
+    }
 
-        const data = React.use(query.promise)
+    function ComponentB(props: { parentId: number }) {
+      useTrackRenders()
+      const query = useQuery({
+        queryKey: ['B', props.parentId],
+        queryFn: async () => {
+          await deferredB.promise
 
-        return <div>B data: {data}</div>
-      }
-      function ComponentBLoading() {
-        useTrackRenders()
-        return <div>B loading..</div>
-      }
+          deferredB = createDeferred()
+          return `B-${props.parentId}`
+        },
+        staleTime: 1000,
+      })
 
-      function Parent() {
-        useTrackRenders()
-        const [count, setCount] = React.useState(0)
-        return (
-          <div>
-            <button
-              onClick={() =>
-                React.startTransition(() => setCount((c) => c + 1))
-              }
-            >
-              increment
-            </button>
-            <React.Suspense fallback={<ComponentALoading />}>
-              <ComponentA parentId={count} />
-            </React.Suspense>
-            <React.Suspense fallback={<ComponentBLoading />}>
-              <ComponentB parentId={count} />
-            </React.Suspense>
-          </div>
-        )
-      }
+      const data = React.use(query.promise)
 
-      const rendered = await renderStream.render(
-        <QueryClientProvider client={queryClient}>
-          <Parent />
-        </QueryClientProvider>,
+      return <div>B data: {data}</div>
+    }
+    function ComponentBLoading() {
+      useTrackRenders()
+      return <div>B loading..</div>
+    }
+
+    function Parent() {
+      useTrackRenders()
+      const [count, setCount] = React.useState(0)
+      return (
+        <div>
+          <button
+            onClick={() => React.startTransition(() => setCount((c) => c + 1))}
+          >
+            increment
+          </button>
+          <React.Suspense fallback={<ComponentALoading />}>
+            <ComponentA parentId={count} />
+          </React.Suspense>
+          <React.Suspense fallback={<ComponentBLoading />}>
+            <ComponentB parentId={count} />
+          </React.Suspense>
+        </div>
       )
-      {
-        const { renderedComponents, withinDOM } =
-          await renderStream.takeRender()
-        withinDOM().getByText('A loading..')
-        withinDOM().getByText('B loading..')
-        expect(renderedComponents).toEqual([
-          Parent,
-          ComponentBLoading,
-          ComponentALoading,
-        ])
-      }
+    }
 
-      deferredA.resolve()
-      deferredB.resolve()
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Parent />
+      </QueryClientProvider>,
+    )
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('A loading..')
+      withinDOM().getByText('B loading..')
+      expect(renderedComponents).toEqual([
+        Parent,
+        ComponentBLoading,
+        ComponentALoading,
+      ])
+    }
 
-      {
-        const { renderedComponents, withinDOM } =
-          await renderStream.takeRender()
-        withinDOM().getByText('A data: A-0')
-        withinDOM().getByText('B data: B-0')
-        expect(renderedComponents).toEqual([ComponentB, ComponentA])
-      }
+    deferredA.resolve()
+    deferredB.resolve()
 
-      rendered.getByRole('button', { name: 'increment' }).click()
+    {
+      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('A data: A-0')
+      withinDOM().getByText('B data: B-0')
+      expect(renderedComponents).toEqual([ComponentB, ComponentA])
+    }
 
-      deferredA.resolve()
-      deferredB.resolve()
+    rendered.getByRole('button', { name: 'increment' }).click()
 
-      {
-        // first render
-        const firstRender = await renderStream.takeRender()
-        firstRender.withinDOM().getByText('A data: A-0')
-        firstRender.withinDOM().getByText('B data: B-0')
+    deferredA.resolve()
+    deferredB.resolve()
 
-        // second render
-        const secondRender = await renderStream.takeRender()
-        secondRender.withinDOM().getByText('A data: A-1')
-        secondRender.withinDOM().getByText('B data: B-0')
+    {
+      // first render
+      const firstRender = await renderStream.takeRender()
+      firstRender.withinDOM().getByText('A data: A-0')
+      firstRender.withinDOM().getByText('B data: B-0')
 
-        // third render
-        const thirdRender = await renderStream.takeRender()
-        thirdRender.withinDOM().getByText('A data: A-1')
-        thirdRender.withinDOM().getByText('B data: B-1')
-      }
-    },
-  )
+      // second render
+      const secondRender = await renderStream.takeRender()
+      secondRender.withinDOM().getByText('A data: A-1')
+      secondRender.withinDOM().getByText('B data: B-0')
+
+      // third render
+      const thirdRender = await renderStream.takeRender()
+      thirdRender.withinDOM().getByText('A data: A-1')
+      thirdRender.withinDOM().getByText('B data: B-1')
+    }
+  })
 })
