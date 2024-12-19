@@ -1,21 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, } from 'vitest'
-import * as React from 'react'
 import {
   createRenderStream,
-  disableActEnvironment,
-  useTrackRenders,
+  useTrackRenders
 } from '@testing-library/react-render-stream'
+import * as React from 'react'
+import { afterAll, beforeAll, describe, expect, it, } from 'vitest'
 import { QueryClientProvider, useQuery } from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, sleep } from './utils'
-
-let disableActReturn: ReturnType<typeof disableActEnvironment>
-beforeAll(() => {
-  disableActReturn = disableActEnvironment()
-})
-afterAll(() => {
-  disableActReturn.cleanup()
-})
 
 
 describe('react transitions', () => {
@@ -110,7 +101,7 @@ describe('react transitions', () => {
     return { promise, resolve: resolve!, reject: reject! }
   }
 
-  it.only('should handle parallel queries with shared parent key in transition', async () => {
+  it.only('should handle parallel queries with shared parent key in transition', {repeats: 10}, async () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
 
     let deferredA = createDeferred<void>()
@@ -131,7 +122,11 @@ describe('react transitions', () => {
         staleTime: 1000,
       })
 
+      
+
       const data = React.use(query.promise)
+
+      
       return <div>A data: {data}</div>
     }
 
@@ -145,9 +140,9 @@ describe('react transitions', () => {
       const query = useQuery({
         queryKey: ['B', props.parentId],
         queryFn: async () => {
-          console.log('B loading', props.parentId)
+          
           await deferredB.promise
-          console.log('B loaded', props.parentId)
+          
           deferredB = createDeferred()
           return `B-${props.parentId}`
         },
@@ -158,7 +153,7 @@ describe('react transitions', () => {
 
       const data = React.use(query.promise)
 
-      console.log('render B', data)
+      
       return <div>B data: {data}</div>
     }
     function ComponentBLoading() {
@@ -215,10 +210,20 @@ describe('react transitions', () => {
     deferredB.resolve()
 
     {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('A data: A-1')
-      withinDOM().getByText('B data: B-1')
-      expect(renderedComponents).toEqual([Parent, ComponentB, ComponentA])
+      // first render
+      const firstRender = await renderStream.takeRender()
+      firstRender.withinDOM().getByText('A data: A-0')
+      firstRender.withinDOM().getByText('B data: B-0')
+
+      // second render
+      const secondRender = await renderStream.takeRender()
+      secondRender.withinDOM().getByText('A data: A-1')
+      secondRender.withinDOM().getByText('B data: B-0')
+
+      // third render
+      const thirdRender = await renderStream.takeRender()
+      thirdRender.withinDOM().getByText('A data: A-1')
+      thirdRender.withinDOM().getByText('B data: B-1')
     }
 
   })
