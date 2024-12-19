@@ -46,10 +46,20 @@ export declare const dataTagSymbol: unique symbol
 export declare const dataTagErrorSymbol: unique symbol
 export declare const unsetMarker: unique symbol
 export type UnsetMarker = typeof unsetMarker
-export type DataTag<TType, TValue, TError = UnsetMarker> = TType & {
-  [dataTagSymbol]: TValue
-  [dataTagErrorSymbol]: TError
+export type AnyDataTag = {
+  [dataTagSymbol]: any
+  [dataTagErrorSymbol]: any
 }
+export type DataTag<
+  TType,
+  TValue,
+  TError = UnsetMarker,
+> = TType extends AnyDataTag
+  ? TType
+  : TType & {
+      [dataTagSymbol]: TValue
+      [dataTagErrorSymbol]: TError
+    }
 
 export type QueryFunction<
   T = unknown,

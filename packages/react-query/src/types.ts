@@ -17,6 +17,13 @@ import type {
   SkipToken,
 } from '@tanstack/query-core'
 
+export type AnyUseBaseQueryOptions = UseBaseQueryOptions<
+  any,
+  any,
+  any,
+  any,
+  any
+>
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -37,6 +44,7 @@ export interface UseBaseQueryOptions<
   subscribed?: boolean
 }
 
+export type AnyUseQueryOptions = UseQueryOptions<any, any, any, any>
 export interface UseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -47,6 +55,12 @@ export interface UseQueryOptions<
     'suspense'
   > {}
 
+export type AnyUseSuspenseQueryOptions = UseSuspenseQueryOptions<
+  any,
+  any,
+  any,
+  any
+>
 export interface UseSuspenseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -62,6 +76,14 @@ export interface UseSuspenseQueryOptions<
   >
 }
 
+export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
+  any,
+  any,
+  any,
+  any,
+  any,
+  any
+>
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -81,6 +103,8 @@ export interface UseInfiniteQueryOptions<
     'suspense'
   > {}
 
+export type AnyUseSuspenseInfiniteQueryOptions =
+  UseSuspenseInfiniteQueryOptions<any, any, any, any, any, any>
 export interface UseSuspenseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -153,6 +177,7 @@ export type UseSuspenseInfiniteQueryResult<
   'isPlaceholderData' | 'promise'
 >
 
+export type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>
 export interface UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
