@@ -19,7 +19,7 @@ export function useIsFetching(
   const filtersRef = React.useRef(filters)
   React.useEffect(() => {
     filtersRef.current = filters
-  }, [filters])
+  })
 
   React.useEffect(() => {
     // Update number immediately to make sure we do not miss any query updates between creating the observer and subscribing to it.
