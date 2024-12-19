@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/require-await */
 import {
   createRenderStream,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
+import { act, render, screen } from '@testing-library/react'
 import * as React from 'react'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { QueryClientProvider, useQuery } from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, sleep } from './utils'
@@ -15,6 +17,9 @@ describe('react transitions', () => {
   })
 
   beforeAll(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    global.IS_REACT_ACT_ENVIRONMENT = true
     queryClient.setDefaultOptions({
       queries: { experimental_prefetchInRender: true },
     })
@@ -25,18 +30,16 @@ describe('react transitions', () => {
     })
   })
 
-  it('should keep values of old key around with startTransition', async () => {
+  it.only('should keep values of old key around with startTransition', async () => {
+    vi.useFakeTimers()
     const key = queryKey()
 
-    const renderStream = createRenderStream({ snapshotDOM: true })
-
     function Loading() {
-      useTrackRenders()
-      return <>loading..</>
+      return <>loading...</>
     }
 
     function Page() {
-      useTrackRenders()
+      const [isPending, startTransition] = React.useTransition()
       const [count, setCount] = React.useState(0)
       const query = useQuery({
         queryKey: [key, count],
@@ -44,50 +47,64 @@ describe('react transitions', () => {
           await sleep(10)
           return 'test' + count
         },
-        staleTime: 1000, // prevent data from being fetched on second mount after suspense
+        staleTime: 1000,
       })
 
       const data = React.use(query.promise)
 
       return (
         <div>
-          <button
-            onClick={() => React.startTransition(() => setCount((c) => c + 1))}
-          >
+          <button onClick={() => startTransition(() => setCount((c) => c + 1))}>
             increment
           </button>
           <div>data: {data}</div>
+          {isPending && <span>pending...</span>}
         </div>
       )
     }
+    // Initial render should show fallback
+    await act(async () => {
+      render(
+        <QueryClientProvider client={queryClient}>
+          <React.Suspense fallback={<Loading />}>
+            <Page />
+          </React.Suspense>
+        </QueryClientProvider>,
+      )
+    })
 
-    const rendered = await renderStream.render(
-      <QueryClientProvider client={queryClient}>
-        <React.Suspense fallback={<Loading />}>
-          <Page />
-        </React.Suspense>
-      </QueryClientProvider>,
-    )
+    screen.getByText('loading...')
+    expect(screen.queryByText('button')).toBeNull()
+    expect(screen.queryByText('pending...')).toBeNull()
+    expect(screen.queryByText('data: test0')).toBeNull()
 
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading..')
-      expect(renderedComponents).toEqual([Loading])
-    }
+    // Resolve the query, should show the data
+    await act(async () => {
+      vi.runAllTimers()
+    })
 
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('data: test0')
-      expect(renderedComponents).toEqual([Page])
-    }
+    expect(screen.queryByText('loading...')).toBeNull()
+    screen.getByRole('button')
+    expect(screen.queryByText('pending...')).toBeNull()
+    screen.getByText('data: test0')
 
-    rendered.getByRole('button', { name: 'increment' }).click()
+    // Update in a transition, should show pending state, and existing content
+    await act(async () => {
+      screen.getByRole('button', { name: 'increment' }).click()
+    })
+    expect(screen.queryByText('loading...')).toBeNull()
+    screen.getByRole('button')
+    screen.getByText('pending...')
+    screen.getByText('data: test0')
 
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('data: test1')
-      expect(renderedComponents).toEqual([Page])
-    }
+    // Resolve the query, should show the new data and no pending state
+    await act(async () => {
+      vi.runAllTimers()
+    })
+    expect(screen.queryByText('loading...')).toBeNull()
+    screen.getByRole('button')
+    expect(screen.queryByText('pending...')).toBeNull()
+    screen.getByText('data: test1')
   })
 
   function createDeferred<T>() {
@@ -100,46 +117,36 @@ describe('react transitions', () => {
     return { promise, resolve: resolve!, reject: reject! }
   }
 
-  it.only('should handle parallel queries with shared parent key in transition', async () => {
+  it('should handle parallel queries with shared parent key in transition', async () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
-
-    
 
     let deferredA = createDeferred<void>()
     let deferredB = createDeferred<void>()
 
     function ComponentA(props: { parentId: number }) {
-      useTrackRenders()
       const query = useQuery({
         queryKey: ['A', props.parentId],
         queryFn: async () => {
           await deferredA.promise
           deferredA = createDeferred()
-
           return `A-${props.parentId}`
         },
         staleTime: 1000,
       })
 
       const data = React.use(query.promise)
-
-      console.log(props.parentId, query.promise)
-
       return <div>A data: {data}</div>
     }
 
     function ComponentALoading() {
-      useTrackRenders()
       return <div>A loading..</div>
     }
 
     function ComponentB(props: { parentId: number }) {
-      useTrackRenders()
       const query = useQuery({
         queryKey: ['B', props.parentId],
         queryFn: async () => {
           await deferredB.promise
-
           deferredB = createDeferred()
           return `B-${props.parentId}`
         },
@@ -147,16 +154,14 @@ describe('react transitions', () => {
       })
 
       const data = React.use(query.promise)
-
       return <div>B data: {data}</div>
     }
+
     function ComponentBLoading() {
-      useTrackRenders()
       return <div>B loading..</div>
     }
 
     function Parent() {
-      useTrackRenders()
       const [count, setCount] = React.useState(0)
       return (
         <div>
@@ -180,6 +185,7 @@ describe('react transitions', () => {
         <Parent />
       </QueryClientProvider>,
     )
+
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('A loading..')
@@ -191,8 +197,10 @@ describe('react transitions', () => {
       ])
     }
 
-    deferredA.resolve()
-    deferredB.resolve()
+    await act(async () => {
+      deferredA.resolve()
+      deferredB.resolve()
+    })
 
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
@@ -201,10 +209,14 @@ describe('react transitions', () => {
       expect(renderedComponents).toEqual([ComponentB, ComponentA])
     }
 
-    rendered.getByRole('button', { name: 'increment' }).click()
+    await act(async () => {
+      rendered.getByRole('button', { name: 'increment' }).click()
+    })
 
-    deferredA.resolve()
-    deferredB.resolve()
+    await act(async () => {
+      deferredA.resolve()
+      deferredB.resolve()
+    })
 
     {
       // first render
