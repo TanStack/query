@@ -90,8 +90,8 @@ describe('react transitions', () => {
         screen.getByRole('button', { name: 'increment' }).click()
       }
     })
-    
-    // resolve all 
+
+    // resolve all
     for (const resolve of Object.values(resolveByCount)) {
       await sleep(1)
       await act(async () => {
