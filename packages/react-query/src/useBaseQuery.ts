@@ -113,6 +113,7 @@ export function useBaseQuery<
     observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
 
+  // For prefetchInRender, we need to set the options within the render
   if (defaultedOptions.experimental_prefetchInRender) {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
