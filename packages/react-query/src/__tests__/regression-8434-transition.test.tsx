@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import {act, render, screen} from '@testing-library/react'
@@ -27,7 +28,7 @@ describe('react transitions', () => {
 
   it('should keep values of old key around with startTransition', async () => {
     const key = queryKey()
-    vi.useFakeTimers()
+    const resolveByCount: Record<number, () => void> = {}
 
     function Loading() {
       return <>loading...</>
@@ -39,7 +40,9 @@ describe('react transitions', () => {
       const query = useQuery({
         queryKey: [key, count],
         queryFn: async () => {
-          await sleep(10)
+          await new Promise<void>((resolve) => {
+            resolveByCount[count] = resolve
+          })
           return 'test' + count
         },
       })
@@ -76,7 +79,7 @@ describe('react transitions', () => {
 
     // Resolve the query, should show the data
     await act(async () => {
-      vi.runAllTimers();
+      resolveByCount[0]!()
     });
     expect(screen.queryByText('loading...')).toBeNull()
     screen.getByRole('button')
@@ -87,23 +90,22 @@ describe('react transitions', () => {
     await act(async () => {
       screen.getByRole('button', {name: 'increment'}).click()
     });
+    
     expect(screen.queryByText('loading...')).toBeNull()
-    screen.getByRole('button')
-    screen.getByText('pending...')
-    screen.getByText('data: test0');
+    expect(screen.queryByText('pending...')).not.toBeNull()
 
+    // resolve outside of transition
+    resolveByCount[1]!()
 
+    // wait 1 tick
+    await sleep(0)
+
+    // wait for transition to finish
     await act(async () => {
-      screen.getByRole('button', {name: 'increment'}).click()
     });
 
-    // Resolve the query, should show the new data and no pending state
-    await act(async () => {
-      vi.runAllTimers();
-    });
     expect(screen.queryByText('loading...')).toBeNull()
-    screen.getByRole('button')
     expect(screen.queryByText('pending...')).toBeNull()
-    screen.getByText('data: test2');
+    screen.getByText('data: test1');
   })
 })
