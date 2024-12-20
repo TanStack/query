@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
-import {act, render, screen} from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { QueryClientProvider, useQuery } from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, sleep } from './utils'
@@ -15,7 +15,7 @@ describe('react transitions', () => {
   beforeAll(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    global.IS_REACT_ACT_ENVIRONMENT = true;
+    global.IS_REACT_ACT_ENVIRONMENT = true
     queryClient.setDefaultOptions({
       queries: { experimental_prefetchInRender: true },
     })
@@ -51,9 +51,7 @@ describe('react transitions', () => {
 
       return (
         <div>
-          <button
-            onClick={() => startTransition(() => setCount((c) => c + 1))}
-          >
+          <button onClick={() => startTransition(() => setCount((c) => c + 1))}>
             increment
           </button>
           {isPending && <span>pending...</span>}
@@ -66,12 +64,12 @@ describe('react transitions', () => {
     await act(async () => {
       render(
         <QueryClientProvider client={queryClient}>
-          <React.Suspense fallback={<Loading/>}>
-            <Page/>
+          <React.Suspense fallback={<Loading />}>
+            <Page />
           </React.Suspense>
         </QueryClientProvider>,
-        );
-    });
+      )
+    })
     screen.getByText('loading...')
     expect(screen.queryByText('button')).toBeNull()
     expect(screen.queryByText('pending...')).toBeNull()
@@ -80,32 +78,26 @@ describe('react transitions', () => {
     // Resolve the query, should show the data
     await act(async () => {
       resolveByCount[0]!()
-    });
+    })
     expect(screen.queryByText('loading...')).toBeNull()
     screen.getByRole('button')
     expect(screen.queryByText('pending...')).toBeNull()
-    screen.getByText('data: test0');
+    screen.getByText('data: test0')
 
     // Update in a transition, should show pending state, and existing content
     await act(async () => {
-      screen.getByRole('button', {name: 'increment'}).click()
-    });
-    
+      screen.getByRole('button', { name: 'increment' }).click()
+    })
+
     expect(screen.queryByText('loading...')).toBeNull()
     expect(screen.queryByText('pending...')).not.toBeNull()
 
-    // resolve outside of transition
-    resolveByCount[1]!()
-
-    // wait 1 tick
-    await sleep(0)
-
-    // wait for transition to finish
-    await act(async () => {
-    });
+    act(() => {
+      resolveByCount[1]!()
+    })
 
     expect(screen.queryByText('loading...')).toBeNull()
     expect(screen.queryByText('pending...')).toBeNull()
-    screen.getByText('data: test1');
+    screen.getByText('data: test1')
   })
 })
