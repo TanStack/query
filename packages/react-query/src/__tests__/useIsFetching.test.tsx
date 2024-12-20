@@ -1,8 +1,14 @@
+import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { describe, expect, it } from 'vitest'
 import { QueryCache, useIsFetching, useQuery } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import {
+  createQueryClient,
+  queryKey,
+  renderWithClient,
+  setActTimeout,
+  sleep,
+} from './utils'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -46,6 +52,65 @@ describe('useIsFetching', () => {
     fireEvent.click(getByRole('button', { name: /setReady/i }))
     await findByText('isFetching: 1')
     await findByText('isFetching: 0')
+  })
+
+  it('should not update state while rendering', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({ queryCache })
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const isFetchingArray: Array<number> = []
+
+    function IsFetching() {
+      const isFetching = useIsFetching()
+      isFetchingArray.push(isFetching)
+      return null
+    }
+
+    function FirstQuery() {
+      useQuery({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
+      })
+      return null
+    }
+
+    function SecondQuery() {
+      useQuery({
+        queryKey: key2,
+        queryFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
+      })
+      return null
+    }
+
+    function Page() {
+      const [renderSecond, setRenderSecond] = React.useState(false)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setRenderSecond(true)
+        }, 50)
+      }, [])
+
+      return (
+        <>
+          <IsFetching />
+          <FirstQuery />
+          {renderSecond && <SecondQuery />}
+        </>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+    await waitFor(() => expect(isFetchingArray).toEqual([0, 1, 1, 2, 1, 0]))
   })
 
   it('should be able to filter', async () => {

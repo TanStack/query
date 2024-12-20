@@ -3,7 +3,7 @@
 'use client'
 import * as React from 'react'
 
-import { replaceEqualDeep } from '@tanstack/query-core'
+import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   Mutation,
@@ -47,26 +47,31 @@ export function useMutationState<TResult = MutationState>(
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
   const optionsRef = React.useRef(options)
+  const result = React.useRef<Array<TResult>>(null)
+  if (!result.current) {
+    result.current = getResult(mutationCache, options)
+  }
+
   React.useEffect(() => {
     optionsRef.current = options
   })
 
-  const [result, setResult] = React.useState<Array<TResult>>(() =>
-    getResult(mutationCache, options),
-  )
-
-  React.useEffect(() => {
-    const sub = mutationCache.subscribe(() => {
-      setResult((prevResult) => {
-        const nextResult = replaceEqualDeep(
-          prevResult,
-          getResult(mutationCache, optionsRef.current),
-        )
-        return nextResult
-      })
-    })
-    return sub
-  }, [mutationCache])
-
-  return result
+  return React.useSyncExternalStore(
+    React.useCallback(
+      (onStoreChange) =>
+        mutationCache.subscribe(() => {
+          const nextResult = replaceEqualDeep(
+            result.current,
+            getResult(mutationCache, optionsRef.current),
+          )
+          if (result.current !== nextResult) {
+            result.current = nextResult
+            notifyManager.schedule(onStoreChange)
+          }
+        }),
+      [mutationCache],
+    ),
+    () => result.current,
+    () => result.current,
+  )!
 }
