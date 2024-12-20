@@ -27,7 +27,7 @@ const Example2 = ({ value }: { value: number }) => {
   const { promise, isFetching } = useQuery({
     queryKey: ['2' + value],
     queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       return '2' + value
     },
     // placeholderData: keepPreviousData,
