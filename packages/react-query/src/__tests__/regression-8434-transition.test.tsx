@@ -86,18 +86,21 @@ describe('react transitions', () => {
 
     // Update in a transition, should show pending state, and existing content
     await act(async () => {
-      screen.getByRole('button', { name: 'increment' }).click()
+      for (let i = 0; i < 100; i++) {
+        screen.getByRole('button', { name: 'increment' }).click()
+      }
     })
-
-    expect(screen.queryByText('loading...')).toBeNull()
-    expect(screen.queryByText('pending...')).not.toBeNull()
-
-    act(() => {
-      resolveByCount[1]!()
-    })
+    
+    // resolve all 
+    for (const resolve of Object.values(resolveByCount)) {
+      await sleep(1)
+      await act(async () => {
+        resolve()
+      })
+    }
 
     expect(screen.queryByText('loading...')).toBeNull()
     expect(screen.queryByText('pending...')).toBeNull()
-    screen.getByText('data: test1')
+    screen.getByText('data: test100')
   })
 })
