@@ -10,7 +10,7 @@ const Example1 = ({ value }: { value: number }) => {
   const { isFetching, promise } = useQuery({
     queryKey: ['1' + value],
     queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       return '1' + value
     },
   })
@@ -50,7 +50,6 @@ const SuspenseBoundary = () => {
     <div>
       <h1>Change state with transition</h1>
       <div>
-        State:
         <button
           onClick={() =>
             startTransition(() => {
@@ -59,9 +58,15 @@ const SuspenseBoundary = () => {
           }
         >
           Decrease
-        </button>{' '}
-        (last state value: {state}..) {isPending && <strong>pending</strong>}
+        </button>
       </div>
+      <h2>State:</h2>
+      <ul>
+        <li>last state value: {state}</li>
+        <li>
+          transition state: {isPending ? <strong>pending</strong> : 'idle'}
+        </li>
+      </ul>
       <h2>2. 1 Suspense + startTransition</h2>
       <Suspense fallback="fallback 1">
         <Example1 value={state}></Example1>
