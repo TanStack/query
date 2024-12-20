@@ -105,10 +105,19 @@ export function useBaseQuery<
   }, [observer, isRestoring])
 
   React.useEffect(() => {
+    if (defaultedOptions.experimental_prefetchInRender) {
+      return
+    }
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
+
+  if (defaultedOptions.experimental_prefetchInRender) {
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    observer.setOptions(defaultedOptions, { listeners: false })
+  }
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
