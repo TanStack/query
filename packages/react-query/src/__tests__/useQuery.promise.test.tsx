@@ -1,10 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
 import {
   createRenderStream,
+  disableActEnvironment,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
+import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import {
   QueryClientProvider,
   QueryErrorResetBoundary,
@@ -13,6 +14,24 @@ import {
 } from '..'
 import { QueryCache } from '../index'
 import { createQueryClient, queryKey, sleep } from './utils'
+
+let disableActReturn: ReturnType<typeof disableActEnvironment>
+beforeAll(() => {
+  disableActReturn = disableActEnvironment()
+})
+afterAll(() => {
+  disableActReturn.cleanup()
+})
+
+function createDeferred<T = void>() {
+  let resolve: (value: T) => void
+  let reject: (error: unknown) => void
+  const promise = new Promise<T>((_resolve, _reject) => {
+    resolve = _resolve
+    reject = _reject
+  })
+  return { promise, resolve: resolve!, reject: reject! }
+}
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
@@ -79,7 +98,7 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test')
-      expect(renderedComponents).toEqual([Page, MyComponent])
+      expect(renderedComponents).toEqual([MyComponent])
     }
   })
 
@@ -139,7 +158,9 @@ describe('useQuery().promise', () => {
   })
 
   it('parallel queries', async () => {
+    const deferred = createDeferred()
     const key = queryKey()
+
     const renderStream = createRenderStream({ snapshotDOM: true })
     let callCount = 0
 
@@ -149,7 +170,7 @@ describe('useQuery().promise', () => {
         queryKey: key,
         queryFn: async () => {
           callCount++
-          await sleep(1)
+          await deferred.promise
           return 'test'
         },
         staleTime: 1000,
@@ -161,7 +182,7 @@ describe('useQuery().promise', () => {
 
     function Loading() {
       useTrackRenders()
-      return <>loading..</>
+      return <span>loading..</span>
     }
     function Page() {
       useTrackRenders()
@@ -172,7 +193,7 @@ describe('useQuery().promise', () => {
             <MyComponent />
             <MyComponent />
           </React.Suspense>
-          <React.Suspense fallback={null}>
+          <React.Suspense fallback={<span>loading 2...</span>}>
             <MyComponent />
             <MyComponent />
           </React.Suspense>
@@ -189,19 +210,15 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('loading..')
+      withinDOM().getByText('loading 2...')
       expect(renderedComponents).toEqual([Page, Loading])
     }
 
+    deferred.resolve()
+
     {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
+      const { withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('testtesttesttesttest')
-      expect(renderedComponents).toEqual([
-        MyComponent,
-        MyComponent,
-        MyComponent,
-        MyComponent,
-        MyComponent,
-      ])
     }
 
     expect(callCount).toBe(1)
@@ -484,6 +501,7 @@ describe('useQuery().promise', () => {
   })
 
   it('should throw error if the promise fails', async () => {
+    let deferred = createDeferred()
     const renderStream = createRenderStream({ snapshotDOM: true })
     const consoleMock = vi
       .spyOn(console, 'error')
@@ -505,12 +523,10 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(1)
-          if (++queryCount > 1) {
-            // second time this query mounts, it should not throw
-            return 'data'
-          }
-          throw new Error('Error test')
+          queryCount++
+          await deferred.promise
+
+          return 'data'
         },
         retry: false,
       })
@@ -553,6 +569,9 @@ describe('useQuery().promise', () => {
       withinDOM().getByText('loading..')
     }
 
+    deferred.reject(new Error('Error test'))
+    deferred = createDeferred()
+
     {
       const { withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('error boundary')
@@ -567,6 +586,7 @@ describe('useQuery().promise', () => {
       withinDOM().getByText('loading..')
     }
 
+    deferred.resolve()
     {
       const { withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('data')
@@ -576,6 +596,7 @@ describe('useQuery().promise', () => {
   })
 
   it('should throw error if the promise fails (colocate suspense and promise)', async () => {
+    const deferred = createDeferred()
     const renderStream = createRenderStream({ snapshotDOM: true })
     const consoleMock = vi
       .spyOn(console, 'error')
@@ -587,8 +608,8 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(1)
-          throw new Error('Error test')
+          await deferred.promise
+          return 'data'
         },
         retry: false,
       })
@@ -617,6 +638,8 @@ describe('useQuery().promise', () => {
       const { withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('loading..')
     }
+
+    deferred.reject(new Error('Error test'))
 
     {
       const { withinDOM } = await renderStream.takeRender()

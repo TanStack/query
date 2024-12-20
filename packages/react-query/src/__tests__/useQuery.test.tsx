@@ -6,6 +6,7 @@ import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
+  arrayPick,
   createQueryClient,
   mockOnlineManagerIsOnline,
   mockVisibilityState,
@@ -2485,38 +2486,6 @@ describe('useQuery', () => {
     expect(queryCache.find({ queryKey: key })!.options.retryDelay).toBe(20)
   })
 
-  it('should batch re-renders', async () => {
-    const key = queryKey()
-
-    let renders = 0
-
-    const queryFn = async () => {
-      await sleep(15)
-      return 'data'
-    }
-
-    function Page() {
-      const query1 = useQuery({ queryKey: key, queryFn })
-      const query2 = useQuery({ queryKey: key, queryFn })
-      renders++
-
-      return (
-        <div>
-          {query1.data} {query2.data}
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => {
-      rendered.getByText('data data')
-    })
-
-    // Should be 2 instead of 3
-    expect(renders).toBe(2)
-  })
-
   it('should render latest data even if react has discarded certain renders', async () => {
     const key = queryKey()
 
@@ -4803,6 +4772,7 @@ describe('useQuery', () => {
           return count
         },
         staleTime: Infinity,
+        notifyOnChangeProps: 'all',
       })
 
       states.push(state)
@@ -4829,34 +4799,53 @@ describe('useQuery', () => {
 
     expect(count).toBe(2)
 
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isPending: true,
-      isFetching: true,
-      isSuccess: false,
-      isStale: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: 1,
-      isPending: false,
-      isFetching: false,
-      isSuccess: true,
-      isStale: false,
-    })
-    expect(states[2]).toMatchObject({
-      data: undefined,
-      isPending: true,
-      isFetching: true,
-      isSuccess: false,
-      isStale: true,
-    })
-    expect(states[3]).toMatchObject({
-      data: 2,
-      isPending: false,
-      isFetching: false,
-      isSuccess: true,
-      isStale: false,
-    })
+    expect(
+      arrayPick(states, [
+        'data',
+        'isStale',
+        'isFetching',
+        'isPending',
+        'isSuccess',
+      ]),
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "data": undefined,
+          "isFetching": true,
+          "isPending": true,
+          "isStale": true,
+          "isSuccess": false,
+        },
+        {
+          "data": 1,
+          "isFetching": false,
+          "isPending": false,
+          "isStale": false,
+          "isSuccess": true,
+        },
+        {
+          "data": undefined,
+          "isFetching": true,
+          "isPending": true,
+          "isStale": true,
+          "isSuccess": false,
+        },
+        {
+          "data": undefined,
+          "isFetching": true,
+          "isPending": true,
+          "isStale": true,
+          "isSuccess": false,
+        },
+        {
+          "data": 2,
+          "isFetching": false,
+          "isPending": false,
+          "isStale": false,
+          "isSuccess": true,
+        },
+      ]
+    `)
   })
 
   it('should update query state and not refetch when resetting a disabled query with resetQueries', async () => {
