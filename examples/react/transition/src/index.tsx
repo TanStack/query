@@ -45,7 +45,7 @@ const Example2 = ({ value }: { value: number }) => {
 const SuspenseBoundary = () => {
   const [state, setState] = useState(-1)
   const [isPending, startTransition] = useTransition()
-  console.log({ isPending })
+
   return (
     <div>
       <h1>Change state with transition</h1>
