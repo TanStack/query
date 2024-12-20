@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/require-await */
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import * as React from 'react'
 import { afterAll, beforeAll, expect, it, vi } from 'vitest'
 import { QueryClientProvider, useQuery } from '..'
