@@ -28,7 +28,6 @@ size-plugin.json
 stats-hydration.json
 stats.json
 stats.html
-.vscode/settings.json
 
 *.log
 *.tsbuildinfo

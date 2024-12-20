@@ -82,26 +82,27 @@ export function useBaseQuery<
       ),
   )
 
+  const [_, setForceUpdate] = React.useState({})
+
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) => {
-        const unsubscribe = isRestoring
-          ? noop
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange))
+  React.useEffect(() => {
+    if (isRestoring) {
+      return
+    }
 
-        // Update result to make sure we did not miss any query updates
-        // between creating the observer and subscribing to it.
-        observer.updateResult()
+    const unsubscribe = observer.subscribe(
+      notifyManager.batchCalls(() => {
+        setForceUpdate({})
+      }),
+    )
 
-        return unsubscribe
-      },
-      [observer, isRestoring],
-    ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
-  )
+    // Update result to make sure we did not miss any query updates
+    // between creating the observer and subscribing to it.
+    observer.updateResult()
+
+    return unsubscribe
+  }, [observer, isRestoring])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because

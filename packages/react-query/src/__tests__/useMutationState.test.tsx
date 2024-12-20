@@ -80,7 +80,9 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating({ mutationKey: ['mutation1'] })
-      isMutatingArray.push(isMutating)
+      React.useEffect(() => {
+        isMutatingArray.push(isMutating)
+      }, [isMutating])
       return null
     }
 
@@ -121,7 +123,10 @@ describe('useIsMutating', () => {
         predicate: (mutation) =>
           mutation.options.mutationKey?.[0] === 'mutation1',
       })
-      isMutatingArray.push(isMutating)
+
+      React.useEffect(() => {
+        isMutatingArray.push(isMutating)
+      }, [isMutating])
       return null
     }
 
