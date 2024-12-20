@@ -50,7 +50,7 @@ const SuspenseBoundary = () => {
     <div>
       <h1>Change state with transition</h1>
       <div>
-        State: {isPending ? 'in transition' : state}{' '}
+        State:
         <button
           onClick={() =>
             startTransition(() => {
@@ -60,7 +60,7 @@ const SuspenseBoundary = () => {
         >
           Decrease
         </button>{' '}
-        (last state value: {state})
+        (last state value: {state}..) {isPending && <strong>pending</strong>}
       </div>
       <h2>2. 1 Suspense + startTransition</h2>
       <Suspense fallback="fallback 1">
