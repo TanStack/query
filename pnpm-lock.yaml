@@ -1313,6 +1313,37 @@ importers:
         specifier: ^5.3.5
         version: 5.4.11(@types/node@22.9.3)(less@4.2.1)(lightningcss@1.27.0)(sass@1.81.0)(terser@5.31.6)
 
+  examples/react/transition:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.62.8
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.62.8
+        version: link:../../../packages/react-query-devtools
+      font-awesome:
+        specifier: ^4.7.0
+        version: 4.7.0
+      react:
+        specifier: ^19.0.0
+        version: 19.0.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.0.0(react@19.0.0)
+      react-error-boundary:
+        specifier: ^4.1.2
+        version: 4.1.2(react@19.0.0)
+    devDependencies:
+      '@vitejs/plugin-react':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@5.4.11(@types/node@22.9.3)(less@4.2.1)(lightningcss@1.27.0)(sass@1.81.0)(terser@5.31.6))
+      typescript:
+        specifier: 5.7.2
+        version: 5.7.2
+      vite:
+        specifier: ^5.3.5
+        version: 5.4.11(@types/node@22.9.3)(less@4.2.1)(lightningcss@1.27.0)(sass@1.81.0)(terser@5.31.6)
+
   examples/solid/astro:
     dependencies:
       '@astrojs/check':
