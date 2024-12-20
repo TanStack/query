@@ -33,8 +33,6 @@ function createDeferred<T = void>() {
   return { promise, resolve: resolve!, reject: reject! }
 }
 
-type Deferred<T = void> = ReturnType<typeof createDeferred<T>>
-
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({
