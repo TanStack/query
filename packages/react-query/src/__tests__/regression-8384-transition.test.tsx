@@ -79,6 +79,7 @@ describe('react transitions', () => {
     await act(async () => {
       resolveByCount[0]!()
     })
+    // HELP WANTED - get the below to fail as the repro does
     expect(screen.queryByText('loading...')).toBeNull()
     screen.getByRole('button')
     expect(screen.queryByText('pending...')).toBeNull()
