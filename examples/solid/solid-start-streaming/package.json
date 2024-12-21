@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.14.1",
-    "@solidjs/start": "^1.0.6",
+    "@solidjs/router": "^0.15.2",
+    "@solidjs/start": "^1.0.10",
     "@tanstack/solid-query": "^5.62.8",
     "@tanstack/solid-query-devtools": "^5.62.8",
     "solid-js": "^1.9.3",
