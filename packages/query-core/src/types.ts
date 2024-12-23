@@ -42,9 +42,11 @@ export type DefaultError = Register extends {
 
 export type QueryKey = ReadonlyArray<unknown>
 
-export declare const dataTagSymbol: unique symbol
-export declare const dataTagErrorSymbol: unique symbol
-export declare const unsetMarker: unique symbol
+export const dataTagSymbol = Symbol('dataTagSymbol')
+export type dataTagSymbol = typeof dataTagSymbol
+export const dataTagErrorSymbol = Symbol('dataTagErrorSymbol')
+export type dataTagErrorSymbol = typeof dataTagErrorSymbol
+export const unsetMarker = Symbol('unsetMarker')
 export type UnsetMarker = typeof unsetMarker
 export type AnyDataTag = {
   [dataTagSymbol]: any
