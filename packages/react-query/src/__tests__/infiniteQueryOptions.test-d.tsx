@@ -4,7 +4,11 @@ import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import { useQuery } from '../useQuery'
-import type { InfiniteData, InitialDataFunction } from '@tanstack/query-core'
+import type {
+  DataTag,
+  InfiniteData,
+  InitialDataFunction,
+} from '@tanstack/query-core'
 
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
@@ -198,6 +202,40 @@ describe('infiniteQueryOptions', () => {
       | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
       | InfiniteData<{ example: boolean }, number>
       | undefined
+    >()
+  })
+
+  it('should return a custom query key type', () => {
+    type MyQueryKey = [Array<string>, { type: 'foo' }]
+
+    const options = infiniteQueryOptions({
+      queryKey: [['key'], { type: 'foo' }] as MyQueryKey,
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      DataTag<MyQueryKey, InfiniteData<number>, Error>
+    >()
+  })
+
+  it('should return a custom query key type with datatag', () => {
+    type MyQueryKey = DataTag<
+      [Array<string>, { type: 'foo' }],
+      number,
+      Error & { myMessage: string }
+    >
+
+    const options = infiniteQueryOptions({
+      queryKey: [['key'], { type: 'foo' }] as MyQueryKey,
+      queryFn: () => Promise.resolve(1),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      DataTag<MyQueryKey, InfiniteData<number>, Error & { myMessage: string }>
     >()
   })
 })
