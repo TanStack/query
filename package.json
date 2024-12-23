@@ -44,8 +44,8 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@types/eslint": "^9.6.1",
     "@types/node": "^22.9.3",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
     "@vitest/coverage-istanbul": "^2.0.4",
     "@vitest/eslint-plugin": "^1.1.16",
     "cpy-cli": "^5.0.0",
@@ -76,8 +76,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@types/react": "$@types/react",
-      "@types/react-dom": "$@types/react",
+      "@types/react": "^19.0.1",
+      "@types/react-dom": "^19.0.2",
       "eslint": "$eslint"
     }
   }
