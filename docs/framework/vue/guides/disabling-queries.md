@@ -18,15 +18,16 @@ const { isLoading, isError, data, error, refetch, isFetching } = useQuery({
 </script>
 
 <template>
-  <button @click="refetch">Fetch Todos</button>
-  <span v-if="isIdle">Not ready...</span>
-  <span v-else-if="isError">Error: {{ error.message }}</span>
+  <button @click="refetch()">Fetch Todos</button>
+  <span v-if="isLoading">Loading...</span>
+  <span v-else-if="isError">Error: {{ error?.message }}</span>
   <div v-else-if="data">
     <span v-if="isFetching">Fetching...</span>
     <ul>
       <li v-for="todo in data" :key="todo.id">{{ todo.title }}</li>
     </ul>
   </div>
+  <span v-else>Not ready...</span>
 </template>
 ```
 
