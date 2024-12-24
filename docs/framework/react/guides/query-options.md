@@ -31,4 +31,4 @@ queryClient.setQueryData(groupOptions(42).queryKey, newGroups)
 
 [//]: # 'Example1'
 
-For Infinite Queries, a separate `infiniteQueryOptions` helper is available.
+For Infinite Queries, a separate [`infiniteQueryOptions`](../reference/infiniteQueryOptions.md) helper is available.

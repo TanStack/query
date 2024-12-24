@@ -9,12 +9,12 @@
     "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^5.62.0",
-    "@tanstack/svelte-query-devtools": "^5.62.0"
+    "@tanstack/svelte-query": "^5.62.9",
+    "@tanstack/svelte-query-devtools": "^5.62.9"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^3.2.3",
-    "@sveltejs/kit": "^2.8.2",
+    "@sveltejs/adapter-auto": "^3.3.1",
+    "@sveltejs/kit": "^2.14.0",
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
