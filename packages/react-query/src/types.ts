@@ -36,7 +36,13 @@ export interface UseBaseQueryOptions<
     TData,
     TQueryData,
     TQueryKey
-  > {}
+  > {
+  /**
+   * Set this to `false` to unsubscribe this observer from updates to the query cache.
+   * Defaults to `true`.
+   */
+  subscribed?: boolean
+}
 
 export type AnyUseQueryOptions = UseQueryOptions<any, any, any, any>
 export interface UseQueryOptions<
