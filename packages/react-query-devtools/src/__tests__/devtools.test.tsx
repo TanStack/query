@@ -931,7 +931,7 @@ describe('ReactQueryDevtools', () => {
       paddingRight: '20%',
     }
 
-    function Parent({ children }: { children: React.ReactElement }) {
+    function Parent({ children }: { children: React.ReactNode }) {
       return (
         <div data-testid={parentElementTestid} style={parentPaddings}>
           {children}
