@@ -188,7 +188,7 @@ type Entry = {
 }
 
 type RendererProps = {
-  handleEntry: (entry: Entry) => JSX.Element
+  handleEntry: (entry: Entry) => React.JSX.Element
   label?: string
   value: unknown
   subEntries: Entry[]
@@ -220,7 +220,7 @@ export function chunkArray<T>(array: T[], size: number): T[][] {
   return result
 }
 
-type Renderer = (props: RendererProps) => JSX.Element
+type Renderer = (props: RendererProps) => React.JSX.Element
 
 export const DefaultRenderer: Renderer = ({
   handleEntry,

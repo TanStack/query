@@ -73,7 +73,7 @@ export const QueryClientProvider = ({
   children,
   context,
   contextSharing = false,
-}: QueryClientProviderProps): JSX.Element => {
+}: QueryClientProviderProps): React.JSX.Element => {
   React.useEffect(() => {
     client.mount()
     return () => {
