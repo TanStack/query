@@ -1380,8 +1380,8 @@ importers:
         specifier: ^19.0.0
         version: 19.0.0
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^19.0.0
+        version: 19.0.0
       react-17:
         specifier: npm:react@^17.0.2
         version: /react@17.0.2
@@ -1389,14 +1389,14 @@ importers:
         specifier: npm:react@^18.0.14
         version: /react@18.2.0
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^19.0.0
+        version: 19.0.0(react@19.0.0)
       react-dom-17:
         specifier: npm:react-dom@^17.0.2
-        version: /react-dom@17.0.2(react@18.2.0)
+        version: /react-dom@17.0.2(react@19.0.0)
       react-dom-18:
         specifier: npm:react-dom@^18.0.5
-        version: /react-dom@18.2.0(react@18.2.0)
+        version: /react-dom@18.2.0(react@19.0.0)
 
   packages/solid-query:
     dependencies:
@@ -7530,7 +7530,7 @@ packages:
   /@types/babel__core@7.1.19:
     resolution: {integrity: sha512-WEOTgRsbYkvA/KCsDwVEGkd7WAr1e3g31VHQ8zy5gul/V1qKullU/BU5I68X5v7V3GnB9eotmom4v5a5gjxorw==}
     dependencies:
-      '@babel/parser': 7.19.1
+      '@babel/parser': 7.26.3
       '@babel/types': 7.19.0
       '@types/babel__generator': 7.6.4
       '@types/babel__template': 7.4.1
