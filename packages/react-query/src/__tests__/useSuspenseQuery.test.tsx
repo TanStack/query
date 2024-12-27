@@ -903,4 +903,100 @@ describe('useSuspenseQuery', () => {
     )
     consoleErrorSpy.mockRestore()
   })
+
+  describe.only("warnOnServerFetches should warn when query isn't prefetched", () => {
+    it('global default', async () => {
+      const queryClient = createQueryClient({
+        defaultOptions: {
+          queries: {
+            warnOnServerFetches: true,
+          },
+        },
+      })
+
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
+
+      function App() {
+        useSuspenseQuery({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data1'),
+        })
+
+        return null
+      }
+
+      renderWithClient(queryClient, <App />)
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'A new query suspended on the server without any cache entry.',
+      )
+    })
+
+    it('local override', async () => {
+      const queryClient = createQueryClient({
+        defaultOptions: {
+          queries: {
+            warnOnServerFetches: true,
+          },
+        },
+      })
+
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
+
+      function App() {
+        useSuspenseQuery({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data1'),
+          warnOnServerFetches: false,
+        })
+
+        return null
+      }
+
+      renderWithClient(queryClient, <App />)
+
+      expect(consoleWarnSpy).not.toHaveBeenCalled()
+    })
+
+    it('mix of both', async () => {
+      const queryClient = createQueryClient({
+        defaultOptions: {
+          queries: {
+            warnOnServerFetches: true,
+          },
+        },
+      })
+
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
+
+      function Component(props: { warnOnServerFetches?: boolean }) {
+        useSuspenseQuery({
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve('data'),
+          warnOnServerFetches: props.warnOnServerFetches,
+        })
+
+        return null
+      }
+
+      function App() {
+        return (
+          <>
+            <Component />
+            <Component warnOnServerFetches={false} />
+          </>
+        )
+      }
+
+      renderWithClient(queryClient, <App />)
+
+      expect(consoleWarnSpy).not.toHaveBeenCalledTimes(1)
+    })
+  })
 })
