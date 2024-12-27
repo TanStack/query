@@ -92,7 +92,9 @@ export class QueriesObserver<
     this.#options = options
 
     if (process.env.NODE_ENV !== 'production') {
-      const queryHashes = queries.map((query) => query.queryHash)
+      const queryHashes = queries.map(
+        (query) => this.#client.defaultQueryOptions(query).queryHash,
+      )
       if (new Set(queryHashes).size !== queryHashes.length) {
         console.warn(
           '[QueriesObserver]: Duplicate Queries found. This might result in unexpected behavior.',
