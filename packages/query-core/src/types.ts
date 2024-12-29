@@ -43,9 +43,9 @@ export type DefaultError = Register extends {
 export type QueryKey = ReadonlyArray<unknown>
 
 export const dataTagSymbol = Symbol('dataTagSymbol')
-export type dataTagSymbol = typeof dataTagSymbol
+export type DataTagSymbol = typeof dataTagSymbol
 export const dataTagErrorSymbol = Symbol('dataTagErrorSymbol')
-export type dataTagErrorSymbol = typeof dataTagErrorSymbol
+export type DataTagErrorSymbol = typeof dataTagErrorSymbol
 export const unsetMarker = Symbol('unsetMarker')
 export type UnsetMarker = typeof unsetMarker
 export type AnyDataTag = {
