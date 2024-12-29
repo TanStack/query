@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { Query, QueryCache, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
-  experimental_createPersister,
+  experimental_createQueryPersister,
 } from '../createPersister'
 import { sleep } from './utils'
 import type { StoragePersisterOptions } from '../createPersister'
@@ -12,10 +12,10 @@ function getFreshStorage() {
   const storage = new Map()
   return {
     getItem: (key: string) => Promise.resolve(storage.get(key)),
-    setItem: async (key: string, value: unknown) => {
+    setItem: (key: string, value: unknown) => {
       storage.set(key, value)
     },
-    removeItem: async (key: string) => {
+    removeItem: (key: string) => {
       storage.delete(key)
     },
   }
@@ -36,7 +36,7 @@ function setupPersister(
 
   const queryFn = vi.fn()
 
-  const persisterFn = experimental_createPersister(persisterOptions)
+  const { persisterFn } = experimental_createQueryPersister(persisterOptions)
 
   const query = new Query({
     cache: new QueryCache(),
@@ -202,7 +202,7 @@ describe('createPersister', () => {
       storageKey,
       JSON.stringify({
         buster: '',
-        state: { dataUpdatedAt },
+        state: { dataUpdatedAt, data: '' },
       }),
     )
 
@@ -231,7 +231,7 @@ describe('createPersister', () => {
       storageKey,
       JSON.stringify({
         buster: '',
-        state: { dataUpdatedAt: Date.now() },
+        state: { dataUpdatedAt: Date.now(), data: '' },
       }),
     )
 
@@ -325,7 +325,7 @@ describe('createPersister', () => {
       storageKey,
       JSON.stringify({
         buster: '',
-        state: { dataUpdatedAt: Date.now() },
+        state: { dataUpdatedAt: Date.now(), data: '' },
       }),
     )
 
