@@ -15,14 +15,11 @@ export class TodosComponent {
   queryClient = inject(QueryClient)
 
   // When this mutation succeeds, invalidate any queries with the `todos` or `reminders` query key
-  mutation = injectMutation((queryClient) => ({
+  mutation = injectMutation(() => ({
     mutationFn: addTodo,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-      queryClient.invalidateQueries({ queryKey: ['reminders'] })
-
-      // OR use the queryClient that is injected into the component
-      // this.queryClient.invalidateQueries({ queryKey: ['todos'] })
+      this.queryClient.invalidateQueries({ queryKey: ['todos'] })
+      this.queryClient.invalidateQueries({ queryKey: ['reminders'] })
     },
   }))
 }
