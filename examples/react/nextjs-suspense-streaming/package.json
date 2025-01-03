@@ -9,9 +9,9 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.62.11",
-    "@tanstack/react-query-devtools": "^5.62.11",
-    "@tanstack/react-query-next-experimental": "^5.62.11",
+    "@tanstack/react-query": "^5.62.12",
+    "@tanstack/react-query-devtools": "^5.62.12",
+    "@tanstack/react-query-next-experimental": "^5.62.12",
     "next": "^14.2.20",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
