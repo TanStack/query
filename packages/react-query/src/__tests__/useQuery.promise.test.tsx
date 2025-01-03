@@ -6,6 +6,7 @@ import {
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent, waitFor } from '@testing-library/react'
 import {
   QueryClientProvider,
   QueryErrorResetBoundary,
@@ -13,7 +14,7 @@ import {
   useQuery,
 } from '..'
 import { QueryCache } from '../index'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
 let disableActReturn: ReturnType<typeof disableActEnvironment>
 beforeAll(() => {
@@ -40,6 +41,13 @@ describe('useQuery().promise', () => {
   })
 
   beforeAll(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    global.IS_REACT_ACT_ENVIRONMENT = true
+    queryClient.setDefaultOptions({
+      queries: { experimental_prefetchInRender: true },
+    })
+
     queryClient.setDefaultOptions({
       queries: { experimental_prefetchInRender: true },
     })
@@ -48,6 +56,68 @@ describe('useQuery().promise', () => {
     queryClient.setDefaultOptions({
       queries: { experimental_prefetchInRender: false },
     })
+  })
+
+  it('should throw error if query fails with deferred value #8249', async () => {
+    function MyComponent(props: { promise: Promise<string> }) {
+      const data = React.use(props.promise)
+
+      return <>{data}</>
+    }
+
+    const key = queryKey()
+    let renderCount = 0
+
+    function Page() {
+      renderCount++
+
+      const [_count, setCount] = React.useState(0)
+      const count = React.useDeferredValue(_count)
+
+      const query = useQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          await sleep(10)
+          // succeed only on first query
+          if (count === 0) {
+            return 'test' + count
+          }
+          throw new Error('Error test')
+        },
+        retry: false,
+      })
+
+      return (
+        <React.Suspense fallback="loading..">
+          <button onClick={() => setCount((curr) => curr + 1)}>inc</button>
+          <MyComponent promise={query.promise} />
+        </React.Suspense>
+      )
+    }
+
+    const rendered = await act(() =>
+      renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>,
+      ),
+    )
+
+    await waitFor(() => rendered.getByText('loading..'))
+    await waitFor(() => rendered.getByText('test0'))
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    await act(() => fireEvent.click(rendered.getByText('inc')))
+
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
+
+    expect(renderCount).toBe(6)
   })
 
   it('should work with a basic test', async () => {
