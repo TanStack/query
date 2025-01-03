@@ -420,6 +420,33 @@ This last change is technically a breaking one, and was made so we don't prematu
 + </HydrationBoundary> // [!code ++]
 ```
 
+### Query defaults changes
+
+`queryClient.getQueryDefaults` will now merge together all matching registrations instead of returning only the first matching registration.
+
+As a result, calls to `queryClient.setQueryDefaults` should now be ordered with _increasing_ specificity.
+That is, registrations should be made from the **most generic key** to the **least generic one**.
+
+For example:
+
+```ts
++ queryClient.setQueryDefaults(['todo'], {   // [!code ++]
++   retry: false,  // [!code ++]
++   staleTime: 60_000,  // [!code ++]
++ })  // [!code ++]
+queryClient.setQueryDefaults(['todo', 'detail'], {
++   retry: true,  // [!code --]
+  retryDelay: 1_000,
+  staleTime: 10_000,
+})
+- queryClient.setQueryDefaults(['todo'], { // [!code --]
+-   retry: false, // [!code --]
+-   staleTime: 60_000, // [!code --]
+- }) // [!code --]
+```
+
+Note that in this specific example, `retry: true` was added to the `['todo', 'detail']` registration to counteract it now inheriting `retry: false` from the more general registration. The specific changes needed to maintain exact behavior will vary depending on your defaults.
+
 [//]: # 'FrameworkSpecificBreakingChanges'
 
 ## New Features 🚀
