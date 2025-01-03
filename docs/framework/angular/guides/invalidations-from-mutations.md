@@ -5,6 +5,17 @@ ref: docs/framework/react/guides/invalidations-from-mutations.md
 replace: { 'useMutation': 'injectMutation', 'hook': 'function' }
 ---
 
+[//]: # 'Example'
+
+```ts
+mutation = injectMutation(() => ({
+  mutationFn: postTodo,
+}))
+```
+
+[//]: # 'Example'
+[//]: # 'Example2'
+
 ```ts
 import {
   injectMutation,
@@ -25,4 +36,6 @@ export class TodosComponent {
 }
 ```
 
-You can wire up your invalidations to happen using any of the callbacks available in the [`injectMutation`](../mutations) function
+[//]: # 'Example2'
+
+You can wire up your invalidations to happen using any of the callbacks available in the [`injectMutation` function](../mutations)
