@@ -698,11 +698,11 @@ export class QueryObserver<
         includedProps.add('error')
       }
 
-      return Object.keys(this.#currentResult).some((key) => {
+      return [...includedProps].some((key) => {
         const typedKey = key as keyof QueryObserverResult
         const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
 
-        return changed && includedProps.has(typedKey)
+        return changed
       })
     }
 
