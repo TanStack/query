@@ -1233,4 +1233,35 @@ describe('queryObserver', () => {
 
     unsubscribe()
   })
+
+  test('switching enabled state should reuse the same promise', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+      queryFn: () => 'data',
+    })
+    const results: Array<QueryObserverResult> = []
+    
+
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await sleep(1)
+
+    observer.setOptions({ queryKey: key, queryFn: () => 'data', enabled: true })
+
+
+    await waitFor(() => {
+      expect(results.at(-1)?.status).toBe('success')
+    })
+    
+    unsubscribe()
+
+    
+    const promises = new Set(results.map((result) => result.promise))
+    expect(promises.size).toBe(1)
+  })
 })
