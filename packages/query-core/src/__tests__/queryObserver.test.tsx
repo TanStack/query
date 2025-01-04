@@ -1257,7 +1257,11 @@ describe('queryObserver', () => {
       }
     })
 
-    observer.setOptions({ queryKey: key, queryFn: () => 'data', enabled: true })
+    observer.setOptions({ 
+      queryKey: key, 
+      queryFn: () => 'data', 
+      enabled: true 
+    })
 
 
     await success
