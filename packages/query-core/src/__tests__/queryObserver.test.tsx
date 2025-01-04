@@ -11,6 +11,7 @@ import { waitFor } from '@testing-library/dom'
 import { QueryObserver, focusManager } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
+import { pendingThenable } from '../thenable'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
@@ -1243,18 +1244,23 @@ describe('queryObserver', () => {
       queryFn: () => 'data',
     })
     const results: Array<QueryObserverResult> = []
+
+    const success = pendingThenable<void>()
     
 
     const unsubscribe = observer.subscribe((result) => {
+      
       results.push(result)
+
+      if (result.status === 'success') {
+        success.resolve()
+      }
     })
 
     observer.setOptions({ queryKey: key, queryFn: () => 'data', enabled: true })
 
 
-    await waitFor(() => {
-      expect(results.at(-1)?.status).toBe('success')
-    })
+    await success
     
     unsubscribe()
 
