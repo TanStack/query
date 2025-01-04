@@ -11,7 +11,6 @@ import { AutocompleteService } from '../services/autocomplete-service'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example',
-  standalone: true,
   templateUrl: './example.component.html',
   imports: [ReactiveFormsModule],
 })

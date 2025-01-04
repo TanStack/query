@@ -7,7 +7,6 @@ import { PostsService } from '../services/posts-service'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'posts',
-  standalone: true,
   templateUrl: './posts.component.html',
   imports: [RouterLink],
 })

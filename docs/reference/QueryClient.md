@@ -71,8 +71,6 @@ Its available methods are:
 
 If the query exists and the data is not invalidated or older than the given `staleTime`, then the data from the cache will be returned. Otherwise it will try to fetch the latest data.
 
-> The difference between using `fetchQuery` and `setQueryData` is that `fetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
-
 ```tsx
 try {
   const data = await queryClient.fetchQuery({ queryKey, queryFn })
@@ -524,8 +522,8 @@ The `getQueryDefaults` method returns the default options which have been set fo
 const defaultOptions = queryClient.getQueryDefaults(['posts'])
 ```
 
-> Note that if several query defaults match the given query key, the **first** matching one is returned.
-> This could lead to unexpected behaviours. See [`setQueryDefaults`](#queryclientsetquerydefaults).
+> Note that if several query defaults match the given query key, they will be merged together based on the order of registration.
+> See [`setQueryDefaults`](#queryclientsetquerydefaults).
 
 ## `queryClient.setQueryDefaults`
 
@@ -545,7 +543,8 @@ function Component() {
 - `options: QueryOptions`
 
 > As stated in [`getQueryDefaults`](#queryclientgetquerydefaults), the order of registration of query defaults does matter.
-> Since the **first** matching defaults are returned by `getQueryDefaults`, the registration should be made in the following order: from the **least generic key** to the **most generic one**. This way, in case of specific key, the first matching one would be the expected one.
+> Since the matching defaults are merged by `getQueryDefaults`, the registration should be made in the following order: from the **most generic key** to the **least generic one** .
+> This way, more specific defaults will override more generic defaults.
 
 ## `queryClient.getMutationDefaults`
 

@@ -42,10 +42,26 @@ export type DefaultError = Register extends {
 
 export type QueryKey = ReadonlyArray<unknown>
 
-export declare const dataTagSymbol: unique symbol
-export type DataTag<TType, TValue> = TType & {
-  [dataTagSymbol]: TValue
+export const dataTagSymbol = Symbol('dataTagSymbol')
+export type dataTagSymbol = typeof dataTagSymbol
+export const dataTagErrorSymbol = Symbol('dataTagErrorSymbol')
+export type dataTagErrorSymbol = typeof dataTagErrorSymbol
+export const unsetMarker = Symbol('unsetMarker')
+export type UnsetMarker = typeof unsetMarker
+export type AnyDataTag = {
+  [dataTagSymbol]: any
+  [dataTagErrorSymbol]: any
 }
+export type DataTag<
+  TType,
+  TValue,
+  TError = UnsetMarker,
+> = TType extends AnyDataTag
+  ? TType
+  : TType & {
+      [dataTagSymbol]: TValue
+      [dataTagErrorSymbol]: TError
+    }
 
 export type QueryFunction<
   T = unknown,
@@ -534,11 +550,21 @@ export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters extends QueryFilters {
+export interface InvalidateQueryFilters<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {
   refetchType?: QueryTypeFilter | 'none'
 }
 
-export interface RefetchQueryFilters extends QueryFilters {}
+export interface RefetchQueryFilters<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {}
 
 export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/react'
+import { waitFor } from '@testing-library/dom'
 
 import {
   MutationObserver,
@@ -477,6 +477,21 @@ describe('queryClient', () => {
         }),
       ).resolves.toEqual('new')
     })
+
+    test('should not fetch with initialDat', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn().mockImplementation(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.ensureQueryData({
+          queryKey: [key, 'id'],
+          queryFn,
+          initialData: 'initial',
+        }),
+      ).resolves.toEqual('initial')
+
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
   })
 
   describe('ensureInfiniteQueryData', () => {
@@ -698,6 +713,28 @@ describe('queryClient', () => {
       expect(second).toBe(1)
       expect(third).toBe(1)
       expect(fourth).toBe(2)
+    })
+
+    test('should allow new meta', async () => {
+      const key = queryKey()
+
+      const first = await queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: true,
+        },
+      })
+      expect(first).toStrictEqual({ foo: true })
+
+      const second = await queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: false,
+        },
+      })
+      expect(second).toStrictEqual({ foo: false })
     })
   })
 

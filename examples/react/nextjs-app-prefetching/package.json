@@ -9,15 +9,15 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.61.0",
-    "@tanstack/react-query-devtools": "^5.61.0",
-    "next": "^15.0.0-rc.0",
-    "react": "19.0.0-rc-4c2e457c7c-20240522",
-    "react-dom": "19.0.0-rc-4c2e457c7c-20240522"
+    "@tanstack/react-query": "^5.62.14",
+    "@tanstack/react-query-devtools": "^5.62.14",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc",
-    "typescript": "5.3.3"
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "typescript": "5.7.2"
   }
 }

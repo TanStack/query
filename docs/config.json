@@ -1047,6 +1047,10 @@
               "to": "framework/angular/examples/basic"
             },
             {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/angular/examples/auto-refetching"
+            },
+            {
               "label": "Pagination",
               "to": "framework/angular/examples/pagination"
             },

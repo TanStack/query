@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-next-experimental",
-  "version": "5.61.0",
+  "version": "5.62.14",
   "description": "Hydration utils for React Query in the NextJs app directory",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -21,7 +21,11 @@
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
-    "test:types:ts53": "tsc",
+    "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js",
+    "test:types:ts57": "tsc",
     "test:build": "publint --strict && attw --pack",
     "build": "tsup"
   },
@@ -50,10 +54,10 @@
   ],
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
-    "@types/react": "npm:types-react@rc",
+    "@types/react": "^19.0.1",
     "@vitejs/plugin-react": "^4.3.3",
-    "next": "^14.2.18",
-    "react": "19.0.0-rc-4c2e457c7c-20240522"
+    "next": "^14.2.20",
+    "react": "^19.0.0"
   },
   "peerDependencies": {
     "@tanstack/react-query": "workspace:^",

@@ -92,7 +92,7 @@ const {
 - `staleTime: number | ((query: Query) => number)`
   - Optional
   - Defaults to `0`
-  - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
+  - The time in milliseconds after which data is considered stale. This value only applies to the hook it is defined on.
   - If set to `Infinity`, the data will never be considered stale
   - If set to a function, the function will be executed with the query to compute a `staleTime`.
 - `gcTime: number | Infinity`

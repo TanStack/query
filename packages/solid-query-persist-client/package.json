@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-persist-client",
-  "version": "5.60.6",
+  "version": "5.62.12",
   "description": "Solid.js bindings to work with persisters in TanStack/solid-query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -21,7 +21,11 @@
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
-    "test:types:ts53": "tsc",
+    "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js",
+    "test:types:ts57": "tsc",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
@@ -61,8 +65,9 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
+    "@solidjs/testing-library": "^0.8.10",
     "@tanstack/solid-query": "workspace:*",
-    "solid-js": "^1.8.19",
+    "solid-js": "^1.9.3",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.10.2"
   },

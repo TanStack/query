@@ -4,7 +4,6 @@ import { ExampleComponent } from './components/example.component'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
-  standalone: true,
   template: `<example />`,
   imports: [ExampleComponent],
 })

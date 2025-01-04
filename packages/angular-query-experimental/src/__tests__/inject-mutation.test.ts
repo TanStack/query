@@ -51,7 +51,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('should change state after invoking mutate', async () => {
+  test('should change state after invoking mutate', () => {
     const result = 'Mock data'
 
     const mutation = TestBed.runInInjectionContext(() => {
@@ -59,6 +59,8 @@ describe('injectMutation', () => {
         mutationFn: (params: string) => successMutator(params),
       }))
     })
+
+    TestBed.flushEffects()
 
     mutation.mutate(result)
     vi.advanceTimersByTime(1)
@@ -79,6 +81,7 @@ describe('injectMutation', () => {
         mutationFn: errorMutator,
       }))
     })
+
     mutation.mutate({})
 
     await resolveMutations()
@@ -128,8 +131,6 @@ describe('injectMutation', () => {
     })
 
     mutationKey.set(['2'])
-
-    TestBed.flushEffects()
 
     mutation.mutate('xyz')
 
@@ -404,6 +405,8 @@ describe('injectMutation', () => {
           throwOnError: boundaryFn,
         }))
       })
+
+      TestBed.flushEffects()
 
       mutate()
 
