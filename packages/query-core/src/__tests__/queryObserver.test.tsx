@@ -1246,10 +1246,8 @@ describe('queryObserver', () => {
     const results: Array<QueryObserverResult> = []
 
     const success = pendingThenable<void>()
-    
 
     const unsubscribe = observer.subscribe((result) => {
-      
       results.push(result)
 
       if (result.status === 'success') {
@@ -1257,18 +1255,16 @@ describe('queryObserver', () => {
       }
     })
 
-    observer.setOptions({ 
-      queryKey: key, 
-      queryFn: () => 'data', 
-      enabled: true 
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => 'data',
+      enabled: true,
     })
 
-
     await success
-    
+
     unsubscribe()
 
-    
     const promises = new Set(results.map((result) => result.promise))
     expect(promises.size).toBe(1)
   })
