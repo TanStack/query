@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.62.2",
+  "version": "5.62.13",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -72,7 +72,7 @@
     "@angular/core": "^19.1.0-next.0",
     "@angular/platform-browser": "^19.1.0-next.0",
     "@angular/platform-browser-dynamic": "^19.1.0-next.0",
-    "@microsoft/api-extractor": "^7.48.0",
+    "@microsoft/api-extractor": "^7.48.1",
     "eslint-plugin-jsdoc": "^50.5.0",
     "tsup": "8.0.2",
     "typescript": "5.7.2"

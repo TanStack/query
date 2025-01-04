@@ -6422,6 +6422,39 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: data'))
   })
 
+  it('should allow enabled: true and queryFn: skipToken', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function App() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: skipToken,
+        enabled: true,
+      })
+
+      return (
+        <div>
+          <div>
+            status: {query.status}, fetchStatus: {query.fetchStatus}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() =>
+      rendered.getByText('status: pending, fetchStatus: idle'),
+    )
+
+    // no warnings expected about skipToken / missing queryFn
+    expect(consoleMock).toHaveBeenCalledTimes(0)
+    consoleMock.mockRestore()
+  })
+
   it('should return correct optimistic result when fetching after error', async () => {
     const key = queryKey()
     const error = new Error('oh no')
