@@ -1249,8 +1249,6 @@ describe('queryObserver', () => {
       results.push(result)
     })
 
-    await sleep(1)
-
     observer.setOptions({ queryKey: key, queryFn: () => 'data', enabled: true })
 
 
