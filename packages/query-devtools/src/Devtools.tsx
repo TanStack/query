@@ -1622,7 +1622,10 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
           css`
             cursor: pointer;
             &:hover {
-              background: ${t(colors.gray[200], colors.darkGray[400])}${alpha[80]};
+              background: ${t(
+                  colors.gray[200],
+                  colors.darkGray[400],
+                )}${alpha[80]};
             }
           `,
         'tsqd-query-status-tag',

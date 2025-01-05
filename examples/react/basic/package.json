@@ -9,15 +9,15 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.62.8",
-    "@tanstack/react-query": "^5.62.8",
-    "@tanstack/react-query-devtools": "^5.62.8",
-    "@tanstack/react-query-persist-client": "^5.62.8",
+    "@tanstack/query-sync-storage-persister": "^5.62.12",
+    "@tanstack/react-query": "^5.62.14",
+    "@tanstack/react-query-devtools": "^5.62.14",
+    "@tanstack/react-query-persist-client": "^5.62.14",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.62.1",
+    "@tanstack/eslint-plugin-query": "^5.62.9",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.3.3",
