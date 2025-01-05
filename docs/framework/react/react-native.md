@@ -159,41 +159,27 @@ function MyComponent() {
 
 ## Disable queries on out of focus screens
 
-Enabled can also be set to a callback to support disabling queries on out of focus screens without state and re-rendering on navigation, similar to how notifyOnChangeProps works but in addition it wont trigger refetching when invalidating queries with refetchType active.
-
-```tsx
-import React from 'react'
-import { useFocusEffect } from '@react-navigation/native'
-
-export function useQueryFocusAware() {
-  const focusedRef = React.useRef(true)
-
-  useFocusEffect(
-    React.useCallback(() => {
-      focusedRef.current = true
-
-      return () => {
-        focusedRef.current = false
-      }
-    }, []),
-  )
-
-  return () => focusedRef.current
-}
-```
+If you don’t want certain queries to remain “live” while a screen is out of focus, you can use the subscribed prop on useQuery. This prop lets you control whether a query stays subscribed to updates. Combined with React Navigation’s useIsFocused, it allows you to seamlessly unsubscribe from queries when a screen isn’t in focus:
 
 Example usage:
 
 ```tsx
+import React from 'react'
+import { useIsFocused } from '@react-navigation/native'
+import { useQuery } from '@tanstack/react-query'
+import { Text } from 'react-native'
+
 function MyComponent() {
-  const isFocused = useQueryFocusAware()
+  const isFocused = useIsFocused()
 
   const { dataUpdatedAt } = useQuery({
-    queryKey: ['key'],
+    queryKey: ['myKey'],
     queryFn: () => fetch(...),
-    enabled: isFocused,
+    subscribed: isFocused,
   })
 
   return <Text>DataUpdatedAt: {dataUpdatedAt}</Text>
 }
 ```
+
+When subscribed is false, the query unsubscribes from updates and won’t trigger re-renders or fetch new data for that screen. Once it becomes true again (e.g., when the screen regains focus), the query re-subscribes and stays up to date.
