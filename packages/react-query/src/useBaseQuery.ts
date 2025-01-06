@@ -80,7 +80,6 @@ export function useBaseQuery<
       ),
   )
 
-  
   const result = observer.getOptimisticResult(defaultedOptions)
 
   React.useSyncExternalStore(
