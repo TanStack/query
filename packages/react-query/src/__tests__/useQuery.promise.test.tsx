@@ -1387,7 +1387,6 @@ describe('useQuery().promise', () => {
     })
 
     function MyComponent(props: { enabled: boolean }) {
-      useTrackRenders()
       const query = useQuery({
         queryKey: key,
         queryFn,
@@ -1400,12 +1399,10 @@ describe('useQuery().promise', () => {
     }
 
     function Loading() {
-      useTrackRenders()
       return <>loading..</>
     }
 
     function Page() {
-      useTrackRenders()
       const enabledState = React.useState(false)
       const enabled = enabledState[0]
       const setEnabled = enabledState[1]
