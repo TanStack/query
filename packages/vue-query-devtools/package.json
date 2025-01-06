@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "5.62.7",
+  "version": "5.62.12",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@tanstack/vue-query": "workspace:*",
-    "@vitejs/plugin-vue": "^5.1.1",
+    "@vitejs/plugin-vue": "^5.2.1",
     "eslint-plugin-vue": "^9.27.0",
     "typescript": "5.6.3",
     "vite": "^5.3.5",

@@ -8,11 +8,9 @@ replace: { 'useMutation': 'injectMutation', 'hook': 'function' }
 [//]: # 'Example'
 
 ```ts
-class TodoItemComponent {
-  mutation = injectMutation(() => ({
-    mutationFn: postTodo,
-  }))
-}
+mutation = injectMutation(() => ({
+  mutationFn: postTodo,
+}))
 ```
 
 [//]: # 'Example'
@@ -33,9 +31,6 @@ export class TodosComponent {
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['todos'] })
       this.queryClient.invalidateQueries({ queryKey: ['reminders'] })
-
-      // OR use the queryClient that is injected into the component
-      // this.queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   }))
 }

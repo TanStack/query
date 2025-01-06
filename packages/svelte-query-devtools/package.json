@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query-devtools",
-  "version": "5.62.7",
+  "version": "5.62.12",
   "description": "Developer tools to interact with and visualize the TanStack/svelte-query cache",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -40,7 +40,7 @@
   ],
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*",
-    "esm-env": "^1.1.4"
+    "esm-env": "^1.2.1"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.3.7",
