@@ -92,71 +92,6 @@ export function useRefreshOnFocus<T>(refetch: () => Promise<T>) {
 
 In the above code, `refetch` is skipped the first time because `useFocusEffect` calls our callback on mount in addition to screen focus.
 
-## Disable re-renders on out of focus Screens
-
-In some situations, including performance concerns, you may want to stop re-renders when a React Native screen gets out of focus. To achieve this we can use `useFocusEffect` from `@react-navigation/native` together with the `notifyOnChangeProps` query option.
-
-This custom hook provides a `notifyOnChangeProps` option that will return an empty array whenever a screen goes out of focus - effectively stopping any re-renders on that scenario. Whenever the screens gets in focus again, the behavior goes back to normal.
-
-```tsx
-import React from 'react'
-import { NotifyOnChangeProps } from '@tanstack/query-core'
-import { useFocusEffect } from '@react-navigation/native'
-
-export function useFocusNotifyOnChangeProps(
-  notifyOnChangeProps?: NotifyOnChangeProps,
-) {
-  const focusedRef = React.useRef(true)
-
-  useFocusEffect(
-    React.useCallback(() => {
-      focusedRef.current = true
-
-      return () => {
-        focusedRef.current = false
-      }
-    }, []),
-  )
-
-  return () => {
-    if (!focusedRef.current) {
-      return []
-    }
-
-    if (typeof notifyOnChangeProps === 'function') {
-      return notifyOnChangeProps()
-    }
-
-    return notifyOnChangeProps
-  }
-}
-```
-
-In the above code, `useFocusEffect` is used to change the value of a reference that the callback will use as a condition.
-
-The argument is wrapped in a reference to also guarantee that the returned callback always keeps the same reference.
-
-Example usage:
-
-```tsx
-function MyComponent() {
-  const notifyOnChangeProps = useFocusNotifyOnChangeProps()
-
-  const { dataUpdatedAt } = useQuery({
-    queryKey: ['myKey'],
-    queryFn: async () => {
-      const response = await fetch(
-        'https://api.github.com/repos/tannerlinsley/react-query',
-      )
-      return response.json()
-    },
-    notifyOnChangeProps,
-  })
-
-  return <Text>DataUpdatedAt: {dataUpdatedAt}</Text>
-}
-```
-
 ## Disable queries on out of focus screens
 
 If you don’t want certain queries to remain “live” while a screen is out of focus, you can use the subscribed prop on useQuery. This prop lets you control whether a query stays subscribed to updates. Combined with React Navigation’s useIsFocused, it allows you to seamlessly unsubscribe from queries when a screen isn’t in focus:
@@ -173,7 +108,7 @@ function MyComponent() {
   const isFocused = useIsFocused()
 
   const { dataUpdatedAt } = useQuery({
-    queryKey: ['myKey'],
+    queryKey: ['key'],
     queryFn: () => fetch(...),
     subscribed: isFocused,
   })
