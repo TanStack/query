@@ -70,9 +70,7 @@ export function useBaseQuery<
   useClearResetErrorBoundary(errorResetBoundary)
 
   // this needs to be invoked before creating the Observer because that can create a cache entry
-  const isNewCacheEntry = !client
-    .getQueryCache()
-    .get(defaultedOptions.queryHash)
+  const cacheEntry = client.getQueryCache().get(defaultedOptions.queryHash)
 
   const [observer] = React.useState(
     () =>
@@ -82,6 +80,7 @@ export function useBaseQuery<
       ),
   )
 
+  
   const result = observer.getOptimisticResult(defaultedOptions)
 
   React.useSyncExternalStore(
@@ -130,6 +129,7 @@ export function useBaseQuery<
         >(defaultedOptions.queryHash),
     })
   ) {
+    console.log('throwing error')
     throw result.error
   }
 
@@ -138,12 +138,32 @@ export function useBaseQuery<
     result,
   )
 
+  console.log(
+    'prefetchInRender',
+    defaultedOptions.experimental_prefetchInRender,
+    {
+      willFetch: willFetch(result, isRestoring),
+      isRestoring: isRestoring,
+      isLoading: result.isLoading,
+      isFetching: result.isFetching,
+      isServer: isServer,
+    },
+  )
   if (
     defaultedOptions.experimental_prefetchInRender &&
     !isServer &&
     willFetch(result, isRestoring)
   ) {
-    const promise = isNewCacheEntry
+    const cacheEntryState = cacheEntry?.state
+
+    const shouldFetch =
+      !cacheEntryState ||
+      (cacheEntryState.data === undefined &&
+        cacheEntryState.status === 'pending' &&
+        cacheEntryState.fetchStatus === 'idle')
+
+    console.log({ shouldFetch })
+    const promise = shouldFetch
       ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
         fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
       : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
