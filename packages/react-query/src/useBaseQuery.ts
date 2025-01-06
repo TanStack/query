@@ -129,7 +129,6 @@ export function useBaseQuery<
         >(defaultedOptions.queryHash),
     })
   ) {
-    console.log('throwing error')
     throw result.error
   }
 
@@ -138,30 +137,19 @@ export function useBaseQuery<
     result,
   )
 
-  console.log(
-    'prefetchInRender',
-    defaultedOptions.experimental_prefetchInRender,
-    {
-      willFetch: willFetch(result, isRestoring),
-      isRestoring: isRestoring,
-      isLoading: result.isLoading,
-      isFetching: result.isFetching,
-      isServer: isServer,
-    },
-  )
   if (
     defaultedOptions.experimental_prefetchInRender &&
     !isServer &&
     willFetch(result, isRestoring)
   ) {
     // This fetching in the render should likely be done as part of the getOptimisticResult() considering https://github.com/TanStack/query/issues/8507
-    const cacheEntryState = cacheEntry?.state
+    const state = cacheEntry?.state
 
     const shouldFetch =
-      !cacheEntryState ||
-      (cacheEntryState.data === undefined &&
-        cacheEntryState.status === 'pending' &&
-        cacheEntryState.fetchStatus === 'idle')
+      !state ||
+      (state.data === undefined &&
+        state.status === 'pending' &&
+        state.fetchStatus === 'idle')
 
     const promise = shouldFetch
       ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
