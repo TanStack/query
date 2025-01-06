@@ -154,6 +154,7 @@ export function useBaseQuery<
     !isServer &&
     willFetch(result, isRestoring)
   ) {
+    // This fetching in the render should likely be done as part of the getOptimisticResult() considering https://github.com/TanStack/query/issues/8507
     const cacheEntryState = cacheEntry?.state
 
     const shouldFetch =
@@ -162,7 +163,6 @@ export function useBaseQuery<
         cacheEntryState.status === 'pending' &&
         cacheEntryState.fetchStatus === 'idle')
 
-    console.log({ shouldFetch })
     const promise = shouldFetch
       ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
         fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
