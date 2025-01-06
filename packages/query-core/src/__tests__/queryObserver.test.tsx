@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom'
 import {
   afterEach,
   beforeEach,
@@ -7,11 +8,10 @@ import {
   test,
   vi,
 } from 'vitest'
-import { waitFor } from '@testing-library/dom'
 import { QueryObserver, focusManager } from '..'
+import { pendingThenable } from '../thenable'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
-import { pendingThenable } from '../thenable'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
