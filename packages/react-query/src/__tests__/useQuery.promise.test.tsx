@@ -138,6 +138,73 @@ describe('useQuery().promise', () => {
     expect(callCount).toBe(1)
   })
 
+  it.only('should work with a previously errored query', async () => {
+    const key = queryKey()
+    const renderStream = createRenderStream({ snapshotDOM: true })
+    const queryFn = vi.fn(async () => {
+      await sleep(1)
+      return 'test'
+    })
+
+    // Ensure the query is in an errored state
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => {
+        throw new Error('test')
+      },
+      retry: false,
+    })
+
+    function MyComponent() {
+      useTrackRenders()
+      const query = useQuery({
+        queryKey: key,
+        queryFn,
+        staleTime: Infinity,
+      })
+
+      const data = React.use(query.promise)
+      return <>{data}</>
+    }
+
+    function Loading() {
+      useTrackRenders()
+      return <>loading..</>
+    }
+
+    function Page() {
+      useTrackRenders()
+
+      return (
+        <div>
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    {
+      const result = await renderStream.takeRender()
+      result.withinDOM().getByText('loading..')
+    }
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    {
+      const result = await renderStream.takeRender()
+      result.withinDOM().getByText('test')
+    }
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
   it('parallel queries', async () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })

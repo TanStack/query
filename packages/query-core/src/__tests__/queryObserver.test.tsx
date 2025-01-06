@@ -1171,6 +1171,36 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('getOptimisticResult() should return pending on previously errored queries', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => {
+        throw new Error('test')
+      },
+      retry: false,
+    })
+
+    const options = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(1)
+        return 'data'
+      },
+      enabled: false,
+    })
+
+    const observer = new QueryObserver(queryClient, options)
+
+    const optimisticResult = observer.getOptimisticResult(options)
+
+    const fetched = await queryClient.fetchQuery(options)
+
+    expect(fetched).toBe('data')
+    expect(optimisticResult.status).toBe('pending')
+  })
+
   test('should return a new promise after recovering from an error', async () => {
     const results: Array<QueryObserverResult> = []
     const key = queryKey()
