@@ -183,7 +183,7 @@ Also similarly to registering a [global error type](#registering-a-global-error)
 ```ts
 import '@tanstack/react-query'
 
-type QueryKey = ["dashboard" | "marketing", ...ReadonlyArray<unknown>]
+type QueryKey = ['dashboard' | 'marketing', ...ReadonlyArray<unknown>]
 
 declare module '@tanstack/react-query' {
   interface Register {

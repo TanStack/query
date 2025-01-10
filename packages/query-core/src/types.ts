@@ -43,12 +43,12 @@ export type DefaultError = Register extends {
   : Error
 
 export type QueryKey = Register extends {
-    queryKey: infer TQueryKey;
+  queryKey: infer TQueryKey
 }
   ? TQueryKey extends Array<unknown>
     ? TQueryKey
     : ReadonlyArray<unknown>
-  : ReadonlyArray<unknown>;
+  : ReadonlyArray<unknown>
 
 export const dataTagSymbol = Symbol('dataTagSymbol')
 export type dataTagSymbol = typeof dataTagSymbol
@@ -1005,12 +1005,12 @@ export type InfiniteQueryObserverResult<
   | InfiniteQueryObserverPendingResult<TData, TError>
 
 export type MutationKey = Register extends {
-  mutationKey: infer TMutationKey;
+  mutationKey: infer TMutationKey
 }
-? TMutationKey extends Array<unknown>
-  ? TMutationKey
+  ? TMutationKey extends Array<unknown>
+    ? TMutationKey
+    : ReadonlyArray<unknown>
   : ReadonlyArray<unknown>
-: ReadonlyArray<unknown>;
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
