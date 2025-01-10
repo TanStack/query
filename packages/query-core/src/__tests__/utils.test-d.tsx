@@ -1,13 +1,18 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import type { QueryFilters } from '../utils'
-import type { DataTag } from '../types'
+import type { DataTag, QueryKey } from '../types'
 
 describe('QueryFilters', () => {
   it('should be typed if generics are passed', () => {
     type TData = { a: number; b: string }
 
-    const a: QueryFilters<TData> = {
+    const filters: QueryFilters<
+      TData,
+      Error,
+      TData,
+      DataTag<QueryKey, TData>
+    > = {
       predicate(query) {
         expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
         return true
@@ -17,10 +22,10 @@ describe('QueryFilters', () => {
 
     const queryClient = new QueryClient()
 
-    const data = queryClient.getQueryData(a.queryKey!)
+    const data = queryClient.getQueryData(filters.queryKey!)
     expectTypeOf(data).toEqualTypeOf<TData | undefined>()
 
-    const error = queryClient.getQueryState(a.queryKey!)?.error
+    const error = queryClient.getQueryState(filters.queryKey!)?.error
     expectTypeOf(error).toEqualTypeOf<Error | null | undefined>()
   })
 
@@ -28,7 +33,12 @@ describe('QueryFilters', () => {
     type TData = { a: number; b: string }
     type TError = Error & { message: string }
 
-    const a: QueryFilters<TData, TError> = {
+    const filters: QueryFilters<
+      TData,
+      TError,
+      TData,
+      DataTag<QueryKey, TData, TError>
+    > = {
       predicate(query) {
         expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
         return true
@@ -38,10 +48,10 @@ describe('QueryFilters', () => {
 
     const queryClient = new QueryClient()
 
-    const data = queryClient.getQueryData(a.queryKey!)
+    const data = queryClient.getQueryData(filters.queryKey!)
     expectTypeOf(data).toEqualTypeOf<TData | undefined>()
 
-    const error = queryClient.getQueryState(a.queryKey!)?.error
+    const error = queryClient.getQueryState(filters.queryKey!)?.error
     expectTypeOf(error).toEqualTypeOf<TError | null | undefined>()
   })
 

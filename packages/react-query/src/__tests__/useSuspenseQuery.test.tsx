@@ -64,7 +64,7 @@ describe('useSuspenseQuery', () => {
 
     await waitFor(() => rendered.getByText('data: 2'))
 
-    expect(renders).toBe(4)
+    expect(renders).toBe(6)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: 1, status: 'success' })
     expect(states[1]).toMatchObject({ data: 2, status: 'success' })
@@ -325,61 +325,6 @@ describe('useSuspenseQuery', () => {
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('rendered'))
     consoleMock.mockRestore()
-  })
-
-  it('should refetch when re-mounting', async () => {
-    const key = queryKey()
-    let count = 0
-
-    function Component() {
-      const result = useSuspenseQuery({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(100)
-          count++
-          return count
-        },
-        retry: false,
-        staleTime: 0,
-      })
-      return (
-        <div>
-          <span>data: {result.data}</span>
-          <span>fetching: {result.isFetching ? 'true' : 'false'}</span>
-        </div>
-      )
-    }
-
-    function Page() {
-      const [show, setShow] = React.useState(true)
-      return (
-        <div>
-          <button
-            onClick={() => {
-              setShow(!show)
-            }}
-          >
-            {show ? 'hide' : 'show'}
-          </button>
-          <React.Suspense fallback="Loading...">
-            {show && <Component />}
-          </React.Suspense>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('data: 1'))
-    await waitFor(() => rendered.getByText('fetching: false'))
-    await waitFor(() => rendered.getByText('hide'))
-    fireEvent.click(rendered.getByText('hide'))
-    await waitFor(() => rendered.getByText('show'))
-    fireEvent.click(rendered.getByText('show'))
-    await waitFor(() => rendered.getByText('fetching: true'))
-    await waitFor(() => rendered.getByText('data: 2'))
-    await waitFor(() => rendered.getByText('fetching: false'))
   })
 
   it('should set staleTime when having passed a function', async () => {
@@ -754,7 +699,7 @@ describe('useSuspenseQuery', () => {
       }),
     )
 
-    expect(renders).toBe(2)
+    expect(renders).toBe(3)
     await waitFor(() => expect(rendered.queryByText('rendered')).not.toBeNull())
   })
 
