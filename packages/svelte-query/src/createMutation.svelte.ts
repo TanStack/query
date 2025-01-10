@@ -6,7 +6,7 @@ import type {
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
-  FunctionedParams,
+  Accessor,
 } from './types.js'
 
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
@@ -17,7 +17,7 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: FunctionedParams<
+  options: Accessor<
     CreateMutationOptions<TData, TError, TVariables, TContext>
   >,
   queryClient?: QueryClient,

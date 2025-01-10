@@ -2,7 +2,7 @@ import { untrack } from 'svelte'
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import type { FunctionedParams } from './types.js'
+import type { Accessor } from './types.js'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -208,7 +208,7 @@ export function createQueries<
     queries,
     ...options
   }: {
-    queries: FunctionedParams<[...QueriesOptions<T>]>
+    queries: Accessor<[...QueriesOptions<T>]>
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,

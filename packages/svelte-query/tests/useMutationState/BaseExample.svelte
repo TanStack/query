@@ -6,14 +6,15 @@
   import type {
     CreateMutationOptions,
     FunctionedParams,
-    MutationStateOptions,
+    AccessorteOptions,
   } from '../../src/index.js'
 
   let {
     successMutationOpts,
     errorMutationOpts,
-    mutationStateOpts,
+    mutationAccessor,
   }: {
+    Accessor
     successMutationOpts: FunctionedParams<CreateMutationOptions>
     errorMutationOpts: FunctionedParams<CreateMutationOptions>
     mutationStateOpts?: MutationStateOptions | undefined

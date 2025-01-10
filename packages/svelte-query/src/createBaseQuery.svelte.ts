@@ -4,7 +4,7 @@ import { useQueryClient } from './useQueryClient.js'
 import type {
   CreateBaseQueryOptions,
   CreateBaseQueryResult,
-  FunctionedParams,
+  Accessor,
 } from './types.js'
 import type {
   QueryClient,
@@ -20,7 +20,7 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: FunctionedParams<
+  options: Accessor<
     CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,

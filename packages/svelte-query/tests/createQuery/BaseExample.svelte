@@ -3,10 +3,10 @@
   import { createQuery } from '../../src/index.js'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
   import type { CreateQueryOptions, FunctionedParams } from '../../src/index.js'
-
+Accessor
   let {
     options,
-    queryClient,
+    queryClient,Accessor
     states,
   }: {
     options: FunctionedParams<CreateQueryOptions<any>>
