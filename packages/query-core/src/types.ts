@@ -32,6 +32,8 @@ export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
   // mutationMeta: Record<string, unknown>
+  // queryKey: ReadonlyArray<unknown>
+  // mutationKey: ReadonlyArray<unknown>
 }
 
 export type DefaultError = Register extends {
@@ -40,7 +42,13 @@ export type DefaultError = Register extends {
   ? TError
   : Error
 
-export type QueryKey = ReadonlyArray<unknown>
+export type QueryKey = Register extends {
+    queryKey: infer TQueryKey;
+}
+  ? TQueryKey extends Array<unknown>
+    ? TQueryKey
+    : ReadonlyArray<unknown>
+  : ReadonlyArray<unknown>;
 
 export const dataTagSymbol = Symbol('dataTagSymbol')
 export type dataTagSymbol = typeof dataTagSymbol
@@ -996,7 +1004,13 @@ export type InfiniteQueryObserverResult<
   | InfiniteQueryObserverLoadingResult<TData, TError>
   | InfiniteQueryObserverPendingResult<TData, TError>
 
-export type MutationKey = ReadonlyArray<unknown>
+export type MutationKey = Register extends {
+  mutationKey: infer TMutationKey;
+}
+? TMutationKey extends Array<unknown>
+  ? TMutationKey
+  : ReadonlyArray<unknown>
+: ReadonlyArray<unknown>;
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
