@@ -35,6 +35,8 @@ For Infinite Queries, a separate [`infiniteQueryOptions`](../reference/infiniteQ
 
 You can still override some options at the component level. A very common and useful pattern is to create per-component [`select`](../guides/render-optimizations.md#select) functions:
 
+[//]: # 'Example2'
+
 ```ts
 // Type inference still works, so query.data will be the return type of select instead of queryFn
 
