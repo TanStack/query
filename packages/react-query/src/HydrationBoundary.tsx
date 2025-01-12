@@ -35,11 +35,6 @@ export const HydrationBoundary = ({
     DehydratedState['queries'] | undefined
   >()
 
-  // console.log(
-  //   '[HydrationBoundary] rendering with state',
-  //   JSON.stringify(state, null, 2),
-  // )
-
   const optionsRef = React.useRef(options)
   optionsRef.current = options
 
@@ -73,14 +68,6 @@ export const HydrationBoundary = ({
       for (const dehydratedQuery of queries) {
         const existingQuery = queryCache.get(dehydratedQuery.queryHash)
 
-        // console.log(
-        //   '[HydrationBoundary] existingQuery',
-        //   JSON.stringify(existingQuery?.state, null, 2),
-        // )
-        // console.log(
-        //   '[HydrationBoundary] dehydratedQuery',
-        //   JSON.stringify(dehydratedQuery.state, null, 2),
-        // )
         if (!existingQuery) {
           newQueries.push(dehydratedQuery)
         } else {
@@ -89,18 +76,6 @@ export const HydrationBoundary = ({
               existingQuery.state.dataUpdatedAt ||
             // @ts-expect-error
             dehydratedQuery.promise?.status !== existingQuery.promise?.status
-
-          console.log(
-            '[HydrationBoundary] hydrationIsNewer',
-            dehydratedQuery.queryKey,
-            hydrationIsNewer,
-            dehydratedQuery.state.promiseDehydratedAt,
-            existingQuery.state.promiseDehydratedAt,
-            // @ts-expect-error
-            dehydratedQuery.promise?.status,
-            // @ts-expect-error
-            existingQuery.promise?.status,
-          )
 
           const queryAlreadyQueued = hydrationQueue?.find(
             (query) => query.queryHash === dehydratedQuery.queryHash,

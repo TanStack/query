@@ -56,7 +56,6 @@ export interface QueryState<TData = unknown, TError = DefaultError> {
   isInvalidated: boolean
   status: QueryStatus
   fetchStatus: FetchStatus
-  promiseDehydratedAt: number
 }
 
 export interface FetchContext<
@@ -680,6 +679,5 @@ function getDefaultState<
     isInvalidated: false,
     status: hasData ? 'success' : 'pending',
     fetchStatus: 'idle',
-    promiseDehydratedAt: 0,
   }
 }
