@@ -1086,7 +1086,6 @@ describe('dehydration and rehydration', () => {
       queryKey: ['data'],
       queryFn: async () => {
         await sleep(10)
-        console.log('queryFn', countRef.current)
         return countRef.current
       },
     }
@@ -1112,8 +1111,6 @@ describe('dehydration and rehydration', () => {
       expect(clientQueryClient.getQueryData(query.queryKey)).toBe(0),
     )
 
-    console.log('serialize mock', serializeDataMock.mock.calls)
-
     expect(serializeDataMock).toHaveBeenCalledTimes(1)
     expect(serializeDataMock).toHaveBeenCalledWith(0)
 
@@ -1122,6 +1119,7 @@ describe('dehydration and rehydration', () => {
 
     // --- server ---
     countRef.current++
+    serverQueryClient.clear()
     const promise2 = serverQueryClient.prefetchQuery(query)
 
     dehydrated = dehydrate(serverQueryClient)
@@ -1135,15 +1133,10 @@ describe('dehydration and rehydration', () => {
       expect(clientQueryClient.getQueryData(query.queryKey)).toBe(1),
     )
 
-    console.log('serialize mock', serializeDataMock.mock.calls)
-
-    // Why are we getting 3 calls here? Should be 2?
-    // expect(serializeDataMock).toHaveBeenCalledTimes(2)
-    expect(serializeDataMock).toHaveBeenCalledTimes(3)
+    expect(serializeDataMock).toHaveBeenCalledTimes(2)
     expect(serializeDataMock).toHaveBeenCalledWith(1)
 
-    // expect(deserializeDataMock).toHaveBeenCalledTimes(2)
-    expect(deserializeDataMock).toHaveBeenCalledTimes(3)
+    expect(deserializeDataMock).toHaveBeenCalledTimes(2)
     expect(deserializeDataMock).toHaveBeenCalledWith(1)
 
     clientQueryClient.clear()
