@@ -45,9 +45,11 @@ export type DefaultError = Register extends {
 export type QueryKey = Register extends {
   queryKey: infer TQueryKey
 }
-  ? TQueryKey extends Array<unknown>
+  ? TQueryKey extends ReadonlyArray<unknown>
     ? TQueryKey
-    : ReadonlyArray<unknown>
+    : TQueryKey extends Array<unknown>
+      ? TQueryKey
+      : ReadonlyArray<unknown>
   : ReadonlyArray<unknown>
 
 export const dataTagSymbol = Symbol('dataTagSymbol')
@@ -1009,7 +1011,9 @@ export type MutationKey = Register extends {
 }
   ? TMutationKey extends Array<unknown>
     ? TMutationKey
-    : ReadonlyArray<unknown>
+    : TMutationKey extends Array<unknown>
+      ? TMutationKey
+      : ReadonlyArray<unknown>
   : ReadonlyArray<unknown>
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
