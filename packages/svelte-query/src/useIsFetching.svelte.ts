@@ -1,11 +1,12 @@
 import { onDestroy } from 'svelte'
 import { useQueryClient } from './useQueryClient.js'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
+import type { Accessor } from './types.js'
 
 export function useIsFetching(
   filters?: QueryFilters,
   queryClient?: QueryClient,
-): () => number {
+): Accessor<number> {
   const client = useQueryClient(queryClient)
   const queryCache = client.getQueryCache()
 

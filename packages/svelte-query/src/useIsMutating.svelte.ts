@@ -1,11 +1,12 @@
 import { notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient.js'
 import type { MutationFilters, QueryClient } from '@tanstack/query-core'
+import type { Accessor } from './types.js'
 
 export function useIsMutating(
   filters?: MutationFilters,
   queryClient?: QueryClient,
-): () => number {
+): Accessor<number> {
   const client = useQueryClient(queryClient)
   const cache = client.getMutationCache()
   // isMutating is the prev value initialized on mount *
