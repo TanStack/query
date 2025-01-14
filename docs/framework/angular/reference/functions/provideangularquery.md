@@ -3,7 +3,7 @@ id: provideAngularQuery
 title: provideAngularQuery
 ---
 
-# Function: provideAngularQuery()
+# Function: ~~provideAngularQuery()~~
 
 ```ts
 function provideAngularQuery(queryClient): EnvironmentProviders
@@ -13,39 +13,11 @@ Sets up providers necessary to enable TanStack Query functionality for Angular a
 
 Allows to configure a `QueryClient`.
 
-**Example - standalone**
-
-```ts
-import {
-  provideAngularQuery,
-  QueryClient,
-} from '@tanstack/angular-query-experimental'
-
-bootstrapApplication(AppComponent, {
-  providers: [provideAngularQuery(new QueryClient())],
-})
-```
-
-**Example - NgModule-based**
-
-```ts
-import {
-  provideAngularQuery,
-  QueryClient,
-} from '@tanstack/angular-query-experimental'
-
-@NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule],
-  providers: [provideAngularQuery(new QueryClient())],
-  bootstrap: [AppComponent],
-})
-export class AppModule {}
-```
-
 ## Parameters
 
-• **queryClient**: `QueryClient`
+### queryClient
+
+`QueryClient`
 
 A `QueryClient` instance.
 
@@ -59,6 +31,10 @@ A set of providers to set up TanStack Query.
 
 https://tanstack.com/query/v5/docs/framework/angular/quick-start
 
+## Deprecated
+
+Use `provideTanStackQuery` instead.
+
 ## Defined in
 
-[providers.ts:50](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/providers.ts#L50)
+[providers.ts:125](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L125)

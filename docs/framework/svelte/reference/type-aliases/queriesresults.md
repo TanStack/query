@@ -6,7 +6,30 @@ title: QueriesResults
 # Type Alias: QueriesResults\<T, TResults, TDepth\>
 
 ```ts
-type QueriesResults<T, TResults, TDepth>: TDepth["length"] extends MAXIMUM_DEPTH ? QueryObserverResult[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetCreateQueryResult<Head>] : T extends [infer Head, ...(infer Tails)] ? QueriesResults<[...Tails], [...TResults, GetCreateQueryResult<Head>], [...TDepth, 1]> : T extends QueryObserverOptionsForCreateQueries<infer TQueryFnData, infer TError, infer TData, any>[] ? QueryObserverResult<unknown extends TData ? TQueryFnData : TData, unknown extends TError ? DefaultError : TError>[] : QueryObserverResult[];
+type QueriesResults<T, TResults, TDepth> =
+  TDepth['length'] extends MAXIMUM_DEPTH
+    ? QueryObserverResult[]
+    : T extends []
+      ? []
+      : T extends [infer Head]
+        ? [...TResults, GetCreateQueryResult<Head>]
+        : T extends [infer Head, ...infer Tails]
+          ? QueriesResults<
+              [...Tails],
+              [...TResults, GetCreateQueryResult<Head>],
+              [...TDepth, 1]
+            >
+          : T extends QueryObserverOptionsForCreateQueries<
+                infer TQueryFnData,
+                infer TError,
+                infer TData,
+                any
+              >[]
+            ? QueryObserverResult<
+                unknown extends TData ? TQueryFnData : TData,
+                unknown extends TError ? DefaultError : TError
+              >[]
+            : QueryObserverResult[]
 ```
 
 QueriesResults reducer recursively maps type param to results
@@ -21,4 +44,4 @@ QueriesResults reducer recursively maps type param to results
 
 ## Defined in
 
-[packages/svelte-query/src/createQueries.ts:171](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/createQueries.ts#L171)
+[packages/svelte-query/src/createQueries.ts:171](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQueries.ts#L171)

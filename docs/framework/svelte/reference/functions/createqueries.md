@@ -20,13 +20,19 @@ function createQueries<T, TCombinedResult>(
 
 ## Parameters
 
-• **\_\_namedParameters**
+### \_\_namedParameters
 
-• **\_\_namedParameters.combine?**
+#### combine
 
-• **\_\_namedParameters.queries?**: [`StoreOrVal`](../type-aliases/storeorval.md)\<[`...(T extends [] ? [] : T extends [Head] ? [GetQueryObserverOptionsForCreateQueries<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetQueryObserverOptionsForCreateQueries<Head>, GetQueryObserverOptionsForCreateQueries<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : (...) extends (...) ? (...) : (...) : readonly (...)[] extends [...(...)[]] ? [...(...)[]] : (...) extends (...) ? (...) : (...) : readonly unknown[] extends T ? T : T extends QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[] ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[] : QueryObserverOptionsForCreateQueries<unknown, Error, unknown, QueryKey>[])[]`]\>
+(`result`) => `TCombinedResult`
 
-• **queryClient?**: `QueryClient`
+#### queries
+
+[`StoreOrVal`](../type-aliases/storeorval.md)\<[`...(T extends [] ? [] : T extends [Head] ? [GetQueryObserverOptionsForCreateQueries<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetQueryObserverOptionsForCreateQueries<Head>, GetQueryObserverOptionsForCreateQueries<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : (...) extends (...) ? (...) : (...) : readonly (...)[] extends [...(...)[]] ? [...(...)[]] : (...) extends (...) ? (...) : (...) : readonly unknown[] extends T ? T : T extends QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[] ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[] : QueryObserverOptionsForCreateQueries<unknown, Error, unknown, readonly (...)[]>[])[]`]\>
+
+### queryClient?
+
+`QueryClient`
 
 ## Returns
 
@@ -34,4 +40,4 @@ function createQueries<T, TCombinedResult>(
 
 ## Defined in
 
-[packages/svelte-query/src/createQueries.ts:205](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/createQueries.ts#L205)
+[packages/svelte-query/src/createQueries.ts:205](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQueries.ts#L205)

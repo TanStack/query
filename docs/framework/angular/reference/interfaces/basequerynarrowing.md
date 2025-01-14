@@ -21,7 +21,9 @@ isError: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBase
 
 #### Parameters
 
-• **this**: [`CreateBaseQueryResult`](../type-aliases/createbasequeryresult.md)\<`TData`, `TError`, `QueryObserverResult`\<`TData`, `TError`\>\>
+##### this
+
+[`CreateBaseQueryResult`](../type-aliases/createbasequeryresult.md)\<`TData`, `TError`, `QueryObserverResult`\<`TData`, `TError`\>\>
 
 #### Returns
 
@@ -29,7 +31,7 @@ isError: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBase
 
 #### Defined in
 
-[types.ts:75](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L75)
+[types.ts:76](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L76)
 
 ---
 
@@ -41,7 +43,9 @@ isPending: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBa
 
 #### Parameters
 
-• **this**: [`CreateBaseQueryResult`](../type-aliases/createbasequeryresult.md)\<`TData`, `TError`, `QueryObserverResult`\<`TData`, `TError`\>\>
+##### this
+
+[`CreateBaseQueryResult`](../type-aliases/createbasequeryresult.md)\<`TData`, `TError`, `QueryObserverResult`\<`TData`, `TError`\>\>
 
 #### Returns
 
@@ -49,7 +53,7 @@ isPending: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBa
 
 #### Defined in
 
-[types.ts:82](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L82)
+[types.ts:83](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L83)
 
 ---
 
@@ -61,7 +65,9 @@ isSuccess: (this) => this is CreateBaseQueryResult<TData, TError, QueryObserverS
 
 #### Parameters
 
-• **this**: [`CreateBaseQueryResult`](../type-aliases/createbasequeryresult.md)\<`TData`, `TError`, `QueryObserverResult`\<`TData`, `TError`\>\>
+##### this
+
+[`CreateBaseQueryResult`](../type-aliases/createbasequeryresult.md)\<`TData`, `TError`, `QueryObserverResult`\<`TData`, `TError`\>\>
 
 #### Returns
 
@@ -69,4 +75,4 @@ isSuccess: (this) => this is CreateBaseQueryResult<TData, TError, QueryObserverS
 
 #### Defined in
 
-[types.ts:68](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L68)
+[types.ts:69](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L69)

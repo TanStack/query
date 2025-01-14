@@ -5,7 +5,7 @@ title: queryOptions
 
 # Function: queryOptions()
 
-## queryOptions(options)
+## Call Signature
 
 ```ts
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
@@ -21,11 +21,13 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
-• **options**: [`DefinedInitialDataOptions`](../type-aliases/definedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+#### options
+
+[`DefinedInitialDataOptions`](../type-aliases/definedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 ### Returns
 
@@ -33,9 +35,9 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
 
 ### Defined in
 
-[packages/svelte-query/src/queryOptions.ts:26](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/queryOptions.ts#L26)
+[packages/svelte-query/src/queryOptions.ts:31](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L31)
 
-## queryOptions(options)
+## Call Signature
 
 ```ts
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
@@ -51,11 +53,13 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
-• **options**: [`UndefinedInitialDataOptions`](../type-aliases/undefinedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+#### options
+
+[`UndefinedInitialDataOptions`](../type-aliases/undefinedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 ### Returns
 
@@ -63,4 +67,4 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
 
 ### Defined in
 
-[packages/svelte-query/src/queryOptions.ts:37](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/queryOptions.ts#L37)
+[packages/svelte-query/src/queryOptions.ts:42](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L42)

@@ -28,11 +28,15 @@ Unlike queries, mutations are not run automatically.
 
 ## Parameters
 
-• **optionsFn**
+### optionsFn
+
+() => [`CreateMutationOptions`](../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>
 
 A function that returns mutation options.
 
-• **injector?**: `Injector`
+### injector?
+
+`Injector`
 
 The Angular injector to use.
 
@@ -44,4 +48,4 @@ The mutation.
 
 ## Defined in
 
-[inject-mutation.ts:38](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-mutation.ts#L38)
+[inject-mutation.ts:33](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L33)

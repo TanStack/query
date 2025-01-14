@@ -58,7 +58,9 @@ new HydrationBoundary<Props, Events, Slots>(options): HydrationBoundary<Props, E
 
 #### Parameters
 
-• **options**: `ComponentConstructorOptions`\<`Props`\>
+##### options
+
+`ComponentConstructorOptions`\<`Props`\>
 
 #### Returns
 
@@ -70,7 +72,7 @@ new HydrationBoundary<Props, Events, Slots>(options): HydrationBoundary<Props, E
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:144
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:144
 
 ## Properties
 
@@ -90,7 +92,7 @@ Do not use, may change at any time
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:102
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:102
 
 ---
 
@@ -107,7 +109,7 @@ Does not exist at runtime.
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:158
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:158
 
 ---
 
@@ -124,7 +126,7 @@ Does not exist at runtime.
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:151
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:151
 
 ---
 
@@ -144,7 +146,7 @@ Do not use, may change at any time
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:109
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:109
 
 ---
 
@@ -161,7 +163,7 @@ Does not exist at runtime.
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:165
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:165
 
 ## Methods
 
@@ -177,7 +179,7 @@ $capture_state(): void
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:167
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:167
 
 ---
 
@@ -197,7 +199,7 @@ $destroy(): void
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:111
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:111
 
 ---
 
@@ -213,7 +215,7 @@ $inject_state(): void
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:169
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:169
 
 ---
 
@@ -229,9 +231,13 @@ $on<K>(type, callback): () => void
 
 #### Parameters
 
-• **type**: `K`
+##### type
 
-• **callback**: `undefined` \| `null` \| (`e`) => `void`
+`K`
+
+##### callback
+
+`undefined` | `null` | (`e`) => `void`
 
 #### Returns
 
@@ -247,7 +253,7 @@ $on<K>(type, callback): () => void
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:113
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:113
 
 ---
 
@@ -259,7 +265,9 @@ $set(props): void
 
 #### Parameters
 
-• **props**: `Partial`\<`Props`\>
+##### props
+
+`Partial`\<`Props`\>
 
 #### Returns
 
@@ -271,4 +279,4 @@ $set(props): void
 
 #### Defined in
 
-node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:115
+node_modules/.pnpm/svelte@4.2.19/node_modules/svelte/types/index.d.ts:115

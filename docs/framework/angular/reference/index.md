@@ -13,7 +13,9 @@ title: '@tanstack/angular-query-experimental'
 - [CreateInfiniteQueryOptions](interfaces/createinfinitequeryoptions.md)
 - [CreateMutationOptions](interfaces/createmutationoptions.md)
 - [CreateQueryOptions](interfaces/createqueryoptions.md)
+- [DevtoolsOptions](interfaces/devtoolsoptions.md)
 - [InjectMutationStateOptions](interfaces/injectmutationstateoptions.md)
+- [QueryFeature](interfaces/queryfeature.md)
 
 ## Type Aliases
 
@@ -28,11 +30,18 @@ title: '@tanstack/angular-query-experimental'
 - [DefinedCreateQueryResult](type-aliases/definedcreatequeryresult.md)
 - [DefinedInitialDataInfiniteOptions](type-aliases/definedinitialdatainfiniteoptions.md)
 - [DefinedInitialDataOptions](type-aliases/definedinitialdataoptions.md)
+- [DeveloperToolsFeature](type-aliases/developertoolsfeature.md)
 - [NonUndefinedGuard](type-aliases/nonundefinedguard.md)
 - [QueriesOptions](type-aliases/queriesoptions.md)
 - [QueriesResults](type-aliases/queriesresults.md)
+- [QueryFeatureKind](type-aliases/queryfeaturekind.md)
+- [QueryFeatures](type-aliases/queryfeatures.md)
 - [UndefinedInitialDataInfiniteOptions](type-aliases/undefinedinitialdatainfiniteoptions.md)
 - [UndefinedInitialDataOptions](type-aliases/undefinedinitialdataoptions.md)
+
+## Variables
+
+- [queryFeatures](variables/queryfeatures.md)
 
 ## Functions
 
@@ -45,6 +54,9 @@ title: '@tanstack/angular-query-experimental'
 - [injectQueries](functions/injectqueries.md)
 - [injectQuery](functions/injectquery.md)
 - [injectQueryClient](functions/injectqueryclient.md)
+- [mutationOptions](functions/mutationoptions.md)
 - [provideAngularQuery](functions/provideangularquery.md)
 - [provideQueryClient](functions/providequeryclient.md)
+- [provideTanStackQuery](functions/providetanstackquery.md)
 - [queryOptions](functions/queryoptions.md)
+- [withDevtools](functions/withdevtools.md)

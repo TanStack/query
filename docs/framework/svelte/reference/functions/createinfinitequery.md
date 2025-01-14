@@ -23,15 +23,19 @@ function createInfiniteQuery<
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 
 ## Parameters
 
-• **options**: [`StoreOrVal`](../type-aliases/storeorval.md)\<[`CreateInfiniteQueryOptions`](../type-aliases/createinfinitequeryoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `TPageParam`\>\>
+### options
 
-• **queryClient?**: `QueryClient`
+[`StoreOrVal`](../type-aliases/storeorval.md)\<[`CreateInfiniteQueryOptions`](../type-aliases/createinfinitequeryoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `TPageParam`\>\>
+
+### queryClient?
+
+`QueryClient`
 
 ## Returns
 
@@ -39,4 +43,4 @@ function createInfiniteQuery<
 
 ## Defined in
 
-[packages/svelte-query/src/createInfiniteQuery.ts:16](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/createInfiniteQuery.ts#L16)
+[packages/svelte-query/src/createInfiniteQuery.ts:16](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createInfiniteQuery.ts#L16)

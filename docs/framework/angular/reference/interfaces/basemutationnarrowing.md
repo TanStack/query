@@ -17,80 +17,128 @@ title: BaseMutationNarrowing
 
 ## Properties
 
-### isError()
+### isError
 
 ```ts
-isError: (this) => this is CreateMutationResult<TData, TError, TVariables, TContext, Override<MutationObserverErrorResult<TData, TError, TVariables, TContext>, Object> & Object>;
+isError: SignalFunction<
+  (
+    this,
+  ) => this is CreateMutationResult<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    Override<
+      MutationObserverErrorResult<TData, TError, TVariables, TContext>,
+      { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
+    > & {
+      mutateAsync: CreateMutateAsyncFunction<
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
+    }
+  >
+>
 ```
-
-#### Parameters
-
-• **this**: [`CreateMutationResult`](../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TContext`, `CreateStatusBasedMutationResult`\<`"error"` \| `"success"` \| `"pending"` \| `"idle"`, `TData`, `TError`, `TVariables`, `TContext`\>\>
-
-#### Returns
-
-`this is CreateMutationResult<TData, TError, TVariables, TContext, Override<MutationObserverErrorResult<TData, TError, TVariables, TContext>, Object> & Object>`
 
 #### Defined in
 
-[types.ts:248](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L248)
+[types.ts:241](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L241)
 
 ---
 
-### isIdle()
+### isIdle
 
 ```ts
-isIdle: (this) => this is CreateMutationResult<TData, TError, TVariables, TContext, Override<MutationObserverIdleResult<TData, TError, TVariables, TContext>, Object> & Object>;
+isIdle: SignalFunction<
+  (
+    this,
+  ) => this is CreateMutationResult<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    Override<
+      MutationObserverIdleResult<TData, TError, TVariables, TContext>,
+      { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
+    > & {
+      mutateAsync: CreateMutateAsyncFunction<
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
+    }
+  >
+>
 ```
-
-#### Parameters
-
-• **this**: [`CreateMutationResult`](../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TContext`, `CreateStatusBasedMutationResult`\<`"error"` \| `"success"` \| `"pending"` \| `"idle"`, `TData`, `TError`, `TVariables`, `TContext`\>\>
-
-#### Returns
-
-`this is CreateMutationResult<TData, TError, TVariables, TContext, Override<MutationObserverIdleResult<TData, TError, TVariables, TContext>, Object> & Object>`
 
 #### Defined in
 
-[types.ts:278](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L278)
+[types.ts:275](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L275)
 
 ---
 
-### isPending()
+### isPending
 
 ```ts
-isPending: (this) => this is CreateMutationResult<TData, TError, TVariables, TContext, Override<MutationObserverLoadingResult<TData, TError, TVariables, TContext>, Object> & Object>;
+isPending: SignalFunction<
+  (
+    this,
+  ) => this is CreateMutationResult<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    Override<
+      MutationObserverLoadingResult<TData, TError, TVariables, TContext>,
+      { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
+    > & {
+      mutateAsync: CreateMutateAsyncFunction<
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
+    }
+  >
+>
 ```
-
-#### Parameters
-
-• **this**: [`CreateMutationResult`](../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TContext`, `CreateStatusBasedMutationResult`\<`"error"` \| `"success"` \| `"pending"` \| `"idle"`, `TData`, `TError`, `TVariables`, `TContext`\>\>
-
-#### Returns
-
-`this is CreateMutationResult<TData, TError, TVariables, TContext, Override<MutationObserverLoadingResult<TData, TError, TVariables, TContext>, Object> & Object>`
 
 #### Defined in
 
-[types.ts:263](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L263)
+[types.ts:258](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L258)
 
 ---
 
-### isSuccess()
+### isSuccess
 
 ```ts
-isSuccess: (this) => this is CreateMutationResult<TData, TError, TVariables, TContext, Override<MutationObserverSuccessResult<TData, TError, TVariables, TContext>, Object> & Object>;
+isSuccess: SignalFunction<
+  (
+    this,
+  ) => this is CreateMutationResult<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    Override<
+      MutationObserverSuccessResult<TData, TError, TVariables, TContext>,
+      { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
+    > & {
+      mutateAsync: CreateMutateAsyncFunction<
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
+    }
+  >
+>
 ```
-
-#### Parameters
-
-• **this**: [`CreateMutationResult`](../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TContext`, `CreateStatusBasedMutationResult`\<`"error"` \| `"success"` \| `"pending"` \| `"idle"`, `TData`, `TError`, `TVariables`, `TContext`\>\>
-
-#### Returns
-
-`this is CreateMutationResult<TData, TError, TVariables, TContext, Override<MutationObserverSuccessResult<TData, TError, TVariables, TContext>, Object> & Object>`
 
 #### Defined in
 
-[types.ts:233](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L233)
+[types.ts:224](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L224)
