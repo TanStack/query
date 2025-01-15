@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.64.0",
+  "version": "5.64.1",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "tanstack"
   ],
   "scripts": {
-    "clean": "rimraf ./build ./coverage",
+    "clean": "premove ./build ./coverage",
     "test:eslint": "eslint ./src",
     "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js",
