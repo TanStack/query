@@ -12,8 +12,6 @@ export function ClientComponent() {
         await fetch('http://localhost:3000/count')
       ).json()
 
-      console.log('client', count)
-
       return {
         text: 'data from client',
         date: Temporal.PlainDate.from('2023-01-01'),

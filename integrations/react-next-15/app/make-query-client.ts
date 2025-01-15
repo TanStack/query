@@ -38,13 +38,10 @@ export function makeQueryClient() {
           return tson.serialize(data)
         },
         shouldDehydrateQuery: (query) => {
-          const shouldDehydrate =
+          return (
             defaultShouldDehydrateQuery(query) ||
             query.state.status === 'pending'
-
-          console.log('shouldDehydrateQuery', query.queryKey, shouldDehydrate)
-
-          return shouldDehydrate
+          )
         },
       },
     },

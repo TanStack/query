@@ -17,8 +17,6 @@ export default function Home() {
         await fetch('http://localhost:3000/count')
       ).json()
 
-      console.log('server', count)
-
       return {
         text: 'data from server',
         date: Temporal.PlainDate.from('2024-01-01'),
@@ -28,8 +26,6 @@ export default function Home() {
   })
 
   const state = dehydrate(queryClient)
-
-  console.log('[page] state', state)
 
   return (
     <main>
