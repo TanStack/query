@@ -25,9 +25,7 @@ Defined in: [types.ts:218](https://github.com/TanStack/query/blob/main/packages/
 
 ```ts
 isError: SignalFunction<
-  (
-    this,
-  ) => this is CreateMutationResult<
+  (this) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -55,9 +53,7 @@ Defined in: [types.ts:241](https://github.com/TanStack/query/blob/main/packages/
 
 ```ts
 isIdle: SignalFunction<
-  (
-    this,
-  ) => this is CreateMutationResult<
+  (this) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -85,9 +81,7 @@ Defined in: [types.ts:275](https://github.com/TanStack/query/blob/main/packages/
 
 ```ts
 isPending: SignalFunction<
-  (
-    this,
-  ) => this is CreateMutationResult<
+  (this) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -115,9 +109,7 @@ Defined in: [types.ts:258](https://github.com/TanStack/query/blob/main/packages/
 
 ```ts
 isSuccess: SignalFunction<
-  (
-    this,
-  ) => this is CreateMutationResult<
+  (this) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
