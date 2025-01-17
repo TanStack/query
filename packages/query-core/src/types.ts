@@ -32,6 +32,8 @@ export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
   // mutationMeta: Record<string, unknown>
+  // queryKey: ReadonlyArray<unknown>
+  // mutationKey: ReadonlyArray<unknown>
 }
 
 export type DefaultError = Register extends {
@@ -40,16 +42,36 @@ export type DefaultError = Register extends {
   ? TError
   : Error
 
-export type QueryKey = ReadonlyArray<unknown>
-
-export declare const dataTagSymbol: unique symbol
-export declare const dataTagErrorSymbol: unique symbol
-export declare const unsetMarker: unique symbol
-export type UnsetMarker = typeof unsetMarker
-export type DataTag<TType, TValue, TError = UnsetMarker> = TType & {
-  [dataTagSymbol]: TValue
-  [dataTagErrorSymbol]: TError
+export type QueryKey = Register extends {
+  queryKey: infer TQueryKey
 }
+  ? TQueryKey extends ReadonlyArray<unknown>
+    ? TQueryKey
+    : TQueryKey extends Array<unknown>
+      ? TQueryKey
+      : ReadonlyArray<unknown>
+  : ReadonlyArray<unknown>
+
+export const dataTagSymbol = Symbol('dataTagSymbol')
+export type dataTagSymbol = typeof dataTagSymbol
+export const dataTagErrorSymbol = Symbol('dataTagErrorSymbol')
+export type dataTagErrorSymbol = typeof dataTagErrorSymbol
+export const unsetMarker = Symbol('unsetMarker')
+export type UnsetMarker = typeof unsetMarker
+export type AnyDataTag = {
+  [dataTagSymbol]: any
+  [dataTagErrorSymbol]: any
+}
+export type DataTag<
+  TType,
+  TValue,
+  TError = UnsetMarker,
+> = TType extends AnyDataTag
+  ? TType
+  : TType & {
+      [dataTagSymbol]: TValue
+      [dataTagErrorSymbol]: TError
+    }
 
 export type QueryFunction<
   T = unknown,
@@ -984,7 +1006,15 @@ export type InfiniteQueryObserverResult<
   | InfiniteQueryObserverLoadingResult<TData, TError>
   | InfiniteQueryObserverPendingResult<TData, TError>
 
-export type MutationKey = ReadonlyArray<unknown>
+export type MutationKey = Register extends {
+  mutationKey: infer TMutationKey
+}
+  ? TMutationKey extends Array<unknown>
+    ? TMutationKey
+    : TMutationKey extends Array<unknown>
+      ? TMutationKey
+      : ReadonlyArray<unknown>
+  : ReadonlyArray<unknown>
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 

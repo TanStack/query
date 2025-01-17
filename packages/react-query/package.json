@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.62.7",
+  "version": "5.64.1",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "rimraf ./build ./coverage",
+    "clean": "premove ./build ./coverage",
     "test:eslint": "eslint ./src",
     "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js -p tsconfig.legacy.json",
@@ -37,6 +37,7 @@
   "types": "build/legacy/index.d.ts",
   "main": "build/legacy/index.cjs",
   "module": "build/legacy/index.js",
+  "react-native": "src/index.ts",
   "exports": {
     ".": {
       "import": {
@@ -65,12 +66,12 @@
   },
   "devDependencies": {
     "@tanstack/query-persist-client-core": "workspace:*",
-    "@testing-library/react": "^16.0.1",
+    "@testing-library/react": "^16.1.0",
     "@testing-library/react-render-stream": "^2.0.0",
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.3",
-    "eslint-plugin-react-compiler": "19.0.0-beta-0dec889-20241115",
+    "eslint-plugin-react-compiler": "19.0.0-beta-df7b47d-20241124",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-error-boundary": "^4.1.2"

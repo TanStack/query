@@ -32,3 +32,18 @@ queryClient.setQueryData(groupOptions(42).queryKey, newGroups)
 [//]: # 'Example1'
 
 For Infinite Queries, a separate [`infiniteQueryOptions`](../reference/infiniteQueryOptions.md) helper is available.
+
+You can still override some options at the component level. A very common and useful pattern is to create per-component [`select`](../guides/render-optimizations.md#select) functions:
+
+[//]: # 'Example2'
+
+```ts
+// Type inference still works, so query.data will be the return type of select instead of queryFn
+
+const query = useQuery({
+  ...groupOptions(1),
+  select: (data) => data.groupName,
+})
+```
+
+[//]: # 'Example2'
