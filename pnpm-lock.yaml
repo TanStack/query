@@ -8993,6 +8993,7 @@ packages:
 
   critters@0.0.24:
     resolution: {integrity: sha512-Oyqew0FGM0wYUSNqR0L6AteO5MpMoUU0rhKRieXeiKs+PmRTxiJMyaunYB2KF6fQ3dzChXKCpbFOEJx3OQ1v/Q==}
+    deprecated: Ownership of Critters has moved to the Nuxt team, who will be maintaining the project going forward. If you'd like to keep using Critters, please switch to the actively-maintained fork at https://github.com/danielroe/beasties
 
   croner@8.1.0:
     resolution: {integrity: sha512-sz990XOUPR8dG/r5BRKMBd15MYDDUu8oeSaxFD5DqvNgHSZw8Psd1s689/IGET7ezxRMiNlCIyGeY1Gvxp/MLg==}
