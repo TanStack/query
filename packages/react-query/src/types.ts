@@ -102,12 +102,12 @@ export interface UseInfiniteQueryOptions<
     >,
     'suspense'
   > {
-    /**
-     * Set this to `false` to unsubscribe this observer from updates to the query cache.
-     * Defaults to `true`.
-     */
-    subscribed?: boolean
-  }
+  /**
+   * Set this to `false` to unsubscribe this observer from updates to the query cache.
+   * Defaults to `true`.
+   */
+  subscribed?: boolean
+}
 
 export type AnyUseSuspenseInfiniteQueryOptions =
   UseSuspenseInfiniteQueryOptions<any, any, any, any, any, any>
