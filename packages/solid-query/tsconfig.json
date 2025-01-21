@@ -14,5 +14,6 @@
     "*.config.js",
     "*.config.ts",
     "package.json"
-  ]
+  ],
+  "references": [{ "path": "../query-core" }]
 }

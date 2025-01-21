@@ -12,5 +12,9 @@
     "target": "ES2022",
     "types": ["vitest/globals"]
   },
-  "include": ["src", "*.config.js", "*.config.ts", "package.json"]
+  "include": ["src", "*.config.js", "*.config.ts", "package.json"],
+  "references": [
+    { "path": "../query-devtools" },
+    { "path": "../angular-query-experimental" }
+  ]
 }
