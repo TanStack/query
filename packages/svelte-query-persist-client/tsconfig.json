@@ -11,8 +11,8 @@
     "tests/**/*.js",
     "tests/**/*.ts",
     "tests/**/*.svelte",
-    "eslint.config.js",
-    "svelte.config.js",
-    "vite.config.ts"
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
   ]
 }

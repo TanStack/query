@@ -6,7 +6,8 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.vue",
-    "eslint.config.js",
-    "vite.config.ts"
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
   ]
 }
