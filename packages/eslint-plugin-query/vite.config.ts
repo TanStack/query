@@ -1,8 +1,10 @@
 import { defineConfig, mergeConfig } from 'vitest/config'
 import { tanstackViteConfig } from '@tanstack/config/vite'
+import tsconfigPaths from 'vite-tsconfig-paths'
 import packageJson from './package.json'
 
 const config = defineConfig({
+  plugins: [tsconfigPaths({ ignoreConfigErrors: true })],
   test: {
     name: packageJson.name,
     dir: './src',

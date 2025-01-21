@@ -1,9 +1,10 @@
 import { defineConfig, mergeConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { tanstackViteConfig } from '@tanstack/config/vite'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 const config = defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), tsconfigPaths({ ignoreConfigErrors: true })],
 })
 
 export default mergeConfig(

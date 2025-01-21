@@ -1,9 +1,10 @@
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
+import tsconfigPaths from 'vite-tsconfig-paths'
 import packageJson from './package.json'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), tsconfigPaths({ ignoreConfigErrors: true })],
   test: {
     name: packageJson.name,
     dir: './src',
