@@ -42,7 +42,7 @@
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm build:tsup",
-    "build:tsup": "tsup"
+    "build:tsup": "tsup --tsconfig tsconfig.prod.json"
   },
   "type": "module",
   "types": "build/index.d.ts",
