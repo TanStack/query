@@ -1,6 +1,10 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": [".pnpmfile.cjs", "scripts/typedoc-remove-prefix.js"],
+  "ignore": [
+    ".pnpmfile.cjs",
+    "scripts/typedoc-remove-prefix.js",
+    "**/root.*.config.*"
+  ],
   "ignoreDependencies": [
     "@types/react",
     "@types/react-dom",
