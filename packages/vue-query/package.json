@@ -15,7 +15,8 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "premove ./build ./coverage",
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "compile": "tsc --build",
     "test:eslint": "eslint ./src",
     "test:types": "vue-demi-switch 3 && pnpm run \"/^test:types:ts[0-9]{2}$/\"",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build tsconfig.legacy.json",

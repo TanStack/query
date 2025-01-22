@@ -34,10 +34,12 @@
     },
     "test:eslint": {
       "cache": true,
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production", "{workspaceRoot}/eslint.config.js"]
     },
     "test:lib": {
       "cache": true,
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/coverage"]
     },

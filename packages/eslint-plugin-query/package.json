@@ -15,7 +15,8 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "premove ./dist ./coverage",
+    "clean": "premove ./dist ./coverage ./dist-ts",
+    "compile": "tsc --build",
     "test:eslint": "eslint ./src",
     "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
