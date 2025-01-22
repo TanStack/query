@@ -9,7 +9,8 @@
       "{workspaceRoot}/.nvmrc",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getTsupConfig.js",
-      "{workspaceRoot}/tsconfig.json"
+      "{workspaceRoot}/tsconfig.json",
+      "{workspaceRoot}/eslint.config.js"
     ],
     "default": [
       "sharedGlobals",
