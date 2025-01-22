@@ -33,18 +33,15 @@
     },
     "test:eslint": {
       "cache": true,
-      "dependsOn": ["^build"],
       "inputs": ["default", "^production", "{workspaceRoot}/eslint.config.js"]
     },
     "test:lib": {
       "cache": true,
-      "dependsOn": ["^build"],
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/coverage"]
     },
     "test:types": {
       "cache": true,
-      "dependsOn": ["^build"],
       "inputs": ["default", "^production"]
     },
     "build": {
