@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "./dist-ts",
     "rootDir": ".",
     "baseUrl": ".",
     "module": "NodeNext",
