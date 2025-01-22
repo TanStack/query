@@ -1,9 +1,14 @@
 import { defineConfig } from 'vitest/config'
-import packageJson from './package.json'
 import tsconfigPaths from 'vite-tsconfig-paths'
+
+import { dynamicAliases } from './root.vite.config'
+import packageJson from './package.json'
 
 export default defineConfig({
   plugins: [tsconfigPaths({ ignoreConfigErrors: true })],
+  resolve: {
+    alias: dynamicAliases,
+  },
   test: {
     name: packageJson.name,
     dir: './src',

@@ -4,8 +4,7 @@
     "outDir": "./dist-ts",
     "rootDir": ".",
     "baseUrl": ".",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "Bundler"
   },
   "include": [
     "src/**/*.js",

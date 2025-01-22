@@ -2,7 +2,9 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { defineConfig } from 'vitest/config'
 import { svelteTesting } from '@testing-library/svelte/vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import packageJson from './package.json' with { type: 'json' }
+
+import { dynamicAliases } from './root.vite.config'
+import packageJson from './package.json'
 
 export default defineConfig({
   plugins: [
@@ -10,6 +12,9 @@ export default defineConfig({
     svelteTesting(),
     tsconfigPaths({ ignoreConfigErrors: true }),
   ],
+  resolve: {
+    alias: dynamicAliases,
+  },
   test: {
     name: packageJson.name,
     dir: './tests',
