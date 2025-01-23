@@ -24,6 +24,10 @@
     ]
   },
   "targetDefaults": {
+    "compile": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    },
     "test:knip": {
       "cache": true,
       "inputs": ["{workspaceRoot}/**/*"]
