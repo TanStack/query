@@ -14,6 +14,7 @@ env:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   test:
@@ -43,6 +44,11 @@ jobs:
           directory: packages
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Preview Build Bundle Size
+        uses: marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728
+        message: |
+          Main: <https://deno.bundlejs.com/badge?q=@tanstack/react-query&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-dom%22]}}&badge=detailed>
+          This PR: <https://deno.bundlejs.com/badge?q=https://esm.sh/pr/@tanstack/react-query@${{ github.sha }}/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.0.0/jsx-runtime?target=es2022%22,%22react@^19.0.0?target=es2022%22]}}&badge=detailed>
   preview:
     name: Preview
     runs-on: ubuntu-latest
