@@ -777,11 +777,8 @@ describe('useSuspenseQuery', () => {
     const states: Array<UseSuspenseQueryResult<number>> = []
 
     let count = 0
-    let renders = 0
 
     function Page() {
-      renders++
-
       const [stateKey, setStateKey] = React.useState(key)
 
       const state = useSuspenseQuery({
