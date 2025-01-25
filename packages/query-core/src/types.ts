@@ -791,6 +791,7 @@ export interface QueryObserverPendingResult<
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'pending'
 }
 
@@ -806,6 +807,7 @@ export interface QueryObserverLoadingResult<
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'pending'
 }
 
@@ -821,6 +823,7 @@ export interface QueryObserverLoadingErrorResult<
   isLoadingError: true
   isRefetchError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'error'
 }
 
@@ -836,6 +839,7 @@ export interface QueryObserverRefetchErrorResult<
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
+  isPlaceholderData: false
   status: 'error'
 }
 
@@ -851,6 +855,23 @@ export interface QueryObserverSuccessResult<
   isLoadingError: false
   isRefetchError: false
   isSuccess: true
+  isPlaceholderData: false
+  status: 'success'
+}
+
+export interface QueryObserverPlaceholderResult<
+  TData = unknown,
+  TError = DefaultError,
+> extends QueryObserverBaseResult<TData, TError> {
+  data: TData
+  isError: false
+  error: null
+  isPending: false
+  isLoading: false
+  isLoadingError: false
+  isRefetchError: false
+  isSuccess: true
+  isPlaceholderData: true
   status: 'success'
 }
 
@@ -866,6 +887,7 @@ export type QueryObserverResult<TData = unknown, TError = DefaultError> =
   | QueryObserverLoadingErrorResult<TData, TError>
   | QueryObserverLoadingResult<TData, TError>
   | QueryObserverPendingResult<TData, TError>
+  | QueryObserverPlaceholderResult<TData, TError>
 
 export interface InfiniteQueryObserverBaseResult<
   TData = unknown,

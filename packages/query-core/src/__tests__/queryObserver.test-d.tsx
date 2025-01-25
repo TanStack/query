@@ -131,5 +131,20 @@ describe('queryObserver', () => {
         },
       })
     })
+
+    it('isPreviousData should narrow the type of data', () => {
+      const observer = new QueryObserver(createQueryClient(), {
+        queryKey: ['key'],
+        queryFn: () => ({ foo: 'bar' }),
+        placeholderData: { foo: 'foo' },
+      })
+
+      const result = observer.getCurrentResult()
+      expectTypeOf(result.data).toEqualTypeOf<{ foo: string } | undefined>()
+
+      if (result.isPlaceholderData) {
+        expectTypeOf(result.data).toEqualTypeOf<{ foo: string }>()
+      }
+    })
   })
 })
