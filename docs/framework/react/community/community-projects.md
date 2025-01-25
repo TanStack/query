@@ -77,7 +77,7 @@ Link: https://github.com/astahmer/openapi-zod-client
 
 A 2KB min, typesafe fetch wrapper that uses static TypeScript type inference and no runtime checks.
 
-Link: https://openapi-ts.pages.dev/openapi-fetch/
+Link: https://openapi-ts.dev/openapi-react-query/
 
 ## Orval
 
