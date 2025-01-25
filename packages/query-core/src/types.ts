@@ -944,6 +944,7 @@ export interface InfiniteQueryObserverPendingResult<
   isFetchNextPageError: false
   isFetchPreviousPageError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'pending'
 }
 
@@ -961,6 +962,7 @@ export interface InfiniteQueryObserverLoadingResult<
   isFetchNextPageError: false
   isFetchPreviousPageError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'pending'
 }
 
@@ -978,6 +980,7 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   isFetchNextPageError: false
   isFetchPreviousPageError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'error'
 }
 
@@ -993,6 +996,7 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
+  isPlaceholderData: false
   status: 'error'
 }
 
@@ -1010,6 +1014,25 @@ export interface InfiniteQueryObserverSuccessResult<
   isFetchNextPageError: false
   isFetchPreviousPageError: false
   isSuccess: true
+  isPlaceholderData: false
+  status: 'success'
+}
+
+export interface InfiniteQueryObserverPlaceholderResult<
+  TData = unknown,
+  TError = DefaultError,
+> extends InfiniteQueryObserverBaseResult<TData, TError> {
+  data: TData
+  isError: false
+  error: null
+  isPending: false
+  isLoading: false
+  isLoadingError: false
+  isRefetchError: false
+  isSuccess: true
+  isPlaceholderData: true
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   status: 'success'
 }
 
@@ -1028,6 +1051,7 @@ export type InfiniteQueryObserverResult<
   | InfiniteQueryObserverLoadingErrorResult<TData, TError>
   | InfiniteQueryObserverLoadingResult<TData, TError>
   | InfiniteQueryObserverPendingResult<TData, TError>
+  | InfiniteQueryObserverPlaceholderResult<TData, TError>
 
 export type MutationKey = Register extends {
   mutationKey: infer TMutationKey
