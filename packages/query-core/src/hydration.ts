@@ -82,6 +82,9 @@ function dehydrateQuery(
     queryHash: query.queryHash,
     ...(query.state.status === 'pending' && {
       promise: query.promise?.then(serializeData).catch((error) => {
+        if ('digest' in error && error.digest === 'DYNAMIC_SERVER_USAGE') {
+          return Promise.reject(error)
+        }
         if (process.env.NODE_ENV !== 'production') {
           console.error(
             `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
