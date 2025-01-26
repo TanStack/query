@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview",
-    "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@tanstack/svelte-query": "^5.64.2",
