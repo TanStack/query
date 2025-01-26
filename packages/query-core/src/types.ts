@@ -305,6 +305,7 @@ export interface QueryObserverOptions<
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
    * If set to a function, the function will be executed with the query to compute a `staleTime`.
+   * Defaults to `0`.
    */
   staleTime?: StaleTime<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
