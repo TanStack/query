@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:types": "vue-tsc",
     "build": "vite build"
   },
   "dependencies": {
