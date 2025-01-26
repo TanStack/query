@@ -73,7 +73,10 @@ export const HydrationBoundary = ({
         } else {
           const hydrationIsNewer =
             dehydratedQuery.state.dataUpdatedAt >
-            existingQuery.state.dataUpdatedAt
+              existingQuery.state.dataUpdatedAt ||
+            // @ts-expect-error
+            dehydratedQuery.promise?.status !== existingQuery.promise?.status
+
           const queryAlreadyQueued = hydrationQueue?.find(
             (query) => query.queryHash === dehydratedQuery.queryHash,
           )
