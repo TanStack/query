@@ -26,7 +26,8 @@
   "targetDefaults": {
     "compile": {
       "cache": true,
-      "inputs": ["default", "^production"]
+      "inputs": ["default", "^production"],
+      "outputs": ["{projectRoot}/dist-ts"]
     },
     "test:knip": {
       "cache": true,
