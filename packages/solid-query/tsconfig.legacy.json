@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "outDir": "./dist-ts/legacy"
   },
   "include": ["src"],
   "exclude": ["src/__tests__"],
