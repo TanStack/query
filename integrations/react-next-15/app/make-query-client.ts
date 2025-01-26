@@ -43,6 +43,10 @@ export function makeQueryClient() {
             query.state.status === 'pending'
           )
         },
+        shouldRedactError: (error) => {
+          // Next.js automatically redacts errors for us
+          return false
+        },
       },
     },
   })
