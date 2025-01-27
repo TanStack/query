@@ -15,11 +15,12 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "premove ./build ./coverage",
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "compile": "vue-tsc --build",
     "test:eslint": "eslint ./src",
-    "test:types": "vue-tsc",
+    "test:types": "vue-tsc --build",
     "test:build": "publint --strict && attw --pack",
-    "build": "vite build"
+    "build": "pnpm run compile && vite build"
   },
   "type": "module",
   "types": "dist/esm/index.d.ts",

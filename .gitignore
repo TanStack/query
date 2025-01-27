@@ -10,6 +10,7 @@ yarn.lock
 build
 coverage
 dist
+dist-ts
 
 # misc
 .DS_Store

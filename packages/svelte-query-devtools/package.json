@@ -15,7 +15,8 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "premove ./dist ./coverage ./.svelte-kit",
+    "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
+    "compile": "tsc --build",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint ./src",
     "test:build": "publint --strict && attw --pack",
