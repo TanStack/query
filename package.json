@@ -12,6 +12,7 @@
     "test": "pnpm run test:ci",
     "test:ci": "nx affected --targets=test:lib,test:types,test:eslint,test:format",
     "test:react:17": "nx affected --target=test:lib",
+    "test:react:18": "nx affected --target=test:lib",
     "test:eslint": "nx affected --target=test:eslint",
     "test:format": "pnpm run prettier --check",
     "test:lib": "nx affected --target=test:lib",
