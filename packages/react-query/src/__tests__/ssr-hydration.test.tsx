@@ -1,6 +1,5 @@
-import * as React from 'react'
+import { act } from 'react'
 import ReactDOM from 'react-dom'
-import ReactDOMTestUtils from 'react-dom/test-utils'
 import { renderToString } from 'react-dom/server'
 
 import {
@@ -17,7 +16,7 @@ const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   if (isReact17()) {
-    ReactDOMTestUtils.act(() => {
+    act(() => {
       // @ts-expect-error
       ReactDOM.hydrate(element, container)
     })
@@ -28,7 +27,7 @@ const ReactHydrate = (element: React.ReactElement, container: Element) => {
   }
 
   let root: any
-  ReactDOMTestUtils.act(() => {
+  act(() => {
     // @ts-expect-error
     root = ReactDOM.hydrateRoot(container, element)
   })

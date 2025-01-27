@@ -46,7 +46,7 @@
     "@rollup/plugin-node-resolve": "^13.2.1",
     "@rollup/plugin-replace": "^4.0.0",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/react": "^16.2.0",
     "@testing-library/react-17": "npm:@testing-library/react@12.1.4",
     "@testing-library/react-18": "npm:@testing-library/react@13.0.0",
     "@testing-library/react-hooks": "^7.0.2",
