@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start",
-    "test:types": "tsc"
+    "start": "next start"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.64.2",
