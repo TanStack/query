@@ -37,9 +37,5 @@ export const QueryClientProvider = ({
     }
   }, [client])
 
-  return (
-    <QueryClientContext.Provider value={client}>
-      {children}
-    </QueryClientContext.Provider>
-  )
+  return <QueryClientContext value={client}>{children}</QueryClientContext>
 }
