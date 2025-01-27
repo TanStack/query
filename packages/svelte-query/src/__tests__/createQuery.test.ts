@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import CreateQuery from './CreateQuery.svelte'
 import { sleep } from './utils'
+import '@testing-library/jest-dom'
 
 describe('createQuery', () => {
   it('Render and wait for success', async () => {
