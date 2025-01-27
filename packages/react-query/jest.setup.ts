@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react'
+import { act } from 'react'
 import { notifyManager } from '@tanstack/query-core'
 
 // Wrap notifications with act to make sure React knows about React Query updates
@@ -6,7 +6,7 @@ notifyManager.setNotifyFunction((fn) => {
   act(fn)
 })
 
-type ReactVersion = '18' | '17' | '19'
+type ReactVersion = '19 ' | '18' | '17'
 
 jest.mock('react', () => {
   const packages = {
