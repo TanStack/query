@@ -126,7 +126,7 @@ export function useBaseQuery<
   })
 
   // fix #5910
-  const refetch = (...args: Parameters<typeof state['refetch']>) => {
+  const refetch = (...args: Parameters<(typeof state)['refetch']>) => {
     updater()
     return state.refetch(...args)
   }

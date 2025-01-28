@@ -82,7 +82,7 @@
     "luxon": "^2.3.2",
     "nx": "16.7.4",
     "nx-cloud": "16.3.0",
-    "prettier": "^2.6.2",
+    "prettier": "^2.8.8",
     "prettier-plugin-svelte": "^2.9.0",
     "react": "^19.0.0",
     "react-17": "npm:react@^17.0.2",
