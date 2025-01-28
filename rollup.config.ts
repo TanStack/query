@@ -1,4 +1,4 @@
-import path from 'path'
+import type { OutputOptions, RollupOptions } from 'rollup'
 import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
@@ -6,8 +6,8 @@ import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
+import path from 'path'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
-import type { OutputOptions, RollupOptions } from 'rollup'
 
 type Options = {
   input: string | string[]

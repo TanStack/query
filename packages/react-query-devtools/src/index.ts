@@ -2,14 +2,14 @@
 
 import * as devtools from './devtools'
 
-export const ReactQueryDevtools: (typeof devtools)['ReactQueryDevtools'] =
+export const ReactQueryDevtools: typeof devtools['ReactQueryDevtools'] =
   process.env.NODE_ENV !== 'development'
     ? function () {
         return null
       }
     : devtools.ReactQueryDevtools
 
-export const ReactQueryDevtoolsPanel: (typeof devtools)['ReactQueryDevtoolsPanel'] =
+export const ReactQueryDevtoolsPanel: typeof devtools['ReactQueryDevtoolsPanel'] =
   process.env.NODE_ENV !== 'development'
     ? (function () {
         return null
