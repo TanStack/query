@@ -1,6 +1,6 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom'
-import { renderToString } from 'react-dom/server'
+import ReactDOMServer from 'react-dom/server'
 
 import {
   QueryCache,
@@ -92,7 +92,7 @@ describe('Server side rendering with de/rehydration', () => {
       queryCache: renderCache,
     })
     hydrate(renderClient, dehydratedStateServer)
-    const markup = renderToString(
+    const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
         <SuccessComponent />
       </QueryClientProvider>,
@@ -170,7 +170,7 @@ describe('Server side rendering with de/rehydration', () => {
       queryCache: renderCache,
     })
     hydrate(renderClient, dehydratedStateServer)
-    const markup = renderToString(
+    const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
         <ErrorComponent />
       </QueryClientProvider>,
@@ -241,7 +241,7 @@ describe('Server side rendering with de/rehydration', () => {
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderClient = createQueryClient()
     hydrate(renderClient, dehydratedStateServer)
-    const markup = renderToString(
+    const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
         <SuccessComponent />
       </QueryClientProvider>,

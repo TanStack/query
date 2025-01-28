@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { act, fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -150,7 +150,7 @@ describe('ReactQueryDevtools', () => {
       throw new Error('Could not find the draggable element')
     }
 
-    await act(async () => {
+    await React.act(async () => {
       fireEvent.mouseDown(draggableElement)
     })
   })
@@ -899,7 +899,7 @@ describe('ReactQueryDevtools', () => {
     expect(panel.style.height).toBe('500px')
     expect(panel.style.width).toBe('100%')
 
-    await act(async () => {
+    await React.act(async () => {
       fireEvent.change(positionSelect, { target: { value: 'right' } })
     })
 
