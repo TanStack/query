@@ -35,10 +35,10 @@
   },
   "namespace": "@tanstack",
   "devDependencies": {
-    "@babel/core": "^7.17.9",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-react": "^7.16.7",
-    "@babel/preset-typescript": "^7.16.7",
+    "@babel/core": "^7.26.7",
+    "@babel/preset-env": "^7.26.7",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.26.0",
     "@commitlint/parse": "^16.2.1",
     "@faker-js/faker": "^6.3.1",
     "@rollup/plugin-babel": "^5.3.1",
@@ -63,7 +63,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^29.7.0",
     "babel-plugin-transform-async-to-promises": "^0.8.18",
-    "babel-preset-solid": "^1.5.4",
+    "babel-preset-solid": "^1.9.3",
     "bundlewatch": "^0.3.2",
     "chalk": "^4.1.2",
     "concurrently": "^7.1.0",
@@ -104,14 +104,6 @@
     "ts-node": "^10.7.0",
     "typescript": "^4.7.4",
     "vue": "^3.2.33"
-  },
-  "pnpm": {
-    "overrides": {
-      "react": "18.2.0",
-      "react-dom": "18.2.0",
-      "@types/react": "18.2.0",
-      "@types/react-dom": "18.2.0"
-    }
   },
   "bundlewatch": {
     "files": [
