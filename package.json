@@ -91,8 +91,8 @@
     "react-dom-17": "npm:react-dom@^17.0.2",
     "react-dom-18": "npm:react-dom@^18.2.0",
     "rimraf": "^3.0.2",
-    "rollup": "^2.70.2",
-    "rollup-plugin-preserve-directives": "0.1.0",
+    "rollup": "^2.79.2",
+    "rollup-plugin-preserve-directives": "0.4.0",
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-visualizer": "^5.6.0",
@@ -104,6 +104,14 @@
     "ts-node": "^10.7.0",
     "typescript": "^4.7.4",
     "vue": "^3.2.33"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "@types/react": "18.2.0",
+      "@types/react-dom": "18.2.0"
+    }
   },
   "bundlewatch": {
     "files": [

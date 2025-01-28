@@ -117,10 +117,6 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
-      - name: Override React version to ${{ matrix.react-version }}
-        run: |
-          pnpm override react@${{ matrix.react-version }}.x.x
-          pnpm override react-dom@${{ matrix.react-version }}.x.x
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
