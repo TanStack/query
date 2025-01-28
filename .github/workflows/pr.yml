@@ -97,8 +97,8 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run prettier
         run: pnpm run test:format
-  test-react-17-18:
-    name: 'Test React 17-18'
+  test-react-version:
+    name: 'Test React Version'
     runs-on: ubuntu-latest
     strategy:
       matrix:
