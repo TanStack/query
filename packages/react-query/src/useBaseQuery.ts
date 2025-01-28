@@ -130,6 +130,7 @@ export function useBaseQuery<
           TQueryData,
           TQueryKey
         >(defaultedOptions.queryHash),
+      suspense: defaultedOptions.suspense,
     })
   ) {
     throw result.error
