@@ -14,9 +14,22 @@ import {
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
 
-const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
+const isReact19 = () => (process.env.REACTJS_VERSION || '19') === '19'
+const isReact18 = () => (process.env.REACTJS_VERSION || '19') === '18'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
+  if (isReact19()) {
+    let root: any
+    // @ts-expect-error
+    React.act(() => {
+      // @ts-expect-error
+      root = ReactDOM.hydrateRoot(container, element)
+    })
+    return () => {
+      root.unmount()
+    }
+  }
+
   if (isReact18()) {
     let root: any
     ReactDOMTestUtils.act(() => {
