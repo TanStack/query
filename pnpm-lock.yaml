@@ -39,16 +39,16 @@ importers:
         version: 6.6.3
       '@testing-library/react':
         specifier: ^16.2.0
-        version: 16.2.0(@testing-library/dom@10.4.0)(@types/react-dom@18.0.5)(@types/react@18.0.15)(react-dom@18.2.0)(react@18.2.0)
+        version: 16.2.0(@testing-library/dom@10.4.0)(@types/react-dom@19.0.0)(@types/react@19.0.0)(react-dom@19.0.0)(react@19.0.0)
       '@testing-library/react-17':
         specifier: npm:@testing-library/react@12.1.4
-        version: /@testing-library/react@12.1.4(react-dom@18.2.0)(react@18.2.0)
+        version: /@testing-library/react@12.1.4(react-dom@19.0.0)(react@19.0.0)
       '@testing-library/react-18':
         specifier: npm:@testing-library/react@13.0.0
-        version: /@testing-library/react@13.0.0(react-dom@18.2.0)(react@18.2.0)
+        version: /@testing-library/react@13.0.0(react-dom@19.0.0)(react@19.0.0)
       '@testing-library/react-hooks':
         specifier: ^7.0.2
-        version: 7.0.2(react-dom@18.2.0)(react@18.2.0)
+        version: 7.0.2(react-dom@19.0.0)(react@19.0.0)
       '@testing-library/user-event':
         specifier: 14.4.3
         version: 14.4.3(@testing-library/dom@10.4.0)
@@ -62,11 +62,11 @@ importers:
         specifier: ^17.0.25
         version: 17.0.25
       '@types/react':
-        specifier: ^18.0.14
-        version: 18.0.15
+        specifier: ^19.0.0
+        version: 19.0.0
       '@types/react-dom':
-        specifier: ^18.0.5
-        version: 18.0.5
+        specifier: ^19.0.0
+        version: 19.0.0
       '@types/semver':
         specifier: ^7.3.13
         version: 7.3.13
@@ -152,8 +152,8 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0(prettier@2.6.2)(svelte@3.54.0)
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^19.0.0
+        version: 19.0.0
       react-17:
         specifier: npm:react@^17.0.2
         version: /react@17.0.2
@@ -161,14 +161,14 @@ importers:
         specifier: npm:react@^18.2.0
         version: /react@18.2.0
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^19.0.0
+        version: 19.0.0(react@19.0.0)
       react-dom-17:
         specifier: npm:react-dom@^17.0.2
-        version: /react-dom@17.0.2(react@18.2.0)
+        version: /react-dom@17.0.2(react@19.0.0)
       react-dom-18:
         specifier: npm:react-dom@^18.2.0
-        version: /react-dom@18.2.0(react@18.2.0)
+        version: /react-dom@18.2.0(react@19.0.0)
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
@@ -6610,7 +6610,7 @@ packages:
       redent: 3.0.0
     dev: true
 
-  /@testing-library/react-hooks@7.0.2(react-dom@18.2.0)(react@18.2.0):
+  /@testing-library/react-hooks@7.0.2(react-dom@19.0.0)(react@19.0.0):
     resolution: {integrity: sha512-dYxpz8u9m4q1TuzfcUApqi8iFfR6R0FaMbr2hjZJy1uC8z+bO/K4v8Gs9eogGKYQop7QsrBTFkv/BCF7MzD2Cg==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -6627,12 +6627,12 @@ packages:
       '@types/react': 18.0.15
       '@types/react-dom': 19.0.0
       '@types/react-test-renderer': 19.0.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-error-boundary: 3.1.4(react@18.2.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      react-error-boundary: 3.1.4(react@19.0.0)
     dev: true
 
-  /@testing-library/react@12.1.4(react-dom@18.2.0)(react@18.2.0):
+  /@testing-library/react@12.1.4(react-dom@19.0.0)(react@19.0.0):
     resolution: {integrity: sha512-jiPKOm7vyUw311Hn/HlNQ9P8/lHNtArAx0PisXyFixDDvfl8DbD6EUdbshK5eqauvBSvzZd19itqQ9j3nferJA==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -6642,11 +6642,11 @@ packages:
       '@babel/runtime': 7.26.7
       '@testing-library/dom': 8.20.1
       '@types/react-dom': 19.0.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     dev: true
 
-  /@testing-library/react@13.0.0(react-dom@18.2.0)(react@18.2.0):
+  /@testing-library/react@13.0.0(react-dom@19.0.0)(react@19.0.0):
     resolution: {integrity: sha512-p0lYA1M7uoEmk2LnCbZLGmHJHyH59sAaZVXChTXlyhV/PRW9LoIh4mdf7tiXsO8BoNG+vN8UnFJff1hbZeXv+w==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -6656,11 +6656,11 @@ packages:
       '@babel/runtime': 7.26.7
       '@testing-library/dom': 8.20.1
       '@types/react-dom': 19.0.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     dev: true
 
-  /@testing-library/react@16.2.0(@testing-library/dom@10.4.0)(@types/react-dom@18.0.5)(@types/react@18.0.15)(react-dom@18.2.0)(react@18.2.0):
+  /@testing-library/react@16.2.0(@testing-library/dom@10.4.0)(@types/react-dom@19.0.0)(@types/react@19.0.0)(react-dom@19.0.0)(react@19.0.0):
     resolution: {integrity: sha512-2cSskAvA1QNtKc8Y9VJQRv0tm3hLVgxRGDB+KYhIaPQJ1I+RHbhIXcM+zClKXzMes/wshsMVzf4B9vS4IZpqDQ==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -6677,10 +6677,10 @@ packages:
     dependencies:
       '@babel/runtime': 7.26.7
       '@testing-library/dom': 10.4.0
-      '@types/react': 18.0.15
-      '@types/react-dom': 18.0.5
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      '@types/react': 19.0.0
+      '@types/react-dom': 19.0.0
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
     dev: true
 
   /@testing-library/svelte@3.2.2(svelte@3.54.0):
@@ -15469,17 +15469,6 @@ packages:
       scheduler: 0.20.2
     dev: false
 
-  /react-dom@17.0.2(react@18.2.0):
-    resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}
-    peerDependencies:
-      react: 17.0.2
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-      react: 18.2.0
-      scheduler: 0.20.2
-    dev: true
-
   /react-dom@17.0.2(react@19.0.0):
     resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}
     peerDependencies:
@@ -15499,6 +15488,7 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.2
+    dev: false
 
   /react-dom@18.2.0(react@19.0.0):
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
@@ -15528,16 +15518,6 @@ packages:
       '@babel/runtime': 7.26.7
       react: 18.2.0
     dev: false
-
-  /react-error-boundary@3.1.4(react@18.2.0):
-    resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}
-    engines: {node: '>=10', npm: '>=6'}
-    peerDependencies:
-      react: '>=16.13.1'
-    dependencies:
-      '@babel/runtime': 7.26.7
-      react: 18.2.0
-    dev: true
 
   /react-error-boundary@3.1.4(react@19.0.0):
     resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}

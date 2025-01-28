@@ -6,7 +6,7 @@ notifyManager.setNotifyFunction((fn) => {
   act(fn)
 })
 
-type ReactVersion = '18' | '17' | '19'
+type ReactVersion = '19' | '18' | '17'
 
 jest.mock('react', () => {
   const packages = {
