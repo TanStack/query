@@ -1,6 +1,9 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom'
+import ReactDOMTestUtils from 'react-dom/test-utils'
 import ReactDOMServer from 'react-dom/server'
+// eslint-disable-next-line import/no-unresolved -- types only for module augmentation
+import type {} from 'react-dom/next'
 
 import {
   QueryCache,
@@ -11,28 +14,36 @@ import {
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
 
-const isReact17 = () => (process.env.REACTJS_VERSION || '17') === '17'
-const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
+const isReact19 = () => (process.env.REACTJS_VERSION || '19') === '19'
+const isReact18 = () => (process.env.REACTJS_VERSION || '19') === '18'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
-  if (isReact17()) {
+  if (isReact19()) {
+    let root: any
+    // @ts-expect-error
     React.act(() => {
       // @ts-expect-error
-      ReactDOM.hydrate(element, container)
+      root = ReactDOM.hydrateRoot(container, element)
     })
     return () => {
-      // @ts-expect-error
-      ReactDOM.unmountComponentAtNode(container)
+      root.unmount()
     }
   }
 
-  let root: any
-  React.act(() => {
-    // @ts-expect-error
-    root = ReactDOM.hydrateRoot(container, element)
-  })
+  if (isReact18()) {
+    let root: any
+    ReactDOMTestUtils.act(() => {
+      // @ts-expect-error
+      root = ReactDOM.hydrateRoot(container, element)
+    })
+    return () => {
+      root.unmount()
+    }
+  }
+
+  ReactDOM.hydrate(element, container)
   return () => {
-    root.unmount()
+    ReactDOM.unmountComponentAtNode(container)
   }
 }
 
