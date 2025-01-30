@@ -34,7 +34,7 @@ jobs:
         with:
           main-branch-name: main
       - name: Run Checks
-        run: pnpm run test:pr --parallel=3 --skip-nx-cache
+        run: pnpm run test:pr --parallel=3
       - name: Stop Nx Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
