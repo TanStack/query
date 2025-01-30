@@ -9,6 +9,7 @@ import {
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
+import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type {
   CancelOptions,
@@ -167,6 +168,7 @@ export class Query<
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
+  #cache: QueryCache
   #queryClient: QueryClient
   #retryer?: Retryer<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
@@ -181,6 +183,7 @@ export class Query<
     this.setOptions(config.options)
     this.observers = []
     this.#queryClient = config.queryClient
+    this.#cache = config.queryClient.getQueryCache()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
@@ -205,7 +208,7 @@ export class Query<
 
   protected optionalRemove() {
     if (!this.observers.length && this.state.fetchStatus === 'idle') {
-      this.#queryClient.getQueryCache().remove(this)
+      this.#cache.remove(this)
     }
   }
 
@@ -314,9 +317,7 @@ export class Query<
       // Stop the query from being garbage collected
       this.clearGcTimeout()
 
-      this.#queryClient
-        .getQueryCache()
-        .notify({ type: 'observerAdded', query: this, observer })
+      this.#cache.notify({ type: 'observerAdded', query: this, observer })
     }
   }
 
@@ -338,9 +339,7 @@ export class Query<
         this.scheduleGc()
       }
 
-      this.#queryClient
-        .getQueryCache()
-        .notify({ type: 'observerRemoved', query: this, observer })
+      this.#cache.notify({ type: 'observerRemoved', query: this, observer })
     }
   }
 
@@ -477,16 +476,15 @@ export class Query<
 
       if (!isCancelledError(error)) {
         // Notify cache callback
-        this.#queryClient
-          .getQueryCache()
-          .config.onError?.(error as any, this as Query<any, any, any, any>)
-        this.#queryClient
-          .getQueryCache()
-          .config.onSettled?.(
-            this.state.data,
-            error as any,
-            this as Query<any, any, any, any>,
-          )
+        this.#cache.config.onError?.(
+          error as any,
+          this as Query<any, any, any, any>,
+        )
+        this.#cache.config.onSettled?.(
+          this.state.data,
+          error as any,
+          this as Query<any, any, any, any>,
+        )
       }
 
       // Schedule query gc after fetching
@@ -519,16 +517,12 @@ export class Query<
         }
 
         // Notify cache callback
-        this.#queryClient
-          .getQueryCache()
-          .config.onSuccess?.(data, this as Query<any, any, any, any>)
-        this.#queryClient
-          .getQueryCache()
-          .config.onSettled?.(
-            data,
-            this.state.error as any,
-            this as Query<any, any, any, any>,
-          )
+        this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+        this.#cache.config.onSettled?.(
+          data,
+          this.state.error as any,
+          this as Query<any, any, any, any>,
+        )
 
         // Schedule query gc after fetching
         this.scheduleGc()
@@ -631,9 +625,7 @@ export class Query<
         observer.onQueryUpdate()
       })
 
-      this.#queryClient
-        .getQueryCache()
-        .notify({ query: this, type: 'updated', action })
+      this.#cache.notify({ query: this, type: 'updated', action })
     })
   }
 }
