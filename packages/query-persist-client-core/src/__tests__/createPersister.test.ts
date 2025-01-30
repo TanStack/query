@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
-import { Query, QueryCache, hashKey } from '@tanstack/query-core'
+import { Query, QueryClient, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createPersister,
@@ -25,8 +25,10 @@ function setupPersister(
   queryKey: QueryKey,
   persisterOptions: StoragePersisterOptions,
 ) {
+  const queryClient = new QueryClient()
   const context = {
     meta: { foo: 'bar' },
+    queryClient,
     queryKey,
     // @ts-expect-error
     signal: undefined as AbortSignal,
@@ -39,7 +41,7 @@ function setupPersister(
   const persisterFn = experimental_createPersister(persisterOptions)
 
   const query = new Query({
-    cache: new QueryCache(),
+    queryClient,
     queryHash,
     queryKey,
   })
