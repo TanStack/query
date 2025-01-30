@@ -515,6 +515,49 @@ describe('useSuspenseQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should throw select errors to the error boundary by default', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => {
+          const data = { a: { b: 'c' } }
+          return Promise.resolve(data)
+        },
+        select: () => {
+          throw new Error('foo')
+        },
+      })
+      return <div>rendered</div>
+    }
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallbackRender={() => (
+            <div>
+              <div>error boundary</div>
+            </div>
+          )}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
+  })
+
   it('should error caught in error boundary without infinite loop', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
@@ -777,11 +820,8 @@ describe('useSuspenseQuery', () => {
     const states: Array<UseSuspenseQueryResult<number>> = []
 
     let count = 0
-    let renders = 0
 
     function Page() {
-      renders++
-
       const [stateKey, setStateKey] = React.useState(key)
 
       const state = useSuspenseQuery({
