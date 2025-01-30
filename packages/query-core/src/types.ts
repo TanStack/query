@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import type { QueryClient } from './queryClient'
 import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
 import type { FetchDirection, Query, QueryBehavior } from './query'
@@ -116,6 +117,7 @@ export type QueryFunctionContext<
   TPageParam = never,
 > = [TPageParam] extends [never]
   ? {
+      queryClient: QueryClient
       queryKey: TQueryKey
       signal: AbortSignal
       meta: QueryMeta | undefined
@@ -127,6 +129,7 @@ export type QueryFunctionContext<
       direction?: unknown
     }
   : {
+      queryClient: QueryClient
       queryKey: TQueryKey
       signal: AbortSignal
       pageParam: TPageParam
