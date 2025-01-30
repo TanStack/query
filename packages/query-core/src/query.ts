@@ -183,7 +183,7 @@ export class Query<
     this.setOptions(config.options)
     this.observers = []
     this.#queryClient = config.queryClient
-    this.#cache = config.queryClient.getQueryCache()
+    this.#cache = this.#queryClient.getQueryCache()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
