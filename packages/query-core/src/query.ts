@@ -36,7 +36,7 @@ interface QueryConfig<
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > {
-  queryClient: QueryClient
+  client: QueryClient
   queryKey: TQueryKey
   queryHash: string
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -169,7 +169,7 @@ export class Query<
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
-  #queryClient: QueryClient
+  #client: QueryClient
   #retryer?: Retryer<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -182,8 +182,8 @@ export class Query<
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
-    this.#queryClient = config.queryClient
-    this.#cache = this.#queryClient.getQueryCache()
+    this.#client = config.client
+    this.#cache = this.#client.getQueryCache()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
@@ -415,7 +415,7 @@ export class Query<
         QueryFunctionContext<TQueryKey>,
         'signal'
       > = {
-        queryClient: this.#queryClient,
+        queryClient: this.#client,
         queryKey: this.queryKey,
         meta: this.meta,
       }
@@ -442,7 +442,7 @@ export class Query<
       fetchOptions,
       options: this.options,
       queryKey: this.queryKey,
-      queryClient: this.#queryClient,
+      queryClient: this.#client,
       state: this.state,
       fetchFn,
     }
