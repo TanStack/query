@@ -69,7 +69,7 @@ export interface FetchContext<
   fetchOptions?: FetchOptions
   signal: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
-  queryClient: QueryClient
+  client: QueryClient
   queryKey: TQueryKey
   state: QueryState<TData, TError>
 }
@@ -415,7 +415,7 @@ export class Query<
         QueryFunctionContext<TQueryKey>,
         'signal'
       > = {
-        queryClient: this.#client,
+        client: this.#client,
         queryKey: this.queryKey,
         meta: this.meta,
       }
@@ -442,7 +442,7 @@ export class Query<
       fetchOptions,
       options: this.options,
       queryKey: this.queryKey,
-      queryClient: this.#client,
+      client: this.#client,
       state: this.state,
       fetchFn,
     }

@@ -117,7 +117,7 @@ export type QueryFunctionContext<
   TPageParam = never,
 > = [TPageParam] extends [never]
   ? {
-      queryClient: QueryClient
+      client: QueryClient
       queryKey: TQueryKey
       signal: AbortSignal
       meta: QueryMeta | undefined
@@ -129,7 +129,7 @@ export type QueryFunctionContext<
       direction?: unknown
     }
   : {
-      queryClient: QueryClient
+      client: QueryClient
       queryKey: TQueryKey
       signal: AbortSignal
       pageParam: TPageParam

@@ -5,8 +5,8 @@ import {
   experimental_createPersister,
 } from '../createPersister'
 import { sleep } from './utils'
+import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
 import type { StoragePersisterOptions } from '../createPersister'
-import type { QueryKey } from '@tanstack/query-core'
 
 function getFreshStorage() {
   const storage = new Map()
@@ -25,14 +25,14 @@ function setupPersister(
   queryKey: QueryKey,
   persisterOptions: StoragePersisterOptions,
 ) {
-  const queryClient = new QueryClient()
+  const client = new QueryClient()
   const context = {
     meta: { foo: 'bar' },
-    queryClient,
+    client,
     queryKey,
     // @ts-expect-error
     signal: undefined as AbortSignal,
-  }
+  } satisfies QueryFunctionContext
   const queryHash = hashKey(queryKey)
   const storageKey = `${PERSISTER_KEY_PREFIX}-${queryHash}`
 
@@ -41,7 +41,7 @@ function setupPersister(
   const persisterFn = experimental_createPersister(persisterOptions)
 
   const query = new Query({
-    queryClient,
+    client,
     queryHash,
     queryKey,
   })
