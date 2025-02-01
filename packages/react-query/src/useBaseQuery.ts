@@ -113,6 +113,11 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
+    if (defaultedOptions.warnOnServerFetches && isNewCacheEntry) {
+      console.warn(
+        'A new query suspended on the server without any cache entry.',
+      )
+    }
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
 

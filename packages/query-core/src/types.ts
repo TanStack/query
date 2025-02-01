@@ -252,6 +252,12 @@ export interface QueryOptions<
    * Maximum number of pages to store in the data of an infinite query.
    */
   maxPages?: number
+  /**
+   * If set to `true`, the query will warn if it is fetched on the server.
+   * Use this if you intend to only consume prefetched queries.
+   * Defaults to `false`.
+   */
+  warnOnServerFetches?: boolean
 }
 
 export interface InitialPageParam<TPageParam = unknown> {
