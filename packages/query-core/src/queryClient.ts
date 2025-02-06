@@ -171,19 +171,21 @@ export class QueryClient {
       any,
       any
     > = QueryFilters<TQueryFnData>,
-    TInferredQueryFnData = TQueryFilters extends QueryFilters<
-      infer TData,
-      any,
-      any,
-      any
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredData = TTaggedQueryKey extends DataTag<
+      unknown,
+      infer TaggedValue,
+      unknown
     >
-      ? TData
+      ? TaggedValue
       : TQueryFnData,
   >(
-    filters: TQueryFilters,
-  ): Array<[QueryKey, TInferredQueryFnData | undefined]> {
+    filters: TQueryFilters & {
+      queryKey?: TTaggedQueryKey
+    },
+  ): Array<[QueryKey, TInferredData | undefined]> {
     return this.#queryCache.findAll(filters).map(({ queryKey, state }) => {
-      const data = state.data as TInferredQueryFnData | undefined
+      const data = state.data as TInferredData | undefined
       return [queryKey, data]
     })
   }
