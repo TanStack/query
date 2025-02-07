@@ -172,13 +172,11 @@ export class QueryClient {
       any
     > = QueryFilters<TQueryFnData>,
     TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredData = TTaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue,
-      unknown
-    >
-      ? TaggedValue
-      : TQueryFnData,
+    TInferredData = TQueryFilters extends { exact: true }
+      ? TTaggedQueryKey extends DataTag<unknown, infer TaggedValue, unknown>
+        ? TaggedValue
+        : TQueryFnData
+      : unknown,
   >(
     filters: TQueryFilters & {
       queryKey?: TTaggedQueryKey
