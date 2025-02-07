@@ -5,6 +5,7 @@ import { defaultThrowOnError } from './suspense'
 import type {
   DefaultError,
   InfiniteData,
+  InfiniteQueryObserverOptions,
   InfiniteQueryObserverSuccessResult,
   QueryClient,
   QueryKey,
@@ -38,14 +39,36 @@ export function useSuspenseInfiniteQuery<
     }
   }
 
-  return useBaseQuery(
+  return useBaseQuery<
+    TQueryFnData,
+    TError,
+    TData,
+    InfiniteData<TQueryFnData, TPageParam>,
+    TQueryKey,
+    InfiniteQueryObserver<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey,
+      TPageParam
+    >,
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey,
+      TPageParam
+    >
+  >(
     {
       ...options,
       enabled: true,
       suspense: true,
       throwOnError: defaultThrowOnError,
     },
-    InfiniteQueryObserver as typeof QueryObserver,
+    InfiniteQueryObserver,
     queryClient,
   ) as InfiniteQueryObserverSuccessResult<TData, TError>
 }

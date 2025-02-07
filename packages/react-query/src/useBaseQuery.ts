@@ -17,13 +17,14 @@ import {
   willFetch,
 } from './suspense'
 import { noop } from './utils'
+import type { UseBaseQueryOptions } from 'src/types'
 import type {
   QueryClient,
   QueryKey,
   QueryObserver,
+  QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { UseBaseQueryOptions } from './types'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -31,6 +32,20 @@ export function useBaseQuery<
   TData,
   TQueryData,
   TQueryKey extends QueryKey,
+  TObserver extends QueryObserver<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
+  TOptions extends QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
 >(
   options: UseBaseQueryOptions<
     TQueryFnData,
@@ -39,7 +54,7 @@ export function useBaseQuery<
     TQueryData,
     TQueryKey
   >,
-  Observer: typeof QueryObserver,
+  Observer: new (client: QueryClient, observerOptions: TOptions) => TObserver,
   queryClient?: QueryClient,
 ): QueryObserverResult<TData, TError> {
   if (process.env.NODE_ENV !== 'production') {
@@ -53,6 +68,7 @@ export function useBaseQuery<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+
   const defaultedOptions = client.defaultQueryOptions(options)
 
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
@@ -75,11 +91,7 @@ export function useBaseQuery<
     .get(defaultedOptions.queryHash)
 
   const [observer] = React.useState(
-    () =>
-      new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
-        client,
-        defaultedOptions,
-      ),
+    () => new Observer(client, defaultedOptions as TOptions),
   )
 
   // note: this must be called before useSyncExternalStore
