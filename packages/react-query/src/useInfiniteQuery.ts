@@ -7,7 +7,6 @@ import type {
   InfiniteQueryObserverOptions,
   QueryClient,
   QueryKey,
-  QueryObserver,
 } from '@tanstack/query-core'
 import type {
   DefinedUseInfiniteQueryResult,
