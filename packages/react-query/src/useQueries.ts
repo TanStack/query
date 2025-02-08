@@ -219,7 +219,7 @@ export type QueriesResults<
               >
             >
           : // Fallback
-            Array<UseQueryResult>
+            Array<GetUseQueryResult<T[number]>>
 
 export function useQueries<
   T extends Array<any>,
@@ -229,7 +229,9 @@ export function useQueries<
     queries,
     ...options
   }: {
-    queries: readonly [...QueriesOptions<T>]
+    queries:
+      | QueriesOptions<T>
+      | readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
     subscribed?: boolean
   },

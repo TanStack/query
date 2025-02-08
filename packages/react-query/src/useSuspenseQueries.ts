@@ -176,14 +176,16 @@ export type SuspenseQueriesResults<
               >
             >
           : // Fallback
-            Array<UseSuspenseQueryResult>
+            Array<GetUseSuspenseQueryResult<T[number]>>
 
 export function useSuspenseQueries<
   T extends Array<any>,
   TCombinedResult = SuspenseQueriesResults<T>,
 >(
   options: {
-    queries: readonly [...SuspenseQueriesOptions<T>]
+    queries:
+      | SuspenseQueriesOptions<T>
+      | readonly [...{ [K in keyof T]: GetUseSuspenseQueryOptions<T[K]> }]
     combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,

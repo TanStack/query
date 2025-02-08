@@ -10,7 +10,12 @@ import {
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { skipToken, useSuspenseQueries, useSuspenseQuery } from '..'
+import {
+  queryOptions,
+  skipToken,
+  useSuspenseQueries,
+  useSuspenseQuery,
+} from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
 
@@ -692,5 +697,55 @@ describe('useSuspenseQueries 2', () => {
       'skipToken is not allowed for useSuspenseQueries',
     )
     consoleErrorSpy.mockRestore()
+  })
+
+  it('should return correct data for dynamic queries with mixed result types', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const Queries1 = {
+        get: () =>
+          queryOptions({
+            queryKey: key1,
+            queryFn: async () => {
+              await sleep(10)
+              return 1
+            },
+          }),
+      }
+      const Queries2 = {
+        get: () =>
+          queryOptions({
+            queryKey: key2,
+            queryFn: async () => {
+              await sleep(10)
+              return true
+            },
+          }),
+      }
+
+      const queries1List = [1, 2, 3].map(() => ({ ...Queries1.get() }))
+      const result = useSuspenseQueries({
+        queries: [...queries1List, { ...Queries2.get() }],
+      })
+
+      return (
+        <React.Suspense fallback="loading...">
+          <div>
+            data1: {String(result[0]?.data ?? 'null')}, data2:{' '}
+            {String(result[1]?.data ?? 'null')}, data3:{' '}
+            {String(result[2]?.data ?? 'null')}, data4:{' '}
+            {String(result[3]?.data ?? 'null')}
+          </div>
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() =>
+      rendered.getByText('data1: 1, data2: 1, data3: 1, data4: true'),
+    )
   })
 })
