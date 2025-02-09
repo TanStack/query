@@ -182,7 +182,7 @@ export function useSuspenseQueries<
 >(
   options: {
     queries:
-      | SuspenseQueriesOptions<T>
+      | readonly [...SuspenseQueriesOptions<T>]
       | readonly [...{ [K in keyof T]: GetUseSuspenseQueryOptions<T[K]> }]
     combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
   },

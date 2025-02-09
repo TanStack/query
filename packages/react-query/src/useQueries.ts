@@ -228,7 +228,7 @@ export function useQueries<
     ...options
   }: {
     queries:
-      | QueriesOptions<T>
+      | readonly [...QueriesOptions<T>]
       | readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
     subscribed?: boolean
