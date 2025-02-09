@@ -160,23 +160,21 @@ export type SuspenseQueriesResults<
             [...TResults, GetUseSuspenseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              UseSuspenseQueryOptions<
+        : T extends Array<UseSuspenseQueryOptions<any, any, any, any>>
+          ? {
+              [K in keyof T]: T[K] extends UseSuspenseQueryOptions<
                 infer TQueryFnData,
                 infer TError,
                 infer TData,
                 any
               >
-            >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              UseSuspenseQueryResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<GetUseSuspenseQueryResult<T[number]>>
+                ? UseSuspenseQueryResult<
+                    unknown extends TData ? TQueryFnData : TData,
+                    unknown extends TError ? DefaultError : TError
+                  >
+                : never
+            }
+          : Array<GetUseSuspenseQueryResult<T[number]>>
 
 export function useSuspenseQueries<
   T extends Array<any>,

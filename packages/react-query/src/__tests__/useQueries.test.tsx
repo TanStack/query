@@ -1653,6 +1653,17 @@ describe('useQueries', () => {
         queries: [...queries1List, { ...Queries2.get() }],
       })
 
+      expectTypeOf(result).toEqualTypeOf<
+        [
+          ...Array<UseQueryResult<number, Error>>,
+          UseQueryResult<boolean, Error>,
+        ]
+      >()
+
+      expectTypeOf(result[0]?.data).toEqualTypeOf<
+        number | boolean | undefined
+      >()
+
       return (
         <div>
           <div>

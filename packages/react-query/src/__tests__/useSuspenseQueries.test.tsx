@@ -4,6 +4,7 @@ import {
   beforeAll,
   describe,
   expect,
+  expectTypeOf,
   it,
   vi,
 } from 'vitest'
@@ -17,7 +18,7 @@ import {
   useSuspenseQuery,
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
-import type { UseSuspenseQueryOptions } from '..'
+import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from '..'
 
 type NumberQueryOptions = UseSuspenseQueryOptions<number>
 
@@ -729,6 +730,15 @@ describe('useSuspenseQueries 2', () => {
       const result = useSuspenseQueries({
         queries: [...queries1List, { ...Queries2.get() }],
       })
+
+      expectTypeOf(result).toEqualTypeOf<
+        [
+          ...Array<UseSuspenseQueryResult<number, Error>>,
+          UseSuspenseQueryResult<boolean, Error>,
+        ]
+      >()
+
+      expectTypeOf(result[0]?.data).toEqualTypeOf<number | boolean>()
 
       return (
         <React.Suspense fallback="loading...">
