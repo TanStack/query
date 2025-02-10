@@ -8,7 +8,7 @@ export interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
   rules: Record<RuleKey, RuleModule<any, any, any>>
   configs: {
     recommended: ESLint.ConfigData
-    'flat/recommended': Array<Linter.FlatConfig>
+    'flat/recommended': Array<Linter.Config>
   }
 }
 
