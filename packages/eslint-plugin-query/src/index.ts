@@ -34,6 +34,7 @@ Object.assign(plugin.configs, {
   },
   'flat/recommended': [
     {
+      name: 'tanstack/query/flat/recommended',
       plugins: {
         '@tanstack/query': plugin,
       },
