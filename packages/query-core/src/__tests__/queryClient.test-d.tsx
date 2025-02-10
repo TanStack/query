@@ -184,6 +184,7 @@ describe('defaultOptions', () => {
         queries: {
           queryFn: (context) => {
             expectTypeOf(context).toEqualTypeOf<{
+              client: QueryClient
               queryKey: QueryKey
               meta: Record<string, unknown> | undefined
               signal: AbortSignal
