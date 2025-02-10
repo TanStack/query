@@ -117,7 +117,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
     if (!query) {
       query = new Query({
-        cache: this,
+        client,
         queryKey,
         queryHash,
         options: client.defaultQueryOptions(options),

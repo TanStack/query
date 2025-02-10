@@ -9,6 +9,8 @@ import {
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
+import type { QueryCache } from './queryCache'
+import type { QueryClient } from './queryClient'
 import type {
   CancelOptions,
   DefaultError,
@@ -23,7 +25,6 @@ import type {
   QueryStatus,
   SetDataOptions,
 } from './types'
-import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
 
@@ -35,7 +36,7 @@ interface QueryConfig<
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > {
-  cache: QueryCache
+  client: QueryClient
   queryKey: TQueryKey
   queryHash: string
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -68,6 +69,7 @@ export interface FetchContext<
   fetchOptions?: FetchOptions
   signal: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
+  client: QueryClient
   queryKey: TQueryKey
   state: QueryState<TData, TError>
 }
@@ -167,6 +169,7 @@ export class Query<
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
+  #client: QueryClient
   #retryer?: Retryer<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -179,7 +182,8 @@ export class Query<
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
-    this.#cache = config.cache
+    this.#client = config.client
+    this.#cache = this.#client.getQueryCache()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
@@ -411,6 +415,7 @@ export class Query<
         QueryFunctionContext<TQueryKey>,
         'signal'
       > = {
+        client: this.#client,
         queryKey: this.queryKey,
         meta: this.meta,
       }
@@ -437,6 +442,7 @@ export class Query<
       fetchOptions,
       options: this.options,
       queryKey: this.queryKey,
+      client: this.#client,
       state: this.state,
       fetchFn,
     }
