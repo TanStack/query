@@ -23,9 +23,10 @@ import NetInfo from '@react-native-community/netinfo'
 import { onlineManager } from '@tanstack/react-query'
 
 onlineManager.setEventListener((setOnline) => {
-  return NetInfo.addEventListener((state) => {
+  const eventSubscribtion = NetInfo.addEventListener((state) => {
     setOnline(!!state.isConnected)
   })
+  return eventSubscribtion.remove
 })
 ```
 
@@ -36,9 +37,10 @@ import { onlineManager } from '@tanstack/react-query'
 import * as Network from 'expo-network'
 
 onlineManager.setEventListener((setOnline) => {
-  return Network.addNetworkStateListener((state) => {
-    setOnline(state.isConnected)
+  const eventSubscribtion = Network.addNetworkStateListener((state) => {
+    setOnline(!!state.isConnected)
   })
+  return eventSubscribtion.remove
 })
 ```
 
