@@ -23,10 +23,9 @@ import NetInfo from '@react-native-community/netinfo'
 import { onlineManager } from '@tanstack/react-query'
 
 onlineManager.setEventListener((setOnline) => {
-  const eventSubscribtion = NetInfo.addEventListener((state) => {
+  return NetInfo.addEventListener((state) => {
     setOnline(!!state.isConnected)
   })
-  return eventSubscribtion.remove
 })
 ```
 
