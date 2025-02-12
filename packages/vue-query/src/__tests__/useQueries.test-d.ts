@@ -1,6 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue'
-import { sleep } from 'node_modules/@tanstack/query-core/src/utils'
 import { skipToken, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof, QueryObserverResult } from '..'
@@ -226,20 +225,14 @@ describe('UseQueries config object overload', () => {
       get: () =>
         queryOptions({
           queryKey: ['key1'],
-          queryFn: async () => {
-            await sleep(10)
-            return 1
-          },
+          queryFn: () => Promise.resolve(1),
         }),
     }
     const Queries2 = {
       get: () =>
         queryOptions({
           queryKey: ['key2'],
-          queryFn: async () => {
-            await sleep(10)
-            return true
-          },
+          queryFn: () => Promise.resolve(true),
         }),
     }
 

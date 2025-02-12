@@ -1,5 +1,4 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { queryKey, sleep } from 'src/__tests__/utils'
 import { skipToken } from '..'
 import { useQueries } from '../useQueries'
 import { queryOptions } from '../queryOptions'
@@ -144,26 +143,18 @@ describe('UseQueries config object overload', () => {
   })
 
   it('should return correct data for dynamic queries with mixed result types', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
     const Queries1 = {
       get: () =>
         queryOptions({
-          queryKey: key1,
-          queryFn: async () => {
-            await sleep(10)
-            return 1
-          },
+          queryKey: ['key1'],
+          queryFn: () => Promise.resolve(1),
         }),
     }
     const Queries2 = {
       get: () =>
         queryOptions({
-          queryKey: key2,
-          queryFn: async () => {
-            await sleep(10)
-            return true
-          },
+          queryKey: ['key2'],
+          queryFn: () => Promise.resolve(true),
         }),
     }
 
@@ -176,8 +167,9 @@ describe('UseQueries config object overload', () => {
       [...Array<UseQueryResult<number, Error>>, UseQueryResult<boolean, Error>]
     >()
 
-    if (result[0]) {
-      expectTypeOf(result[0].data).toEqualTypeOf<number | boolean | undefined>()
+    if (!result[0]) {
+      throw new Error('Type check failure')
     }
+    expectTypeOf(result[0].data).toEqualTypeOf<number | boolean | undefined>()
   })
 })

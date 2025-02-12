@@ -183,30 +183,28 @@ type QueriesResults<
             [...TResult, GetResults<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              CreateQueryOptionsForCreateQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
+        : {
+            [K in keyof T]: T[K] extends CreateQueryOptionsForCreateQueries<
+              infer TQueryFnData,
+              infer TError,
+              infer TData,
+              any
             >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              CreateQueryResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<CreateQueryResult>
+              ? CreateQueryResult<
+                  unknown extends TData ? TQueryFnData : TData,
+                  unknown extends TError ? DefaultError : TError
+                >
+              : CreateQueryResult<T[number]>
+          }
 
 export function createQueries<
   T extends Array<any>,
   TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{
-    queries: readonly [...QueriesOptions<T>]
+    queries:
+      | readonly [...QueriesOptions<T>]
+      | readonly [...{ [K in keyof T]: GetOptions<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
   }>,
   queryClient?: Accessor<QueryClient>,

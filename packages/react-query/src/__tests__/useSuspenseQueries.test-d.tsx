@@ -1,5 +1,4 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { queryKey, sleep } from 'src/__tests__/utils'
 import { skipToken, useSuspenseQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
@@ -157,27 +156,18 @@ describe('UseSuspenseQueries config object overload', () => {
   })
 
   it('should return correct data for dynamic queries with mixed result types', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-
     const Queries1 = {
       get: () =>
         queryOptions({
-          queryKey: key1,
-          queryFn: async () => {
-            await sleep(10)
-            return 1
-          },
+          queryKey: ['key1'],
+          queryFn: () => Promise.resolve(1),
         }),
     }
     const Queries2 = {
       get: () =>
         queryOptions({
-          queryKey: key2,
-          queryFn: async () => {
-            await sleep(10)
-            return true
-          },
+          queryKey: ['key2'],
+          queryFn: () => Promise.resolve(true),
         }),
     }
 
@@ -193,8 +183,9 @@ describe('UseSuspenseQueries config object overload', () => {
       ]
     >()
 
-    if (result[0]) {
-      expectTypeOf(result[0].data).toEqualTypeOf<number | boolean>()
+    if (!result[0]) {
+      throw new Error('Type check failure')
     }
+    expectTypeOf(result[0].data).toEqualTypeOf<number | boolean>()
   })
 })
