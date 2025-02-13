@@ -26,6 +26,7 @@ export function makeQueryClient() {
       },
       queries: {
         staleTime: 60 * 1000,
+        warnOnServerFetches: true,
       },
       dehydrate: {
         serializeData: tson.serialize,

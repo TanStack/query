@@ -1,11 +1,11 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 import { Temporal } from '@js-temporal/polyfill'
 
 export function ClientComponent() {
-  const query = useQuery({
+  const query = useSuspenseQuery({
     queryKey: ['data'],
     queryFn: async () => {
       await new Promise((r) => setTimeout(r, 1000))
@@ -16,13 +16,13 @@ export function ClientComponent() {
     },
   })
 
-  if (query.isPending) {
-    return <div>Loading...</div>
-  }
+  // if (query.isPending) {
+  //   return <div>Loading...</div>
+  // }
 
-  if (query.isError) {
-    return <div>An error has occurred!</div>
-  }
+  // if (query.isError) {
+  //   return <div>An error has occurred!</div>
+  // }
 
   return (
     <div>
