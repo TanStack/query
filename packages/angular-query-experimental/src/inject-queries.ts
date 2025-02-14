@@ -174,23 +174,19 @@ export type QueriesResults<
             [...TResult, GetResults<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              QueryObserverOptionsForCreateQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
+        : {
+            [K in keyof T]: T[K] extends QueryObserverOptionsForCreateQueries<
+              infer TQueryFnData,
+              infer TError,
+              infer TData,
+              any
             >
-          ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
-            Array<
-              QueryObserverResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<QueryObserverResult>
+              ? QueryObserverResult<
+                  unknown extends TData ? TQueryFnData : TData,
+                  unknown extends TError ? DefaultError : TError
+                >
+              : QueryObserverResult<T[number]>
+          }
 
 /**
  * @param root0
@@ -207,7 +203,10 @@ export function injectQueries<
     queries,
     ...options
   }: {
-    queries: Signal<[...QueriesOptions<T>]>
+    queries: Signal<
+      | readonly [...QueriesOptions<T>]
+      | readonly [...{ [K in keyof T]: GetOptions<T[K]> }]
+    >
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   injector?: Injector,

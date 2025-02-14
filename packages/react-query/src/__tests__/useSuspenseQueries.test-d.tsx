@@ -183,9 +183,6 @@ describe('UseSuspenseQueries config object overload', () => {
       ]
     >()
 
-    if (!result[0]) {
-      throw new Error('Type check failure')
-    }
     expectTypeOf(result[0].data).toEqualTypeOf<number | boolean>()
   })
 })

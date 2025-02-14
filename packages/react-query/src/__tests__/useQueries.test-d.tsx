@@ -167,9 +167,6 @@ describe('UseQueries config object overload', () => {
       [...Array<UseQueryResult<number, Error>>, UseQueryResult<boolean, Error>]
     >()
 
-    if (!result[0]) {
-      throw new Error('Type check failure')
-    }
     expectTypeOf(result[0].data).toEqualTypeOf<number | boolean | undefined>()
   })
 })
