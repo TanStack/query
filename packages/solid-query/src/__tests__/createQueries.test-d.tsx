@@ -31,10 +31,6 @@ describe('createQueries', () => {
       ]
     >()
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (!result[0]) {
-      throw new Error('Type check failure')
-    }
     expectTypeOf(result[0].data).toEqualTypeOf<number | boolean | undefined>()
   })
 })
