@@ -17,8 +17,7 @@ import type {
   InfiniteQueryObserverOptions,
   QueryObserverOptions,
 } from './QueryClient'
-
-export type FunctionedParams<T> = () => T
+import type { Accessor } from 'solid-js'
 
 export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
@@ -63,7 +62,7 @@ export type CreateQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = FunctionedParams<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
+> = Accessor<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
 
 /* --- Create Query and Create Base Query  Types --- */
 
@@ -128,7 +127,7 @@ export type CreateInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = FunctionedParams<
+> = Accessor<
   SolidInfiniteQueryOptions<
     TQueryFnData,
     TError,
@@ -165,7 +164,7 @@ export type CreateMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = FunctionedParams<SolidMutationOptions<TData, TError, TVariables, TContext>>
+> = Accessor<SolidMutationOptions<TData, TError, TVariables, TContext>>
 
 export type CreateMutateFunction<
   TData = unknown,
