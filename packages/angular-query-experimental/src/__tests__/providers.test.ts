@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
-import { ENVIRONMENT_INITIALIZER, signal } from '@angular/core'
+import {
+  ENVIRONMENT_INITIALIZER,
+  provideExperimentalZonelessChangeDetection,
+  signal,
+} from '@angular/core'
 import { isDevMode } from '../util/is-dev-mode/is-dev-mode'
 import { provideTanStackQuery, withDevtools } from '../providers'
 import type { DevtoolsOptions } from '../providers'
@@ -103,6 +107,7 @@ describe('withDevtools feature', () => {
       isDevModeMock.mockReturnValue(isDevModeValue)
 
       const providers = [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           new QueryClient(),
           loadDevtools !== undefined
@@ -136,6 +141,7 @@ describe('withDevtools feature', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           new QueryClient(),
           withDevtools(() => ({
@@ -170,6 +176,7 @@ describe('withDevtools feature', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           new QueryClient(),
           withDevtools(() => ({
@@ -199,6 +206,7 @@ describe('withDevtools feature', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           new QueryClient(),
           withDevtools(() => ({
@@ -228,6 +236,7 @@ describe('withDevtools feature', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           new QueryClient(),
           withDevtools(() => ({
@@ -257,6 +266,7 @@ describe('withDevtools feature', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           new QueryClient(),
           withDevtools(() => ({
@@ -286,6 +296,7 @@ describe('withDevtools feature', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           new QueryClient(),
           withDevtools(() => ({
@@ -297,8 +308,6 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.runAllTimersAsync()
-
-    TestBed.flushEffects()
 
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)
