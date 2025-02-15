@@ -22,7 +22,7 @@ export interface DehydrateOptions {
   serializeData?: TransformerFn
   shouldDehydrateMutation?: (mutation: Mutation) => boolean
   shouldDehydrateQuery?: (query: Query) => boolean
-  shouldRedactError?: (error: unknown) => boolean
+  shouldRedactErrors?: (error: unknown) => boolean
 }
 
 export interface HydrateOptions {
@@ -71,7 +71,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
 function dehydrateQuery(
   query: Query,
   serializeData: TransformerFn,
-  shouldRedactError: (error: unknown) => boolean,
+  shouldRedactErrors: (error: unknown) => boolean,
 ): DehydratedQuery {
   return {
     state: {
@@ -84,7 +84,7 @@ function dehydrateQuery(
     queryHash: query.queryHash,
     ...(query.state.status === 'pending' && {
       promise: query.promise?.then(serializeData).catch((error) => {
-        if (!shouldRedactError(error)) {
+        if (!shouldRedactErrors(error)) {
           // Reject original error if it should not be redacted
           return Promise.reject(error)
         }
@@ -109,7 +109,7 @@ export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
-export function defaultShouldRedactError(_: unknown) {
+export function defaultshouldRedactErrors(_: unknown) {
   return true
 }
 
@@ -134,10 +134,10 @@ export function dehydrate(
     client.getDefaultOptions().dehydrate?.shouldDehydrateQuery ??
     defaultShouldDehydrateQuery
 
-  const shouldRedactError =
-    options.shouldRedactError ??
-    client.getDefaultOptions().dehydrate?.shouldRedactError ??
-    defaultShouldRedactError
+  const shouldRedactErrors =
+    options.shouldRedactErrors ??
+    client.getDefaultOptions().dehydrate?.shouldRedactErrors ??
+    defaultshouldRedactErrors
 
   const serializeData =
     options.serializeData ??
@@ -149,7 +149,7 @@ export function dehydrate(
     .getAll()
     .flatMap((query) =>
       filterQuery(query)
-        ? [dehydrateQuery(query, serializeData, shouldRedactError)]
+        ? [dehydrateQuery(query, serializeData, shouldRedactErrors)]
         : [],
     )
 
