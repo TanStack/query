@@ -355,24 +355,6 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
-      name: 'should ignore references of the queryClient',
-      code: `
-        const CONST_VAL = 1
-        function useHook() {
-          const queryClient = useQueryClient()
-          const queryClient2 = useQueryClient()
-          useQuery({
-            queryKey: ["foo"],
-            queryFn: () => {
-                doSomething(queryClient)
-                queryClient.invalidateQueries()
-                doSomethingSus(queryClient2)
-            }
-          });
-        }
-      `,
-    },
-    {
       name: 'query key with nullish coalescing operator',
       code: `
         const factory = (id: number) => ['foo', id];
@@ -470,7 +452,7 @@ ruleTester.run('exhaustive-deps', rule, {
           queryKey: ['foo'],
           queryFn: () => Promise.resolve(EXTERNAL),
         }),
-      };  
+      };
       `,
     },
     {
