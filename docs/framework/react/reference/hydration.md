@@ -38,6 +38,12 @@ const dehydratedState = dehydrate(queryClient, {
     - Defaults to only including successful queries
     - If you would like to extend the function while retaining the default behavior, import and execute `defaultShouldDehydrateQuery` as part of the return statement
   - `serializeData?: (data: any) => any` A function to transform (serialize) data during dehydration.
+  - `shouldRedactErrors?: (error: unknown) => boolean`
+    - Optional
+    - Whether to redact errors from the server during dehydration.
+    - The function is called for each error in the cache
+      - Return `true` to redact this error, or `false` otherwise
+    - Defaults to redacting all errors
 
 **Returns**
 
