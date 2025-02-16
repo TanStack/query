@@ -36,6 +36,7 @@
   "types": "build/legacy/index.d.ts",
   "main": "build/legacy/index.cjs",
   "module": "build/legacy/index.js",
+  "react-native": "src/index.ts",
   "exports": {
     ".": {
       "import": {
