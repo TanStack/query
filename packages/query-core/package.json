@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-core",
-  "version": "5.66.0",
+  "version": "5.66.2",
   "description": "The framework agnostic core that powers TanStack Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -36,6 +36,7 @@
   "types": "build/legacy/index.d.ts",
   "main": "build/legacy/index.cjs",
   "module": "build/legacy/index.js",
+  "react-native": "src/index.ts",
   "exports": {
     ".": {
       "import": {
