@@ -68,7 +68,6 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^1.6.4",
     "@angular/compiler": "^19.1.0-next.0",
     "@angular/core": "^19.1.0-next.0",
     "@angular/platform-browser": "^19.1.0-next.0",
