@@ -183,6 +183,9 @@ describe('UseSuspenseQueries config object overload', () => {
       ]
     >()
 
-    expectTypeOf(result[0].data).toEqualTypeOf<number | boolean>()
+    expectTypeOf(result[0]).not.toBeUndefined()
+    if (result[0]) {
+      expectTypeOf(result[0].data).toEqualTypeOf<number | boolean>()
+    }
   })
 })
