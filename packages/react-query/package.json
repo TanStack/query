@@ -27,7 +27,7 @@
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts57": "tsc --build",
-    "test:lib": "vitest",
+    "test:lib": "NODE_OPTIONS=--max_old_space_size=4096 vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm build:tsup && pnpm build:codemods",
