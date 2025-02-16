@@ -1,7 +1,12 @@
 'use client'
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { DefaultError, NoInfer, QueryClient, QueryKey } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  NoInfer,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
