@@ -184,6 +184,7 @@ describe('defaultOptions', () => {
         queries: {
           queryFn: (context) => {
             expectTypeOf(context).toEqualTypeOf<{
+              client: QueryClient
               queryKey: QueryKey
               meta: Record<string, unknown> | undefined
               signal: AbortSignal
@@ -228,16 +229,11 @@ describe('fully typed usage', () => {
       TData,
       TError,
       TData,
-      QueryKey & DataTag<unknown, TData, TError>
+      DataTag<QueryKey, TData, TError>
     > = {
       predicate(query) {
         expectTypeOf(query).toEqualTypeOf<
-          Query<
-            TData,
-            TError,
-            TData,
-            QueryKey & DataTag<unknown, TData, TError>
-          >
+          Query<TData, TError, TData, DataTag<QueryKey, TData, TError>>
         >()
         expectTypeOf(query.state.data).toEqualTypeOf<TData | undefined>()
         expectTypeOf(query.state.error).toEqualTypeOf<TError | null>()

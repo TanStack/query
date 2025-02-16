@@ -714,6 +714,28 @@ describe('queryClient', () => {
       expect(third).toBe(1)
       expect(fourth).toBe(2)
     })
+
+    test('should allow new meta', async () => {
+      const key = queryKey()
+
+      const first = await queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: true,
+        },
+      })
+      expect(first).toStrictEqual({ foo: true })
+
+      const second = await queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: false,
+        },
+      })
+      expect(second).toStrictEqual({ foo: false })
+    })
   })
 
   describe('fetchInfiniteQuery', () => {

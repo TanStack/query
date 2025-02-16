@@ -58,6 +58,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             QueryFunctionContext<QueryKey, unknown>,
             'signal'
           > = {
+            client: context.client,
             queryKey: context.queryKey,
             pageParam: param,
             direction: previous ? 'backward' : 'forward',
@@ -114,6 +115,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           return context.options.persister?.(
             fetchFn as any,
             {
+              client: context.client,
               queryKey: context.queryKey,
               meta: context.options.meta,
               signal: context.signal,
