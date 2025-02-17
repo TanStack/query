@@ -154,4 +154,17 @@ describe('UseSuspenseQueries config object overload', () => {
       expectTypeOf(data).toEqualTypeOf<Data>()
     })
   })
+
+  it('queryOptions with initialData works on useSuspenseQueries', () => {
+    const query1 = queryOptions({
+      queryKey: ['key1'],
+      queryFn: () => 'Query Data',
+      initialData: 'initial data',
+    })
+
+    const queryResults = useSuspenseQueries({ queries: [query1] })
+    const query1Data = queryResults[0].data
+
+    expectTypeOf(query1Data).toEqualTypeOf<string>()
+  })
 })

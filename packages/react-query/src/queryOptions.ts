@@ -55,7 +55,14 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+): Omit<
+  DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'queryFn'
+> & {
+  queryFn?: Exclude<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
+    SkipToken | undefined
+  >
   queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
