@@ -80,9 +80,8 @@ export const HydrationBoundary = ({
         } else {
           const hydrationIsNewer =
             dehydratedQuery.state.dataUpdatedAt >
-            existingQuery.state.dataUpdatedAt ||
-            (// RSC special serialized then-able chunks
-              hasProperty(dehydratedQuery.promise, 'status') &&
+              existingQuery.state.dataUpdatedAt || // RSC special serialized then-able chunks
+            (hasProperty(dehydratedQuery.promise, 'status') &&
               hasProperty(existingQuery.promise, 'status') &&
               dehydratedQuery.promise?.status !== existingQuery.promise?.status)
 
@@ -94,7 +93,7 @@ export const HydrationBoundary = ({
             hydrationIsNewer &&
             (!queryAlreadyQueued ||
               dehydratedQuery.state.dataUpdatedAt >
-              queryAlreadyQueued.state.dataUpdatedAt)
+                queryAlreadyQueued.state.dataUpdatedAt)
           ) {
             existingQueries.push(dehydratedQuery)
           }
