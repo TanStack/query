@@ -24,10 +24,10 @@ export interface HydrationBoundaryProps {
   queryClient?: QueryClient
 }
 
-const hasProperty = <K extends string>(
+const hasProperty = <TKey extends string>(
   obj: unknown,
-  key: K,
-): obj is { [key in K]: unknown } => {
+  key: TKey,
+): obj is { [k in TKey]: unknown } => {
   return typeof obj === 'object' && obj !== null && key in obj
 }
 
@@ -83,7 +83,7 @@ export const HydrationBoundary = ({
               existingQuery.state.dataUpdatedAt || // RSC special serialized then-able chunks
             (hasProperty(dehydratedQuery.promise, 'status') &&
               hasProperty(existingQuery.promise, 'status') &&
-              dehydratedQuery.promise?.status !== existingQuery.promise?.status)
+              dehydratedQuery.promise.status !== existingQuery.promise.status)
 
           const queryAlreadyQueued = hydrationQueue?.find(
             (query) => query.queryHash === dehydratedQuery.queryHash,
