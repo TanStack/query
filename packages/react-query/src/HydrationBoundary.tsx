@@ -24,6 +24,13 @@ export interface HydrationBoundaryProps {
   queryClient?: QueryClient
 }
 
+const hasProperty = <K extends string>(
+  obj: unknown,
+  key: K,
+): obj is { [key in K]: unknown } => {
+  return typeof obj === 'object' && obj !== null && key in obj
+}
+
 export const HydrationBoundary = ({
   children,
   options = {},
@@ -73,9 +80,11 @@ export const HydrationBoundary = ({
         } else {
           const hydrationIsNewer =
             dehydratedQuery.state.dataUpdatedAt >
-              existingQuery.state.dataUpdatedAt ||
-            // @ts-expect-error
-            dehydratedQuery.promise?.status !== existingQuery.promise?.status
+            existingQuery.state.dataUpdatedAt ||
+            (// RSC special serialized then-able chunks
+              hasProperty(dehydratedQuery.promise, 'status') &&
+              hasProperty(existingQuery.promise, 'status') &&
+              dehydratedQuery.promise?.status !== existingQuery.promise?.status)
 
           const queryAlreadyQueued = hydrationQueue?.find(
             (query) => query.queryHash === dehydratedQuery.queryHash,
@@ -85,7 +94,7 @@ export const HydrationBoundary = ({
             hydrationIsNewer &&
             (!queryAlreadyQueued ||
               dehydratedQuery.state.dataUpdatedAt >
-                queryAlreadyQueued.state.dataUpdatedAt)
+              queryAlreadyQueued.state.dataUpdatedAt)
           ) {
             existingQueries.push(dehydratedQuery)
           }
