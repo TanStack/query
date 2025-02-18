@@ -3,6 +3,7 @@ import type {
   DefaultError,
   InitialDataFunction,
   OmitKeyof,
+  QueryFunction,
   QueryKey,
   SkipToken,
 } from '@tanstack/query-core'
@@ -42,10 +43,11 @@ export type DefinedInitialDataOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'queryFn'> & {
   initialData:
     | NonUndefinedGuard<TQueryFnData>
     | (() => NonUndefinedGuard<TQueryFnData>)
+  queryFn: QueryFunction<TQueryFnData, TQueryKey>
 }
 
 export function queryOptions<
@@ -55,14 +57,7 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): Omit<
-  DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'queryFn'
-> & {
-  queryFn?: Exclude<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
-    SkipToken | undefined
-  >
+): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
   queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
