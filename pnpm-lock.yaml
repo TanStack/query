@@ -303,6 +303,52 @@ importers:
         specifier: 5.7.2
         version: 5.7.2
 
+  examples/angular/optimistic-updates:
+    dependencies:
+      '@angular/common':
+        specifier: ^19.1.0-next.0
+        version: 19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1)
+      '@angular/compiler':
+        specifier: ^19.1.0-next.0
+        version: 19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))
+      '@angular/core':
+        specifier: ^19.1.0-next.0
+        version: 19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)
+      '@angular/forms':
+        specifier: 19.1.0-next.0
+        version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1)
+      '@angular/platform-browser':
+        specifier: ^19.1.0-next.0
+        version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))
+      '@angular/platform-browser-dynamic':
+        specifier: ^19.1.0-next.0
+        version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
+      '@tanstack/angular-query-experimental':
+        specifier: ^5.66.4
+        version: link:../../../packages/angular-query-experimental
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      tslib:
+        specifier: ^2.6.3
+        version: 2.8.1
+      zone.js:
+        specifier: ^0.15.0
+        version: 0.15.0
+    devDependencies:
+      '@angular/build':
+        specifier: ^19.0.2
+        version: 19.0.2(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@types/node@22.10.7)(chokidar@4.0.3)(less@4.2.2)(lightningcss@1.27.0)(postcss@8.5.1)(tailwindcss@3.4.7)(terser@5.31.6)(typescript@5.7.2)
+      '@angular/cli':
+        specifier: ^19.0.2
+        version: 19.0.2(@types/node@22.10.7)(chokidar@4.0.3)
+      '@angular/compiler-cli':
+        specifier: ^19.1.0-next.0
+        version: 19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2)
+      typescript:
+        specifier: 5.7.2
+        version: 5.7.2
+
   examples/angular/pagination:
     dependencies:
       '@angular/common':

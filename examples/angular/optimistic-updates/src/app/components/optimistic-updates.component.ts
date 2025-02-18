@@ -1,13 +1,14 @@
-import { Component, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import {
   injectMutation,
   injectQuery,
 } from '@tanstack/angular-query-experimental'
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { FormsModule } from '@angular/forms'
 import { DatePipe } from '@angular/common'
 import { TasksService } from '../services/tasks.service'
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'optimistic-updates',
   imports: [FormsModule, DatePipe],
   template: `
@@ -48,13 +49,12 @@ import { TasksService } from '../services/tasks.service'
         <p>Fetching in background</p>
       }
     </div>
-  `,
-  styles: ``,
+  `
 })
 export class OptimisticUpdatesComponent {
   #tasksService = inject(TasksService)
 
-  tasks = (() => injectQuery(() => this.#tasksService.allTasks()))()
+  tasks = injectQuery(() => this.#tasksService.allTasks())
   clearMutation = injectMutation(() => this.#tasksService.addTask())
   addMutation = injectMutation(() => this.#tasksService.addTask())
 

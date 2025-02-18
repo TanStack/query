@@ -20,7 +20,7 @@ export const mockInterceptor: HttpInterceptorFn = (
   next: HttpHandlerFn,
 ): Observable<HttpEvent<any>> => {
   const respondWith = (status: number, body: any) =>
-    of(new HttpResponse({ status, body })).pipe(delay(500))
+    of(new HttpResponse({ status, body })).pipe(delay(1000))
   if (req.url === '/api/tasks') {
     switch (req.method) {
       case 'GET':
