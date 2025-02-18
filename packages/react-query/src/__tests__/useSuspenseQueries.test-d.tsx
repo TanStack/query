@@ -167,4 +167,22 @@ describe('UseSuspenseQueries config object overload', () => {
 
     expectTypeOf(query1Data).toEqualTypeOf<string>()
   })
+
+  it('queryOptions with skipToken in queryFn should not work on useSuspenseQueries', () => {
+    const query1 = queryOptions({
+      queryKey: ['key1'],
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+    })
+
+    const query2 = queryOptions({
+      queryKey: ['key1'],
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+      initialData: 5,
+    })
+
+    // @ts-expect-error
+    useSuspenseQueries({ queries: [query1] })
+    // @ts-expect-error
+    useSuspenseQueries({ queries: [query2] })
+  })
 })
