@@ -283,6 +283,6 @@ export function createIDBPersister(idbValidKey: IDBValidKey = 'reactQuery') {
     removeClient: async () => {
       await del(idbValidKey)
     },
-  } as Persister
+  } satisfies Persister
 }
 ```

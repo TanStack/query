@@ -106,5 +106,5 @@ export function ReactQueryDevtools(
     }
   }, [devtools])
 
-  return <div className="tsqd-parent-container" ref={ref}></div>
+  return <div dir="ltr" className="tsqd-parent-container" ref={ref}></div>
 }

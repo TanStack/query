@@ -1,5 +1,9 @@
-import { ElementRef, signal } from '@angular/core'
-import { TestBed, fakeAsync } from '@angular/core/testing'
+import {
+  ElementRef,
+  provideExperimentalZonelessChangeDetection,
+  signal,
+} from '@angular/core'
+import { TestBed } from '@angular/core/testing'
 import {
   QueryClient,
   provideTanStackQuery,
@@ -34,6 +38,7 @@ describe('injectDevtoolsPanel', () => {
     mockElementRef = new ElementRef(document.createElement('div'))
     TestBed.configureTestingModule({
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(queryClient),
         { provide: ElementRef, useValue: signal(mockElementRef) },
       ],
@@ -56,7 +61,7 @@ describe('injectDevtoolsPanel', () => {
     })
   })
 
-  it('should initialize TanstackQueryDevtoolsPanel', fakeAsync(() => {
+  it('should initialize TanstackQueryDevtoolsPanel', () => {
     TestBed.runInInjectionContext(() => {
       injectDevtoolsPanel(() => ({
         hostElement: TestBed.inject(ElementRef),
@@ -66,9 +71,9 @@ describe('injectDevtoolsPanel', () => {
     TestBed.flushEffects()
 
     expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
-  }))
+  })
 
-  it('should destroy TanstackQueryDevtoolsPanel', fakeAsync(() => {
+  it('should destroy TanstackQueryDevtoolsPanel', () => {
     const result = TestBed.runInInjectionContext(() => {
       return injectDevtoolsPanel(() => ({
         hostElement: TestBed.inject(ElementRef),
@@ -80,9 +85,9 @@ describe('injectDevtoolsPanel', () => {
     result.destroy()
 
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(1)
-  }))
+  })
 
-  it('should destroy TanstackQueryDevtoolsPanel when hostElement is removed', fakeAsync(() => {
+  it('should destroy TanstackQueryDevtoolsPanel when hostElement is removed', () => {
     const hostElement = signal<ElementRef>(mockElementRef)
 
     TestBed.runInInjectionContext(() => {
@@ -100,9 +105,9 @@ describe('injectDevtoolsPanel', () => {
     TestBed.flushEffects()
 
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(1)
-  }))
+  })
 
-  it('should update client', fakeAsync(() => {
+  it('should update client', () => {
     const client = signal(new QueryClient())
 
     TestBed.runInInjectionContext(() => {
@@ -121,9 +126,9 @@ describe('injectDevtoolsPanel', () => {
     TestBed.flushEffects()
 
     expect(mockDevtoolsPanelInstance.setClient).toHaveBeenCalledTimes(1)
-  }))
+  })
 
-  it('should update error types', fakeAsync(() => {
+  it('should update error types', () => {
     const errorTypes = signal([])
 
     TestBed.runInInjectionContext(() => {
@@ -142,9 +147,9 @@ describe('injectDevtoolsPanel', () => {
     TestBed.flushEffects()
 
     expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(1)
-  }))
+  })
 
-  it('should update onclose', fakeAsync(() => {
+  it('should update onclose', () => {
     const functionA = () => {}
     const functionB = () => {}
 
@@ -166,5 +171,5 @@ describe('injectDevtoolsPanel', () => {
     TestBed.flushEffects()
 
     expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(1)
-  }))
+  })
 })

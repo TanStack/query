@@ -228,14 +228,8 @@ describe('useInfiniteQuery', () => {
 
       createRenderEffect(() => {
         states.push({
+          ...state,
           data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
-          hasNextPage: state.hasNextPage,
-          hasPreviousPage: state.hasPreviousPage,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isSuccess: state.isSuccess,
-          isPlaceholderData: state.isPlaceholderData,
         })
       })
 

@@ -4,16 +4,17 @@ import type { InjectOptions } from '@angular/core'
 
 /**
  * Injects a `QueryClient` instance and allows passing a custom injector.
+ * @param injectOptions - Type of the options argument to inject and optionally a custom injector.
+ * @returns The `QueryClient` instance.
+ * @public
+ * @deprecated Use `inject(QueryClient)` instead.
+ * If you need to get a `QueryClient` from a custom injector, use `injector.get(QueryClient)`.
  *
- * You can also use `inject(QueryClient)` if you don't need to provide a custom injector.
  *
  * **Example**
  * ```ts
  * const queryClient = injectQueryClient();
  * ```
- * @param injectOptions - Type of the options argument to inject and optionally a custom injector.
- * @returns The `QueryClient` instance.
- * @public
  */
 export function injectQueryClient(
   injectOptions: InjectOptions & { injector?: Injector } = {},
