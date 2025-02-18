@@ -154,7 +154,7 @@ describe('UseSuspenseQueries config object overload', () => {
       expectTypeOf(data).toEqualTypeOf<Data>()
     })
   })
-
+  
   it('should return correct data for dynamic queries with mixed result types', () => {
     const Queries1 = {
       get: () =>
@@ -187,5 +187,17 @@ describe('UseSuspenseQueries config object overload', () => {
     if (result[0]) {
       expectTypeOf(result[0].data).toEqualTypeOf<number | boolean>()
     }
+    
+  it('queryOptions with initialData works on useSuspenseQueries', () => {
+    const query1 = queryOptions({
+      queryKey: ['key1'],
+      queryFn: () => 'Query Data',
+      initialData: 'initial data',
+    })
+
+    const queryResults = useSuspenseQueries({ queries: [query1] })
+    const query1Data = queryResults[0].data
+
+    expectTypeOf(query1Data).toEqualTypeOf<string>()
   })
 })
