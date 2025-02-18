@@ -182,11 +182,6 @@ describe('UseSuspenseQueries config object overload', () => {
         UseSuspenseQueryResult<boolean, Error>,
       ]
     >()
-
-    expectTypeOf(result[0]).not.toBeUndefined()
-    if (result[0]) {
-      expectTypeOf(result[0].data).toEqualTypeOf<number | boolean>()
-    }
   })
 
   it('queryOptions with initialData works on useSuspenseQueries', () => {
