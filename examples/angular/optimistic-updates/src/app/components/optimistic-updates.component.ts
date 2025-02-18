@@ -49,7 +49,7 @@ import { TasksService } from '../services/tasks.service'
         <p>Fetching in background</p>
       }
     </div>
-  `
+  `,
 })
 export class OptimisticUpdatesComponent {
   #tasksService = inject(TasksService)
