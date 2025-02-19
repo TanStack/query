@@ -47,7 +47,7 @@ export type DefinedInitialDataOptions<
   initialData:
     | NonUndefinedGuard<TQueryFnData>
     | (() => NonUndefinedGuard<TQueryFnData>)
-  queryFn: QueryFunction<TQueryFnData, TQueryKey>
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey>
 }
 
 export function queryOptions<
