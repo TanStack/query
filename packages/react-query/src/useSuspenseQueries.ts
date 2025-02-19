@@ -160,19 +160,7 @@ export type SuspenseQueriesResults<
             [...TResults, GetUseSuspenseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : {
-            [K in keyof T]: T[K] extends UseSuspenseQueryOptions<
-              infer TQueryFnData,
-              infer TError,
-              infer TData,
-              any
-            >
-              ? UseSuspenseQueryResult<
-                  unknown extends TData ? TQueryFnData : TData,
-                  unknown extends TError ? DefaultError : TError
-                >
-              : GetUseSuspenseQueryResult<T[number]>
-          }
+        : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> }
 
 export function useSuspenseQueries<
   T extends Array<any>,

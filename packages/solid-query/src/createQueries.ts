@@ -183,19 +183,7 @@ type QueriesResults<
             [...TResult, GetResults<Head>],
             [...TDepth, 1]
           >
-        : {
-            [K in keyof T]: T[K] extends CreateQueryOptionsForCreateQueries<
-              infer TQueryFnData,
-              infer TError,
-              infer TData,
-              any
-            >
-              ? CreateQueryResult<
-                  unknown extends TData ? TQueryFnData : TData,
-                  unknown extends TError ? DefaultError : TError
-                >
-              : CreateQueryResult<T[number]>
-          }
+        : { [K in keyof T]: GetResults<T[K]> }
 
 export function createQueries<
   T extends Array<any>,

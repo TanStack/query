@@ -30,7 +30,5 @@ describe('createQueries', () => {
         CreateQueryResult<boolean, Error>,
       ]
     >()
-
-    expectTypeOf(result[0].data).toEqualTypeOf<number | boolean | undefined>()
   })
 })

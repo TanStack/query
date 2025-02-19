@@ -203,19 +203,7 @@ export type QueriesResults<
             [...TResults, GetUseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : {
-            [K in keyof T]: T[K] extends UseQueryOptionsForUseQueries<
-              infer TQueryFnData,
-              infer TError,
-              infer TData,
-              any
-            >
-              ? UseQueryResult<
-                  unknown extends TData ? TQueryFnData : TData,
-                  unknown extends TError ? DefaultError : TError
-                >
-              : GetUseQueryResult<T[number]>
-          }
+        : { [K in keyof T]: GetUseQueryResult<T[K]> }
 
 export function useQueries<
   T extends Array<any>,

@@ -174,19 +174,7 @@ export type QueriesResults<
             [...TResult, GetResults<Head>],
             [...TDepth, 1]
           >
-        : {
-            [K in keyof T]: T[K] extends QueryObserverOptionsForCreateQueries<
-              infer TQueryFnData,
-              infer TError,
-              infer TData,
-              any
-            >
-              ? QueryObserverResult<
-                  unknown extends TData ? TQueryFnData : TData,
-                  unknown extends TError ? DefaultError : TError
-                >
-              : QueryObserverResult<T[number]>
-          }
+        : { [K in keyof T]: GetResults<T[K]> }
 
 /**
  * @param root0
