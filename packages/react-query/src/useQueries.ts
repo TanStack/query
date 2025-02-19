@@ -335,7 +335,7 @@ export function useQueries<
           errorResetBoundary,
           throwOnError: query.throwOnError,
           query: client.getQueryCache().get(query.queryHash),
-          suspense: defaultedQueries[index]?.suspense,
+          suspense: query.suspense,
         })
       )
     },
