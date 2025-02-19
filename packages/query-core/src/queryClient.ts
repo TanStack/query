@@ -511,6 +511,10 @@ export class QueryClient {
     return Promise.resolve()
   }
 
+  cancelPausedMutations({ scope }: { scope: MutationOptions['scope'] }): void {
+    this.#mutationCache.cancelPausedMutations(scope)
+  }
+
   getQueryCache(): QueryCache {
     return this.#queryCache
   }

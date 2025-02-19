@@ -227,6 +227,22 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       ),
     )
   }
+
+  cancelPausedMutations(scope: MutationOptions['scope']): void {
+    const pausedMutationsInScope = this.getAll().filter(
+      (x) => x.state.isPaused && scopeFor(x) === scope?.id,
+    )
+
+    notifyManager.batch(() => {
+      pausedMutationsInScope.forEach((mutation) => {
+        // Notify observers that the mutation was removed
+        this.notify({ type: 'removed', mutation })
+        // Remove the mutation from the cache, which will
+        // delete the scope when the last mutation is removed
+        this.remove(mutation)
+      })
+    })
+  }
 }
 
 function scopeFor(mutation: Mutation<any, any, any, any>) {
