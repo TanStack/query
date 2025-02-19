@@ -336,29 +336,49 @@ export class QueryClient {
   }
 
   invalidateQueries<
-    TInvalidateQueryFilters extends InvalidateQueryFilters<
-      any,
-      any,
-      any,
-      any
-    > = InvalidateQueryFilters,
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
+      unknown,
+      infer TaggedValue,
+      unknown
+    >
+      ? TaggedValue
+      : TQueryFnData,
+    TInferredError = TTaggedQueryKey extends DataTag<
+      unknown,
+      unknown,
+      infer TaggedError
+    >
+      ? TaggedError extends UnsetMarker
+        ? TError
+        : TaggedError
+      : TError,
   >(
-    filters?: TInvalidateQueryFilters,
+    filters?: InvalidateQueryFilters<
+      TInferredQueryFnData,
+      TInferredError,
+      TInferredQueryFnData,
+      TTaggedQueryKey
+    >,
     options: InvalidateOptions = {},
   ): Promise<void> {
     return notifyManager.batch(() => {
-      this.#queryCache.findAll(filters).forEach((query) => {
+      this.#queryCache.findAll(filters as QueryFilters).forEach((query) => {
         query.invalidate()
       })
 
       if (filters?.refetchType === 'none') {
         return Promise.resolve()
       }
-      const refetchFilters: RefetchQueryFilters = {
-        ...filters,
-        type: filters?.refetchType ?? filters?.type ?? 'active',
-      }
-      return this.refetchQueries(refetchFilters, options)
+      return this.refetchQueries(
+        {
+          ...filters,
+          type: filters?.refetchType ?? filters?.type ?? 'active',
+        },
+        options,
+      )
     })
   }
 

@@ -497,3 +497,20 @@ describe('fully typed usage', () => {
     queryClient.getMutationDefaults(mutationKey)
   })
 })
+
+describe('invalidateQueries', () => {
+  it('predicate should be typed if key is tagged', () => {
+    const queryKey = ['key'] as DataTag<Array<string>, number>
+    const queryClient = new QueryClient()
+    queryClient.invalidateQueries({
+      queryKey,
+      predicate: (query) => {
+        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<
+          DataTag<Array<string>, number>
+        >()
+        return true
+      },
+    })
+  })
+})
