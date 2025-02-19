@@ -474,6 +474,70 @@ describe('mutations', () => {
         'finish-B',
       ])
     })
+
+    test('cancelPausedMutations should cancel all paused mutations in a scope', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      const results: Array<string> = []
+
+      const execute1 = executeMutation(
+        queryClient,
+        {
+          mutationKey: key1,
+          scope: {
+            id: 'SCOPE_ID',
+          },
+          mutationFn: async () => {
+            results.push('start-A')
+            await sleep(10)
+            results.push('finish-A')
+            return 'a'
+          },
+
+          // Cancel all paused mutations in the scope when this one succeeds
+          onSuccess: () =>
+            queryClient.cancelPausedMutations({ scope: { id: 'SCOPE_ID' } }),
+        },
+        'vars1',
+      )
+
+      expect(
+        queryClient.getMutationCache().find({ mutationKey: key1 })?.state,
+      ).toMatchObject({
+        status: 'pending',
+        isPaused: false,
+      })
+
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key2,
+          scope: {
+            id: 'SCOPE_ID',
+          },
+          mutationFn: async () => {
+            results.push('start-B')
+            await sleep(10)
+            results.push('finish-B')
+            return 'b'
+          },
+        },
+        'vars2',
+      )
+
+      // The second mutation should be enqueued by scope, and paused for serial execution
+      expect(
+        queryClient.getMutationCache().find({ mutationKey: key2 })?.state,
+      ).toMatchObject({
+        status: 'pending',
+        isPaused: true,
+      })
+
+      // When the first mutation succeeds, it should cancel the second mutation
+      await execute1
+      expect(results).toStrictEqual(['start-A', 'finish-A'])
+    })
   })
 
   test('mutations without scope should run in parallel', async () => {

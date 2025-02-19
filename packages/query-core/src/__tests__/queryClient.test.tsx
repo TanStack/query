@@ -1980,6 +1980,47 @@ describe('queryClient', () => {
       unsubscribe()
     })
 
+    test('cancelPausedMutations should cancel paused mutations of a given scope', async () => {
+      const results: Array<string> = []
+
+      const observer1 = new MutationObserver(queryClient, {
+        scope: {
+          id: 'SCOPE_ID',
+        },
+        mutationFn: async () => {
+          results.push('mutation1-start')
+          await sleep(20)
+          results.push('mutation1-end')
+          return 1
+        },
+
+        // cancel paused mutations of the same scope when this mutation succeeds
+        onSuccess: () =>
+          queryClient.cancelPausedMutations({ scope: { id: 'SCOPE_ID' } }),
+      })
+
+      const observer2 = new MutationObserver(queryClient, {
+        scope: {
+          id: 'SCOPE_ID',
+        },
+        mutationFn: async () => {
+          results.push('mutation2-start')
+          await sleep(20)
+          results.push('mutation2-end')
+          return 2
+        },
+      })
+
+      void observer1.mutate()
+      void observer2.mutate()
+
+      await waitFor(() =>
+        expect(observer1.getCurrentResult().status).toBe('success'),
+      )
+
+      expect(results).toStrictEqual(['mutation1-start', 'mutation1-end'])
+    })
+
     test('should notify queryCache and mutationCache after multiple mounts and single unmount', async () => {
       const testClient = createQueryClient()
       testClient.mount()
