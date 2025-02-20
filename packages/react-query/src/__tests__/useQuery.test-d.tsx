@@ -105,6 +105,15 @@ describe('initialData', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       }
     })
+
+    it('data should not have undefined when initialData is provided', () => {
+      const { data } = useQuery({
+        queryKey: ['query-key'],
+        initialData: 42,
+      })
+
+      expectTypeOf(data).toEqualTypeOf<number>()
+    })
   })
 
   describe('custom hook', () => {
