@@ -3,9 +3,6 @@ import { QueryClient as QC } from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
-import type { UseQueryOptions } from './useQuery'
-import type { Ref } from 'vue-demi'
-import type { MaybeRefDeep, NoUnknown } from './types'
 import type {
   CancelOptions,
   DataTag,
@@ -14,6 +11,8 @@ import type {
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
+  InferDataFromTag,
+  InferErrorFromTag,
   InfiniteData,
   InvalidateOptions,
   InvalidateQueryFilters,
@@ -33,6 +32,9 @@ import type {
   SetDataOptions,
   Updater,
 } from '@tanstack/query-core'
+import type { UseQueryOptions } from './useQuery'
+import type { Ref } from 'vue-demi'
+import type { MaybeRefDeep, NoUnknown } from './types'
 
 export class QueryClient extends QC {
   constructor(config: QueryClientConfig = {}) {
@@ -56,11 +58,7 @@ export class QueryClient extends QC {
 
   getQueryData<TData = unknown, TTaggedQueryKey extends QueryKey = QueryKey>(
     queryKey: TTaggedQueryKey,
-  ):
-    | (TTaggedQueryKey extends DataTag<unknown, infer TaggedValue, unknown>
-        ? TaggedValue
-        : TData)
-    | undefined
+  ): InferDataFromTag<TData, TTaggedQueryKey> | undefined
   getQueryData<TData = unknown>(
     queryKey: MaybeRefDeep<QueryKey>,
   ): TData | undefined
@@ -171,6 +169,21 @@ export class QueryClient extends QC {
     return super.cancelQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
   }
 
+  invalidateQueries<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
+    filters?: InvalidateQueryFilters<
+      TInferredQueryFnData,
+      TInferredError,
+      TInferredQueryFnData,
+      TTaggedQueryKey
+    >,
+    options?: MaybeRefDeep<InvalidateOptions>,
+  ): Promise<void>
   invalidateQueries(
     filters: MaybeRefDeep<InvalidateQueryFilters> = {},
     options: MaybeRefDeep<InvalidateOptions> = {},
