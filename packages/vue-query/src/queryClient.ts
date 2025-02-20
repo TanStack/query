@@ -182,10 +182,23 @@ export class QueryClient extends QC {
       TInferredQueryFnData,
       TTaggedQueryKey
     >,
-    options?: MaybeRefDeep<InvalidateOptions>,
+    options?: InvalidateOptions,
   ): Promise<void>
-  invalidateQueries(
-    filters: MaybeRefDeep<InvalidateQueryFilters> = {},
+  invalidateQueries<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
+    filters: MaybeRefDeep<
+      InvalidateQueryFilters<
+        TInferredQueryFnData,
+        TInferredError,
+        TInferredQueryFnData,
+        TTaggedQueryKey
+      >
+    > = {},
     options: MaybeRefDeep<InvalidateOptions> = {},
   ): Promise<void> {
     const filtersCloned = cloneDeepUnref(filters)
@@ -200,7 +213,12 @@ export class QueryClient extends QC {
       return Promise.resolve()
     }
 
-    const refetchFilters: RefetchQueryFilters = {
+    const refetchFilters: RefetchQueryFilters<
+      TInferredQueryFnData,
+      TInferredError,
+      TInferredQueryFnData,
+      TTaggedQueryKey
+    > = {
       ...filtersCloned,
       type: filtersCloned.refetchType ?? filtersCloned.type ?? 'active',
     }
