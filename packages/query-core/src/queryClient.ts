@@ -15,7 +15,6 @@ import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type {
   CancelOptions,
-  DataTag,
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
@@ -23,6 +22,8 @@ import type {
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
+  InferDataFromTag,
+  InferErrorFromTag,
   InfiniteData,
   InvalidateOptions,
   InvalidateQueryFilters,
@@ -39,7 +40,6 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   SetDataOptions,
-  UnsetMarker,
 } from './types'
 import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
@@ -122,13 +122,7 @@ export class QueryClient {
   getQueryData<
     TQueryFnData = unknown,
     TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue,
-      unknown
-    >
-      ? TaggedValue
-      : TQueryFnData,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
   >(queryKey: TTaggedQueryKey): TInferredQueryFnData | undefined {
     const options = this.defaultQueryOptions({ queryKey })
 
@@ -191,13 +185,7 @@ export class QueryClient {
   setQueryData<
     TQueryFnData = unknown,
     TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue,
-      unknown
-    >
-      ? TaggedValue
-      : TQueryFnData,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
   >(
     queryKey: TTaggedQueryKey,
     updater: Updater<
@@ -267,22 +255,8 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = DefaultError,
     TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue,
-      unknown
-    >
-      ? TaggedValue
-      : TQueryFnData,
-    TInferredError = TTaggedQueryKey extends DataTag<
-      unknown,
-      unknown,
-      infer TaggedError
-    >
-      ? TaggedError extends UnsetMarker
-        ? TError
-        : TaggedError
-      : TError,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
     queryKey: TTaggedQueryKey,
   ): QueryState<TInferredQueryFnData, TInferredError> | undefined {
@@ -339,22 +313,8 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = DefaultError,
     TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue,
-      unknown
-    >
-      ? TaggedValue
-      : TQueryFnData,
-    TInferredError = TTaggedQueryKey extends DataTag<
-      unknown,
-      unknown,
-      infer TaggedError
-    >
-      ? TaggedError extends UnsetMarker
-        ? TError
-        : TaggedError
-      : TError,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
     filters?: InvalidateQueryFilters<
       TInferredQueryFnData,

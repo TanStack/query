@@ -74,6 +74,18 @@ export type DataTag<
       [dataTagErrorSymbol]: TError
     }
 
+export type InferDataFromTag<TQueryFnData, TTaggedQueryKey extends QueryKey> =
+  TTaggedQueryKey extends DataTag<unknown, infer TaggedValue, unknown>
+    ? TaggedValue
+    : TQueryFnData
+
+export type InferErrorFromTag<TError, TTaggedQueryKey extends QueryKey> =
+  TTaggedQueryKey extends DataTag<unknown, unknown, infer TaggedError>
+    ? TaggedError extends UnsetMarker
+      ? TError
+      : TaggedError
+    : TError
+
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
