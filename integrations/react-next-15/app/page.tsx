@@ -27,9 +27,7 @@ export default function Home() {
     },
   })
 
-
   void queryClient.prefetchQuery({ ...getApiV1ActivitiesOptions() })
-
 
   const state = dehydrate(queryClient)
 
@@ -44,7 +42,6 @@ export default function Home() {
           <Activities />
         </Suspense>
       </HydrationBoundary>
-  
     </main>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
-import Link from "next/link"
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import Link from 'next/link'
 import React from 'react'
 import { Temporal } from '@js-temporal/polyfill'
 import { getApiV1ActivitiesOptions, getApiV1AuthorsOptions } from './query'
@@ -35,10 +35,6 @@ export function ClientComponent() {
     </div>
   )
 }
-
-
-
-
 
 export const Activities = () => {
   const { data: activities } = useSuspenseQuery({
