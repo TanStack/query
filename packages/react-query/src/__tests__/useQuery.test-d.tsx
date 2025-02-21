@@ -1,4 +1,4 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { describe, expectTypeOf, it } from 'vitest'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
