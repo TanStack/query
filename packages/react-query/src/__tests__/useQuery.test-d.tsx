@@ -1,8 +1,8 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
-import type { UseQueryOptions } from '../types'
+import type { UseQueryOptions, UseQueryResult } from '../types'
 
 describe('initialData', () => {
   describe('Config object overload', () => {
@@ -104,6 +104,21 @@ describe('initialData', () => {
       if (isSuccess) {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       }
+    })
+
+    it('TData should depend from only arguments, not the result', () => {
+      // @ts-expect-error
+      const result: UseQueryResult<{ wow: string }> = useQuery({
+        queryKey: ['key'],
+        queryFn: () => {
+          return {
+            wow: true,
+          }
+        },
+        initialData: () => undefined as { wow: boolean } | undefined,
+      })
+
+      void result
     })
 
     it('data should not have undefined when initialData is provided', () => {

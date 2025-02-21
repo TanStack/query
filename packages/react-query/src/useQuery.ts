@@ -20,7 +20,7 @@ export function useQuery<
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError>
+): DefinedUseQueryResult<NoInfer<TData>, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -30,7 +30,7 @@ export function useQuery<
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseQueryResult<TData, TError>
+): UseQueryResult<NoInfer<TData>, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -40,8 +40,10 @@ export function useQuery<
 >(
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseQueryResult<TData, TError>
+): UseQueryResult<NoInfer<TData>, TError>
 
 export function useQuery(options: UseQueryOptions, queryClient?: QueryClient) {
   return useBaseQuery(options, QueryObserver, queryClient)
 }
+
+type NoInfer<T> = [T][T extends any ? 0 : never]
