@@ -5,19 +5,16 @@ import {
 } from '@tanstack/query-core'
 import {
   DestroyRef,
+  Injector,
   NgZone,
   computed,
   effect,
   inject,
+  runInInjectionContext,
   signal,
+  untracked,
 } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import {
-  CreateQueryOptions,
-  CreateQueryResult,
-  DefinedCreateQueryResult,
-} from './types'
-import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
   OmitKeyof,
@@ -26,9 +23,14 @@ import type {
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
-  QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
+import type {
+  CreateQueryOptions,
+  CreateQueryResult,
+  DefinedCreateQueryResult,
+} from './types'
+import type { Signal } from '@angular/core'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed
@@ -222,50 +224,90 @@ export function injectQueries<
   optionsFn: () => InjectQueriesOptions<T, TCombinedResult>,
   injector?: Injector,
 ): Signal<TCombinedResult> {
-  return 0 as never
-  // return assertInjector(injectQueries, injector, () => {
-  //   const destroyRef = inject(DestroyRef)
-  //   const ngZone = inject(NgZone)
-  //   const queryClient = inject(QueryClient)
-  //
-  //   const defaultedQueries = computed(() => {
-  //     return queries().map((opts) => {
-  //       const defaultedOptions = queryClient.defaultQueryOptions(opts)
-  //       // Make sure the results are already in fetching state before subscribing or updating options
-  //       defaultedOptions._optimisticResults = 'optimistic'
-  //
-  //       return defaultedOptions as QueryObserverOptions
-  //     })
-  //   })
-  //
-  //   const observer = new QueriesObserver<TCombinedResult>(
-  //     queryClient,
-  //     defaultedQueries(),
-  //     options as QueriesObserverOptions<TCombinedResult>,
-  //   )
-  //
-  //   // Do not notify on updates because of changes in the options because
-  //   // these changes should already be reflected in the optimistic result.
-  //   effect(() => {
-  //     observer.setQueries(
-  //       defaultedQueries(),
-  //       options as QueriesObserverOptions<TCombinedResult>,
-  //       { listeners: false },
-  //     )
-  //   })
-  //
-  //   const [, getCombinedResult] = observer.getOptimisticResult(
-  //     defaultedQueries(),
-  //     (options as QueriesObserverOptions<TCombinedResult>).combine,
-  //   )
-  //
-  //   const result = signal(getCombinedResult() as any)
-  //
-  //   const unsubscribe = ngZone.runOutsideAngular(() =>
-  //     observer.subscribe(notifyManager.batchCalls(result.set)),
-  //   )
-  //   destroyRef.onDestroy(unsubscribe)
-  //
-  //   return result
-  // })
+  return assertInjector(injectQueries, injector, () => {
+    const ngInjector = inject(Injector)
+    const destroyRef = inject(DestroyRef)
+    const ngZone = inject(NgZone)
+    const queryClient = inject(QueryClient)
+
+    /**
+     * Signal that has the default options from query client applied
+     * computed() is used so signals can be inserted into the options
+     * making it reactive. Wrapping options in a function ensures embedded expressions
+     * are preserved and can keep being applied after signal changes
+     */
+    const optionsSignal = computed(() => {
+      return runInInjectionContext(injector ?? ngInjector, () => optionsFn())
+    })
+
+    const defaultedQueries = computed(() => {
+      return optionsSignal().queries.map((opts) => {
+        const defaultedOptions = queryClient.defaultQueryOptions(opts)
+        // Make sure the results are already in fetching state before subscribing or updating options
+        defaultedOptions._optimisticResults = 'optimistic'
+
+        return defaultedOptions as QueryObserverOptions
+      })
+    })
+
+    const observerSignal = (() => {
+      let instance: QueriesObserver<TCombinedResult> | null = null
+
+      return computed(() => {
+        return (instance ||= new QueriesObserver<TCombinedResult>(
+          queryClient,
+          defaultedQueries(),
+          optionsSignal() as QueriesObserverOptions<TCombinedResult>,
+        ))
+      })
+    })()
+
+    const optimisticResultSignal = computed(() =>
+      observerSignal().getOptimisticResult(
+        defaultedQueries(),
+        (optionsSignal() as QueriesObserverOptions<TCombinedResult>).combine,
+      ),
+    )
+
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    effect(() => {
+      observerSignal().setQueries(
+        defaultedQueries(),
+        optionsSignal() as QueriesObserverOptions<TCombinedResult>,
+        { listeners: false },
+      )
+    })
+
+    const optimisticCombinedResultSignal = computed(() => {
+      const [_optimisticResult, getCombinedResult, trackResult] =
+        optimisticResultSignal()
+      return getCombinedResult(trackResult())
+    })
+
+    const resultFromSubscriberSignal = signal<TCombinedResult | null>(null)
+
+    effect(() => {
+      const observer = observerSignal()
+      const [_optimisticResult, getCombinedResult] = optimisticResultSignal()
+
+      untracked(() => {
+        const unsubscribe = ngZone.runOutsideAngular(() =>
+          observer.subscribe(
+            notifyManager.batchCalls((state) => {
+              resultFromSubscriberSignal.set(getCombinedResult(state))
+            }),
+          ),
+        )
+
+        destroyRef.onDestroy(unsubscribe)
+      })
+    })
+
+    return computed(() => {
+      const subscriberResult = resultFromSubscriberSignal()
+      const optimisticResult = optimisticCombinedResultSignal()
+      return subscriberResult ?? optimisticResult
+    })
+  }) as unknown as Signal<TCombinedResult>
 }
