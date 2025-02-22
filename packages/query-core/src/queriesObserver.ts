@@ -44,6 +44,7 @@ export class QueriesObserver<
   #lastCombine?: CombineFn<TCombinedResult>
   #lastResult?: Array<QueryObserverResult>
   #observerMatches: Array<QueryObserverMatch> = []
+  #observerMap: Map<QueryObserver, number> = new Map()
 
   constructor(
     client: QueryClient,
@@ -82,6 +83,7 @@ export class QueriesObserver<
     this.#observers.forEach((observer) => {
       observer.destroy()
     })
+    this.#observerMap.clear()
   }
 
   setQueries(
@@ -129,6 +131,11 @@ export class QueriesObserver<
 
       this.#observers = newObservers
       this.#result = newResult
+
+      this.#observerMap.clear()
+      newObservers.forEach((observer, index) => {
+        this.#observerMap.set(observer, index)
+      })
 
       if (!this.hasListeners()) {
         return
@@ -253,8 +260,8 @@ export class QueriesObserver<
   }
 
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
-    const index = this.#observers.indexOf(observer)
-    if (index !== -1) {
+    const index = this.#observerMap.get(observer)
+    if (index !== undefined) {
       this.#result = replaceAt(this.#result, index, result)
       this.#notify()
     }
