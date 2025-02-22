@@ -1,0 +1,17 @@
+import type { DataTag, DefaultError, InitialDataFunction, QueryKey } from '@tanstack/query-core';
+import type { CreateQueryOptions } from './types.js';
+export type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+    initialData?: undefined | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>;
+};
+type NonUndefinedGuard<T> = T extends undefined ? never : T;
+export type DefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+    initialData: NonUndefinedGuard<TQueryFnData> | (() => NonUndefinedGuard<TQueryFnData>);
+};
+export declare function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+    queryKey: DataTag<TQueryKey, TQueryFnData>;
+};
+export declare function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+    queryKey: DataTag<TQueryKey, TQueryFnData>;
+};
+export {};
+//# sourceMappingURL=queryOptions.d.ts.map
