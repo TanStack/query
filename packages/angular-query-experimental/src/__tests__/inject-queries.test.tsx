@@ -6,11 +6,7 @@ import {
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import {
-  QueryClient,
-  injectQueries,
-  provideTanStackQuery,
-} from '..'
+import { QueryClient, injectQueries, provideTanStackQuery } from '..'
 import { queryKey } from './test-utils'
 import type { CreateQueryResult } from '..'
 
