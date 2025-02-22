@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import type { QueryClient } from './queryClient'
 import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
 import type { FetchDirection, Query, QueryBehavior } from './query'
@@ -32,6 +33,8 @@ export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
   // mutationMeta: Record<string, unknown>
+  // queryKey: ReadonlyArray<unknown>
+  // mutationKey: ReadonlyArray<unknown>
 }
 
 export type DefaultError = Register extends {
@@ -40,7 +43,15 @@ export type DefaultError = Register extends {
   ? TError
   : Error
 
-export type QueryKey = ReadonlyArray<unknown>
+export type QueryKey = Register extends {
+  queryKey: infer TQueryKey
+}
+  ? TQueryKey extends ReadonlyArray<unknown>
+    ? TQueryKey
+    : TQueryKey extends Array<unknown>
+      ? TQueryKey
+      : ReadonlyArray<unknown>
+  : ReadonlyArray<unknown>
 
 export const dataTagSymbol = Symbol('dataTagSymbol')
 export type dataTagSymbol = typeof dataTagSymbol
@@ -106,6 +117,7 @@ export type QueryFunctionContext<
   TPageParam = never,
 > = [TPageParam] extends [never]
   ? {
+      client: QueryClient
       queryKey: TQueryKey
       signal: AbortSignal
       meta: QueryMeta | undefined
@@ -117,6 +129,7 @@ export type QueryFunctionContext<
       direction?: unknown
     }
   : {
+      client: QueryClient
       queryKey: TQueryKey
       signal: AbortSignal
       pageParam: TPageParam
@@ -295,6 +308,7 @@ export interface QueryObserverOptions<
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
    * If set to a function, the function will be executed with the query to compute a `staleTime`.
+   * Defaults to `0`.
    */
   staleTime?: StaleTime<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
@@ -780,6 +794,7 @@ export interface QueryObserverPendingResult<
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'pending'
 }
 
@@ -795,6 +810,7 @@ export interface QueryObserverLoadingResult<
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'pending'
 }
 
@@ -810,6 +826,7 @@ export interface QueryObserverLoadingErrorResult<
   isLoadingError: true
   isRefetchError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'error'
 }
 
@@ -825,6 +842,7 @@ export interface QueryObserverRefetchErrorResult<
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
+  isPlaceholderData: false
   status: 'error'
 }
 
@@ -840,6 +858,23 @@ export interface QueryObserverSuccessResult<
   isLoadingError: false
   isRefetchError: false
   isSuccess: true
+  isPlaceholderData: false
+  status: 'success'
+}
+
+export interface QueryObserverPlaceholderResult<
+  TData = unknown,
+  TError = DefaultError,
+> extends QueryObserverBaseResult<TData, TError> {
+  data: TData
+  isError: false
+  error: null
+  isPending: false
+  isLoading: false
+  isLoadingError: false
+  isRefetchError: false
+  isSuccess: true
+  isPlaceholderData: true
   status: 'success'
 }
 
@@ -855,6 +890,7 @@ export type QueryObserverResult<TData = unknown, TError = DefaultError> =
   | QueryObserverLoadingErrorResult<TData, TError>
   | QueryObserverLoadingResult<TData, TError>
   | QueryObserverPendingResult<TData, TError>
+  | QueryObserverPlaceholderResult<TData, TError>
 
 export interface InfiniteQueryObserverBaseResult<
   TData = unknown,
@@ -911,6 +947,7 @@ export interface InfiniteQueryObserverPendingResult<
   isFetchNextPageError: false
   isFetchPreviousPageError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'pending'
 }
 
@@ -928,6 +965,7 @@ export interface InfiniteQueryObserverLoadingResult<
   isFetchNextPageError: false
   isFetchPreviousPageError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'pending'
 }
 
@@ -945,6 +983,7 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   isFetchNextPageError: false
   isFetchPreviousPageError: false
   isSuccess: false
+  isPlaceholderData: false
   status: 'error'
 }
 
@@ -960,6 +999,7 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
+  isPlaceholderData: false
   status: 'error'
 }
 
@@ -977,6 +1017,25 @@ export interface InfiniteQueryObserverSuccessResult<
   isFetchNextPageError: false
   isFetchPreviousPageError: false
   isSuccess: true
+  isPlaceholderData: false
+  status: 'success'
+}
+
+export interface InfiniteQueryObserverPlaceholderResult<
+  TData = unknown,
+  TError = DefaultError,
+> extends InfiniteQueryObserverBaseResult<TData, TError> {
+  data: TData
+  isError: false
+  error: null
+  isPending: false
+  isLoading: false
+  isLoadingError: false
+  isRefetchError: false
+  isSuccess: true
+  isPlaceholderData: true
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   status: 'success'
 }
 
@@ -995,8 +1054,17 @@ export type InfiniteQueryObserverResult<
   | InfiniteQueryObserverLoadingErrorResult<TData, TError>
   | InfiniteQueryObserverLoadingResult<TData, TError>
   | InfiniteQueryObserverPendingResult<TData, TError>
+  | InfiniteQueryObserverPlaceholderResult<TData, TError>
 
-export type MutationKey = ReadonlyArray<unknown>
+export type MutationKey = Register extends {
+  mutationKey: infer TMutationKey
+}
+  ? TMutationKey extends Array<unknown>
+    ? TMutationKey
+    : TMutationKey extends Array<unknown>
+      ? TMutationKey
+      : ReadonlyArray<unknown>
+  : ReadonlyArray<unknown>
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 

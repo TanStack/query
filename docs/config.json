@@ -1055,6 +1055,10 @@
               "to": "framework/angular/examples/auto-refetching"
             },
             {
+              "label": "Optimistic Updates",
+              "to": "framework/angular/examples/optimistic-updates"
+            },
+            {
               "label": "Pagination",
               "to": "framework/angular/examples/pagination"
             },

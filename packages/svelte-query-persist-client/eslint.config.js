@@ -1,7 +1,7 @@
 // @ts-check
 
 import pluginSvelte from 'eslint-plugin-svelte'
-import rootConfig from '../../eslint.config.js'
+import rootConfig from './root.eslint.config.js'
 
 export default [
   ...rootConfig,
