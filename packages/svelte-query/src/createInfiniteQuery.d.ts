@@ -1,4 +1,31 @@
-import type { DefaultError, InfiniteData, QueryClient, QueryKey } from '@tanstack/query-core';
-import type { CreateInfiniteQueryOptions, CreateInfiniteQueryResult, StoreOrVal } from './types.js';
-export declare function createInfiniteQuery<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(options: StoreOrVal<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, TPageParam>>, queryClient?: QueryClient): CreateInfiniteQueryResult<TData, TError>;
+import type {
+  DefaultError,
+  InfiniteData,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core'
+import type {
+  CreateInfiniteQueryOptions,
+  CreateInfiniteQueryResult,
+  StoreOrVal,
+} from './types.js'
+export declare function createInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: StoreOrVal<
+    CreateInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey,
+      TPageParam
+    >
+  >,
+  queryClient?: QueryClient,
+): CreateInfiniteQueryResult<TData, TError>
 //# sourceMappingURL=createInfiniteQuery.d.ts.map

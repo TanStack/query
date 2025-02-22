@@ -1,7 +1,45 @@
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core';
-import type { CreateQueryOptions, CreateQueryResult, DefinedCreateQueryResult, StoreOrVal } from './types.js';
-import type { DefinedInitialDataOptions, UndefinedInitialDataOptions } from './queryOptions.js';
-export declare function createQuery<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: StoreOrVal<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: QueryClient): DefinedCreateQueryResult<TData, TError>;
-export declare function createQuery<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: StoreOrVal<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: QueryClient): CreateQueryResult<TData, TError>;
-export declare function createQuery<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: StoreOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>, queryClient?: QueryClient): CreateQueryResult<TData, TError>;
+import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+import type {
+  CreateQueryOptions,
+  CreateQueryResult,
+  DefinedCreateQueryResult,
+  StoreOrVal,
+} from './types.js'
+import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions.js'
+export declare function createQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: StoreOrVal<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+  queryClient?: QueryClient,
+): DefinedCreateQueryResult<TData, TError>
+export declare function createQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: StoreOrVal<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+  queryClient?: QueryClient,
+): CreateQueryResult<TData, TError>
+export declare function createQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: StoreOrVal<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+  queryClient?: QueryClient,
+): CreateQueryResult<TData, TError>
 //# sourceMappingURL=createQuery.d.ts.map
