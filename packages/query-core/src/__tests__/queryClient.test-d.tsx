@@ -497,7 +497,7 @@ describe('fully typed usage', () => {
     queryClient.getMutationDefaults(mutationKey)
   })
 
-  it('shows type error when queryKey is not an array in invalidateQueries', () => {
+  it('shows type error when queryKey is a wrong type in invalidateQueries', () => {
     const queryClient = new QueryClient()
 
     queryClient.invalidateQueries()
