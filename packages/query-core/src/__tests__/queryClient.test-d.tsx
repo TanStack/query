@@ -496,4 +496,24 @@ describe('fully typed usage', () => {
     queryClient.setQueryDefaults(queryKey, {} as any)
     queryClient.getMutationDefaults(mutationKey)
   })
+
+  it('shows type error when queryKey is a wrong type in invalidateQueries', () => {
+    const queryClient = new QueryClient()
+
+    queryClient.invalidateQueries()
+
+    queryClient.invalidateQueries({
+      queryKey: ['1'],
+    })
+
+    queryClient.invalidateQueries({
+      // @ts-expect-error
+      queryKey: '1',
+    })
+
+    queryClient.invalidateQueries({
+      // @ts-expect-error
+      queryKey: {},
+    })
+  })
 })

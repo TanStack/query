@@ -336,25 +336,28 @@ export class QueryClient {
   }
 
   invalidateQueries<
-    TInvalidateQueryFilters extends InvalidateQueryFilters<
-      any,
-      any,
-      any,
-      any
-    > = InvalidateQueryFilters,
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
   >(
-    filters?: TInvalidateQueryFilters,
+    filters?: InvalidateQueryFilters<TQueryFnData, TError, TData, TQueryKey>,
     options: InvalidateOptions = {},
   ): Promise<void> {
     return notifyManager.batch(() => {
-      this.#queryCache.findAll(filters).forEach((query) => {
+      this.#queryCache.findAll(filters as QueryFilters).forEach((query) => {
         query.invalidate()
       })
 
       if (filters?.refetchType === 'none') {
         return Promise.resolve()
       }
-      const refetchFilters: RefetchQueryFilters = {
+      const refetchFilters: RefetchQueryFilters<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey
+      > = {
         ...filters,
         type: filters?.refetchType ?? filters?.type ?? 'active',
       }
