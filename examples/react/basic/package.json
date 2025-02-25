@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@tanstack/query-sync-storage-persister": "^5.66.4",
-    "@tanstack/react-query": "^5.66.7",
-    "@tanstack/react-query-devtools": "^5.66.7",
-    "@tanstack/react-query-persist-client": "^5.66.7",
+    "@tanstack/react-query": "^5.66.9",
+    "@tanstack/react-query-devtools": "^5.66.9",
+    "@tanstack/react-query-persist-client": "^5.66.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
