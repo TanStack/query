@@ -499,6 +499,25 @@ describe('fully typed usage', () => {
 })
 
 describe('invalidateQueries', () => {
+  it('shows type error when queryKey is a wrong type in invalidateQueries', () => {
+    const queryClient = new QueryClient()
+
+    queryClient.invalidateQueries()
+
+    queryClient.invalidateQueries({
+      queryKey: ['1'],
+    })
+
+    queryClient.invalidateQueries({
+      // @ts-expect-error
+      queryKey: '1',
+    })
+
+    queryClient.invalidateQueries({
+      // @ts-expect-error
+      queryKey: {},
+    })
+  })
   it('predicate should be typed if key is tagged', () => {
     const queryKey = ['key'] as DataTag<Array<string>, number>
     const queryClient = new QueryClient()
