@@ -182,7 +182,7 @@ export class QueryClient extends QC {
       TInferredQueryFnData,
       TTaggedQueryKey
     >,
-    options?: InvalidateOptions,
+    options?: MaybeRefDeep<InvalidateOptions>,
   ): Promise<void>
   invalidateQueries<
     TQueryFnData = unknown,
