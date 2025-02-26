@@ -18,6 +18,9 @@ export function useSuspenseQuery<
     if ((options.queryFn as any) === skipToken) {
       console.error('skipToken is not allowed for useSuspenseQuery')
     }
+    if (!options.queryFn && !options.initialData) {
+      console.error('useSuspenseQuery requires either `queryFn` or `initialData`')
+    }
   }
 
   return useBaseQuery(

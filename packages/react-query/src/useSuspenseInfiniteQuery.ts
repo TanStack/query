@@ -36,6 +36,9 @@ export function useSuspenseInfiniteQuery<
     if ((options.queryFn as any) === skipToken) {
       console.error('skipToken is not allowed for useSuspenseInfiniteQuery')
     }
+    if (!options.queryFn && !options.initialData) {
+      console.error('useSuspenseInfiniteQuery requires either `queryFn` or `initialData`')
+    }
   }
 
   return useBaseQuery(

@@ -182,6 +182,9 @@ export function useSuspenseQueries<
           if (query.queryFn === skipToken) {
             console.error('skipToken is not allowed for useSuspenseQueries')
           }
+          if (!query.queryFn && !query.initialData) {
+            console.error('useSuspenseQueries requires either `queryFn` or `initialData`')
+          }
         }
 
         return {
