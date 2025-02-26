@@ -533,3 +533,71 @@ describe('invalidateQueries', () => {
     })
   })
 })
+
+describe('cancelQueries', () => {
+  it('predicate should be typed if key is tagged', () => {
+    const queryKey = ['key'] as DataTag<Array<string>, number>
+    const queryClient = new QueryClient()
+    queryClient.cancelQueries({
+      queryKey,
+      predicate: (query) => {
+        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<
+          DataTag<Array<string>, number>
+        >()
+        return true
+      },
+    })
+  })
+})
+
+describe('removeQueries', () => {
+  it('predicate should be typed if key is tagged', () => {
+    const queryKey = ['key'] as DataTag<Array<string>, number>
+    const queryClient = new QueryClient()
+    queryClient.removeQueries({
+      queryKey,
+      predicate: (query) => {
+        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<
+          DataTag<Array<string>, number>
+        >()
+        return true
+      },
+    })
+  })
+})
+
+describe('refetchQueries', () => {
+  it('predicate should be typed if key is tagged', () => {
+    const queryKey = ['key'] as DataTag<Array<string>, number>
+    const queryClient = new QueryClient()
+    queryClient.refetchQueries({
+      queryKey,
+      predicate: (query) => {
+        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<
+          DataTag<Array<string>, number>
+        >()
+        return true
+      },
+    })
+  })
+})
+
+describe('resetQueries', () => {
+  it('predicate should be typed if key is tagged', () => {
+    const queryKey = ['key'] as DataTag<Array<string>, number>
+    const queryClient = new QueryClient()
+    queryClient.resetQueries({
+      queryKey,
+      predicate: (query) => {
+        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<
+          DataTag<Array<string>, number>
+        >()
+        return true
+      },
+    })
+  })
+})

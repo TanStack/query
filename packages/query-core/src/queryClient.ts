@@ -267,8 +267,19 @@ export class QueryClient {
   }
 
   removeQueries<
-    TQueryFilters extends QueryFilters<any, any, any, any> = QueryFilters,
-  >(filters?: TQueryFilters): void {
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
+    filters?: QueryFilters<
+      TInferredQueryFnData,
+      TInferredError,
+      TInferredQueryFnData,
+      TTaggedQueryKey
+    >,
+  ): void {
     const queryCache = this.#queryCache
     notifyManager.batch(() => {
       queryCache.findAll(filters).forEach((query) => {
@@ -278,26 +289,51 @@ export class QueryClient {
   }
 
   resetQueries<
-    TQueryFilters extends QueryFilters<any, any, any, any> = QueryFilters,
-  >(filters?: TQueryFilters, options?: ResetOptions): Promise<void> {
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
+    filters?: QueryFilters<
+      TInferredQueryFnData,
+      TInferredError,
+      TInferredQueryFnData,
+      TTaggedQueryKey
+    >,
+    options?: ResetOptions,
+  ): Promise<void> {
     const queryCache = this.#queryCache
-
-    const refetchFilters: RefetchQueryFilters = {
-      type: 'active',
-      ...filters,
-    }
 
     return notifyManager.batch(() => {
       queryCache.findAll(filters).forEach((query) => {
         query.reset()
       })
-      return this.refetchQueries(refetchFilters, options)
+      return this.refetchQueries(
+        {
+          type: 'active',
+          ...filters,
+        },
+        options,
+      )
     })
   }
 
   cancelQueries<
-    TQueryFilters extends QueryFilters<any, any, any, any> = QueryFilters,
-  >(filters?: TQueryFilters, cancelOptions: CancelOptions = {}): Promise<void> {
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
+  >(
+    filters?: QueryFilters<
+      TInferredQueryFnData,
+      TInferredError,
+      TInferredQueryFnData,
+      TTaggedQueryKey
+    >,
+    cancelOptions: CancelOptions = {},
+  ): Promise<void> {
     const defaultedCancelOptions = { revert: true, ...cancelOptions }
 
     const promises = notifyManager.batch(() =>
@@ -325,7 +361,7 @@ export class QueryClient {
     options: InvalidateOptions = {},
   ): Promise<void> {
     return notifyManager.batch(() => {
-      this.#queryCache.findAll(filters as QueryFilters).forEach((query) => {
+      this.#queryCache.findAll(filters).forEach((query) => {
         query.invalidate()
       })
 
@@ -343,14 +379,18 @@ export class QueryClient {
   }
 
   refetchQueries<
-    TRefetchQueryFilters extends RefetchQueryFilters<
-      any,
-      any,
-      any,
-      any
-    > = RefetchQueryFilters,
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
-    filters?: TRefetchQueryFilters,
+    filters?: RefetchQueryFilters<
+      TInferredQueryFnData,
+      TInferredError,
+      TInferredQueryFnData,
+      TTaggedQueryKey
+    >,
     options: RefetchOptions = {},
   ): Promise<void> {
     const fetchOptions = {
