@@ -223,7 +223,7 @@ describe('UseSuspenseQueries config object overload', () => {
     useSuspenseQueries({ queries: [query2] })
   })
 
-  it('test', () => {
+  it('should not show type error when using spreaded queryOptions', () => {
     function myQueryOptions() {
       return queryOptions({
         queryKey: ['key1'],
