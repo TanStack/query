@@ -173,7 +173,15 @@ describe('UseSuspenseQueries config object overload', () => {
 
     const queries1List = [1, 2, 3].map(() => ({ ...Queries1.get() }))
     const result = useSuspenseQueries({
-      queries: [...queries1List, { ...Queries2.get() }],
+      queries: [
+        ...queries1List,
+        {
+          ...Queries2.get(),
+          select(data: boolean) {
+            return data
+          },
+        },
+      ],
     })
 
     expectTypeOf(result).toEqualTypeOf<
@@ -213,5 +221,24 @@ describe('UseSuspenseQueries config object overload', () => {
     useSuspenseQueries({ queries: [query1] })
     // @ts-expect-error
     useSuspenseQueries({ queries: [query2] })
+  })
+
+  it('test', () => {
+    function myQueryOptions() {
+      return queryOptions({
+        queryKey: ['key1'],
+        queryFn: () => 'Query Data',
+      })
+    }
+    useSuspenseQueries({
+      queries: [
+        {
+          ...myQueryOptions(),
+          select(data: string) {
+            return data
+          },
+        },
+      ],
+    })
   })
 })
