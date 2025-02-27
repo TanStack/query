@@ -400,6 +400,27 @@ describe('queryClient', () => {
     })
   })
 
+  describe('isFetching', () => {
+    test('should return length of fetching queries', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      expect(queryClient.isFetching()).toBe(0)
+      queryClient.prefetchQuery({
+        queryKey: key1,
+        queryFn: () => sleep(300).then(() => 'data'),
+      })
+      expect(queryClient.isFetching()).toBe(1)
+      queryClient.prefetchQuery({
+        queryKey: key2,
+        queryFn: () => sleep(200).then(() => 'data'),
+      })
+      expect(queryClient.isFetching()).toBe(2)
+      await waitFor(() => expect(queryClient.isFetching()).toEqual(1))
+      await waitFor(() => expect(queryClient.isFetching()).toEqual(0))
+    })
+  })
+
   describe('getQueryData', () => {
     test('should return the query data if the query is found', () => {
       const key = queryKey()
