@@ -579,10 +579,10 @@ importers:
         specifier: 5.2.1
         version: 5.2.1
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -613,10 +613,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.20
@@ -644,13 +644,13 @@ importers:
         specifier: ^5.66.4
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-persist-client
       react:
         specifier: ^19.0.0
@@ -681,10 +681,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -709,10 +709,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -734,10 +734,10 @@ importers:
   examples/react/devtools-panel:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -759,10 +759,10 @@ importers:
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.20
@@ -787,10 +787,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.20
@@ -818,10 +818,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.20
@@ -846,10 +846,10 @@ importers:
   examples/react/nextjs-app-prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.0
@@ -874,13 +874,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.2.20
@@ -908,13 +908,13 @@ importers:
         specifier: ^3.7.4
         version: 3.7.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-persist-client
       msw:
         specifier: ^2.6.6
@@ -942,10 +942,10 @@ importers:
   examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.20
@@ -970,10 +970,10 @@ importers:
   examples/react/optimistic-updates-ui:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.20
@@ -998,10 +998,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.20
@@ -1026,10 +1026,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1051,10 +1051,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.20
@@ -1088,10 +1088,10 @@ importers:
         specifier: ^6.4.1
         version: 6.4.1(ps2gcw7wsvqo7jgjw47ug7eu24)
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^52.0.11
@@ -1140,10 +1140,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -1204,10 +1204,10 @@ importers:
         specifier: ^6.1.8
         version: 6.1.8(@types/react@19.0.1)(react@19.0.0)
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1235,10 +1235,10 @@ importers:
   examples/react/shadow-dom:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1266,10 +1266,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1303,10 +1303,10 @@ importers:
         specifier: ^6.1.8
         version: 6.1.8(@types/react@19.0.1)(react@19.0.0)
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1334,10 +1334,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.66.9
+        specifier: ^5.66.10
         version: link:../../../packages/react-query-devtools
       font-awesome:
         specifier: ^4.7.0
