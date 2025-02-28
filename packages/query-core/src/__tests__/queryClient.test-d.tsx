@@ -518,6 +518,12 @@ describe('invalidateQueries', () => {
       queryKey: {},
     })
   })
+  it('needs queryKey to be an array (#8684)', () => {
+    new QueryClient().invalidateQueries({
+      // @ts-expect-error key is not an array
+      queryKey: { foo: true },
+    })
+  })
   it('predicate should be typed if key is tagged', () => {
     const queryKey = ['key'] as DataTag<Array<string>, number>
     const queryClient = new QueryClient()
