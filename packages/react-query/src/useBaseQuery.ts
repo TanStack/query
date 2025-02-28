@@ -58,7 +58,7 @@ export function useBaseQuery<
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
     defaultedOptions,
   )
-  
+
   if (process.env.NODE_ENV !== 'production') {
     // Make sure the queryFn is defined
     if (!defaultedOptions.queryFn) {
