@@ -402,22 +402,23 @@ describe('queryClient', () => {
 
   describe('isFetching', () => {
     test('should return length of fetching queries', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-
+      vi.useFakeTimers()
       expect(queryClient.isFetching()).toBe(0)
       queryClient.prefetchQuery({
-        queryKey: key1,
-        queryFn: () => sleep(30).then(() => 'data'),
+        queryKey: queryKey(),
+        queryFn: () => sleep(10).then(() => 'data'),
       })
       expect(queryClient.isFetching()).toBe(1)
       queryClient.prefetchQuery({
-        queryKey: key2,
-        queryFn: () => sleep(25).then(() => 'data'),
+        queryKey: queryKey(),
+        queryFn: () => sleep(5).then(() => 'data'),
       })
       expect(queryClient.isFetching()).toBe(2)
-      await waitFor(() => expect(queryClient.isFetching()).toEqual(1))
-      await waitFor(() => expect(queryClient.isFetching()).toEqual(0))
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryClient.isFetching()).toEqual(1)
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryClient.isFetching()).toEqual(0)
+      vi.useRealTimers()
     })
   })
 
