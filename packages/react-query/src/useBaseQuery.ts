@@ -58,11 +58,13 @@ export function useBaseQuery<
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
     defaultedOptions,
   )
-
+  
   if (process.env.NODE_ENV !== 'production') {
     // Make sure the queryFn is defined
-    if (!defaultedOptions.queryFn && !client.getDefaultOptions().queries?.queryFn) {
-      console.error('Error: queryFn is required, but only if no default query function has been defined. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function');
+    if (!defaultedOptions.queryFn) {
+      console.error(
+        'Error: queryFn is required, but only if no default query function has been defined. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function',
+      )
     }
   }
 
