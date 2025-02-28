@@ -48,12 +48,6 @@ export function useBaseQuery<
         'Bad argument type. Starting with v5, only the "Object" form is allowed when calling query related functions. Please use the error stack to find the culprit call. More info here: https://tanstack.com/query/latest/docs/react/guides/migrating-to-v5#supports-a-single-signature-one-object',
       )
     }
-    const defaultQueryFn = queryClient?.getDefaultOptions().queries?.queryFn
-    if (!options.queryFn && !defaultQueryFn) {
-      console.error(
-        'Error: queryFn is required, but only if no default query function has been defined. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function',
-      )
-    }
   }
 
   const client = useQueryClient(queryClient)
@@ -64,6 +58,13 @@ export function useBaseQuery<
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
     defaultedOptions,
   )
+
+  // Make sure the queryFn is defined
+  if (!defaultedOptions.queryFn) {
+    console.error(
+      'Error: queryFn is required, but only if no default query function has been defined. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function',
+    )
+  }
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
