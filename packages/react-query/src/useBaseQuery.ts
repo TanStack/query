@@ -62,7 +62,7 @@ export function useBaseQuery<
   if (process.env.NODE_ENV !== 'production') {
     if (!defaultedOptions.queryFn) {
       console.error(
-        `[${defaultedOptions.queryHash}]: No QueryFunction was passed as an option, and no default query function was found. The query function is only optional when using a default query function. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
+        `[${defaultedOptions.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
       )
     }
   }
