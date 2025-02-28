@@ -413,7 +413,7 @@ describe('queryClient', () => {
       expect(queryClient.isFetching()).toBe(1)
       queryClient.prefetchQuery({
         queryKey: key2,
-        queryFn: () => sleep(5).then(() => 'data'),
+        queryFn: () => sleep(25).then(() => 'data'),
       })
       expect(queryClient.isFetching()).toBe(2)
       await waitFor(() => expect(queryClient.isFetching()).toEqual(1))
