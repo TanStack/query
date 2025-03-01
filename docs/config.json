@@ -142,6 +142,10 @@
               "to": "framework/angular/quick-start"
             },
             {
+              "label": "Angular HttpClient and other data fetching clients",
+              "to": "framework/angular/angular-httpclient-and-other-data-fetching-clients"
+            },
+            {
               "label": "Devtools",
               "to": "framework/angular/devtools"
             },
