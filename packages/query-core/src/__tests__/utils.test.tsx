@@ -484,6 +484,7 @@ describe('core/utils', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${queryHash}'`,
       )
+      consoleErrorSpy.mockRestore()
     })
   })
 })
