@@ -15,9 +15,9 @@
     "@astrojs/solid-js": "^4.4.4",
     "@astrojs/tailwind": "^5.1.2",
     "@astrojs/vercel": "^7.8.2",
-    "@tanstack/solid-query": "^5.62.7",
-    "@tanstack/solid-query-devtools": "^5.62.7",
-    "astro": "^4.16.1",
+    "@tanstack/solid-query": "^5.66.11",
+    "@tanstack/solid-query-devtools": "^5.66.11",
+    "astro": "^4.16.18",
     "solid-js": "^1.9.3",
     "tailwindcss": "^3.4.7",
     "typescript": "5.7.2"

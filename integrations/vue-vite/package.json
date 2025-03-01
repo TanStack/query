@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:types": "vue-tsc",
     "build": "vite build"
   },
   "dependencies": {
@@ -11,7 +10,7 @@
     "vue": "^3.4.27"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.1.1",
+    "@vitejs/plugin-vue": "^5.2.1",
     "typescript": "5.6.3",
     "vite": "^5.3.5",
     "vue-tsc": "^2.1.10"

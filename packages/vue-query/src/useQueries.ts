@@ -225,23 +225,7 @@ export type UseQueriesResults<
             [...TResults, GetUseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              UseQueryOptionsForUseQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              QueryObserverResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<QueryObserverResult>
+        : { [K in keyof T]: GetUseQueryResult<T[K]> }
 
 type UseQueriesOptionsArg<T extends Array<any>> = readonly [
   ...UseQueriesOptions<T>,
@@ -255,7 +239,13 @@ export function useQueries<
     queries,
     ...options
   }: {
-    queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
+    queries:
+      | MaybeRefDeep<UseQueriesOptionsArg<T>>
+      | MaybeRefDeep<
+          readonly [
+            ...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> },
+          ]
+        >
     combine?: (result: UseQueriesResults<T>) => TCombinedResult
     shallow?: boolean
   },
@@ -297,11 +287,31 @@ export function useQueries<
     defaultedQueries.value,
     options as QueriesObserverOptions<TCombinedResult>,
   )
-  const [, getCombinedResult] = observer.getOptimisticResult(
-    defaultedQueries.value,
-    (options as QueriesObserverOptions<TCombinedResult>).combine,
-  )
-  const state = shallowRef(getCombinedResult())
+
+  const getOptimisticResult = () => {
+    const [results, getCombinedResult] = observer.getOptimisticResult(
+      defaultedQueries.value,
+      (options as QueriesObserverOptions<TCombinedResult>).combine,
+    )
+
+    return getCombinedResult(
+      results.map((result, index) => {
+        return {
+          ...result,
+          refetch: async (...args: Array<any>) => {
+            const [{ [index]: query }] = observer.getOptimisticResult(
+              defaultedQueries.value,
+              (options as QueriesObserverOptions<TCombinedResult>).combine,
+            )
+
+            return query!.refetch(...args)
+          },
+        }
+      }),
+    )
+  }
+
+  const state = shallowRef(getOptimisticResult())
 
   let unsubscribe = () => {
     // noop
@@ -313,38 +323,22 @@ export function useQueries<
       if (!isRestoring) {
         unsubscribe()
         unsubscribe = observer.subscribe(() => {
-          const [, getCombinedResultRestoring] = observer.getOptimisticResult(
-            defaultedQueries.value,
-            (options as QueriesObserverOptions<TCombinedResult>).combine,
-          )
-          state.value = getCombinedResultRestoring()
+          state.value = getOptimisticResult()
         })
-        // Subscription would not fire for persisted results
-        const [, getCombinedResultPersisted] = observer.getOptimisticResult(
-          defaultedQueries.value,
-          (options as QueriesObserverOptions<TCombinedResult>).combine,
-        )
-        state.value = getCombinedResultPersisted()
+
+        state.value = getOptimisticResult()
       }
     },
     { immediate: true },
   )
 
-  watch(
-    defaultedQueries,
-    () => {
-      observer.setQueries(
-        defaultedQueries.value,
-        options as QueriesObserverOptions<TCombinedResult>,
-      )
-      const [, getCombinedResultPersisted] = observer.getOptimisticResult(
-        defaultedQueries.value,
-        (options as QueriesObserverOptions<TCombinedResult>).combine,
-      )
-      state.value = getCombinedResultPersisted()
-    },
-    { flush: 'sync' },
-  )
+  watch(defaultedQueries, (queriesValue) => {
+    observer.setQueries(
+      queriesValue,
+      options as QueriesObserverOptions<TCombinedResult>,
+    )
+    state.value = getOptimisticResult()
+  })
 
   onScopeDispose(() => {
     unsubscribe()

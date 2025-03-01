@@ -5,13 +5,12 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start",
-    "test:types": "tsc"
+    "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.62.7",
-    "@tanstack/react-query-devtools": "^5.62.7",
-    "next": "^14.2.18",
+    "@tanstack/react-query": "^5.66.11",
+    "@tanstack/react-query-devtools": "^5.66.11",
+    "next": "^14.2.20",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

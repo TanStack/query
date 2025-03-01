@@ -25,7 +25,7 @@ export type DefinedInitialDataOptions<
 
 export function queryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TOptions extends ReturnType<
@@ -45,7 +45,7 @@ export function queryOptions<
 
 export function queryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TOptions extends ReturnType<

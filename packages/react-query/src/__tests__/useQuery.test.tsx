@@ -5964,6 +5964,110 @@ describe('useQuery', () => {
     })
   })
 
+  describe('subscribed', () => {
+    it('should be able to toggle subscribed', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(async () => 'data')
+      function Page() {
+        const [subscribed, setSubscribed] = React.useState(true)
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed,
+        })
+        return (
+          <div>
+            <span>data: {data}</span>
+            <button onClick={() => setSubscribed(!subscribed)}>toggle</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('data: data'))
+
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(1)
+
+      fireEvent.click(rendered.getByRole('button', { name: 'toggle' }))
+
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      fireEvent.click(rendered.getByRole('button', { name: 'toggle' }))
+
+      // background refetch when we re-subscribe
+      await waitFor(() => expect(queryFn).toHaveBeenCalledTimes(2))
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(1)
+    })
+
+    it('should not be attached to the query when subscribed is false', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(async () => 'data')
+      function Page() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed: false,
+        })
+        return (
+          <div>
+            <span>data: {data}</span>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('data:'))
+
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
+
+    it('should not re-render when data is added to the cache when subscribed is false', async () => {
+      const key = queryKey()
+      let renders = 0
+      function Page() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: async () => 'data',
+          subscribed: false,
+        })
+        renders++
+        return (
+          <div>
+            <span>{data ? 'has data' + data : 'no data'}</span>
+            <button
+              onClick={() => queryClient.setQueryData<string>(key, 'new data')}
+            >
+              set data
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('no data'))
+
+      fireEvent.click(rendered.getByRole('button', { name: 'set data' }))
+
+      await sleep(10)
+
+      await waitFor(() => rendered.getByText('no data'))
+
+      expect(renders).toBe(1)
+    })
+  })
+
   it('should have status=error on mount when a query has failed', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<unknown>> = []
