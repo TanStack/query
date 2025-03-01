@@ -4,6 +4,7 @@ import type {
   InfiniteData,
   InfiniteQueryPageParamsOptions,
   OmitKeyof,
+  QueryFunction,
   QueryFunctionContext,
   QueryKey,
 } from './types'
@@ -38,7 +39,13 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           })
         }
 
-        const queryFn = ensureQueryFn(context.options, context.fetchOptions)
+        const queryFn = ensureQueryFn(
+          context.options as {
+            queryFn?: QueryFunction<TQueryFnData, QueryKey>
+            queryHash?: string
+          },
+          context.fetchOptions,
+        )
 
         // Create function to fetch a page
         const fetchPage = async (

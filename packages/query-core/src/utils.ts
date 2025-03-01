@@ -405,19 +405,21 @@ export function ensureQueryFn<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: {
-    queryFn?: QueryFunction<TQueryFnData, TQueryKey> | SkipToken
+    queryFn?: QueryFunction<TQueryFnData, TQueryKey>
     queryHash?: string
   },
   fetchOptions?: FetchOptions<TQueryFnData>,
 ): QueryFunction<TQueryFnData, TQueryKey> {
+  const queryFnCouldBeSkipTokenInRuntime = options.queryFn as
+    | SkipToken
+    | QueryFunction<TQueryFnData, TQueryKey>
   if (process.env.NODE_ENV !== 'production') {
-    if (options.queryFn === skipToken) {
+    if (queryFnCouldBeSkipTokenInRuntime === skipToken) {
       console.error(
         `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${options.queryHash}'`,
       )
     }
   }
-
   // if we attempt to retry a fetch that was triggered from an initialPromise
   // when we don't have a queryFn yet, we can't retry, so we just return the already rejected initialPromise
   // if an observer has already mounted, we will be able to retry with that queryFn
@@ -425,7 +427,7 @@ export function ensureQueryFn<
     return () => fetchOptions.initialPromise!
   }
 
-  if (!options.queryFn || options.queryFn === skipToken) {
+  if (!options.queryFn || queryFnCouldBeSkipTokenInRuntime === skipToken) {
     return () =>
       Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
   }
