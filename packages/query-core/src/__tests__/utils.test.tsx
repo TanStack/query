@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   addToEnd,
   addToStart,
+  ensureQueryFn,
   isPlainArray,
   isPlainObject,
   keepPreviousData,
@@ -9,6 +10,7 @@ import {
   partialMatchKey,
   replaceEqualDeep,
   shallowEqualObjects,
+  skipToken,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
@@ -471,6 +473,17 @@ describe('core/utils', () => {
       const max = 0
       const newItems = addToStart(items, item, max)
       expect(newItems).toEqual([4, 1, 2, 3])
+    })
+  })
+
+  describe('ensureQueryFn', () => {
+    it('should log an error when queryFn is set to skipToken', () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error')
+      const queryHash = 'hash'
+      ensureQueryFn({ queryFn: skipToken, queryHash })
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${queryHash}'`,
+      )
     })
   })
 })
