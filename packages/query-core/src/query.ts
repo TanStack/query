@@ -408,7 +408,13 @@ export class Query<
 
     // Create fetch function
     const fetchFn = () => {
-      const queryFn = ensureQueryFn(this.options, fetchOptions)
+      const queryFn = ensureQueryFn(
+        this.options as {
+          queryFn?: QueryFunction<TQueryFnData, TQueryKey>
+          queryHash?: string
+        },
+        fetchOptions,
+      )
 
       // Create query function context
       const queryFnContext: OmitKeyof<

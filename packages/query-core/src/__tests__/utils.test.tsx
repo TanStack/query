@@ -480,7 +480,7 @@ describe('core/utils', () => {
     it('should log an error when queryFn is set to skipToken', () => {
       const consoleErrorSpy = vi.spyOn(console, 'error')
       const queryHash = 'hash'
-      ensureQueryFn({ queryFn: skipToken, queryHash })
+      ensureQueryFn({ queryFn: skipToken as any, queryHash })
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${queryHash}'`,
       )
