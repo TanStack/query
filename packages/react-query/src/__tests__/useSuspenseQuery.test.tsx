@@ -848,4 +848,36 @@ describe('useSuspenseQuery', () => {
     )
     consoleErrorSpy.mockRestore()
   })
+
+  it('should properly refresh data when refetchInterval is set', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: key,
+        queryFn: async () => {
+          count++
+          await sleep(1)
+          return count
+        },
+        refetchInterval: 10,
+      })
+
+      return <div>count: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="Loading...">
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('count: 1'))
+    await waitFor(() => rendered.getByText('count: 2'))
+    await waitFor(() => rendered.getByText('count: 3'))
+
+    expect(count).toBeGreaterThanOrEqual(3)
+  })
 })
