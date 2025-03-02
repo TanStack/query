@@ -5,6 +5,7 @@ import {
   hashKey,
   isPlainArray,
   isPlainObject,
+  keepPreviousData,
   matchMutation,
   partialMatchKey,
   replaceEqualDeep,
@@ -403,6 +404,13 @@ describe('core/utils', () => {
         options: {},
       })
       expect(matchMutation(filters, mutation)).toBeFalsy()
+    })
+  })
+
+  describe('keepPreviousData', () => {
+    it('should return the parameter as is', () => {
+      const x = { a: 1, b: 2 }
+      expect(keepPreviousData(x)).toEqual(x)
     })
   })
 
