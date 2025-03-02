@@ -5,7 +5,7 @@ import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
 import type { UseQueryOptions } from './useQuery'
 import type { Ref } from 'vue-demi'
-import type { MaybeRefDeep, NoUnknown } from './types'
+import type { MaybeRefDeep, NoUnknown, QueryClientConfig } from './types'
 import type {
   CancelOptions,
   DataTag,
@@ -22,7 +22,6 @@ import type {
   MutationObserverOptions,
   NoInfer,
   OmitKeyof,
-  QueryClientConfig,
   QueryFilters,
   QueryKey,
   QueryObserverOptions,

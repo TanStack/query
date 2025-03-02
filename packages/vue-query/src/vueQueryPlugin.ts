@@ -4,7 +4,7 @@ import { isServer } from '@tanstack/query-core'
 import { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
 import { setupDevtools } from './devtools/devtools'
-import type { QueryClientConfig } from '@tanstack/query-core'
+import type { QueryClientConfig } from './types'
 
 type ClientPersister = (client: QueryClient) => [() => void, Promise<void>]
 

@@ -29,6 +29,9 @@ type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
 
 type UseMutationOptionsBase<TData, TError, TVariables, TContext> =
   MutationObserverOptions<TData, TError, TVariables, TContext> & {
+    /**
+     * Return data in a shallow ref object (it is `false` by default). It can be set to `true` to return data in a shallow ref object, which can improve performance if your data does not need to be deeply reactive.
+     */
     shallow?: boolean
   }
 
