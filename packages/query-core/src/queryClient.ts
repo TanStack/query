@@ -605,14 +605,17 @@ export class QueryClient {
 
   getMutationDefaults(
     mutationKey: MutationKey,
-  ): MutationObserverOptions<any, any, any, any> {
+  ): OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'> {
     const defaults = [...this.#mutationDefaults.values()]
 
-    let result: MutationObserverOptions<any, any, any, any> = {}
+    const result: OmitKeyof<
+      MutationObserverOptions<any, any, any, any>,
+      'mutationKey'
+    > = {}
 
     defaults.forEach((queryDefault) => {
       if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
-        result = { ...result, ...queryDefault.defaultOptions }
+        Object.assign(result, queryDefault.defaultOptions)
       }
     })
 
