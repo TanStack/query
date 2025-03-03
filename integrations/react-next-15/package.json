@@ -6,6 +6,7 @@
     "build": "next build"
   },
   "dependencies": {
+    "@hey-api/client-next": "^0.2.1",
     "@js-temporal/polyfill": "^0.4.4",
     "@tanstack/react-query": "workspace:*",
     "@tanstack/react-query-devtools": "workspace:*",
