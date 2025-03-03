@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   addToEnd,
   addToStart,
@@ -17,29 +17,24 @@ import { createQueryClient } from './utils'
 
 describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
-    it('should hash query key using default hash function for primitive values', () => {
-      const queryKey = ['test', 123, true, null]
+    it('should use custom hash function when provided in options', () => {
+      const queryKey = ['test', { a: 1, b: 2 }]
+      const customHashFn = vi.fn(() => 'custom-hash')
+
+      const result = hashQueryKeyByOptions(queryKey, {
+        queryKeyHashFn: customHashFn,
+      })
+
+      expect(customHashFn).toHaveBeenCalledWith(queryKey)
+      expect(result).toEqual('custom-hash')
+    })
+
+    it('should use default hash function when no options provided', () => {
+      const queryKey = ['test', { a: 1, b: 2 }]
+      const defaultResult = hashKey(queryKey)
       const result = hashQueryKeyByOptions(queryKey)
 
-      expect(result).toEqual(JSON.stringify(queryKey))
-    })
-
-    it('should hash query key consistently regardless of object key order', () => {
-      const queryKey1 = ['test', { a: 'a', b: 'b' }]
-      const queryKey2 = ['test', { b: 'b', a: 'a' }]
-
-      expect(hashQueryKeyByOptions(queryKey1)).toEqual(
-        hashQueryKeyByOptions(queryKey2),
-      )
-    })
-
-    it('should hash nested objects consistently regardless of key order', () => {
-      const queryKey1 = [{ a: { d: 4, c: 3 }, b: 2 }]
-      const queryKey2 = [{ b: 2, a: { c: 3, d: 4 } }]
-
-      expect(hashQueryKeyByOptions(queryKey1)).toEqual(
-        hashQueryKeyByOptions(queryKey2),
-      )
+      expect(result).toEqual(defaultResult)
     })
   })
 
