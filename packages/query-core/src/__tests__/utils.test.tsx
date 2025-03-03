@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   addToEnd,
   addToStart,
+  hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
   keepPreviousData,
@@ -14,6 +15,33 @@ import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
 
 describe('core/utils', () => {
+  describe('hashQueryKeyByOptions', () => {
+    it('should hash query key using default hash function for primitive values', () => {
+      const queryKey = ['test', 123, true, null]
+      const result = hashQueryKeyByOptions(queryKey)
+
+      expect(result).toEqual(JSON.stringify(queryKey))
+    })
+
+    it('should hash query key consistently regardless of object key order', () => {
+      const queryKey1 = ['test', { a: 'a', b: 'b' }]
+      const queryKey2 = ['test', { b: 'b', a: 'a' }]
+
+      expect(hashQueryKeyByOptions(queryKey1)).toEqual(
+        hashQueryKeyByOptions(queryKey2),
+      )
+    })
+
+    it('should hash nested objects consistently regardless of key order', () => {
+      const queryKey1 = [{ a: { d: 4, c: 3 }, b: 2 }]
+      const queryKey2 = [{ b: 2, a: { c: 3, d: 4 } }]
+
+      expect(hashQueryKeyByOptions(queryKey1)).toEqual(
+        hashQueryKeyByOptions(queryKey2),
+      )
+    })
+  })
+
   describe('shallowEqualObjects', () => {
     it('should return `true` for shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toEqual(true)
