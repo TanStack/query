@@ -532,7 +532,8 @@ const stylesFactory = (
     entry: css`
       & * {
         font-size: ${font.size.xs};
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           'Liberation Mono', 'Courier New', monospace;
       }
       position: relative;
