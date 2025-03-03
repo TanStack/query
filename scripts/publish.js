@@ -92,6 +92,10 @@ await publish({
       name: '@tanstack/angular-query-experimental',
       packageDir: 'packages/angular-query-experimental',
     },
+    {
+      name: '@tanstack/angular-query-persist-client-experimental',
+      packageDir: 'packages/angular-persist-query-client-experimental',
+    },
   ],
   branchConfigs: {
     main: {
