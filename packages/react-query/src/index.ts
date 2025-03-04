@@ -30,3 +30,8 @@ export { useIsMutating } from './useIsMutating'
 export { useMutation } from './useMutation'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './isRestoring'
+export { queryOptions } from './queryOptions'
+export type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions'
