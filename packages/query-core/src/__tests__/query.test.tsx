@@ -214,6 +214,7 @@ describe('query', () => {
     expect(args.pageParam).toBeUndefined()
     expect(args.queryKey).toEqual(key)
     expect(args.signal).toBeInstanceOf(AbortSignal)
+    expect(args.client).toEqual(queryClient)
   })
 
   test('should continue if cancellation is not supported and signal is not consumed', async () => {

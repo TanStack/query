@@ -156,7 +156,7 @@ describe('useQuery().promise', () => {
       })
       const data = React.use(query.promise)
 
-      return data
+      return <>{data}</>
     }
 
     function Loading() {

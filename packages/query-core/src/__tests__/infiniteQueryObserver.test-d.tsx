@@ -32,6 +32,7 @@ describe('InfiniteQueryObserver', () => {
       expectTypeOf(result.error).toEqualTypeOf<null>()
       expectTypeOf(result.isLoading).toEqualTypeOf<boolean>()
       expectTypeOf(result.status).toEqualTypeOf<'pending'>()
+      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
     }
 
     if (result.isLoading) {
@@ -39,12 +40,14 @@ describe('InfiniteQueryObserver', () => {
       expectTypeOf(result.error).toEqualTypeOf<null>()
       expectTypeOf(result.isPending).toEqualTypeOf<true>()
       expectTypeOf(result.status).toEqualTypeOf<'pending'>()
+      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
     }
 
     if (result.isLoadingError) {
       expectTypeOf(result.data).toEqualTypeOf<undefined>()
       expectTypeOf(result.error).toEqualTypeOf<Error>()
       expectTypeOf(result.status).toEqualTypeOf<'error'>()
+      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
     }
 
     if (result.isRefetchError) {
@@ -53,9 +56,17 @@ describe('InfiniteQueryObserver', () => {
       expectTypeOf(result.status).toEqualTypeOf<'error'>()
       expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<boolean>()
       expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<boolean>()
+      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
     }
 
     if (result.isSuccess) {
+      expectTypeOf(result.data).toEqualTypeOf<InfiniteData<string, unknown>>()
+      expectTypeOf(result.error).toEqualTypeOf<null>()
+      expectTypeOf(result.status).toEqualTypeOf<'success'>()
+      expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
+    }
+
+    if (result.isPlaceholderData) {
       expectTypeOf(result.data).toEqualTypeOf<InfiniteData<string, unknown>>()
       expectTypeOf(result.error).toEqualTypeOf<null>()
       expectTypeOf(result.status).toEqualTypeOf<'success'>()

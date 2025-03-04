@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query",
-  "version": "5.64.2",
+  "version": "5.67.1",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -15,7 +15,8 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "premove ./dist ./coverage ./.svelte-kit",
+    "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
+    "compile": "tsc --build",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint ./src",
     "test:lib": "vitest",

@@ -184,23 +184,7 @@ export type QueriesResults<
             [...TResults, GetCreateQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              QueryObserverOptionsForCreateQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
-            Array<
-              QueryObserverResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<QueryObserverResult>
+        : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 
 export function createQueries<
   T extends Array<any>,
@@ -210,7 +194,11 @@ export function createQueries<
     queries,
     ...options
   }: {
-    queries: StoreOrVal<[...QueriesOptions<T>]>
+    queries:
+      | StoreOrVal<[...QueriesOptions<T>]>
+      | StoreOrVal<
+          [...{ [K in keyof T]: GetQueryObserverOptionsForCreateQueries<T[K]> }]
+        >
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,

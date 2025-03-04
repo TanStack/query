@@ -1,15 +1,22 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": ".",
+    "baseUrl": ".",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "moduleResolution": "Bundler"
   },
   "include": [
     "src",
-    "eslint.config.js",
     "test-setup.ts",
-    "tsup.config.js",
-    "vite.config.ts"
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
+  "references": [
+    { "path": "../query-persist-client-core" },
+    { "path": "../solid-query" }
   ]
 }
