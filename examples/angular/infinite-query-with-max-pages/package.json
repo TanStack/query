@@ -23,6 +23,6 @@
     "@angular/build": "^19.0.2",
     "@angular/cli": "^19.0.2",
     "@angular/compiler-cli": "^19.1.0-next.0",
-    "typescript": "5.8.2"
+    "typescript": "5.7.2"
   }
 }
