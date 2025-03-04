@@ -248,6 +248,7 @@ export interface QueryObserverOptions<
    */
   select?: (data: TQueryData) => TData
   /**
+   * @deprecated Use useSuspenseQuery* instead, this option is removed in v5.
    * If set to `true`, the query will suspend when `status === 'loading'`
    * and throw errors when `status === 'error'`.
    * Defaults to `false`.
