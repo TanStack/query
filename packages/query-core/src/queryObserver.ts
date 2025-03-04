@@ -577,12 +577,14 @@ export class QueryObserver<
 
     const isFetching = fetchStatus === 'fetching'
     const isLoading = status === 'loading'
+    const isPending = status === 'loading'
     const isError = status === 'error'
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
       fetchStatus,
       isLoading,
+      isPending,
       isSuccess: status === 'success',
       isError,
       isInitialLoading: isLoading && isFetching,

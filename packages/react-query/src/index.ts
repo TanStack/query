@@ -11,6 +11,7 @@ export * from './types'
 export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'
+export { useSuspenseQuery } from './useSuspenseQuery'
 export {
   defaultContext,
   QueryClientProvider,
