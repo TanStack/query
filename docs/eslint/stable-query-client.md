@@ -28,7 +28,7 @@ Examples of **correct** code for this rule:
 
 ```tsx
 function App() {
-  const [queryClient] = useState(() => new QueryClient())
+  const queryClient = useRef(new QueryClient()).current
   return (
     <QueryClientProvider client={queryClient}>
       <Home />
