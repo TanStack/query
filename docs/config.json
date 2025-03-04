@@ -121,6 +121,10 @@
               "to": "framework/svelte/installation"
             },
             {
+              "label": "Devtools",
+              "to": "framework/svelte/devtools"
+            },
+            {
               "label": "SSR & SvelteKit",
               "to": "framework/svelte/ssr"
             },
