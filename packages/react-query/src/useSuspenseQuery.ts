@@ -2,7 +2,7 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type { QueryKey } from '@tanstack/query-core'
-import type { UseQueryResult, UseSuspenseQueryOptions } from './types'
+import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
 
 // HOOK
 
@@ -13,7 +13,7 @@ export function useSuspenseQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UseQueryResult<TData, TError> {
+): UseSuspenseQueryResult<TData, TError> {
   return useBaseQuery(
     {
       ...options,
@@ -22,5 +22,5 @@ export function useSuspenseQuery<
       placeholderData: undefined,
     },
     QueryObserver,
-  )
+  ) as UseSuspenseQueryResult<TData, TError>
 }
