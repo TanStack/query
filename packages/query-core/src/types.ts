@@ -393,7 +393,9 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isFetched: boolean
   isFetchedAfterMount: boolean
   isFetching: boolean
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: boolean
+  isPending: boolean
   isLoadingError: boolean
   isInitialLoading: boolean
   isPaused: boolean
@@ -416,7 +418,9 @@ export interface QueryObserverLoadingResult<TData = unknown, TError = unknown>
   data: undefined
   error: null
   isError: false
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: true
+  isPending: true
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
@@ -430,7 +434,9 @@ export interface QueryObserverLoadingErrorResult<
   data: undefined
   error: TError
   isError: true
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
+  isPending: false
   isLoadingError: true
   isRefetchError: false
   isSuccess: false
@@ -444,6 +450,7 @@ export interface QueryObserverRefetchErrorResult<
   data: TData
   error: TError
   isError: true
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
   isLoadingError: false
   isRefetchError: true
@@ -456,7 +463,9 @@ export interface QueryObserverSuccessResult<TData = unknown, TError = unknown>
   data: TData
   error: null
   isError: false
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
+  isPending: false
   isLoadingError: false
   isRefetchError: false
   isSuccess: true
@@ -495,7 +504,9 @@ export interface InfiniteQueryObserverLoadingResult<
   data: undefined
   error: null
   isError: false
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: true
+  isPending: true
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
@@ -509,7 +520,9 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   data: undefined
   error: TError
   isError: true
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
+  isPending: false
   isLoadingError: true
   isRefetchError: false
   isSuccess: false
@@ -523,7 +536,9 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   data: InfiniteData<TData>
   error: TError
   isError: true
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
+  isPending: false
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
@@ -537,7 +552,9 @@ export interface InfiniteQueryObserverSuccessResult<
   data: InfiniteData<TData>
   error: null
   isError: false
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
+  isPending: false
   isLoadingError: false
   isRefetchError: false
   isSuccess: true
@@ -645,7 +662,9 @@ export interface MutationObserverBaseResult<
 > extends MutationState<TData, TError, TVariables, TContext> {
   isError: boolean
   isIdle: boolean
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: boolean
+  isPending: boolean
   isSuccess: boolean
   mutate: MutateFunction<TData, TError, TVariables, TContext>
   reset: () => void
@@ -661,6 +680,7 @@ export interface MutationObserverIdleResult<
   error: null
   isError: false
   isIdle: true
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
   isSuccess: false
   status: 'idle'
@@ -676,7 +696,9 @@ export interface MutationObserverLoadingResult<
   error: null
   isError: false
   isIdle: false
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: true
+  isPending: true
   isSuccess: false
   status: 'loading'
 }
@@ -691,6 +713,7 @@ export interface MutationObserverErrorResult<
   error: TError
   isError: true
   isIdle: false
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
   isSuccess: false
   status: 'error'
@@ -706,7 +729,9 @@ export interface MutationObserverSuccessResult<
   error: null
   isError: false
   isIdle: false
+  /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
+  isPending: false
   isSuccess: true
   status: 'success'
 }

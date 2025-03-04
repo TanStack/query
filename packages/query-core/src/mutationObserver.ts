@@ -149,6 +149,7 @@ export class MutationObserver<
     > = {
       ...state,
       isLoading: state.status === 'loading',
+      isPending: state.status === 'loading',
       isSuccess: state.status === 'success',
       isError: state.status === 'error',
       isIdle: state.status === 'idle',
