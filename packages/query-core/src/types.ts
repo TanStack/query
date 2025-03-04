@@ -453,6 +453,7 @@ export interface QueryObserverRefetchErrorResult<
   isError: true
   /** @deprecated Removed in v5. Use isPending instead */
   isLoading: false
+  isPending: false
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
