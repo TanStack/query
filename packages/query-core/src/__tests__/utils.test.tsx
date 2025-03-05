@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   addToEnd,
   addToStart,
-  hashQueryKeyByOptions,
   hashKey,
+  hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
   keepPreviousData,
