@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-async-storage-persister",
-  "version": "5.67.0",
+  "version": "5.67.1",
   "description": "A persister for asynchronous storages, to be used with TanStack/Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -26,7 +26,8 @@
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
-    "test:types:ts57": "tsc --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
+    "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
