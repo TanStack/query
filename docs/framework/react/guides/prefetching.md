@@ -12,9 +12,9 @@ There are a few different prefetching patterns:
 3. Via router integration
 4. During Server Rendering (another form of router integration)
 
-In this guide, we'll take a look at the first three, while the fourth will be covered in depth in the [Server Rendering & Hydration guide](../ssr) and the [Advanced Server Rendering guide](../advanced-ssr).
+In this guide, we'll take a look at the first three, while the fourth will be covered in depth in the [Server Rendering & Hydration guide](../guides/ssr) and the [Advanced Server Rendering guide](../guides/advanced-ssr).
 
-One specific use of prefetching is to avoid Request Waterfalls, for an in-depth background and explanation of those, see the [Performance & Request Waterfalls guide](../request-waterfalls).
+One specific use of prefetching is to avoid Request Waterfalls, for an in-depth background and explanation of those, see the [Performance & Request Waterfalls guide](../guides/request-waterfalls).
 
 ## prefetchQuery & prefetchInfiniteQuery
 
@@ -196,7 +196,7 @@ This starts fetching `'article-comments'` immediately and flattens the waterfall
 
 [//]: # 'Suspense'
 
-If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../../reference/usePrefetchQuery), the [`usePrefetchQueries`](../../reference/usePrefetchQueries) or the [`usePrefetchInfiniteQuery`](../../reference/usePrefetchInfiniteQuery) hooks available in the library.
+If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../reference/usePrefetchQuery), the [`usePrefetchQueries`](../reference/usePrefetchQueries) or the [`usePrefetchInfiniteQuery`](../reference/usePrefetchInfiniteQuery) hooks available in the library.
 
 You can now use `useSuspenseQuery` in the component that actually needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
 
@@ -267,7 +267,7 @@ Let's look at a slightly more advanced case next.
 
 ### Dependent Queries & Code Splitting
 
-Sometimes we want to prefetch conditionally, based on the result of another fetch. Consider this example borrowed from the [Performance & Request Waterfalls guide](../request-waterfalls):
+Sometimes we want to prefetch conditionally, based on the result of another fetch. Consider this example borrowed from the [Performance & Request Waterfalls guide](../guides/request-waterfalls):
 
 [//]: # 'ExampleConditionally1'
 
@@ -412,13 +412,13 @@ const articleRoute = new Route({
 })
 ```
 
-Integration with other routers is also possible, see the [React Router example](../../examples/react-router) for another demonstration.
+Integration with other routers is also possible, see the [React Router example](../examples/react-router) for another demonstration.
 
 [//]: # 'Router'
 
 ## Manually Priming a Query
 
-If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../../../../reference/QueryClient/#queryclientsetquerydata) to directly add or update a query's cached result by key.
+If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../../../reference/QueryClient/#queryclientsetquerydata) to directly add or update a query's cached result by key.
 
 [//]: # 'ExampleManualPriming'
 
@@ -431,8 +431,8 @@ queryClient.setQueryData(['todos'], todos)
 
 ## Further reading
 
-For a deep-dive on how to get data into your Query Cache before you fetch, have a look at [#17: Seeding the Query Cache](../community/tkdodos-blog#17-seeding-the-query-cache) from the Community Resources.
+For a deep-dive on how to get data into your Query Cache before you fetch, have a look at [#17: Seeding the Query Cache](https://tkdodo.eu/blog/seeding-the-query-cache) from the Community Resources.
 
-Integrating with Server Side routers and frameworks is very similar to what we just saw, with the addition that the data has to passed from the server to the client to be hydrated into the cache there. To learn how, continue on to the [Server Rendering & Hydration guide](../ssr).
+Integrating with Server Side routers and frameworks is very similar to what we just saw, with the addition that the data has to passed from the server to the client to be hydrated into the cache there. To learn how, continue on to the [Server Rendering & Hydration guide](../guides/ssr).
 
 [//]: # 'Materials'
