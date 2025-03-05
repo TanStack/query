@@ -8,15 +8,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^5.66.11",
-    "@tanstack/svelte-query-devtools": "^5.66.11"
+    "@tanstack/svelte-query": "^5.67.1",
+    "@tanstack/svelte-query-devtools": "^5.67.1"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@tsconfig/svelte": "^5.0.4",
     "svelte": "^4.2.18",
     "svelte-check": "^4.0.0",
-    "typescript": "5.7.2",
+    "typescript": "5.8.2",
     "vite": "^5.3.5"
   }
 }
