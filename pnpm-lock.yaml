@@ -1079,6 +1079,31 @@ importers:
         specifier: 5.8.2
         version: 5.8.2
 
+  examples/react/pause:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.67.1
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.67.1
+        version: link:../../../packages/react-query-devtools
+      react:
+        specifier: ^19.0.0
+        version: 19.0.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.0.0(react@19.0.0)
+    devDependencies:
+      '@vitejs/plugin-react':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@5.4.14(@types/node@22.13.5)(less@4.2.2)(lightningcss@1.27.0)(sass@1.85.1)(terser@5.31.6))
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
+      vite:
+        specifier: ^5.3.5
+        version: 5.4.14(@types/node@22.13.5)(less@4.2.2)(lightningcss@1.27.0)(sass@1.85.1)(terser@5.31.6)
+
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
