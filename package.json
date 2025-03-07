@@ -46,8 +46,8 @@
     "@types/node": "^22.9.3",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
-    "@vitest/coverage-istanbul": "^2.0.4",
-    "@vitest/eslint-plugin": "^1.1.16",
+    "@vitest/coverage-istanbul": "^2.1.9",
+    "@vitest/eslint-plugin": "^1.1.36",
     "cpy-cli": "^5.0.0",
     "esbuild-plugin-file-path-extensions": "^2.1.2",
     "eslint": "^9.15.0",
@@ -74,7 +74,7 @@
     "typescript57": "npm:typescript@5.7",
     "vite": "^5.3.5",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^2.0.4"
+    "vitest": "^2.1.9"
   },
   "pnpm": {
     "overrides": {
