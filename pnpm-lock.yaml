@@ -41,11 +41,11 @@ importers:
         specifier: ^19.0.2
         version: 19.0.2(@types/react@19.0.1)
       '@vitest/coverage-istanbul':
-        specifier: ^2.0.4
-        version: 2.0.5(vitest@2.1.9(@types/node@22.13.9)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.27.0)(msw@2.6.6(@types/node@22.13.9)(typescript@5.8.2))(sass@1.85.1)(terser@5.31.6))
+        specifier: ^2.1.9
+        version: 2.1.9(vitest@2.1.9(@types/node@22.13.9)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.27.0)(msw@2.6.6(@types/node@22.13.9)(typescript@5.8.2))(sass@1.85.1)(terser@5.31.6))
       '@vitest/eslint-plugin':
-        specifier: ^1.1.16
-        version: 1.1.20(@typescript-eslint/utils@8.18.1(eslint@9.15.0(jiti@2.4.0))(typescript@5.8.2))(eslint@9.15.0(jiti@2.4.0))(typescript@5.8.2)(vitest@2.1.9(@types/node@22.13.9)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.27.0)(msw@2.6.6(@types/node@22.13.9)(typescript@5.8.2))(sass@1.85.1)(terser@5.31.6))
+        specifier: ^1.1.36
+        version: 1.1.36(@typescript-eslint/utils@8.18.1(eslint@9.15.0(jiti@2.4.0))(typescript@5.8.2))(eslint@9.15.0(jiti@2.4.0))(typescript@5.8.2)(vitest@2.1.9(@types/node@22.13.9)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.27.0)(msw@2.6.6(@types/node@22.13.9)(typescript@5.8.2))(sass@1.85.1)(terser@5.31.6))
       cpy-cli:
         specifier: ^5.0.0
         version: 5.0.0
@@ -125,7 +125,7 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.8.2)(vite@5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.27.0)(sass@1.85.1)(terser@5.31.6))
       vitest:
-        specifier: ^2.0.4
+        specifier: ^2.1.9
         version: 2.1.9(@types/node@22.13.9)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.27.0)(msw@2.6.6(@types/node@22.13.9)(typescript@5.8.2))(sass@1.85.1)(terser@5.31.6)
 
   examples/angular/auto-refetching:
@@ -7086,15 +7086,15 @@ packages:
       vite: ^5.0.0 || ^6.0.0
       vue: ^3.2.25
 
-  '@vitest/coverage-istanbul@2.0.5':
-    resolution: {integrity: sha512-BvjWKtp7fiMAeYUD0mO5cuADzn1gmjTm54jm5qUEnh/O08riczun8rI4EtQlg3bWoRo2lT3FO8DmjPDX9ZthPw==}
+  '@vitest/coverage-istanbul@2.1.9':
+    resolution: {integrity: sha512-vdYE4FkC/y2lxcN3Dcj54Bw+ericmDwiex0B8LV5F/YNYEYP1mgVwhPnHwWGAXu38qizkjOuyczKbFTALfzFKw==}
     peerDependencies:
-      vitest: 2.0.5
+      vitest: 2.1.9
 
-  '@vitest/eslint-plugin@1.1.20':
-    resolution: {integrity: sha512-2eLsgUm+GVOpDfNyH2do//MiNO/WZkXrPi+EjDmXEdUt6Jwnziq4H221L8vJE0aJys+l1FRfSkm4QbaIyDCfBg==}
+  '@vitest/eslint-plugin@1.1.36':
+    resolution: {integrity: sha512-IjBV/fcL9NJRxGw221ieaDsqKqj8qUo7rvSupDxMjTXyhsCusHC6M+jFUNqBp4PCkYFcf5bjrKxeZoCEWoPxig==}
     peerDependencies:
-      '@typescript-eslint/utils': '>= 8.0'
+      '@typescript-eslint/utils': ^8.24.0
       eslint: ^9.15.0
       typescript: '>= 5.0.0'
       vitest: '*'
@@ -21855,7 +21855,7 @@ snapshots:
       vite: 5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.27.0)(sass@1.85.1)(terser@5.31.6)
       vue: 3.4.35(typescript@5.8.2)
 
-  '@vitest/coverage-istanbul@2.0.5(vitest@2.1.9(@types/node@22.13.9)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.27.0)(msw@2.6.6(@types/node@22.13.9)(typescript@5.8.2))(sass@1.85.1)(terser@5.31.6))':
+  '@vitest/coverage-istanbul@2.1.9(vitest@2.1.9(@types/node@22.13.9)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.27.0)(msw@2.6.6(@types/node@22.13.9)(typescript@5.8.2))(sass@1.85.1)(terser@5.31.6))':
     dependencies:
       '@istanbuljs/schema': 0.1.3
       debug: 4.4.0
@@ -21871,7 +21871,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.1.20(@typescript-eslint/utils@8.18.1(eslint@9.15.0(jiti@2.4.0))(typescript@5.8.2))(eslint@9.15.0(jiti@2.4.0))(typescript@5.8.2)(vitest@2.1.9(@types/node@22.13.9)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.27.0)(msw@2.6.6(@types/node@22.13.9)(typescript@5.8.2))(sass@1.85.1)(terser@5.31.6))':
+  '@vitest/eslint-plugin@1.1.36(@typescript-eslint/utils@8.18.1(eslint@9.15.0(jiti@2.4.0))(typescript@5.8.2))(eslint@9.15.0(jiti@2.4.0))(typescript@5.8.2)(vitest@2.1.9(@types/node@22.13.9)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.27.0)(msw@2.6.6(@types/node@22.13.9)(typescript@5.8.2))(sass@1.85.1)(terser@5.31.6))':
     dependencies:
       '@typescript-eslint/utils': 8.18.1(eslint@9.15.0(jiti@2.4.0))(typescript@5.8.2)
       eslint: 9.15.0(jiti@2.4.0)
