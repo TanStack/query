@@ -15,6 +15,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
+    "clean": "premove ./coverage ./dist-ts",
     "test:eslint": "eslint ./src",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch"

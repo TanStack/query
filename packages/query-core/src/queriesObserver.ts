@@ -43,6 +43,7 @@ export class QueriesObserver<
   #combinedResult?: TCombinedResult
   #lastCombine?: CombineFn<TCombinedResult>
   #lastResult?: Array<QueryObserverResult>
+  #observerMatches: Array<QueryObserverMatch> = []
 
   constructor(
     client: QueryClient,
@@ -106,6 +107,7 @@ export class QueriesObserver<
       const prevObservers = this.#observers
 
       const newObserverMatches = this.#findMatchingObservers(this.#queries)
+      this.#observerMatches = newObserverMatches
 
       // set options for the new observers to notify of changes
       newObserverMatches.forEach((match) =>
@@ -177,17 +179,15 @@ export class QueriesObserver<
         return this.#combineResult(r ?? result, combine)
       },
       () => {
-        return this.#trackResult(result, queries)
+        return this.#trackResult(result, matches)
       },
     ]
   }
 
   #trackResult(
     result: Array<QueryObserverResult>,
-    queries: Array<QueryObserverOptions>,
+    matches: Array<QueryObserverMatch>,
   ) {
-    const matches = this.#findMatchingObservers(queries)
-
     return matches.map((match, index) => {
       const observerResult = result[index]!
       return !match.defaultedQueryOptions.notifyOnChangeProps
@@ -263,10 +263,8 @@ export class QueriesObserver<
   #notify(): void {
     if (this.hasListeners()) {
       const previousResult = this.#combinedResult
-      const newResult = this.#combineResult(
-        this.#trackResult(this.#result, this.#queries),
-        this.#options?.combine,
-      )
+      const newTracked = this.#trackResult(this.#result, this.#observerMatches)
+      const newResult = this.#combineResult(newTracked, this.#options?.combine)
 
       if (previousResult !== newResult) {
         notifyManager.batch(() => {
