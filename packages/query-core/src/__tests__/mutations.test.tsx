@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/react'
+import { waitFor } from '@testing-library/dom'
 import { MutationObserver } from '../mutationObserver'
 import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
 import type { QueryClient } from '..'

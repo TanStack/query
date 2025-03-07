@@ -53,6 +53,7 @@ const {
     select,
     staleTime,
     structuralSharing,
+    subscribed,
     throwOnError,
   },
   queryClient,
@@ -92,7 +93,7 @@ const {
 - `staleTime: number | ((query: Query) => number)`
   - Optional
   - Defaults to `0`
-  - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
+  - The time in milliseconds after which data is considered stale. This value only applies to the hook it is defined on.
   - If set to `Infinity`, the data will never be considered stale
   - If set to a function, the function will be executed with the query to compute a `staleTime`.
 - `gcTime: number | Infinity`
@@ -161,8 +162,11 @@ const {
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
   - If set to a function, the old and new data values will be passed through this function, which should combine them into resolved data for the query. This way, you can retain references from the old data to improve performance even when that data contains non-serializable values.
+- `subscribed: boolean`
+  - Optional
+  - Defaults to `true`
+  - If set to `false`, this instance of `useQuery` will not be subscribed to the cache. This means it won't trigger the `queryFn` on its own, and it won't receive updates if data gets into cache by other means.
 - `throwOnError: undefined | boolean | (error: TError, query: Query) => boolean`
-  - Defaults to the global query config's `throwOnError` value, which is `undefined`
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable `suspense`'s default behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)

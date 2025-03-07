@@ -82,19 +82,21 @@ mutationState = injectMutationState<string>(() => ({
 [//]: # 'Example'
 
 ```ts
-updateTodo = injectMutation((client) => ({
+queryClient = inject(QueryClient)
+
+updateTodo = injectMutation(() => ({
   mutationFn: updateTodo,
   // When mutate is called:
   onMutate: async (newTodo) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
-    await client.cancelQueries({ queryKey: ['todos'] })
+    await this.queryClient.cancelQueries({ queryKey: ['todos'] })
 
     // Snapshot the previous value
     const previousTodos = client.getQueryData(['todos'])
 
     // Optimistically update to the new value
-    client.setQueryData(['todos'], (old) => [...old, newTodo])
+    this.queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
 
     // Return a context object with the snapshotted value
     return { previousTodos }
@@ -106,7 +108,7 @@ updateTodo = injectMutation((client) => ({
   },
   // Always refetch after error or success:
   onSettled: () => {
-    client.invalidateQueries({ queryKey: ['todos'] })
+    this.queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
 }))
 ```
@@ -115,30 +117,35 @@ updateTodo = injectMutation((client) => ({
 [//]: # 'Example2'
 
 ```ts
-updateTodo = injectMutation((client) => ({
+queryClient = inject(QueryClient)
+
+updateTodo = injectMutation(() => ({
   mutationFn: updateTodo,
   // When mutate is called:
   onMutate: async (newTodo) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
-    await client.cancelQueries({ queryKey: ['todos', newTodo.id] })
+    await this.queryClient.cancelQueries({ queryKey: ['todos', newTodo.id] })
 
     // Snapshot the previous value
-    const previousTodo = client.getQueryData(['todos', newTodo.id])
+    const previousTodo = this.queryClient.getQueryData(['todos', newTodo.id])
 
     // Optimistically update to the new value
-    client.setQueryData(['todos', newTodo.id], newTodo)
+    this.queryClient.setQueryData(['todos', newTodo.id], newTodo)
 
     // Return a context with the previous and new todo
     return { previousTodo, newTodo }
   },
   // If the mutation fails, use the context we returned above
   onError: (err, newTodo, context) => {
-    client.setQueryData(['todos', context.newTodo.id], context.previousTodo)
+    this.queryClient.setQueryData(
+      ['todos', context.newTodo.id],
+      context.previousTodo,
+    )
   },
   // Always refetch after error or success:
   onSettled: (newTodo) => {
-    client.invalidateQueries({ queryKey: ['todos', newTodo.id] })
+    this.queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
   },
 }))
 ```

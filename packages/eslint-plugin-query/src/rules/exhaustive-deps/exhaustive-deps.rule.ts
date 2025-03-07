@@ -102,13 +102,16 @@ export const rule = createRule({
 
         const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyNode).map(
           (identifier) =>
-            ASTUtils.mapKeyNodeToText(identifier, context.sourceCode),
+            ASTUtils.mapKeyNodeToBaseText(identifier, context.sourceCode),
         )
 
         const missingRefs = relevantRefs
           .map((ref) => ({
             ref: ref,
-            text: ASTUtils.mapKeyNodeToText(ref.identifier, context.sourceCode),
+            text: ASTUtils.mapKeyNodeToBaseText(
+              ref.identifier,
+              context.sourceCode,
+            ),
           }))
           .filter(({ ref, text }) => {
             return (

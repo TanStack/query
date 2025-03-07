@@ -7,7 +7,7 @@ In this guide you'll learn how to use React Query with server rendering.
 
 See the guide on [Prefetching & Router Integration](../prefetching) for some background. You might also want to check out the [Performance & Request Waterfalls guide](../request-waterfalls) before that.
 
-For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](../advanced-ssr).
+For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](./advanced-ssr).
 
 If you just want to see some code, you can skip ahead to the [Full Next.js pages router example](#full-nextjs-pages-router-example) or the [Full Remix example](#full-remix-example) below.
 
@@ -181,7 +181,7 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 
 ### Full Next.js pages router example
 
-> For app router documentation, see the [Advanced Server Rendering guide](../advanced-ssr).
+> For app router documentation, see the [Advanced Server Rendering guide](./advanced-ssr).
 
 Initial setup:
 
@@ -214,7 +214,7 @@ export default function MyApp({ Component, pageProps }) {
 In each route:
 
 ```tsx
-// pages/posts.jsx
+// pages/posts.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -554,6 +554,6 @@ Alternatively, you can set a smaller `gcTime`.
 
 ### Caveat for Next.js rewrites
 
-There's a catch if you're using [Next.js' rewrites feature](https://nextjs.org/docs/api-reference/next.config.js/rewrites) together with [Automatic Static Optimization](https://nextjs.org/docs/advanced-features/automatic-static-optimization) or `getStaticProps`: It will cause a second hydration by React Query. That's because [Next.js needs to ensure that they parse the rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewrite-parameters) on the client and collect any params after hydration so that they can be provided in `router.query`.
+There's a catch if you're using [Next.js' rewrites feature](https://nextjs.org/docs/app/api-reference/next-config-js/rewrites) together with [Automatic Static Optimization](https://nextjs.org/docs/pages/building-your-application/rendering/automatic-static-optimization) or `getStaticProps`: It will cause a second hydration by React Query. That's because [Next.js needs to ensure that they parse the rewrites](https://nextjs.org/docs/app/api-reference/next-config-js/rewrites#rewrite-parameters) on the client and collect any params after hydration so that they can be provided in `router.query`.
 
 The result is missing referential equality for all the hydration data, which for example triggers wherever your data is used as props of components or in the dependency array of `useEffect`s/`useMemo`s.

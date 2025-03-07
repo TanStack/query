@@ -2,7 +2,7 @@ import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { derived, get, readable } from 'svelte/store'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import { isSvelteStore } from './utils.js'
+import { isSvelteStore, noop } from './utils.js'
 import type { Readable } from 'svelte/store'
 import type { StoreOrVal } from './types.js'
 import type {
@@ -184,23 +184,7 @@ export type QueriesResults<
             [...TResults, GetCreateQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              QueryObserverOptionsForCreateQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
-            Array<
-              QueryObserverResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<QueryObserverResult>
+        : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 
 export function createQueries<
   T extends Array<any>,
@@ -210,7 +194,11 @@ export function createQueries<
     queries,
     ...options
   }: {
-    queries: StoreOrVal<[...QueriesOptions<T>]>
+    queries:
+      | StoreOrVal<[...QueriesOptions<T>]>
+      | StoreOrVal<
+          [...{ [K in keyof T]: GetQueryObserverOptionsForCreateQueries<T[K]> }]
+        >
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
@@ -253,7 +241,7 @@ export function createQueries<
 
   const result = derived([isRestoring], ([$isRestoring], set) => {
     const unsubscribe = $isRestoring
-      ? () => undefined
+      ? noop
       : observer.subscribe(notifyManager.batchCalls(set))
 
     return () => unsubscribe()

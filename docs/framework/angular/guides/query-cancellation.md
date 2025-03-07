@@ -95,7 +95,7 @@ export class TodosComponent {
     },
   }))
 
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 
   onCancel() {
     this.queryClient.cancelQueries(['todos'])

@@ -13,6 +13,7 @@ import {
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
+import { noop } from './utils'
 import type { CreateQueryResult, SolidQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
@@ -182,30 +183,16 @@ type QueriesResults<
             [...TResult, GetResults<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              CreateQueryOptionsForCreateQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              CreateQueryResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<CreateQueryResult>
+        : { [K in keyof T]: GetResults<T[K]> }
 
 export function createQueries<
   T extends Array<any>,
   TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{
-    queries: readonly [...QueriesOptions<T>]
+    queries:
+      | readonly [...QueriesOptions<T>]
+      | readonly [...{ [K in keyof T]: GetOptions<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
   }>,
   queryClient?: Accessor<QueryClient>,
@@ -305,10 +292,10 @@ export function createQueries<
       })
     })
 
-  let unsubscribe: () => void = () => undefined
+  let unsubscribe = noop
   createComputed<() => void>((cleanup) => {
     cleanup?.()
-    unsubscribe = isRestoring() ? () => undefined : subscribeToObserver()
+    unsubscribe = isRestoring() ? noop : subscribeToObserver()
     // cleanup needs to be scheduled after synchronous effects take place
     return () => queueMicrotask(unsubscribe)
   })

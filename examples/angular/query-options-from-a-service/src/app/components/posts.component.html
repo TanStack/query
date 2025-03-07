@@ -1,0 +1,38 @@
+<div>
+  <h1>Posts</h1>
+  @switch (postsQuery.status()) {
+    @case ('pending') {
+      Loading...
+    }
+    @case ('error') {
+      Error: {{ postsQuery.error()?.message }}
+    }
+    @default {
+      <div class="todo-container">
+        @for (post of postsQuery.data(); track post.id) {
+          <p>
+            <!--          We can access the query data here to show bold links for-->
+            <!--          ones that are cached-->
+            <a
+              routerLink="post/{{ post.id }}"
+              [style]="
+                queryClient.getQueryData(['post', post.id])
+                  ? {
+                      fontWeight: 'bold',
+                      color: 'green',
+                    }
+                  : {}
+              "
+              >{{ post.title }}</a
+            >
+          </p>
+        }
+      </div>
+    }
+  }
+  <div>
+    @if (postsQuery.isFetching()) {
+      Background Updating...
+    }
+  </div>
+</div>

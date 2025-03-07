@@ -201,35 +201,26 @@ If you want to prefetch together with Suspense, you will have to do things a bit
 You can now use `useSuspenseQuery` in the component that actually needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
 
 ```tsx
-function App() {
+function ArticleLayout({ id }) {
   usePrefetchQuery({
-    queryKey: ['articles'],
-    queryFn: (...args) => {
-      return getArticles(...args)
-    },
+    queryKey: ['article-comments', id],
+    queryFn: getArticleCommentsById,
   })
 
   return (
-    <Suspense fallback="Loading articles...">
-      <Articles />
+    <Suspense fallback="Loading article">
+      <Article id={id} />
     </Suspense>
   )
 }
 
-function Articles() {
-  const { data: articles } = useSuspenseQuery({
-    queryKey: ['articles'],
-    queryFn: (...args) => {
-      return getArticles(...args)
-    },
+function Article({ id }) {
+  const { data: articleData, isPending } = useSuspenseQuery({
+    queryKey: ['article', id],
+    queryFn: getArticleById,
   })
 
-  return articles.map((article) => (
-    <div key={articleData.id}>
-      <ArticleHeader article={article} />
-      <ArticleBody article={article} />
-    </div>
-  ))
+  ...
 }
 ```
 

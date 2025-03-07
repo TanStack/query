@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/angular-query-devtools-experimental",
-  "version": "5.59.0",
+  "version": "5.67.1",
   "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
   "author": "Arnoud de Vries",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/angular-query-devtools-experimental"
   },
   "homepage": "https://tanstack.com/query",
@@ -15,24 +15,29 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "rimraf ./build ./coverage",
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "compile": "tsc --build",
     "test:eslint": "eslint ./src",
-    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
-    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
-    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
-    "test:types:ts53": "tsc",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
+    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js --build",
+    "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js --build",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
+    "test:types:tscurrent": "tsc --build",
     "test:build": "publint --strict && attw --pack",
-    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json"
+    "build": "pnpm build:tsup",
+    "build:tsup": "tsup --tsconfig tsconfig.prod.json"
   },
   "type": "module",
   "types": "build/index.d.ts",
-  "module": "build/fesm2022/tanstack-angular-query-devtools-experimental.mjs",
+  "module": "build/index.mjs",
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
-      "esm2022": "./build/esm2022/tanstack-angular-query-devtools-experimental.mjs",
-      "esm": "./build/esm2022/tanstack-angular-query-devtools-experimental.mjs",
-      "default": "./build/fesm2022/tanstack-angular-query-devtools-experimental.mjs"
+      "default": "./build/index.mjs"
     },
     "./package.json": {
       "default": "./package.json"
@@ -40,20 +45,21 @@
   },
   "sideEffects": false,
   "files": [
-    "build"
+    "build",
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
-    "@tanstack/query-devtools": "workspace:*",
-    "tslib": "^2.6.3"
+    "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "@angular/common": "^17.3.12",
-    "@angular/compiler-cli": "^17.3.12",
-    "@angular/core": "^17.3.12",
+    "@angular/core": "^19.1.0-next.0",
+    "@angular/platform-browser-dynamic": "^19.1.0-next.0",
     "@tanstack/angular-query-experimental": "workspace:*",
-    "eslint-plugin-jsdoc": "^50.2.2",
-    "ng-packagr": "^17.3.0",
-    "typescript": "5.3.3"
+    "eslint-plugin-jsdoc": "^50.5.0",
+    "npm-run-all": "^4.1.5",
+    "tsup": "8.0.2",
+    "typescript": "5.8.2"
   },
   "peerDependencies": {
     "@angular/common": ">=16.0.0",

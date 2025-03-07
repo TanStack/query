@@ -1,9 +1,9 @@
 import { ApplicationConfig } from '@angular/core'
 import {
-  provideAngularQuery,
+  provideTanStackQuery,
   QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideAngularQuery(new QueryClient())],
+  providers: [provideTanStackQuery(new QueryClient())],
 }

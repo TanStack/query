@@ -71,12 +71,9 @@ export function useMutationState<TResult = MutationState>(
 ): Readonly<Ref<Array<TResult>>> {
   const filters = computed(() => cloneDeepUnref(options.filters))
   const mutationCache = (queryClient || useQueryClient()).getMutationCache()
-  const state = shallowRef(getResult(mutationCache, options)) as Ref<
-    Array<TResult>
-  >
+  const state = shallowRef(getResult(mutationCache, options))
   const unsubscribe = mutationCache.subscribe(() => {
-    const result = getResult(mutationCache, options)
-    state.value = result
+    state.value = getResult(mutationCache, options)
   })
 
   watch(filters, () => {

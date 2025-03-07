@@ -8,9 +8,9 @@ replace: { '@tanstack/react-query': '@tanstack/angular-query-experimental' }
 [//]: # 'Example'
 
 ```ts
-bootstrapApplication(AppComponent, {
+export const appConfig: ApplicationConfig = {
   providers: [
-    provideAngularQuery(
+    provideTanStackQuery(
       new QueryClient({
         defaultOptions: {
           queries: {
@@ -20,7 +20,7 @@ bootstrapApplication(AppComponent, {
       }),
     ),
   ],
-})
+}
 ```
 
 [//]: # 'Example'

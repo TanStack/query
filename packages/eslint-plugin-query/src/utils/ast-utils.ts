@@ -42,6 +42,7 @@ export const ASTUtils = {
     properties: Array<TSESTree.ObjectLiteralElement>,
     key: string,
   ): TSESTree.Property | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     return properties.find((x) =>
       ASTUtils.isPropertyWithIdentifierKey(x, key),
     ) as TSESTree.Property | undefined
@@ -109,6 +110,24 @@ export const ASTUtils = {
 
     if (node.type === AST_NODE_TYPES.TSNonNullExpression) {
       identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
+    }
+
+    if (node.type === AST_NODE_TYPES.ArrowFunctionExpression) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
+    }
+
+    if (node.type === AST_NODE_TYPES.FunctionExpression) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
+    }
+
+    if (node.type === AST_NODE_TYPES.BlockStatement) {
+      identifiers.push(
+        ...node.body.map((body) => ASTUtils.getNestedIdentifiers(body)).flat(),
+      )
+    }
+
+    if (node.type === AST_NODE_TYPES.ReturnStatement && node.argument) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
     }
 
     return identifiers
@@ -205,8 +224,18 @@ export const ASTUtils = {
     return sourceCode.getText(
       ASTUtils.traverseUpOnly(node, [
         AST_NODE_TYPES.MemberExpression,
+        AST_NODE_TYPES.TSNonNullExpression,
         AST_NODE_TYPES.Identifier,
       ]),
+    )
+  },
+  mapKeyNodeToBaseText(
+    node: TSESTree.Node,
+    sourceCode: Readonly<TSESLint.SourceCode>,
+  ) {
+    return ASTUtils.mapKeyNodeToText(node, sourceCode).replace(
+      /(?:\?(\.)|!)/g,
+      '$1',
     )
   },
   isValidReactComponentOrHookName(
@@ -223,7 +252,13 @@ export const ASTUtils = {
     node: TSESTree.Node,
   ) {
     for (const ancestor of sourceCode.getAncestors(node)) {
-      if (ancestor.type === AST_NODE_TYPES.FunctionDeclaration) {
+      if (
+        ASTUtils.isNodeOfOneOf(ancestor, [
+          AST_NODE_TYPES.FunctionDeclaration,
+          AST_NODE_TYPES.FunctionExpression,
+          AST_NODE_TYPES.ArrowFunctionExpression,
+        ])
+      ) {
         return ancestor
       }
 

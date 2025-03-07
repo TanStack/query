@@ -98,7 +98,7 @@ Embedded mode will show the development tools as a fixed element in your applica
 Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
 
 ```tsx
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 
 function App() {
   const [isOpen, setIsOpen] = React.useState(false)

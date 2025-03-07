@@ -100,6 +100,10 @@
               "to": "framework/vue/typescript"
             },
             {
+              "label": "Reactivity",
+              "to": "framework/vue/reactivity"
+            },
+            {
               "label": "GraphQL",
               "to": "framework/vue/graphql"
             }
@@ -146,8 +150,16 @@
               "to": "framework/angular/quick-start"
             },
             {
+              "label": "Angular HttpClient and other data fetching clients",
+              "to": "framework/angular/angular-httpclient-and-other-data-fetching-clients"
+            },
+            {
               "label": "Devtools",
               "to": "framework/angular/devtools"
+            },
+            {
+              "label": "TypeScript",
+              "to": "framework/angular/typescript"
             },
             {
               "label": "Zoneless",
@@ -521,6 +533,10 @@
             {
               "label": "Mutations",
               "to": "framework/angular/guides/mutations"
+            },
+            {
+              "label": "Mutation Options",
+              "to": "framework/angular/guides/mutation-options"
             },
             {
               "label": "Query Invalidation",
@@ -1043,11 +1059,19 @@
               "to": "framework/angular/examples/basic"
             },
             {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/angular/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/angular/examples/optimistic-updates"
+            },
+            {
               "label": "Pagination",
               "to": "framework/angular/examples/pagination"
             },
             {
-              "label": "Infinite query with Max pages",
+              "label": "Infinite query with maxPages",
               "to": "framework/angular/examples/infinite-query-with-max-pages"
             },
             {
@@ -1057,6 +1081,14 @@
             {
               "label": "RxJS autocomplete",
               "to": "framework/angular/examples/rxjs"
+            },
+            {
+              "label": "Query options from a service",
+              "to": "framework/angular/examples/query-options-from-a-service"
+            },
+            {
+              "label": "Devtools embedded panel",
+              "to": "framework/angular/examples/devtools-panel"
             }
           ]
         }

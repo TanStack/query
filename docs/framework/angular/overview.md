@@ -9,11 +9,11 @@ The `@tanstack/angular-query-experimental` package offers a 1st-class API for us
 
 ## Feedback welcome!
 
-We are in the process of getting to a stable API for Angular Query. If you have any feedback, please contact us at the [TanStack Discord](https://tlinz.com/discord) server or [visit this discussion](https://github.com/TanStack/query/discussions/6293) on Github.
+We are in the process of getting to a stable API for TanStack Query on Angular. If you have any feedback, please contact us at the [TanStack Discord](https://tlinz.com/discord) server or [visit this discussion](https://github.com/TanStack/query/discussions/6293) on Github.
 
 ## Supported Angular Versions
 
-Angular Query is compatible with Angular v16 and higher.
+TanStack Query is compatible with Angular v16 and higher.
 
 TanStack Query (FKA React Query) is often described as the missing data-fetching library for web applications, but in more technical terms, it makes **fetching, caching, synchronizing and updating server state** in your web applications a breeze.
 
@@ -41,11 +41,11 @@ Once you grasp the nature of server state in your application, **even more chall
 
 If you're not overwhelmed by that list, then that must mean that you've probably solved all of your server state problems already and deserve an award. However, if you are like a vast majority of people, you either have yet to tackle all or most of these challenges and we're only scratching the surface!
 
-Angular Query is hands down one of the _best_ libraries for managing server state. It works amazingly well **out-of-the-box, with zero-config, and can be customized** to your liking as your application grows.
+TanStack Query is hands down one of the _best_ libraries for managing server state. It works amazingly well **out-of-the-box, with zero-config, and can be customized** to your liking as your application grows.
 
-Angular Query allows you to defeat and overcome the tricky challenges and hurdles of _server state_ and control your app data before it starts to control you.
+TanStack Query allows you to defeat and overcome the tricky challenges and hurdles of _server state_ and control your app data before it starts to control you.
 
-On a more technical note, Angular Query will likely:
+On a more technical note, TanStack Query will likely:
 
 - Help you remove **many** lines of complicated and misunderstood code from your application and replace with just a handful of lines of Angular Query logic.
 - Make your application more maintainable and easier to build new features without worrying about wiring up new server state data sources
@@ -56,12 +56,11 @@ On a more technical note, Angular Query will likely:
 
 ## Enough talk, show me some code already!
 
-In the example below, you can see Angular Query in its most basic and simple form being used to fetch the GitHub stats for the TanStack Query GitHub project itself:
+In the example below, you can see TanStack Query in its most basic and simple form being used to fetch the GitHub stats for the TanStack Query GitHub project itself:
 
 [Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/angular/simple)
 
 ```angular-ts
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { CommonModule } from '@angular/common'
@@ -86,10 +85,7 @@ import { lastValueFrom } from 'rxjs'
       <strong>✨ {{ data.stargazers_count }}</strong>
       <strong>🍴 {{ data.forks_count }}</strong>
     }
-
-    <angular-query-devtools initialIsOpen />
-  `,
-  imports: [AngularQueryDevtools],
+  `
 })
 export class SimpleExampleComponent {
   http = inject(HttpClient)
@@ -103,7 +99,7 @@ export class SimpleExampleComponent {
   }))
 }
 
-type Response = {
+interface Response {
   name: string
   description: string
   subscribers_count: number
@@ -114,4 +110,4 @@ type Response = {
 
 ## You talked me into it, so what now?
 
-- Learn Angular Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/functions/injectquery)
+- Learn TanStack Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/functions/injectquery)

@@ -20,6 +20,7 @@ import {
   shouldSuspend,
   willFetch,
 } from './suspense'
+import { noop } from './utils'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -46,7 +47,7 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData'
+  'placeholderData' | 'subscribed'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
@@ -202,23 +203,7 @@ export type QueriesResults<
             [...TResults, GetUseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              UseQueryOptionsForUseQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              UseQueryResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<UseQueryResult>
+        : { [K in keyof T]: GetUseQueryResult<T[K]> }
 
 export function useQueries<
   T extends Array<any>,
@@ -228,8 +213,11 @@ export function useQueries<
     queries,
     ...options
   }: {
-    queries: readonly [...QueriesOptions<T>]
+    queries:
+      | readonly [...QueriesOptions<T>]
+      | readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
+    subscribed?: boolean
   },
   queryClient?: QueryClient,
 ): TCombinedResult {
@@ -270,19 +258,21 @@ export function useQueries<
       ),
   )
 
+  // note: this must be called before useSyncExternalStore
   const [optimisticResult, getCombinedResult, trackResult] =
     observer.getOptimisticResult(
       defaultedQueries,
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
 
+  const shouldSubscribe = !isRestoring && options.subscribed !== false
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
-        isRestoring
-          ? () => undefined
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer, isRestoring],
+        shouldSubscribe
+          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
+          : noop,
+      [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
@@ -333,6 +323,7 @@ export function useQueries<
           errorResetBoundary,
           throwOnError: query.throwOnError,
           query: client.getQueryCache().get(query.queryHash),
+          suspense: query.suspense,
         })
       )
     },

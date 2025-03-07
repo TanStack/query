@@ -1,25 +1,23 @@
-import { createNoopInjectionToken } from './util/create-injection-token/create-injection-token'
-import type { QueryClient } from '@tanstack/query-core'
-
-const tokens = createNoopInjectionToken<QueryClient>('QueryClientToken')
+import { Injector, inject } from '@angular/core'
+import { QueryClient } from '@tanstack/query-core'
+import type { InjectOptions } from '@angular/core'
 
 /**
- * Injects the `QueryClient` instance into the component or service.
+ * Injects a `QueryClient` instance and allows passing a custom injector.
+ * @param injectOptions - Type of the options argument to inject and optionally a custom injector.
+ * @returns The `QueryClient` instance.
+ * @public
+ * @deprecated Use `inject(QueryClient)` instead.
+ * If you need to get a `QueryClient` from a custom injector, use `injector.get(QueryClient)`.
+ *
  *
  * **Example**
  * ```ts
  * const queryClient = injectQueryClient();
  * ```
- * @returns The `QueryClient` instance.
- * @public
  */
-export const injectQueryClient = tokens[0]
-
-/**
- * Usually {@link provideAngularQuery} is used once to set up TanStack Query and the
- * {@link https://tanstack.com/query/latest/docs/reference/QueryClient|QueryClient}
- * for the entire application. You can use `provideQueryClient` to provide a
- * different `QueryClient` instance for a part of the application.
- * @public
- */
-export const provideQueryClient = tokens[1]
+export function injectQueryClient(
+  injectOptions: InjectOptions & { injector?: Injector } = {},
+) {
+  return (injectOptions.injector ?? inject(Injector)).get(QueryClient)
+}

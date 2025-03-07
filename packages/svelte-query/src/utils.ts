@@ -7,4 +7,4 @@ export function isSvelteStore<T extends object>(
   return 'subscribe' in obj && typeof obj.subscribe === 'function'
 }
 
-export function noop() {}
+export function noop(): void {}

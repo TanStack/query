@@ -1,5 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts/legacy"
+  },
   "include": ["src"],
-  "exclude": ["src/__mocks__", "src/__tests__"]
+  "exclude": ["src/__mocks__", "src/__tests__"],
+  "references": [{ "path": "../query-core" }]
 }

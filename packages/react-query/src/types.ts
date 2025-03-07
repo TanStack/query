@@ -14,8 +14,16 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  SkipToken,
 } from '@tanstack/query-core'
 
+export type AnyUseBaseQueryOptions = UseBaseQueryOptions<
+  any,
+  any,
+  any,
+  any,
+  any
+>
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -28,8 +36,15 @@ export interface UseBaseQueryOptions<
     TData,
     TQueryData,
     TQueryKey
-  > {}
+  > {
+  /**
+   * Set this to `false` to unsubscribe this observer from updates to the query cache.
+   * Defaults to `true`.
+   */
+  subscribed?: boolean
+}
 
+export type AnyUseQueryOptions = UseQueryOptions<any, any, any, any>
 export interface UseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -40,6 +55,12 @@ export interface UseQueryOptions<
     'suspense'
   > {}
 
+export type AnyUseSuspenseQueryOptions = UseSuspenseQueryOptions<
+  any,
+  any,
+  any,
+  any
+>
 export interface UseSuspenseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -47,9 +68,22 @@ export interface UseSuspenseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'enabled' | 'throwOnError' | 'placeholderData'
-  > {}
+    'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  > {
+  queryFn?: Exclude<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
+    SkipToken
+  >
+}
 
+export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
+  any,
+  any,
+  any,
+  any,
+  any,
+  any
+>
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -67,8 +101,16 @@ export interface UseInfiniteQueryOptions<
       TPageParam
     >,
     'suspense'
-  > {}
+  > {
+  /**
+   * Set this to `false` to unsubscribe this observer from updates to the query cache.
+   * Defaults to `true`.
+   */
+  subscribed?: boolean
+}
 
+export type AnyUseSuspenseInfiniteQueryOptions =
+  UseSuspenseInfiniteQueryOptions<any, any, any, any, any, any>
 export interface UseSuspenseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -85,8 +127,20 @@ export interface UseSuspenseInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >,
-    'enabled' | 'throwOnError' | 'placeholderData'
-  > {}
+    'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  > {
+  queryFn?: Exclude<
+    UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >['queryFn'],
+    SkipToken
+  >
+}
 
 export type UseBaseQueryResult<
   TData = unknown,
@@ -129,6 +183,7 @@ export type UseSuspenseInfiniteQueryResult<
   'isPlaceholderData' | 'promise'
 >
 
+export type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>
 export interface UseMutationOptions<
   TData = unknown,
   TError = DefaultError,

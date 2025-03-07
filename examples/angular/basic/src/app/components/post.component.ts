@@ -6,17 +6,13 @@ import {
   inject,
   input,
 } from '@angular/core'
-import {
-  injectQuery,
-  injectQueryClient,
-} from '@tanstack/angular-query-experimental'
+import { QueryClient, injectQuery } from '@tanstack/angular-query-experimental'
 import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
 import { PostsService } from '../services/posts-service'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'post',
-  standalone: true,
   templateUrl: './post.component.html',
 })
 export class PostComponent {
@@ -38,5 +34,5 @@ export class PostComponent {
     },
   }))
 
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 }

@@ -7,7 +7,6 @@ import {
   createQueryClient,
   doNotExecute,
   renderWithClient,
-  setActTimeout,
   sleep,
 } from './utils'
 import type { MutationState, MutationStatus } from '@tanstack/query-core'
@@ -27,26 +26,24 @@ describe('useIsMutating', () => {
       const { mutate: mutate1 } = useMutation({
         mutationKey: ['mutation1'],
         mutationFn: async () => {
-          await sleep(150)
+          await sleep(50)
           return 'data'
         },
       })
       const { mutate: mutate2 } = useMutation({
         mutationKey: ['mutation2'],
         mutationFn: async () => {
-          await sleep(50)
+          await sleep(10)
           return 'data'
         },
       })
 
-      React.useEffect(() => {
-        mutate1()
-        setActTimeout(() => {
-          mutate2()
-        }, 50)
-      }, [mutate1, mutate2])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => mutate1()}>mutate1</button>
+          <button onClick={() => mutate2()}>mutate2</button>
+        </div>
+      )
     }
 
     function Page() {
@@ -58,8 +55,23 @@ describe('useIsMutating', () => {
       )
     }
 
-    renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 2, 1, 0]))
+    const rendered = renderWithClient(queryClient, <Page />)
+    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    await sleep(10)
+    fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
+
+    // we don't really care if this yields
+    // [ +0, 1, 2, +0 ]
+    // or
+    // [ +0, 1, 2, 1, +0 ]
+    // our batching strategy might yield different results
+
+    await waitFor(() => expect(isMutatingArray[0]).toEqual(0))
+    await waitFor(() => expect(isMutatingArray[1]).toEqual(1))
+    await waitFor(() => expect(isMutatingArray[2]).toEqual(2))
+    await waitFor(() =>
+      expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0),
+    )
   })
 
   it('should filter correctly by mutationKey', async () => {

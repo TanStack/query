@@ -56,23 +56,13 @@ export const rule = createRule({
           return
         }
 
-        const properties = allProperties.flatMap((p) => {
+        const properties = allProperties.flatMap((p, index) => {
           if (
             p.type === AST_NODE_TYPES.Property &&
             p.key.type === AST_NODE_TYPES.Identifier
           ) {
             return { name: p.key.name, property: p }
-          } else if (p.type === AST_NODE_TYPES.SpreadElement) {
-            if (p.argument.type === AST_NODE_TYPES.Identifier) {
-              return { name: p.argument.name, property: p }
-            } else if (p.argument.type === AST_NODE_TYPES.CallExpression) {
-              if (p.argument.callee.type === AST_NODE_TYPES.Identifier) {
-                return { name: p.argument.callee.name, property: p }
-              }
-            }
-            throw new Error('Unsupported spread element')
-          }
-          return []
+          } else return { name: `_property_${index}`, property: p }
         })
 
         const sortedProperties = sortDataByOrder(properties, sortRules, 'name')

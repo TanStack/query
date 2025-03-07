@@ -67,7 +67,7 @@ export function generateInterleavedCombinations<
   }
 
   function insertAtPositions(
-    data: Array<TResult>,
+    baseData: Array<TResult>,
     subset: Array<TResult>,
   ): Array<Array<TResult>> {
     const combinations: Array<Array<TResult>> = []
@@ -92,7 +92,7 @@ export function generateInterleavedCombinations<
       }
     }
 
-    recurse(data, subset, 0)
+    recurse(baseData, subset, 0)
     return combinations
   }
 

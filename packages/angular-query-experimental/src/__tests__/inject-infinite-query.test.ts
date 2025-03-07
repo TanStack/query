@@ -1,7 +1,10 @@
 import { TestBed } from '@angular/core/testing'
 import { afterEach } from 'vitest'
-import { Injector } from '@angular/core'
-import { QueryClient, injectInfiniteQuery, provideAngularQuery } from '..'
+import {
+  Injector,
+  provideExperimentalZonelessChangeDetection,
+} from '@angular/core'
+import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
 import { expectSignals, infiniteFetcher } from './test-utils'
 
 const QUERY_DURATION = 1000
@@ -15,7 +18,10 @@ describe('injectInfiniteQuery', () => {
     queryClient = new QueryClient()
     vi.useFakeTimers()
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [
+        provideExperimentalZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
     })
   })
 

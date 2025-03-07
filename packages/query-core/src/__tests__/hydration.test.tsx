@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/react'
+import { waitFor } from '@testing-library/dom'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
@@ -1027,5 +1027,119 @@ describe('dehydration and rehydration', () => {
 
     queryClient.clear()
     hydrationClient.clear()
+  })
+
+  test('should overwrite query in cache if hydrated query is newer (with promise)', async () => {
+    // --- server ---
+
+    const serverQueryClient = createQueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+
+    const promise = serverQueryClient.prefetchQuery({
+      queryKey: ['data'],
+      queryFn: async () => {
+        await sleep(10)
+        return 'server data'
+      },
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    // --- client ---
+
+    const clientQueryClient = createQueryClient()
+
+    clientQueryClient.setQueryData(['data'], 'old data', { updatedAt: 10 })
+
+    hydrate(clientQueryClient, dehydrated)
+
+    await promise
+    await waitFor(() =>
+      expect(clientQueryClient.getQueryData(['data'])).toBe('server data'),
+    )
+
+    clientQueryClient.clear()
+    serverQueryClient.clear()
+  })
+
+  test('should overwrite data when a new promise is streamed in', async () => {
+    const serializeDataMock = vi.fn((data: any) => data)
+    const deserializeDataMock = vi.fn((data: any) => data)
+
+    const countRef = { current: 0 }
+    // --- server ---
+    const serverQueryClient = createQueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+          serializeData: serializeDataMock,
+        },
+      },
+    })
+
+    const query = {
+      queryKey: ['data'],
+      queryFn: async () => {
+        await sleep(10)
+        return countRef.current
+      },
+    }
+
+    const promise = serverQueryClient.prefetchQuery(query)
+
+    let dehydrated = dehydrate(serverQueryClient)
+
+    // --- client ---
+
+    const clientQueryClient = createQueryClient({
+      defaultOptions: {
+        hydrate: {
+          deserializeData: deserializeDataMock,
+        },
+      },
+    })
+
+    hydrate(clientQueryClient, dehydrated)
+
+    await promise
+    await waitFor(() =>
+      expect(clientQueryClient.getQueryData(query.queryKey)).toBe(0),
+    )
+
+    expect(serializeDataMock).toHaveBeenCalledTimes(1)
+    expect(serializeDataMock).toHaveBeenCalledWith(0)
+
+    expect(deserializeDataMock).toHaveBeenCalledTimes(1)
+    expect(deserializeDataMock).toHaveBeenCalledWith(0)
+
+    // --- server ---
+    countRef.current++
+    serverQueryClient.clear()
+    const promise2 = serverQueryClient.prefetchQuery(query)
+
+    dehydrated = dehydrate(serverQueryClient)
+
+    // --- client ---
+
+    hydrate(clientQueryClient, dehydrated)
+
+    await promise2
+    await waitFor(() =>
+      expect(clientQueryClient.getQueryData(query.queryKey)).toBe(1),
+    )
+
+    expect(serializeDataMock).toHaveBeenCalledTimes(2)
+    expect(serializeDataMock).toHaveBeenCalledWith(1)
+
+    expect(deserializeDataMock).toHaveBeenCalledTimes(2)
+    expect(deserializeDataMock).toHaveBeenCalledWith(1)
+
+    clientQueryClient.clear()
+    serverQueryClient.clear()
   })
 })

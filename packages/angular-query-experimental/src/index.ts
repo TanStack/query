@@ -10,6 +10,8 @@ export type {
   UndefinedInitialDataOptions,
 } from './query-options'
 export { queryOptions } from './query-options'
+export { mutationOptions } from './mutation-options'
+export type { CreateMutationOptions } from './mutation-options'
 
 export type {
   DefinedInitialDataInfiniteOptions,
@@ -24,5 +26,5 @@ export * from './inject-mutation'
 export * from './inject-mutation-state'
 export * from './inject-queries'
 export * from './inject-query'
-export { injectQueryClient, provideQueryClient } from './inject-query-client'
-export { provideAngularQuery } from './providers'
+export * from './inject-query-client'
+export * from './providers'

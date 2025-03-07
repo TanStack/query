@@ -2,7 +2,7 @@ import { derived, get, readable } from 'svelte/store'
 import { notifyManager } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import { isSvelteStore } from './utils.js'
+import { isSvelteStore, noop } from './utils.js'
 import type {
   QueryClient,
   QueryKey,
@@ -66,7 +66,7 @@ export function createBaseQuery<
     QueryObserverResult<TData, TError>
   >(isRestoring, ($isRestoring, set) => {
     const unsubscribe = $isRestoring
-      ? () => undefined
+      ? noop
       : observer.subscribe(notifyManager.batchCalls(set))
     observer.updateResult()
     return unsubscribe

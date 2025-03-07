@@ -172,11 +172,33 @@ declare module '@tanstack/react-query' {
 ```
 
 [//]: # 'TypingMeta'
+[//]: # 'TypingQueryAndMutationKeys'
+
+## Typing query and mutation keys
+
+### Registering the query and mutation key types
+
+Also similarly to registering a [global error type](#registering-a-global-error), you can also register a global `QueryKey` and `MutationKey` type. This allows you to provide more structure to your keys, that matches your application's hierarchy, and have them be typed across all of the library's surface area. Note that the registered type must extend the `Array` type, so that your keys remain an array.
+
+```ts
+import '@tanstack/react-query'
+
+type QueryKey = ['dashboard' | 'marketing', ...ReadonlyArray<unknown>]
+
+declare module '@tanstack/react-query' {
+  interface Register {
+    queryKey: QueryKey
+    mutationKey: QueryKey
+  }
+}
+```
+
+[//]: # 'TypingQueryAndMutationKeys'
 [//]: # 'TypingQueryOptions'
 
 ## Typing Query Options
 
-If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use `queryOptions` helper:
+If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
 
 ```ts
 import { queryOptions } from '@tanstack/react-query'

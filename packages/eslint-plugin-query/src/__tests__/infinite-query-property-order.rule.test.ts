@@ -24,6 +24,7 @@ const orderIndependentProps = [
   'queryKey',
   '...objectExpressionSpread',
   '...callExpressionSpread',
+  '...memberCallExpressionSpread',
 ] as const
 type OrderIndependentProps = (typeof orderIndependentProps)[number]
 
@@ -147,6 +148,8 @@ function getCode({
         return `...objectExpressionSpread`
       case '...callExpressionSpread':
         return callExpressionSpread
+      case '...memberCallExpressionSpread':
+        return '...myOptions.infiniteQueryOptions()'
       case 'queryKey':
         return `queryKey: ['projects']`
       case 'queryFn':

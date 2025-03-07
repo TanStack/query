@@ -4,7 +4,6 @@ import {
   computed,
   inject,
 } from '@angular/core'
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { injectInfiniteQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 import { ProjectStyleDirective } from '../directives/project-style.directive'
@@ -13,9 +12,8 @@ import { ProjectsService } from '../services/projects.service'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'example',
-  standalone: true,
   templateUrl: './example.component.html',
-  imports: [AngularQueryDevtools, ProjectStyleDirective],
+  imports: [ProjectStyleDirective],
 })
 export class ExampleComponent {
   projectsService = inject(ProjectsService)

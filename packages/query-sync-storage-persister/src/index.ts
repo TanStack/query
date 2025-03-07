@@ -88,7 +88,7 @@ export function createSyncStoragePersister({
 
   return {
     persistClient: noop,
-    restoreClient: () => undefined,
+    restoreClient: noop,
     removeClient: noop,
   }
 }

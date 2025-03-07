@@ -1,13 +1,4 @@
-import {
-  afterAll,
-  beforeAll,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-  test,
-  vi,
-} from 'vitest'
+import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -4971,6 +4962,29 @@ describe('useQuery', () => {
     expect(renders).toBe(hashes)
   })
 
+  it('should hash query keys that contain bigints given a supported query hash function', async () => {
+    const key = [queryKey(), 1n]
+
+    function queryKeyHashFn(x: any) {
+      return JSON.stringify(x, (_, value) => {
+        if (typeof value === 'bigint') return value.toString()
+        return value
+      })
+    }
+
+    function Page() {
+      useQuery({ queryKey: key, queryFn: () => 'test', queryKeyHashFn })
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    const query = queryClient.getQueryCache().get(queryKeyHashFn(key))
+    expect(query?.state.data).toBe('test')
+  })
+
   it('should refetch when changed enabled to true in error state', async () => {
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(async () => {
@@ -5950,6 +5964,110 @@ describe('useQuery', () => {
     })
   })
 
+  describe('subscribed', () => {
+    it('should be able to toggle subscribed', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(async () => 'data')
+      function Page() {
+        const [subscribed, setSubscribed] = React.useState(true)
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed,
+        })
+        return (
+          <div>
+            <span>data: {data}</span>
+            <button onClick={() => setSubscribed(!subscribed)}>toggle</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('data: data'))
+
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(1)
+
+      fireEvent.click(rendered.getByRole('button', { name: 'toggle' }))
+
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      fireEvent.click(rendered.getByRole('button', { name: 'toggle' }))
+
+      // background refetch when we re-subscribe
+      await waitFor(() => expect(queryFn).toHaveBeenCalledTimes(2))
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(1)
+    })
+
+    it('should not be attached to the query when subscribed is false', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(async () => 'data')
+      function Page() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn,
+          subscribed: false,
+        })
+        return (
+          <div>
+            <span>data: {data}</span>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('data:'))
+
+      expect(
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+      ).toBe(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
+
+    it('should not re-render when data is added to the cache when subscribed is false', async () => {
+      const key = queryKey()
+      let renders = 0
+      function Page() {
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: async () => 'data',
+          subscribed: false,
+        })
+        renders++
+        return (
+          <div>
+            <span>{data ? 'has data' + data : 'no data'}</span>
+            <button
+              onClick={() => queryClient.setQueryData<string>(key, 'new data')}
+            >
+              set data
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('no data'))
+
+      fireEvent.click(rendered.getByRole('button', { name: 'set data' }))
+
+      await sleep(10)
+
+      await waitFor(() => rendered.getByText('no data'))
+
+      expect(renders).toBe(1)
+    })
+  })
+
   it('should have status=error on mount when a query has failed', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<unknown>> = []
@@ -6408,6 +6526,39 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: data'))
   })
 
+  it('should allow enabled: true and queryFn: skipToken', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function App() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: skipToken,
+        enabled: true,
+      })
+
+      return (
+        <div>
+          <div>
+            status: {query.status}, fetchStatus: {query.fetchStatus}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() =>
+      rendered.getByText('status: pending, fetchStatus: idle'),
+    )
+
+    // no warnings expected about skipToken / missing queryFn
+    expect(consoleMock).toHaveBeenCalledTimes(0)
+    consoleMock.mockRestore()
+  })
+
   it('should return correct optimistic result when fetching after error', async () => {
     const key = queryKey()
     const error = new Error('oh no')
@@ -6619,748 +6770,5 @@ describe('useQuery', () => {
     )
 
     consoleMock.mockRestore()
-  })
-
-  describe('useQuery().promise', () => {
-    beforeAll(() => {
-      queryClient.setDefaultOptions({
-        queries: { experimental_prefetchInRender: true },
-      })
-    })
-    afterAll(() => {
-      queryClient.setDefaultOptions({
-        queries: { experimental_prefetchInRender: false },
-      })
-    })
-    it('should work with a basic test', async () => {
-      const key = queryKey()
-      let suspenseRenderCount = 0
-      let pageRenderCount = 0
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-
-      function Loading() {
-        suspenseRenderCount++
-        return <>loading..</>
-      }
-      function Page() {
-        const query = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            await sleep(1)
-            return 'test'
-          },
-        })
-
-        pageRenderCount++
-        return (
-          <React.Suspense fallback={<Loading />}>
-            <MyComponent promise={query.promise} />
-          </React.Suspense>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => rendered.getByText('test'))
-
-      // Suspense should rendered once since `.promise` is the only watched property
-      expect(suspenseRenderCount).toBe(1)
-
-      // Page should be rendered once since since the promise do not change
-      expect(pageRenderCount).toBe(1)
-    })
-
-    it('colocate suspense and promise', async () => {
-      const key = queryKey()
-      let suspenseRenderCount = 0
-      let pageRenderCount = 0
-      let callCount = 0
-
-      function MyComponent() {
-        const query = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            callCount++
-            await sleep(1)
-            return 'test'
-          },
-          staleTime: 1000,
-        })
-        const data = React.use(query.promise)
-
-        return <>{data}</>
-      }
-
-      function Loading() {
-        suspenseRenderCount++
-        return <>loading..</>
-      }
-      function Page() {
-        pageRenderCount++
-        return (
-          <React.Suspense fallback={<Loading />}>
-            <MyComponent />
-          </React.Suspense>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => rendered.getByText('test'))
-
-      // Suspense should rendered once since `.promise` is the only watched property
-      expect(suspenseRenderCount).toBe(1)
-
-      // Page should be rendered once since since the promise do not change
-      expect(pageRenderCount).toBe(1)
-
-      expect(callCount).toBe(1)
-    })
-
-    it('parallel queries', async () => {
-      const key = queryKey()
-      let suspenseRenderCount = 0
-      let pageRenderCount = 0
-      let callCount = 0
-
-      function MyComponent() {
-        const query = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            callCount++
-            await sleep(1)
-            return 'test'
-          },
-          staleTime: 1000,
-        })
-        const data = React.use(query.promise)
-
-        return data
-      }
-
-      function Loading() {
-        suspenseRenderCount++
-        return <>loading..</>
-      }
-      function Page() {
-        pageRenderCount++
-        return (
-          <>
-            <React.Suspense fallback={<Loading />}>
-              <MyComponent />
-              <MyComponent />
-              <MyComponent />
-            </React.Suspense>
-            <React.Suspense fallback={null}>
-              <MyComponent />
-              <MyComponent />
-            </React.Suspense>
-          </>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => {
-        expect(rendered.queryByText('loading..')).not.toBeInTheDocument()
-      })
-
-      expect(rendered.container.textContent).toBe('test'.repeat(5))
-
-      // Suspense should rendered once since `.promise` is the only watched property
-      expect(suspenseRenderCount).toBe(1)
-
-      // Page should be rendered once since since the promise do not change
-      expect(pageRenderCount).toBe(1)
-
-      expect(callCount).toBe(1)
-    })
-
-    it('should work with initial data', async () => {
-      const key = queryKey()
-      let suspenseRenderCount = 0
-      let pageRenderCount = 0
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-      function Loading() {
-        suspenseRenderCount++
-
-        return <>loading..</>
-      }
-      function Page() {
-        const query = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            await sleep(1)
-            return 'test'
-          },
-          initialData: 'initial',
-        })
-        pageRenderCount++
-
-        return (
-          <React.Suspense fallback={<Loading />}>
-            <MyComponent promise={query.promise} />
-          </React.Suspense>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      await waitFor(() => rendered.getByText('initial'))
-      await waitFor(() => rendered.getByText('test'))
-
-      // Suspense boundary should never be rendered since it has data immediately
-      expect(suspenseRenderCount).toBe(0)
-      // Page should only be rendered twice since, the promise will get swapped out when new result comes in
-      expect(pageRenderCount).toBe(2)
-    })
-
-    it('should not fetch with initial data and staleTime', async () => {
-      const key = queryKey()
-      let suspenseRenderCount = 0
-      const queryFn = vi.fn().mockImplementation(async () => {
-        await sleep(1)
-        return 'test'
-      })
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-      function Loading() {
-        suspenseRenderCount++
-
-        return <>loading..</>
-      }
-      function Page() {
-        const query = useQuery({
-          queryKey: key,
-          queryFn,
-          initialData: 'initial',
-          staleTime: 1000,
-        })
-
-        return (
-          <React.Suspense fallback={<Loading />}>
-            <MyComponent promise={query.promise} />
-          </React.Suspense>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      await waitFor(() => rendered.getByText('initial'))
-
-      // Suspense boundary should never be rendered since it has data immediately
-      expect(suspenseRenderCount).toBe(0)
-      // should not call queryFn because of staleTime + initialData combo
-      expect(queryFn).toHaveBeenCalledTimes(0)
-    })
-
-    it('should work with static placeholderData', async () => {
-      const key = queryKey()
-      let suspenseRenderCount = 0
-      let pageRenderCount = 0
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-      function Loading() {
-        suspenseRenderCount++
-
-        return <>loading..</>
-      }
-      function Page() {
-        const query = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            await sleep(1)
-            return 'test'
-          },
-          placeholderData: 'placeholder',
-        })
-        pageRenderCount++
-
-        return (
-          <React.Suspense fallback={<Loading />}>
-            <MyComponent promise={query.promise} />
-          </React.Suspense>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      await waitFor(() => rendered.getByText('placeholder'))
-      await waitFor(() => rendered.getByText('test'))
-
-      // Suspense boundary should never be rendered since it has data immediately
-      expect(suspenseRenderCount).toBe(0)
-      // Page should only be rendered twice since, the promise will get swapped out when new result comes in
-      expect(pageRenderCount).toBe(2)
-    })
-
-    it('should work with placeholderData: keepPreviousData', async () => {
-      const key = queryKey()
-      let suspenseRenderCount = 0
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-      function Loading() {
-        suspenseRenderCount++
-
-        return <>loading..</>
-      }
-      function Page() {
-        const [count, setCount] = React.useState(0)
-        const query = useQuery({
-          queryKey: [...key, count],
-          queryFn: async () => {
-            await sleep(1)
-            return 'test-' + count
-          },
-          placeholderData: keepPreviousData,
-        })
-
-        return (
-          <div>
-            <React.Suspense fallback={<Loading />}>
-              <MyComponent promise={query.promise} />
-            </React.Suspense>
-            <button onClick={() => setCount((c) => c + 1)}>increment</button>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => rendered.getByText('test-0'))
-
-      // Suspense boundary should only be rendered initially
-      expect(suspenseRenderCount).toBe(1)
-
-      fireEvent.click(rendered.getByRole('button', { name: 'increment' }))
-
-      await waitFor(() => rendered.getByText('test-1'))
-
-      // no more suspense boundary rendering
-      expect(suspenseRenderCount).toBe(1)
-    })
-
-    it('should be possible to select a part of the data with select', async () => {
-      const key = queryKey()
-      let suspenseRenderCount = 0
-      let pageRenderCount = 0
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-        return <>{data}</>
-      }
-
-      function Loading() {
-        suspenseRenderCount++
-        return <>loading..</>
-      }
-
-      function Page() {
-        const query = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            await sleep(1)
-            return { name: 'test' }
-          },
-          select: (data) => data.name,
-        })
-
-        pageRenderCount++
-        return (
-          <React.Suspense fallback={<Loading />}>
-            <MyComponent promise={query.promise} />
-          </React.Suspense>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-
-      await waitFor(() => {
-        rendered.getByText('test')
-      })
-      expect(suspenseRenderCount).toBe(1)
-      expect(pageRenderCount).toBe(1)
-    })
-
-    it('should throw error if the promise fails', async () => {
-      let suspenseRenderCount = 0
-      const consoleMock = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
-
-      const key = queryKey()
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-
-      function Loading() {
-        suspenseRenderCount++
-        return <>loading..</>
-      }
-
-      let queryCount = 0
-      function Page() {
-        const query = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            await sleep(1)
-            if (++queryCount > 1) {
-              // second time this query mounts, it should not throw
-              return 'data'
-            }
-            throw new Error('Error test')
-          },
-          retry: false,
-        })
-
-        return (
-          <React.Suspense fallback={<Loading />}>
-            <MyComponent promise={query.promise} />
-          </React.Suspense>
-        )
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <ErrorBoundary
-          fallbackRender={(props) => (
-            <>
-              error boundary{' '}
-              <button
-                onClick={() => {
-                  props.resetErrorBoundary()
-                }}
-              >
-                resetErrorBoundary
-              </button>
-            </>
-          )}
-        >
-          <Page />
-        </ErrorBoundary>,
-      )
-
-      await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => rendered.getByText('error boundary'))
-
-      consoleMock.mockRestore()
-
-      fireEvent.click(rendered.getByText('resetErrorBoundary'))
-
-      await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => rendered.getByText('data'))
-
-      expect(queryCount).toBe(2)
-    })
-
-    it('should recreate promise with data changes', async () => {
-      const key = queryKey()
-      let suspenseRenderCount = 0
-      let pageRenderCount = 0
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-
-      function Loading() {
-        suspenseRenderCount++
-        return <>loading..</>
-      }
-      function Page() {
-        const query = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            await sleep(1)
-            return 'test1'
-          },
-        })
-
-        pageRenderCount++
-        return (
-          <React.Suspense fallback={<Loading />}>
-            <MyComponent promise={query.promise} />
-          </React.Suspense>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => rendered.getByText('test1'))
-
-      // Suspense should rendered once since `.promise` is the only watched property
-      expect(pageRenderCount).toBe(1)
-
-      queryClient.setQueryData(key, 'test2')
-
-      await waitFor(() => rendered.getByText('test2'))
-
-      // Suspense should rendered once since `.promise` is the only watched property
-      expect(suspenseRenderCount).toBe(1)
-
-      // Page should be rendered once since since the promise changed once
-      expect(pageRenderCount).toBe(2)
-    })
-
-    it('should dedupe when re-fetched with queryClient.fetchQuery while suspending', async () => {
-      const key = queryKey()
-      const queryFn = vi.fn().mockImplementation(async () => {
-        await sleep(10)
-        return 'test'
-      })
-
-      const options = {
-        queryKey: key,
-        queryFn,
-      }
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-
-      function Loading() {
-        return <>loading..</>
-      }
-      function Page() {
-        const query = useQuery(options)
-
-        return (
-          <div>
-            <React.Suspense fallback={<Loading />}>
-              <MyComponent promise={query.promise} />
-            </React.Suspense>
-            <button onClick={() => queryClient.fetchQuery(options)}>
-              fetch
-            </button>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      fireEvent.click(rendered.getByText('fetch'))
-      await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => rendered.getByText('test'))
-
-      expect(queryFn).toHaveBeenCalledOnce()
-    })
-
-    it('should dedupe when re-fetched with refetchQueries while suspending', async () => {
-      const key = queryKey()
-      let count = 0
-      const queryFn = vi.fn().mockImplementation(async () => {
-        await sleep(10)
-        return 'test' + count++
-      })
-
-      const options = {
-        queryKey: key,
-        queryFn,
-      }
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-
-      function Loading() {
-        return <>loading..</>
-      }
-      function Page() {
-        const query = useQuery(options)
-
-        return (
-          <div>
-            <React.Suspense fallback={<Loading />}>
-              <MyComponent promise={query.promise} />
-            </React.Suspense>
-            <button onClick={() => queryClient.refetchQueries(options)}>
-              refetch
-            </button>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      fireEvent.click(rendered.getByText('refetch'))
-      await waitFor(() => rendered.getByText('loading..'))
-      await waitFor(() => rendered.getByText('test0'))
-
-      expect(queryFn).toHaveBeenCalledOnce()
-    })
-
-    it('should stay pending when canceled with cancelQueries while suspending until refetched', async () => {
-      const key = queryKey()
-      let count = 0
-      const queryFn = vi.fn().mockImplementation(async () => {
-        await sleep(10)
-        return 'test' + count++
-      })
-
-      const options = {
-        queryKey: key,
-        queryFn,
-      }
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-
-      function Loading() {
-        return <>loading..</>
-      }
-      function Page() {
-        const query = useQuery(options)
-
-        return (
-          <div>
-            <React.Suspense fallback={<Loading />}>
-              <MyComponent promise={query.promise} />
-            </React.Suspense>
-            <button onClick={() => queryClient.cancelQueries(options)}>
-              cancel
-            </button>
-            <button
-              onClick={() => queryClient.setQueryData<string>(key, 'hello')}
-            >
-              fetch
-            </button>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <ErrorBoundary fallbackRender={() => <>error boundary</>}>
-          <Page />
-        </ErrorBoundary>,
-      )
-      fireEvent.click(rendered.getByText('cancel'))
-      await waitFor(() => rendered.getByText('loading..'))
-      // await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() =>
-        expect(queryClient.getQueryState(key)).toMatchObject({
-          status: 'pending',
-          fetchStatus: 'idle',
-        }),
-      )
-
-      expect(queryFn).toHaveBeenCalledOnce()
-
-      fireEvent.click(rendered.getByText('fetch'))
-
-      await waitFor(() => rendered.getByText('hello'))
-    })
-
-    it('should resolve to previous data when canceled with cancelQueries while suspending', async () => {
-      const key = queryKey()
-      const queryFn = vi.fn().mockImplementation(async () => {
-        await sleep(10)
-        return 'test'
-      })
-
-      const options = {
-        queryKey: key,
-        queryFn,
-      }
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-
-      function Loading() {
-        return <>loading..</>
-      }
-      function Page() {
-        const query = useQuery(options)
-
-        return (
-          <div>
-            <React.Suspense fallback={<Loading />}>
-              <MyComponent promise={query.promise} />
-            </React.Suspense>
-            <button onClick={() => queryClient.cancelQueries(options)}>
-              cancel
-            </button>
-          </div>
-        )
-      }
-
-      queryClient.setQueryData(key, 'initial')
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      fireEvent.click(rendered.getByText('cancel'))
-      await waitFor(() => rendered.getByText('initial'))
-
-      expect(queryFn).toHaveBeenCalledTimes(1)
-    })
-
-    it('should suspend when not enabled', async () => {
-      const key = queryKey()
-
-      const options = (count: number) => ({
-        queryKey: [...key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return 'test' + count
-        },
-      })
-
-      function MyComponent(props: { promise: Promise<string> }) {
-        const data = React.use(props.promise)
-
-        return <>{data}</>
-      }
-
-      function Loading() {
-        return <>loading..</>
-      }
-      function Page() {
-        const [count, setCount] = React.useState(0)
-        const query = useQuery({ ...options(count), enabled: count > 0 })
-
-        return (
-          <div>
-            <React.Suspense fallback={<Loading />}>
-              <MyComponent promise={query.promise} />
-            </React.Suspense>
-            <button onClick={() => setCount(1)}>enable</button>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-      await waitFor(() => rendered.getByText('loading..'))
-      fireEvent.click(rendered.getByText('enable'))
-      await waitFor(() => rendered.getByText('test1'))
-    })
   })
 })

@@ -9,7 +9,12 @@ import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 import { useSuspenseQuery } from '../useSuspenseQuery'
-import type { QueryObserverResult } from '@tanstack/query-core'
+import type { AnyUseQueryOptions } from '../types'
+import type {
+  DataTag,
+  InitialDataFunction,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
@@ -174,6 +179,16 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<unknown>()
   })
 
+  it('should throw a type error when using queryFn with skipToken in a suspense query', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+    })
+    // @ts-expect-error TS2345
+    const { data } = useSuspenseQuery(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
   it('should return the proper type when passed to QueriesObserver', () => {
     const options = queryOptions({
       queryKey: ['key'],
@@ -204,5 +219,65 @@ describe('queryOptions', () => {
                 title: 'Initial Data',
               },
       })
+  })
+
+  it('should allow optional initialData object', () => {
+    const testFn = (id?: string) => {
+      const options = queryOptions({
+        queryKey: ['test'],
+        queryFn: async () => 'something string',
+        initialData: id ? 'initial string' : undefined,
+      })
+      expectTypeOf(options.initialData).toMatchTypeOf<
+        InitialDataFunction<string> | string | undefined
+      >()
+    }
+    testFn('id')
+    testFn()
+  })
+
+  it('should be passable to UseQueryOptions', () => {
+    function somethingWithQueryOptions<TQueryOpts extends AnyUseQueryOptions>(
+      options: TQueryOpts,
+    ) {
+      return options.queryKey
+    }
+
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(1),
+    })
+
+    somethingWithQueryOptions(options)
+  })
+
+  it('should return a custom query key type', () => {
+    type MyQueryKey = [Array<string>, { type: 'foo' }]
+
+    const options = queryOptions({
+      queryKey: [['key'], { type: 'foo' }] as MyQueryKey,
+      queryFn: () => Promise.resolve(1),
+    })
+
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      DataTag<MyQueryKey, number, Error>
+    >()
+  })
+
+  it('should return a custom query key type with datatag', () => {
+    type MyQueryKey = DataTag<
+      [Array<string>, { type: 'foo' }],
+      number,
+      Error & { myMessage: string }
+    >
+
+    const options = queryOptions({
+      queryKey: [['key'], { type: 'foo' }] as MyQueryKey,
+      queryFn: () => Promise.resolve(1),
+    })
+
+    expectTypeOf(options.queryKey).toEqualTypeOf<
+      DataTag<MyQueryKey, number, Error & { myMessage: string }>
+    >()
   })
 })

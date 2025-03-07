@@ -4,11 +4,11 @@ import type { RuleModule } from '@typescript-eslint/utils/ts-eslint'
 
 type RuleKey = keyof typeof rules
 
-interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
+export interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
   rules: Record<RuleKey, RuleModule<any, any, any>>
   configs: {
     recommended: ESLint.ConfigData
-    'flat/recommended': Array<Linter.FlatConfig>
+    'flat/recommended': Array<Linter.Config>
   }
 }
 
@@ -34,6 +34,7 @@ Object.assign(plugin.configs, {
   },
   'flat/recommended': [
     {
+      name: 'tanstack/query/flat/recommended',
       plugins: {
         '@tanstack/query': plugin,
       },

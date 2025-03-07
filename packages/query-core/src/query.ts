@@ -3,11 +3,14 @@ import {
   noop,
   replaceData,
   resolveEnabled,
+  skipToken,
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
+import type { QueryCache } from './queryCache'
+import type { QueryClient } from './queryClient'
 import type {
   CancelOptions,
   DefaultError,
@@ -22,7 +25,6 @@ import type {
   QueryStatus,
   SetDataOptions,
 } from './types'
-import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
 
@@ -34,7 +36,7 @@ interface QueryConfig<
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > {
-  cache: QueryCache
+  client: QueryClient
   queryKey: TQueryKey
   queryHash: string
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -67,6 +69,7 @@ export interface FetchContext<
   fetchOptions?: FetchOptions
   signal: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
+  client: QueryClient
   queryKey: TQueryKey
   state: QueryState<TData, TError>
 }
@@ -162,11 +165,11 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  isFetchingOptimistic?: boolean
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
+  #client: QueryClient
   #retryer?: Retryer<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -179,7 +182,8 @@ export class Query<
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
-    this.#cache = config.cache
+    this.#client = config.client
+    this.#cache = this.#client.getQueryCache()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
@@ -256,7 +260,14 @@ export class Query<
   }
 
   isDisabled(): boolean {
-    return this.getObserversCount() > 0 && !this.isActive()
+    if (this.getObserversCount() > 0) {
+      return !this.isActive()
+    }
+    // if a query has no observers, it should still be considered disabled if it never attempted a fetch
+    return (
+      this.options.queryFn === skipToken ||
+      this.state.dataUpdateCount + this.state.errorUpdateCount === 0
+    )
   }
 
   isStale(): boolean {
@@ -404,6 +415,7 @@ export class Query<
         QueryFunctionContext<TQueryKey>,
         'signal'
       > = {
+        client: this.#client,
         queryKey: this.queryKey,
         meta: this.meta,
       }
@@ -430,6 +442,7 @@ export class Query<
       fetchOptions,
       options: this.options,
       queryKey: this.queryKey,
+      client: this.#client,
       state: this.state,
       fetchFn,
     }
@@ -474,11 +487,8 @@ export class Query<
         )
       }
 
-      if (!this.isFetchingOptimistic) {
-        // Schedule query gc after fetching
-        this.scheduleGc()
-      }
-      this.isFetchingOptimistic = false
+      // Schedule query gc after fetching
+      this.scheduleGc()
     }
 
     // Try to fetch the data
@@ -514,11 +524,8 @@ export class Query<
           this as Query<any, any, any, any>,
         )
 
-        if (!this.isFetchingOptimistic) {
-          // Schedule query gc after fetching
-          this.scheduleGc()
-        }
-        this.isFetchingOptimistic = false
+        // Schedule query gc after fetching
+        this.scheduleGc()
       },
       onError,
       onFail: (failureCount, error) => {

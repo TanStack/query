@@ -1,6 +1,4 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/react'
-
 import {
   MutationObserver,
   QueryClient,
@@ -9,8 +7,8 @@ import {
   focusManager,
   hydrate,
   onlineManager,
+  skipToken,
 } from '..'
-import { skipToken } from '../utils'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
@@ -24,6 +22,7 @@ describe('queryClient', () => {
   let queryCache: QueryCache
 
   beforeEach(() => {
+    vi.useFakeTimers()
     queryClient = createQueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
@@ -32,6 +31,7 @@ describe('queryClient', () => {
   afterEach(() => {
     queryClient.clear()
     queryClient.unmount()
+    vi.useRealTimers()
   })
 
   describe('defaultOptions', () => {
@@ -75,7 +75,6 @@ describe('queryClient', () => {
     test('should not trigger a fetch', async () => {
       const key = queryKey()
       queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
-      await sleep(1)
       const data = queryClient.getQueryData(key)
       expect(data).toBeUndefined()
     })
@@ -333,10 +332,7 @@ describe('queryClient', () => {
       const key = queryKey()
       queryClient.prefetchQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 23
-        },
+        queryFn: () => sleep(10).then(() => 23),
       })
       expect(queryClient.getQueryState(key)).toMatchObject({
         data: undefined,
@@ -347,12 +343,11 @@ describe('queryClient', () => {
         data: 42,
         fetchStatus: 'fetching',
       })
-      await waitFor(() =>
-        expect(queryClient.getQueryState(key)).toMatchObject({
-          data: 23,
-          fetchStatus: 'idle',
-        }),
-      )
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: 23,
+        fetchStatus: 'idle',
+      })
     })
   })
 
@@ -397,6 +392,26 @@ describe('queryClient', () => {
 
       expect(result).toEqual([])
       expect(queryClient.getQueryData(['key'])).toBe(undefined)
+    })
+  })
+
+  describe('isFetching', () => {
+    test('should return length of fetching queries', async () => {
+      expect(queryClient.isFetching()).toBe(0)
+      queryClient.prefetchQuery({
+        queryKey: queryKey(),
+        queryFn: () => sleep(10).then(() => 'data'),
+      })
+      expect(queryClient.isFetching()).toBe(1)
+      queryClient.prefetchQuery({
+        queryKey: queryKey(),
+        queryFn: () => sleep(5).then(() => 'data'),
+      })
+      expect(queryClient.isFetching()).toBe(2)
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryClient.isFetching()).toEqual(1)
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryClient.isFetching()).toEqual(0)
     })
   })
 
@@ -468,7 +483,7 @@ describe('queryClient', () => {
           revalidateIfStale: true,
         }),
       ).resolves.toEqual('old')
-      await sleep(TIMEOUT + 10)
+      await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
@@ -476,6 +491,21 @@ describe('queryClient', () => {
           revalidateIfStale: true,
         }),
       ).resolves.toEqual('new')
+    })
+
+    test('should not fetch with initialDat', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn().mockImplementation(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.ensureQueryData({
+          queryKey: [key, 'id'],
+          queryFn,
+          initialData: 'initial',
+        }),
+      ).resolves.toEqual('initial')
+
+      expect(queryFn).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -515,10 +545,7 @@ describe('queryClient', () => {
       const key = queryKey()
       queryClient.setQueryData([key, 'id'], { pages: ['old'], pageParams: [0] })
 
-      const queryFn = () =>
-        new Promise((resolve) => {
-          setTimeout(() => resolve('new'), TIMEOUT)
-        })
+      const queryFn = () => sleep(TIMEOUT).then(() => 'new')
 
       await expect(
         queryClient.ensureInfiniteQueryData({
@@ -529,7 +556,7 @@ describe('queryClient', () => {
           revalidateIfStale: true,
         }),
       ).resolves.toEqual({ pages: ['old'], pageParams: [0] })
-      await sleep(TIMEOUT + 10)
+      await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
@@ -622,32 +649,28 @@ describe('queryClient', () => {
 
     test('should be able to fetch when garbage collection time is set to 0 and then be removed', async () => {
       const key1 = queryKey()
-      const result = await queryClient.fetchQuery({
+      const promise = queryClient.fetchQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return 1
-        },
+        queryFn: () => sleep(10).then(() => 1),
         gcTime: 0,
       })
-      expect(result).toEqual(1)
-      await waitFor(() =>
+      vi.advanceTimersByTimeAsync(10)
+      await expect(promise).resolves.toEqual(1)
+      await vi.waitFor(() =>
         expect(queryClient.getQueryData(key1)).toEqual(undefined),
       )
     })
 
     test('should keep a query in cache if garbage collection time is Infinity', async () => {
       const key1 = queryKey()
-      const result = await queryClient.fetchQuery({
+      const promise = queryClient.fetchQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return 1
-        },
+        queryFn: () => sleep(10).then(() => 1),
         gcTime: Infinity,
       })
+      await vi.advanceTimersByTimeAsync(10)
       const result2 = queryClient.getQueryData(key1)
-      expect(result).toEqual(1)
+      await expect(promise).resolves.toEqual(1)
       expect(result2).toEqual(1)
     })
 
@@ -669,35 +692,57 @@ describe('queryClient', () => {
       const key = queryKey()
 
       let count = 0
-      const fetchFn = () => ++count
+      const queryFn = () => ++count
 
       queryClient.setQueryData(key, count)
-      const first = await queryClient.fetchQuery({
+      const firstPromise = queryClient.fetchQuery({
         queryKey: key,
-        queryFn: fetchFn,
+        queryFn,
         staleTime: 100,
       })
-      await sleep(11)
+      await expect(firstPromise).resolves.toBe(0)
+      await vi.advanceTimersByTimeAsync(10)
+      const secondPromise = queryClient.fetchQuery({
+        queryKey: key,
+        queryFn,
+        staleTime: 10,
+      })
+      await expect(secondPromise).resolves.toBe(1)
+      const thirdPromise = queryClient.fetchQuery({
+        queryKey: key,
+        queryFn,
+        staleTime: 10,
+      })
+      await expect(thirdPromise).resolves.toBe(1)
+      await vi.advanceTimersByTimeAsync(10)
+      const fourthPromise = queryClient.fetchQuery({
+        queryKey: key,
+        queryFn,
+        staleTime: 10,
+      })
+      await expect(fourthPromise).resolves.toBe(2)
+    })
+
+    test('should allow new meta', async () => {
+      const key = queryKey()
+
+      const first = await queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: true,
+        },
+      })
+      expect(first).toStrictEqual({ foo: true })
+
       const second = await queryClient.fetchQuery({
         queryKey: key,
-        queryFn: fetchFn,
-        staleTime: 10,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: false,
+        },
       })
-      const third = await queryClient.fetchQuery({
-        queryKey: key,
-        queryFn: fetchFn,
-        staleTime: 10,
-      })
-      await sleep(11)
-      const fourth = await queryClient.fetchQuery({
-        queryKey: key,
-        queryFn: fetchFn,
-        staleTime: 10,
-      })
-      expect(first).toBe(0)
-      expect(second).toBe(1)
-      expect(third).toBe(1)
-      expect(fourth).toBe(2)
+      expect(second).toStrictEqual({ foo: false })
     })
   })
 
@@ -874,13 +919,11 @@ describe('queryClient', () => {
 
       await queryClient.prefetchQuery({
         queryKey: key,
-        queryFn: async () => {
-          return 'data'
-        },
+        queryFn: async () => 'data',
         gcTime: 10,
       })
       expect(queryCache.find({ queryKey: key })).toBeDefined()
-      await sleep(15)
+      await vi.advanceTimersByTimeAsync(15)
       expect(queryCache.find({ queryKey: key })).not.toBeDefined()
     })
   })
@@ -912,9 +955,7 @@ describe('queryClient', () => {
       const key3 = queryKey()
       await queryClient.fetchQuery({
         queryKey: key1,
-        queryFn: async () => {
-          return 'data'
-        },
+        queryFn: async () => 'data',
       })
       try {
         await queryClient.fetchQuery({
@@ -926,28 +967,20 @@ describe('queryClient', () => {
       } catch {}
       queryClient.fetchQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(1000)
-          return 'data2'
-        },
+        queryFn: () => sleep(1000).then(() => 'data2'),
       })
       try {
         queryClient.fetchQuery({
           queryKey: key2,
-          queryFn: async () => {
-            await sleep(1000)
-            return Promise.reject<unknown>('err2')
-          },
+          queryFn: () =>
+            sleep(1000).then(() => Promise.reject<unknown>('err2')),
         })
       } catch {}
       queryClient.fetchQuery({
         queryKey: key3,
-        queryFn: async () => {
-          await sleep(1000)
-          return 'data3'
-        },
+        queryFn: () => sleep(1000).then(() => 'data3'),
       })
-      await sleep(10)
+      await vi.advanceTimersByTime(10)
       await queryClient.cancelQueries()
       const state1 = queryClient.getQueryState(key1)
       const state2 = queryClient.getQueryState(key2)
@@ -972,18 +1005,13 @@ describe('queryClient', () => {
       const key1 = queryKey()
       await queryClient.fetchQuery({
         queryKey: key1,
-        queryFn: async () => {
-          return 'data'
-        },
+        queryFn: async () => 'data',
       })
       queryClient.fetchQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(1000)
-          return 'data2'
-        },
+        queryFn: () => sleep(1000).then(() => 'data2'),
       })
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
       await queryClient.cancelQueries({ queryKey: key1 }, { revert: false })
       const state1 = queryClient.getQueryState(key1)
       expect(state1).toMatchObject({
@@ -1409,24 +1437,64 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(2)
     })
 
+    test('should not refetch disabled inactive queries even if "refetchType" is "all', async () => {
+      const queryFn = vi
+        .fn<(...args: Array<unknown>) => string>()
+        .mockReturnValue('data1')
+      const observer = new QueryObserver(queryClient, {
+        queryKey: queryKey(),
+        queryFn: queryFn,
+        staleTime: Infinity,
+        enabled: false,
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+      unsubscribe()
+      await queryClient.invalidateQueries({
+        refetchType: 'all',
+      })
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
+
+    test('should not refetch inactive queries that have a skipToken queryFn even if "refetchType" is "all', async () => {
+      const key = queryKey()
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: skipToken,
+        staleTime: Infinity,
+      })
+
+      queryClient.setQueryData(key, 'data1')
+
+      const unsubscribe = observer.subscribe(() => undefined)
+      unsubscribe()
+
+      expect(queryClient.getQueryState(key)?.dataUpdateCount).toBe(1)
+
+      await queryClient.invalidateQueries({
+        refetchType: 'all',
+      })
+
+      expect(queryClient.getQueryState(key)?.dataUpdateCount).toBe(1)
+    })
+
     test('should cancel ongoing fetches if cancelRefetch option is set (default value)', async () => {
       const key = queryKey()
       const abortFn = vi.fn()
       let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
-        queryFn: ({ signal }) => {
-          return new Promise((resolve) => {
+        queryFn: ({ signal }) =>
+          new Promise((resolve) => {
             fetchCount++
             setTimeout(() => resolve(5), 10)
             signal.addEventListener('abort', abortFn)
-          })
-        },
+          }),
         initialData: 1,
       })
       observer.subscribe(() => undefined)
 
-      await queryClient.refetchQueries()
+      queryClient.refetchQueries()
+      await vi.advanceTimersByTime(10)
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(1)
       expect(fetchCount).toBe(2)
@@ -1449,7 +1517,8 @@ describe('queryClient', () => {
       })
       observer.subscribe(() => undefined)
 
-      await queryClient.refetchQueries(undefined, { cancelRefetch: false })
+      queryClient.refetchQueries(undefined, { cancelRefetch: false })
+      await vi.advanceTimersByTime(10)
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(0)
       expect(fetchCount).toBe(1)
@@ -1575,7 +1644,9 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       focusManager.setFocused(true)
-      await waitFor(() => expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1))
+      await vi.waitFor(() =>
+        expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1),
+      )
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
@@ -1607,7 +1678,7 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       onlineManager.setOnline(true)
-      await waitFor(() =>
+      await vi.waitFor(() =>
         expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1),
       )
 
@@ -1635,14 +1706,14 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(observer1.getCurrentResult().isPaused).toBeTruthy()
         expect(observer2.getCurrentResult().isPaused).toBeTruthy()
       })
 
       onlineManager.setOnline(true)
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(observer1.getCurrentResult().status).toBe('success')
         expect(observer2.getCurrentResult().status).toBe('success')
       })
@@ -1673,14 +1744,14 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(observer1.getCurrentResult().isPaused).toBeTruthy()
         expect(observer2.getCurrentResult().isPaused).toBeTruthy()
       })
 
       onlineManager.setOnline(true)
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(observer1.getCurrentResult().status).toBe('success')
         expect(observer2.getCurrentResult().status).toBe('success')
       })
@@ -1721,17 +1792,15 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(observer1.getCurrentResult().isPaused).toBeTruthy()
         expect(observer2.getCurrentResult().isPaused).toBeTruthy()
       })
 
       onlineManager.setOnline(true)
       void queryClient.resumePausedMutations()
-      await sleep(5)
-      await queryClient.resumePausedMutations()
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(observer1.getCurrentResult().status).toBe('success')
         expect(observer2.getCurrentResult().status).toBe('success')
       })
@@ -1759,7 +1828,7 @@ describe('queryClient', () => {
 
       onlineManager.setOnline(true)
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(observer.getCurrentResult().status).toBe('success')
       })
     })
@@ -1800,7 +1869,7 @@ describe('queryClient', () => {
 
       onlineManager.setOnline(true)
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(
           newQueryClient.getMutationCache().getAll()[0]?.state.status,
         ).toBe('success')
@@ -1827,7 +1896,7 @@ describe('queryClient', () => {
 
       const unsubscribe = queryObserver.subscribe(() => undefined)
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(queryClient.getQueryData(key)).toBe('data1')
       })
 
@@ -1872,19 +1941,19 @@ describe('queryClient', () => {
 
       void observer3.mutate()
 
-      await waitFor(() =>
+      await vi.waitFor(() =>
         expect(observer.getCurrentResult().isPaused).toBeTruthy(),
       )
-      await waitFor(() =>
+      await vi.waitFor(() =>
         expect(observer2.getCurrentResult().isPaused).toBeTruthy(),
       )
-      await waitFor(() =>
+      await vi.waitFor(() =>
         expect(observer3.getCurrentResult().isPaused).toBeTruthy(),
       )
 
       onlineManager.setOnline(true)
 
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(queryClient.getQueryData(key)).toBe('data2')
       })
 
@@ -1924,13 +1993,15 @@ describe('queryClient', () => {
 
       onlineManager.setOnline(false)
       onlineManager.setOnline(true)
-      await waitFor(() =>
+      await vi.waitFor(() =>
         expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1),
       )
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       focusManager.setFocused(true)
-      await waitFor(() => expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1))
+      await vi.waitFor(() =>
+        expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1),
+      )
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(2)
 
       queryCacheOnFocusSpy.mockRestore()
