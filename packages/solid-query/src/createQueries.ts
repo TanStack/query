@@ -309,7 +309,6 @@ export function createQueries<
             combine: queriesOptions().combine,
           } as QueriesObserverOptions<TCombinedResult>)
         : undefined,
-      { listeners: false },
     )
   })
 
@@ -321,7 +320,6 @@ export function createQueries<
             combine: queriesOptions().combine,
           } as QueriesObserverOptions<TCombinedResult>)
         : undefined,
-      { listeners: false },
     )
   })
 

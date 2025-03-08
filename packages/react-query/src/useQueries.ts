@@ -279,14 +279,9 @@ export function useQueries<
   )
 
   React.useEffect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
     observer.setQueries(
       defaultedQueries,
       options as QueriesObserverOptions<TCombinedResult>,
-      {
-        listeners: false,
-      },
     )
   }, [defaultedQueries, options, observer])
 
