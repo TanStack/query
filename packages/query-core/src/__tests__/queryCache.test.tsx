@@ -358,23 +358,23 @@ describe('queryCache', () => {
         expect(onSettled).toHaveBeenCalledWith({ data: 5 }, null, query)
       })
     })
+  })
 
-    describe('QueryCache.add', () => {
-      test('should not try to add a query already added to the cache', async () => {
-        const key = queryKey()
+  describe('QueryCache.add', () => {
+    test('should not try to add a query already added to the cache', async () => {
+      const key = queryKey()
 
-        queryClient.prefetchQuery({
-          queryKey: key,
-          queryFn: () => sleep(100).then(() => 'data1'),
-        })
-        await vi.advanceTimersByTimeAsync(100)
-
-        const query = queryCache.findAll()[0]!
-        const queryClone = Object.assign({}, query)
-
-        queryCache.add(queryClone)
-        expect(queryCache.getAll().length).toEqual(1)
+      queryClient.prefetchQuery({
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'data1'),
       })
+      await vi.advanceTimersByTimeAsync(100)
+
+      const query = queryCache.findAll()[0]!
+      const queryClone = Object.assign({}, query)
+
+      queryCache.add(queryClone)
+      expect(queryCache.getAll().length).toEqual(1)
     })
   })
 })
