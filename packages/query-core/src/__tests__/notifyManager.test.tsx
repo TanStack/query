@@ -1,31 +1,36 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createNotifyManager } from '../notifyManager'
 import { sleep } from './utils'
 
 describe('notifyManager', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should use default notifyFn', async () => {
     const notifyManagerTest = createNotifyManager()
     const callbackSpy = vi.fn()
     notifyManagerTest.schedule(callbackSpy)
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(0)
     expect(callbackSpy).toHaveBeenCalled()
   })
 
   it('should use default batchNotifyFn', async () => {
     const notifyManagerTest = createNotifyManager()
-    const callbackScheduleSpy = vi
-      .fn()
-      .mockImplementation(async () => await sleep(20))
+    const callbackScheduleSpy = vi.fn().mockImplementation(() => sleep(20))
     const callbackBatchLevel2Spy = vi.fn().mockImplementation(async () => {
       notifyManagerTest.schedule(callbackScheduleSpy)
     })
     const callbackBatchLevel1Spy = vi.fn().mockImplementation(async () => {
       notifyManagerTest.batch(callbackBatchLevel2Spy)
     })
-
     notifyManagerTest.batch(callbackBatchLevel1Spy)
 
-    await sleep(30)
+    await vi.advanceTimersByTimeAsync(20)
     expect(callbackBatchLevel1Spy).toHaveBeenCalledTimes(1)
     expect(callbackBatchLevel2Spy).toHaveBeenCalledTimes(1)
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
@@ -62,8 +67,7 @@ describe('notifyManager', () => {
       })
     } catch {}
 
-    // needed for setTimeout to kick in
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
