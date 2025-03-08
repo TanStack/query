@@ -22,6 +22,8 @@ import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
+ * @param optionsFn
+ * @param Observer
  */
 export function createBaseQuery<
   TQueryFnData,
@@ -86,11 +88,7 @@ export function createBaseQuery<
       const defaultedOptions = defaultedOptionsSignal()
 
       untracked(() => {
-        observer.setOptions(defaultedOptions, {
-          // Do not notify on updates because of changes in the options because
-          // these changes should already be reflected in the optimistic result.
-          listeners: false,
-        })
+        observer.setOptions(defaultedOptions)
       })
       onCleanup(() => {
         ngZone.run(() => resultFromSubscriberSignal.set(null))
