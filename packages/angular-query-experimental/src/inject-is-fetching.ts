@@ -2,7 +2,8 @@ import { DestroyRef, NgZone, inject, signal } from '@angular/core'
 import { QueryClient, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import type { QueryFilters } from '@tanstack/query-core'
-import type { Injector, Signal } from '@angular/core'
+import type { Signal } from '@angular/core'
+import type { WithOptionalInjector } from "./types";
 
 /**
  * Injects a signal that tracks the number of queries that your application is loading or
@@ -10,15 +11,15 @@ import type { Injector, Signal } from '@angular/core'
  *
  * Can be used for app-wide loading indicators
  * @param filters - The filters to apply to the query.
- * @param injector - The Angular injector to use.
+ * @param options - Additional configuration
  * @returns signal with number of loading or fetching queries.
  * @public
  */
 export function injectIsFetching(
   filters?: QueryFilters,
-  injector?: Injector,
+  options?: WithOptionalInjector,
 ): Signal<number> {
-  return assertInjector(injectIsFetching, injector, () => {
+  return assertInjector(injectIsFetching, options?.injector, () => {
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
     const queryClient = inject(QueryClient)

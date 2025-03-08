@@ -2,22 +2,23 @@ import { DestroyRef, NgZone, inject, signal } from '@angular/core'
 import { QueryClient, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import type { MutationFilters } from '@tanstack/query-core'
-import type { Injector, Signal } from '@angular/core'
+import type { Signal } from '@angular/core'
+import type { WithOptionalInjector } from "./types";
 
 /**
  * Injects a signal that tracks the number of mutations that your application is fetching.
  *
  * Can be used for app-wide loading indicators
  * @param filters - The filters to apply to the query.
- * @param injector - The Angular injector to use.
+ * @param options - Additional configuration
  * @returns signal with number of fetching mutations.
  * @public
  */
 export function injectIsMutating(
   filters?: MutationFilters,
-  injector?: Injector,
+  options?: WithOptionalInjector,
 ): Signal<number> {
-  return assertInjector(injectIsMutating, injector, () => {
+  return assertInjector(injectIsMutating, options?.injector, () => {
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
     const queryClient = inject(QueryClient)

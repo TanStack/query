@@ -12,9 +12,12 @@ import {
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import {
   QueryClient,
-  onlineManager,
+  onlineManager
 } from '@tanstack/angular-query-experimental'
 import { isPlatformBrowser } from '@angular/common'
+import type {
+  WithOptionalInjector
+} from '@tanstack/angular-query-experimental'
 import type { ElementRef } from '@angular/core'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 
@@ -26,19 +29,19 @@ import type { DevtoolsErrorType } from '@tanstack/query-devtools'
  *
  * Consider `withDevtools` instead if you don't need this.
  * @param optionsFn - A function that returns devtools panel options.
- * @param injector - The Angular injector to use.
+ * @param options - Additional configuration
  * @returns DevtoolsPanelRef
  * @see https://tanstack.com/query/v5/docs/framework/angular/devtools
  */
 export function injectDevtoolsPanel(
   optionsFn: () => DevtoolsPanelOptions,
-  injector?: Injector,
+  options?: WithOptionalInjector,
 ): DevtoolsPanelRef {
-  !injector && assertInInjectionContext(injectDevtoolsPanel)
-  const currentInjector = injector ?? inject(Injector)
+  !options?.injector && assertInInjectionContext(injectDevtoolsPanel)
+  const currentInjector = options?.injector ?? inject(Injector)
 
   return runInInjectionContext(currentInjector, () => {
-    const options = computed(optionsFn)
+    const queryOptions = computed(optionsFn)
     let devtools: TanstackQueryDevtoolsPanel | null = null
 
     const isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
@@ -64,7 +67,7 @@ export function injectDevtoolsPanel(
         shadowDOMTarget,
         onClose,
         hostElement,
-      } = options()
+      } = queryOptions()
 
       untracked(() => {
         if (!client) throw new Error('No QueryClient found')

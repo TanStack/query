@@ -12,7 +12,7 @@ import {
   signal,
 } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import type { Injector, Signal } from '@angular/core'
+import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   OmitKeyof,
@@ -24,6 +24,7 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
+import type { WithOptionalInjector } from "./types";
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -196,7 +197,7 @@ export type QueriesResults<
  * @param root0
  * @param root0.queries
  * @param root0.combine
- * @param injector
+ * @param props
  * @public
  */
 export function injectQueries<
@@ -210,9 +211,9 @@ export function injectQueries<
     queries: Signal<[...QueriesOptions<T>]>
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
-  injector?: Injector,
+  props?: WithOptionalInjector,
 ): Signal<TCombinedResult> {
-  return assertInjector(injectQueries, injector, () => {
+  return assertInjector(injectQueries, props?.injector, () => {
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
     const queryClient = inject(QueryClient)

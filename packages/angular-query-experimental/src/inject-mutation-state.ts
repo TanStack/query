@@ -5,13 +5,14 @@ import {
   replaceEqualDeep,
 } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import type { Injector, Signal } from '@angular/core'
+import type { Signal } from '@angular/core'
 import type {
   Mutation,
   MutationCache,
   MutationFilters,
   MutationState,
 } from '@tanstack/query-core'
+import type { WithOptionalInjector } from "./types";
 
 type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
@@ -33,9 +34,7 @@ function getResult<TResult = MutationState>(
 /**
  * @public
  */
-export interface InjectMutationStateOptions {
-  injector?: Injector
-}
+export type InjectMutationStateOptions = WithOptionalInjector
 
 /**
  * Injects a signal that tracks the state of all mutations.

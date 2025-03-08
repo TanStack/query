@@ -18,7 +18,7 @@ import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { noop, shouldThrowError } from './util'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
-import type { CreateMutateFunction, CreateMutationResult } from './types'
+import type {CreateMutateFunction, CreateMutationResult, WithOptionalInjector} from './types'
 import type { CreateMutationOptions } from './mutation-options'
 
 /**
@@ -26,7 +26,7 @@ import type { CreateMutationOptions } from './mutation-options'
  *
  * Unlike queries, mutations are not run automatically.
  * @param optionsFn - A function that returns mutation options.
- * @param injector - The Angular injector to use.
+ * @param options - Additional configuration
  * @returns The mutation.
  * @public
  */
@@ -37,9 +37,9 @@ export function injectMutation<
   TContext = unknown,
 >(
   optionsFn: () => CreateMutationOptions<TData, TError, TVariables, TContext>,
-  injector?: Injector,
+  options?: WithOptionalInjector,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
-  return assertInjector(injectMutation, injector, () => {
+  return assertInjector(injectMutation, options?.injector, () => {
     const currentInjector = inject(Injector)
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
@@ -104,7 +104,7 @@ export function injectMutation<
         })
       },
       {
-        injector,
+        injector: options?.injector,
       },
     )
 
@@ -136,7 +136,7 @@ export function injectMutation<
         })
       },
       {
-        injector,
+        injector: options?.injector,
       },
     )
 

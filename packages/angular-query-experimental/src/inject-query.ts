@@ -1,12 +1,11 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { createBaseQuery } from './create-base-query'
-import type { Injector } from '@angular/core'
 import type { DefaultError, QueryKey } from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
-  DefinedCreateQueryResult,
+  DefinedCreateQueryResult, WithOptionalInjector,
 } from './types'
 import type {
   DefinedInitialDataOptions,
@@ -45,7 +44,7 @@ import type {
  * }
  * ```
  * @param optionsFn - A function that returns query options.
- * @param injector - The Angular injector to use.
+ * @param options - Additional configuration
  * @returns The query result.
  * @public
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
@@ -62,7 +61,7 @@ export function injectQuery<
     TData,
     TQueryKey
   >,
-  injector?: Injector,
+  options?: WithOptionalInjector,
 ): DefinedCreateQueryResult<TData, TError>
 
 /**
@@ -97,7 +96,7 @@ export function injectQuery<
  * }
  * ```
  * @param optionsFn - A function that returns query options.
- * @param injector - The Angular injector to use.
+ * @param options - Additional configuration
  * @returns The query result.
  * @public
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
@@ -114,7 +113,7 @@ export function injectQuery<
     TData,
     TQueryKey
   >,
-  injector?: Injector,
+  options?: WithOptionalInjector,
 ): CreateQueryResult<TData, TError>
 
 /**
@@ -149,7 +148,7 @@ export function injectQuery<
  * }
  * ```
  * @param optionsFn - A function that returns query options.
- * @param injector - The Angular injector to use.
+ * @param options - Additional configuration
  * @returns The query result.
  * @public
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
@@ -161,7 +160,7 @@ export function injectQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   optionsFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  injector?: Injector,
+  options?: WithOptionalInjector,
 ): CreateQueryResult<TData, TError>
 
 /**
@@ -196,16 +195,16 @@ export function injectQuery<
  * }
  * ```
  * @param optionsFn - A function that returns query options.
- * @param injector - The Angular injector to use.
+ * @param options - Additional configuration
  * @returns The query result.
  * @public
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */
 export function injectQuery(
   optionsFn: () => CreateQueryOptions,
-  injector?: Injector,
+  options?: WithOptionalInjector,
 ) {
-  return assertInjector(injectQuery, injector, () =>
+  return assertInjector(injectQuery, options?.injector, () =>
     createBaseQuery(optionsFn, QueryObserver),
   ) as unknown as CreateQueryResult
 }

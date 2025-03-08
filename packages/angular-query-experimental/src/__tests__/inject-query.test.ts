@@ -638,7 +638,9 @@ describe('injectQuery', () => {
           queryKey: ['manualInjector'],
           queryFn: simpleFetcher,
         }),
-        TestBed.inject(Injector),
+        {
+          injector: TestBed.inject(Injector),
+        },
       )
 
       expect(query.status()).toBe('pending')
