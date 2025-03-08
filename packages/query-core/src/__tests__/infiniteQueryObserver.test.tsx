@@ -1,18 +1,20 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { InfiniteQueryObserver } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey } from './utils'
 import type { QueryClient } from '..'
 
 describe('InfiniteQueryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
+    vi.useFakeTimers()
     queryClient = createQueryClient()
     queryClient.mount()
   })
 
   afterEach(() => {
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   test('InfiniteQueryObserver should be able to fetch an infinite query with selector', async () => {
@@ -31,7 +33,7 @@ describe('InfiniteQueryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(observerResult).toMatchObject({
       data: { pages: ['1'], pageParams: [1] },
@@ -60,7 +62,7 @@ describe('InfiniteQueryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(observerResult).toMatchObject({
       data: { pages: ['1'], pageParams: [1] },
