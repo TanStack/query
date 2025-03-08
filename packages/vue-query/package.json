@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query",
-  "version": "5.66.11",
+  "version": "5.67.2",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in Vue",
   "author": "Damian Osipiuk",
   "license": "MIT",
@@ -26,7 +26,8 @@
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json",
-    "test:types:ts57": "tsc --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:tscurrent": "tsc --build",
     "test:lib": "pnpm run test:lib:2 && pnpm run test:lib:2.7 && pnpm run test:lib:3",
     "test:lib:2": "vue-demi-switch 2 vue2 && vitest",
     "test:lib:2.7": "vue-demi-switch 2.7 vue2.7 && vitest",
