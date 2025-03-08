@@ -72,5 +72,5 @@ export const useTodoCount = () => {
 
 ## Further Reading
 
-For an in-depth guide about these topics, read [React Query Render Optimizations](../../community/tkdodos-blog#3-react-query-render-optimizations) from
+For an in-depth guide about these topics, read [React Query Render Optimizations](../community/tkdodos-blog#3-react-query-render-optimizations) from
 the Community Resources.
