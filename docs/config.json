@@ -121,6 +121,10 @@
               "to": "framework/svelte/installation"
             },
             {
+              "label": "Devtools",
+              "to": "framework/svelte/devtools"
+            },
+            {
               "label": "SSR & SvelteKit",
               "to": "framework/svelte/ssr"
             },
@@ -144,6 +148,10 @@
             {
               "label": "Quick Start",
               "to": "framework/angular/quick-start"
+            },
+            {
+              "label": "Angular HttpClient and other data fetching clients",
+              "to": "framework/angular/angular-httpclient-and-other-data-fetching-clients"
             },
             {
               "label": "Devtools",
