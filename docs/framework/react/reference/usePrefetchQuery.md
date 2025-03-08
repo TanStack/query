@@ -21,4 +21,4 @@ You can pass everything to `usePrefetchQuery` that you can pass to [`queryClient
 
 **Returns**
 
-The `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseQuery`](./useSuspenseQuery).
+The `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseQuery`](../reference/useSuspenseQuery).

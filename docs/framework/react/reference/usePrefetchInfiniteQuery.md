@@ -34,4 +34,4 @@ You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`que
 
 - **Returns**
 
-The `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseInfiniteQuery`](./useSuspenseInfiniteQuery)
+The `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseInfiniteQuery`](../reference/useSuspenseInfiniteQuery)

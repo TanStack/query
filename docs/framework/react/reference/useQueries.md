@@ -18,7 +18,7 @@ const results = useQueries({
 
 **Options**
 
-The `useQueries` hook accepts an options object with a **queries** key whose value is an array with query option objects identical to the [`useQuery` hook](./useQuery) (excluding the `queryClient` option - because the `QueryClient` can be passed in on the top level).
+The `useQueries` hook accepts an options object with a **queries** key whose value is an array with query option objects identical to the [`useQuery` hook](../reference/useQuery) (excluding the `queryClient` option - because the `QueryClient` can be passed in on the top level).
 
 - `queryClient?: QueryClient`
   - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context will be used.

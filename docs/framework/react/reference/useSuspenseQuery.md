@@ -9,7 +9,7 @@ const result = useSuspenseQuery(options)
 
 **Options**
 
-The same as for [useQuery](./useQuery.md), except for:
+The same as for [useQuery](../reference/useQuery), except for:
 
 - `throwOnError`
 - `enabled`
@@ -17,7 +17,7 @@ The same as for [useQuery](./useQuery.md), except for:
 
 **Returns**
 
-Same object as [useQuery](./useQuery), except that:
+Same object as [useQuery](../reference/useQuery), except that:
 
 - `data` is guaranteed to be defined
 - `isPlaceholderData` is missing

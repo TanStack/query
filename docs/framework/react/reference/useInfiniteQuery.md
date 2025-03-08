@@ -27,7 +27,7 @@ const {
 
 **Options**
 
-The options for `useInfiniteQuery` are identical to the [`useQuery` hook](./useQuery) with the addition of the following:
+The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../reference/useQuery) with the addition of the following:
 
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
   - **Required, but only if no default query function has been defined** [`defaultQueryFn`](../guides/default-query-function)
@@ -55,7 +55,7 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](./useQ
 
 **Returns**
 
-The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](./useQuery), with the addition of the following properties and a small difference in `isRefetching` and `isRefetchError`:
+The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](../reference/useQuery), with the addition of the following properties and a small difference in `isRefetching` and `isRefetchError`:
 
 - `data.pages: TData[]`
   - Array containing all pages.
