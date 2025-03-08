@@ -64,7 +64,7 @@ export function errorMutator(_parameter?: unknown): Promise<Error> {
 }
 
 // Evaluate all signals on an object and return the result
-function evaluateSignals<T extends Record<string, any>>(
+export function evaluateSignals<T extends Record<string, any>>(
   obj: T,
 ): { [K in keyof T]: ReturnType<T[K]> } {
   const result: Partial<{ [K in keyof T]: ReturnType<T[K]> }> = {}

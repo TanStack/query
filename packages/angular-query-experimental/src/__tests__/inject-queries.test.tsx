@@ -7,8 +7,7 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { QueryClient, injectQueries, provideTanStackQuery } from '..'
-import { queryKey } from './test-utils'
-import type { CreateQueryResult } from '..'
+import { evaluateSignals, queryKey } from './test-utils'
 
 let queryClient: QueryClient
 
@@ -31,14 +30,14 @@ describe('useQueries', () => {
   it('should return the correct states', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: Array<Array<CreateQueryResult>> = []
+    const results: Array<Array<Record<string, any>>> = []
 
     @Component({
       template: `
         <div>
           <div>
-            data1: {{ toString(result()[0].data ?? 'null') }}, data2:
-            {{ toString(result()[1].data ?? 'null') }}
+            data1: {{ toString(result()[0].data() ?? 'null') }}, data2:
+            {{ toString(result()[1].data() ?? 'null') }}
           </div>
         </div>
       `,
@@ -67,7 +66,7 @@ describe('useQueries', () => {
       }))
 
       _pushResults = effect(() => {
-        results.push(this.result())
+        results.push(this.result().map(evaluateSignals))
       })
     }
 

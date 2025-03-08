@@ -15,6 +15,7 @@ import {
   untracked,
 } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
+import { signalProxy } from './signal-proxy'
 import type {
   DefaultError,
   OmitKeyof,
@@ -304,10 +305,15 @@ export function injectQueries<
       })
     })
 
-    return computed(() => {
+    const resultSignal = computed(() => {
       const subscriberResult = resultFromSubscriberSignal()
       const optimisticResult = optimisticCombinedResultSignal()
       return subscriberResult ?? optimisticResult
+    })
+
+    return computed(() => {
+      const result = resultSignal()
+      return result.map((query) => signalProxy(signal(query)))
     })
   }) as unknown as Signal<TCombinedResult>
 }
