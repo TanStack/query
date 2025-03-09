@@ -4,10 +4,7 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import {
-  QueryClient,
-  provideTanStackQuery,
-} from '@tanstack/angular-query'
+import { QueryClient, provideTanStackQuery } from '@tanstack/angular-query'
 import { beforeEach, describe, expect, vi } from 'vitest'
 import { injectDevtoolsPanel } from '../inject-devtools-panel'
 

@@ -16,10 +16,7 @@ Allows to configure a `QueryClient`.
 **Example - standalone**
 
 ```ts
-import {
-  provideAngularQuery,
-  QueryClient,
-} from '@tanstack/angular-query'
+import { provideAngularQuery, QueryClient } from '@tanstack/angular-query'
 
 bootstrapApplication(AppComponent, {
   providers: [provideAngularQuery(new QueryClient())],
@@ -29,10 +26,7 @@ bootstrapApplication(AppComponent, {
 **Example - NgModule-based**
 
 ```ts
-import {
-  provideAngularQuery,
-  QueryClient,
-} from '@tanstack/angular-query'
+import { provideAngularQuery, QueryClient } from '@tanstack/angular-query'
 
 @NgModule({
   declarations: [AppComponent],
