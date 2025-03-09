@@ -113,22 +113,6 @@ export function provideTanStackQuery(
 }
 
 /**
- * Sets up providers necessary to enable TanStack Query functionality for Angular applications.
- *
- * Allows to configure a `QueryClient`.
- * @param queryClient - A `QueryClient` instance.
- * @returns A set of providers to set up TanStack Query.
- * @public
- * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
- * @deprecated Use `provideTanStackQuery` instead.
- */
-export function provideAngularQuery(
-  queryClient: QueryClient,
-): EnvironmentProviders {
-  return provideTanStackQuery(queryClient)
-}
-
-/**
  * Helper type to represent a Query feature.
  */
 export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
