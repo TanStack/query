@@ -10,7 +10,8 @@ import type {
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
-  DefinedCreateInfiniteQueryResult, WithOptionalInjector,
+  DefinedCreateInfiniteQueryResult,
+  WithOptionalInjector,
 } from './types'
 import type {
   DefinedInitialDataInfiniteOptions,

@@ -12,7 +12,7 @@ import type {
   MutationFilters,
   MutationState,
 } from '@tanstack/query-core'
-import type { WithOptionalInjector } from "./types";
+import type { WithOptionalInjector } from './types'
 
 type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters

@@ -1,7 +1,7 @@
 import { Injector, inject } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import type { InjectOptions } from '@angular/core'
-import type { WithOptionalInjector} from "./types";
+import type { WithOptionalInjector } from './types'
 
 /**
  * Injects a `QueryClient` instance and allows passing a custom injector.

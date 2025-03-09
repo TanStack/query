@@ -12,12 +12,10 @@ import {
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import {
   QueryClient,
-  onlineManager
+  onlineManager,
 } from '@tanstack/angular-query-experimental'
 import { isPlatformBrowser } from '@angular/common'
-import type {
-  WithOptionalInjector
-} from '@tanstack/angular-query-experimental'
+import type { WithOptionalInjector } from '@tanstack/angular-query-experimental'
 import type { ElementRef } from '@angular/core'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 

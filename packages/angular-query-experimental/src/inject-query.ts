@@ -5,7 +5,8 @@ import type { DefaultError, QueryKey } from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
-  DefinedCreateQueryResult, WithOptionalInjector,
+  DefinedCreateQueryResult,
+  WithOptionalInjector,
 } from './types'
 import type {
   DefinedInitialDataOptions,

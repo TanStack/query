@@ -24,7 +24,7 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import type { WithOptionalInjector } from "./types";
+import type { WithOptionalInjector } from './types'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter

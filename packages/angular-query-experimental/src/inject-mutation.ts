@@ -18,7 +18,11 @@ import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { noop, shouldThrowError } from './util'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
-import type {CreateMutateFunction, CreateMutationResult, WithOptionalInjector} from './types'
+import type {
+  CreateMutateFunction,
+  CreateMutationResult,
+  WithOptionalInjector,
+} from './types'
 import type { CreateMutationOptions } from './mutation-options'
 
 /**

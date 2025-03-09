@@ -3,7 +3,7 @@ import { QueryClient, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import type { QueryFilters } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
-import type { WithOptionalInjector } from "./types";
+import type { WithOptionalInjector } from './types'
 
 /**
  * Injects a signal that tracks the number of queries that your application is loading or
