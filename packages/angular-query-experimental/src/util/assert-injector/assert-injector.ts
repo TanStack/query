@@ -23,13 +23,11 @@ import {
  * After assertion, `assertInjector` runs the `runner` function with the guaranteed `Injector`
  * whether it is the default `Injector` within the current **Injection Context**
  * or the custom `Injector` that was passed in.
- *
  * @template {() => any} Runner - Runner is a function that can return anything
- * @param {Function} fn - the Function to pass in `assertInInjectionContext`
- * @param {Injector | undefined | null} injector - the optional "custom" Injector
- * @param {Runner} runner - the runner fn
- * @returns {ReturnType<Runner>} result - returns the result of the Runner
- *
+ * @param fn - the Function to pass in `assertInInjectionContext`
+ * @param injector - the optional "custom" Injector
+ * @param runner - the runner fn
+ * @returns result - returns the result of the Runner
  * @example
  * ```ts
  * function injectValue(injector?: Injector) {
@@ -48,11 +46,9 @@ export function assertInjector<TRunner extends () => any>(
  * `assertInjector` extends `assertInInjectionContext` with an optional `Injector`
  * After assertion, `assertInjector` returns a guaranteed `Injector` whether it is the default `Injector`
  * within the current **Injection Context** or the custom `Injector` that was passed in.
- *
- * @param {Function} fn - the Function to pass in `assertInInjectionContext`
- * @param {Injector | undefined | null} injector - the optional "custom" Injector
+ * @param fn - the Function to pass in `assertInInjectionContext`
+ * @param injector - the optional "custom" Injector
  * @returns Injector
- *
  * @example
  * ```ts
  * function injectDestroy(injector?: Injector) {
@@ -68,6 +64,12 @@ export function assertInjector(
   fn: Function,
   injector: Injector | undefined | null,
 ): Injector
+/**
+ * @param fn - the Function to pass in `assertInInjectionContext`
+ * @param injector - the optional "custom" Injector
+ * @param runner - the runner fn
+ * @returns any
+ */
 export function assertInjector(
   fn: Function,
   injector: Injector | undefined | null,

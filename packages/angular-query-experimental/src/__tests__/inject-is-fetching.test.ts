@@ -60,7 +60,9 @@ describe('injectIsFetching', () => {
 
     test('can be used outside injection context when passing an injector', () => {
       expect(
-        injectIsFetching(undefined, TestBed.inject(Injector)),
+        injectIsFetching(undefined, {
+          injector: TestBed.inject(Injector),
+        }),
       ).not.toThrow()
     })
   })

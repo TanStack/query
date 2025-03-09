@@ -60,7 +60,9 @@ describe('injectIsMutating', () => {
 
     test('can be used outside injection context when passing an injector', () => {
       expect(
-        injectIsMutating(undefined, TestBed.inject(Injector)),
+        injectIsMutating(undefined, {
+          injector: TestBed.inject(Injector),
+        }),
       ).not.toThrow()
     })
   })

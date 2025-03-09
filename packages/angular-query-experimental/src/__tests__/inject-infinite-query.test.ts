@@ -87,7 +87,9 @@ describe('injectInfiniteQuery', () => {
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }),
-        TestBed.inject(Injector),
+        {
+          injector: TestBed.inject(Injector),
+        },
       )
 
       expect(query.status()).toBe('pending')
