@@ -16,7 +16,7 @@ import { provideHttpClient } from '@angular/common/http'
 import {
   provideTanStackQuery,
   QueryClient,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 
 bootstrapApplication(AppComponent, {
   providers: [provideHttpClient(), provideTanStackQuery(new QueryClient())],
@@ -30,7 +30,7 @@ import { provideHttpClient } from '@angular/common/http'
 import {
   provideTanStackQuery,
   QueryClient,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 
 @NgModule({
   declarations: [AppComponent],
@@ -52,7 +52,7 @@ import {
   injectMutation,
   injectQuery,
   QueryClient
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 
 @Component({
   standalone: true,

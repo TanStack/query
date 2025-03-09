@@ -44,7 +44,7 @@ export function provideQueryClient(queryClient: QueryClient) {
  * import {
  *   provideTanStackQuery,
  *   QueryClient,
- * } from '@tanstack/angular-query-experimental'
+ * } from '@tanstack/angular-query'
  *
  * bootstrapApplication(AppComponent, {
  *   providers: [provideTanStackQuery(new QueryClient())],
@@ -57,7 +57,7 @@ export function provideQueryClient(queryClient: QueryClient) {
  * import {
  *   provideTanStackQuery,
  *   QueryClient,
- * } from '@tanstack/angular-query-experimental'
+ * } from '@tanstack/angular-query'
  *
  * @NgModule({
  *   declarations: [AppComponent],
@@ -75,7 +75,7 @@ export function provideQueryClient(queryClient: QueryClient) {
  *   provideTanStackQuery,
  *   withDevtools
  *   QueryClient,
- * } from '@tanstack/angular-query-experimental'
+ * } from '@tanstack/angular-query'
  *
  * bootstrapApplication(AppComponent,
  *   {

@@ -19,7 +19,7 @@ Allows to configure a `QueryClient`.
 import {
   provideAngularQuery,
   QueryClient,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 
 bootstrapApplication(AppComponent, {
   providers: [provideAngularQuery(new QueryClient())],
@@ -32,7 +32,7 @@ bootstrapApplication(AppComponent, {
 import {
   provideAngularQuery,
   QueryClient,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 
 @NgModule({
   declarations: [AppComponent],
