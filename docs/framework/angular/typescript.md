@@ -6,7 +6,7 @@ replace:
   {
     'useQuery': 'injectQuery',
     'useMutation': 'injectMutation',
-    'react-query': 'angular-query-experimental',
+    'react-query': 'angular-query',
     'public API of React Query': 'public API of TanStack Query and - after the experimental phase, the angular-query package',
     'still follows': 'still follow',
     'React Query': 'TanStack Query',

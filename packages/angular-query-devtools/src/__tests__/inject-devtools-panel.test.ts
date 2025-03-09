@@ -3,7 +3,7 @@ import { TestBed, fakeAsync } from '@angular/core/testing'
 import {
   QueryClient,
   provideTanStackQuery,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 import { beforeEach, describe, expect, vi } from 'vitest'
 import { injectDevtoolsPanel } from '../inject-devtools-panel'
 

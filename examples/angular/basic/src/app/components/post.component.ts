@@ -6,7 +6,7 @@ import {
   inject,
   input,
 } from '@angular/core'
-import { QueryClient, injectQuery } from '@tanstack/angular-query-experimental'
+import { QueryClient, injectQuery } from '@tanstack/angular-query'
 import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
 import { PostsService } from '../services/posts-service'
 

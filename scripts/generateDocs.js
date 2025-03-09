@@ -7,13 +7,13 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 /** @type {import('@tanstack/config/typedoc').Package[]} */
 const packages = [
   {
-    name: 'angular-query-experimental',
+    name: 'angular-query',
     entryPoints: [
-      resolve(__dirname, '../packages/angular-query-experimental/src/index.ts'),
+      resolve(__dirname, '../packages/angular-query/src/index.ts'),
     ],
     tsconfig: resolve(
       __dirname,
-      '../packages/angular-query-experimental/tsconfig.json',
+      '../packages/angular-query/tsconfig.json',
     ),
     outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
     exclude: ['./packages/query-core/**/*'],

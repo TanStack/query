@@ -4,7 +4,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms'
 import {
   injectQuery,
   keepPreviousData,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 import { debounceTime, distinctUntilChanged, lastValueFrom } from 'rxjs'
 import { AutocompleteService } from '../services/autocomplete-service'
 

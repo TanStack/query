@@ -24,7 +24,7 @@ importers:
         version: 1.21.0(eslint@9.15.0(jiti@2.4.0))(typescript@5.7.2)
       '@tanstack/config':
         specifier: ^0.14.2
-        version: 0.14.2(@types/node@22.10.7)(esbuild@0.24.0)(eslint@9.15.0(jiti@2.4.0))(rollup@4.31.0)(typescript@5.7.2)(vite@5.4.14(@types/node@22.10.7)(less@4.2.2)(lightningcss@1.27.0)(sass@1.83.4)(terser@5.31.6))
+        version: 0.14.2(@types/node@22.10.7)(esbuild@0.19.12)(eslint@9.15.0(jiti@2.4.0))(rollup@4.31.0)(typescript@5.7.2)(vite@5.4.14(@types/node@22.10.7)(less@4.2.2)(lightningcss@1.27.0)(sass@1.83.4)(terser@5.31.6))
       '@testing-library/jest-dom':
         specifier: ^6.6.3
         version: 6.6.3
@@ -142,9 +142,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: ^5.64.2
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -185,9 +185,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: ^5.64.2
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -231,12 +231,12 @@ importers:
       '@angular/router':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1)
+      '@tanstack/angular-query':
+        specifier: ^5.64.2
+        version: link:../../../packages/angular-query
       '@tanstack/angular-query-devtools-experimental':
         specifier: ^5.64.2
-        version: link:../../../packages/angular-query-devtools-experimental
-      '@tanstack/angular-query-experimental':
-        specifier: ^5.64.2
-        version: link:../../../packages/angular-query-experimental
+        version: 5.67.2(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@tanstack/angular-query-experimental@5.67.2(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -277,9 +277,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: ^5.64.2
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -320,9 +320,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: ^5.64.2
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -366,9 +366,9 @@ importers:
       '@angular/router':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1)
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: ^5.64.2
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -412,9 +412,9 @@ importers:
       '@angular/router':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1)
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: ^5.64.2
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -458,9 +458,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: ^5.64.2
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -501,9 +501,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: ^5.64.2
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -1844,9 +1844,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^17.3.12
         version: 17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(@angular/platform-browser@17.3.12(@angular/animations@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../packages/angular-query-experimental
+        version: link:../../packages/angular-query
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -2025,7 +2025,7 @@ importers:
         version: 5.6.3(webpack@5.96.1)
       webpack:
         specifier: ^5.96.1
-        version: 5.96.1(esbuild@0.24.0)(webpack-cli@5.1.4)
+        version: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-cli:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.96.1)
@@ -2088,38 +2088,7 @@ importers:
         specifier: ^2.1.10
         version: 2.1.10(typescript@5.6.3)
 
-  packages/angular-query-devtools-experimental:
-    dependencies:
-      '@angular/common':
-        specifier: '>=16.0.0'
-        version: 17.3.12(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1)
-      '@tanstack/query-devtools':
-        specifier: workspace:*
-        version: link:../query-devtools
-    devDependencies:
-      '@analogjs/vite-plugin-angular':
-        specifier: ^1.6.4
-        version: 1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.94.0(esbuild@0.23.0)))
-      '@angular/core':
-        specifier: ^19.1.0-next.0
-        version: 19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)
-      '@angular/platform-browser-dynamic':
-        specifier: ^19.1.0-next.0
-        version: 19.1.0-next.0(@angular/common@17.3.12(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@17.3.12(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
-        specifier: workspace:*
-        version: link:../angular-query-experimental
-      eslint-plugin-jsdoc:
-        specifier: ^50.5.0
-        version: 50.5.0(eslint@9.15.0(jiti@2.4.0))
-      tsup:
-        specifier: 8.0.2
-        version: 8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.10.7))(postcss@8.4.41)(typescript@5.7.2)
-      typescript:
-        specifier: 5.7.2
-        version: 5.7.2
-
-  packages/angular-query-experimental:
+  packages/angular-query:
     dependencies:
       '@angular/common':
         specifier: '>=16.0.0'
@@ -2133,7 +2102,7 @@ importers:
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: ^1.6.4
-        version: 1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.24.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.24.0)))
+        version: 1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.23.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.94.0(esbuild@0.23.0)))
       '@angular/compiler':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))
@@ -2149,6 +2118,37 @@ importers:
       '@microsoft/api-extractor':
         specifier: ^7.48.1
         version: 7.48.1(@types/node@22.10.7)
+      eslint-plugin-jsdoc:
+        specifier: ^50.5.0
+        version: 50.5.0(eslint@9.15.0(jiti@2.4.0))
+      tsup:
+        specifier: 8.0.2
+        version: 8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.10.7))(postcss@8.4.41)(typescript@5.7.2)
+      typescript:
+        specifier: 5.7.2
+        version: 5.7.2
+
+  packages/angular-query-devtools:
+    dependencies:
+      '@angular/common':
+        specifier: '>=16.0.0'
+        version: 17.3.12(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1)
+      '@tanstack/query-devtools':
+        specifier: workspace:*
+        version: link:../query-devtools
+    devDependencies:
+      '@analogjs/vite-plugin-angular':
+        specifier: ^1.6.4
+        version: 1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.19.12)))
+      '@angular/core':
+        specifier: ^19.1.0-next.0
+        version: 19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)
+      '@angular/platform-browser-dynamic':
+        specifier: ^19.1.0-next.0
+        version: 19.1.0-next.0(@angular/common@17.3.12(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@17.3.12(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))
+      '@tanstack/angular-query':
+        specifier: workspace:*
+        version: link:../angular-query
       eslint-plugin-jsdoc:
         specifier: ^50.5.0
         version: 50.5.0(eslint@9.15.0(jiti@2.4.0))
@@ -7016,6 +7016,19 @@ packages:
   '@swc/helpers@0.5.5':
     resolution: {integrity: sha512-KGYxvIOXcceOAbEk4bi/dVLEK9z8sZ0uBB3Il5b1rhfClSpcX0yfRO0KmTkqR2cnQDymwLB+25ZyMzICg/cm/A==}
 
+  '@tanstack/angular-query-devtools-experimental@5.67.2':
+    resolution: {integrity: sha512-egbSRNsjziivBKrXmX82SooOD+BdBoWCeM0WF8kSRc4S2s9Gok5F2x3EvlO1ZsLT0sKs+RZgU2Shd9XgY3dNaQ==}
+    peerDependencies:
+      '@angular/common': '>=16.0.0'
+      '@angular/core': '>=16.0.0'
+      '@tanstack/angular-query-experimental': ^5.67.2
+
+  '@tanstack/angular-query-experimental@5.67.2':
+    resolution: {integrity: sha512-qDUJy1IEAmMQNiHGupjYs/6g7928f1n4rFIPhedsPR/SA9N9ax6Y2aPhD7aZJNKfra/OopFzkLWsDNgurx6G/w==}
+    peerDependencies:
+      '@angular/common': '>=16.0.0'
+      '@angular/core': '>=16.0.0'
+
   '@tanstack/config@0.14.2':
     resolution: {integrity: sha512-C431mIFMWgsnQKvmwjysfUbkqGWGtNgXqIcS14h/0QUvwSCx+ctC1UrsvGY08FrNouo/iAExRoOqUbD6cNagPg==}
     engines: {node: '>=18'}
@@ -7024,6 +7037,12 @@ packages:
   '@tanstack/match-sorter-utils@8.19.4':
     resolution: {integrity: sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg==}
     engines: {node: '>=12'}
+
+  '@tanstack/query-core@5.67.2':
+    resolution: {integrity: sha512-+iaFJ/pt8TaApCk6LuZ0WHS/ECVfTzrxDOEL9HH9Dayyb5OVuomLzDXeSaI2GlGT/8HN7bDGiRXDts3LV+u6ww==}
+
+  '@tanstack/query-devtools@5.67.2':
+    resolution: {integrity: sha512-O4QXFFd7xqp6EX7sdvc9tsVO8nm4lpWBqwpgjpVLW5g7IeOY6VnS/xvs/YzbRhBVkKTMaJMOUGU7NhSX+YGoNg==}
 
   '@tanstack/react-location@3.7.4':
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
@@ -16638,16 +16657,16 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@analogjs/vite-plugin-angular@1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.94.0(esbuild@0.23.0)))':
+  '@analogjs/vite-plugin-angular@1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.23.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.94.0(esbuild@0.23.0)))':
     dependencies:
-      '@angular-devkit/build-angular': 18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2)
+      '@angular-devkit/build-angular': 18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.23.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2)
       '@ngtools/webpack': 18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.94.0(esbuild@0.23.0))
       ts-morph: 21.0.1
 
-  '@analogjs/vite-plugin-angular@1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.24.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.24.0)))':
+  '@analogjs/vite-plugin-angular@1.6.4(@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2))(@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.19.12)))':
     dependencies:
-      '@angular-devkit/build-angular': 18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.24.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2)
-      '@ngtools/webpack': 18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.24.0))
+      '@angular-devkit/build-angular': 18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2)
+      '@ngtools/webpack': 18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.19.12))
       ts-morph: 21.0.1
 
   '@andrewbranch/untar.js@1.0.3': {}
@@ -16735,7 +16754,7 @@ snapshots:
       undici: 6.11.1
       vite: 5.1.7(@types/node@22.10.7)(less@4.2.0)(lightningcss@1.27.0)(sass@1.71.1)(terser@5.29.1)
       watchpack: 2.4.0
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
       webpack-dev-middleware: 6.1.2(webpack@5.90.3(esbuild@0.20.1))
       webpack-dev-server: 4.15.1(webpack@5.90.3(esbuild@0.20.1))
       webpack-merge: 5.10.0
@@ -16763,7 +16782,7 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2)':
+  '@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.23.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.1802.12(chokidar@3.6.0)
@@ -16828,7 +16847,7 @@ snapshots:
       webpack-dev-middleware: 7.4.2(webpack@5.94.0(esbuild@0.23.0))
       webpack-dev-server: 5.0.4(webpack@5.94.0(esbuild@0.23.0))
       webpack-merge: 6.0.1
-      webpack-subresource-integrity: 5.1.0(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.19.12)))(webpack@5.94.0(esbuild@0.23.0))
+      webpack-subresource-integrity: 5.1.0(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.23.0)))(webpack@5.94.0(esbuild@0.23.0))
     optionalDependencies:
       esbuild: 0.23.0
       tailwindcss: 3.4.7
@@ -16850,7 +16869,7 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.24.0)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2)':
+  '@angular-devkit/build-angular@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(@types/node@22.10.7)(chokidar@3.6.0)(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.19.12)))(lightningcss@1.27.0)(tailwindcss@3.4.7)(typescript@5.7.2)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.1802.12(chokidar@3.6.0)
@@ -16915,7 +16934,7 @@ snapshots:
       webpack-dev-middleware: 7.4.2(webpack@5.94.0(esbuild@0.23.0))
       webpack-dev-server: 5.0.4(webpack@5.94.0(esbuild@0.23.0))
       webpack-merge: 6.0.1
-      webpack-subresource-integrity: 5.1.0(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.24.0)))(webpack@5.94.0(esbuild@0.23.0))
+      webpack-subresource-integrity: 5.1.0(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.19.12)))(webpack@5.94.0(esbuild@0.23.0))
     optionalDependencies:
       esbuild: 0.23.0
       tailwindcss: 3.4.7
@@ -16941,7 +16960,7 @@ snapshots:
     dependencies:
       '@angular-devkit/architect': 0.1703.8(chokidar@3.6.0)
       rxjs: 7.8.1
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
       webpack-dev-server: 4.15.1(webpack@5.90.3(esbuild@0.20.1))
     transitivePeerDependencies:
       - chokidar
@@ -21777,7 +21796,7 @@ snapshots:
     dependencies:
       '@angular/compiler-cli': 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.4.5)
       typescript: 5.4.5
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   '@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.94.0(esbuild@0.23.0))':
     dependencies:
@@ -21785,11 +21804,11 @@ snapshots:
       typescript: 5.7.2
       webpack: 5.94.0(esbuild@0.19.12)
 
-  '@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.24.0))':
+  '@ngtools/webpack@18.2.12(@angular/compiler-cli@19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2))(typescript@5.7.2)(webpack@5.96.1(esbuild@0.19.12))':
     dependencies:
       '@angular/compiler-cli': 19.1.0-next.0(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.7.2)
       typescript: 5.7.2
-      webpack: 5.96.1(esbuild@0.24.0)
+      webpack: 5.96.1(esbuild@0.19.12)
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -22904,14 +22923,28 @@ snapshots:
       '@swc/counter': 0.1.3
       tslib: 2.8.1
 
-  '@tanstack/config@0.14.2(@types/node@22.10.7)(esbuild@0.24.0)(eslint@9.15.0(jiti@2.4.0))(rollup@4.31.0)(typescript@5.7.2)(vite@5.4.14(@types/node@22.10.7)(less@4.2.2)(lightningcss@1.27.0)(sass@1.83.4)(terser@5.31.6))':
+  '@tanstack/angular-query-devtools-experimental@5.67.2(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(@tanstack/angular-query-experimental@5.67.2(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)))':
+    dependencies:
+      '@angular/common': 19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1)
+      '@angular/core': 19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)
+      '@tanstack/angular-query-experimental': 5.67.2(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))
+      '@tanstack/query-devtools': 5.67.2
+
+  '@tanstack/angular-query-experimental@5.67.2(@angular/common@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))':
+    dependencies:
+      '@angular/common': 19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1)
+      '@angular/core': 19.1.0-next.0(rxjs@7.8.1)(zone.js@0.15.0)
+      '@tanstack/query-core': 5.67.2
+      '@tanstack/query-devtools': 5.67.2
+
+  '@tanstack/config@0.14.2(@types/node@22.10.7)(esbuild@0.19.12)(eslint@9.15.0(jiti@2.4.0))(rollup@4.31.0)(typescript@5.7.2)(vite@5.4.14(@types/node@22.10.7)(less@4.2.2)(lightningcss@1.27.0)(sass@1.83.4)(terser@5.31.6))':
     dependencies:
       '@commitlint/parse': 19.5.0
       '@eslint/js': 9.17.0
       '@stylistic/eslint-plugin-js': 2.11.0(eslint@9.15.0(jiti@2.4.0))
       commander: 12.1.0
       current-git-branch: 1.1.0
-      esbuild-register: 3.6.0(esbuild@0.24.0)
+      esbuild-register: 3.6.0(esbuild@0.19.12)
       eslint-plugin-import-x: 4.6.1(eslint@9.15.0(jiti@2.4.0))(typescript@5.7.2)
       eslint-plugin-n: 17.14.0(eslint@9.15.0(jiti@2.4.0))
       globals: 15.14.0
@@ -22942,6 +22975,10 @@ snapshots:
   '@tanstack/match-sorter-utils@8.19.4':
     dependencies:
       remove-accents: 0.5.0
+
+  '@tanstack/query-core@5.67.2': {}
+
+  '@tanstack/query-devtools@5.67.2': {}
 
   '@tanstack/react-location@3.7.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
@@ -23935,7 +23972,7 @@ snapshots:
 
   '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.96.1)':
     dependencies:
-      webpack: 5.96.1(esbuild@0.24.0)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.96.1)
 
   '@webpack-cli/info@1.5.0(webpack-cli@4.10.0)':
@@ -23945,7 +23982,7 @@ snapshots:
 
   '@webpack-cli/info@2.0.2(webpack-cli@5.1.4)(webpack@5.96.1)':
     dependencies:
-      webpack: 5.96.1(esbuild@0.24.0)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.96.1)
 
   '@webpack-cli/serve@1.7.0(webpack-cli@4.10.0)':
@@ -23954,7 +23991,7 @@ snapshots:
 
   '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4)(webpack@5.96.1)':
     dependencies:
-      webpack: 5.96.1(esbuild@0.24.0)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.96.1)
 
   '@xmldom/xmldom@0.7.13': {}
@@ -24467,7 +24504,7 @@ snapshots:
       '@babel/core': 7.24.0
       find-cache-dir: 4.0.0
       schema-utils: 4.3.0
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   babel-loader@9.1.3(@babel/core@7.25.2)(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
@@ -24481,7 +24518,7 @@ snapshots:
       '@babel/core': 7.26.0
       find-cache-dir: 4.0.0
       schema-utils: 4.3.0
-      webpack: 5.96.1(esbuild@0.24.0)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
 
   babel-plugin-add-module-exports@0.2.1: {}
 
@@ -25462,7 +25499,7 @@ snapshots:
       normalize-path: 3.0.0
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   copy-webpack-plugin@12.0.2(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
@@ -25712,7 +25749,7 @@ snapshots:
       postcss-value-parser: 4.2.0
       semver: 7.6.3
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   css-loader@7.1.2(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
@@ -26238,10 +26275,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  esbuild-register@3.6.0(esbuild@0.24.0):
+  esbuild-register@3.6.0(esbuild@0.19.12):
     dependencies:
       debug: 4.4.0
-      esbuild: 0.24.0
+      esbuild: 0.19.12
     transitivePeerDependencies:
       - supports-color
 
@@ -27859,10 +27896,10 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
     optional: true
 
-  html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.19.12)):
+  html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
@@ -27873,7 +27910,7 @@ snapshots:
       webpack: 5.94.0(esbuild@0.19.12)
     optional: true
 
-  html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.24.0)):
+  html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.19.12)):
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
@@ -27881,7 +27918,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.96.1(esbuild@0.24.0)
+      webpack: 5.96.1(esbuild@0.19.12)
     optional: true
 
   html-webpack-plugin@5.6.3(webpack@5.96.1):
@@ -27892,7 +27929,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.96.1(esbuild@0.24.0)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
 
   htmlparser2@6.1.0:
     dependencies:
@@ -28874,7 +28911,7 @@ snapshots:
     dependencies:
       klona: 2.0.6
       less: 4.2.0
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   less-loader@12.2.0(less@4.2.0)(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
@@ -28922,7 +28959,7 @@ snapshots:
     dependencies:
       webpack-sources: 3.2.3
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   license-webpack-plugin@4.0.2(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
@@ -29930,7 +29967,7 @@ snapshots:
     dependencies:
       schema-utils: 4.3.0
       tapable: 2.2.1
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   mini-css-extract-plugin@2.9.0(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
@@ -31318,7 +31355,7 @@ snapshots:
       postcss: 8.4.35
       semver: 7.6.3
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
     transitivePeerDependencies:
       - typescript
 
@@ -32369,7 +32406,7 @@ snapshots:
       neo-async: 2.6.2
     optionalDependencies:
       sass: 1.71.1
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   sass-loader@16.0.0(sass@1.77.6)(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
@@ -32864,7 +32901,7 @@ snapshots:
     dependencies:
       iconv-lite: 0.6.3
       source-map-js: 1.2.1
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   source-map-loader@5.0.0(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
@@ -33359,6 +33396,17 @@ snapshots:
       webpack-sources: 1.4.3
       worker-farm: 1.7.0
 
+  terser-webpack-plugin@5.3.11(esbuild@0.19.12)(webpack@5.90.3(esbuild@0.20.1)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.31.6
+      webpack: 5.90.3(esbuild@0.19.12)
+    optionalDependencies:
+      esbuild: 0.19.12
+
   terser-webpack-plugin@5.3.11(esbuild@0.19.12)(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
@@ -33370,38 +33418,27 @@ snapshots:
     optionalDependencies:
       esbuild: 0.19.12
 
-  terser-webpack-plugin@5.3.11(esbuild@0.24.0)(webpack@5.90.3(esbuild@0.20.1)):
+  terser-webpack-plugin@5.3.11(esbuild@0.19.12)(webpack@5.96.1(esbuild@0.19.12)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
       terser: 5.31.6
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.96.1(esbuild@0.19.12)
     optionalDependencies:
-      esbuild: 0.24.0
+      esbuild: 0.19.12
 
-  terser-webpack-plugin@5.3.11(esbuild@0.24.0)(webpack@5.96.1(esbuild@0.24.0)):
+  terser-webpack-plugin@5.3.11(esbuild@0.19.12)(webpack@5.96.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
       terser: 5.31.6
-      webpack: 5.96.1(esbuild@0.24.0)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
     optionalDependencies:
-      esbuild: 0.24.0
-
-  terser-webpack-plugin@5.3.11(esbuild@0.24.0)(webpack@5.96.1):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 4.3.0
-      serialize-javascript: 6.0.2
-      terser: 5.31.6
-      webpack: 5.96.1(esbuild@0.24.0)(webpack-cli@5.1.4)
-    optionalDependencies:
-      esbuild: 0.24.0
+      esbuild: 0.19.12
 
   terser@4.8.1:
     dependencies:
@@ -34585,7 +34622,7 @@ snapshots:
       import-local: 3.2.0
       interpret: 3.1.1
       rechoir: 0.8.0
-      webpack: 5.96.1(esbuild@0.24.0)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-merge: 5.10.0
 
   webpack-dev-middleware@5.3.4(webpack@5.90.3(esbuild@0.20.1)):
@@ -34595,7 +34632,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.3.0
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   webpack-dev-middleware@6.1.2(webpack@5.90.3(esbuild@0.20.1)):
     dependencies:
@@ -34605,7 +34642,7 @@ snapshots:
       range-parser: 1.2.1
       schema-utils: 4.3.0
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   webpack-dev-middleware@7.4.2(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
@@ -34651,7 +34688,7 @@ snapshots:
       webpack-dev-middleware: 5.3.4(webpack@5.90.3(esbuild@0.20.1))
       ws: 8.18.0
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
     transitivePeerDependencies:
       - bufferutil
       - debug
@@ -34720,23 +34757,23 @@ snapshots:
   webpack-subresource-integrity@5.1.0(html-webpack-plugin@5.6.3(webpack@5.90.3(esbuild@0.20.1)))(webpack@5.90.3(esbuild@0.20.1)):
     dependencies:
       typed-assert: 1.0.9
-      webpack: 5.90.3(esbuild@0.24.0)
+      webpack: 5.90.3(esbuild@0.19.12)
     optionalDependencies:
       html-webpack-plugin: 5.6.3(webpack@5.90.3(esbuild@0.20.1))
 
-  webpack-subresource-integrity@5.1.0(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.19.12)))(webpack@5.94.0(esbuild@0.23.0)):
+  webpack-subresource-integrity@5.1.0(html-webpack-plugin@5.6.3(webpack@5.94.0(esbuild@0.23.0)))(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
       typed-assert: 1.0.9
       webpack: 5.94.0(esbuild@0.19.12)
     optionalDependencies:
-      html-webpack-plugin: 5.6.3(webpack@5.94.0(esbuild@0.19.12))
+      html-webpack-plugin: 5.6.3(webpack@5.94.0(esbuild@0.23.0))
 
-  webpack-subresource-integrity@5.1.0(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.24.0)))(webpack@5.94.0(esbuild@0.23.0)):
+  webpack-subresource-integrity@5.1.0(html-webpack-plugin@5.6.3(webpack@5.96.1(esbuild@0.19.12)))(webpack@5.94.0(esbuild@0.23.0)):
     dependencies:
       typed-assert: 1.0.9
       webpack: 5.94.0(esbuild@0.19.12)
     optionalDependencies:
-      html-webpack-plugin: 5.6.3(webpack@5.96.1(esbuild@0.24.0))
+      html-webpack-plugin: 5.6.3(webpack@5.96.1(esbuild@0.19.12))
 
   webpack-virtual-modules@0.6.2: {}
 
@@ -34770,7 +34807,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  webpack@5.90.3(esbuild@0.24.0):
+  webpack@5.90.3(esbuild@0.19.12):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.6
@@ -34793,7 +34830,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.11(esbuild@0.24.0)(webpack@5.90.3(esbuild@0.20.1))
+      terser-webpack-plugin: 5.3.11(esbuild@0.19.12)(webpack@5.90.3(esbuild@0.20.1))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -34831,7 +34868,7 @@ snapshots:
       - esbuild
       - uglify-js
 
-  webpack@5.96.1(esbuild@0.24.0):
+  webpack@5.96.1(esbuild@0.19.12):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.6
@@ -34853,7 +34890,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.11(esbuild@0.24.0)(webpack@5.96.1(esbuild@0.24.0))
+      terser-webpack-plugin: 5.3.11(esbuild@0.19.12)(webpack@5.96.1(esbuild@0.19.12))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -34861,7 +34898,7 @@ snapshots:
       - esbuild
       - uglify-js
 
-  webpack@5.96.1(esbuild@0.24.0)(webpack-cli@5.1.4):
+  webpack@5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.6
@@ -34883,7 +34920,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.11(esbuild@0.24.0)(webpack@5.96.1)
+      terser-webpack-plugin: 5.3.11(esbuild@0.19.12)(webpack@5.96.1)
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     optionalDependencies:
