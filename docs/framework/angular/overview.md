@@ -5,10 +5,6 @@ title: Overview
 
 The `@tanstack/angular-query` package offers a 1st-class API for using TanStack Query via Angular.
 
-## Feedback welcome!
-
-We are in the process of getting to a stable API for TanStack Query on Angular. If you have any feedback, please contact us at the [TanStack Discord](https://tlinz.com/discord) server or [visit this discussion](https://github.com/TanStack/query/discussions/6293) on Github.
-
 ## Supported Angular Versions
 
 TanStack Query is compatible with Angular v16 and higher.
