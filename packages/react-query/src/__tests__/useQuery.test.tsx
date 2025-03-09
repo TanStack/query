@@ -6771,4 +6771,21 @@ describe('useQuery', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('should console.error when there is no queryFn', () => {
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    const key = queryKey()
+    function Example() {
+      useQuery({ queryKey: key })
+      return <></>
+    }
+    renderWithClient(queryClient, <Example />)
+
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenCalledWith(
+      `[${queryClient.getQueryCache().find({ queryKey: key })?.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
+    )
+
+    consoleErrorMock.mockRestore()
+  })
 })

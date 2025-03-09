@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-devtools",
-  "version": "5.64.2",
+  "version": "5.67.2",
   "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -18,14 +18,15 @@
     "clean": "premove ./build ./coverage ./dist-ts",
     "compile": "tsc --build",
     "test:eslint": "eslint ./src",
-    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
+    "test:types": "npm-run-all --serial test:types:*",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js --build",
     "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js --build",
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
-    "test:types:ts57": "tsc --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
+    "test:types:tscurrent": "tsc --build",
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm build:tsup",
     "build:tsup": "tsup --tsconfig tsconfig.prod.json"
@@ -52,13 +53,13 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^1.6.4",
     "@angular/core": "^19.1.0-next.0",
     "@angular/platform-browser-dynamic": "^19.1.0-next.0",
     "@tanstack/angular-query": "workspace:*",
     "eslint-plugin-jsdoc": "^50.5.0",
+    "npm-run-all": "^4.1.5",
     "tsup": "8.0.2",
-    "typescript": "5.7.2"
+    "typescript": "5.8.2"
   },
   "peerDependencies": {
     "@angular/common": ">=16.0.0",

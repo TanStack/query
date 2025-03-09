@@ -15,6 +15,7 @@ import {
   InjectionToken,
   Injector,
   inject,
+  provideExperimentalZonelessChangeDetection,
   runInInjectionContext,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
@@ -35,6 +36,9 @@ describe('assertInjector', () => {
   }
 
   it('given no custom injector, when run in injection context, then return value', () => {
+    TestBed.configureTestingModule({
+      providers: [provideExperimentalZonelessChangeDetection()],
+    })
     TestBed.runInInjectionContext(() => {
       const value = injectDummy()
       const valueTwo = injectDummyTwo()

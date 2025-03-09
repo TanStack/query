@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.64.2",
+  "version": "5.67.2",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -18,7 +18,7 @@
     "clean": "premove ./build ./coverage ./dist-ts",
     "compile": "tsc --build",
     "test:eslint": "eslint ./src",
-    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
+    "test:types": "npm run compile && npm-run-all --serial test:types:*",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js --build",
@@ -26,7 +26,7 @@
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
-    "test:types:ts57": "tsc --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
     "test:build": "publint --strict && attw --pack",
     "build": "tsup --tsconfig tsconfig.prod.json",
     "build:dev": "tsup --watch"
@@ -64,6 +64,7 @@
   },
   "devDependencies": {
     "@tanstack/solid-query": "workspace:*",
+    "npm-run-all": "^4.1.5",
     "solid-js": "^1.9.3",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.10.2"

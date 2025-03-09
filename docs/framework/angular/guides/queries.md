@@ -10,6 +10,7 @@ replace:
     'custom hooks': 'services',
     'the `useQuery` hook': '`injectQuery`',
     '`useQuery`': '`injectQuery`',
+    "TypeScript will also narrow the type of data correctly if you've checked for pending and error before accessing it.": 'TypeScript will only narrow the type when checking boolean signals such as `isPending` and `isError`.',
   }
 ---
 

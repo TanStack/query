@@ -100,6 +100,10 @@
               "to": "framework/vue/typescript"
             },
             {
+              "label": "Reactivity",
+              "to": "framework/vue/reactivity"
+            },
+            {
               "label": "GraphQL",
               "to": "framework/vue/graphql"
             }
@@ -115,6 +119,10 @@
             {
               "label": "Installation",
               "to": "framework/svelte/installation"
+            },
+            {
+              "label": "Devtools",
+              "to": "framework/svelte/devtools"
             },
             {
               "label": "SSR & SvelteKit",
@@ -140,6 +148,10 @@
             {
               "label": "Quick Start",
               "to": "framework/angular/quick-start"
+            },
+            {
+              "label": "Angular HttpClient and other data fetching clients",
+              "to": "framework/angular/angular-httpclient-and-other-data-fetching-clients"
             },
             {
               "label": "Devtools",
@@ -1049,6 +1061,10 @@
             {
               "label": "Auto Refetching / Polling / Realtime",
               "to": "framework/angular/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/angular/examples/optimistic-updates"
             },
             {
               "label": "Pagination",
