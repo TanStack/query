@@ -10,7 +10,7 @@
     "@angular/core": "^17.3.12",
     "@angular/platform-browser": "^17.3.12",
     "@angular/platform-browser-dynamic": "^17.3.12",
-    "@tanstack/angular-query-experimental": "workspace:*",
+    "@tanstack/angular-query": "workspace:*",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.3",
     "zone.js": "^0.14.8"
