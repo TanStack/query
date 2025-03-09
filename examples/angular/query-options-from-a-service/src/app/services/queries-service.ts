@@ -13,7 +13,7 @@ export interface Post {
   providedIn: 'root',
 })
 export class QueriesService {
-  private http = inject(HttpClient)
+  private readonly http = inject(HttpClient)
 
   post(postId: number) {
     return queryOptions({

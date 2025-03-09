@@ -17,16 +17,16 @@ import { PostsService } from '../services/posts-service'
   imports: [RouterLink],
 })
 export default class PostComponent {
-  #postsService = inject(PostsService)
+  readonly #postsService = inject(PostsService)
 
   // The Angular router will automatically bind postId
   // as `withComponentInputBinding` is added to `provideRouter`.
   // See https://angular.dev/api/router/withComponentInputBinding
-  postId = input.required({
+  readonly postId = input.required({
     transform: numberAttribute,
   })
 
-  postQuery = injectQuery(() => ({
+  readonly postQuery = injectQuery(() => ({
     queryKey: ['post', this.postId()],
     queryFn: () => {
       return lastValueFrom(this.#postsService.postById$(this.postId()))

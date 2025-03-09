@@ -5,7 +5,7 @@ import { Injectable, inject } from '@angular/core'
   providedIn: 'root',
 })
 export class PostsService {
-  #http = inject(HttpClient)
+  readonly #http = inject(HttpClient)
 
   postById$ = (postId: number) =>
     this.#http.get<Post>(`https://jsonplaceholder.typicode.com/posts/${postId}`)

@@ -33,9 +33,9 @@ interface Response {
   `,
 })
 export class ExampleQueryComponent {
-  #http = inject(HttpClient)
+  readonly #http = inject(HttpClient)
 
-  query = injectQuery(() => ({
+  readonly query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
