@@ -411,7 +411,7 @@ describe('InfiniteQueryBehavior', () => {
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
-      queryFn: async () => 'data',
+      queryFn: () => 'data',
       getNextPageParam: () => null,
       initialPageParam: null,
     })

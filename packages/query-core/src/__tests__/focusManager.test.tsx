@@ -39,7 +39,7 @@ describe('focusManager', () => {
     expect(focusManager.isFocused()).toBeTruthy()
   })
 
-  it('should return true for isFocused if document is undefined', async () => {
+  it('should return true for isFocused if document is undefined', () => {
     const { document } = globalThis
 
     // @ts-expect-error
@@ -50,7 +50,7 @@ describe('focusManager', () => {
     globalThis.document = document
   })
 
-  test('cleanup (removeEventListener) should not be called if window is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window is not defined', () => {
     const restoreIsServer = setIsServer(true)
 
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
@@ -64,7 +64,7 @@ describe('focusManager', () => {
     restoreIsServer()
   })
 
-  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
@@ -81,7 +81,7 @@ describe('focusManager', () => {
     globalThis.window.addEventListener = addEventListener
   })
 
-  it('should replace default window listener when a new event listener is set', async () => {
+  it('should replace default window listener when a new event listener is set', () => {
     const unsubscribeSpy = vi.fn().mockImplementation(() => undefined)
     const handlerSpy = vi.fn().mockImplementation(() => unsubscribeSpy)
 
