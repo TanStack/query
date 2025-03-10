@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   addToEnd,
   addToStart,
   hashKey,
+  hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
   keepPreviousData,
@@ -15,6 +16,28 @@ import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
 
 describe('core/utils', () => {
+  describe('hashQueryKeyByOptions', () => {
+    it('should use custom hash function when provided in options', () => {
+      const queryKey = ['test', { a: 1, b: 2 }]
+      const customHashFn = vi.fn(() => 'custom-hash')
+
+      const result = hashQueryKeyByOptions(queryKey, {
+        queryKeyHashFn: customHashFn,
+      })
+
+      expect(customHashFn).toHaveBeenCalledWith(queryKey)
+      expect(result).toEqual('custom-hash')
+    })
+
+    it('should use default hash function when no options provided', () => {
+      const queryKey = ['test', { a: 1, b: 2 }]
+      const defaultResult = hashKey(queryKey)
+      const result = hashQueryKeyByOptions(queryKey)
+
+      expect(result).toEqual(defaultResult)
+    })
+  })
+
   describe('shallowEqualObjects', () => {
     it('should return `true` for shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toEqual(true)
