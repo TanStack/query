@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-devtools-experimental",
-  "version": "5.66.9",
+  "version": "5.67.2",
   "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -25,7 +25,8 @@
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
-    "test:types:ts57": "tsc --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
+    "test:types:tscurrent": "tsc --build",
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm build:tsup",
     "build:tsup": "tsup --tsconfig tsconfig.prod.json"
@@ -58,7 +59,7 @@
     "eslint-plugin-jsdoc": "^50.5.0",
     "npm-run-all": "^4.1.5",
     "tsup": "8.0.2",
-    "typescript": "5.7.2"
+    "typescript": "5.8.2"
   },
   "peerDependencies": {
     "@angular/common": ">=16.0.0",

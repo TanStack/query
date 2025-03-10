@@ -5,9 +5,9 @@ title: Server Rendering & Hydration
 
 In this guide you'll learn how to use React Query with server rendering.
 
-See the guide on [Prefetching & Router Integration](../prefetching) for some background. You might also want to check out the [Performance & Request Waterfalls guide](../request-waterfalls) before that.
+See the guide on [Prefetching & Router Integration](./prefetching) for some background. You might also want to check out the [Performance & Request Waterfalls guide](./request-waterfalls) before that.
 
-For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](../advanced-ssr).
+For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](./advanced-ssr).
 
 If you just want to see some code, you can skip ahead to the [Full Next.js pages router example](#full-nextjs-pages-router-example) or the [Full Remix example](#full-remix-example) below.
 
@@ -181,7 +181,7 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 
 ### Full Next.js pages router example
 
-> For app router documentation, see the [Advanced Server Rendering guide](../advanced-ssr).
+> For app router documentation, see the [Advanced Server Rendering guide](./advanced-ssr).
 
 Initial setup:
 
@@ -386,7 +386,7 @@ With Remix, this is a little bit more involved, we recommend checking out the [u
 
 ## Prefetching dependent queries
 
-Over in the Prefetching guide we learned how to [prefetch dependent queries](../prefetching#dependent-queries--code-splitting), but how do we do this in framework loaders? Consider the following code, taken from the [Dependent Queries guide](../dependent-queries):
+Over in the Prefetching guide we learned how to [prefetch dependent queries](./prefetching#dependent-queries--code-splitting), but how do we do this in framework loaders? Consider the following code, taken from the [Dependent Queries guide](./dependent-queries):
 
 ```tsx
 // Get the user
