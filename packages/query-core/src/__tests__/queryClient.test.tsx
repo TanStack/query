@@ -415,6 +415,24 @@ describe('queryClient', () => {
     })
   })
 
+  describe('isMutating', () => {
+    test('should return length of mutating', async () => {
+      expect(queryClient.isMutating()).toBe(0)
+      new MutationObserver(queryClient, {
+        mutationFn: () => sleep(10).then(() => 'data'),
+      }).mutate()
+      expect(queryClient.isMutating()).toBe(1)
+      new MutationObserver(queryClient, {
+        mutationFn: () => sleep(5).then(() => 'data'),
+      }).mutate()
+      expect(queryClient.isMutating()).toBe(2)
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryClient.isMutating()).toEqual(1)
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryClient.isMutating()).toEqual(0)
+    })
+  })
+
   describe('getQueryData', () => {
     test('should return the query data if the query is found', () => {
       const key = queryKey()
