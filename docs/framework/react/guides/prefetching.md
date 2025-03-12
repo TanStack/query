@@ -196,7 +196,7 @@ This starts fetching `'article-comments'` immediately and flattens the waterfall
 
 [//]: # 'Suspense'
 
-If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../reference/usePrefetchQuery), the [`usePrefetchQueries`](../reference/usePrefetchQueries) or the [`usePrefetchInfiniteQuery`](../reference/usePrefetchInfiniteQuery) hooks available in the library.
+If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../reference/usePrefetchQuery), [`usePrefetchQueries`](../reference/usePrefetchQueries) or the [`usePrefetchInfiniteQuery`](../reference/usePrefetchInfiniteQuery) hooks available in the library.
 
 You can now use `useSuspenseQuery` in the component that actually needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
 
@@ -367,7 +367,7 @@ There is a tradeoff however, in that the code for `getGraphDataById` is now incl
 
 Because data fetching in the component tree itself can easily lead to request waterfalls and the different fixes for that can be cumbersome as they accumulate throughout the application, an attractive way to do prefetching is integrating it at the router level.
 
-In this approach, you explicitly declare for each _route_ what data is going to be needed for that component tree, ahead of time. Because Server Rendering has traditionally needed all data to be loaded before rendering starts, this has been the dominating approach for SSR'd apps for a long time. This is still a common approach and you can read more about it in the [Server Rendering & Hydration guide](../ssr).
+In this approach, you explicitly declare for each _route_ what data is going to be needed for that component tree, ahead of time. Because Server Rendering has traditionally needed all data to be loaded before rendering starts, this has been the dominating approach for SSR'd apps for a long time. This is still a common approach and you can read more about it in the [Server Rendering & Hydration guide](../guides/ssr).
 
 For now, let's focus on the client side case and look at an example of how you can make this work with [Tanstack Router](https://tanstack.com/router). These examples leave out a lot of setup and boilerplate to stay concise, you can check out a [full React Query example](https://tanstack.com/router/v1/docs/framework/react/examples/basic-react-query-file-based) over in the [Tanstack Router docs](https://tanstack.com/router/v1/docs).
 
