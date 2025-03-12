@@ -313,7 +313,7 @@ describe('mutations', () => {
     expect(onSettled).toHaveBeenCalled()
   })
 
-  test('addObserver should not add an existing observer', async () => {
+  test('addObserver should not add an existing observer', () => {
     const mutationCache = queryClient.getMutationCache()
     const observer = new MutationObserver(queryClient, {})
     const currentMutation = mutationCache.build(queryClient, {})

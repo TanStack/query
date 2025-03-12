@@ -22,10 +22,10 @@ describe('notifyManager', () => {
   it('should use default batchNotifyFn', async () => {
     const notifyManagerTest = createNotifyManager()
     const callbackScheduleSpy = vi.fn().mockImplementation(() => sleep(20))
-    const callbackBatchLevel2Spy = vi.fn().mockImplementation(async () => {
+    const callbackBatchLevel2Spy = vi.fn().mockImplementation(() => {
       notifyManagerTest.schedule(callbackScheduleSpy)
     })
-    const callbackBatchLevel1Spy = vi.fn().mockImplementation(async () => {
+    const callbackBatchLevel1Spy = vi.fn().mockImplementation(() => {
       notifyManagerTest.batch(callbackBatchLevel2Spy)
     })
     notifyManagerTest.batch(callbackBatchLevel1Spy)
@@ -72,7 +72,7 @@ describe('notifyManager', () => {
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
 
-  it('typeDefs should catch proper signatures', async () => {
+  it('typeDefs should catch proper signatures', () => {
     const notifyManagerTest = createNotifyManager()
 
     // we define some fn with its signature:
