@@ -359,12 +359,8 @@ describe('React hydration', () => {
       </QueryClientProvider>,
     )
 
-    await Promise.all(
-      Array.from({ length: 1000 }).map(async (_, index) => {
-        await vi.advanceTimersByTimeAsync(index)
-        expect(hydrateSpy).toHaveBeenCalledTimes(0)
-      }),
-    )
+    await vi.runAllTimersAsync()
+    expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
     hydrateSpy.mockRestore()
     queryClient.clear()
