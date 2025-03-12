@@ -109,7 +109,7 @@ describe('InfiniteQueryObserver', () => {
     expect(all).toEqual(['next0', 'next0,1', 'prev0,1'])
   })
 
-  test('should not invoke getNextPageParam and getPreviousPageParam on empty pages', async () => {
+  test('should not invoke getNextPageParam and getPreviousPageParam on empty pages', () => {
     const key = queryKey()
 
     const getNextPageParam = vi.fn()
