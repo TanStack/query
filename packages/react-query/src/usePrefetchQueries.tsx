@@ -57,7 +57,7 @@ type GetFetchQueryOptions<T> =
                     FetchQueryOptions
 
 /**
- * SuspenseQueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
+ * PrefetchQueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 export type PrefetchQueriesOptions<
   T extends Array<any>,
@@ -100,8 +100,9 @@ export function usePrefetchQueries<T extends Array<any>>(
   queryClient?: QueryClient,
 ) {
   const client = useQueryClient(queryClient)
+  const queries = options.queries as ReadonlyArray<FetchQueryOptions>
 
-  for (const query of options.queries) {
+  for (const query of queries) {
     if (!client.getQueryState(query.queryKey)) {
       client.prefetchQuery(query)
     }

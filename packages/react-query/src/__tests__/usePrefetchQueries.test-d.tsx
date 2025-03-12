@@ -11,7 +11,15 @@ describe('usePrefetchQueries', () => {
         },
         {
           queryKey: ['key2'],
-          queryFn: () => Promise.resolve(5),
+          queryFn: () => Promise.resolve('data'),
+        },
+        {
+          queryKey: ['key3'],
+          queryFn: () =>
+            Promise.resolve({
+              foo: 1,
+              bar: 'fizzbuzz',
+            }),
         },
       ],
     })
@@ -35,7 +43,7 @@ describe('usePrefetchQueries', () => {
       queries: [
         {
           queryKey: ['key1'],
-          queryFn: () => Promise.resolve(5),
+          queryFn: () => Promise.resolve('data'),
           // @ts-expect-error TS2345
           enabled: true,
         },
@@ -46,7 +54,11 @@ describe('usePrefetchQueries', () => {
       queries: [
         {
           queryKey: ['key1'],
-          queryFn: () => Promise.resolve(5),
+          queryFn: () =>
+            Promise.resolve({
+              foo: 1,
+              bar: 'fizzbuzz',
+            }),
           // @ts-expect-error TS2345
           throwOnError: true,
         },
