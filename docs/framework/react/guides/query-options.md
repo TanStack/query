@@ -3,7 +3,7 @@ id: query-options
 title: Query Options
 ---
 
-One of the best ways to share `queryKey` and `queryFn` between multiple places, yet keep them co-located to one another, is to use the `queryOptions` helper. At runtime, this helper just returns whatever you pass into it, but it has a lot of advantages when using it [with TypeScript](../typescript.md#typing-query-options). You can define all possible options for a query in one place, and you'll also get type inference and type safety for all of them.
+One of the best ways to share `queryKey` and `queryFn` between multiple places, yet keep them co-located to one another, is to use the `queryOptions` helper. At runtime, this helper just returns whatever you pass into it, but it has a lot of advantages when using it [with TypeScript](../typescript#typing-query-options). You can define all possible options for a query in one place, and you'll also get type inference and type safety for all of them.
 
 [//]: # 'Example1'
 
