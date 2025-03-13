@@ -8,8 +8,8 @@ There are many ways to supply initial data for a query to the cache before you n
 - Declaratively:
   - Provide `initialData` to a query to prepopulate its cache if empty
 - Imperatively:
-  - [Prefetch the data using `queryClient.prefetchQuery`](../../../react/guides/prefetching)
-  - [Manually place the data into the cache using `queryClient.setQueryData`](../../../react/guides/prefetching)
+  - [Prefetch the data using `queryClient.prefetchQuery`](./prefetching)
+  - [Manually place the data into the cache using `queryClient.setQueryData`](./prefetching)
 
 ## Using `initialData` to prepopulate a query
 

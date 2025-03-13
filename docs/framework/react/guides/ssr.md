@@ -5,9 +5,9 @@ title: Server Rendering & Hydration
 
 In this guide you'll learn how to use React Query with server rendering.
 
-See the guide on [Prefetching & Router Integration](../prefetching) for some background. You might also want to check out the [Performance & Request Waterfalls guide](../request-waterfalls) before that.
+See the guide on [Prefetching & Router Integration](./prefetching) for some background. You might also want to check out the [Performance & Request Waterfalls guide](./request-waterfalls) before that.
 
-For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](../advanced-ssr).
+For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](./advanced-ssr).
 
 If you just want to see some code, you can skip ahead to the [Full Next.js pages router example](#full-nextjs-pages-router-example) or the [Full Remix example](#full-remix-example) below.
 
@@ -386,7 +386,7 @@ With Remix, this is a little bit more involved, we recommend checking out the [u
 
 ## Prefetching dependent queries
 
-Over in the Prefetching guide we learned how to [prefetch dependent queries](../prefetching#dependent-queries--code-splitting), but how do we do this in framework loaders? Consider the following code, taken from the [Dependent Queries guide](../dependent-queries):
+Over in the Prefetching guide we learned how to [prefetch dependent queries](./prefetching#dependent-queries--code-splitting), but how do we do this in framework loaders? Consider the following code, taken from the [Dependent Queries guide](./dependent-queries):
 
 ```tsx
 // Get the user
@@ -482,7 +482,7 @@ If you are using a custom SSR setup, you need to take care of this step yourself
 
 ## A note about request waterfalls
 
-In the [Performance & Request Waterfalls guide](../request-waterfalls) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](../request-waterfalls#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetches their own data. With client rendering, this leads to the following request waterfall:
+In the [Performance & Request Waterfalls guide](./request-waterfalls) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](./request-waterfalls#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetches their own data. With client rendering, this leads to the following request waterfall:
 
 ```
 1. |> Markup (without content)
@@ -528,7 +528,7 @@ Modern frameworks often try to solve this by fetching the initial code and data 
 2.   |> JS for <GraphFeedItem>
 ```
 
-This is much better, but if we want to improve this further we can flatten this to a single roundtrip with Server Components. Learn how in the [Advanced Server Rendering guide](../advanced-ssr).
+This is much better, but if we want to improve this further we can flatten this to a single roundtrip with Server Components. Learn how in the [Advanced Server Rendering guide](./advanced-ssr).
 
 ## Tips, Tricks and Caveats
 
@@ -546,9 +546,9 @@ In case you are creating the `QueryClient` for every request, React Query create
 
 On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
-Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../../reference/hydration#hydrationboundary) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
+Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/hydration#hydrationboundary) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../../reference/QueryClient/#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
 Alternatively, you can set a smaller `gcTime`.
 

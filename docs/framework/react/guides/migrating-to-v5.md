@@ -169,7 +169,7 @@ Custom loggers were already deprecated in 4 and have been removed in this versio
 
 ### Supported Browsers
 
-We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../../installation#requirements).
+We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
 
 ### Private class fields and methods
 
@@ -218,7 +218,7 @@ useQuery<number, string>({
 })
 ```
 
-For a way to set a different kind of Error globally, see [the TypeScript Guide](../../typescript#registering-a-global-error).
+For a way to set a different kind of Error globally, see [the TypeScript Guide](../typescript#registering-a-global-error).
 
 ### eslint `prefer-query-object-syntax` rule is removed
 
@@ -494,21 +494,21 @@ Note that the infinite list must be bi-directional, which requires both `getNext
 
 ### Infinite Queries can prefetch multiple pages
 
-Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](../prefetching) for more information.
+Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](./prefetching) for more information.
 
 ### New `combine` option for `useQueries`
 
-See the [useQueries docs](../../reference/useQueries#combine) for more details.
+See the [useQueries docs](../reference/useQueries#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 
-See the [experimental_createPersister docs](../../../react/plugins/createPersister) for more details.
+See the [experimental_createPersister docs](../plugins/createPersister) for more details.
 
 [//]: # 'FrameworkSpecificNewFeatures'
 
 ### Typesafe way to create Query Options
 
-See the [TypeScript docs](../../typescript#typing-query-options) for more details.
+See the [TypeScript docs](../typescript#typing-query-options) for more details.
 
 ### new hooks for suspense
 
@@ -524,6 +524,6 @@ const { data: post } = useSuspenseQuery({
 
 The experimental `suspense: boolean` flag on the query hooks has been removed.
 
-You can read more about them in the [suspense docs](../suspense).
+You can read more about them in the [suspense docs](./suspense).
 
 [//]: # 'FrameworkSpecificNewFeatures'

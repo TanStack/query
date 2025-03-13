@@ -99,15 +99,15 @@ function fetchTodoList({ queryKey }) {
 
 The `QueryFunctionContext` is the object passed to each query function. It consists of:
 
-- `queryKey: QueryKey`: [Query Keys](../query-keys)
-- `client: QueryClient`: [QueryClient](../../../../reference/QueryClient)
+- `queryKey: QueryKey`: [Query Keys](./query-keys)
+- `client: QueryClient`: [QueryClient](../../../reference/QueryClient)
 - `signal?: AbortSignal`
   - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by TanStack Query
-  - Can be used for [Query Cancellation](../query-cancellation)
+  - Can be used for [Query Cancellation](./query-cancellation)
 - `meta: Record<string, unknown> | undefined`
   - an optional field you can fill with additional information about your query
 
-Additionally, [Infinite Queries](../infinite-queries) get the following options passed:
+Additionally, [Infinite Queries](./infinite-queries) get the following options passed:
 
 - `pageParam: TPageParam`
   - the page parameter used to fetch the current page
