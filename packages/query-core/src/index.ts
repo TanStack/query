@@ -13,6 +13,7 @@ export { MutationObserver } from './mutationObserver'
 export { notifyManager } from './notifyManager'
 export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
+export { PauseManager } from './pauseManager'
 export {
   hashKey,
   replaceEqualDeep,
