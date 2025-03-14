@@ -8,8 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.67.3",
-    "@tanstack/vue-query-devtools": "^5.67.3",
+    "@tanstack/vue-query": "^5.68.0",
+    "@tanstack/vue-query-devtools": "^5.68.0",
     "vue": "^3.4.27"
   },
   "devDependencies": {

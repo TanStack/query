@@ -63,7 +63,7 @@ describe('query', () => {
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
-      queryFn: async () => {
+      queryFn: () => {
         count++
 
         if (count === 3) {
@@ -109,7 +109,7 @@ describe('query', () => {
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
-      queryFn: async () => {
+      queryFn: () => {
         count++
 
         if (count === 3) {
@@ -158,7 +158,7 @@ describe('query', () => {
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
-      queryFn: async (): Promise<unknown> => {
+      queryFn: (): Promise<unknown> => {
         count++
         throw new Error(`error${count}`)
       },
@@ -192,7 +192,7 @@ describe('query', () => {
     }
   })
 
-  test('should provide context to queryFn', async () => {
+  test('should provide context to queryFn', () => {
     const key = queryKey()
 
     const queryFn = vi
@@ -432,7 +432,7 @@ describe('query', () => {
     const key = queryKey()
     await queryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async () => 'data',
+      queryFn: () => 'data',
     })
     const query = queryCache.find({ queryKey: key })!
     query.cancel()
@@ -511,7 +511,7 @@ describe('query', () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: async () => 'data',
+      queryFn: () => 'data',
       gcTime: 0,
     })
     expect(queryCache.find({ queryKey: key })).toBeDefined()
@@ -547,7 +547,7 @@ describe('query', () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: async () => 'data',
+      queryFn: () => 'data',
       gcTime: 0,
     })
     expect(queryCache.find({ queryKey: key })).toBeDefined()
@@ -562,9 +562,9 @@ describe('query', () => {
     expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
 
-  test('should return proper count of observers', async () => {
+  test('should return proper count of observers', () => {
     const key = queryKey()
-    const options = { queryKey: key, queryFn: async () => 'data' }
+    const options = { queryKey: key, queryFn: () => 'data' }
     const observer = new QueryObserver(queryClient, options)
     const observer2 = new QueryObserver(queryClient, options)
     const observer3 = new QueryObserver(queryClient, options)
@@ -659,7 +659,7 @@ describe('query', () => {
     )
   })
 
-  test('should refetch the observer when online method is called', async () => {
+  test('should refetch the observer when online method is called', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {

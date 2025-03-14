@@ -57,7 +57,7 @@ describe('onlineManager', () => {
     expect(remove2Spy).not.toHaveBeenCalled()
   })
 
-  test('cleanup (removeEventListener) should not be called if window is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window is not defined', () => {
     const restoreIsServer = setIsServer(true)
 
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
@@ -71,7 +71,7 @@ describe('onlineManager', () => {
     restoreIsServer()
   })
 
-  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
@@ -88,7 +88,7 @@ describe('onlineManager', () => {
     globalThis.window.addEventListener = addEventListener
   })
 
-  test('it should replace default window listener when a new event listener is set', async () => {
+  test('it should replace default window listener when a new event listener is set', () => {
     const addEventListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
 
     const removeEventListenerSpy = vi.spyOn(
