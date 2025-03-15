@@ -56,35 +56,37 @@ describe('mutationCache', () => {
       const states: Array<number> = []
       const onError = async () => {
         states.push(1)
-        await sleep(1)
+        await vi.advanceTimersByTimeAsync(1)
         states.push(2)
       }
       const onSettled = async () => {
         states.push(5)
-        await sleep(1)
+        await vi.advanceTimersByTimeAsync(1)
         states.push(6)
       }
       const testCache = new MutationCache({ onError, onSettled })
       const testClient = createQueryClient({ mutationCache: testCache })
 
-      executeMutation(
-        testClient,
-        {
-          mutationKey: key,
-          mutationFn: () => Promise.reject(new Error('error')),
-          onError: async () => {
-            states.push(3)
-            await sleep(1)
-            states.push(4)
+      try {
+        await executeMutation(
+          testClient,
+          {
+            mutationKey: key,
+            mutationFn: () => Promise.reject(new Error('error')),
+            onError: async () => {
+              states.push(3)
+              await vi.advanceTimersByTimeAsync(1)
+              states.push(4)
+            },
+            onSettled: async () => {
+              states.push(7)
+              await vi.advanceTimersByTimeAsync(1)
+              states.push(8)
+            },
           },
-          onSettled: async () => {
-            states.push(7)
-            await sleep(1)
-            states.push(8)
-          },
-        },
-        'vars',
-      ).catch()
+          'vars',
+        )
+      } catch {}
 
       await vi.runAllTimersAsync()
       expect(states).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
