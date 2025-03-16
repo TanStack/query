@@ -532,7 +532,7 @@ export default function Posts() {
 
 Now, your `getPosts` function can return e.g. `Temporal` datetime objects and the data will be serialized and deserialized on the client, assuming your transformer can serialize and deserialize those data types.
 
-For more information, check out the [Next.js App with Prefetching Example](../../examples/nextjs-app-prefetching).
+For more information, check out the [Next.js App with Prefetching Example](../../../../examples/react//nextjs-app-prefetching).
 
 ## Experimental streaming without prefetching in Next.js
 
@@ -599,7 +599,7 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../../examples/nextjs-suspense-streaming).
+For more information, check out the [NextJs Suspense Streaming Example](../../../../examples/react/nextjs-suspense-streaming).
 
 The big upside is that you no longer need to prefetch queries manually to have SSR work, and it even still streams in the result! This gives you phenomenal DX and lower code complexity.
 
