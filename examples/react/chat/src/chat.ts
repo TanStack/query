@@ -15,7 +15,7 @@ function chatAnswer(_question: string) {
       let index = 0
       while (index < answer.length) {
         await new Promise((resolve) =>
-          setTimeout(resolve, 100 + Math.random() * 500),
+          setTimeout(resolve, 100 + Math.random() * 300),
         )
         yield answer[index++]
       }

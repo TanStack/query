@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-simple",
+  "name": "@tanstack/query-example-chat",
   "private": true,
   "type": "module",
   "scripts": {

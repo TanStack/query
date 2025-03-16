@@ -957,6 +957,10 @@
             {
               "label": "Devtools Embedded Panel",
               "to": "framework/react/examples/devtools-panel"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/react/examples/chat"
             }
           ]
         },
