@@ -709,6 +709,37 @@ importers:
         specifier: ^5.3.5
         version: 5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.31.6)
 
+  examples/react/chat:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.68.0
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.68.0
+        version: link:../../../packages/react-query-devtools
+      react:
+        specifier: ^19.0.0
+        version: 19.0.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.0.0(react@19.0.0)
+    devDependencies:
+      '@tailwindcss/vite':
+        specifier: ^4.0.14
+        version: 4.0.14(vite@5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.31.6))
+      '@vitejs/plugin-react':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.31.6))
+      tailwindcss:
+        specifier: ^4.0.14
+        version: 4.0.14
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
+      vite:
+        specifier: ^5.3.5
+        version: 5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.31.6)
+
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
@@ -1327,37 +1358,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.3
         version: 4.3.3(vite@5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.31.6))
-      typescript:
-        specifier: 5.8.2
-        version: 5.8.2
-      vite:
-        specifier: ^5.3.5
-        version: 5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.31.6)
-
-  examples/react/streaming:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.68.0
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: ^5.68.0
-        version: link:../../../packages/react-query-devtools
-      react:
-        specifier: ^19.0.0
-        version: 19.0.0
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.0.0(react@19.0.0)
-    devDependencies:
-      '@tailwindcss/vite':
-        specifier: ^4.0.14
-        version: 4.0.14(vite@5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.31.6))
-      '@vitejs/plugin-react':
-        specifier: ^4.3.3
-        version: 4.3.3(vite@5.4.14(@types/node@22.13.9)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.31.6))
-      tailwindcss:
-        specifier: ^4.0.14
-        version: 4.0.14
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -24920,7 +24920,7 @@ snapshots:
       '@typescript-eslint/utils': 8.18.1(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.2)
       debug: 4.4.0
       doctrine: 3.0.0
-      enhanced-resolve: 5.18.0
+      enhanced-resolve: 5.18.1
       eslint: 9.15.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
       get-tsconfig: 4.8.1
@@ -24953,7 +24953,7 @@ snapshots:
   eslint-plugin-n@17.14.0(eslint@9.15.0(jiti@2.4.2)):
     dependencies:
       '@eslint-community/eslint-utils': 4.4.1(eslint@9.15.0(jiti@2.4.2))
-      enhanced-resolve: 5.18.0
+      enhanced-resolve: 5.18.1
       eslint: 9.15.0(jiti@2.4.2)
       eslint-plugin-es-x: 7.8.0(eslint@9.15.0(jiti@2.4.2))
       get-tsconfig: 4.8.1
@@ -33036,7 +33036,7 @@ snapshots:
       acorn-import-assertions: 1.9.0(acorn@8.14.0)
       browserslist: 4.24.4
       chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.18.0
+      enhanced-resolve: 5.18.1
       es-module-lexer: 1.6.0
       eslint-scope: 5.1.1
       events: 3.3.0
