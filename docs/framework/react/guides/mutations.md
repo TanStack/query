@@ -386,7 +386,7 @@ export default function App() {
 
 [//]: # 'Example11'
 
-We also have an extensive [offline example](../../examples/offline) that covers both queries and mutations.
+We also have an extensive [offline example](../../../../examples/react/offline) that covers both queries and mutations.
 
 ## Mutation Scopes
 
