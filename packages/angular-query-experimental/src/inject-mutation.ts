@@ -1,11 +1,9 @@
 import {
   DestroyRef,
-  Injector,
   NgZone,
   computed,
   effect,
   inject,
-  runInInjectionContext,
   signal,
   untracked,
 } from '@angular/core'
@@ -17,6 +15,7 @@ import {
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { noop, shouldThrowError } from './util'
+import type { Injector } from '@angular/core'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type { CreateMutateFunction, CreateMutationResult } from './types'
 import type { CreateMutationOptions } from './mutation-options'
@@ -40,7 +39,6 @@ export function injectMutation<
   injector?: Injector,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   return assertInjector(injectMutation, injector, () => {
-    const currentInjector = inject(Injector)
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
     const queryClient = inject(QueryClient)
@@ -50,9 +48,7 @@ export function injectMutation<
      * making it reactive. Wrapping options in a function ensures embedded expressions
      * are preserved and can keep being applied after signal changes
      */
-    const optionsSignal = computed(() =>
-      runInInjectionContext(currentInjector, () => optionsFn()),
-    )
+    const optionsSignal = computed(optionsFn)
 
     const observerSignal = (() => {
       let instance: MutationObserver<

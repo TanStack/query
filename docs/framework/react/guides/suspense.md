@@ -172,7 +172,7 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../../examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](../advanced-ssr) guide.
+For more information, check out the [NextJs Suspense Streaming Example](../../../../examples/react/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](../advanced-ssr) guide.
 
 ## Using `useQuery().promise` and `React.use()` (Experimental)
 
