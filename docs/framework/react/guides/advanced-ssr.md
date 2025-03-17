@@ -5,7 +5,7 @@ title: Advanced Server Rendering
 
 Welcome to the Advanced Server Rendering guide, where you will learn all about using React Query with streaming, Server Components and the Next.js app router.
 
-You might want to read the [Server Rendering & Hydration guide](./ssr) before this one as it teaches the basics for using React Query with SSR, and [Performance & Request Waterfalls](./request-waterfalls) as well as [Prefetching & Router Integration](./prefetching) also contains valuable background.
+You might want to read the [Server Rendering & Hydration guide](./ssr.md) before this one as it teaches the basics for using React Query with SSR, and [Performance & Request Waterfalls](./request-waterfalls.md) as well as [Prefetching & Router Integration](./prefetching.md) also contains valuable background.
 
 https://tanstack.com/query/latest/docs/framework/react/guides/ssr
 
