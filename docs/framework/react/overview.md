@@ -96,6 +96,6 @@ function Example() {
 ## You talked me into it, so what now?
 
 - Consider taking the official [React Query Course](https://query.gg?s=tanstack) (or buying it for your whole team!)
-- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/useQuery)
+- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](./installation.md) and [API Reference](./reference/useQuery.md)
 
 [//]: # 'Materials'
