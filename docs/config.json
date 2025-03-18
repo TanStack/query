@@ -606,6 +606,10 @@
           "to": "reference/QueriesObserver"
         },
         {
+          "label": "streamedQuery",
+          "to": "reference/streamedQuery"
+        },
+        {
           "label": "focusManager",
           "to": "reference/focusManager"
         },
