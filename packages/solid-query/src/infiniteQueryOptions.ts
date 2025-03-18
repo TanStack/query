@@ -4,7 +4,8 @@ import type {
   InfiniteData,
   QueryKey,
 } from '@tanstack/query-core'
-import type { FunctionedParams, SolidInfiniteQueryOptions } from './types'
+import type { SolidInfiniteQueryOptions } from './types'
+import type { Accessor } from 'solid-js'
 
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
@@ -12,7 +13,7 @@ export type UndefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = FunctionedParams<
+> = Accessor<
   SolidInfiniteQueryOptions<
     TQueryFnData,
     TError,
@@ -34,7 +35,7 @@ export type DefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = FunctionedParams<
+> = Accessor<
   SolidInfiniteQueryOptions<
     TQueryFnData,
     TError,
