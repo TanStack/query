@@ -132,7 +132,6 @@ export function createBaseQuery<
     defaultOptions.structuralSharing = false
     if (isServer) {
       defaultOptions.retry = false
-      defaultOptions.throwOnError = true
     }
     return defaultOptions
   })
@@ -157,7 +156,13 @@ export function createBaseQuery<
         const query = observer().getCurrentQuery()
         const unwrappedResult = hydratableObserverResult(query, result)
 
-        if (unwrappedResult.isError) {
+        if (
+          unwrappedResult.isError &&
+          shouldThrowError(initialOptions.throwOnError, [
+            unwrappedResult.error,
+            query,
+          ])
+        ) {
           reject(unwrappedResult.error)
           unsubscribeIfQueued()
         } else {
