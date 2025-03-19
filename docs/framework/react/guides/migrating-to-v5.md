@@ -14,52 +14,52 @@ useQuery and friends used to have many overloads in TypeScript - different ways 
 now we only support the object format.
 
 ```tsx
-useQuery(key, fn, options) + // [!code --]
-  useQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  useInfiniteQuery(key, fn, options) + // [!code --]
-  useInfiniteQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  useMutation(fn, options) + // [!code --]
-  useMutation({ mutationFn, ...options }) - // [!code ++]
-  useIsFetching(key, filters) + // [!code --]
-  useIsFetching({ queryKey, ...filters }) - // [!code ++]
-  useIsMutating(key, filters) + // [!code --]
-  useIsMutating({ mutationKey, ...filters }) // [!code ++]
+useQuery(key, fn, options) // [!code --]
+useQuery({ queryKey, queryFn, ...options }) // [!code ++]
+useInfiniteQuery(key, fn, options) // [!code --]
+useInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
+useMutation(fn, options) // [!code --]
+useMutation({ mutationFn, ...options }) // [!code ++]
+useIsFetching(key, filters) // [!code --]
+useIsFetching({ queryKey, ...filters }) // [!code ++]
+useIsMutating(key, filters) // [!code --]
+useIsMutating({ mutationKey, ...filters }) // [!code ++]
 ```
 
 ```tsx
-queryClient.isFetching(key, filters) + // [!code --]
-  queryClient.isFetching({ queryKey, ...filters }) - // [!code ++]
-  queryClient.ensureQueryData(key, filters) + // [!code --]
-  queryClient.ensureQueryData({ queryKey, ...filters }) - // [!code ++]
-  queryClient.getQueriesData(key, filters) + // [!code --]
-  queryClient.getQueriesData({ queryKey, ...filters }) - // [!code ++]
-  queryClient.setQueriesData(key, updater, filters, options) + // [!code --]
-  queryClient.setQueriesData({ queryKey, ...filters }, updater, options) - // [!code ++]
-  queryClient.removeQueries(key, filters) + // [!code --]
-  queryClient.removeQueries({ queryKey, ...filters }) - // [!code ++]
-  queryClient.resetQueries(key, filters, options) + // [!code --]
-  queryClient.resetQueries({ queryKey, ...filters }, options) - // [!code ++]
-  queryClient.cancelQueries(key, filters, options) + // [!code --]
-  queryClient.cancelQueries({ queryKey, ...filters }, options) - // [!code ++]
-  queryClient.invalidateQueries(key, filters, options) + // [!code --]
-  queryClient.invalidateQueries({ queryKey, ...filters }, options) - // [!code ++]
-  queryClient.refetchQueries(key, filters, options) + // [!code --]
-  queryClient.refetchQueries({ queryKey, ...filters }, options) - // [!code ++]
-  queryClient.fetchQuery(key, fn, options) + // [!code --]
-  queryClient.fetchQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  queryClient.prefetchQuery(key, fn, options) + // [!code --]
-  queryClient.prefetchQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  queryClient.fetchInfiniteQuery(key, fn, options) + // [!code --]
-  queryClient.fetchInfiniteQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  queryClient.prefetchInfiniteQuery(key, fn, options) + // [!code --]
-  queryClient.prefetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
+queryClient.isFetching(key, filters) // [!code --]
+queryClient.isFetching({ queryKey, ...filters }) // [!code ++]
+queryClient.ensureQueryData(key, filters) // [!code --]
+queryClient.ensureQueryData({ queryKey, ...filters }) // [!code ++]
+queryClient.getQueriesData(key, filters) // [!code --]
+queryClient.getQueriesData({ queryKey, ...filters }) // [!code ++]
+queryClient.setQueriesData(key, updater, filters, options) // [!code --]
+queryClient.setQueriesData({ queryKey, ...filters }, updater, options) // [!code ++]
+queryClient.removeQueries(key, filters) // [!code --]
+queryClient.removeQueries({ queryKey, ...filters }) // [!code ++]
+queryClient.resetQueries(key, filters, options) // [!code --]
+queryClient.resetQueries({ queryKey, ...filters }, options) // [!code ++]
+queryClient.cancelQueries(key, filters, options) // [!code --]
+queryClient.cancelQueries({ queryKey, ...filters }, options) // [!code ++]
+queryClient.invalidateQueries(key, filters, options) // [!code --]
+queryClient.invalidateQueries({ queryKey, ...filters }, options) // [!code ++]
+queryClient.refetchQueries(key, filters, options) // [!code --]
+queryClient.refetchQueries({ queryKey, ...filters }, options) // [!code ++]
+queryClient.fetchQuery(key, fn, options) // [!code --]
+queryClient.fetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
+queryClient.prefetchQuery(key, fn, options) // [!code --]
+queryClient.prefetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
+queryClient.fetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient.fetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
+queryClient.prefetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient.prefetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
 ```
 
 ```tsx
-queryCache.find(key, filters) + // [!code --]
-  queryCache.find({ queryKey, ...filters }) - // [!code ++]
-  queryCache.findAll(key, filters) + // [!code --]
-  queryCache.findAll({ queryKey, ...filters }) // [!code ++]
+queryCache.find(key, filters) // [!code --]
+queryCache.find({ queryKey, ...filters }) // [!code ++]
+queryCache.findAll(key, filters) // [!code --]
+queryCache.findAll({ queryKey, ...filters }) // [!code ++]
 ```
 
 ### `queryClient.getQueryData` now accepts queryKey only as an Argument
@@ -67,8 +67,8 @@ queryCache.find(key, filters) + // [!code --]
 `queryClient.getQueryData` argument is changed to accept only a `queryKey`
 
 ```tsx
-queryClient.getQueryData(queryKey, filters) + // [!code --]
-  queryClient.getQueryData(queryKey) // [!code ++]
+queryClient.getQueryData(queryKey, filters) // [!code --]
+queryClient.getQueryData(queryKey) // [!code ++]
 ```
 
 ### `queryClient.getQueryState` now accepts queryKey only as an Argument
@@ -76,8 +76,8 @@ queryClient.getQueryData(queryKey, filters) + // [!code --]
 `queryClient.getQueryState` argument is changed to accept only a `queryKey`
 
 ```tsx
-queryClient.getQueryState(queryKey, filters) + // [!code --]
-  queryClient.getQueryState(queryKey) // [!code ++]
+queryClient.getQueryState(queryKey, filters) // [!code --]
+queryClient.getQueryState(queryKey) // [!code ++]
 ```
 
 #### Codemod
@@ -142,8 +142,8 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 const queryClient = useQueryClient()
 const query = useQuery({ queryKey, queryFn })
 
-query.remove() + // [!code --]
-  queryClient.removeQueries({ queryKey }) // [!code ++]
+query.remove() // [!code --]
+queryClient.removeQueries({ queryKey }) // [!code ++]
 ```
 
 ### The minimum required TypeScript version is now 4.7
