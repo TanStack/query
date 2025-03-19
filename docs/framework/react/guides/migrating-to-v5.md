@@ -14,7 +14,7 @@ useQuery and friends used to have many overloads in TypeScript - different ways 
 now we only support the object format.
 
 ```tsx
-;-useQuery(key, fn, options) + // [!code --]
+useQuery(key, fn, options) + // [!code --]
   useQuery({ queryKey, queryFn, ...options }) - // [!code ++]
   useInfiniteQuery(key, fn, options) + // [!code --]
   useInfiniteQuery({ queryKey, queryFn, ...options }) - // [!code ++]
@@ -27,7 +27,7 @@ now we only support the object format.
 ```
 
 ```tsx
-;-queryClient.isFetching(key, filters) + // [!code --]
+queryClient.isFetching(key, filters) + // [!code --]
   queryClient.isFetching({ queryKey, ...filters }) - // [!code ++]
   queryClient.ensureQueryData(key, filters) + // [!code --]
   queryClient.ensureQueryData({ queryKey, ...filters }) - // [!code ++]
@@ -56,7 +56,7 @@ now we only support the object format.
 ```
 
 ```tsx
-;-queryCache.find(key, filters) + // [!code --]
+queryCache.find(key, filters) + // [!code --]
   queryCache.find({ queryKey, ...filters }) - // [!code ++]
   queryCache.findAll(key, filters) + // [!code --]
   queryCache.findAll({ queryKey, ...filters }) // [!code ++]
@@ -67,7 +67,7 @@ now we only support the object format.
 `queryClient.getQueryData` argument is changed to accept only a `queryKey`
 
 ```tsx
-;-queryClient.getQueryData(queryKey, filters) + // [!code --]
+queryClient.getQueryData(queryKey, filters) + // [!code --]
   queryClient.getQueryData(queryKey) // [!code ++]
 ```
 
@@ -76,7 +76,7 @@ now we only support the object format.
 `queryClient.getQueryState` argument is changed to accept only a `queryKey`
 
 ```tsx
-;-queryClient.getQueryState(queryKey, filters) + // [!code --]
+queryClient.getQueryState(queryKey, filters) + // [!code --]
   queryClient.getQueryState(queryKey) // [!code ++]
 ```
 
@@ -142,7 +142,7 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 const queryClient = useQueryClient()
 const query = useQuery({ queryKey, queryFn })
 
-;-query.remove() + // [!code --]
+query.remove() + // [!code --]
   queryClient.removeQueries({ queryKey }) // [!code ++]
 ```
 
