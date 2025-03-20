@@ -69,7 +69,7 @@ const latest = data[data.length - 1]
 **Options**
 
 - `options`
-  - `filters?: MutationFilters`: [Mutation Filters](../guides/filters#mutation-filters)
+  - `filters?: MutationFilters`: [Mutation Filters](../guides/filters.md#mutation-filters)
   - `select?: (mutation: Mutation) => TResult`
     - Use this to transform the mutation state.
 - `queryClient?: QueryClient`,
