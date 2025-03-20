@@ -9,7 +9,7 @@ usePrefetchInfiniteQuery(options)
 
 **Options**
 
-You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.prefetchInfiniteQuery`](../../../reference/QueryClient#queryclientprefetchinfinitequery). Remember that some of them are required as below:
+You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.prefetchInfiniteQuery`](../../../reference/QueryClient.md#queryclientprefetchinfinitequery). Remember that some of them are required as below:
 
 - `queryKey: QueryKey`
 
@@ -18,7 +18,7 @@ You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`que
 
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
 
-  - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function) for more information.
+  - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function.md) for more information.
 
 - `initialPageParam: TPageParam`
 
@@ -34,4 +34,4 @@ You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`que
 
 - **Returns**
 
-The `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseInfiniteQuery`](../reference/useSuspenseInfiniteQuery)
+The `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseInfiniteQuery`](../reference/useSuspenseInfiniteQuery.md)

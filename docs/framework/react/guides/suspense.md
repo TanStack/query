@@ -5,12 +5,12 @@ title: Suspense
 
 React Query can also be used with React's Suspense for Data Fetching API's. For this, we have dedicated hooks:
 
-- [useSuspenseQuery](../../reference/useSuspenseQuery)
-- [useSuspenseInfiniteQuery](../../reference/useSuspenseInfiniteQuery)
-- [useSuspenseQueries](../../reference/useSuspenseQueries)
+- [useSuspenseQuery](../reference/useSuspenseQuery.md)
+- [useSuspenseInfiniteQuery](../reference/useSuspenseInfiniteQuery.md)
+- [useSuspenseQueries](../reference/useSuspenseQueries.md)
 - Additionally, you can use the `useQuery().promise` and `React.use()` (Experimental)
 
-When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](https://stackblitz.com/github/TanStack/query/tree/main/examples/react/suspense) for more information on how to set up suspense mode.
+When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](../examples/react/suspense) for more information on how to set up suspense mode.
 
 If you want mutations to propagate errors to the nearest error boundary (similar to queries), you can set the `throwOnError` option to `true` as well.
 
@@ -107,7 +107,7 @@ const App = () => {
 
 ## Fetch-on-render vs Render-as-you-fetch
 
-Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. This means that when your components attempt to mount, they will trigger query fetching and suspend, but only once you have imported them and mounted them. If you want to take it to the next level and implement a **Render-as-you-fetch** model, we recommend implementing [Prefetching](../prefetching) on routing callbacks and/or user interactions events to start loading queries before they are mounted and hopefully even before you start importing or mounting their parent components.
+Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. This means that when your components attempt to mount, they will trigger query fetching and suspend, but only once you have imported them and mounted them. If you want to take it to the next level and implement a **Render-as-you-fetch** model, we recommend implementing [Prefetching](./prefetching.md) on routing callbacks and/or user interactions events to start loading queries before they are mounted and hopefully even before you start importing or mounting their parent components.
 
 ## Suspense on the Server with streaming
 
@@ -172,7 +172,7 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../../../../examples/react/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](../advanced-ssr) guide.
+For more information, check out the [NextJs Suspense Streaming Example](../examples/react/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](./advanced-ssr.md) guide.
 
 ## Using `useQuery().promise` and `React.use()` (Experimental)
 
