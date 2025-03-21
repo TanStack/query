@@ -108,18 +108,23 @@ export function createBaseQuery<
         observer.subscribe(
           notifyManager.batchCalls((state) => {
             ngZone.run(() => {
-              if (
-                state.isError &&
-                !state.isFetching &&
-                // !isRestoring() && // todo: enable when client persistence is implemented
-                shouldThrowError(observer.options.throwOnError, [
-                  state.error,
-                  observer.getCurrentQuery(),
-                ])
-              ) {
-                throw state.error
+              try {
+                if (
+                  state.isError &&
+                  !state.isFetching &&
+                  // !isRestoring() && // todo: enable when client persistence is implemented
+                  shouldThrowError(observer.options.throwOnError, [
+                    state.error,
+                    observer.getCurrentQuery(),
+                  ])
+                ) {
+                  throw state.error
+                }
+                resultFromSubscriberSignal.set(state)
+              } catch (error) {
+                ngZone.onError.next(error)
+                throw error
               }
-              resultFromSubscriberSignal.set(state)
             })
           }),
         ),
