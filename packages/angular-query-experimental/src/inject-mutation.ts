@@ -114,16 +114,21 @@ export function injectMutation<
             observer.subscribe(
               notifyManager.batchCalls((state) => {
                 ngZone.run(() => {
-                  if (
-                    state.isError &&
-                    shouldThrowError(observer.options.throwOnError, [
-                      state.error,
-                    ])
-                  ) {
-                    throw state.error
+                  try {
+                    if (
+                      state.isError &&
+                      shouldThrowError(observer.options.throwOnError, [
+                        state.error,
+                      ])
+                    ) {
+                      throw state.error
+                    }
+  
+                    resultFromSubscriberSignal.set(state)
+                  } catch (error) {
+                    ngZone.onError.next(error)
+                    throw error
                   }
-
-                  resultFromSubscriberSignal.set(state)
                 })
               }),
             ),
