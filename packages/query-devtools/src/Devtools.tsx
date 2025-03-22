@@ -1771,10 +1771,10 @@ const QueryDetails = () => {
     const promise = activeQuery()?.fetch()
     promise?.catch(() => {})
   }
-
+  // trigger error
   const triggerError = (errorType?: DevtoolsErrorType) => {
     const error =
-      errorType?.initializer(activeQuery()!) ??
+      errorType?.initializer(activeQuery()) ??
       new Error('Unknown error from devtools')
 
     const __previousQueryOptions = activeQuery()!.options
@@ -1785,10 +1785,10 @@ const QueryDetails = () => {
       fetchMeta: {
         ...activeQuery()!.state.fetchMeta,
         __previousQueryOptions,
-      } as any,
+      },
     } as QueryState<unknown, Error>)
   }
-
+  // restore error
   const restoreQueryAfterLoadingOrError = () => {
     const activeQueryVal = activeQuery()!
     const previousState = activeQueryVal.state
@@ -1835,7 +1835,7 @@ const QueryDetails = () => {
         class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
       >
         <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
-          Query Details
+          Query Detailszzzz
         </div>
         <div
           class={cx(
@@ -1981,7 +1981,7 @@ const QueryDetails = () => {
                   fetchMeta: {
                     ...activeQueryVal.state.fetchMeta,
                     __previousQueryOptions,
-                  } as any,
+                  },
                 } as QueryState<unknown, Error>)
               }
             }}
