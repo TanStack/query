@@ -117,6 +117,7 @@ export function createBaseQuery<
                   observer.getCurrentQuery(),
                 ])
               ) {
+                ngZone.onError.emit(state.error)
                 throw state.error
               }
               resultFromSubscriberSignal.set(state)
