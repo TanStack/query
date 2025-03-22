@@ -17,6 +17,7 @@ import {
   willFetch,
 } from './suspense'
 import { noop } from './utils'
+import { usePauseManager } from './PauseManagerProvider'
 import type {
   QueryClient,
   QueryKey,
@@ -53,6 +54,7 @@ export function useBaseQuery<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const pauseManager = usePauseManager()
   const defaultedOptions = client.defaultQueryOptions(options)
 
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
@@ -97,9 +99,29 @@ export function useBaseQuery<
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
-        const unsubscribe = shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop
+        if (!shouldSubscribe) {
+          return noop
+        }
+
+        const subscribe = () =>
+          observer.subscribe(notifyManager.batchCalls(onStoreChange))
+        let unsubscribe: ReturnType<typeof subscribe>
+
+        if (pauseManager) {
+          let unsubscribeObserver: (() => void) | undefined
+          const onPausedChange = (paused: boolean) => {
+            unsubscribeObserver?.()
+            unsubscribeObserver = paused ? undefined : subscribe()
+          }
+          const unsubscribePaused = pauseManager.subscribe(onPausedChange)
+          onPausedChange(pauseManager.isPaused())
+          unsubscribe = () => {
+            unsubscribePaused()
+            unsubscribeObserver?.()
+          }
+        } else {
+          unsubscribe = subscribe()
+        }
 
         // Update result to make sure we did not miss any query updates
         // between creating the observer and subscribing to it.
@@ -107,7 +129,7 @@ export function useBaseQuery<
 
         return unsubscribe
       },
-      [observer, shouldSubscribe],
+      [observer, shouldSubscribe, pauseManager],
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
