@@ -32,10 +32,6 @@ type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
 ) => void
 
-export interface NotifyOptions {
-  listeners?: boolean
-}
-
 interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
@@ -151,7 +147,6 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
-    notifyOptions?: NotifyOptions,
   ): void {
     const prevOptions = this.options
     const prevQuery = this.#currentQuery
@@ -200,7 +195,7 @@ export class QueryObserver<
     }
 
     // Update result
-    this.updateResult(notifyOptions)
+    this.updateResult()
 
     // Update stale interval if needed
     if (
@@ -648,7 +643,7 @@ export class QueryObserver<
     return nextResult
   }
 
-  updateResult(notifyOptions?: NotifyOptions): void {
+  updateResult(): void {
     const prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
@@ -668,9 +663,6 @@ export class QueryObserver<
     }
 
     this.#currentResult = nextResult
-
-    // Determine which callbacks to trigger
-    const defaultNotifyOptions: NotifyOptions = {}
 
     const shouldNotifyListeners = (): boolean => {
       if (!prevResult) {
@@ -706,11 +698,7 @@ export class QueryObserver<
       })
     }
 
-    if (notifyOptions?.listeners !== false && shouldNotifyListeners()) {
-      defaultNotifyOptions.listeners = true
-    }
-
-    this.#notify({ ...defaultNotifyOptions, ...notifyOptions })
+    this.#notify({ listeners: shouldNotifyListeners() })
   }
 
   #updateQuery(): void {
@@ -740,7 +728,7 @@ export class QueryObserver<
     }
   }
 
-  #notify(notifyOptions: NotifyOptions): void {
+  #notify(notifyOptions: { listeners: boolean }): void {
     notifyManager.batch(() => {
       // First, trigger the listeners
       if (notifyOptions.listeners) {
