@@ -15,7 +15,6 @@ export type PersistQueryClientProviderProps = QueryClientProviderProps & {
 }
 
 export const PersistQueryClientProvider = ({
-  client,
   children,
   persistOptions,
   onSuccess,
@@ -32,7 +31,7 @@ export const PersistQueryClientProvider = ({
   React.useEffect(() => {
     const options = {
       ...refs.current.persistOptions,
-      queryClient: client,
+      queryClient: props.client,
     }
     if (!didRestore.current) {
       didRestore.current = true
@@ -45,10 +44,10 @@ export const PersistQueryClientProvider = ({
       })
     }
     return isRestoring ? undefined : persistQueryClientSubscribe(options)
-  }, [client, isRestoring])
+  }, [props.client, isRestoring])
 
   return (
-    <QueryClientProvider client={client} {...props}>
+    <QueryClientProvider {...props}>
       <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
     </QueryClientProvider>
   )
