@@ -1772,7 +1772,7 @@ const QueryDetails = () => {
     const promise = activeQuery()?.fetch()
     promise?.catch(() => {})
   }
-  // trigger error
+
   const triggerError = (errorType?: DevtoolsErrorType) => {
     const activeQueryVal = activeQuery()
     if (!activeQueryVal) return
