@@ -290,7 +290,6 @@ function App() {
     - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
     - If set to `Infinity`, the data will never be considered stale
   - ##### `throwOnError: undefined | boolean | (error: TError, query: Query) => boolean`
-    - Defaults to the global query config's `throwOnError` value, which is `undefined`
     - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
     - Set this to `false` to disable `suspense`'s default behavior of throwing errors to the error boundary.
     - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)

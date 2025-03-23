@@ -143,7 +143,7 @@ describe('injectMutationState', () => {
       @Component({
         selector: 'app-fake',
         template: `
-          @for (mutation of mutationState(); track mutation) {
+          @for (mutation of mutationState(); track $index) {
             <span>{{ mutation.status }}</span>
           }
         `,

@@ -8,15 +8,15 @@
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.66.2",
-    "@tanstack/react-query-devtools": "^5.66.2",
-    "@tanstack/react-query-next-experimental": "^5.66.2",
+    "@tanstack/react-query": "^5.69.0",
+    "@tanstack/react-query-devtools": "^5.69.0",
+    "@tanstack/react-query-next-experimental": "^5.69.0",
     "next": "^14.2.20",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.79",
-    "typescript": "5.7.2"
+    "typescript": "5.8.2"
   }
 }

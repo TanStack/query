@@ -8,19 +8,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.66.2",
-    "@tanstack/react-query": "^5.66.2",
-    "@tanstack/react-query-devtools": "^5.66.2",
-    "@tanstack/react-query-persist-client": "^5.66.2",
+    "@tanstack/query-sync-storage-persister": "^5.69.0",
+    "@tanstack/react-query": "^5.69.0",
+    "@tanstack/react-query-devtools": "^5.69.0",
+    "@tanstack/react-query-persist-client": "^5.69.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.66.1",
+    "@tanstack/eslint-plugin-query": "^5.68.0",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.3.3",
-    "typescript": "5.7.2",
+    "typescript": "5.8.2",
     "vite": "^5.3.5"
   }
 }

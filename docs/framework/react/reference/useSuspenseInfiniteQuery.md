@@ -9,7 +9,7 @@ const result = useSuspenseInfiniteQuery(options)
 
 **Options**
 
-The same as for [useInfiniteQuery](../useInfiniteQuery), except for:
+The same as for [useInfiniteQuery](../reference/useInfiniteQuery.md), except for:
 
 - `suspense`
 - `throwOnError`
@@ -18,7 +18,7 @@ The same as for [useInfiniteQuery](../useInfiniteQuery), except for:
 
 **Returns**
 
-Same object as [useInfiniteQuery](../useInfiniteQuery), except that:
+Same object as [useInfiniteQuery](../reference/useInfiniteQuery.md), except that:
 
 - `data` is guaranteed to be defined
 - `isPlaceholderData` is missing

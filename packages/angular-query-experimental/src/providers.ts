@@ -1,13 +1,11 @@
 import {
   DestroyRef,
   ENVIRONMENT_INITIALIZER,
-  Injector,
   PLATFORM_ID,
   computed,
   effect,
   inject,
   makeEnvironmentProviders,
-  runInInjectionContext,
 } from '@angular/core'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { isPlatformBrowser } from '@angular/common'
@@ -99,7 +97,7 @@ export function provideTanStackQuery(
   return makeEnvironmentProviders([
     provideQueryClient(queryClient),
     {
-      // Do not use provideEnvironmentInitializer to support Angular < v19
+      // Do not use provideEnvironmentInitializer while Angular < v19 is supported
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
       useValue: () => {
@@ -250,14 +248,17 @@ export function withDevtools(
   } else {
     providers = [
       {
+        // Do not use provideEnvironmentInitializer while Angular < v19 is supported
         provide: ENVIRONMENT_INITIALIZER,
         multi: true,
         useFactory: () => {
           if (!isPlatformBrowser(inject(PLATFORM_ID))) return noop
-          const injector = inject(Injector)
-          const options = computed(() =>
-            runInInjectionContext(injector, () => optionsFn?.() ?? {}),
-          )
+          const injectedClient = inject(QueryClient, {
+            optional: true,
+          })
+          const destroyRef = inject(DestroyRef)
+
+          const options = computed(() => optionsFn?.() ?? {})
 
           let devtools: TanstackQueryDevtools | null = null
           let el: HTMLElement | null = null
@@ -269,10 +270,7 @@ export function withDevtools(
               : isDevMode()
           })
 
-          const destroyRef = inject(DestroyRef)
-
           const getResolvedQueryClient = () => {
-            const injectedClient = injector.get(QueryClient, null)
             const client = options().client ?? injectedClient
             if (!client) {
               throw new Error('No QueryClient found')
@@ -314,22 +312,20 @@ export function withDevtools(
               el = document.body.appendChild(document.createElement('div'))
               el.classList.add('tsqd-parent-container')
 
-              import('@tanstack/query-devtools').then((queryDevtools) =>
-                runInInjectionContext(injector, () => {
-                  devtools = new queryDevtools.TanstackQueryDevtools({
-                    ...options(),
-                    client: getResolvedQueryClient(),
-                    queryFlavor: 'Angular Query',
-                    version: '5',
-                    onlineManager,
-                  })
+              import('@tanstack/query-devtools').then((queryDevtools) => {
+                devtools = new queryDevtools.TanstackQueryDevtools({
+                  ...options(),
+                  client: getResolvedQueryClient(),
+                  queryFlavor: 'Angular Query',
+                  version: '5',
+                  onlineManager,
+                })
 
-                  el && devtools.mount(el)
+                el && devtools.mount(el)
 
-                  // Unmount the devtools on application destroy
-                  destroyRef.onDestroy(destroyDevtools)
-                }),
-              )
+                // Unmount the devtools on application destroy
+                destroyRef.onDestroy(destroyDevtools)
+              })
             })
         },
       },

@@ -62,4 +62,39 @@ describe('createQueries', () => {
     >()
     expectTypeOf(firstResult.data).toEqualTypeOf<number | undefined>()
   })
+
+  test('should return correct data for dynamic queries with mixed result types', () => {
+    const Queries1 = {
+      get: () =>
+        queryOptions({
+          queryKey: ['key1'],
+          queryFn: () => Promise.resolve(1),
+        }),
+    }
+    const Queries2 = {
+      get: () =>
+        queryOptions({
+          queryKey: ['key2'],
+          queryFn: () => Promise.resolve(true),
+        }),
+    }
+
+    const queries1List = [1, 2, 3].map(() => ({ ...Queries1.get() }))
+    const result = createQueries({
+      queries: [...queries1List, { ...Queries2.get() }],
+    })
+
+    expectTypeOf(result).toEqualTypeOf<
+      Readable<
+        [
+          ...Array<QueryObserverResult<number, Error>>,
+          QueryObserverResult<boolean, Error>,
+        ]
+      >
+    >()
+
+    expectTypeOf(get(result)[0].data).toEqualTypeOf<
+      number | boolean | undefined
+    >()
+  })
 })
