@@ -1768,28 +1768,34 @@ const QueryDetails = () => {
   const color = createMemo(() => getQueryStatusColorByLabel(statusLabel()))
 
   const handleRefetch = () => {
+    notifyDevtools(activeQuery(), 'REFETCH')
     const promise = activeQuery()?.fetch()
     promise?.catch(() => {})
   }
   // trigger error
   const triggerError = (errorType?: DevtoolsErrorType) => {
+    const activeQueryVal = activeQuery()
+    if (!activeQueryVal) return
+    notifyDevtools(activeQueryVal, 'TRIGGER_ERROR')
     const error =
-      errorType?.initializer(activeQuery()) ??
+      errorType?.initializer(activeQueryVal) ??
       new Error('Unknown error from devtools')
 
-    const __previousQueryOptions = activeQuery()!.options
+    const __previousQueryOptions = activeQueryVal.options
 
-    activeQuery()!.setState({
+    activeQueryVal.setState({
       status: 'error',
       error,
       fetchMeta: {
-        ...activeQuery()!.state.fetchMeta,
+        ...activeQueryVal.state.fetchMeta,
+        // @ts-ignore This does exist
         __previousQueryOptions,
       },
-    } as QueryState<unknown, Error>)
+    })
   }
-  // restore error
+
   const restoreQueryAfterLoadingOrError = () => {
+    notifyDevtools(activeQuery(), 'RESTORE_LOADING')
     const activeQueryVal = activeQuery()!
     const previousState = activeQueryVal.state
     const previousOptions = activeQueryVal.state.fetchMeta
@@ -1835,7 +1841,7 @@ const QueryDetails = () => {
         class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
       >
         <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
-          Query Detailszzzz
+          Query Details
         </div>
         <div
           class={cx(
@@ -1899,7 +1905,10 @@ const QueryDetails = () => {
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-invalidate',
             )}
-            onClick={() => queryClient.invalidateQueries(activeQuery())}
+            onClick={() => {
+              notifyDevtools(activeQuery(), 'INVALIDATE')
+              queryClient.invalidateQueries(activeQuery())
+            }}
             disabled={queryStatus() === 'pending'}
           >
             <span
@@ -1917,7 +1926,10 @@ const QueryDetails = () => {
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-reset',
             )}
-            onClick={() => queryClient.resetQueries(activeQuery())}
+            onClick={() => {
+              notifyDevtools(activeQuery(), 'RESET')
+              queryClient.resetQueries(activeQuery())
+            }}
             disabled={queryStatus() === 'pending'}
           >
             <span
@@ -1936,6 +1948,7 @@ const QueryDetails = () => {
               'tsqd-query-details-action-remove',
             )}
             onClick={() => {
+              notifyDevtools(activeQuery(), 'REMOVE')
               queryClient.removeQueries(activeQuery())
               setSelectedQueryHash(null)
             }}
@@ -1959,9 +1972,11 @@ const QueryDetails = () => {
             disabled={restoringLoading()}
             onClick={() => {
               if (activeQuery()?.state.data === undefined) {
+                notifyDevtools(activeQuery(), 'RESTORE_LOADING')
                 setRestoringLoading(true)
                 restoreQueryAfterLoadingOrError()
               } else {
+                notifyDevtools(activeQuery(), 'TRIGGER_LOADING')
                 const activeQueryVal = activeQuery()
                 if (!activeQueryVal) return
                 const __previousQueryOptions = activeQueryVal.options
@@ -1982,7 +1997,7 @@ const QueryDetails = () => {
                     ...activeQueryVal.state.fetchMeta,
                     __previousQueryOptions,
                   },
-                } as QueryState<unknown, Error>)
+                } as unknown as QueryState<unknown, Error>)
               }
             }}
           >
@@ -2006,6 +2021,7 @@ const QueryDetails = () => {
                 if (!activeQuery()!.state.error) {
                   triggerError()
                 } else {
+                  notifyDevtools(activeQuery(), 'RESTORE_ERROR')
                   queryClient.resetQueries(activeQuery())
                 }
               }}
@@ -2436,6 +2452,32 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   })
 
   return value
+}
+
+const DevtoolsActions = {
+  REFETCH: 'ACTION-REFETCH',
+  INVALIDATE: 'ACTION-INVALIDATE',
+  RESET: 'ACTION-RESET',
+  REMOVE: 'ACTION-REMOVE',
+  TRIGGER_ERROR: 'ACTION-TRIGGER-ERROR',
+  RESTORE_ERROR: 'ACTION-RESTORE-ERROR',
+  TRIGGER_LOADING: 'ACTION-TRIGGER-LOADING',
+  RESTORE_LOADING: 'ACTION-RESTORE-LOADING',
+} as const
+
+const notifyDevtools = (
+  query: Query | undefined,
+  actionType: keyof typeof DevtoolsActions,
+) => {
+  if (!query) return
+  const queryClient = useQueryDevtoolsContext().client
+  queryClient.getQueryCache().notify({
+    query,
+    type: 'updated',
+    action: {
+      type: DevtoolsActions[actionType],
+    },
+  })
 }
 
 const stylesFactory = (
