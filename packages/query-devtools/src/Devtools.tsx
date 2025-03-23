@@ -76,6 +76,7 @@ import type {
   Query,
   QueryCache,
   QueryCacheNotifyEvent,
+  QueryClient,
   QueryState,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
@@ -1768,7 +1769,7 @@ const QueryDetails = () => {
   const color = createMemo(() => getQueryStatusColorByLabel(statusLabel()))
 
   const handleRefetch = () => {
-    notifyDevtools(activeQuery(), 'REFETCH')
+    notifyDevtools(queryClient, activeQuery(), 'REFETCH')
     const promise = activeQuery()?.fetch()
     promise?.catch(() => {})
   }
@@ -1776,7 +1777,7 @@ const QueryDetails = () => {
   const triggerError = (errorType?: DevtoolsErrorType) => {
     const activeQueryVal = activeQuery()
     if (!activeQueryVal) return
-    notifyDevtools(activeQueryVal, 'TRIGGER_ERROR')
+    notifyDevtools(queryClient, activeQueryVal, 'TRIGGER_ERROR')
     const error =
       errorType?.initializer(activeQueryVal) ??
       new Error('Unknown error from devtools')
@@ -1795,7 +1796,7 @@ const QueryDetails = () => {
   }
 
   const restoreQueryAfterLoadingOrError = () => {
-    notifyDevtools(activeQuery(), 'RESTORE_LOADING')
+    notifyDevtools(queryClient, activeQuery(), 'RESTORE_LOADING')
     const activeQueryVal = activeQuery()!
     const previousState = activeQueryVal.state
     const previousOptions = activeQueryVal.state.fetchMeta
@@ -1906,7 +1907,7 @@ const QueryDetails = () => {
               'tsqd-query-details-action-invalidate',
             )}
             onClick={() => {
-              notifyDevtools(activeQuery(), 'INVALIDATE')
+              notifyDevtools(queryClient, activeQuery(), 'INVALIDATE')
               queryClient.invalidateQueries(activeQuery())
             }}
             disabled={queryStatus() === 'pending'}
@@ -1927,7 +1928,7 @@ const QueryDetails = () => {
               'tsqd-query-details-action-reset',
             )}
             onClick={() => {
-              notifyDevtools(activeQuery(), 'RESET')
+              notifyDevtools(queryClient, activeQuery(), 'RESET')
               queryClient.resetQueries(activeQuery())
             }}
             disabled={queryStatus() === 'pending'}
@@ -1948,7 +1949,7 @@ const QueryDetails = () => {
               'tsqd-query-details-action-remove',
             )}
             onClick={() => {
-              notifyDevtools(activeQuery(), 'REMOVE')
+              notifyDevtools(queryClient, activeQuery(), 'REMOVE')
               queryClient.removeQueries(activeQuery())
               setSelectedQueryHash(null)
             }}
@@ -1972,11 +1973,11 @@ const QueryDetails = () => {
             disabled={restoringLoading()}
             onClick={() => {
               if (activeQuery()?.state.data === undefined) {
-                notifyDevtools(activeQuery(), 'RESTORE_LOADING')
+                notifyDevtools(queryClient, activeQuery(), 'RESTORE_LOADING')
                 setRestoringLoading(true)
                 restoreQueryAfterLoadingOrError()
               } else {
-                notifyDevtools(activeQuery(), 'TRIGGER_LOADING')
+                notifyDevtools(queryClient, activeQuery(), 'TRIGGER_LOADING')
                 const activeQueryVal = activeQuery()
                 if (!activeQueryVal) return
                 const __previousQueryOptions = activeQueryVal.options
@@ -2021,7 +2022,7 @@ const QueryDetails = () => {
                 if (!activeQuery()!.state.error) {
                   triggerError()
                 } else {
-                  notifyDevtools(activeQuery(), 'RESTORE_ERROR')
+                  notifyDevtools(queryClient, activeQuery(), 'RESTORE_ERROR')
                   queryClient.resetQueries(activeQuery())
                 }
               }}
@@ -2466,11 +2467,11 @@ const DevtoolsActions = {
 } as const
 
 const notifyDevtools = (
+  queryClient: QueryClient,
   query: Query | undefined,
   actionType: keyof typeof DevtoolsActions,
 ) => {
-  if (!query) return
-  const queryClient = useQueryDevtoolsContext().client
+  if (!queryClient || !query) return
   queryClient.getQueryCache().notify({
     query,
     type: 'updated',
