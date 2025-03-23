@@ -44,7 +44,7 @@ function Example() {
       }
       return await response.json()
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+    onSettled: async () => await queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   return (
