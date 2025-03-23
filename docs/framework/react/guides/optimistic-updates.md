@@ -70,7 +70,7 @@ This approach works very well if the mutation and the query live in the same com
 // somewhere in your app
 const { mutate } = useMutation({
   mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
-  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  onSettled: async () => await queryClient.invalidateQueries({ queryKey: ['todos'] }),
   mutationKey: ['addTodo'],
 })
 
@@ -121,8 +121,8 @@ useMutation({
     queryClient.setQueryData(['todos'], context.previousTodos)
   },
   // Always refetch after error or success:
-  onSettled: () => {
-    queryClient.invalidateQueries({ queryKey: ['todos'] })
+  onSettled: async () => {
+    return await queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
 })
 ```
@@ -159,8 +159,8 @@ useMutation({
     )
   },
   // Always refetch after error or success:
-  onSettled: (newTodo) => {
-    queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
+  onSettled: async (newTodo) => {
+    return await queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
   },
 })
 ```
@@ -175,7 +175,7 @@ You can also use the `onSettled` function in place of the separate `onError` and
 useMutation({
   mutationFn: updateTodo,
   // ...
-  onSettled: (newTodo, error, variables, context) => {
+  onSettled: async (newTodo, error, variables, context) => {
     if (error) {
       // do something
     }
