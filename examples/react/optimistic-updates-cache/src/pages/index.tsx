@@ -75,8 +75,8 @@ function Example() {
       }
     },
     // Always refetch after error or success:
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
+    onSettled: async () => {
+      return await queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })
 
