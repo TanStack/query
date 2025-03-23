@@ -1973,7 +1973,6 @@ const QueryDetails = () => {
             disabled={restoringLoading()}
             onClick={() => {
               if (activeQuery()?.state.data === undefined) {
-                notifyDevtools(queryClient, activeQuery(), 'RESTORE_LOADING')
                 setRestoringLoading(true)
                 restoreQueryAfterLoadingOrError()
               } else {
