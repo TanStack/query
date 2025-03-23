@@ -121,6 +121,18 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
+  const onlineManager = createMemo(
+    () => useQueryDevtoolsContext().onlineManager,
+  )
+  onMount(() => {
+    const unsubscribe = onlineManager().subscribe((online) => {
+      setOffline(!online)
+    })
+
+    onCleanup(() => {
+      unsubscribe()
+    })
+  })
 
   const pip = usePiPWindow()
 
@@ -940,13 +952,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             </button>
             <button
               onClick={() => {
-                if (offline()) {
-                  onlineManager().setOnline(true)
-                  setOffline(false)
-                } else {
-                  onlineManager().setOnline(false)
-                  setOffline(true)
-                }
+                onlineManager().setOnline(!onlineManager().isOnline())
               }}
               class={cx(
                 styles().actionsBtn,
