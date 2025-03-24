@@ -28,6 +28,8 @@
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
     "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
     "test:types:tscurrent": "tsc --build",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
     "build": "tsup --tsconfig tsconfig.prod.json"
   },
