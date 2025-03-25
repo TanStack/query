@@ -17,8 +17,6 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 
-export type FunctionedParams<T> = () => T
-
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<
   TQueryFnData = unknown,
