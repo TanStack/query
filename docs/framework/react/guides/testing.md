@@ -103,9 +103,7 @@ const expectation = nock('http://example.com').get('/api/data').reply(200, {
 
 const { result } = renderHook(() => useFetchData(), { wrapper })
 
-await waitFor(() => {
-  return result.current.isSuccess
-})
+await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
 expect(result.current.data).toEqual({ answer: 42 })
 ```
@@ -149,7 +147,7 @@ const { result } = renderHook(() => useInfiniteQueryCustomHook(), {
   wrapper,
 })
 
-await waitFor(() => result.current.isSuccess)
+await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
 expect(result.current.data.pages).toStrictEqual(generateMockedResponse(1))
 
