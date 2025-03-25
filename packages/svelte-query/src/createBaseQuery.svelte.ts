@@ -33,8 +33,6 @@ export function createBaseQuery<
     return opts
   })
 
-  let updateEffects = () => {}
-
   /** Creates the observer */
   const observer = new Observer<
     TQueryFnData,
@@ -44,12 +42,6 @@ export function createBaseQuery<
     TQueryKey
   >(client, resolvedOptions)
 
-  /** Subscribe to changes in result and defaultedOptions */
-  $effect.pre(() => {
-    observer.setOptions(resolvedOptions, { listeners: false })
-    updateEffects()
-  })
-
   return createReactiveThunk(
     () => {
       const result = observer.getOptimisticResult(resolvedOptions)
@@ -58,9 +50,15 @@ export function createBaseQuery<
       }
       return result
     },
-    (update) => {
-      updateEffects = update
-      return observer.subscribe(update)
-    },
+    (update) => observer.subscribe(update),
+    [
+      {
+        type: 'pre',
+        fn: (update) => {
+          observer.setOptions(resolvedOptions, { listeners: false })
+          update()
+        },
+      },
+    ],
   )
 }

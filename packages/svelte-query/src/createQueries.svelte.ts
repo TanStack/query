@@ -218,26 +218,6 @@ export function createQueries<
     combine as QueriesObserverOptions<TCombinedResult>,
   )
 
-  let updateEffects = () => {}
-
-  $effect.pre(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setQueries(
-      resolvedQueries,
-      { combine } as QueriesObserverOptions<TCombinedResult>,
-      { listeners: false },
-    )
-    updateEffects()
-  })
-
-  $effect(() => {
-    if (isRestoring || subscribed === false) {
-      return
-    }
-    observer.subscribe(updateEffects)
-  })
-
   return createReactiveThunk(
     () => {
       const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
@@ -246,8 +226,28 @@ export function createQueries<
       )
       return getCombinedResult(trackResult())
     },
-    (update) => {
-      updateEffects = update
-    },
+    () => {},
+    [
+      {
+        type: 'pre',
+        fn: (update) => {
+          observer.setQueries(
+            resolvedQueries,
+            { combine } as QueriesObserverOptions<TCombinedResult>,
+            { listeners: false },
+          )
+          update()
+        },
+      },
+      {
+        type: 'regular',
+        fn: (update) => {
+          if (isRestoring || subscribed === false) {
+            return
+          }
+          observer.subscribe(update)
+        },
+      },
+    ],
   )
 }
