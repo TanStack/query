@@ -25,6 +25,12 @@ The Missing Fullstack Toolkit for Next.js
 
 Link: https://blitzjs.com/
 
+## Connect 
+
+A family of libraries for building building browser and gRPC-compatible HTTP APIs.
+
+Link: https://connectrpc.com/docs
+
 ## GraphQL Code Generator
 
 Generate React Query hooks from your GraphQL schema
