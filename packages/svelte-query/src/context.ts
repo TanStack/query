@@ -1,18 +1,18 @@
 import { getContext, setContext } from 'svelte'
 import type { QueryClient } from '@tanstack/query-core'
 
-const _contextKey = '$$_queryClient'
+const _contextKey = Symbol('QueryClient')
 
 /** Retrieves a Client from Svelte's context */
 export const getQueryClientContext = (): QueryClient => {
-  const client = getContext(_contextKey)
+  const client = getContext<QueryClient | undefined>(_contextKey)
   if (!client) {
     throw new Error(
       'No QueryClient was found in Svelte context. Did you forget to wrap your component with QueryClientProvider?',
     )
   }
 
-  return client as QueryClient
+  return client
 }
 
 /** Sets a QueryClient on Svelte's context */
@@ -20,7 +20,7 @@ export const setQueryClientContext = (client: QueryClient): void => {
   setContext(_contextKey, client)
 }
 
-const _isRestoringContextKey = '$$_isRestoring'
+const _isRestoringContextKey = Symbol('isRestoring')
 
 /** Retrieves a `isRestoring` from Svelte's context */
 export const getIsRestoringContext = (): (() => boolean) => {

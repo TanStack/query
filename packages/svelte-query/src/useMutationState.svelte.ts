@@ -1,5 +1,5 @@
-import { replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient.js'
+import { createReactiveThunk } from './containers.svelte.js'
 import type {
   MutationCache,
   MutationState,
@@ -22,35 +22,10 @@ function getResult<TResult = MutationState>(
 export function useMutationState<TResult = MutationState>(
   options: MutationStateOptions<TResult> = {},
   queryClient?: QueryClient,
-): Array<TResult> {
+): () => Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
-  const result = $state(getResult(mutationCache, options))
-
-  $effect(() => {
-    const unsubscribe = mutationCache.subscribe(() => {
-      const nextResult = replaceEqualDeep(
-        result,
-        getResult(mutationCache, options),
-      )
-      if (result !== nextResult) {
-        Object.assign(result, nextResult)
-      }
-    })
-
-    return unsubscribe
-  })
-
-  /*  $effect(() => {
-    mutationCache.subscribe(() => {
-      const nextResult = replaceEqualDeep(
-        result.current,
-        getResult(mutationCache, optionsRef),
-      )
-      if (result.current !== nextResult) {
-        result = nextResult
-        //notifyManager.schedule(onStoreChange)
-      }
-    })
-  }) */
-  return result
+  return createReactiveThunk(
+    () => getResult(mutationCache, options),
+    (update) => mutationCache.subscribe(update),
+  )
 }

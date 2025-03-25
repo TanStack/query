@@ -10,7 +10,6 @@ import type {
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
-  FunctionedParams,
 } from './types.js'
 
 export function createInfiniteQuery<
@@ -20,21 +19,19 @@ export function createInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: FunctionedParams<
-    CreateInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey,
-      TPageParam
-    >
+  options: CreateInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey,
+    TPageParam
   >,
   queryClient?: QueryClient,
-): CreateInfiniteQueryResult<TData, TError> {
+): () => CreateInfiniteQueryResult<TData, TError> {
   return createBaseQuery(
     options,
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-  ) as CreateInfiniteQueryResult<TData, TError>
+  ) as () => CreateInfiniteQueryResult<TData, TError>
 }

@@ -1,12 +1,10 @@
-import { onDestroy } from 'svelte'
-
-import { MutationObserver, notifyManager } from '@tanstack/query-core'
+import { MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient.js'
+import { createReactiveThunk } from './containers.svelte.js'
 import type {
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
-  FunctionedParams,
 } from './types.js'
 
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
@@ -17,18 +15,14 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: FunctionedParams<
-    CreateMutationOptions<TData, TError, TVariables, TContext>
-  >,
+  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
   queryClient?: QueryClient,
-): CreateMutationResult<TData, TError, TVariables, TContext> {
+): () => CreateMutationResult<TData, TError, TVariables, TContext> {
   const client = useQueryClient(queryClient)
 
-  const observer = $derived(
-    new MutationObserver<TData, TError, TVariables, TContext>(
-      client,
-      options(),
-    ),
+  const observer = new MutationObserver<TData, TError, TVariables, TContext>(
+    client,
+    options,
   )
 
   const mutate = $state<
@@ -37,35 +31,20 @@ export function createMutation<
     observer.mutate(variables, mutateOptions).catch(noop)
   })
 
-  $effect.pre(() => {
-    observer.setOptions(options())
-  })
-
-  const result = $state(observer.getCurrentResult())
-
-  const unsubscribe = observer.subscribe((val) => {
-    notifyManager.batchCalls(() => {
-      Object.assign(result, val)
-    })()
-  })
-
-  onDestroy(() => {
-    unsubscribe()
-  })
-
   // @ts-expect-error
-  return new Proxy(result, {
-    get: (_, prop) => {
-      const r = {
-        ...result,
-        mutate,
-        mutateAsync: result.mutate,
-      }
-      if (prop == 'value') return r
-      // @ts-expect-error
-      return r[prop]
+  return createReactiveThunk(
+    () => {
+      const result = observer.getCurrentResult()
+      Object.defineProperty(result, 'mutateAsync', {
+        value: result.mutate,
+      })
+      Object.defineProperty(result, 'mutate', {
+        value: mutate,
+      })
+      return result
     },
-  })
+    (update) => observer.subscribe(update),
+  )
 }
 
 function noop() {}

@@ -1,8 +1,7 @@
-import { untrack } from 'svelte'
-import { QueriesObserver, notifyManager } from '@tanstack/query-core'
+import { QueriesObserver } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import type { FunctionedParams } from './types.js'
+import { createReactiveThunk } from './containers.svelte.js'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -190,72 +189,65 @@ export function createQueries<
 >(
   {
     queries,
-    ...options
+    combine,
+    subscribed,
   }: {
-    queries: FunctionedParams<[...QueriesOptions<T>]>
+    queries: [...QueriesOptions<T>]
     combine?: (result: QueriesResults<T>) => TCombinedResult
+    subscribed?: boolean
   },
   queryClient?: QueryClient,
-): TCombinedResult {
+): () => TCombinedResult {
   const client = useQueryClient(queryClient)
-  const isRestoring = useIsRestoring()
+  const isRestoring = $derived.by(useIsRestoring())
 
-  const defaultedQueries = $derived(() => {
-    return queries().map((opts) => {
-      const defaultedOptions = client.defaultQueryOptions(opts)
+  const resolvedQueries = $derived(
+    queries.map((opts) => {
+      const resolvedOptions = client.defaultQueryOptions(opts)
       // Make sure the results are already in fetching state before subscribing or updating options
-      defaultedOptions._optimisticResults = isRestoring()
+      resolvedOptions._optimisticResults = isRestoring
         ? 'isRestoring'
         : 'optimistic'
-      return defaultedOptions as QueryObserverOptions
-    })
-  })
+      return resolvedOptions
+    }),
+  )
 
   const observer = new QueriesObserver<TCombinedResult>(
     client,
-    defaultedQueries(),
-    options as QueriesObserverOptions<TCombinedResult>,
+    resolvedQueries,
+    combine as QueriesObserverOptions<TCombinedResult>,
   )
 
-  const [_, getCombinedResult, trackResult] = $derived(
-    observer.getOptimisticResult(
-      defaultedQueries(),
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
-    ),
-  )
+  let updateEffects = () => {}
 
-  $effect(() => {
+  $effect.pre(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observer.setQueries(
-      defaultedQueries(),
-      options as QueriesObserverOptions<TCombinedResult>,
+      resolvedQueries,
+      { combine } as QueriesObserverOptions<TCombinedResult>,
       { listeners: false },
     )
+    updateEffects()
   })
-
-  let result = $state(getCombinedResult(trackResult()))
 
   $effect(() => {
-    if (isRestoring()) {
-      return () => null
+    if (isRestoring || subscribed === false) {
+      return
     }
-    untrack(() => {
-      // @ts-expect-error
-      Object.assign(result, getCombinedResult(trackResult()))
-    })
-
-    return observer.subscribe((_result) => {
-      notifyManager.batchCalls(() => {
-        const res = observer.getOptimisticResult(
-          defaultedQueries(),
-          (options as QueriesObserverOptions<TCombinedResult>).combine,
-        )
-        // @ts-expect-error
-        Object.assign(result, res[1](res[2]()))
-      })()
-    })
+    observer.subscribe(updateEffects)
   })
 
-  return result
+  return createReactiveThunk(
+    () => {
+      const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
+        resolvedQueries,
+        combine as QueriesObserverOptions<TCombinedResult>['combine'],
+      )
+      return getCombinedResult(trackResult())
+    },
+    (update) => {
+      updateEffects = update
+    },
+  )
 }
