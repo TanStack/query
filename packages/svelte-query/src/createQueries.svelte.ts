@@ -1,10 +1,7 @@
-import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import { derived, get, readable } from 'svelte/store'
+import { QueriesObserver } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import { isSvelteStore, noop } from './utils.js'
-import type { Readable } from 'svelte/store'
-import type { StoreOrVal } from './types.js'
+import { createReactiveThunk } from './containers.svelte.js'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -192,74 +189,65 @@ export function createQueries<
 >(
   {
     queries,
-    ...options
+    combine,
+    subscribed,
   }: {
-    queries:
-      | StoreOrVal<[...QueriesOptions<T>]>
-      | StoreOrVal<
-          [...{ [K in keyof T]: GetQueryObserverOptionsForCreateQueries<T[K]> }]
-        >
+    queries: [...QueriesOptions<T>]
     combine?: (result: QueriesResults<T>) => TCombinedResult
+    subscribed?: boolean
   },
   queryClient?: QueryClient,
-): Readable<TCombinedResult> {
+): () => TCombinedResult {
   const client = useQueryClient(queryClient)
-  const isRestoring = useIsRestoring()
+  const isRestoring = $derived.by(useIsRestoring())
 
-  const queriesStore = isSvelteStore(queries) ? queries : readable(queries)
-
-  const defaultedQueriesStore = derived(
-    [queriesStore, isRestoring],
-    ([$queries, $isRestoring]) => {
-      return $queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(
-          opts as QueryObserverOptions,
-        )
-        // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = $isRestoring
-          ? 'isRestoring'
-          : 'optimistic'
-        return defaultedOptions
-      })
-    },
+  const resolvedQueries = $derived(
+    queries.map((opts) => {
+      const resolvedOptions = client.defaultQueryOptions(opts)
+      // Make sure the results are already in fetching state before subscribing or updating options
+      resolvedOptions._optimisticResults = isRestoring
+        ? 'isRestoring'
+        : 'optimistic'
+      return resolvedOptions
+    }),
   )
+
   const observer = new QueriesObserver<TCombinedResult>(
     client,
-    get(defaultedQueriesStore),
-    options as QueriesObserverOptions<TCombinedResult>,
+    resolvedQueries,
+    combine as QueriesObserverOptions<TCombinedResult>,
   )
 
-  defaultedQueriesStore.subscribe(($defaultedQueries) => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setQueries(
-      $defaultedQueries,
-      options as QueriesObserverOptions<TCombinedResult>,
-      { listeners: false },
-    )
-  })
-
-  const result = derived([isRestoring], ([$isRestoring], set) => {
-    const unsubscribe = $isRestoring
-      ? noop
-      : observer.subscribe(notifyManager.batchCalls(set))
-
-    return () => unsubscribe()
-  })
-
-  const { subscribe } = derived(
-    [result, defaultedQueriesStore],
-    // @ts-expect-error svelte-check thinks this is unused
-    ([$result, $defaultedQueriesStore]) => {
-      const [rawResult, combineResult, trackResult] =
-        observer.getOptimisticResult(
-          $defaultedQueriesStore,
-          (options as QueriesObserverOptions<TCombinedResult>).combine,
-        )
-      $result = rawResult
-      return combineResult(trackResult())
+  return createReactiveThunk(
+    () => {
+      const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
+        resolvedQueries,
+        combine as QueriesObserverOptions<TCombinedResult>['combine'],
+      )
+      return getCombinedResult(trackResult())
     },
+    () => {},
+    [
+      {
+        type: 'pre',
+        fn: (update) => {
+          observer.setQueries(
+            resolvedQueries,
+            { combine } as QueriesObserverOptions<TCombinedResult>,
+            { listeners: false },
+          )
+          update()
+        },
+      },
+      {
+        type: 'regular',
+        fn: (update) => {
+          if (isRestoring || subscribed === false) {
+            return
+          }
+          observer.subscribe(update)
+        },
+      },
+    ],
   )
-
-  return { subscribe }
 }

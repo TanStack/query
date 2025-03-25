@@ -14,12 +14,18 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "keywords": [
+    "tanstack",
+    "query",
+    "svelte",
+    "swr"
+  ],
   "scripts": {
     "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
     "compile": "tsc --build",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint ./src",
-    "test:lib": "vitest",
+    "test:lib": "vitest run",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
     "build": "svelte-package --input ./src --output ./dist"
@@ -42,18 +48,18 @@
     "src",
     "!src/__tests__"
   ],
-  "dependencies": {
-    "@tanstack/query-core": "workspace:*"
-  },
   "devDependencies": {
     "@sveltejs/package": "^2.3.7",
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@tanstack/query-core": "workspace:*",
     "@testing-library/svelte": "^5.2.6",
     "eslint-plugin-svelte": "^2.46.0",
-    "svelte": "^4.2.18",
-    "svelte-check": "^4.0.0"
+    "svelte": "^5.20.1",
+    "svelte-check": "^4.0.0",
+    "vite": "^6.0.0",
+    "vitest": "^3.0.0"
   },
   "peerDependencies": {
-    "svelte": "^3.54.0 || ^4.0.0 || ^5.0.0"
+    "svelte": "^5.7.0"
   }
 }

@@ -9,21 +9,21 @@
   const posts = createQuery<
     { id: number; title: string; body: string }[],
     Error
-  >({
+  >(() => ({
     queryKey: ['posts', limit],
     queryFn: () => getPosts(limit),
-  })
+  }))
 </script>
 
 <div>
   <div>
-    {#if $posts.status === 'pending'}
+    {#if posts.status === 'pending'}
       <span>Loading...</span>
-    {:else if $posts.status === 'error'}
-      <span>Error: {$posts.error.message}</span>
+    {:else if posts.status === 'error'}
+      <span>Error: {posts.error.message}</span>
     {:else}
       <ul>
-        {#each $posts.data as post}
+        {#each posts.data as post}
           <article>
             <a
               href={`/${post.id}`}
@@ -38,7 +38,7 @@
           </article>
         {/each}
       </ul>
-      {#if $posts.isFetching}
+      {#if posts.isFetching}
         <div style="color:darkgreen; font-weight:700">
           Background Updating...
         </div>

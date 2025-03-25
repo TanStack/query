@@ -17,3 +17,16 @@ export type StatusResult<T = unknown> = {
   fetchStatus: string
   data: T | undefined
 }
+
+export function ref<T>(initial: T) {
+  let value = $state(initial)
+
+  return {
+    get value() {
+      return value
+    },
+    set value(newValue) {
+      value = newValue
+    },
+  }
+}

@@ -3,12 +3,15 @@
   import RestoreCache from './RestoreCache.svelte'
   import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-  import type { Writable } from 'svelte/store'
-  import type { StatusResult } from '../utils.js'
+  import type { StatusResult } from '../utils.svelte.js'
 
-  export let queryClient: QueryClient
-  export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-  export let states: Writable<Array<StatusResult<string>>>
+  interface Props {
+    queryClient: QueryClient
+    persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+    states: { value: Array<StatusResult<string>> }
+  }
+
+  let { queryClient, persistOptions, states }: Props = $props()
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>

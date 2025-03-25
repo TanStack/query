@@ -6,6 +6,8 @@
   import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client'
   import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 
+  const { children } = $props()
+
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -21,7 +23,7 @@
 
 <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
   <main>
-    <slot />
+    {@render children()}
   </main>
   <SvelteQueryDevtools />
 </PersistQueryClientProvider>

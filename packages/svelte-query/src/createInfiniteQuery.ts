@@ -1,5 +1,5 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
-import { createBaseQuery } from './createBaseQuery.js'
+import { createBaseQuery } from './createBaseQuery.svelte.js'
 import type {
   DefaultError,
   InfiniteData,
@@ -10,7 +10,6 @@ import type {
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
-  StoreOrVal,
 } from './types.js'
 
 export function createInfiniteQuery<
@@ -20,21 +19,19 @@ export function createInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: StoreOrVal<
-    CreateInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey,
-      TPageParam
-    >
+  options: CreateInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey,
+    TPageParam
   >,
   queryClient?: QueryClient,
-): CreateInfiniteQueryResult<TData, TError> {
+): () => CreateInfiniteQueryResult<TData, TError> {
   return createBaseQuery(
     options,
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-  ) as CreateInfiniteQueryResult<TData, TError>
+  ) as () => CreateInfiniteQueryResult<TData, TError>
 }

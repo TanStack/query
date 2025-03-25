@@ -4,8 +4,12 @@
   import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 
-  export let queryClient: QueryClient
-  export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+  interface Props {
+    queryClient: QueryClient
+    persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+  }
+
+  let { queryClient, persistOptions }: Props = $props()
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>
