@@ -120,6 +120,7 @@ export function injectMutation<
                       state.error,
                     ])
                   ) {
+                    ngZone.onError.emit(state.error)
                     throw state.error
                   }
 
