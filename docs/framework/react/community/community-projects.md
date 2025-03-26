@@ -25,7 +25,7 @@ The Missing Fullstack Toolkit for Next.js
 
 Link: https://blitzjs.com/
 
-## Connect 
+## Connect
 
 A family of libraries for building building browser and gRPC-compatible HTTP APIs.
 
