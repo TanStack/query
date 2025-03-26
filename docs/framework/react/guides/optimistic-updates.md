@@ -70,7 +70,7 @@ This approach works very well if the mutation and the query live in the same com
 // somewhere in your app
 const { mutate } = useMutation({
   mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
-  onSettled: async () => await queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   mutationKey: ['addTodo'],
 })
 
