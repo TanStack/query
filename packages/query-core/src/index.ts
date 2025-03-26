@@ -31,6 +31,8 @@ export {
   defaultShouldDehydrateMutation,
 } from './hydration'
 
+export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
+
 // Types
 export * from './types'
 export type { QueryState } from './query'
