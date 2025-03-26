@@ -16,7 +16,7 @@ const addTodoMutation = useMutation({
   mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
   // make sure to _return_ the Promise from the query invalidation
   // so that the mutation stays in `pending` state until the refetch is finished
-  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
 })
 
 const { isPending, submittedAt, variables, mutate, isError } = addTodoMutation
@@ -119,7 +119,7 @@ useMutation({
     queryClient.setQueryData(['todos'], context.previousTodos)
   },
   // Always refetch after error or success:
-  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
 })
 ```
 
@@ -155,7 +155,8 @@ useMutation({
     )
   },
   // Always refetch after error or success:
-  onSettled: (newTodo) => queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
+  onSettled: (newTodo) =>
+    queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
 })
 ```
 
