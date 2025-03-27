@@ -119,6 +119,12 @@ export class QueryClient {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
 
+  /**
+   * Get the data for a query key. This is helpful when query data is needed to be gotten once (non-reactive).
+   *
+   * Hint: If you're using this inside a component and wondering why it does not update, you
+   * should use `useQuery` to get reactive data.
+   */
   getQueryData<
     TQueryFnData = unknown,
     TTaggedQueryKey extends QueryKey = QueryKey,
