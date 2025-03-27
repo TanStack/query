@@ -35,7 +35,7 @@ describe('queryClient', () => {
   })
 
   describe('defaultOptions', () => {
-    test('should merge defaultOptions', async () => {
+    test('should merge defaultOptions', () => {
       const key = queryKey()
 
       const queryFn = () => 'data'
@@ -61,7 +61,7 @@ describe('queryClient', () => {
       expect(newQuery?.options.gcTime).toBe(Infinity)
     })
 
-    test('should get defaultOptions', async () => {
+    test('should get defaultOptions', () => {
       const queryFn = () => 'data'
       const defaultOptions = { queries: { queryFn } }
       const testClient = createQueryClient({
@@ -72,7 +72,7 @@ describe('queryClient', () => {
   })
 
   describe('setQueryDefaults', () => {
-    test('should not trigger a fetch', async () => {
+    test('should not trigger a fetch', () => {
       const key = queryKey()
       queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
       const data = queryClient.getQueryData(key)
@@ -111,7 +111,7 @@ describe('queryClient', () => {
       expect(status).toBe('error')
     })
 
-    test('should also set defaults for observers', async () => {
+    test('should also set defaults for observers', () => {
       const key = queryKey()
       queryClient.setQueryDefaults(key, {
         queryFn: () => 'data',
@@ -124,7 +124,7 @@ describe('queryClient', () => {
       expect(observer.getCurrentResult().fetchStatus).toBe('idle')
     })
 
-    test('should update existing query defaults', async () => {
+    test('should update existing query defaults', () => {
       const key = queryKey()
       const queryOptions1 = { queryFn: () => 'data' }
       const queryOptions2 = { retry: false }
@@ -133,7 +133,7 @@ describe('queryClient', () => {
       expect(queryClient.getQueryDefaults(key)).toMatchObject(queryOptions2)
     })
 
-    test('should merge defaultOptions', async () => {
+    test('should merge defaultOptions', () => {
       const key = queryKey()
 
       queryClient.setQueryDefaults([...key, 'todo'], { suspense: true })
@@ -148,7 +148,7 @@ describe('queryClient', () => {
   })
 
   describe('defaultQueryOptions', () => {
-    test('should default networkMode when persister is present', async () => {
+    test('should default networkMode when persister is present', () => {
       expect(
         createQueryClient({
           defaultOptions: {
@@ -160,7 +160,7 @@ describe('queryClient', () => {
       ).toBe('offlineFirst')
     })
 
-    test('should not default networkMode without persister', async () => {
+    test('should not default networkMode without persister', () => {
       expect(
         createQueryClient({
           defaultOptions: {
@@ -172,7 +172,7 @@ describe('queryClient', () => {
       ).toBe(undefined)
     })
 
-    test('should not default networkMode when already present', async () => {
+    test('should not default networkMode when already present', () => {
       expect(
         createQueryClient({
           defaultOptions: {
@@ -415,6 +415,24 @@ describe('queryClient', () => {
     })
   })
 
+  describe('isMutating', () => {
+    test('should return length of mutating', async () => {
+      expect(queryClient.isMutating()).toBe(0)
+      new MutationObserver(queryClient, {
+        mutationFn: () => sleep(10).then(() => 'data'),
+      }).mutate()
+      expect(queryClient.isMutating()).toBe(1)
+      new MutationObserver(queryClient, {
+        mutationFn: () => sleep(5).then(() => 'data'),
+      }).mutate()
+      expect(queryClient.isMutating()).toBe(2)
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryClient.isMutating()).toEqual(1)
+      await vi.advanceTimersByTimeAsync(5)
+      expect(queryClient.isMutating()).toEqual(0)
+    })
+  })
+
   describe('getQueryData', () => {
     test('should return the query data if the query is found', () => {
       const key = queryKey()
@@ -624,7 +642,7 @@ describe('queryClient', () => {
       await expect(
         queryClient.fetchQuery({
           queryKey: key,
-          queryFn: async (): Promise<unknown> => {
+          queryFn: (): Promise<unknown> => {
             throw new Error('error')
           },
         }),
@@ -905,7 +923,7 @@ describe('queryClient', () => {
 
       const result = await queryClient.prefetchQuery({
         queryKey: key,
-        queryFn: async (): Promise<unknown> => {
+        queryFn: (): Promise<unknown> => {
           throw new Error('error')
         },
         retry: false,
@@ -919,7 +937,7 @@ describe('queryClient', () => {
 
       await queryClient.prefetchQuery({
         queryKey: key,
-        queryFn: async () => 'data',
+        queryFn: () => 'data',
         gcTime: 10,
       })
       expect(queryCache.find({ queryKey: key })).toBeDefined()
@@ -955,7 +973,7 @@ describe('queryClient', () => {
       const key3 = queryKey()
       await queryClient.fetchQuery({
         queryKey: key1,
-        queryFn: async () => 'data',
+        queryFn: () => 'data',
       })
       try {
         await queryClient.fetchQuery({
@@ -1005,7 +1023,7 @@ describe('queryClient', () => {
       const key1 = queryKey()
       await queryClient.fetchQuery({
         queryKey: key1,
-        queryFn: async () => 'data',
+        queryFn: () => 'data',
       })
       queryClient.fetchQuery({
         queryKey: key1,
@@ -2011,7 +2029,7 @@ describe('queryClient', () => {
       onlineManager.setOnline(true)
     })
 
-    test('should not notify queryCache and mutationCache after multiple mounts/unmounts', async () => {
+    test('should not notify queryCache and mutationCache after multiple mounts/unmounts', () => {
       const testClient = createQueryClient()
       testClient.mount()
       testClient.mount()
