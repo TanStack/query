@@ -133,6 +133,38 @@ interface ContinueAction {
   type: 'continue'
 }
 
+export interface RefetchActionEvent {
+  type: 'ACTION-REFETCH'
+}
+
+export interface InvalidateActionEvent {
+  type: 'ACTION-INVALIDATE'
+}
+
+export interface TriggerErrorActionEvent {
+  type: 'ACTION-TRIGGER-ERROR'
+}
+
+export interface RestoreErrorActionEvent {
+  type: 'ACTION-RESTORE-ERROR'
+}
+
+export interface ResetActionEvent {
+  type: 'ACTION-RESET'
+}
+
+export interface RemoveActionEvent {
+  type: 'ACTION-REMOVE'
+}
+
+export interface TriggerLoadingActionEvent {
+  type: 'ACTION-TRIGGER-LOADING'
+}
+
+export interface RestoreLoadingActionEvent {
+  type: 'ACTION-RESTORE-LOADING'
+}
+
 interface SetStateAction<TData, TError> {
   type: 'setState'
   state: Partial<QueryState<TData, TError>>
@@ -148,6 +180,14 @@ export type Action<TData, TError> =
   | PauseAction
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
+  | TriggerErrorActionEvent
+  | RestoreErrorActionEvent
+  | RefetchActionEvent
+  | RestoreLoadingActionEvent
+  | RemoveActionEvent
+  | TriggerLoadingActionEvent
+  | ResetActionEvent
+  | InvalidateActionEvent
 
 export interface SetStateOptions {
   meta?: any
