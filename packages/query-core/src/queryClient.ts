@@ -120,10 +120,10 @@ export class QueryClient {
   }
 
   /**
-   * Get the data for a query key. This is helpful when query data is needed to be gotten once (non-reactive).
+   * Imperative (non-reactive) way to retrieve data for a QueryKey. Should only be used in callbacks or functions where reading the latest data is necessary, e.g. for optimistic updates. 
    *
-   * Hint: If you're using this inside a component and wondering why it does not update, you
-   * should use `useQuery` to get reactive data.
+   * Hint: Do not use this function inside a component, because it won't receive updates.
+   * Use `useQuery` to create a `QueryObserver` that subscribes to changes.
    */
   getQueryData<
     TQueryFnData = unknown,
