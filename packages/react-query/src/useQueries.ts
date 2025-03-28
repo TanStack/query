@@ -21,6 +21,7 @@ import {
   willFetch,
 } from './suspense'
 import { noop } from './utils'
+import { usePauseManager } from './PauseManagerProvider'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -224,6 +225,7 @@ export function useQueries<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const pauseManager = usePauseManager()
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -268,11 +270,28 @@ export function useQueries<
   const shouldSubscribe = !isRestoring && options.subscribed !== false
   React.useSyncExternalStore(
     React.useCallback(
-      (onStoreChange) =>
-        shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop,
-      [observer, shouldSubscribe],
+      (onStoreChange) => {
+        if (!shouldSubscribe) {
+          return noop
+        }
+        const subscribe = () =>
+          observer.subscribe(notifyManager.batchCalls(onStoreChange))
+        if (pauseManager) {
+          let unsubscribeObserver: (() => void) | undefined
+          const onPausedChange = (paused: boolean) => {
+            unsubscribeObserver?.()
+            unsubscribeObserver = paused ? undefined : subscribe()
+          }
+          const unsubscribePaused = pauseManager.subscribe(onPausedChange)
+          onPausedChange(pauseManager.isPaused())
+          return () => {
+            unsubscribePaused()
+            unsubscribeObserver?.()
+          }
+        }
+        return subscribe()
+      },
+      [observer, shouldSubscribe, pauseManager],
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
