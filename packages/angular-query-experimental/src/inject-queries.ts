@@ -239,7 +239,6 @@ export function injectQueries<
       observer.setQueries(
         defaultedQueries(),
         options as QueriesObserverOptions<TCombinedResult>,
-        { listeners: false },
       )
     })
 
