@@ -8,7 +8,6 @@ import type {
   QueryObserverResult,
 } from './types'
 import type { QueryClient } from './queryClient'
-import type { NotifyOptions } from './queryObserver'
 
 function difference<T>(array1: Array<T>, array2: Array<T>): Array<T> {
   return array1.filter((x) => !array2.includes(x))
@@ -87,7 +86,6 @@ export class QueriesObserver<
   setQueries(
     queries: Array<QueryObserverOptions>,
     options?: QueriesObserverOptions<TCombinedResult>,
-    notifyOptions?: NotifyOptions,
   ): void {
     this.#queries = queries
     this.#options = options
@@ -111,7 +109,7 @@ export class QueriesObserver<
 
       // set options for the new observers to notify of changes
       newObserverMatches.forEach((match) =>
-        match.observer.setOptions(match.defaultedQueryOptions, notifyOptions),
+        match.observer.setOptions(match.defaultedQueryOptions),
       )
 
       const newObservers = newObserverMatches.map((match) => match.observer)
