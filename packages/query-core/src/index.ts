@@ -10,7 +10,7 @@ export { InfiniteQueryObserver } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
 export type { MutationCacheNotifyEvent } from './mutationCache'
 export { MutationObserver } from './mutationObserver'
-export { notifyManager } from './notifyManager'
+export { notifyManager, defaultScheduler } from './notifyManager'
 export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
 export {
