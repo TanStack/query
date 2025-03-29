@@ -15,7 +15,7 @@
     "@angular/forms": "19.1.0-next.0",
     "@angular/platform-browser": "^19.1.0-next.0",
     "@angular/platform-browser-dynamic": "^19.1.0-next.0",
-    "@tanstack/angular-query": "^5.67.2",
+    "@tanstack/angular-query": "^5.70.0",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.3",
     "zone.js": "^0.15.0"

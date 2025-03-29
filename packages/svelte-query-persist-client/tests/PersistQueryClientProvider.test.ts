@@ -83,7 +83,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
 
     const states = get(statesStore)
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -104,6 +104,12 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[3]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -139,7 +145,7 @@ describe('PersistQueryClientProvider', () => {
 
     const states = get(statesStore)
 
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -160,6 +166,12 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[3]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -194,7 +206,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
 
     const states = get(statesStore)
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
       status: 'success',
@@ -215,6 +227,12 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[3]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',

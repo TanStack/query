@@ -35,10 +35,12 @@ export function injectDevtoolsPanel(
   const currentInjector = injector ?? inject(Injector)
 
   return runInInjectionContext(currentInjector, () => {
+    const destroyRef = inject(DestroyRef)
+    const isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
+    const injectedClient = inject(QueryClient, { optional: true })
+
     const options = computed(optionsFn)
     let devtools: TanstackQueryDevtoolsPanel | null = null
-
-    const isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
 
     const destroy = () => {
       devtools?.unmount()
@@ -50,10 +52,7 @@ export function injectDevtoolsPanel(
         destroy,
       }
 
-    const destroyRef = inject(DestroyRef)
-
     effect(() => {
-      const injectedClient = currentInjector.get(QueryClient, null)
       const {
         client = injectedClient,
         errorTypes = [],
