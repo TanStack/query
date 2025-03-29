@@ -2165,6 +2165,64 @@ describe('useQuery', () => {
     expect(states[2]).toMatchObject({ isStale: true })
   })
 
+  it('should re-render disabled observers when other observers trigger a query (#8741)', async () => {
+    const key = queryKey()
+
+    const useUserInfoQuery = ({
+      id,
+      enabled,
+    }: {
+      id: number | null
+      enabled: boolean
+    }) => {
+      return useQuery({
+        queryKey: [key, id],
+        queryFn: async () => {
+          await sleep(10)
+          return { id, name: 'John' }
+        },
+        enabled: !!id && enabled,
+      })
+    }
+
+    const Page = () => {
+      const [id, setId] = React.useState<number | null>(null)
+
+      const searchQuery = useUserInfoQuery({ id, enabled: false })
+
+      return (
+        <>
+          <div>User fetching status is {searchQuery.fetchStatus}</div>
+          <UserInfo id={id} />
+          <button onClick={() => setId(42)}>
+            Set ID and trigger user load
+          </button>
+        </>
+      )
+    }
+
+    function UserInfo({ id }: { id: number | null }) {
+      const searchQuery = useUserInfoQuery({ id, enabled: true })
+
+      return <div>UserInfo data is {JSON.stringify(searchQuery.data)} </div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    rendered.getByText('User fetching status is idle')
+
+    fireEvent.click(rendered.getByRole('button', { name: /set id/i }))
+
+    await waitFor(() => {
+      rendered.getByText('User fetching status is fetching')
+    })
+    await waitFor(() => {
+      rendered.getByText('UserInfo data is {"id":42,"name":"John"}')
+    })
+
+    rendered.getByText('User fetching status is idle')
+  })
+
   describe('notifyOnChangeProps', () => {
     it('should not re-render when it should only re-render only data change and the selected data did not change', async () => {
       const key = queryKey()
@@ -6770,5 +6828,22 @@ describe('useQuery', () => {
     )
 
     consoleMock.mockRestore()
+  })
+
+  it('should console.error when there is no queryFn', () => {
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    const key = queryKey()
+    function Example() {
+      useQuery({ queryKey: key })
+      return <></>
+    }
+    renderWithClient(queryClient, <Example />)
+
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenCalledWith(
+      `[${queryClient.getQueryCache().find({ queryKey: key })?.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
+    )
+
+    consoleErrorMock.mockRestore()
   })
 })

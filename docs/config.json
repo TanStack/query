@@ -121,6 +121,10 @@
               "to": "framework/svelte/installation"
             },
             {
+              "label": "Devtools",
+              "to": "framework/svelte/devtools"
+            },
+            {
               "label": "SSR & SvelteKit",
               "to": "framework/svelte/ssr"
             },
@@ -602,6 +606,10 @@
           "to": "reference/QueriesObserver"
         },
         {
+          "label": "streamedQuery",
+          "to": "reference/streamedQuery"
+        },
+        {
           "label": "focusManager",
           "to": "reference/focusManager"
         },
@@ -953,6 +961,10 @@
             {
               "label": "Devtools Embedded Panel",
               "to": "framework/react/examples/devtools-panel"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/react/examples/chat"
             }
           ]
         },
