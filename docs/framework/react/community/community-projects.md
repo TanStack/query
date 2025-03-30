@@ -39,7 +39,7 @@ Link: https://the-guild.dev/graphql/codegen
 
 ## Http-wizard
 
-End-to-end type-safe Fastify API with typecript magic ✨
+End-to-end type-safe Fastify API with typeScript magic ✨
 
 Link: https://http-wizard.com
 
