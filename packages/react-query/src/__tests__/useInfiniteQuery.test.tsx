@@ -161,7 +161,7 @@ describe('useInfiniteQuery', () => {
       const start = 1
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
+        queryFn: ({ pageParam }) => {
           if (pageParam === 2) {
             throw new Error('error')
           }
