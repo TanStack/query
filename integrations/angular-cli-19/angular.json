@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "angular-cli-17": {
+    "angular-cli-19": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -44,7 +44,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/angular-cli-17",
+            "outputPath": "dist/angular-cli-19",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -81,10 +81,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-cli-17:build:production"
+              "buildTarget": "angular-cli-19:build:production"
             },
             "development": {
-              "buildTarget": "angular-cli-17:build:development"
+              "buildTarget": "angular-cli-19:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -92,7 +92,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "angular-cli-17:build"
+            "buildTarget": "angular-cli-19:build"
           }
         }
       }

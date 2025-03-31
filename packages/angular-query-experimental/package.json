@@ -69,14 +69,14 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "@angular/compiler": "^19.1.0-next.0",
-    "@angular/core": "^19.1.0-next.0",
-    "@angular/platform-browser": "^19.1.0-next.0",
-    "@angular/platform-browser-dynamic": "^19.1.0-next.0",
+    "@angular/compiler": "^19.2.4",
+    "@angular/core": "^19.2.4",
+    "@angular/platform-browser": "^19.2.4",
+    "@angular/platform-browser-dynamic": "^19.2.4",
     "@microsoft/api-extractor": "^7.48.1",
     "eslint-plugin-jsdoc": "^50.5.0",
     "npm-run-all": "^4.1.5",
-    "tsup": "8.0.2",
+    "tsup": "^8.4.0",
     "typescript": "5.8.2"
   },
   "peerDependencies": {
