@@ -58,6 +58,29 @@ export const rule = createRule({
       return undefined
     }
 
+    function getHookName(node: TSESTree.CallExpression): string | undefined {
+      if (node.callee.type === AST_NODE_TYPES.Identifier) {
+        return node.callee.name;
+      } else if (node.callee.type === AST_NODE_TYPES.MemberExpression) {
+        // Verify the chain starts with "trpc"
+        let current: TSESTree.Expression = node.callee;
+        while (current.type === AST_NODE_TYPES.MemberExpression) {
+          if (current.object.type === AST_NODE_TYPES.Identifier) {
+            if (current.object.name !== 'trpc') {
+              return undefined; // not from trpc, ignore this case
+            }
+            break; // found trpc as the root
+          }
+          current = current.object;
+        }
+        // Extract the hook name from the right-most property
+        if (node.callee.property.type === AST_NODE_TYPES.Identifier) {
+          return node.callee.property.name;
+        }
+      }
+      return undefined;
+    }
+
     function collectVariableNames(
       pattern: TSESTree.BindingName,
       queryHook: string,
@@ -90,11 +113,12 @@ export const rule = createRule({
       VariableDeclarator(node) {
         if (
           node.init !== null &&
-          node.init.type === AST_NODE_TYPES.CallExpression &&
-          node.init.callee.type === AST_NODE_TYPES.Identifier &&
-          allHookNames.includes(node.init.callee.name)
+          node.init.type === AST_NODE_TYPES.CallExpression
         ) {
-          collectVariableNames(node.id, node.init.callee.name)
+          const hookName = getHookName(node.init);
+          if (hookName && allHookNames.includes(hookName)) {
+            collectVariableNames(node.id, hookName);
+          }
         }
       },
       CallExpression: (node) => {
