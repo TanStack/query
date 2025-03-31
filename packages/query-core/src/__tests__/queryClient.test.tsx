@@ -1715,11 +1715,11 @@ describe('queryClient', () => {
       onlineManager.setOnline(false)
 
       const observer1 = new MutationObserver(queryClient, {
-        mutationFn: async () => 1,
+        mutationFn: () => Promise.resolve(1),
       })
 
       const observer2 = new MutationObserver(queryClient, {
-        mutationFn: async () => 2,
+        mutationFn: () => Promise.resolve(2),
       })
       void observer1.mutate()
       void observer2.mutate()
@@ -1832,7 +1832,7 @@ describe('queryClient', () => {
       onlineManager.setOnline(false)
 
       const observer = new MutationObserver(queryClient, {
-        mutationFn: async () => 1,
+        mutationFn: () => Promise.resolve(1),
       })
 
       void observer.mutate()
@@ -1857,7 +1857,7 @@ describe('queryClient', () => {
       onlineManager.setOnline(false)
 
       const observer = new MutationObserver(queryClient, {
-        mutationFn: async () => 1,
+        mutationFn: () => Promise.resolve(1),
       })
 
       void observer.mutate()
@@ -1869,7 +1869,7 @@ describe('queryClient', () => {
       const newQueryClient = new QueryClient({
         defaultOptions: {
           mutations: {
-            mutationFn: async () => 1,
+            mutationFn: () => Promise.resolve(1),
           },
         },
       })
@@ -2068,7 +2068,7 @@ describe('queryClient', () => {
   describe('setMutationDefaults', () => {
     test('should update existing mutation defaults', () => {
       const key = queryKey()
-      const mutationOptions1 = { mutationFn: async () => 'data' }
+      const mutationOptions1 = { mutationFn: () => Promise.resolve('data') }
       const mutationOptions2 = { retry: false }
       queryClient.setMutationDefaults(key, mutationOptions1)
       queryClient.setMutationDefaults(key, mutationOptions2)
