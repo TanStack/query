@@ -656,7 +656,7 @@ describe('useMutation', () => {
     onlineMock.mockRestore()
   })
 
-  it('should not change state if unmounted', async () => {
+  it('should not change state if unmounted', () => {
     function Mutates() {
       const { mutate } = useMutation({ mutationFn: () => sleep(10) })
       return <button onClick={() => mutate()}>mutate</button>
