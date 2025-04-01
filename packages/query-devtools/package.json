@@ -72,7 +72,7 @@
     "clsx": "^2.1.1",
     "goober": "^2.1.16",
     "npm-run-all": "^4.1.5",
-    "solid-js": "^1.9.3",
+    "solid-js": "^1.9.5",
     "solid-transition-group": "^0.2.3",
     "superjson": "^2.2.1",
     "tsup-preset-solid": "^2.2.0",
