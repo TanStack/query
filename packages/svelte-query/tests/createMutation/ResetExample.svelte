@@ -17,4 +17,4 @@
 <button on:click={() => $mutation.reset()}>Reset</button>
 <button on:click={() => $mutation.mutate()}>Mutate</button>
 
-<div>Error: {$mutation.error?.message}</div>
+<div>Error: {$mutation.error?.message ?? 'undefined'}</div>
