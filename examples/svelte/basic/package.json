@@ -10,7 +10,7 @@
   "dependencies": {
     "@tanstack/query-sync-storage-persister": "^5.71.1",
     "@tanstack/svelte-query": "^5.71.1",
-    "@tanstack/svelte-query-devtools": "^5.71.1",
+    "@tanstack/svelte-query-devtools": "^5.71.2",
     "@tanstack/svelte-query-persist-client": "^5.71.1"
   },
   "devDependencies": {
