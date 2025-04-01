@@ -1974,9 +1974,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.2
         version: 19.0.2(@types/react@19.0.1)
-      typescript:
-        specifier: 5.8.2
-        version: 5.8.2
 
   integrations/react-next-15:
     dependencies:
@@ -2008,9 +2005,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.2
         version: 19.0.2(@types/react@19.0.1)
-      typescript:
-        specifier: 5.8.2
-        version: 5.8.2
 
   integrations/react-vite:
     dependencies:
@@ -2192,12 +2186,6 @@ importers:
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
-      tsup:
-        specifier: 8.0.2
-        version: 8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2)
-      typescript:
-        specifier: 5.8.2
-        version: 5.8.2
 
   packages/angular-query-experimental:
     dependencies:
@@ -2223,21 +2211,12 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.1.0-next.0
         version: 19.1.0-next.0(@angular/common@17.3.12(@angular/core@19.1.0-next.0(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.1.0-next.0(@angular/core@19.1.0-next.0(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/core@19.1.0-next.0(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.1.0-next.0(@angular/common@17.3.12(@angular/core@19.1.0-next.0(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.1.0-next.0(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@microsoft/api-extractor':
-        specifier: ^7.48.1
-        version: 7.48.1(@types/node@22.13.14)
       eslint-plugin-jsdoc:
         specifier: ^50.5.0
         version: 50.5.0(eslint@9.15.0(jiti@2.4.2))
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
-      tsup:
-        specifier: 8.0.2
-        version: 8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2)
-      typescript:
-        specifier: 5.8.2
-        version: 5.8.2
 
   packages/eslint-plugin-query:
     dependencies:
@@ -20078,6 +20057,7 @@ snapshots:
       '@rushstack/node-core-library': 5.10.1(@types/node@22.13.14)
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   '@microsoft/api-extractor@7.47.4(@types/node@22.13.14)':
     dependencies:
@@ -20114,6 +20094,7 @@ snapshots:
       typescript: 5.4.2
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   '@microsoft/tsdoc-config@0.17.1':
     dependencies:
@@ -21094,6 +21075,7 @@ snapshots:
       semver: 7.5.4
     optionalDependencies:
       '@types/node': 22.13.14
+    optional: true
 
   '@rushstack/node-core-library@5.5.1(@types/node@22.13.14)':
     dependencies:
@@ -21126,6 +21108,7 @@ snapshots:
       supports-color: 8.1.1
     optionalDependencies:
       '@types/node': 22.13.14
+    optional: true
 
   '@rushstack/ts-command-line@4.22.3(@types/node@22.13.14)':
     dependencies:
@@ -21144,6 +21127,7 @@ snapshots:
       string-argv: 0.3.2
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   '@schematics/angular@17.3.8(chokidar@3.6.0)':
     dependencies:
