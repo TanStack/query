@@ -2147,17 +2147,20 @@ importers:
         version: link:../../packages/vue-query
       vue:
         specifier: ^3.4.27
-        version: 3.4.35(typescript@5.8.2)
+        version: 3.4.35(typescript@5.6.3)
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
-        version: 5.2.1(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vue@3.4.35(typescript@5.8.2))
+        version: 5.2.1(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vue@3.4.35(typescript@5.6.3))
+      typescript:
+        specifier: 5.6.3
+        version: 5.6.3
       vite:
         specifier: ^5.3.5
         version: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
       vue-tsc:
         specifier: ^2.2.8
-        version: 2.2.8(typescript@5.8.2)
+        version: 2.2.8(typescript@5.6.3)
 
   packages/angular-query-devtools-experimental:
     dependencies:
@@ -2649,19 +2652,22 @@ importers:
         version: link:../vue-query
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
-        version: 5.2.1(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vue@3.4.35(typescript@5.8.2))
+        version: 5.2.1(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vue@3.4.35(typescript@5.6.3))
       eslint-plugin-vue:
         specifier: ^9.27.0
         version: 9.27.0(eslint@9.15.0(jiti@2.4.2))
+      typescript:
+        specifier: 5.6.3
+        version: 5.6.3
       vite:
         specifier: ^5.3.5
         version: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
       vue:
         specifier: ^3.4.27
-        version: 3.4.35(typescript@5.8.2)
+        version: 3.4.35(typescript@5.6.3)
       vue-tsc:
         specifier: ^2.2.8
-        version: 2.2.8(typescript@5.8.2)
+        version: 2.2.8(typescript@5.6.3)
 
 packages:
 
@@ -22093,6 +22099,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@vitejs/plugin-vue@5.2.1(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vue@3.4.35(typescript@5.6.3))':
+    dependencies:
+      vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
+      vue: 3.4.35(typescript@5.6.3)
+
   '@vitejs/plugin-vue@5.2.1(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vue@3.4.35(typescript@5.8.2))':
     dependencies:
       vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
@@ -22318,7 +22329,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.2
 
-  '@vue/language-core@2.2.8(typescript@5.8.2)':
+  '@vue/language-core@2.2.8(typescript@5.6.3)':
     dependencies:
       '@volar/language-core': 2.4.12
       '@vue/compiler-dom': 3.5.13
@@ -22329,7 +22340,7 @@ snapshots:
       muggle-string: 0.4.1
       path-browserify: 1.0.1
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.6.3
 
   '@vue/reactivity@3.4.35':
     dependencies:
@@ -22346,6 +22357,12 @@ snapshots:
       '@vue/runtime-core': 3.4.35
       '@vue/shared': 3.4.35
       csstype: 3.1.3
+
+  '@vue/server-renderer@3.4.35(vue@3.4.35(typescript@5.6.3))':
+    dependencies:
+      '@vue/compiler-ssr': 3.4.35
+      '@vue/shared': 3.4.35
+      vue: 3.4.35(typescript@5.6.3)
 
   '@vue/server-renderer@3.4.35(vue@3.4.35(typescript@5.8.2))':
     dependencies:
@@ -32798,11 +32815,11 @@ snapshots:
       semver: 7.7.1
       typescript: 5.8.2
 
-  vue-tsc@2.2.8(typescript@5.8.2):
+  vue-tsc@2.2.8(typescript@5.6.3):
     dependencies:
       '@volar/typescript': 2.4.12
-      '@vue/language-core': 2.2.8(typescript@5.8.2)
-      typescript: 5.8.2
+      '@vue/language-core': 2.2.8(typescript@5.6.3)
+      typescript: 5.6.3
 
   vue@2.6.14: {}
 
@@ -32810,6 +32827,16 @@ snapshots:
     dependencies:
       '@vue/compiler-sfc': 2.7.16
       csstype: 3.1.3
+
+  vue@3.4.35(typescript@5.6.3):
+    dependencies:
+      '@vue/compiler-dom': 3.4.35
+      '@vue/compiler-sfc': 3.4.35
+      '@vue/runtime-dom': 3.4.35
+      '@vue/server-renderer': 3.4.35(vue@3.4.35(typescript@5.6.3))
+      '@vue/shared': 3.4.35
+    optionalDependencies:
+      typescript: 5.6.3
 
   vue@3.4.35(typescript@5.8.2):
     dependencies:
