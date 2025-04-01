@@ -24,7 +24,7 @@ importers:
         version: 1.21.0(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.2)
       '@tanstack/config':
         specifier: ^0.14.2
-        version: 0.14.2(@types/node@22.13.14)(esbuild@0.25.2)(eslint@9.15.0(jiti@2.4.2))(rollup@4.38.0)(typescript@5.8.2)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
+        version: 0.14.2(@types/node@22.13.14)(esbuild@0.19.12)(eslint@9.15.0(jiti@2.4.2))(rollup@4.38.0)(typescript@5.8.2)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       '@testing-library/jest-dom':
         specifier: ^6.6.3
         version: 6.6.3
@@ -1539,7 +1539,7 @@ importers:
         version: 0.15.2(solid-js@1.9.5)
       '@solidjs/start':
         specifier: ^1.0.10
-        version: 1.0.10(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vinxi@0.4.1(@types/node@22.13.14)(idb-keyval@6.2.1)(ioredis@5.4.1)(less@4.2.2)(lightningcss@1.29.2)(magicast@0.3.5)(sass@1.86.0)(terser@5.31.6))(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 1.0.10(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vinxi@0.4.1(@types/node@22.13.14)(idb-keyval@6.2.1)(ioredis@5.4.1)(less@4.2.2)(lightningcss@1.29.2)(magicast@0.3.5)(sass@1.86.0)(terser@5.31.6))(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       '@tanstack/solid-query':
         specifier: ^5.71.2
         version: link:../../../packages/solid-query
@@ -2105,7 +2105,7 @@ importers:
         version: 5.6.3(webpack@5.96.1)
       webpack:
         specifier: ^5.96.1
-        version: 5.96.1(esbuild@0.25.2)(webpack-cli@5.1.4)
+        version: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-cli:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.96.1)
@@ -2342,10 +2342,10 @@ importers:
         version: 2.2.1
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.25.2)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2))
+        version: 2.2.0(esbuild@0.24.0)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2))
       vite-plugin-solid:
         specifier: ^2.11.6
-        version: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
 
   packages/query-persist-client-core:
     dependencies:
@@ -2393,7 +2393,7 @@ importers:
         version: 19.0.2(@types/react@19.0.1)
       '@vitejs/plugin-react':
         specifier: ^4.3.3
-        version: 4.3.3(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 4.3.3(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       eslint-plugin-react-compiler:
         specifier: 19.0.0-beta-df7b47d-20241124
         version: 19.0.0-beta-df7b47d-20241124(eslint@9.15.0(jiti@2.4.2))
@@ -2427,7 +2427,7 @@ importers:
         version: 19.0.1
       '@vitejs/plugin-react':
         specifier: ^4.3.3
-        version: 4.3.3(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 4.3.3(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -2445,7 +2445,7 @@ importers:
         version: 19.0.1
       '@vitejs/plugin-react':
         specifier: ^4.3.3
-        version: 4.3.3(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 4.3.3(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       next:
         specifier: ^14.2.20
         version: 14.2.21(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
@@ -2473,7 +2473,7 @@ importers:
         version: 19.0.1
       '@vitejs/plugin-react':
         specifier: ^4.3.3
-        version: 4.3.3(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 4.3.3(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -2498,10 +2498,10 @@ importers:
         version: 1.9.5
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.25.2)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2))
+        version: 2.2.0(esbuild@0.24.0)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2))
       vite-plugin-solid:
         specifier: ^2.11.6
-        version: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
 
   packages/solid-query-devtools:
     dependencies:
@@ -2520,10 +2520,10 @@ importers:
         version: 1.9.5
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.25.2)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2))
+        version: 2.2.0(esbuild@0.24.0)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2))
       vite-plugin-solid:
         specifier: ^2.11.6
-        version: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
 
   packages/solid-query-persist-client:
     dependencies:
@@ -2545,10 +2545,10 @@ importers:
         version: 1.9.5
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.25.2)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2))
+        version: 2.2.0(esbuild@0.24.0)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2))
       vite-plugin-solid:
         specifier: ^2.11.6
-        version: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
 
   packages/svelte-query:
     dependencies:
@@ -2561,10 +2561,10 @@ importers:
         version: 2.3.7(svelte@4.2.19)(typescript@5.8.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 3.1.2(svelte@4.2.19)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       '@testing-library/svelte':
         specifier: ^5.2.6
-        version: 5.2.6(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))(vitest@2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6))
+        version: 5.2.6(svelte@4.2.19)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vitest@2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6))
       eslint-plugin-svelte:
         specifier: ^2.46.0
         version: 2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@4.2.19)
@@ -2589,7 +2589,7 @@ importers:
         version: 2.3.7(svelte@4.2.19)(typescript@5.8.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 3.1.2(svelte@4.2.19)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2614,13 +2614,13 @@ importers:
         version: 2.3.7(svelte@4.2.19)(typescript@5.8.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+        version: 3.1.2(svelte@4.2.19)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
       '@testing-library/svelte':
         specifier: ^5.2.6
-        version: 5.2.6(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))(vitest@2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6))
+        version: 5.2.6(svelte@4.2.19)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vitest@2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6))
       eslint-plugin-svelte:
         specifier: ^2.46.0
         version: 2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@4.2.19)
@@ -2648,7 +2648,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
-        version: 5.2.1(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))(vue@3.4.35(typescript@5.8.2))
+        version: 5.2.1(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vue@3.4.35(typescript@5.8.2))
       '@vue/composition-api':
         specifier: 1.7.2
         version: 1.7.2(vue@3.4.35(typescript@5.8.2))
@@ -3074,10 +3074,6 @@ packages:
     resolution: {integrity: sha512-i1SLeK+DzNnQ3LL/CswPCa/E5u4lh1k6IAEphON8F+cXt0t9euTshDru0q7/IqMa1PMPz5RnHuHscF8/ZJsStg==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/core@7.26.10':
-    resolution: {integrity: sha512-vMqyb7XCDMPvJFFOaT9kxtiRh42GwlZEg1/uIgtZshS5a/8OaduUfCi7kynKgc3Tw/6Uo2D+db9qBttghhmxwQ==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/generator@7.23.6':
     resolution: {integrity: sha512-qrSfCYxYQB5owCmGLbl8XRpX1ytXlpueOb0N0UmQwA073KZxejgQTzAmJezxvpwQD9uGtK2shHdi55QT+MbjIw==}
     engines: {node: '>=6.9.0'}
@@ -3192,10 +3188,6 @@ packages:
 
   '@babel/helpers@7.26.0':
     resolution: {integrity: sha512-tbhNuIxNcVb21pInl3ZSjksLCvgdZy9KwJ8brv993QtIVKJBBkYXz4q4ZbAv31GdnC+R90np23L5FbEBlthAEw==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helpers@7.27.0':
-    resolution: {integrity: sha512-U5eyP/CTFPuNE3qk+WZMxFkp/4zUzdceQlfzf7DdGdhp+Fezd7HD+i8Y24ZuTMKX3wQBld449jijbGq6OdGNQg==}
     engines: {node: '>=6.9.0'}
 
   '@babel/highlight@7.25.7':
@@ -4226,12 +4218,6 @@ packages:
     cpu: [ppc64]
     os: [aix]
 
-  '@esbuild/aix-ppc64@0.25.2':
-    resolution: {integrity: sha512-wCIboOL2yXZym2cgm6mlA742s9QeJ8DjGVaL39dLN4rRwrOgOyYSnOaFPhKZGLb2ngj4EyfAFjsNJwPXZvseag==}
-    engines: {node: '>=18'}
-    cpu: [ppc64]
-    os: [aix]
-
   '@esbuild/android-arm64@0.19.12':
     resolution: {integrity: sha512-P0UVNGIienjZv3f5zq0DP3Nt2IE/3plFzuaS96vihvD0Hd6H/q4WXUGpCxD/E8YrSXfNyRPbpTq+T8ZQioSuPA==}
     engines: {node: '>=12'}
@@ -4258,12 +4244,6 @@ packages:
 
   '@esbuild/android-arm64@0.24.0':
     resolution: {integrity: sha512-Vsm497xFM7tTIPYK9bNTYJyF/lsP590Qc1WxJdlB6ljCbdZKU9SY8i7+Iin4kyhV/KV5J2rOKsBQbB77Ab7L/w==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [android]
-
-  '@esbuild/android-arm64@0.25.2':
-    resolution: {integrity: sha512-5ZAX5xOmTligeBaeNEPnPaeEuah53Id2tX4c2CVP3JaROTH+j4fnfHCkr1PjXMd78hMst+TlkfKcW/DlTq0i4w==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [android]
@@ -4298,12 +4278,6 @@ packages:
     cpu: [arm]
     os: [android]
 
-  '@esbuild/android-arm@0.25.2':
-    resolution: {integrity: sha512-NQhH7jFstVY5x8CKbcfa166GoV0EFkaPkCKBQkdPJFvo5u+nGXLEH/ooniLb3QI8Fk58YAx7nsPLozUWfCBOJA==}
-    engines: {node: '>=18'}
-    cpu: [arm]
-    os: [android]
-
   '@esbuild/android-x64@0.19.12':
     resolution: {integrity: sha512-3k7ZoUW6Q6YqhdhIaq/WZ7HwBpnFBlW905Fa4s4qWJyiNOgT1dOqDiVAQFwBH7gBRZr17gLrlFCRzF6jFh7Kew==}
     engines: {node: '>=12'}
@@ -4330,12 +4304,6 @@ packages:
 
   '@esbuild/android-x64@0.24.0':
     resolution: {integrity: sha512-t8GrvnFkiIY7pa7mMgJd7p8p8qqYIz1NYiAoKc75Zyv73L3DZW++oYMSHPRarcotTKuSs6m3hTOa5CKHaS02TQ==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [android]
-
-  '@esbuild/android-x64@0.25.2':
-    resolution: {integrity: sha512-Ffcx+nnma8Sge4jzddPHCZVRvIfQ0kMsUsCMcJRHkGJ1cDmhe4SsrYIjLUKn1xpHZybmOqCWwB0zQvsjdEHtkg==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [android]
@@ -4370,12 +4338,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
-  '@esbuild/darwin-arm64@0.25.2':
-    resolution: {integrity: sha512-MpM6LUVTXAzOvN4KbjzU/q5smzryuoNjlriAIx+06RpecwCkL9JpenNzpKd2YMzLJFOdPqBpuub6eVRP5IgiSA==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [darwin]
-
   '@esbuild/darwin-x64@0.19.12':
     resolution: {integrity: sha512-hKoVkKzFiToTgn+41qGhsUJXFlIjxI/jSYeZf3ugemDYZldIXIxhvwN6erJGlX4t5h417iFuheZ7l+YVn05N3A==}
     engines: {node: '>=12'}
@@ -4402,12 +4364,6 @@ packages:
 
   '@esbuild/darwin-x64@0.24.0':
     resolution: {integrity: sha512-rgtz6flkVkh58od4PwTRqxbKH9cOjaXCMZgWD905JOzjFKW+7EiUObfd/Kav+A6Gyud6WZk9w+xu6QLytdi2OA==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@esbuild/darwin-x64@0.25.2':
-    resolution: {integrity: sha512-5eRPrTX7wFyuWe8FqEFPG2cU0+butQQVNcT4sVipqjLYQjjh8a8+vUTfgBKM88ObB85ahsnTwF7PSIt6PG+QkA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [darwin]
@@ -4442,12 +4398,6 @@ packages:
     cpu: [arm64]
     os: [freebsd]
 
-  '@esbuild/freebsd-arm64@0.25.2':
-    resolution: {integrity: sha512-mLwm4vXKiQ2UTSX4+ImyiPdiHjiZhIaE9QvC7sw0tZ6HoNMjYAqQpGyui5VRIi5sGd+uWq940gdCbY3VLvsO1w==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [freebsd]
-
   '@esbuild/freebsd-x64@0.19.12':
     resolution: {integrity: sha512-EYoXZ4d8xtBoVN7CEwWY2IN4ho76xjYXqSXMNccFSx2lgqOG/1TBPW0yPx1bJZk94qu3tX0fycJeeQsKovA8gg==}
     engines: {node: '>=12'}
@@ -4474,12 +4424,6 @@ packages:
 
   '@esbuild/freebsd-x64@0.24.0':
     resolution: {integrity: sha512-D3H+xh3/zphoX8ck4S2RxKR6gHlHDXXzOf6f/9dbFt/NRBDIE33+cVa49Kil4WUjxMGW0ZIYBYtaGCa2+OsQwQ==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [freebsd]
-
-  '@esbuild/freebsd-x64@0.25.2':
-    resolution: {integrity: sha512-6qyyn6TjayJSwGpm8J9QYYGQcRgc90nmfdUb0O7pp1s4lTY+9D0H9O02v5JqGApUyiHOtkz6+1hZNvNtEhbwRQ==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [freebsd]
@@ -4514,12 +4458,6 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@esbuild/linux-arm64@0.25.2':
-    resolution: {integrity: sha512-gq/sjLsOyMT19I8obBISvhoYiZIAaGF8JpeXu1u8yPv8BE5HlWYobmlsfijFIZ9hIVGYkbdFhEqC0NvM4kNO0g==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [linux]
-
   '@esbuild/linux-arm@0.19.12':
     resolution: {integrity: sha512-J5jPms//KhSNv+LO1S1TX1UWp1ucM6N6XuL6ITdKWElCu8wXP72l9MM0zDTzzeikVyqFE6U8YAV9/tFyj0ti+w==}
     engines: {node: '>=12'}
@@ -4546,12 +4484,6 @@ packages:
 
   '@esbuild/linux-arm@0.24.0':
     resolution: {integrity: sha512-gJKIi2IjRo5G6Glxb8d3DzYXlxdEj2NlkixPsqePSZMhLudqPhtZ4BUrpIuTjJYXxvF9njql+vRjB2oaC9XpBw==}
-    engines: {node: '>=18'}
-    cpu: [arm]
-    os: [linux]
-
-  '@esbuild/linux-arm@0.25.2':
-    resolution: {integrity: sha512-UHBRgJcmjJv5oeQF8EpTRZs/1knq6loLxTsjc3nxO9eXAPDLcWW55flrMVc97qFPbmZP31ta1AZVUKQzKTzb0g==}
     engines: {node: '>=18'}
     cpu: [arm]
     os: [linux]
@@ -4586,12 +4518,6 @@ packages:
     cpu: [ia32]
     os: [linux]
 
-  '@esbuild/linux-ia32@0.25.2':
-    resolution: {integrity: sha512-bBYCv9obgW2cBP+2ZWfjYTU+f5cxRoGGQ5SeDbYdFCAZpYWrfjjfYwvUpP8MlKbP0nwZ5gyOU/0aUzZ5HWPuvQ==}
-    engines: {node: '>=18'}
-    cpu: [ia32]
-    os: [linux]
-
   '@esbuild/linux-loong64@0.19.12':
     resolution: {integrity: sha512-LiXdXA0s3IqRRjm6rV6XaWATScKAXjI4R4LoDlvO7+yQqFdlr1Bax62sRwkVvRIrwXxvtYEHHI4dm50jAXkuAA==}
     engines: {node: '>=12'}
@@ -4618,12 +4544,6 @@ packages:
 
   '@esbuild/linux-loong64@0.24.0':
     resolution: {integrity: sha512-0mswrYP/9ai+CU0BzBfPMZ8RVm3RGAN/lmOMgW4aFUSOQBjA31UP8Mr6DDhWSuMwj7jaWOT0p0WoZ6jeHhrD7g==}
-    engines: {node: '>=18'}
-    cpu: [loong64]
-    os: [linux]
-
-  '@esbuild/linux-loong64@0.25.2':
-    resolution: {integrity: sha512-SHNGiKtvnU2dBlM5D8CXRFdd+6etgZ9dXfaPCeJtz+37PIUlixvlIhI23L5khKXs3DIzAn9V8v+qb1TRKrgT5w==}
     engines: {node: '>=18'}
     cpu: [loong64]
     os: [linux]
@@ -4658,12 +4578,6 @@ packages:
     cpu: [mips64el]
     os: [linux]
 
-  '@esbuild/linux-mips64el@0.25.2':
-    resolution: {integrity: sha512-hDDRlzE6rPeoj+5fsADqdUZl1OzqDYow4TB4Y/3PlKBD0ph1e6uPHzIQcv2Z65u2K0kpeByIyAjCmjn1hJgG0Q==}
-    engines: {node: '>=18'}
-    cpu: [mips64el]
-    os: [linux]
-
   '@esbuild/linux-ppc64@0.19.12':
     resolution: {integrity: sha512-nYJA2/QPimDQOh1rKWedNOe3Gfc8PabU7HT3iXWtNUbRzXS9+vgB0Fjaqr//XNbd82mCxHzik2qotuI89cfixg==}
     engines: {node: '>=12'}
@@ -4690,12 +4604,6 @@ packages:
 
   '@esbuild/linux-ppc64@0.24.0':
     resolution: {integrity: sha512-HcZh5BNq0aC52UoocJxaKORfFODWXZxtBaaZNuN3PUX3MoDsChsZqopzi5UupRhPHSEHotoiptqikjN/B77mYQ==}
-    engines: {node: '>=18'}
-    cpu: [ppc64]
-    os: [linux]
-
-  '@esbuild/linux-ppc64@0.25.2':
-    resolution: {integrity: sha512-tsHu2RRSWzipmUi9UBDEzc0nLc4HtpZEI5Ba+Omms5456x5WaNuiG3u7xh5AO6sipnJ9r4cRWQB2tUjPyIkc6g==}
     engines: {node: '>=18'}
     cpu: [ppc64]
     os: [linux]
@@ -4730,12 +4638,6 @@ packages:
     cpu: [riscv64]
     os: [linux]
 
-  '@esbuild/linux-riscv64@0.25.2':
-    resolution: {integrity: sha512-k4LtpgV7NJQOml/10uPU0s4SAXGnowi5qBSjaLWMojNCUICNu7TshqHLAEbkBdAszL5TabfvQ48kK84hyFzjnw==}
-    engines: {node: '>=18'}
-    cpu: [riscv64]
-    os: [linux]
-
   '@esbuild/linux-s390x@0.19.12':
     resolution: {integrity: sha512-+Pil1Nv3Umes4m3AZKqA2anfhJiVmNCYkPchwFJNEJN5QxmTs1uzyy4TvmDrCRNT2ApwSari7ZIgrPeUx4UZDg==}
     engines: {node: '>=12'}
@@ -4762,12 +4664,6 @@ packages:
 
   '@esbuild/linux-s390x@0.24.0':
     resolution: {integrity: sha512-ZcQ6+qRkw1UcZGPyrCiHHkmBaj9SiCD8Oqd556HldP+QlpUIe2Wgn3ehQGVoPOvZvtHm8HPx+bH20c9pvbkX3g==}
-    engines: {node: '>=18'}
-    cpu: [s390x]
-    os: [linux]
-
-  '@esbuild/linux-s390x@0.25.2':
-    resolution: {integrity: sha512-GRa4IshOdvKY7M/rDpRR3gkiTNp34M0eLTaC1a08gNrh4u488aPhuZOCpkF6+2wl3zAN7L7XIpOFBhnaE3/Q8Q==}
     engines: {node: '>=18'}
     cpu: [s390x]
     os: [linux]
@@ -4802,18 +4698,6 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@esbuild/linux-x64@0.25.2':
-    resolution: {integrity: sha512-QInHERlqpTTZ4FRB0fROQWXcYRD64lAoiegezDunLpalZMjcUcld3YzZmVJ2H/Cp0wJRZ8Xtjtj0cEHhYc/uUg==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [linux]
-
-  '@esbuild/netbsd-arm64@0.25.2':
-    resolution: {integrity: sha512-talAIBoY5M8vHc6EeI2WW9d/CkiO9MQJ0IOWX8hrLhxGbro/vBXJvaQXefW2cP0z0nQVTdQ/eNyGFV1GSKrxfw==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [netbsd]
-
   '@esbuild/netbsd-x64@0.19.12':
     resolution: {integrity: sha512-3ltjQ7n1owJgFbuC61Oj++XhtzmymoCihNFgT84UAmJnxJfm4sYCiSLTXZtE00VWYpPMYc+ZQmB6xbSdVh0JWA==}
     engines: {node: '>=12'}
@@ -4844,20 +4728,8 @@ packages:
     cpu: [x64]
     os: [netbsd]
 
-  '@esbuild/netbsd-x64@0.25.2':
-    resolution: {integrity: sha512-voZT9Z+tpOxrvfKFyfDYPc4DO4rk06qamv1a/fkuzHpiVBMOhpjK+vBmWM8J1eiB3OLSMFYNaOaBNLXGChf5tg==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [netbsd]
-
   '@esbuild/openbsd-arm64@0.24.0':
     resolution: {integrity: sha512-MD9uzzkPQbYehwcN583yx3Tu5M8EIoTD+tUgKF982WYL9Pf5rKy9ltgD0eUgs8pvKnmizxjXZyLt0z6DC3rRXg==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [openbsd]
-
-  '@esbuild/openbsd-arm64@0.25.2':
-    resolution: {integrity: sha512-dcXYOC6NXOqcykeDlwId9kB6OkPUxOEqU+rkrYVqJbK2hagWOMrsTGsMr8+rW02M+d5Op5NNlgMmjzecaRf7Tg==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [openbsd]
@@ -4892,12 +4764,6 @@ packages:
     cpu: [x64]
     os: [openbsd]
 
-  '@esbuild/openbsd-x64@0.25.2':
-    resolution: {integrity: sha512-t/TkWwahkH0Tsgoq1Ju7QfgGhArkGLkF1uYz8nQS/PPFlXbP5YgRpqQR3ARRiC2iXoLTWFxc6DJMSK10dVXluw==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [openbsd]
-
   '@esbuild/sunos-x64@0.19.12':
     resolution: {integrity: sha512-HKjJwRrW8uWtCQnQOz9qcU3mUZhTUQvi56Q8DPTLLB+DawoiQdjsYq+j+D3s9I8VFtDr+F9CjgXKKC4ss89IeA==}
     engines: {node: '>=12'}
@@ -4924,12 +4790,6 @@ packages:
 
   '@esbuild/sunos-x64@0.24.0':
     resolution: {integrity: sha512-jVzdzsbM5xrotH+W5f1s+JtUy1UWgjU0Cf4wMvffTB8m6wP5/kx0KiaLHlbJO+dMgtxKV8RQ/JvtlFcdZ1zCPA==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [sunos]
-
-  '@esbuild/sunos-x64@0.25.2':
-    resolution: {integrity: sha512-cfZH1co2+imVdWCjd+D1gf9NjkchVhhdpgb1q5y6Hcv9TP6Zi9ZG/beI3ig8TvwT9lH9dlxLq5MQBBgwuj4xvA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [sunos]
@@ -4964,12 +4824,6 @@ packages:
     cpu: [arm64]
     os: [win32]
 
-  '@esbuild/win32-arm64@0.25.2':
-    resolution: {integrity: sha512-7Loyjh+D/Nx/sOTzV8vfbB3GJuHdOQyrOryFdZvPHLf42Tk9ivBU5Aedi7iyX+x6rbn2Mh68T4qq1SDqJBQO5Q==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [win32]
-
   '@esbuild/win32-ia32@0.19.12':
     resolution: {integrity: sha512-+ZOE6pUkMOJfmxmBZElNOx72NKpIa/HFOMGzu8fqzQJ5kgf6aTGrcJaFsNiVMH4JKpMipyK+7k0n2UXN7a8YKQ==}
     engines: {node: '>=12'}
@@ -5000,12 +4854,6 @@ packages:
     cpu: [ia32]
     os: [win32]
 
-  '@esbuild/win32-ia32@0.25.2':
-    resolution: {integrity: sha512-WRJgsz9un0nqZJ4MfhabxaD9Ft8KioqU3JMinOTvobbX6MOSUigSBlogP8QB3uxpJDsFS6yN+3FDBdqE5lg9kg==}
-    engines: {node: '>=18'}
-    cpu: [ia32]
-    os: [win32]
-
   '@esbuild/win32-x64@0.19.12':
     resolution: {integrity: sha512-T1QyPSDCyMXaO3pzBkF96E8xMkiRYbUEZADd29SyPGabqxMViNoii+NcK7eWJAEoU6RZyEm5lVSIjTmcdoB9HA==}
     engines: {node: '>=12'}
@@ -5032,12 +4880,6 @@ packages:
 
   '@esbuild/win32-x64@0.24.0':
     resolution: {integrity: sha512-7IAFPrjSQIJrGsK6flwg7NFmwBoSTyF3rl7If0hNUFQU4ilTsEPL6GuMuU9BfIWVVGuRnuIidkSMC+c0Otu8IA==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [win32]
-
-  '@esbuild/win32-x64@0.25.2':
-    resolution: {integrity: sha512-kM3HKb16VIXZyIeVrM1ygYmZBKybX8N4p754bw390wGO3Tf2j4L2/WYL+4suWujpgf6GBYs3jv7TyUivdd05JA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
@@ -8461,9 +8303,6 @@ packages:
   caniuse-lite@1.0.30001695:
     resolution: {integrity: sha512-vHyLade6wTgI2u1ec3WQBxv+2BrTERV28UXQu9LO6lZ9pYeMk34vjXFLOxo1A4UBA8XTL4njRQZdno/yYaSmWw==}
 
-  caniuse-lite@1.0.30001707:
-    resolution: {integrity: sha512-3qtRjw/HQSMlDWf+X79N206fepf4SOOU6SQLMaq/0KkZLmSjPxAkBOQQ+FxbHKfHmYLZFfdWsO3KA90ceHPSnw==}
-
   cardinal@2.1.1:
     resolution: {integrity: sha512-JSr5eOgoEymtYHBjNWyjrMqet9Am2miJhlfKNdqLp6zoeAh0KN5dRAcxlecj5mAJrmQomgiOBj35xHLrFjqBpw==}
     hasBin: true
@@ -8792,10 +8631,6 @@ packages:
 
   consola@3.2.3:
     resolution: {integrity: sha512-I5qxpzLv+sJhTVEoLYNcTW+bThDCPsit0vLNKShZx6rLtpilNpmmeTPaeqJb9ZE9dV3DGaeby6Vuhrw38WjeyQ==}
-    engines: {node: ^14.18.0 || >=16.10.0}
-
-  consola@3.4.2:
-    resolution: {integrity: sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
   console-browserify@1.2.0:
@@ -9535,11 +9370,6 @@ packages:
 
   esbuild@0.24.0:
     resolution: {integrity: sha512-FuLPevChGDshgSicjisSooU0cemp/sGXR841D5LHMB7mTVOmsEHcAxaH3irL53+8YDIeVNQEySh4DaYU/iuPqQ==}
-    engines: {node: '>=18'}
-    hasBin: true
-
-  esbuild@0.25.2:
-    resolution: {integrity: sha512-16854zccKPnC+toMywC+uKNeYSv+/eXkevRAfwRD/G9Cleq66m8XFIrigkbvauLLlCfDL45Q2cWegSg53gGBnQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -11469,9 +11299,6 @@ packages:
   knitwork@1.1.0:
     resolution: {integrity: sha512-oHnmiBUVHz1V+URE77PNot2lv3QiYU2zQf1JjOVkMt3YDKGbu8NAFr+c4mcNOhdsGrB/VpVbRwPwhiXrPhxQbw==}
 
-  knitwork@1.2.0:
-    resolution: {integrity: sha512-xYSH7AvuQ6nXkq42x0v5S8/Iry+cfulBz/DJQzhIyESdLD7425jXsPy4vn5cCXU+HhRN2kVw51Vd1K6/By4BQg==}
-
   known-css-properties@0.35.0:
     resolution: {integrity: sha512-a/RAk2BfKk+WFGhhOCAYqSiFLc34k8Mt/6NWRI4joER0EYUzXIcFivjjnoD3+XU1DggLn/tZc3DOAgke7l8a4A==}
 
@@ -12303,9 +12130,6 @@ packages:
   mlly@1.7.3:
     resolution: {integrity: sha512-xUsx5n/mN0uQf4V548PKQ+YShA4/IW0KI1dZhrNrPCLG+xizETbHTkOa1f8/xut9JRPp8kQuMnz0oqwkTiLo/A==}
 
-  mlly@1.7.4:
-    resolution: {integrity: sha512-qmdSIPC4bDJXgZTCR7XosJiNKySV7O215tsPtDN9iEO/7q/76b/ijtgRu/+epFXSJhijtTCCGp3DWS549P3xKw==}
-
   move-concurrently@1.0.1:
     resolution: {integrity: sha512-hdrFxZOycD/g6A6SoI2bB5NA/5NEqD0569+S47WZhPvm46sD50ZHdYaFmnua5lndde9rCHGjmfK7Z8BuCt/PcQ==}
     deprecated: This package is no longer supported.
@@ -13117,9 +12941,6 @@ packages:
   pathe@1.1.2:
     resolution: {integrity: sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==}
 
-  pathe@2.0.3:
-    resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
-
   pathval@2.0.0:
     resolution: {integrity: sha512-vE7JKRyES09KiunauX7nd2Q9/L7lhok4smP9RZTDeD4MVs72Dp2qNFVz39Nz5a0FVEW0BJR6C0DYrq6unoziZA==}
     engines: {node: '>= 14.16'}
@@ -13200,9 +13021,6 @@ packages:
 
   pkg-types@1.2.1:
     resolution: {integrity: sha512-sQoqa8alT3nHjGuTjuKgOnvjo4cljkufdtLMnO2LBP/wRwuDlo1tkaEdMxCRhyGRPacv/ztlZgDPm2b7FAmEvw==}
-
-  pkg-types@1.3.1:
-    resolution: {integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==}
 
   plist@3.1.0:
     resolution: {integrity: sha512-uysumyrvkUX0rX/dEVqt8gC3sTBzd4zoWfLeS29nb53imdaXVvLINYXTI2GNqzaMuvacNx4uJQ8+b3zXR0pkgQ==}
@@ -15816,46 +15634,6 @@ packages:
       terser:
         optional: true
 
-  vite@6.2.3:
-    resolution: {integrity: sha512-IzwM54g4y9JA/xAeBPNaDXiBF8Jsgl3VBQ2YQ/wOY6fyW3xMdSoltIV3Bo59DErdqdE6RxUfv8W69DvUorE4Eg==}
-    engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^18.0.0 || ^20.0.0 || >=22.0.0
-      jiti: '>=1.21.0'
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      sass-embedded: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.16.0
-      tsx: ^4.8.1
-      yaml: ^2.4.2
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      jiti:
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
-        optional: true
-
   vitefu@0.2.5:
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
     peerDependencies:
@@ -16442,11 +16220,6 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
-  yaml@2.7.1:
-    resolution: {integrity: sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ==}
-    engines: {node: '>= 14'}
-    hasBin: true
-
   yargs-parser@20.2.9:
     resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
     engines: {node: '>=10'}
@@ -16617,7 +16390,7 @@ snapshots:
       undici: 6.11.1
       vite: 5.1.7(@types/node@22.13.14)(less@4.2.0)(lightningcss@1.29.2)(sass@1.71.1)(terser@5.29.1)
       watchpack: 2.4.0
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
       webpack-dev-middleware: 6.1.2(webpack@5.90.3(esbuild@0.20.1))
       webpack-dev-server: 4.15.1(webpack@5.90.3(esbuild@0.20.1))
       webpack-merge: 5.10.0
@@ -16649,7 +16422,7 @@ snapshots:
     dependencies:
       '@angular-devkit/architect': 0.1703.8(chokidar@3.6.0)
       rxjs: 7.8.1
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
       webpack-dev-server: 4.15.1(webpack@5.90.3(esbuild@0.20.1))
     transitivePeerDependencies:
       - chokidar
@@ -17117,7 +16890,7 @@ snapshots:
       '@babel/generator': 7.27.0
       '@babel/helper-compilation-targets': 7.26.5
       '@babel/helper-module-transforms': 7.26.0(@babel/core@7.24.0)
-      '@babel/helpers': 7.27.0
+      '@babel/helpers': 7.26.0
       '@babel/parser': 7.27.0
       '@babel/template': 7.27.0
       '@babel/traverse': 7.27.0
@@ -17138,26 +16911,6 @@ snapshots:
       '@babel/helper-compilation-targets': 7.26.5
       '@babel/helper-module-transforms': 7.26.0(@babel/core@7.26.0)
       '@babel/helpers': 7.26.0
-      '@babel/parser': 7.27.0
-      '@babel/template': 7.27.0
-      '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.0
-      convert-source-map: 2.0.0
-      debug: 4.4.0
-      gensync: 1.0.0-beta.2
-      json5: 2.2.3
-      semver: 6.3.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/core@7.26.10':
-    dependencies:
-      '@ampproject/remapping': 2.3.0
-      '@babel/code-frame': 7.26.2
-      '@babel/generator': 7.27.0
-      '@babel/helper-compilation-targets': 7.26.5
-      '@babel/helper-module-transforms': 7.26.0(@babel/core@7.26.10)
-      '@babel/helpers': 7.27.0
       '@babel/parser': 7.27.0
       '@babel/template': 7.27.0
       '@babel/traverse': 7.27.0
@@ -17221,19 +16974,6 @@ snapshots:
       '@babel/helper-member-expression-to-functions': 7.25.9
       '@babel/helper-optimise-call-expression': 7.25.9
       '@babel/helper-replace-supers': 7.25.9(@babel/core@7.26.0)
-      '@babel/helper-skip-transparent-expression-wrappers': 7.25.9
-      '@babel/traverse': 7.27.0
-      semver: 6.3.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/helper-create-class-features-plugin@7.25.9(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-annotate-as-pure': 7.25.9
-      '@babel/helper-member-expression-to-functions': 7.25.9
-      '@babel/helper-optimise-call-expression': 7.25.9
-      '@babel/helper-replace-supers': 7.25.9(@babel/core@7.26.10)
       '@babel/helper-skip-transparent-expression-wrappers': 7.25.9
       '@babel/traverse': 7.27.0
       semver: 6.3.1
@@ -17336,15 +17076,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-module-transforms@7.26.0(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-module-imports': 7.25.9
-      '@babel/helper-validator-identifier': 7.25.9
-      '@babel/traverse': 7.27.0
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/helper-optimise-call-expression@7.25.9':
     dependencies:
       '@babel/types': 7.27.0
@@ -17387,15 +17118,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-replace-supers@7.25.9(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-member-expression-to-functions': 7.25.9
-      '@babel/helper-optimise-call-expression': 7.25.9
-      '@babel/traverse': 7.27.0
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/helper-skip-transparent-expression-wrappers@7.25.9':
     dependencies:
       '@babel/traverse': 7.27.0
@@ -17426,11 +17148,6 @@ snapshots:
       - supports-color
 
   '@babel/helpers@7.26.0':
-    dependencies:
-      '@babel/template': 7.27.0
-      '@babel/types': 7.27.0
-
-  '@babel/helpers@7.27.0':
     dependencies:
       '@babel/template': 7.27.0
       '@babel/types': 7.27.0
@@ -17503,10 +17220,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/plugin-proposal-class-properties@7.18.6(@babel/core@7.26.10)':
+  '@babel/plugin-proposal-class-properties@7.18.6(@babel/core@7.26.0)':
     dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-create-class-features-plugin': 7.25.9(@babel/core@7.26.10)
+      '@babel/core': 7.26.0
+      '@babel/helper-create-class-features-plugin': 7.25.9(@babel/core@7.26.0)
       '@babel/helper-plugin-utils': 7.26.5
     transitivePeerDependencies:
       - supports-color
@@ -17526,18 +17243,18 @@ snapshots:
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/plugin-syntax-export-default-from': 7.24.7(@babel/core@7.26.0)
 
-  '@babel/plugin-proposal-nullish-coalescing-operator@7.18.6(@babel/core@7.26.10)':
+  '@babel/plugin-proposal-nullish-coalescing-operator@7.18.6(@babel/core@7.26.0)':
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
-      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.26.10)
+      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.26.0)
 
-  '@babel/plugin-proposal-optional-chaining@7.21.0(@babel/core@7.26.10)':
+  '@babel/plugin-proposal-optional-chaining@7.21.0(@babel/core@7.26.0)':
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/helper-skip-transparent-expression-wrappers': 7.25.9
-      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.26.10)
+      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.26.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -17559,19 +17276,9 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-bigint@7.8.3(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/helper-plugin-utils': 7.26.5
-
-  '@babel/plugin-syntax-bigint@7.8.3(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
       '@babel/helper-plugin-utils': 7.26.5
 
   '@babel/plugin-syntax-class-properties@7.12.13(@babel/core@7.24.0)':
@@ -17584,11 +17291,6 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-class-properties@7.12.13(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-class-static-block@7.14.5(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -17597,11 +17299,6 @@ snapshots:
   '@babel/plugin-syntax-class-static-block@7.14.5(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/helper-plugin-utils': 7.26.5
-
-  '@babel/plugin-syntax-class-static-block@7.14.5(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
       '@babel/helper-plugin-utils': 7.26.5
 
   '@babel/plugin-syntax-decorators@7.24.7(@babel/core@7.26.0)':
@@ -17634,11 +17331,6 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-flow@7.24.7(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-import-assertions@7.26.0(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -17659,11 +17351,6 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-import-attributes@7.26.0(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-import-meta@7.10.4(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -17672,11 +17359,6 @@ snapshots:
   '@babel/plugin-syntax-import-meta@7.10.4(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/helper-plugin-utils': 7.26.5
-
-  '@babel/plugin-syntax-import-meta@7.10.4(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
       '@babel/helper-plugin-utils': 7.26.5
 
   '@babel/plugin-syntax-json-strings@7.8.3(@babel/core@7.24.0)':
@@ -17689,19 +17371,9 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-json-strings@7.8.3(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-jsx@7.25.9(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/helper-plugin-utils': 7.26.5
-
-  '@babel/plugin-syntax-jsx@7.25.9(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
       '@babel/helper-plugin-utils': 7.26.5
 
   '@babel/plugin-syntax-logical-assignment-operators@7.10.4(@babel/core@7.24.0)':
@@ -17714,11 +17386,6 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-logical-assignment-operators@7.10.4(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-nullish-coalescing-operator@7.8.3(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -17727,11 +17394,6 @@ snapshots:
   '@babel/plugin-syntax-nullish-coalescing-operator@7.8.3(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/helper-plugin-utils': 7.26.5
-
-  '@babel/plugin-syntax-nullish-coalescing-operator@7.8.3(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
       '@babel/helper-plugin-utils': 7.26.5
 
   '@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.24.0)':
@@ -17744,11 +17406,6 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -17757,11 +17414,6 @@ snapshots:
   '@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/helper-plugin-utils': 7.26.5
-
-  '@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
       '@babel/helper-plugin-utils': 7.26.5
 
   '@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.24.0)':
@@ -17774,11 +17426,6 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -17787,11 +17434,6 @@ snapshots:
   '@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/helper-plugin-utils': 7.26.5
-
-  '@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
       '@babel/helper-plugin-utils': 7.26.5
 
   '@babel/plugin-syntax-private-property-in-object@7.14.5(@babel/core@7.24.0)':
@@ -17804,11 +17446,6 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-private-property-in-object@7.14.5(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-top-level-await@7.14.5(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -17819,19 +17456,9 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/plugin-syntax-top-level-await@7.14.5(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-
   '@babel/plugin-syntax-typescript@7.25.9(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/helper-plugin-utils': 7.26.5
-
-  '@babel/plugin-syntax-typescript@7.25.9(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
       '@babel/helper-plugin-utils': 7.26.5
 
   '@babel/plugin-syntax-unicode-sets-regex@7.18.6(@babel/core@7.24.0)':
@@ -18073,12 +17700,6 @@ snapshots:
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/plugin-syntax-flow': 7.24.7(@babel/core@7.26.0)
 
-  '@babel/plugin-transform-flow-strip-types@7.25.2(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-      '@babel/plugin-syntax-flow': 7.24.7(@babel/core@7.26.10)
-
   '@babel/plugin-transform-for-of@7.25.9(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -18181,14 +17802,6 @@ snapshots:
     dependencies:
       '@babel/core': 7.26.0
       '@babel/helper-module-transforms': 7.26.0(@babel/core@7.26.0)
-      '@babel/helper-plugin-utils': 7.26.5
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/plugin-transform-modules-commonjs@7.26.3(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-module-transforms': 7.26.0(@babel/core@7.26.10)
       '@babel/helper-plugin-utils': 7.26.5
     transitivePeerDependencies:
       - supports-color
@@ -18539,17 +18152,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/plugin-transform-typescript@7.25.2(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-annotate-as-pure': 7.25.9
-      '@babel/helper-create-class-features-plugin': 7.25.9(@babel/core@7.26.10)
-      '@babel/helper-plugin-utils': 7.26.5
-      '@babel/helper-skip-transparent-expression-wrappers': 7.25.9
-      '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.10)
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/plugin-transform-unicode-escapes@7.25.9(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -18764,13 +18366,6 @@ snapshots:
       '@babel/helper-validator-option': 7.25.9
       '@babel/plugin-transform-flow-strip-types': 7.25.2(@babel/core@7.26.0)
 
-  '@babel/preset-flow@7.24.7(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-      '@babel/helper-validator-option': 7.25.9
-      '@babel/plugin-transform-flow-strip-types': 7.25.2(@babel/core@7.26.10)
-
   '@babel/preset-modules@0.1.6-no-external-plugins(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
@@ -18808,29 +18403,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/preset-typescript@7.24.7(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-plugin-utils': 7.26.5
-      '@babel/helper-validator-option': 7.25.9
-      '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.10)
-      '@babel/plugin-transform-modules-commonjs': 7.26.3(@babel/core@7.26.10)
-      '@babel/plugin-transform-typescript': 7.25.2(@babel/core@7.26.10)
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/register@7.24.6(@babel/core@7.26.0)':
     dependencies:
       '@babel/core': 7.26.0
-      clone-deep: 4.0.1
-      find-cache-dir: 2.1.0
-      make-dir: 2.1.0
-      pirates: 4.0.6
-      source-map-support: 0.5.21
-
-  '@babel/register@7.24.6(@babel/core@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
       clone-deep: 4.0.1
       find-cache-dir: 2.1.0
       make-dir: 2.1.0
@@ -19273,9 +18848,6 @@ snapshots:
   '@esbuild/aix-ppc64@0.24.0':
     optional: true
 
-  '@esbuild/aix-ppc64@0.25.2':
-    optional: true
-
   '@esbuild/android-arm64@0.19.12':
     optional: true
 
@@ -19289,9 +18861,6 @@ snapshots:
     optional: true
 
   '@esbuild/android-arm64@0.24.0':
-    optional: true
-
-  '@esbuild/android-arm64@0.25.2':
     optional: true
 
   '@esbuild/android-arm@0.19.12':
@@ -19309,9 +18878,6 @@ snapshots:
   '@esbuild/android-arm@0.24.0':
     optional: true
 
-  '@esbuild/android-arm@0.25.2':
-    optional: true
-
   '@esbuild/android-x64@0.19.12':
     optional: true
 
@@ -19325,9 +18891,6 @@ snapshots:
     optional: true
 
   '@esbuild/android-x64@0.24.0':
-    optional: true
-
-  '@esbuild/android-x64@0.25.2':
     optional: true
 
   '@esbuild/darwin-arm64@0.19.12':
@@ -19345,9 +18908,6 @@ snapshots:
   '@esbuild/darwin-arm64@0.24.0':
     optional: true
 
-  '@esbuild/darwin-arm64@0.25.2':
-    optional: true
-
   '@esbuild/darwin-x64@0.19.12':
     optional: true
 
@@ -19361,9 +18921,6 @@ snapshots:
     optional: true
 
   '@esbuild/darwin-x64@0.24.0':
-    optional: true
-
-  '@esbuild/darwin-x64@0.25.2':
     optional: true
 
   '@esbuild/freebsd-arm64@0.19.12':
@@ -19381,9 +18938,6 @@ snapshots:
   '@esbuild/freebsd-arm64@0.24.0':
     optional: true
 
-  '@esbuild/freebsd-arm64@0.25.2':
-    optional: true
-
   '@esbuild/freebsd-x64@0.19.12':
     optional: true
 
@@ -19397,9 +18951,6 @@ snapshots:
     optional: true
 
   '@esbuild/freebsd-x64@0.24.0':
-    optional: true
-
-  '@esbuild/freebsd-x64@0.25.2':
     optional: true
 
   '@esbuild/linux-arm64@0.19.12':
@@ -19417,9 +18968,6 @@ snapshots:
   '@esbuild/linux-arm64@0.24.0':
     optional: true
 
-  '@esbuild/linux-arm64@0.25.2':
-    optional: true
-
   '@esbuild/linux-arm@0.19.12':
     optional: true
 
@@ -19433,9 +18981,6 @@ snapshots:
     optional: true
 
   '@esbuild/linux-arm@0.24.0':
-    optional: true
-
-  '@esbuild/linux-arm@0.25.2':
     optional: true
 
   '@esbuild/linux-ia32@0.19.12':
@@ -19453,9 +18998,6 @@ snapshots:
   '@esbuild/linux-ia32@0.24.0':
     optional: true
 
-  '@esbuild/linux-ia32@0.25.2':
-    optional: true
-
   '@esbuild/linux-loong64@0.19.12':
     optional: true
 
@@ -19469,9 +19011,6 @@ snapshots:
     optional: true
 
   '@esbuild/linux-loong64@0.24.0':
-    optional: true
-
-  '@esbuild/linux-loong64@0.25.2':
     optional: true
 
   '@esbuild/linux-mips64el@0.19.12':
@@ -19489,9 +19028,6 @@ snapshots:
   '@esbuild/linux-mips64el@0.24.0':
     optional: true
 
-  '@esbuild/linux-mips64el@0.25.2':
-    optional: true
-
   '@esbuild/linux-ppc64@0.19.12':
     optional: true
 
@@ -19505,9 +19041,6 @@ snapshots:
     optional: true
 
   '@esbuild/linux-ppc64@0.24.0':
-    optional: true
-
-  '@esbuild/linux-ppc64@0.25.2':
     optional: true
 
   '@esbuild/linux-riscv64@0.19.12':
@@ -19525,9 +19058,6 @@ snapshots:
   '@esbuild/linux-riscv64@0.24.0':
     optional: true
 
-  '@esbuild/linux-riscv64@0.25.2':
-    optional: true
-
   '@esbuild/linux-s390x@0.19.12':
     optional: true
 
@@ -19541,9 +19071,6 @@ snapshots:
     optional: true
 
   '@esbuild/linux-s390x@0.24.0':
-    optional: true
-
-  '@esbuild/linux-s390x@0.25.2':
     optional: true
 
   '@esbuild/linux-x64@0.19.12':
@@ -19561,12 +19088,6 @@ snapshots:
   '@esbuild/linux-x64@0.24.0':
     optional: true
 
-  '@esbuild/linux-x64@0.25.2':
-    optional: true
-
-  '@esbuild/netbsd-arm64@0.25.2':
-    optional: true
-
   '@esbuild/netbsd-x64@0.19.12':
     optional: true
 
@@ -19582,13 +19103,7 @@ snapshots:
   '@esbuild/netbsd-x64@0.24.0':
     optional: true
 
-  '@esbuild/netbsd-x64@0.25.2':
-    optional: true
-
   '@esbuild/openbsd-arm64@0.24.0':
-    optional: true
-
-  '@esbuild/openbsd-arm64@0.25.2':
     optional: true
 
   '@esbuild/openbsd-x64@0.19.12':
@@ -19606,9 +19121,6 @@ snapshots:
   '@esbuild/openbsd-x64@0.24.0':
     optional: true
 
-  '@esbuild/openbsd-x64@0.25.2':
-    optional: true
-
   '@esbuild/sunos-x64@0.19.12':
     optional: true
 
@@ -19622,9 +19134,6 @@ snapshots:
     optional: true
 
   '@esbuild/sunos-x64@0.24.0':
-    optional: true
-
-  '@esbuild/sunos-x64@0.25.2':
     optional: true
 
   '@esbuild/win32-arm64@0.19.12':
@@ -19642,9 +19151,6 @@ snapshots:
   '@esbuild/win32-arm64@0.24.0':
     optional: true
 
-  '@esbuild/win32-arm64@0.25.2':
-    optional: true
-
   '@esbuild/win32-ia32@0.19.12':
     optional: true
 
@@ -19660,9 +19166,6 @@ snapshots:
   '@esbuild/win32-ia32@0.24.0':
     optional: true
 
-  '@esbuild/win32-ia32@0.25.2':
-    optional: true
-
   '@esbuild/win32-x64@0.19.12':
     optional: true
 
@@ -19676,9 +19179,6 @@ snapshots:
     optional: true
 
   '@esbuild/win32-x64@0.24.0':
-    optional: true
-
-  '@esbuild/win32-x64@0.25.2':
     optional: true
 
   '@eslint-community/eslint-utils@4.4.1(eslint@9.15.0(jiti@2.4.2))':
@@ -20032,7 +19532,7 @@ snapshots:
 
   '@expo/metro-config@0.19.4':
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/generator': 7.27.0
       '@babel/parser': 7.27.0
       '@babel/types': 7.27.0
@@ -20426,7 +19926,7 @@ snapshots:
 
   '@jest/transform@29.7.0':
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@jest/types': 29.6.3
       '@jridgewell/trace-mapping': 0.3.25
       babel-plugin-istanbul: 6.1.1
@@ -20895,7 +20395,7 @@ snapshots:
     dependencies:
       '@angular/compiler-cli': 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.2)(zone.js@0.14.8)))(typescript@5.4.5)
       typescript: 5.4.5
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -21861,7 +21361,7 @@ snapshots:
     dependencies:
       solid-js: 1.9.5
 
-  '@solidjs/start@1.0.10(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vinxi@0.4.1(@types/node@22.13.14)(idb-keyval@6.2.1)(ioredis@5.4.1)(less@4.2.2)(lightningcss@1.29.2)(magicast@0.3.5)(sass@1.86.0)(terser@5.31.6))(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))':
+  '@solidjs/start@1.0.10(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vinxi@0.4.1(@types/node@22.13.14)(idb-keyval@6.2.1)(ioredis@5.4.1)(less@4.2.2)(lightningcss@1.29.2)(magicast@0.3.5)(sass@1.86.0)(terser@5.31.6))(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))':
     dependencies:
       '@vinxi/plugin-directives': 0.4.3(vinxi@0.4.1(@types/node@22.13.14)(idb-keyval@6.2.1)(ioredis@5.4.1)(less@4.2.2)(lightningcss@1.29.2)(magicast@0.3.5)(sass@1.86.0)(terser@5.31.6))
       '@vinxi/server-components': 0.4.3(vinxi@0.4.1(@types/node@22.13.14)(idb-keyval@6.2.1)(ioredis@5.4.1)(less@4.2.2)(lightningcss@1.29.2)(magicast@0.3.5)(sass@1.86.0)(terser@5.31.6))
@@ -21876,7 +21376,7 @@ snapshots:
       source-map-js: 1.2.1
       terracotta: 1.0.5(solid-js@1.9.5)
       tinyglobby: 0.2.10
-      vite-plugin-solid: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
+      vite-plugin-solid: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
     transitivePeerDependencies:
       - '@testing-library/jest-dom'
       - solid-js
@@ -21940,15 +21440,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte-inspector@2.1.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)))(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))':
-    dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
-      debug: 4.4.0
-      svelte: 4.2.19
-      vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)
-    transitivePeerDependencies:
-      - supports-color
-
   '@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))':
     dependencies:
       '@sveltejs/vite-plugin-svelte-inspector': 2.1.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)))(svelte@4.2.19)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
@@ -21960,20 +21451,6 @@ snapshots:
       svelte-hmr: 0.16.0(svelte@4.2.19)
       vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
       vitefu: 0.2.5(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
-    transitivePeerDependencies:
-      - supports-color
-
-  '@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))':
-    dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 2.1.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)))(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
-      debug: 4.4.0
-      deepmerge: 4.3.1
-      kleur: 4.1.5
-      magic-string: 0.30.17
-      svelte: 4.2.19
-      svelte-hmr: 0.16.0(svelte@4.2.19)
-      vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)
-      vitefu: 0.2.5(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -22049,14 +21526,14 @@ snapshots:
       tailwindcss: 4.0.14
       vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
 
-  '@tanstack/config@0.14.2(@types/node@22.13.14)(esbuild@0.25.2)(eslint@9.15.0(jiti@2.4.2))(rollup@4.38.0)(typescript@5.8.2)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))':
+  '@tanstack/config@0.14.2(@types/node@22.13.14)(esbuild@0.19.12)(eslint@9.15.0(jiti@2.4.2))(rollup@4.38.0)(typescript@5.8.2)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))':
     dependencies:
       '@commitlint/parse': 19.5.0
       '@eslint/js': 9.17.0
       '@stylistic/eslint-plugin-js': 2.11.0(eslint@9.15.0(jiti@2.4.2))
       commander: 12.1.0
       current-git-branch: 1.1.0
-      esbuild-register: 3.6.0(esbuild@0.25.2)
+      esbuild-register: 3.6.0(esbuild@0.19.12)
       eslint-plugin-import-x: 4.6.1(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.2)
       eslint-plugin-n: 17.14.0(eslint@9.15.0(jiti@2.4.2))
       globals: 15.14.0
@@ -22144,12 +21621,12 @@ snapshots:
       '@types/react': 19.0.1
       '@types/react-dom': 19.0.2(@types/react@19.0.1)
 
-  '@testing-library/svelte@5.2.6(svelte@4.2.19)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))(vitest@2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6))':
+  '@testing-library/svelte@5.2.6(svelte@4.2.19)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vitest@2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6))':
     dependencies:
       '@testing-library/dom': 10.4.0
       svelte: 4.2.19
     optionalDependencies:
-      vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)
+      vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
       vitest: 2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6)
 
   '@tsconfig/svelte@5.0.4': {}
@@ -22632,17 +22109,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-react@4.3.3(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))':
-    dependencies:
-      '@babel/core': 7.26.0
-      '@babel/plugin-transform-react-jsx-self': 7.24.7(@babel/core@7.26.0)
-      '@babel/plugin-transform-react-jsx-source': 7.24.7(@babel/core@7.26.0)
-      '@types/babel__core': 7.20.5
-      react-refresh: 0.14.2
-      vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)
-    transitivePeerDependencies:
-      - supports-color
-
   '@vitejs/plugin-vue@5.2.1(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vue@3.4.35(typescript@5.6.3))':
     dependencies:
       vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
@@ -22651,11 +22117,6 @@ snapshots:
   '@vitejs/plugin-vue@5.2.1(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))(vue@3.4.35(typescript@5.8.2))':
     dependencies:
       vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
-      vue: 3.4.35(typescript@5.8.2)
-
-  '@vitejs/plugin-vue@5.2.1(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))(vue@3.4.35(typescript@5.8.2))':
-    dependencies:
-      vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)
       vue: 3.4.35(typescript@5.8.2)
 
   '@vitest/coverage-istanbul@2.1.9(vitest@2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6))':
@@ -23085,7 +22546,7 @@ snapshots:
 
   '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.96.1)':
     dependencies:
-      webpack: 5.96.1(esbuild@0.25.2)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.96.1)
 
   '@webpack-cli/info@1.5.0(webpack-cli@4.10.0)':
@@ -23095,7 +22556,7 @@ snapshots:
 
   '@webpack-cli/info@2.0.2(webpack-cli@5.1.4)(webpack@5.96.1)':
     dependencies:
-      webpack: 5.96.1(esbuild@0.25.2)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.96.1)
 
   '@webpack-cli/serve@1.7.0(webpack-cli@4.10.0)':
@@ -23104,7 +22565,7 @@ snapshots:
 
   '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4)(webpack@5.96.1)':
     dependencies:
-      webpack: 5.96.1(esbuild@0.25.2)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.96.1)
 
   '@xmldom/xmldom@0.7.13': {}
@@ -23576,9 +23037,9 @@ snapshots:
 
   b4a@1.6.6: {}
 
-  babel-core@7.0.0-bridge.0(@babel/core@7.26.10):
+  babel-core@7.0.0-bridge.0(@babel/core@7.26.0):
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
 
   babel-jest@29.7.0(@babel/core@7.26.0):
     dependencies:
@@ -23607,14 +23068,14 @@ snapshots:
       '@babel/core': 7.24.0
       find-cache-dir: 4.0.0
       schema-utils: 4.3.0
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   babel-loader@9.2.1(@babel/core@7.26.0)(webpack@5.96.1):
     dependencies:
       '@babel/core': 7.26.0
       find-cache-dir: 4.0.0
       schema-utils: 4.3.0
-      webpack: 5.96.1(esbuild@0.25.2)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
 
   babel-plugin-add-module-exports@0.2.1: {}
 
@@ -23640,15 +23101,6 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-module-imports': 7.18.6
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.0)
-      '@babel/types': 7.27.0
-      html-entities: 2.3.3
-      validate-html-nesting: 1.2.2
-
-  babel-plugin-jsx-dom-expressions@0.38.1(@babel/core@7.26.10):
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.10)
       '@babel/types': 7.27.0
       html-entities: 2.3.3
       validate-html-nesting: 1.2.2
@@ -23745,25 +23197,6 @@ snapshots:
       '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.26.0)
       '@babel/plugin-syntax-top-level-await': 7.14.5(@babel/core@7.26.0)
 
-  babel-preset-current-node-syntax@1.1.0(@babel/core@7.26.10):
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/plugin-syntax-async-generators': 7.8.4(@babel/core@7.26.10)
-      '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.26.10)
-      '@babel/plugin-syntax-class-properties': 7.12.13(@babel/core@7.26.10)
-      '@babel/plugin-syntax-class-static-block': 7.14.5(@babel/core@7.26.10)
-      '@babel/plugin-syntax-import-attributes': 7.26.0(@babel/core@7.26.10)
-      '@babel/plugin-syntax-import-meta': 7.10.4(@babel/core@7.26.10)
-      '@babel/plugin-syntax-json-strings': 7.8.3(@babel/core@7.26.10)
-      '@babel/plugin-syntax-logical-assignment-operators': 7.10.4(@babel/core@7.26.10)
-      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.26.10)
-      '@babel/plugin-syntax-numeric-separator': 7.10.4(@babel/core@7.26.10)
-      '@babel/plugin-syntax-object-rest-spread': 7.8.3(@babel/core@7.26.10)
-      '@babel/plugin-syntax-optional-catch-binding': 7.8.3(@babel/core@7.26.10)
-      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.26.10)
-      '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.26.10)
-      '@babel/plugin-syntax-top-level-await': 7.14.5(@babel/core@7.26.10)
-
   babel-preset-expo@12.0.2(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0)):
     dependencies:
       '@babel/plugin-proposal-decorators': 7.24.7(@babel/core@7.26.0)
@@ -23790,11 +23223,6 @@ snapshots:
     dependencies:
       '@babel/core': 7.26.0
       babel-plugin-jsx-dom-expressions: 0.38.1(@babel/core@7.26.0)
-
-  babel-preset-solid@1.8.19(@babel/core@7.26.10):
-    dependencies:
-      '@babel/core': 7.26.10
-      babel-plugin-jsx-dom-expressions: 0.38.1(@babel/core@7.26.10)
 
   bail@2.0.2: {}
 
@@ -24006,7 +23434,7 @@ snapshots:
 
   browserslist@4.24.4:
     dependencies:
-      caniuse-lite: 1.0.30001707
+      caniuse-lite: 1.0.30001695
       electron-to-chromium: 1.5.84
       node-releases: 2.0.19
       update-browserslist-db: 1.1.2(browserslist@4.24.4)
@@ -24177,8 +23605,6 @@ snapshots:
 
   caniuse-lite@1.0.30001695: {}
 
-  caniuse-lite@1.0.30001707: {}
-
   cardinal@2.1.1:
     dependencies:
       ansicolors: 0.3.2
@@ -24302,7 +23728,7 @@ snapshots:
 
   citty@0.1.6:
     dependencies:
-      consola: 3.4.2
+      consola: 3.2.3
 
   class-utils@0.3.6:
     dependencies:
@@ -24536,8 +23962,6 @@ snapshots:
 
   consola@3.2.3: {}
 
-  consola@3.4.2: {}
-
   console-browserify@1.2.0: {}
 
   console-control-strings@1.1.0: {}
@@ -24602,7 +24026,7 @@ snapshots:
       normalize-path: 3.0.0
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   core-js-compat@3.40.0:
     dependencies:
@@ -24823,7 +24247,7 @@ snapshots:
       postcss-value-parser: 4.2.0
       semver: 7.7.1
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   css-select@4.3.0:
     dependencies:
@@ -25317,20 +24741,20 @@ snapshots:
 
   esbuild-plugin-file-path-extensions@2.1.2: {}
 
-  esbuild-plugin-solid@0.5.0(esbuild@0.25.2)(solid-js@1.9.5):
+  esbuild-plugin-solid@0.5.0(esbuild@0.24.0)(solid-js@1.9.5):
     dependencies:
       '@babel/core': 7.26.0
       '@babel/preset-typescript': 7.24.7(@babel/core@7.26.0)
       babel-preset-solid: 1.8.19(@babel/core@7.26.0)
-      esbuild: 0.25.2
+      esbuild: 0.24.0
       solid-js: 1.9.5
     transitivePeerDependencies:
       - supports-color
 
-  esbuild-register@3.6.0(esbuild@0.25.2):
+  esbuild-register@3.6.0(esbuild@0.19.12):
     dependencies:
       debug: 4.4.0
-      esbuild: 0.25.2
+      esbuild: 0.19.12
     transitivePeerDependencies:
       - supports-color
 
@@ -25470,34 +24894,6 @@ snapshots:
       '@esbuild/win32-arm64': 0.24.0
       '@esbuild/win32-ia32': 0.24.0
       '@esbuild/win32-x64': 0.24.0
-
-  esbuild@0.25.2:
-    optionalDependencies:
-      '@esbuild/aix-ppc64': 0.25.2
-      '@esbuild/android-arm': 0.25.2
-      '@esbuild/android-arm64': 0.25.2
-      '@esbuild/android-x64': 0.25.2
-      '@esbuild/darwin-arm64': 0.25.2
-      '@esbuild/darwin-x64': 0.25.2
-      '@esbuild/freebsd-arm64': 0.25.2
-      '@esbuild/freebsd-x64': 0.25.2
-      '@esbuild/linux-arm': 0.25.2
-      '@esbuild/linux-arm64': 0.25.2
-      '@esbuild/linux-ia32': 0.25.2
-      '@esbuild/linux-loong64': 0.25.2
-      '@esbuild/linux-mips64el': 0.25.2
-      '@esbuild/linux-ppc64': 0.25.2
-      '@esbuild/linux-riscv64': 0.25.2
-      '@esbuild/linux-s390x': 0.25.2
-      '@esbuild/linux-x64': 0.25.2
-      '@esbuild/netbsd-arm64': 0.25.2
-      '@esbuild/netbsd-x64': 0.25.2
-      '@esbuild/openbsd-arm64': 0.25.2
-      '@esbuild/openbsd-x64': 0.25.2
-      '@esbuild/sunos-x64': 0.25.2
-      '@esbuild/win32-arm64': 0.25.2
-      '@esbuild/win32-ia32': 0.25.2
-      '@esbuild/win32-x64': 0.25.2
 
   escalade@3.2.0: {}
 
@@ -26947,7 +26343,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
     optional: true
 
   html-webpack-plugin@5.6.3(webpack@5.96.1):
@@ -26958,7 +26354,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.96.1(esbuild@0.25.2)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
 
   htmlparser2@6.1.0:
     dependencies:
@@ -27492,7 +26888,7 @@ snapshots:
 
   istanbul-lib-instrument@5.2.1:
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/parser': 7.27.0
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
@@ -27502,7 +26898,7 @@ snapshots:
 
   istanbul-lib-instrument@6.0.3:
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/parser': 7.27.0
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
@@ -27598,15 +26994,15 @@ snapshots:
 
   jest-snapshot@29.7.0:
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/generator': 7.27.0
-      '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.10)
-      '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.10)
+      '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.0)
+      '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@babel/types': 7.27.0
       '@jest/expect-utils': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      babel-preset-current-node-syntax: 1.1.0(@babel/core@7.26.10)
+      babel-preset-current-node-syntax: 1.1.0(@babel/core@7.26.0)
       chalk: 4.1.2
       expect: 29.7.0
       graceful-fs: 4.2.11
@@ -27687,17 +27083,17 @@ snapshots:
 
   jscodeshift@0.14.0(@babel/preset-env@7.26.0(@babel/core@7.26.0)):
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/parser': 7.27.0
-      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.26.10)
-      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.26.10)
-      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.26.10)
-      '@babel/plugin-transform-modules-commonjs': 7.26.3(@babel/core@7.26.10)
+      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.26.0)
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.26.0)
+      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.26.0)
+      '@babel/plugin-transform-modules-commonjs': 7.26.3(@babel/core@7.26.0)
       '@babel/preset-env': 7.26.0(@babel/core@7.26.0)
-      '@babel/preset-flow': 7.24.7(@babel/core@7.26.10)
-      '@babel/preset-typescript': 7.24.7(@babel/core@7.26.10)
-      '@babel/register': 7.24.6(@babel/core@7.26.10)
-      babel-core: 7.0.0-bridge.0(@babel/core@7.26.10)
+      '@babel/preset-flow': 7.24.7(@babel/core@7.26.0)
+      '@babel/preset-typescript': 7.24.7(@babel/core@7.26.0)
+      '@babel/register': 7.24.6(@babel/core@7.26.0)
+      babel-core: 7.0.0-bridge.0(@babel/core@7.26.0)
       chalk: 4.1.2
       flow-parser: 0.242.1
       graceful-fs: 4.2.11
@@ -27908,8 +27304,6 @@ snapshots:
 
   knitwork@1.1.0: {}
 
-  knitwork@1.2.0: {}
-
   known-css-properties@0.35.0: {}
 
   kolorist@1.8.0: {}
@@ -27927,7 +27321,7 @@ snapshots:
     dependencies:
       klona: 2.0.6
       less: 4.2.0
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   less@4.2.0:
     dependencies:
@@ -27969,7 +27363,7 @@ snapshots:
     dependencies:
       webpack-sources: 3.2.3
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   lie@3.1.1:
     dependencies:
@@ -28559,7 +27953,7 @@ snapshots:
 
   metro-babel-transformer@0.81.0:
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       flow-enums-runtime: 0.0.6
       hermes-parser: 0.24.0
       nullthrows: 1.1.1
@@ -28658,7 +28052,7 @@ snapshots:
 
   metro-transform-plugins@0.81.0:
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/generator': 7.27.0
       '@babel/template': 7.27.0
       '@babel/traverse': 7.27.0
@@ -28669,7 +28063,7 @@ snapshots:
 
   metro-transform-worker@0.81.0:
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/generator': 7.27.0
       '@babel/parser': 7.27.0
       '@babel/types': 7.27.0
@@ -28690,7 +28084,7 @@ snapshots:
   metro@0.81.0:
     dependencies:
       '@babel/code-frame': 7.26.2
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@babel/generator': 7.27.0
       '@babel/parser': 7.27.0
       '@babel/template': 7.27.0
@@ -28986,7 +28380,7 @@ snapshots:
     dependencies:
       schema-utils: 4.3.0
       tapable: 2.2.1
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   minimalistic-assert@1.0.1: {}
 
@@ -29104,13 +28498,6 @@ snapshots:
       acorn: 8.14.0
       pathe: 1.1.2
       pkg-types: 1.2.1
-      ufo: 1.5.4
-
-  mlly@1.7.4:
-    dependencies:
-      acorn: 8.14.0
-      pathe: 2.0.3
-      pkg-types: 1.3.1
       ufo: 1.5.4
 
   move-concurrently@1.0.1:
@@ -30266,8 +29653,6 @@ snapshots:
 
   pathe@1.1.2: {}
 
-  pathe@2.0.3: {}
-
   pathval@2.0.0: {}
 
   pbkdf2@3.1.2:
@@ -30336,14 +29721,8 @@ snapshots:
   pkg-types@1.2.1:
     dependencies:
       confbox: 0.1.8
-      mlly: 1.7.4
+      mlly: 1.7.3
       pathe: 1.1.2
-
-  pkg-types@1.3.1:
-    dependencies:
-      confbox: 0.1.8
-      mlly: 1.7.4
-      pathe: 2.0.3
 
   plist@3.1.0:
     dependencies:
@@ -30390,7 +29769,7 @@ snapshots:
       postcss: 8.4.35
       semver: 7.7.1
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
     transitivePeerDependencies:
       - typescript
 
@@ -31411,7 +30790,7 @@ snapshots:
       neo-async: 2.6.2
     optionalDependencies:
       sass: 1.71.1
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   sass@1.71.1:
     dependencies:
@@ -31895,7 +31274,7 @@ snapshots:
     dependencies:
       iconv-lite: 0.6.3
       source-map-js: 1.2.1
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   source-map-resolve@0.5.3:
     dependencies:
@@ -32393,27 +31772,27 @@ snapshots:
       webpack-sources: 1.4.3
       worker-farm: 1.7.0
 
-  terser-webpack-plugin@5.3.11(esbuild@0.25.2)(webpack@5.90.3(esbuild@0.20.1)):
+  terser-webpack-plugin@5.3.11(esbuild@0.19.12)(webpack@5.90.3(esbuild@0.20.1)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
       terser: 5.31.6
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
     optionalDependencies:
-      esbuild: 0.25.2
+      esbuild: 0.19.12
 
-  terser-webpack-plugin@5.3.11(esbuild@0.25.2)(webpack@5.96.1):
+  terser-webpack-plugin@5.3.11(esbuild@0.19.12)(webpack@5.96.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
       terser: 5.31.6
-      webpack: 5.96.1(esbuild@0.25.2)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
     optionalDependencies:
-      esbuild: 0.25.2
+      esbuild: 0.19.12
 
   terser@4.8.1:
     dependencies:
@@ -32597,9 +31976,9 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tsup-preset-solid@2.2.0(esbuild@0.25.2)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2)):
+  tsup-preset-solid@2.2.0(esbuild@0.24.0)(solid-js@1.9.5)(tsup@8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2)):
     dependencies:
-      esbuild-plugin-solid: 0.5.0(esbuild@0.25.2)(solid-js@1.9.5)
+      esbuild-plugin-solid: 0.5.0(esbuild@0.24.0)(solid-js@1.9.5)
       tsup: 8.0.2(@microsoft/api-extractor@7.48.1(@types/node@22.13.14))(postcss@8.5.3)(typescript@5.8.2)
     transitivePeerDependencies:
       - esbuild
@@ -32974,14 +32353,14 @@ snapshots:
   untun@0.1.3:
     dependencies:
       citty: 0.1.6
-      consola: 3.4.2
+      consola: 3.2.3
       pathe: 1.1.2
 
   unwasm@0.3.9:
     dependencies:
-      knitwork: 1.2.0
+      knitwork: 1.1.0
       magic-string: 0.30.17
-      mlly: 1.7.4
+      mlly: 1.7.3
       pathe: 1.1.2
       pkg-types: 1.2.1
       unplugin: 1.12.0
@@ -33213,29 +32592,14 @@ snapshots:
 
   vite-plugin-solid@2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)):
     dependencies:
-      '@babel/core': 7.26.10
+      '@babel/core': 7.26.0
       '@types/babel__core': 7.20.5
-      babel-preset-solid: 1.8.19(@babel/core@7.26.10)
+      babel-preset-solid: 1.8.19(@babel/core@7.26.0)
       merge-anything: 5.1.7
       solid-js: 1.9.5
       solid-refresh: 0.6.3(solid-js@1.9.5)
       vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
       vitefu: 1.0.4(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
-    optionalDependencies:
-      '@testing-library/jest-dom': 6.6.3
-    transitivePeerDependencies:
-      - supports-color
-
-  vite-plugin-solid@2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)):
-    dependencies:
-      '@babel/core': 7.26.10
-      '@types/babel__core': 7.20.5
-      babel-preset-solid: 1.8.19(@babel/core@7.26.10)
-      merge-anything: 5.1.7
-      solid-js: 1.9.5
-      solid-refresh: 0.6.3(solid-js@1.9.5)
-      vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)
-      vitefu: 1.0.4(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1))
     optionalDependencies:
       '@testing-library/jest-dom': 6.6.3
     transitivePeerDependencies:
@@ -33291,36 +32655,13 @@ snapshots:
       sass: 1.86.0
       terser: 5.31.6
 
-  vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1):
-    dependencies:
-      esbuild: 0.25.2
-      postcss: 8.5.3
-      rollup: 4.38.0
-    optionalDependencies:
-      '@types/node': 22.13.14
-      fsevents: 2.3.3
-      jiti: 2.4.2
-      less: 4.2.2
-      lightningcss: 1.29.2
-      sass: 1.86.0
-      terser: 5.31.6
-      yaml: 2.7.1
-
   vitefu@0.2.5(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)):
     optionalDependencies:
       vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
 
-  vitefu@0.2.5(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)):
-    optionalDependencies:
-      vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)
-
   vitefu@1.0.4(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)):
     optionalDependencies:
       vite: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
-
-  vitefu@1.0.4(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)):
-    optionalDependencies:
-      vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)(yaml@2.7.1)
 
   vitest@2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6):
     dependencies:
@@ -33598,7 +32939,7 @@ snapshots:
       import-local: 3.2.0
       interpret: 3.1.1
       rechoir: 0.8.0
-      webpack: 5.96.1(esbuild@0.25.2)(webpack-cli@5.1.4)
+      webpack: 5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4)
       webpack-merge: 5.10.0
 
   webpack-dev-middleware@5.3.4(webpack@5.90.3(esbuild@0.20.1)):
@@ -33608,7 +32949,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.3.0
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   webpack-dev-middleware@6.1.2(webpack@5.90.3(esbuild@0.20.1)):
     dependencies:
@@ -33618,7 +32959,7 @@ snapshots:
       range-parser: 1.2.1
       schema-utils: 4.3.0
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
 
   webpack-dev-server@4.15.1(webpack@5.90.3(esbuild@0.20.1)):
     dependencies:
@@ -33653,7 +32994,7 @@ snapshots:
       webpack-dev-middleware: 5.3.4(webpack@5.90.3(esbuild@0.20.1))
       ws: 8.18.0
     optionalDependencies:
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
     transitivePeerDependencies:
       - bufferutil
       - debug
@@ -33676,7 +33017,7 @@ snapshots:
   webpack-subresource-integrity@5.1.0(html-webpack-plugin@5.6.3(webpack@5.90.3(esbuild@0.20.1)))(webpack@5.90.3(esbuild@0.20.1)):
     dependencies:
       typed-assert: 1.0.9
-      webpack: 5.90.3(esbuild@0.25.2)
+      webpack: 5.90.3(esbuild@0.19.12)
     optionalDependencies:
       html-webpack-plugin: 5.6.3(webpack@5.90.3(esbuild@0.20.1))
 
@@ -33712,7 +33053,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  webpack@5.90.3(esbuild@0.25.2):
+  webpack@5.90.3(esbuild@0.19.12):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.7
@@ -33735,7 +33076,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.11(esbuild@0.25.2)(webpack@5.90.3(esbuild@0.20.1))
+      terser-webpack-plugin: 5.3.11(esbuild@0.19.12)(webpack@5.90.3(esbuild@0.20.1))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -33743,7 +33084,7 @@ snapshots:
       - esbuild
       - uglify-js
 
-  webpack@5.96.1(esbuild@0.25.2)(webpack-cli@5.1.4):
+  webpack@5.96.1(esbuild@0.19.12)(webpack-cli@5.1.4):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.7
@@ -33765,7 +33106,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.11(esbuild@0.25.2)(webpack@5.96.1)
+      terser-webpack-plugin: 5.3.11(esbuild@0.19.12)(webpack@5.96.1)
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -33971,9 +33312,6 @@ snapshots:
   yaml@1.10.2: {}
 
   yaml@2.6.1: {}
-
-  yaml@2.7.1:
-    optional: true
 
   yargs-parser@20.2.9: {}
 
