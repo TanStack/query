@@ -97,7 +97,7 @@ importers:
         version: 3.4.2
       prettier-plugin-svelte:
         specifier: ^3.3.2
-        version: 3.3.2(prettier@3.4.2)(svelte@4.2.19)
+        version: 3.3.2(prettier@3.4.2)(svelte@5.25.6)
       publint:
         specifier: ^0.2.12
         version: 0.2.12
@@ -154,19 +154,19 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
@@ -177,8 +177,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -197,19 +197,19 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
@@ -220,8 +220,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -240,22 +240,22 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@angular/router':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))(rxjs@7.8.2)
       '@tanstack/angular-query-devtools-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-devtools-experimental
@@ -269,8 +269,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -289,19 +289,19 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
@@ -312,8 +312,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -332,22 +332,22 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/forms':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))(rxjs@7.8.2)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
@@ -358,8 +358,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -378,19 +378,19 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
@@ -401,8 +401,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -421,22 +421,22 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@angular/router':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
@@ -447,8 +447,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -467,22 +467,22 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@angular/router':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
@@ -493,8 +493,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -513,22 +513,22 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/forms':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))(rxjs@7.8.2)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
@@ -539,8 +539,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -559,19 +559,19 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
@@ -582,8 +582,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular/build':
         specifier: ^19.2.5
@@ -1434,7 +1434,7 @@ importers:
         version: 6.0.2(astro@5.5.6(@types/node@22.13.14)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.38.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.2)(yaml@2.6.1))(tailwindcss@3.4.7)
       '@astrojs/vercel':
         specifier: ^8.1.3
-        version: 8.1.3(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(astro@5.5.6(@types/node@22.13.14)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.38.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.2)(yaml@2.6.1))(encoding@0.1.13)(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(rollup@4.38.0)(svelte@4.2.19)(vue@3.4.35(typescript@5.8.2))
+        version: 8.1.3(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(astro@5.5.6(@types/node@22.13.14)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.38.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.2)(yaml@2.6.1))(encoding@0.1.13)(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(rollup@4.38.0)(svelte@5.25.6)(vue@3.4.35(typescript@5.8.2))
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../../../packages/solid-query
@@ -1586,19 +1586,19 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.3.1
-        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
+        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
       '@sveltejs/kit':
         specifier: ^2.14.0
-        version: 2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        version: 2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -1623,19 +1623,19 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.3.1
-        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
+        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
       '@sveltejs/kit':
         specifier: ^2.14.0
-        version: 2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        version: 2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -1654,19 +1654,19 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.3.1
-        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
+        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
       '@sveltejs/kit':
         specifier: ^2.14.0
-        version: 2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        version: 2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -1685,19 +1685,19 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.3.1
-        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
+        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
       '@sveltejs/kit':
         specifier: ^2.14.0
-        version: 2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        version: 2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -1716,19 +1716,19 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.3.1
-        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
+        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
       '@sveltejs/kit':
         specifier: ^2.14.0
-        version: 2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        version: 2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -1746,17 +1746,17 @@ importers:
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@tsconfig/svelte':
         specifier: ^5.0.4
         version: 5.0.4
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -1775,19 +1775,19 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.3.1
-        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
+        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
       '@sveltejs/kit':
         specifier: ^2.14.0
-        version: 2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        version: 2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -1806,13 +1806,13 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.3.1
-        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
+        version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))
       '@sveltejs/kit':
         specifier: ^2.14.0
-        version: 2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        version: 2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.5.3)
@@ -1820,11 +1820,11 @@ importers:
         specifier: ^8.4.49
         version: 8.5.3
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
       tailwindcss:
         specifier: ^3.4.7
         version: 3.4.7
@@ -1933,19 +1933,19 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
         specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../../packages/angular-query-experimental
@@ -1956,8 +1956,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       zone.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: 0.14.8
+        version: 0.14.8
     devDependencies:
       '@angular-devkit/build-angular':
         specifier: ^19.2.5
@@ -2147,8 +2147,8 @@ importers:
   integrations/svelte-vite:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../../packages/svelte-query
@@ -2156,8 +2156,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/svelte-query-devtools
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       vite:
         specifier: ^6.2.4
         version: 6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)
@@ -2212,8 +2212,8 @@ importers:
   packages/angular-query-experimental:
     dependencies:
       '@angular/common':
-        specifier: '>=16.0.0'
-        version: 17.3.12(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        specifier: '>=19.0.0'
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../query-core
@@ -2229,10 +2229,10 @@ importers:
         version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
       '@angular/platform-browser':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@17.3.12(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
-        version: 19.2.4(@angular/common@17.3.12(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@17.3.12(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
       '@microsoft/api-extractor':
         specifier: ^7.48.1
         version: 7.48.1(@types/node@22.13.14)
@@ -2559,22 +2559,22 @@ importers:
     devDependencies:
       '@sveltejs/package':
         specifier: ^2.3.7
-        version: 2.3.7(svelte@4.2.19)(typescript@5.8.2)
+        version: 2.3.7(svelte@5.25.6)(typescript@5.8.2)
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@testing-library/svelte':
         specifier: ^5.2.6
-        version: 5.2.6(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))(vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        version: 5.2.6(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))(vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       eslint-plugin-svelte:
         specifier: ^2.46.0
-        version: 2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@4.2.19)
+        version: 2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@5.25.6)
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
 
   packages/svelte-query-devtools:
     dependencies:
@@ -2587,22 +2587,22 @@ importers:
     devDependencies:
       '@sveltejs/package':
         specifier: ^2.3.7
-        version: 2.3.7(svelte@4.2.19)(typescript@5.8.2)
+        version: 2.3.7(svelte@5.25.6)(typescript@5.8.2)
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
       eslint-plugin-svelte:
         specifier: ^2.46.0
-        version: 2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@4.2.19)
+        version: 2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@5.25.6)
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
 
   packages/svelte-query-persist-client:
     dependencies:
@@ -2612,25 +2612,25 @@ importers:
     devDependencies:
       '@sveltejs/package':
         specifier: ^2.3.7
-        version: 2.3.7(svelte@4.2.19)(typescript@5.8.2)
+        version: 2.3.7(svelte@5.25.6)(typescript@5.8.2)
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^3.1.2
-        version: 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        specifier: ^5.0.3
+        version: 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
       '@testing-library/svelte':
         specifier: ^5.2.6
-        version: 5.2.6(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))(vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+        version: 5.2.6(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))(vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       eslint-plugin-svelte:
         specifier: ^2.46.0
-        version: 2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@4.2.19)
+        version: 2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@5.25.6)
       svelte:
-        specifier: ^4.2.18
-        version: 4.2.19
+        specifier: ^5.0.0
+        version: 5.25.6
       svelte-check:
         specifier: ^4.0.0
-        version: 4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2)
+        version: 4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2)
 
   packages/vue-query:
     dependencies:
@@ -6427,6 +6427,11 @@ packages:
     peerDependencies:
       eslint: ^9.15.0
 
+  '@sveltejs/acorn-typescript@1.0.5':
+    resolution: {integrity: sha512-IwQk4yfwLdibDlrXVE04jTZYlLnwsTT2PIOQQGNLWfjavGifnk1JD1LcZjZaBTRcxZu2FfPfNLOE04DSu9lqtQ==}
+    peerDependencies:
+      acorn: ^8.9.0
+
   '@sveltejs/adapter-auto@3.3.1':
     resolution: {integrity: sha512-5Sc7WAxYdL6q9j/+D0jJKjGREGlfIevDyHSQ2eNETHcB1TKlQWHcAo8AS8H1QdjNvSXpvOwNjykDUHPEAyGgdQ==}
     peerDependencies:
@@ -6448,20 +6453,20 @@ packages:
     peerDependencies:
       svelte: ^3.44.0 || ^4.0.0 || ^5.0.0-next.1
 
-  '@sveltejs/vite-plugin-svelte-inspector@2.1.0':
-    resolution: {integrity: sha512-9QX28IymvBlSCqsCll5t0kQVxipsfhFFL+L2t3nTWfXnddYwxBuAEtTtlaVQpRz9c37BhJjltSeY4AJSC03SSg==}
-    engines: {node: ^18.0.0 || >=20}
+  '@sveltejs/vite-plugin-svelte-inspector@4.0.1':
+    resolution: {integrity: sha512-J/Nmb2Q2y7mck2hyCX4ckVHcR5tu2J+MtBEQqpDrrgELZ2uvraQcK/ioCV61AqkdXFgriksOKIceDcQmqnGhVw==}
+    engines: {node: ^18.0.0 || ^20.0.0 || >=22}
     peerDependencies:
-      '@sveltejs/vite-plugin-svelte': ^3.0.0
-      svelte: ^4.0.0 || ^5.0.0-next.0
-      vite: ^5.0.0
+      '@sveltejs/vite-plugin-svelte': ^5.0.0
+      svelte: ^5.0.0
+      vite: ^6.0.0
 
-  '@sveltejs/vite-plugin-svelte@3.1.2':
-    resolution: {integrity: sha512-Txsm1tJvtiYeLUVRNqxZGKR/mI+CzuIQuc2gn+YCs9rMTowpNZ2Nqt53JdL8KF9bLhAf2ruR/dr9eZCwdTriRA==}
-    engines: {node: ^18.0.0 || >=20}
+  '@sveltejs/vite-plugin-svelte@5.0.3':
+    resolution: {integrity: sha512-MCFS6CrQDu1yGwspm4qtli0e63vaPCehf6V7pIMP15AsWgMKrqDGCPFF/0kn4SP0ii4aySu4Pa62+fIRGFMjgw==}
+    engines: {node: ^18.0.0 || ^20.0.0 || >=22}
     peerDependencies:
-      svelte: ^4.0.0 || ^5.0.0-next.0
-      vite: ^5.0.0
+      svelte: ^5.0.0
+      vite: ^6.0.0
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
@@ -8252,9 +8257,6 @@ packages:
     resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
     engines: {node: '>=0.10.0'}
 
-  code-red@1.0.4:
-    resolution: {integrity: sha512-7qJWqItLA8/VPVlKJlFXU+NBlo/qyfs39aJcuMT/2ere32ZqvF5OSxgdM5xOfJJ7O429gg2HM47y8v9P+9wrNw==}
-
   collection-visit@1.0.0:
     resolution: {integrity: sha512-lNkKvzEeMBBjUGHZ+q6z9pSJla0KWAQPvtzhEV9+iGyQYG+pBpl7xKDhxoNSOZH2hhv0v5k0y2yAM4o4SjoSkw==}
     engines: {node: '>=0.10.0'}
@@ -8611,10 +8613,6 @@ packages:
 
   css-select@5.1.0:
     resolution: {integrity: sha512-nwoRF1rvRRnnCqqY7updORDsuqKzqYJ28+oSMaJMMgOauh3fvwHqMS7EZpIPqK8GL+g9mKxF1vP/ZjSeNjEVHg==}
-
-  css-tree@2.3.1:
-    resolution: {integrity: sha512-6Fv1DV/TYw//QF5IzQdqsNDjx/wc8TrMBZsqjL9eW01tWb7R7k/mq+/VXfJCl7SoD5emsJop9cOByJZfs8hYIw==}
-    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
 
   css-vendor@2.0.8:
     resolution: {integrity: sha512-x9Aq0XTInxrkuFeHKbYC7zWY8ai7qJ04Kxd9MnvbC1uO5DagxoHQjm4JvG+vCdXOoFtCjbL2XSZfxmoYa9uQVQ==}
@@ -9344,6 +9342,9 @@ packages:
   esquery@1.6.0:
     resolution: {integrity: sha512-ca9pw9fomFcKPvFLXhBKUK90ZvGibiGOvRJNbjljY7s7uq/5YO4BOzcYtJqExdx99rF6aAcnRxHmcUHcz6sQsg==}
     engines: {node: '>=0.10'}
+
+  esrap@1.4.6:
+    resolution: {integrity: sha512-F/D2mADJ9SHY3IwksD4DAXjTt7qt7GWUf3/8RhCNWmC/67tyb55dpimHmy7EplakFaflV0R/PC+fdSPqrRHAQw==}
 
   esrecurse@4.3.0:
     resolution: {integrity: sha512-KmfKL3b6G+RXvP8N1vr3Tq1kL/oCFgn2NYXEtqP8/L3pKapUA4G8cFVaoF3SU323CD4XypR/ffioHmkti6/Tag==}
@@ -10630,8 +10631,8 @@ packages:
   is-reference@1.2.1:
     resolution: {integrity: sha512-U82MsXXiFIrjCK4otLT+o2NA2Cd2g5MLoOVXUZjIOhLurrRxpEXzI8O0KZHr3IjLvlAH1kTPYSuqer5T9ZVBKQ==}
 
-  is-reference@3.0.2:
-    resolution: {integrity: sha512-v3rht/LgVcsdZa3O2Nqs+NMowLOxeOm7Ay9+/ARQ2F+qEoANRcqrjAZKGN0v8ymUetZGgkp26LTnGT7H0Qo9Pg==}
+  is-reference@3.0.3:
+    resolution: {integrity: sha512-ixkJoqQvAP88E6wLydLGGqCJsrFUnqoH6HnaczB8XmDH1oaWU+xxdptvikTgaEhtZ53Ky6YXiBuUI2WXLMCwjw==}
 
   is-regex@1.1.4:
     resolution: {integrity: sha512-kvRdxDsxZjhzUX07ZnLydzS1TU/TJlTUHHY4YLL87e37oUA49DfkLqgy+VjFocowy29cKvcSiu+kIv728jTTVg==}
@@ -11468,9 +11469,6 @@ packages:
 
   mdast-util-to-string@4.0.0:
     resolution: {integrity: sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg==}
-
-  mdn-data@2.0.30:
-    resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
 
   mdurl@2.0.0:
     resolution: {integrity: sha512-Lf+9+2r+Tdp5wXDXC4PcIBjTDtq4UKjCPMQhKIuzpJNW0b96kVqSwW0bT7FhRSfmAiFYgP+SCRvdrDozfh0U5w==}
@@ -12632,9 +12630,6 @@ packages:
 
   performance-now@2.1.0:
     resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
-
-  periscopic@3.1.0:
-    resolution: {integrity: sha512-vKiQ8RRtkl9P+r/+oefh25C3fhybptkHKCZSPlcXiJux2tJF55GnEj3BVn4A5gKfq9NWWXXrxkHBwVPUfH0opw==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -14341,21 +14336,15 @@ packages:
       svelte:
         optional: true
 
-  svelte-hmr@0.16.0:
-    resolution: {integrity: sha512-Gyc7cOS3VJzLlfj7wKS0ZnzDVdv3Pn2IuVeJPk9m2skfhcu5bq3wtIZyQGggr7/Iim5rH5cncyQft/kRLupcnA==}
-    engines: {node: ^12.20 || ^14.13.1 || >= 16}
-    peerDependencies:
-      svelte: ^3.19.0 || ^4.0.0
-
   svelte2tsx@0.7.28:
     resolution: {integrity: sha512-TJjA+kU8AnkyoprZPgQACMfTX8N0MA5NsIL//h9IuHOxmmaCLluqhcZU+fCkWipi5c/pooHLFOMpqjhq4v7JLQ==}
     peerDependencies:
       svelte: ^3.55 || ^4.0.0-next.0 || ^4.0 || ^5.0.0-next.0
       typescript: ^4.9.4 || ^5.0.0
 
-  svelte@4.2.19:
-    resolution: {integrity: sha512-IY1rnGr6izd10B0A8LqsBfmlT5OILVuZ7XsI0vdGPEvuonFV7NYEUK4dAkm9Zg2q0Um92kYjTpS1CAP3Nh/KWw==}
-    engines: {node: '>=16'}
+  svelte@5.25.6:
+    resolution: {integrity: sha512-RGkaeAXDuJdvhA1fdSM5GgD++vYfJYijZL0uN6kM2s/TRJ663jktBhZlF0qjzAJGR/34PtaeT3G8MKJY1EKeqg==}
+    engines: {node: '>=18'}
 
   symbol-observable@4.0.0:
     resolution: {integrity: sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==}
@@ -15355,14 +15344,6 @@ packages:
       yaml:
         optional: true
 
-  vitefu@0.2.5:
-    resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
-    peerDependencies:
-      vite: ^3.0.0 || ^4.0.0 || ^5.0.0
-    peerDependenciesMeta:
-      vite:
-        optional: true
-
   vitefu@1.0.4:
     resolution: {integrity: sha512-y6zEE3PQf6uu/Mt6DTJ9ih+kyJLr4XcSgHR2zUkM8SWDhuixEJxfJ6CZGMHh1Ec3vPLoEA0IHU5oWzVqw8ulow==}
     peerDependencies:
@@ -16014,6 +15995,9 @@ packages:
     resolution: {integrity: sha512-y1aNsEeoLXnWb6pI9TvfNPIxySyo4Un3OGxKn7rsNj8+tgSquzXEWkzfA5y6gU0fvzmQgvx3JBn/p51qQ8Xg9A==}
     engines: {node: '>=18'}
 
+  zimmerframe@1.1.2:
+    resolution: {integrity: sha512-rAbqEGa8ovJy4pyBxZM70hg4pE6gDgaQ0Sl9M3enG3I0d6H4XSAM3GeNGLKnsBpuijUow064sf7ww1nutC5/3w==}
+
   zip-stream@6.0.1:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
@@ -16040,6 +16024,9 @@ packages:
 
   zod@3.24.2:
     resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
+
+  zone.js@0.14.8:
+    resolution: {integrity: sha512-48uh7MnVp4/OQDuCHeFdXw5d8xwPqFTvlHgPJ1LBFb5GaustLSZV+YUH0to5ygNyGpqTsjpbpt141U/j3pCfqQ==}
 
   zone.js@0.15.0:
     resolution: {integrity: sha512-9oxn0IIjbCZkJ67L+LkhYWRyAy7axphb3VgE2MBDlOqnmHMPWGYMxJxBYFueFq/JGY2GMwS0rU+UCLunEmy5UA==}
@@ -16331,6 +16318,12 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
+  '@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)':
+    dependencies:
+      '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
+      rxjs: 7.8.2
+      tslib: 2.8.1
+
   '@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)':
     dependencies:
       '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
@@ -16356,17 +16349,23 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)':
+    dependencies:
+      rxjs: 7.8.2
+      tslib: 2.8.1
+      zone.js: 0.14.8
+
   '@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)':
     dependencies:
       rxjs: 7.8.2
       tslib: 2.8.1
       zone.js: 0.15.0
 
-  '@angular/forms@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)':
+  '@angular/forms@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))(rxjs@7.8.2)':
     dependencies:
-      '@angular/common': 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
-      '@angular/platform-browser': 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+      '@angular/common': 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
+      '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
+      '@angular/platform-browser': 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       rxjs: 7.8.2
       tslib: 2.8.1
 
@@ -16376,6 +16375,14 @@ snapshots:
       '@angular/compiler': 19.2.4
       '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
       '@angular/platform-browser': 19.2.4(@angular/common@17.3.12(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+      tslib: 2.8.1
+
+  '@angular/platform-browser-dynamic@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))':
+    dependencies:
+      '@angular/common': 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
+      '@angular/compiler': 19.2.4
+      '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
+      '@angular/platform-browser': 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       tslib: 2.8.1
 
   '@angular/platform-browser-dynamic@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))':
@@ -16392,17 +16399,23 @@ snapshots:
       '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
       tslib: 2.8.1
 
+  '@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))':
+    dependencies:
+      '@angular/common': 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
+      '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
+      tslib: 2.8.1
+
   '@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))':
     dependencies:
       '@angular/common': 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
       '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
       tslib: 2.8.1
 
-  '@angular/router@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)':
+  '@angular/router@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8)))(rxjs@7.8.2)':
     dependencies:
-      '@angular/common': 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
-      '@angular/platform-browser': 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+      '@angular/common': 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2)
+      '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.14.8)
+      '@angular/platform-browser': 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.14.8))
       rxjs: 7.8.2
       tslib: 2.8.1
 
@@ -16548,10 +16561,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/vercel@8.1.3(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(astro@5.5.6(@types/node@22.13.14)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.38.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.2)(yaml@2.6.1))(encoding@0.1.13)(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(rollup@4.38.0)(svelte@4.2.19)(vue@3.4.35(typescript@5.8.2))':
+  '@astrojs/vercel@8.1.3(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(astro@5.5.6(@types/node@22.13.14)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.38.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.2)(yaml@2.6.1))(encoding@0.1.13)(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(rollup@4.38.0)(svelte@5.25.6)(vue@3.4.35(typescript@5.8.2))':
     dependencies:
       '@astrojs/internal-helpers': 0.6.1
-      '@vercel/analytics': 1.5.0(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(svelte@4.2.19)(vue@3.4.35(typescript@5.8.2))
+      '@vercel/analytics': 1.5.0(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(svelte@5.25.6)(vue@3.4.35(typescript@5.8.2))
       '@vercel/edge': 1.2.1
       '@vercel/nft': 0.29.2(encoding@0.1.13)(rollup@4.38.0)
       '@vercel/routing-utils': 5.0.4
@@ -21146,14 +21159,18 @@ snapshots:
       eslint-visitor-keys: 4.2.0
       espree: 10.3.0
 
-  '@sveltejs/adapter-auto@3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))':
+  '@sveltejs/acorn-typescript@1.0.5(acorn@8.14.1)':
     dependencies:
-      '@sveltejs/kit': 2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+      acorn: 8.14.1
+
+  '@sveltejs/adapter-auto@3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))':
+    dependencies:
+      '@sveltejs/kit': 2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       import-meta-resolve: 4.1.0
 
-  '@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))':
+  '@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+      '@sveltejs/vite-plugin-svelte': 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       '@types/cookie': 0.6.0
       cookie: 0.6.0
       devalue: 5.1.1
@@ -21165,41 +21182,40 @@ snapshots:
       sade: 1.8.1
       set-cookie-parser: 2.7.1
       sirv: 3.0.0
-      svelte: 4.2.19
+      svelte: 5.25.6
       tiny-glob: 0.2.9
       vite: 6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)
 
-  '@sveltejs/package@2.3.7(svelte@4.2.19)(typescript@5.8.2)':
+  '@sveltejs/package@2.3.7(svelte@5.25.6)(typescript@5.8.2)':
     dependencies:
       chokidar: 4.0.3
       kleur: 4.1.5
       sade: 1.8.1
       semver: 7.7.1
-      svelte: 4.2.19
-      svelte2tsx: 0.7.28(svelte@4.2.19)(typescript@5.8.2)
+      svelte: 5.25.6
+      svelte2tsx: 0.7.28(svelte@5.25.6)(typescript@5.8.2)
     transitivePeerDependencies:
       - typescript
 
-  '@sveltejs/vite-plugin-svelte-inspector@2.1.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))':
+  '@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+      '@sveltejs/vite-plugin-svelte': 5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       debug: 4.4.0
-      svelte: 4.2.19
+      svelte: 5.25.6
       vite: 6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))':
+  '@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 2.1.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+      '@sveltejs/vite-plugin-svelte-inspector': 4.0.1(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       debug: 4.4.0
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.17
-      svelte: 4.2.19
-      svelte-hmr: 0.16.0(svelte@4.2.19)
+      svelte: 5.25.6
       vite: 6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)
-      vitefu: 0.2.5(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+      vitefu: 1.0.6(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -21434,10 +21450,10 @@ snapshots:
       '@types/react': 19.0.1
       '@types/react-dom': 19.0.2(@types/react@19.0.1)
 
-  '@testing-library/svelte@5.2.6(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))(vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))':
+  '@testing-library/svelte@5.2.6(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))(vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))':
     dependencies:
       '@testing-library/dom': 10.4.0
-      svelte: 4.2.19
+      svelte: 5.25.6
     optionalDependencies:
       vite: 6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)
       vitest: 3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(jiti@2.4.2)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)
@@ -21796,12 +21812,12 @@ snapshots:
       '@urql/core': 5.0.8(graphql@16.9.0)
       wonka: 6.3.4
 
-  '@vercel/analytics@1.5.0(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(svelte@4.2.19)(vue@3.4.35(typescript@5.8.2))':
+  '@vercel/analytics@1.5.0(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(svelte@5.25.6)(vue@3.4.35(typescript@5.8.2))':
     optionalDependencies:
-      '@sveltejs/kit': 2.14.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@4.2.19)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+      '@sveltejs/kit': 2.14.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.25.6)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       next: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
       react: 19.0.0
-      svelte: 4.2.19
+      svelte: 5.25.6
       vue: 3.4.35(typescript@5.8.2)
 
   '@vercel/edge@1.2.1': {}
@@ -22382,9 +22398,13 @@ snapshots:
     dependencies:
       acorn: 8.14.0
 
+  acorn-jsx@5.3.2(acorn@8.14.1):
+    dependencies:
+      acorn: 8.14.1
+
   acorn-loose@8.4.0:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.14.1
 
   acorn-typescript@1.4.13(acorn@8.14.0):
     dependencies:
@@ -23655,14 +23675,6 @@ snapshots:
 
   cluster-key-slot@1.1.2: {}
 
-  code-red@1.0.4:
-    dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.0
-      '@types/estree': 1.0.7
-      acorn: 8.14.0
-      estree-walker: 3.0.3
-      periscopic: 3.1.0
-
   collection-visit@1.0.0:
     dependencies:
       map-visit: 1.0.0
@@ -24098,11 +24110,6 @@ snapshots:
       domhandler: 5.0.3
       domutils: 3.1.0
       nth-check: 2.1.1
-
-  css-tree@2.3.1:
-    dependencies:
-      mdn-data: 2.0.30
-      source-map-js: 1.2.1
 
   css-vendor@2.0.8:
     dependencies:
@@ -24905,7 +24912,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-svelte@2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@4.2.19):
+  eslint-plugin-svelte@2.46.0(eslint@9.15.0(jiti@2.4.2))(svelte@5.25.6):
     dependencies:
       '@eslint-community/eslint-utils': 4.4.1(eslint@9.15.0(jiti@2.4.2))
       '@jridgewell/sourcemap-codec': 1.5.0
@@ -24918,9 +24925,9 @@ snapshots:
       postcss-safe-parser: 6.0.0(postcss@8.5.3)
       postcss-selector-parser: 6.1.1
       semver: 7.7.1
-      svelte-eslint-parser: 0.43.0(svelte@4.2.19)
+      svelte-eslint-parser: 0.43.0(svelte@5.25.6)
     optionalDependencies:
-      svelte: 4.2.19
+      svelte: 5.25.6
     transitivePeerDependencies:
       - ts-node
 
@@ -25013,8 +25020,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.14.0
-      acorn-jsx: 5.3.2(acorn@8.14.0)
+      acorn: 8.14.1
+      acorn-jsx: 5.3.2(acorn@8.14.1)
       eslint-visitor-keys: 3.4.3
 
   esprima@4.0.1: {}
@@ -25022,6 +25029,10 @@ snapshots:
   esquery@1.6.0:
     dependencies:
       estraverse: 5.3.0
+
+  esrap@1.4.6:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.0
 
   esrecurse@4.3.0:
     dependencies:
@@ -26524,7 +26535,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.7
 
-  is-reference@3.0.2:
+  is-reference@3.0.3:
     dependencies:
       '@types/estree': 1.0.7
 
@@ -27597,8 +27608,6 @@ snapshots:
     dependencies:
       '@types/mdast': 4.0.4
 
-  mdn-data@2.0.30: {}
-
   mdurl@2.0.0: {}
 
   media-typer@0.3.0: {}
@@ -28185,14 +28194,14 @@ snapshots:
 
   mlly@1.7.3:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.14.1
       pathe: 1.1.2
       pkg-types: 1.2.1
       ufo: 1.5.4
 
   mlly@1.7.4:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.14.1
       pathe: 2.0.3
       pkg-types: 1.3.1
       ufo: 1.5.4
@@ -29259,12 +29268,6 @@ snapshots:
 
   performance-now@2.1.0: {}
 
-  periscopic@3.1.0:
-    dependencies:
-      '@types/estree': 1.0.7
-      estree-walker: 3.0.3
-      is-reference: 3.0.2
-
   picocolors@1.1.1: {}
 
   picomatch@2.3.1: {}
@@ -29450,10 +29453,10 @@ snapshots:
 
   premove@4.0.0: {}
 
-  prettier-plugin-svelte@3.3.2(prettier@3.4.2)(svelte@4.2.19):
+  prettier-plugin-svelte@3.3.2(prettier@3.4.2)(svelte@5.25.6):
     dependencies:
       prettier: 3.4.2
-      svelte: 4.2.19
+      svelte: 5.25.6
 
   prettier@2.8.7:
     optional: true
@@ -31188,19 +31191,19 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-check@4.0.0(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.8.2):
+  svelte-check@4.0.0(picomatch@4.0.2)(svelte@5.25.6)(typescript@5.8.2):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       chokidar: 3.6.0
       fdir: 6.4.2(picomatch@4.0.2)
       picocolors: 1.1.1
       sade: 1.8.1
-      svelte: 4.2.19
+      svelte: 5.25.6
       typescript: 5.8.2
     transitivePeerDependencies:
       - picomatch
 
-  svelte-eslint-parser@0.43.0(svelte@4.2.19):
+  svelte-eslint-parser@0.43.0(svelte@5.25.6):
     dependencies:
       eslint-scope: 7.2.2
       eslint-visitor-keys: 3.4.3
@@ -31208,35 +31211,31 @@ snapshots:
       postcss: 8.5.3
       postcss-scss: 4.0.9(postcss@8.5.3)
     optionalDependencies:
-      svelte: 4.2.19
+      svelte: 5.25.6
 
-  svelte-hmr@0.16.0(svelte@4.2.19):
-    dependencies:
-      svelte: 4.2.19
-
-  svelte2tsx@0.7.28(svelte@4.2.19)(typescript@5.8.2):
+  svelte2tsx@0.7.28(svelte@5.25.6)(typescript@5.8.2):
     dependencies:
       dedent-js: 1.0.1
       pascal-case: 3.1.2
-      svelte: 4.2.19
+      svelte: 5.25.6
       typescript: 5.8.2
 
-  svelte@4.2.19:
+  svelte@5.25.6:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@jridgewell/sourcemap-codec': 1.5.0
-      '@jridgewell/trace-mapping': 0.3.25
+      '@sveltejs/acorn-typescript': 1.0.5(acorn@8.14.1)
       '@types/estree': 1.0.7
-      acorn: 8.14.0
+      acorn: 8.14.1
       aria-query: 5.3.2
       axobject-query: 4.1.0
-      code-red: 1.0.4
-      css-tree: 2.3.1
-      estree-walker: 3.0.3
-      is-reference: 3.0.2
+      clsx: 2.1.1
+      esm-env: 1.2.1
+      esrap: 1.4.6
+      is-reference: 3.0.3
       locate-character: 3.0.0
       magic-string: 0.30.17
-      periscopic: 3.1.0
+      zimmerframe: 1.1.2
 
   symbol-observable@4.0.0: {}
 
@@ -31375,7 +31374,7 @@ snapshots:
 
   terser@4.8.1:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.14.1
       commander: 2.20.3
       source-map: 0.6.1
       source-map-support: 0.5.21
@@ -31383,14 +31382,14 @@ snapshots:
   terser@5.31.6:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.14.0
+      acorn: 8.14.1
       commander: 2.20.3
       source-map-support: 0.5.21
 
   terser@5.39.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.14.0
+      acorn: 8.14.1
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -31760,7 +31759,7 @@ snapshots:
 
   unctx@2.4.1:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.14.1
       estree-walker: 3.0.3
       magic-string: 0.30.17
       unplugin: 2.2.2
@@ -31927,7 +31926,7 @@ snapshots:
 
   unplugin@1.12.0:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.14.1
       chokidar: 3.6.0
       webpack-sources: 3.2.3
       webpack-virtual-modules: 0.6.2
@@ -32286,10 +32285,6 @@ snapshots:
       sass: 1.86.0
       terser: 5.39.0
       yaml: 2.6.1
-
-  vitefu@0.2.5(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)):
-    optionalDependencies:
-      vite: 6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)
 
   vitefu@1.0.4(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)):
     optionalDependencies:
@@ -32737,7 +32732,7 @@ snapshots:
       '@webassemblyjs/ast': 1.14.1
       '@webassemblyjs/wasm-edit': 1.14.1
       '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.14.0
+      acorn: 8.14.1
       browserslist: 4.24.4
       chrome-trace-event: 1.0.4
       enhanced-resolve: 5.18.1
@@ -33014,6 +33009,8 @@ snapshots:
       cookie: 1.0.2
       youch-core: 0.3.2
 
+  zimmerframe@1.1.2: {}
+
   zip-stream@6.0.1:
     dependencies:
       archiver-utils: 5.0.2
@@ -33036,6 +33033,8 @@ snapshots:
   zod@3.23.8: {}
 
   zod@3.24.2: {}
+
+  zone.js@0.14.8: {}
 
   zone.js@0.15.0: {}
 
