@@ -109,7 +109,7 @@ export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
-export function defaultshouldRedactErrors(_: unknown) {
+export function defaultShouldRedactErrors(_: unknown) {
   return true
 }
 
@@ -137,7 +137,7 @@ export function dehydrate(
   const shouldRedactErrors =
     options.shouldRedactErrors ??
     client.getDefaultOptions().dehydrate?.shouldRedactErrors ??
-    defaultshouldRedactErrors
+    defaultShouldRedactErrors
 
   const serializeData =
     options.serializeData ??
