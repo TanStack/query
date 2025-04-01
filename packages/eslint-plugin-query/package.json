@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/eslint-plugin-query"
   },
   "homepage": "https://tanstack.com/query",
@@ -31,7 +31,7 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
-    "build": "vite build"
+    "build": "tsup"
   },
   "type": "module",
   "types": "dist/esm/index.d.ts",
@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/rule-tester": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
     "combinate": "^1.1.11",
     "eslint": "^9.15.0",
     "npm-run-all": "^4.1.5"
