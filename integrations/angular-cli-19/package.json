@@ -1,28 +1,23 @@
 {
-  "name": "@tanstack/query-example-angular-rxjs",
+  "name": "angular-cli-19",
   "private": true,
-  "type": "module",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "build": "ng build"
   },
   "dependencies": {
     "@angular/common": "^19.1.0-next.0",
     "@angular/compiler": "^19.1.0-next.0",
     "@angular/core": "^19.1.0-next.0",
-    "@angular/forms": "19.1.0-next.0",
     "@angular/platform-browser": "^19.1.0-next.0",
     "@angular/platform-browser-dynamic": "^19.1.0-next.0",
-    "@tanstack/angular-query-experimental": "^5.71.2",
+    "@tanstack/angular-query-experimental": "workspace:*",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.3",
-    "zone.js": "^0.15.0"
+    "zone.js": "^0.14.8"
   },
   "devDependencies": {
-    "@angular/build": "^19.0.2",
-    "@angular/cli": "^19.0.2",
+    "@angular-devkit/build-angular": "^19.1.0-next.0",
+    "@angular/cli": "^19.1.0-next.0",
     "@angular/compiler-cli": "^19.1.0-next.0",
     "typescript": "5.7.3"
   }

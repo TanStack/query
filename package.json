@@ -63,7 +63,7 @@
     "react-dom": "^19.0.0",
     "sherif": "^1.0.0",
     "tsup": "8.0.2",
-    "typescript": "5.8.2",
+    "typescript": "5.7.3",
     "typescript50": "npm:typescript@5.0",
     "typescript51": "npm:typescript@5.1",
     "typescript52": "npm:typescript@5.2",

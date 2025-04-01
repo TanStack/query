@@ -54,7 +54,7 @@
     "@tanstack/vue-query": "workspace:*",
     "@vitejs/plugin-vue": "^5.2.1",
     "eslint-plugin-vue": "^9.27.0",
-    "typescript": "5.8.2",
+    "typescript": "5.7.3",
     "vite": "^5.3.5",
     "vue": "^3.4.27",
     "vue-tsc": "^2.2.8"

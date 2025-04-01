@@ -13,7 +13,7 @@
     "solid-js": "^1.9.5"
   },
   "devDependencies": {
-    "typescript": "5.8.2",
+    "typescript": "5.7.3",
     "vite": "^5.3.5",
     "vite-plugin-solid": "^2.11.6"
   }
