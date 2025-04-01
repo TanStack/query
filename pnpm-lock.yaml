@@ -2233,9 +2233,6 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@microsoft/api-extractor':
-        specifier: ^7.48.1
-        version: 7.48.1(@types/node@22.13.14)
       eslint-plugin-jsdoc:
         specifier: ^50.5.0
         version: 50.5.0(eslint@9.15.0(jiti@2.4.2))
@@ -19896,6 +19893,7 @@ snapshots:
       '@rushstack/node-core-library': 5.10.1(@types/node@22.13.14)
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   '@microsoft/api-extractor@7.47.4(@types/node@22.13.14)':
     dependencies:
@@ -19932,6 +19930,7 @@ snapshots:
       typescript: 5.4.2
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   '@microsoft/tsdoc-config@0.17.1':
     dependencies:
@@ -20859,6 +20858,7 @@ snapshots:
       semver: 7.5.4
     optionalDependencies:
       '@types/node': 22.13.14
+    optional: true
 
   '@rushstack/node-core-library@5.5.1(@types/node@22.13.14)':
     dependencies:
@@ -20891,6 +20891,7 @@ snapshots:
       supports-color: 8.1.1
     optionalDependencies:
       '@types/node': 22.13.14
+    optional: true
 
   '@rushstack/ts-command-line@4.22.3(@types/node@22.13.14)':
     dependencies:
@@ -20909,6 +20910,7 @@ snapshots:
       string-argv: 0.3.2
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   '@schematics/angular@19.2.5(chokidar@4.0.3)':
     dependencies:
