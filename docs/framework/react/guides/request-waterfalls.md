@@ -233,7 +233,7 @@ function GraphFeedItem({ feedItem }) {
 }
 ```
 
-The second query `getGraphDataById` is dependent on it's parent in two different ways. First of all, it doesn't ever happen unless the `feedItem` is a graph, and second, it needs an `id` from the parent.
+The second query `getGraphDataById` is dependent on its parent in two different ways. First of all, it doesn't ever happen unless the `feedItem` is a graph, and second, it needs an `id` from the parent.
 
 ```
 1. |> getFeed()

@@ -23,5 +23,5 @@ const query = queryOptions({
 - `refetchMode?: 'append' | 'reset'`
   - optional
   - when set to `'reset'`, the query will erase all data and go back into `pending` state when a refetch occurs.
-  - when set ot `'append'`, data will be appended on a refetch.
+  - when set to `'append'`, data will be appended on a refetch.
   - defaults to `'reset'`
