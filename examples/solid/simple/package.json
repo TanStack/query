@@ -16,6 +16,6 @@
     "@tanstack/eslint-plugin-query": "^5.68.0",
     "typescript": "5.8.2",
     "vite": "^5.3.5",
-    "vite-plugin-solid": "^2.10.2"
+    "vite-plugin-solid": "^2.11.6"
   }
 }
