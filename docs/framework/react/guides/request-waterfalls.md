@@ -307,7 +307,7 @@ But that's just looking at the code from the example, if we consider what the fi
 5.         |> getGraphDataById()
 ```
 
-Note that this looks a bit different when server rendering, we will explore that further in the [Server Rendering & Hydration guide](../ssr). Also note that it's not uncommon for the route that contains `<Feed>` to also be code split, which could add yet another hop.
+Note that this looks a bit different when server rendering, we will explore that further in the [Server Rendering & Hydration guide](./ssr.md). Also note that it's not uncommon for the route that contains `<Feed>` to also be code split, which could add yet another hop.
 
 In the code split case, it might actually help to hoist the `getGraphDataById` query to the `<Feed>` component and make it conditional, or add a conditional prefetch. That query could then be fetched in parallel with the code, turning the example part into this:
 
@@ -317,14 +317,14 @@ In the code split case, it might actually help to hoist the `getGraphDataById` q
 2.   |> JS for <GraphFeedItem>
 ```
 
-This is very much a tradeoff however. You are now including the data fetching code for `getGraphDataById` in the same bundle as `<Feed>`, so evaluate what is best for your case. Read more about how to do this in the [Prefetching & Router Integration guide](../prefetching).
+This is very much a tradeoff however. You are now including the data fetching code for `getGraphDataById` in the same bundle as `<Feed>`, so evaluate what is best for your case. Read more about how to do this in the [Prefetching & Router Integration guide](./prefetching.md).
 
 > The tradeoff between:
 >
 > - Include all data fetching code in the main bundle, even if we seldom use it
 > - Put the data fetching code in the code split bundle, but with a request waterfall
 >
-> is not great and has been one of the motivations for Server Components. With Server Components, it's possible to avoid both, read more about how this applies to React Query in the [Advanced Server Rendering guide](../advanced-ssr).
+> is not great and has been one of the motivations for Server Components. With Server Components, it's possible to avoid both, read more about how this applies to React Query in the [Advanced Server Rendering guide](./advanced-ssr.md).
 
 ## Summary and takeaways
 
