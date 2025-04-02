@@ -3,7 +3,7 @@ id: overview
 title: Overview
 ---
 
-TanStack Query (FKA React Query) is often described as the missing data-fetching library for web applications, but in more technical terms, it makes **fetching, caching, synchronizing and updating server state** in your web applications a breeze.
+TanStack Query (formerly known as React Query) is often described as the missing data-fetching library for web applications, but in more technical terms, it makes **fetching, caching, synchronizing and updating server state** in your web applications a breeze.
 
 ## Motivation
 
@@ -29,13 +29,13 @@ Once you grasp the nature of server state in your application, **even more chall
 
 If you're not overwhelmed by that list, then that must mean that you've probably solved all of your server state problems already and deserve an award. However, if you are like a vast majority of people, you either have yet to tackle all or most of these challenges and we're only scratching the surface!
 
-React Query is hands down one of the _best_ libraries for managing server state. It works amazingly well **out-of-the-box, with zero-config, and can be customized** to your liking as your application grows.
+TanStack Query is hands down one of the _best_ libraries for managing server state. It works amazingly well **out-of-the-box, with zero-config, and can be customized** to your liking as your application grows.
 
-React Query allows you to defeat and overcome the tricky challenges and hurdles of _server state_ and control your app data before it starts to control you.
+TanStack Query allows you to defeat and overcome the tricky challenges and hurdles of _server state_ and control your app data before it starts to control you.
 
-On a more technical note, React Query will likely:
+On a more technical note, TanStack Query will likely:
 
-- Help you remove **many** lines of complicated and misunderstood code from your application and replace with just a handful of lines of React Query logic.
+- Help you remove **many** lines of complicated and misunderstood code from your application and replace with just a handful of lines of TanStack Query logic.
 - Make your application more maintainable and easier to build new features without worrying about wiring up new server state data sources
 - Have a direct impact on your end-users by making your application feel faster and more responsive than ever before.
 - Potentially help you save on bandwidth and increase memory performance
@@ -44,7 +44,7 @@ On a more technical note, React Query will likely:
 
 ## Enough talk, show me some code already!
 
-In the example below, you can see React Query in its most basic and simple form being used to fetch the GitHub stats for the React Query GitHub project itself:
+In the example below, you can see TanStack Query in its most basic and simple form being used to fetch the GitHub stats for the TanStack Query GitHub project itself:
 
 [Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/react/simple)
 
@@ -95,7 +95,7 @@ function Example() {
 
 ## You talked me into it, so what now?
 
-- Consider taking the official [React Query Course](https://query.gg?s=tanstack) (or buying it for your whole team!)
-- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](./installation.md) and [API Reference](./reference/useQuery.md)
+- Consider taking the official [TanStack Query Course](https://query.gg?s=tanstack) (or buying it for your whole team!)
+- Learn TanStack Query at your own pace with our amazingly thorough [Walkthrough Guide](./installation.md) and [API Reference](./reference/useQuery.md)
 
 [//]: # 'Materials'

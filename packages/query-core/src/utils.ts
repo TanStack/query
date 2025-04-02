@@ -373,6 +373,9 @@ export function replaceData<
         console.error(
           `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
         )
+
+        // Prevent the replaceEqualDeep from being called again down below.
+        throw error
       }
     }
     // Structurally share data between prev and new data if needed

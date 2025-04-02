@@ -80,7 +80,8 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('hydrated'))
     await waitFor(() => rendered.getByText('fetched'))
 
-    expect(states.value).toHaveLength(3)
+    const states = get(statesStore)
+    expect(states).toHaveLength(5)
 
     expect(states.value[0]).toMatchObject({
       status: 'pending',
@@ -95,6 +96,12 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states.value[2]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -136,7 +143,9 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states.value).toHaveLength(3)
 
-    expect(states.value[0]).toMatchObject({
+    expect(states).toHaveLength(5)
+
+    expect(states[0]).toMatchObject({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
@@ -149,6 +158,12 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states.value[2]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -182,7 +197,8 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('hydrated'))
     await waitFor(() => rendered.getByText('fetched'))
 
-    expect(states.value).toHaveLength(3)
+    const states = get(statesStore)
+    expect(states).toHaveLength(5)
 
     expect(states.value[0]).toMatchObject({
       status: 'success',
@@ -203,6 +219,12 @@ describe('PersistQueryClientProvider', () => {
     }) */
 
     expect(states.value[2]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',

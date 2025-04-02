@@ -237,11 +237,9 @@ export function createQueries<
   })
 
   $effect.pre(() => {
-    observer.setQueries(
-      resolvedQueries,
-      { combine } as QueriesObserverOptions<TCombinedResult>,
-      { listeners: false },
-    )
+    observer.setQueries(resolvedQueries, {
+      combine,
+    } as QueriesObserverOptions<TCombinedResult>)
     update(createResult())
   })
 
