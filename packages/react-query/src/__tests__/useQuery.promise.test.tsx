@@ -59,14 +59,12 @@ describe('useQuery().promise', () => {
         },
       })
 
-      // Force Page to re-render when query state changes
-      React.useEffect(() => {
-        // noop
-      }, [query.status])
-
       return (
         <React.Suspense fallback={<Loading />}>
-          <MyComponent promise={query.promise} />
+          <div>
+            <MyComponent promise={query.promise} />
+          </div>
+          <div>status:{query.status}</div>
         </React.Suspense>
       )
     }
