@@ -1,5 +1,5 @@
 import { useQueryClient } from './useQueryClient.js'
-import { createReactiveThunk } from './containers.svelte.js'
+import { createRawRef } from './containers.svelte.js'
 import type {
   MutationCache,
   MutationState,
@@ -22,10 +22,9 @@ function getResult<TResult = MutationState>(
 export function useMutationState<TResult = MutationState>(
   options: MutationStateOptions<TResult> = {},
   queryClient?: QueryClient,
-): () => Array<TResult> {
+): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
-  return createReactiveThunk(
-    () => getResult(mutationCache, options),
-    (update) => mutationCache.subscribe(update),
-  )
+  let [mutation, update] = createRawRef(getResult(mutationCache, options))
+  $effect(() => update(getResult(mutationCache, options)))
+  return mutation
 }

@@ -1,6 +1,6 @@
 import { MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient.js'
-import { createReactiveThunk } from './containers.svelte.js'
+import { createRawRef } from './containers.svelte.js'
 import type {
   CreateMutateFunction,
   CreateMutationOptions,
@@ -31,20 +31,23 @@ export function createMutation<
     observer.mutate(variables, mutateOptions).catch(noop)
   })
 
+  function createResult() {
+    const result = observer.getCurrentResult()
+    Object.defineProperty(result, 'mutateAsync', {
+      value: result.mutate,
+    })
+    Object.defineProperty(result, 'mutate', {
+      value: mutate,
+    })
+    return result
+  }
+
+  let [mutation, update] = createRawRef(createResult())
+
+  $effect(() => update(createResult()))
+
   // @ts-expect-error
-  return createReactiveThunk(
-    () => {
-      const result = observer.getCurrentResult()
-      Object.defineProperty(result, 'mutateAsync', {
-        value: result.mutate,
-      })
-      Object.defineProperty(result, 'mutate', {
-        value: mutate,
-      })
-      return result
-    },
-    (update) => observer.subscribe(update),
-  )
+  return mutation
 }
 
 function noop() {}

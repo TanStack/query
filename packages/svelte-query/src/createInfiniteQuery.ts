@@ -28,10 +28,10 @@ export function createInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): () => CreateInfiniteQueryResult<TData, TError> {
+): CreateInfiniteQueryResult<TData, TError> {
   return createBaseQuery(
     options,
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-  ) as () => CreateInfiniteQueryResult<TData, TError>
+  ) as CreateInfiniteQueryResult<TData, TError>
 }

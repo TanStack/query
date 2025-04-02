@@ -1,15 +1,15 @@
-import { createReactiveThunk } from './containers.svelte.js'
+import { ReactiveValue } from './containers.svelte.js'
 import { useQueryClient } from './useQueryClient.js'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 
 export function useIsFetching(
   filters?: QueryFilters,
   queryClient?: QueryClient,
-): () => number {
+): ReactiveValue<number> {
   const client = useQueryClient(queryClient)
   const queryCache = client.getQueryCache()
 
-  return createReactiveThunk(
+  return new ReactiveValue(
     () => client.isFetching(filters),
     (update) => queryCache.subscribe(update),
   )

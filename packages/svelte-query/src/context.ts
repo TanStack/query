@@ -1,5 +1,6 @@
 import { getContext, setContext } from 'svelte'
 import type { QueryClient } from '@tanstack/query-core'
+import type { Box, ReactiveValue } from './containers.svelte'
 
 const _contextKey = Symbol('QueryClient')
 
@@ -23,18 +24,18 @@ export const setQueryClientContext = (client: QueryClient): void => {
 const _isRestoringContextKey = Symbol('isRestoring')
 
 /** Retrieves a `isRestoring` from Svelte's context */
-export const getIsRestoringContext = (): (() => boolean) => {
+export const getIsRestoringContext = (): Box<boolean> => {
   try {
-    const isRestoring = getContext<(() => boolean) | undefined>(
+    const isRestoring = getContext<Box<boolean> | undefined>(
       _isRestoringContextKey,
     )
-    return isRestoring ?? (() => false)
+    return isRestoring ?? { current: false }
   } catch (error) {
-    return () => false
+    return { current: false }
   }
 }
 
 /** Sets a `isRestoring` on Svelte's context */
-export const setIsRestoringContext = (isRestoring: () => boolean): void => {
+export const setIsRestoringContext = (isRestoring: Box<boolean>): void => {
   setContext(_isRestoringContextKey, isRestoring)
 }

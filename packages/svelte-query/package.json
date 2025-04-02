@@ -26,7 +26,7 @@
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint ./src",
     "test:lib": "vitest run",
-    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:lib:dev": "vitest",
     "test:build": "publint --strict && attw --pack",
     "build": "svelte-package --input ./src --output ./dist"
   },

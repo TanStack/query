@@ -19,7 +19,7 @@ export function createQuery<
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): () => DefinedCreateQueryResult<TData, TError>
+): DefinedCreateQueryResult<TData, TError>
 
 export function createQuery<
   TQueryFnData = unknown,
@@ -29,7 +29,7 @@ export function createQuery<
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): () => CreateQueryResult<TData, TError>
+): CreateQueryResult<TData, TError>
 
 export function createQuery<
   TQueryFnData = unknown,
@@ -39,7 +39,7 @@ export function createQuery<
 >(
   options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): () => CreateQueryResult<TData, TError>
+): CreateQueryResult<TData, TError>
 
 export function createQuery(
   options: CreateQueryOptions,
