@@ -4472,7 +4472,7 @@ describe('useQuery', () => {
           return [1, 2]
         },
         select: (res) => res.map((x) => x + 1),
-        reconcile(oldData:any, newData:any) {
+        reconcile(oldData: any, newData: any) {
           return reconcile(newData)(oldData)
         },
       }))
