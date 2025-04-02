@@ -3,7 +3,7 @@ id: suspense
 title: Suspense
 ---
 
-React Query can also be used with React's Suspense for Data Fetching API's. For this, we have dedicated hooks:
+React Query can also be used with React's Suspense for Data Fetching APIs. For this, we have dedicated hooks:
 
 - [useSuspenseQuery](../reference/useSuspenseQuery.md)
 - [useSuspenseInfiniteQuery](../reference/useSuspenseInfiniteQuery.md)
