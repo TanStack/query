@@ -9,9 +9,9 @@ import type {
 } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type {
+  DefinedUseInfiniteQueryResult,
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
-  DefinedUseInfiniteQueryResult,
 } from './types'
 import type { Accessor } from 'solid-js'
 import type {

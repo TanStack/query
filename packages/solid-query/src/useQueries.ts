@@ -14,7 +14,7 @@ import {
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import { noop } from './utils'
-import type { UseQueryResult, SolidQueryOptions } from './types'
+import type { SolidQueryOptions, UseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {

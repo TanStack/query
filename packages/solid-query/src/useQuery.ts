@@ -5,9 +5,9 @@ import type { DefaultError, QueryKey } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
 import type {
+  DefinedUseQueryResult,
   UseQueryOptions,
   UseQueryResult,
-  DefinedUseQueryResult,
 } from './types'
 import type {
   DefinedInitialDataOptions,
