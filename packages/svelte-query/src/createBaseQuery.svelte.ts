@@ -22,7 +22,6 @@ export function createBaseQuery<
   queryClient?: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
   /** Load query client */
-  console.log('createBaseQuery', options)
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 
@@ -56,7 +55,7 @@ export function createBaseQuery<
   )
 
   $effect.pre(() => {
-    observer.setOptions(resolvedOptions, { listeners: false })
+    observer.setOptions(resolvedOptions)
     const result = observer.getOptimisticResult(resolvedOptions)
     update(result)
   })

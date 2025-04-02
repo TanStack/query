@@ -888,7 +888,7 @@ describe('createQuery', () => {
   )
 
   it.only(
-    'works basically',
+    'keeps up-to-date with query key changes',
     withEffectRoot(async () => {
       let search = $state('')
 
