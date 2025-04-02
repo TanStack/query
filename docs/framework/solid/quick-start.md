@@ -11,14 +11,14 @@ The `@tanstack/solid-query` package provides a 1st-class API for using TanStack 
 import {
   QueryClient,
   QueryClientProvider,
-  createQuery,
+  useQuery,
 } from '@tanstack/solid-query'
 import { Switch, Match, For } from 'solid-js'
 
 const queryClient = new QueryClient()
 
 function Example() {
-  const query = createQuery(() => ({
+  const query = useQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodos,
   }))
@@ -53,7 +53,7 @@ function App() {
 
 Solid Query offers useful primitives and functions that will make managing server state in SolidJS apps easier.
 
-- `createQuery`
+- `useQuery`
 - `createQueries`
 - `createInfiniteQueries`
 - `createMutation`
@@ -67,7 +67,7 @@ Solid Query offers useful primitives and functions that will make managing serve
 
 Solid Query offers an API similar to React Query, but there are some key differences to be mindful of.
 
-- Arguments to `solid-query` primitives (like `createQuery`, `createMutation`, `useIsFetching`) listed above are functions, so that they can be tracked in a reactive scope.
+- Arguments to `solid-query` primitives (like `useQuery`, `createMutation`, `useIsFetching`) listed above are functions, so that they can be tracked in a reactive scope.
 
 ```tsx
 // ❌ react version
@@ -77,7 +77,7 @@ useQuery({
 })
 
 // ✅ solid version
-createQuery(() => ({
+useQuery(() => ({
   queryKey: ['todos', todo],
   queryFn: fetchTodos,
 }))
@@ -89,7 +89,7 @@ createQuery(() => ({
 import { For, Suspense } from 'solid-js'
 
 function Example() {
-  const query = createQuery(() => ({
+  const query = useQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodos,
   }))
@@ -112,7 +112,7 @@ function Example() {
 import {
   QueryClient,
   QueryClientProvider,
-  createQuery,
+  useQuery,
 } from '@tanstack/solid-query'
 import { Match, Switch } from 'solid-js'
 
@@ -137,7 +137,7 @@ function Example() {
   // })
 
   // ✅ solid version -- does not support destructuring outside reactive context
-  const query = createQuery(() => ({
+  const query = useQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       fetch('https://api.github.com/repos/tannerlinsley/react-query').then(
@@ -170,7 +170,7 @@ function Example() {
 import {
   QueryClient,
   QueryClientProvider,
-  createQuery,
+  useQuery,
 } from '@tanstack/solid-query'
 import { createSignal, For } from 'solid-js'
 
@@ -182,13 +182,13 @@ function Example() {
 
   // ✅ passing a signal directly is safe and observers update
   // automatically when the value of a signal changes
-  const todosQuery = createQuery(() => ({
+  const todosQuery = useQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodos,
     enabled: enabled(),
   }))
 
-  const todoDetailsQuery = createQuery(() => ({
+  const todoDetailsQuery = useQuery(() => ({
     queryKey: ['todo', todo()],
     queryFn: fetchTodo,
     enabled: todo() > 0,
