@@ -9,18 +9,9 @@ import {
   createSignal,
   on,
 } from 'solid-js'
-import {
-  QueryCache,
-  QueryClientProvider,
-  useInfiniteQuery,
-  useQuery,
-} from '..'
+import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
-import type {
-  InfiniteData,
-  UseInfiniteQueryResult,
-  UseQueryResult,
-} from '..'
+import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()

@@ -6,12 +6,7 @@ import {
   createSignal,
 } from 'solid-js'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
-import {
-  MutationCache,
-  QueryCache,
-  QueryClientProvider,
-  useMutation,
-} from '..'
+import { MutationCache, QueryCache, QueryClientProvider, useMutation } from '..'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,

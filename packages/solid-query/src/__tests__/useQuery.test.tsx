@@ -11,12 +11,7 @@ import {
 } from 'solid-js'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { reconcile } from 'solid-js/store'
-import {
-  QueryCache,
-  QueryClientProvider,
-  keepPreviousData,
-  useQuery,
-} from '..'
+import { QueryCache, QueryClientProvider, keepPreviousData, useQuery } from '..'
 import {
   Blink,
   createQueryClient,
@@ -2985,8 +2980,7 @@ describe('useQuery', () => {
 
   it('should keep initial data when the query key changes', async () => {
     const key = queryKey()
-    const states: Array<Partial<DefinedUseQueryResult<{ count: number }>>> =
-      []
+    const states: Array<Partial<DefinedUseQueryResult<{ count: number }>>> = []
 
     function Page() {
       const [count, setCount] = createSignal(0)
@@ -4193,8 +4187,7 @@ describe('useQuery', () => {
   it('should use placeholder data even for disabled queries', async () => {
     const key1 = queryKey()
 
-    const states: Array<{ state: UseQueryResult<string>; count: number }> =
-      []
+    const states: Array<{ state: UseQueryResult<string>; count: number }> = []
 
     function Page() {
       const [count, setCount] = createSignal(0)

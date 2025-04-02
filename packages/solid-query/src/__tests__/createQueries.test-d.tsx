@@ -25,10 +25,7 @@ describe('useQueries', () => {
     }))
 
     expectTypeOf(result).toEqualTypeOf<
-      [
-        ...Array<UseQueryResult<number, Error>>,
-        UseQueryResult<boolean, Error>,
-      ]
+      [...Array<UseQueryResult<number, Error>>, UseQueryResult<boolean, Error>]
     >()
   })
 })

@@ -127,12 +127,8 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf(result2[0]).toEqualTypeOf<
-        UseQueryResult<string, unknown>
-      >()
-      expectTypeOf(result2[1]).toEqualTypeOf<
-        UseQueryResult<number, unknown>
-      >()
+      expectTypeOf(result2[0]).toEqualTypeOf<UseQueryResult<string, unknown>>()
+      expectTypeOf(result2[1]).toEqualTypeOf<UseQueryResult<number, unknown>>()
       expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
       expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
 
@@ -207,12 +203,8 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf(result1[0]).toEqualTypeOf<
-        UseQueryResult<number, unknown>
-      >()
-      expectTypeOf(result1[1]).toEqualTypeOf<
-        UseQueryResult<string, unknown>
-      >()
+      expectTypeOf(result1[0]).toEqualTypeOf<UseQueryResult<number, unknown>>()
+      expectTypeOf(result1[1]).toEqualTypeOf<UseQueryResult<string, unknown>>()
       expectTypeOf(result1[2]).toEqualTypeOf<
         UseQueryResult<Array<string>, boolean>
       >()
@@ -247,44 +239,34 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf(result2[0]).toEqualTypeOf<
-        UseQueryResult<string, unknown>
-      >()
-      expectTypeOf(result2[1]).toEqualTypeOf<
-        UseQueryResult<number, unknown>
-      >()
+      expectTypeOf(result2[0]).toEqualTypeOf<UseQueryResult<string, unknown>>()
+      expectTypeOf(result2[1]).toEqualTypeOf<UseQueryResult<number, unknown>>()
       expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
       expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
 
       // can pass only TData (data prop) although TQueryFnData will be left unknown
-      const result3 = useQueries<[{ data: string }, { data: number }]>(
-        () => ({
-          queries: [
-            {
-              queryKey: key1,
-              queryFn: () => 'string',
-              select: (a) => {
-                expectTypeOf(a).toEqualTypeOf<unknown>()
-                return a as string
-              },
+      const result3 = useQueries<[{ data: string }, { data: number }]>(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => 'string',
+            select: (a) => {
+              expectTypeOf(a).toEqualTypeOf<unknown>()
+              return a as string
             },
-            {
-              queryKey: key2,
-              queryFn: () => 'string',
-              select: (a) => {
-                expectTypeOf(a).toEqualTypeOf<unknown>()
-                return a as number
-              },
+          },
+          {
+            queryKey: key2,
+            queryFn: () => 'string',
+            select: (a) => {
+              expectTypeOf(a).toEqualTypeOf<unknown>()
+              return a as number
             },
-          ],
-        }),
-      )
-      expectTypeOf(result3[0]).toEqualTypeOf<
-        UseQueryResult<string, unknown>
-      >()
-      expectTypeOf(result3[1]).toEqualTypeOf<
-        UseQueryResult<number, unknown>
-      >()
+          },
+        ],
+      }))
+      expectTypeOf(result3[0]).toEqualTypeOf<UseQueryResult<string, unknown>>()
+      expectTypeOf(result3[1]).toEqualTypeOf<UseQueryResult<number, unknown>>()
       expectTypeOf(result3[0].data).toEqualTypeOf<string | undefined>()
       expectTypeOf(result3[1].data).toEqualTypeOf<number | undefined>()
 
