@@ -29,4 +29,4 @@ Same structure as [useQueries](../reference/useQueries.md), except that for each
 
 Keep in mind that the component will only re-mount after **all queries** have finished loading. Hence, if a query has gone stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid this, make sure to set a high enough `staleTime`.
 
-[Cancelation](../guides/query-cancellation.md) does not work.
+[Cancellation](../guides/query-cancellation.md) does not work.

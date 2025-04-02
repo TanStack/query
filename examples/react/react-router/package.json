@@ -8,15 +8,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.71.0",
-    "@tanstack/react-query-devtools": "^5.71.0",
+    "@tanstack/react-query": "^5.71.1",
+    "@tanstack/react-query-devtools": "^5.71.2",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^6.25.1",
     "react-router-dom": "^6.25.1",
-    "rooks": "^7.14.1",
+    "rooks": "^8.0.0",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {

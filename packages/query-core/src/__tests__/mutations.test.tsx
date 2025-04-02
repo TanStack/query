@@ -22,9 +22,9 @@ describe('mutations', () => {
     let variables
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async (vars: unknown) => {
+      mutationFn: (vars: unknown) => {
         variables = vars
-        return vars
+        return Promise.resolve(vars)
       },
     })
 
@@ -252,7 +252,7 @@ describe('mutations', () => {
     const onSettled = vi.fn()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: async (text: string) => text,
+      mutationFn: (text: string) => Promise.resolve(text),
       onMutate,
       onSuccess,
       onSettled,
@@ -349,8 +349,8 @@ describe('mutations', () => {
     const onSettled = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
-        return 'update'
+      mutationFn: () => {
+        return Promise.resolve('update')
       },
     })
 
@@ -365,8 +365,8 @@ describe('mutations', () => {
     const onSettled = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
-        return 'update'
+      mutationFn: () => {
+        return Promise.resolve('update')
       },
     })
 
@@ -380,9 +380,9 @@ describe('mutations', () => {
     const onSuccess = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
+      mutationFn: () => {
         sleep(100)
-        return 'update'
+        return Promise.resolve('update')
       },
       onSuccess: () => {
         onSuccess(1)
@@ -392,9 +392,9 @@ describe('mutations', () => {
     void mutation.mutate()
 
     mutation.setOptions({
-      mutationFn: async () => {
+      mutationFn: () => {
         sleep(100)
-        return 'update'
+        return Promise.resolve('update')
       },
       onSuccess: () => {
         onSuccess(2)

@@ -368,7 +368,7 @@ With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/
 
 ### Removed undocumented methods from the `queryClient`, `query` and `mutation`
 
-The methods `cancelMutatations` and `executeMutation` on the `QueryClient` were undocumented and unused internally, so we removed them. Since it was just a wrapper around a method available on the `mutationCache`, you can still use the functionality of `executeMutation`
+The methods `cancelMutations` and `executeMutation` on the `QueryClient` were undocumented and unused internally, so we removed them. Since it was just a wrapper around a method available on the `mutationCache`, you can still use the functionality of `executeMutation`
 
 ```tsx
 - executeMutation< // [!code --]
