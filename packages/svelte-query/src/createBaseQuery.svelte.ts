@@ -25,11 +25,9 @@ export function createBaseQuery<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 
-  /** Creates a store that has the default options applied */
   const resolvedOptions = $derived.by(() => {
     const opts = client.defaultQueryOptions(options)
     opts._optimisticResults = isRestoring.current ? 'isRestoring' : 'optimistic'
-    opts.structuralSharing = false
     return opts
   })
 

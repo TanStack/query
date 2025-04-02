@@ -55,9 +55,7 @@
     "@testing-library/svelte": "^5.2.6",
     "eslint-plugin-svelte": "^2.46.0",
     "svelte": "^5.20.1",
-    "svelte-check": "^4.0.0",
-    "vite": "^6.0.0",
-    "vitest": "^3.0.0"
+    "svelte-check": "^4.0.0"
   },
   "peerDependencies": {
     "svelte": "^5.7.0"

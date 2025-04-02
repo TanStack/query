@@ -1,5 +1,5 @@
 import { QueryCache, QueryClient, createQuery } from '@tanstack/svelte-query'
-import { promiseWithResolvers, withEffectRoot } from './utils.svelte'
+import { promiseWithResolvers, sleep, withEffectRoot } from './utils.svelte'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -887,7 +887,7 @@ describe('createQuery', () => {
     }),
   )
 
-  it.only(
+  it(
     'keeps up-to-date with query key changes',
     withEffectRoot(async () => {
       let search = $state('')
@@ -907,6 +907,214 @@ describe('createQuery', () => {
       search = 'phone'
 
       await vi.waitFor(() => expect(query.data).toBe('phone'))
+    }),
+  )
+
+  it(
+    'should create a new query when refetching a removed query',
+    withEffectRoot(async () => {
+      const key = ['test']
+      const states: Array<CreateQueryResult<number>> = []
+      let count = 0
+
+      const query = $derived(
+        createQuery(
+          {
+            queryKey: key,
+            queryFn: () => Promise.resolve(++count),
+          },
+          queryClient,
+        ),
+      )
+
+      $effect(() => {
+        states.push({ ...query })
+      })
+
+      await vi.waitFor(() => {
+        expect(query.data).toBe(1)
+      })
+
+      queryClient.removeQueries({ queryKey: key })
+      await query.refetch()
+      await vi.waitFor(() => {
+        expect(query.data).toBe(2)
+      })
+
+      expect(states.length).toBe(4)
+      // Initial
+      expect(states[0]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
+      // Fetched
+      expect(states[1]).toMatchObject({ data: 1 })
+      // Switch
+      expect(states[2]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
+      // Fetched
+      expect(states[3]).toMatchObject({ data: 2 })
+    }),
+  )
+
+  it(
+    'should share equal data structures between query results',
+    withEffectRoot(async () => {
+      const key = ['test']
+
+      const result1 = [
+        { id: '1', done: false },
+        { id: '2', done: false },
+      ]
+
+      const result2 = [
+        { id: '1', done: false },
+        { id: '2', done: true },
+      ]
+
+      const states: Array<CreateQueryResult<typeof result1>> = []
+
+      let count = 0
+
+      const query = $derived(
+        createQuery<typeof result1>(
+          {
+            queryKey: key,
+            queryFn: () => {
+              count++
+              return Promise.resolve(count === 1 ? result1 : result2)
+            },
+          },
+          queryClient,
+        ),
+      )
+
+      $effect(() => {
+        states.push({ ...query })
+      })
+
+      await vi.waitFor(() => expect(query.data?.[1]?.done).toBe(false))
+      await query.refetch()
+      await vi.waitFor(() => expect(query.data?.[1]?.done).toBe(true))
+
+      expect(states.length).toBe(4)
+
+      const todos = states[1]?.data
+      const todo1 = todos?.[0]
+      const todo2 = todos?.[1]
+
+      const newTodos = states[3]?.data
+      const newTodo1 = newTodos?.[0]
+      const newTodo2 = newTodos?.[1]
+
+      expect(todos).toEqual(result1)
+      expect(newTodos).toEqual(result2)
+      expect(newTodos).not.toBe(todos)
+      expect(newTodo1).toBe(todo1)
+      expect(newTodo2).not.toBe(todo2)
+    }),
+  )
+
+  it(
+    'should share equal data structure between query results',
+    withEffectRoot(async () => {
+      const key = ['test']
+
+      queryClient.setQueryData(key, 'set')
+
+      const query = $derived(
+        createQuery(
+          {
+            queryKey: key,
+            queryFn: () => Promise.resolve('fetched'),
+            initialData: 'initial',
+            staleTime: Infinity,
+          },
+          queryClient,
+        ),
+      )
+
+      await vi.waitFor(() => expect(query.data).toBe('set'))
+      queryClient.refetchQueries({ queryKey: key })
+      await vi.waitFor(() => expect(query.data).toBe('fetched'))
+    }),
+  )
+
+  it(
+    'should update query stale state and refetch when invalidated with invalidateQueries',
+    withEffectRoot(async () => {
+      const key = ['test']
+      let count = 0
+
+      const query = $derived(
+        createQuery<number>(
+          {
+            queryKey: key,
+            queryFn: () => Promise.resolve(++count),
+            staleTime: Infinity,
+          },
+          queryClient,
+        ),
+      )
+
+      await vi.waitFor(() =>
+        expect(query).toEqual(
+          expect.objectContaining({
+            data: 1,
+            isStale: false,
+            isFetching: false,
+          }),
+        ),
+      )
+      queryClient.invalidateQueries({ queryKey: key })
+      await vi.waitFor(() =>
+        expect(query).toEqual(
+          expect.objectContaining({
+            data: 1,
+            isStale: true,
+            isFetching: true,
+          }),
+        ),
+      )
+      await vi.waitFor(() =>
+        expect(query).toEqual(
+          expect.objectContaining({
+            data: 2,
+            isStale: false,
+            isFetching: false,
+          }),
+        ),
+      )
+    }),
+  )
+
+  it(
+    'should not update disabled query when refetching with refetchQueries',
+    withEffectRoot(async () => {
+      const key = ['test']
+      const states: Array<CreateQueryResult<number>> = []
+      let count = 0
+
+      const query = $derived(
+        createQuery<number>(
+          {
+            queryKey: key,
+            queryFn: () => Promise.resolve(++count),
+            enabled: false,
+          },
+          queryClient,
+        ),
+      )
+
+      $effect(() => {
+        states.push({ ...query })
+      })
+
+      await sleep(50)
+
+      expect(states.length).toBe(1)
+      expect(states[0]).toMatchObject({
+        data: undefined,
+        isSuccess: false,
+        isFetching: false,
+        isStale: false,
+      })
     }),
   )
 })
