@@ -28,14 +28,17 @@
   "main": "dist/esm/index.js",
   "exports": {
     ".": {
+      "tanstack-internal": "./src/index.ts",
       "types": "./dist/esm/index.d.ts",
       "default": "./dist/esm/index.js"
     },
     "./production": {
+      "tanstack-internal": "./src/production.ts",
       "types": "./dist/esm/production.d.ts",
       "default": "./dist/esm/production.js"
     },
     "./dist/production.js": {
+      "tanstack-internal": "./src/production.ts",
       "types": "./dist/esm/production.d.ts",
       "default": "./dist/esm/production.js"
     },

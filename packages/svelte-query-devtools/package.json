@@ -28,6 +28,7 @@
   "svelte": "./dist/index.js",
   "exports": {
     ".": {
+      "tanstack-internal": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js",
       "import": "./dist/index.js"

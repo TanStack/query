@@ -38,17 +38,20 @@
   "browser": {},
   "exports": {
     "solid": {
+      "tanstack-internal": "./src/index.ts",
       "development": "./build/dev.jsx",
       "import": "./build/index.jsx"
     },
     "development": {
       "import": {
+        "tanstack-internal": "./src/index.ts",
         "types": "./build/index.d.ts",
         "default": "./build/dev.js"
       },
       "require": "./build/dev.cjs"
     },
     "import": {
+      "tanstack-internal": "./src/index.ts",
       "types": "./build/index.d.ts",
       "default": "./build/index.js"
     },

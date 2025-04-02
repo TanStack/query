@@ -26,57 +26,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES2020",
-    "paths": {
-      "@tanstack/angular-query-devtools-experimental": [
-        "../../packages/angular-query-devtools-experimental/src"
-      ],
-      "@tanstack/angular-query-experimental": [
-        "../../packages/angular-query-experimental/src"
-      ],
-      "@tanstack/eslint-plugin-query": [
-        "../../packages/eslint-plugin-query/src"
-      ],
-      "@tanstack/query-async-storage-persister": [
-        "../../packages/query-async-storage-persister/src"
-      ],
-      "@tanstack/query-broadcast-client-experimental": [
-        "../../packages/query-broadcast-client-experimental/src"
-      ],
-      "@tanstack/query-devtools": ["../../packages/query-devtools/src"],
-      "@tanstack/query-persist-client-core": [
-        "../../packages/query-persist-client-core/src"
-      ],
-      "@tanstack/query-sync-storage-persister": [
-        "../../packages/query-sync-storage-persister/src"
-      ],
-      "@tanstack/react-query": ["../../packages/react-query/src"],
-      "@tanstack/react-query-devtools": [
-        "../../packages/react-query-devtools/src"
-      ],
-      "@tanstack/react-query-next-experimental": [
-        "../../packages/react-query-next-experimental/src"
-      ],
-      "@tanstack/react-query-persist-client": [
-        "../../packages/react-query-persist-client/src"
-      ],
-      "@tanstack/solid-query": ["../../packages/solid-query/src"],
-      "@tanstack/solid-query-devtools": [
-        "../../packages/solid-query-devtools/src"
-      ],
-      "@tanstack/solid-query-persist-client": [
-        "../../packages/solid-query-persist-client/src"
-      ],
-      "@tanstack/svelte-query": ["../../packages/svelte-query/src"],
-      "@tanstack/svelte-query-devtools": [
-        "../../packages/svelte-query-devtools/src"
-      ],
-      "@tanstack/svelte-query-persist-client": [
-        "../../packages/svelte-query-persist-client/src"
-      ],
-      "@tanstack/vue-query": ["../../packages/vue-query/src"],
-      "@tanstack/vue-query-devtools": ["../../packages/vue-query-devtools/src"]
-    }
+    "target": "ES2020"
   },
   "include": ["eslint.config.js", "prettier.config.js"]
 }
