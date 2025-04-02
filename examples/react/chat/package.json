@@ -8,16 +8,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.71.1",
-    "@tanstack/react-query-devtools": "^5.71.2",
+    "@tanstack/react-query": "^5.71.5",
+    "@tanstack/react-query-devtools": "^5.71.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.14",
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^4.3.4",
     "tailwindcss": "^4.0.14",
     "typescript": "5.8.2",
-    "vite": "^5.3.5"
+    "vite": "^6.2.4"
   }
 }

@@ -6,9 +6,9 @@ import type {
   MutationCache,
   MutationFilters,
   MutationState,
+  QueryClient,
 } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
-import type { QueryClient } from './QueryClient'
 
 type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters

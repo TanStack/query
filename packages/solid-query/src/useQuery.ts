@@ -1,20 +1,19 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { createMemo } from 'solid-js'
-import { createBaseQuery } from './createBaseQuery'
-import type { DefaultError, QueryKey } from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
+import { useBaseQuery } from './useBaseQuery'
+import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
 import type {
-  CreateQueryOptions,
-  CreateQueryResult,
-  DefinedCreateQueryResult,
+  DefinedUseQueryResult,
+  UseQueryOptions,
+  UseQueryResult,
 } from './types'
 import type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
 } from './queryOptions'
 
-export function createQuery<
+export function useQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -22,9 +21,9 @@ export function createQuery<
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: () => QueryClient,
-): CreateQueryResult<TData, TError>
+): UseQueryResult<TData, TError>
 
-export function createQuery<
+export function useQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -32,17 +31,17 @@ export function createQuery<
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: () => QueryClient,
-): DefinedCreateQueryResult<TData, TError>
-export function createQuery<
+): DefinedUseQueryResult<TData, TError>
+export function useQuery<
   TQueryFnData,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: Accessor<QueryClient>,
 ) {
-  return createBaseQuery(
+  return useBaseQuery(
     createMemo(() => options()),
     QueryObserver,
     queryClient,

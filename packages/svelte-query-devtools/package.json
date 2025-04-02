@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query-devtools",
-  "version": "5.71.2",
+  "version": "5.71.5",
   "description": "Developer tools to interact with and visualize the TanStack/svelte-query cache",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -46,10 +46,10 @@
   },
   "devDependencies": {
     "@sveltejs/package": "^2.3.7",
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@tanstack/svelte-query": "workspace:*",
     "eslint-plugin-svelte": "^2.46.0",
-    "svelte": "^4.2.18",
+    "svelte": "^5.0.0",
     "svelte-check": "^4.0.0"
   },
   "peerDependencies": {

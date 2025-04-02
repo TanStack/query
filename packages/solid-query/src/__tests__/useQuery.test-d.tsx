@@ -1,10 +1,10 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { createQuery, queryOptions } from '../index'
+import { queryOptions, useQuery } from '../index'
 
 describe('initialData', () => {
   describe('Config object overload', () => {
     it('TData should always be defined when initialData is provided as an object', () => {
-      const { data } = createQuery(() => ({
+      const { data } = useQuery(() => ({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
         initialData: { wow: true },
@@ -19,13 +19,13 @@ describe('initialData', () => {
         queryFn: () => ({ wow: true }),
         initialData: { wow: true },
       })
-      const { data } = createQuery(() => options)
+      const { data } = useQuery(() => options)
 
       expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
     })
 
     it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
-      const { data } = createQuery(() => ({
+      const { data } = useQuery(() => ({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
         initialData: () => ({ wow: true }),
@@ -35,7 +35,7 @@ describe('initialData', () => {
     })
 
     it('TData should have undefined in the union when initialData is NOT provided', () => {
-      const { data } = createQuery(() => ({
+      const { data } = useQuery(() => ({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
       }))
@@ -44,7 +44,7 @@ describe('initialData', () => {
     })
 
     it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
-      const { data } = createQuery(() => ({
+      const { data } = useQuery(() => ({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
         initialData: () => undefined as { wow: boolean } | undefined,
@@ -56,7 +56,7 @@ describe('initialData', () => {
 
   describe('Query key overload', () => {
     it('TData should always be defined when initialData is provided', () => {
-      const { data } = createQuery(() => ({
+      const { data } = useQuery(() => ({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
         initialData: { wow: true },
@@ -66,7 +66,7 @@ describe('initialData', () => {
     })
 
     it('TData should have undefined in the union when initialData is NOT provided', () => {
-      const { data } = createQuery(() => ({
+      const { data } = useQuery(() => ({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
       }))
@@ -77,7 +77,7 @@ describe('initialData', () => {
 
   describe('Query key and func', () => {
     it('TData should always be defined when initialData is provided', () => {
-      const { data } = createQuery(() => ({
+      const { data } = useQuery(() => ({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
         initialData: { wow: true },
@@ -87,7 +87,7 @@ describe('initialData', () => {
     })
 
     it('TData should have undefined in the union when initialData is NOT provided', () => {
-      const { data } = createQuery(() => ({
+      const { data } = useQuery(() => ({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
       }))
