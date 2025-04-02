@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.71.2",
+  "version": "5.71.3",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
