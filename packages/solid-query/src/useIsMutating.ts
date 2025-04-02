@@ -1,7 +1,6 @@
 import { createMemo, createSignal, onCleanup } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
-import type { MutationFilters } from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
+import type { MutationFilters, QueryClient } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
 
 export function useIsMutating(

@@ -1051,7 +1051,7 @@ describe('useQuery', () => {
           count++
           return count === 1 ? result1 : result2
         },
-        reconcile: (oldData, newData) => {
+        reconcile: (oldData: any, newData: any) => {
           return reconcile(newData)(oldData)
         },
       }))
@@ -4472,7 +4472,7 @@ describe('useQuery', () => {
           return [1, 2]
         },
         select: (res) => res.map((x) => x + 1),
-        reconcile(oldData, newData) {
+        reconcile(oldData:any, newData:any) {
           return reconcile(newData)(oldData)
         },
       }))

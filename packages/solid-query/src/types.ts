@@ -4,6 +4,7 @@ import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
+  InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
@@ -11,12 +12,10 @@ import type {
   OmitKeyof,
   Override,
   QueryKey,
+  QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type {
-  InfiniteQueryObserverOptions,
-  QueryObserverOptions,
-} from './QueryClient'
+
 import type { Accessor } from 'solid-js'
 
 export interface UseBaseQueryOptions<
