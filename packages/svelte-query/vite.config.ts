@@ -1,19 +1,15 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { defineConfig } from 'vitest/config'
 import { svelteTesting } from '@testing-library/svelte/vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
 import { dynamicAliases } from './root.vite.config'
 import packageJson from './package.json'
 
 export default defineConfig({
-  plugins: [
-    svelte(),
-    svelteTesting(),
-    tsconfigPaths({ ignoreConfigErrors: true }),
-  ],
+  plugins: [svelte(), svelteTesting()],
   resolve: {
     alias: dynamicAliases,
+    conditions: ['tanstack-internal'],
   },
   test: {
     name: packageJson.name,

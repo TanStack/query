@@ -41,21 +41,21 @@
   "browser": {},
   "exports": {
     "solid": {
-      "tanstack-internal": "./src/index.ts",
       "development": "./build/index.js",
+      "tanstack-internal": "./src/index.ts",
       "import": "./build/index.js"
     },
     "development": {
       "import": {
-        "tanstack-internal": "./src/index.ts",
         "types": "./build/index.d.ts",
+        "tanstack-internal": "./src/index.ts",
         "default": "./build/dev.js"
       },
       "require": "./build/dev.cjs"
     },
     "import": {
-      "tanstack-internal": "./src/index.ts",
       "types": "./build/index.d.ts",
+      "tanstack-internal": "./src/index.ts",
       "default": "./build/index.js"
     },
     "require": "./build/index.cjs"

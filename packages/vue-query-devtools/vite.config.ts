@@ -1,14 +1,14 @@
 import { defineConfig, mergeConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { tanstackViteConfig } from '@tanstack/config/vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
 import { dynamicAliases } from './root.vite.config'
 
 const config = defineConfig({
-  plugins: [vue(), tsconfigPaths({ ignoreConfigErrors: true })],
+  plugins: [vue()],
   resolve: {
     alias: dynamicAliases,
+    conditions: ['tanstack-internal'],
   },
 })
 

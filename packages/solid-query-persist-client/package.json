@@ -39,8 +39,8 @@
   "exports": {
     "development": {
       "import": {
-        "tanstack-internal": "./src/index.ts",
         "types": "./build/index.d.ts",
+        "tanstack-internal": "./src/index.ts",
         "default": "./build/dev.js"
       },
       "require": {
@@ -49,8 +49,8 @@
       }
     },
     "import": {
-      "tanstack-internal": "./src/index.ts",
       "types": "./build/index.d.ts",
+      "tanstack-internal": "./src/index.ts",
       "default": "./build/index.js"
     },
     "require": {

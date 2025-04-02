@@ -143,9 +143,6 @@ importers:
       vite:
         specifier: ^5.3.5
         version: 5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6)
-      vite-tsconfig-paths:
-        specifier: ^5.1.4
-        version: 5.1.4(typescript@5.8.2)(vite@5.4.16(@types/node@22.13.14)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.31.6))
       vitest:
         specifier: ^2.1.9
         version: 2.1.9(@types/node@22.13.14)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.13.14)(typescript@5.8.2))(sass@1.86.0)(terser@5.31.6)

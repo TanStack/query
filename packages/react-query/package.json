@@ -43,8 +43,8 @@
   "exports": {
     ".": {
       "import": {
-        "tanstack-internal": "./src/index.ts",
         "types": "./build/modern/index.d.ts",
+        "tanstack-internal": "./src/index.ts",
         "default": "./build/modern/index.js"
       },
       "require": {
