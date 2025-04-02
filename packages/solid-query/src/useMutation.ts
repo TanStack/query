@@ -3,8 +3,7 @@ import { createComputed, createMemo, on, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import { noop, shouldThrowError } from './utils'
-import type { DefaultError } from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
+import type { DefaultError, QueryClient } from '@tanstack/query-core'
 import type {
   UseMutateFunction,
   UseMutationOptions,

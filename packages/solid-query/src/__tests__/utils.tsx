@@ -1,8 +1,7 @@
 import { vi } from 'vitest'
 import { Show, createEffect, createSignal, onCleanup } from 'solid-js'
-import { onlineManager } from '@tanstack/query-core'
-import { QueryClient } from '../QueryClient'
-import type { QueryClientConfig } from '..'
+import { QueryClient, onlineManager } from '@tanstack/query-core'
+import type { QueryClientConfig } from '@tanstack/query-core'
 import type { ParentProps } from 'solid-js'
 import type { MockInstance } from 'vitest'
 

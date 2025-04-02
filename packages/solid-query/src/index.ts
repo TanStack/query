@@ -44,13 +44,6 @@ export type {
   UseBaseQueryOptions as CreateBaseQueryOptions,
 } from './types'
 
-export { QueryClient } from './QueryClient'
-export type {
-  QueryObserverOptions,
-  DefaultOptions,
-  QueryClientConfig,
-  InfiniteQueryObserverOptions,
-} from './QueryClient'
 export { useQuery } from './useQuery'
 export { useQuery as createQuery } from './useQuery'
 export { queryOptions } from './queryOptions'

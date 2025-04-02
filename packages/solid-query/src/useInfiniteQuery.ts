@@ -4,10 +4,11 @@ import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
+  QueryClient,
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
+
 import type {
   DefinedUseInfiniteQueryResult,
   UseInfiniteQueryOptions,
