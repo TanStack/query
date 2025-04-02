@@ -14,5 +14,7 @@ const dtsFiles = [
 
 for (const file of dtsFiles) {
   await fs.appendFile(file, '\n\nexport = plugin')
-  console.log(`Appended \`export = plugin\` to ${path.relative(projectDir, file)}`)
+  console.log(
+    `Appended \`export = plugin\` to ${path.relative(projectDir, file)}`,
+  )
 }
