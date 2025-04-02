@@ -109,7 +109,7 @@ export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
-export function defaultShouldRedactErrors(_: unknown) {
+function defaultShouldRedactErrors(_: unknown) {
   return true
 }
 
