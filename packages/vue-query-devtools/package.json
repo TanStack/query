@@ -52,8 +52,8 @@
   },
   "devDependencies": {
     "@tanstack/vue-query": "workspace:*",
-    "@vitejs/plugin-vue": "^5.2.1",
-    "eslint-plugin-vue": "^9.27.0",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "eslint-plugin-vue": "^9.33.0",
     "typescript": "5.8.2",
     "vite": "^6.2.4",
     "vue": "^3.4.27",

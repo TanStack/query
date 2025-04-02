@@ -68,8 +68,8 @@
   },
   "devDependencies": {
     "@tanstack/query-persist-client-core": "workspace:*",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/react-render-stream": "^2.0.0",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/react-render-stream": "^2.0.1",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",

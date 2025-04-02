@@ -19,7 +19,7 @@
     "@tanstack/solid-query-devtools": "^5.71.3",
     "astro": "^5.5.6",
     "solid-js": "^1.9.5",
-    "tailwindcss": "^3.4.7",
+    "tailwindcss": "^3.4.17",
     "typescript": "5.8.2"
   }
 }
