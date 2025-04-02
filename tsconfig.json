@@ -7,6 +7,7 @@
     "allowUnusedLabels": false,
     "checkJs": true,
     "composite": true,
+    "customConditions": ["tanstack-internal"],
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
@@ -42,7 +43,6 @@
       "@tanstack/query-broadcast-client-experimental": [
         "../../packages/query-broadcast-client-experimental/src"
       ],
-      "@tanstack/query-core": ["../../packages/query-core/src"],
       "@tanstack/query-devtools": ["../../packages/query-devtools/src"],
       "@tanstack/query-persist-client-core": [
         "../../packages/query-persist-client-core/src"
