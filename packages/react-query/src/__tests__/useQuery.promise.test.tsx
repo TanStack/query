@@ -33,7 +33,7 @@ describe('useQuery().promise', () => {
     })
   })
 
-  it('should work with a basic test', async () => {
+  it.only('should work with a basic test', async () => {
     const key = queryKey()
 
     const renderStream = createRenderStream({ snapshotDOM: true })
@@ -58,6 +58,11 @@ describe('useQuery().promise', () => {
           return 'test'
         },
       })
+
+      // Force Page to re-render when query state changes
+      React.useEffect(() => {
+        // noop
+      }, [query.status])
 
       return (
         <React.Suspense fallback={<Loading />}>
