@@ -19,9 +19,9 @@
     "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^4.3.4",
     "typescript": "5.8.2",
-    "vite": "^5.3.5"
+    "vite": "^6.2.4"
   },
   "msw": {
     "workerDirectory": [

@@ -61,7 +61,10 @@ describe('useQuery().promise', () => {
 
       return (
         <React.Suspense fallback={<Loading />}>
-          <MyComponent promise={query.promise} />
+          <div>
+            <MyComponent promise={query.promise} />
+          </div>
+          <div>status:{query.status}</div>
         </React.Suspense>
       )
     }

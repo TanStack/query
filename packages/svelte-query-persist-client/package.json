@@ -47,11 +47,11 @@
   },
   "devDependencies": {
     "@sveltejs/package": "^2.3.7",
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@tanstack/svelte-query": "workspace:*",
     "@testing-library/svelte": "^5.2.6",
     "eslint-plugin-svelte": "^2.46.0",
-    "svelte": "^4.2.18",
+    "svelte": "^5.0.0",
     "svelte-check": "^4.0.0"
   },
   "peerDependencies": {
