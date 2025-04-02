@@ -227,7 +227,7 @@ export function createQueries<
   }
 
   // @ts-expect-error - the crazy-complex TCombinedResult type doesn't like being called an array
-  let [results, update] = createRawRef<TCombinedResult>(createResult())
+  const [results, update] = createRawRef<TCombinedResult>(createResult())
 
   $effect(() => {
     if (isRestoring.current || subscribed === false) {

@@ -42,7 +42,7 @@ export function createMutation<
     return result
   }
 
-  let [mutation, update] = createRawRef(createResult())
+  const [mutation, update] = createRawRef(createResult())
 
   $effect(() => update(createResult()))
 

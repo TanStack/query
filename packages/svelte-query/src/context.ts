@@ -1,6 +1,6 @@
 import { getContext, setContext } from 'svelte'
 import type { QueryClient } from '@tanstack/query-core'
-import type { Box, ReactiveValue } from './containers.svelte'
+import type { Box } from './containers.svelte'
 
 const _contextKey = Symbol('QueryClient')
 

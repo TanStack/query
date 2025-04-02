@@ -42,7 +42,7 @@ export function createBaseQuery<
     TQueryKey
   >(client, resolvedOptions)
 
-  let [query, update] = createRawRef(
+  const [query, update] = createRawRef(
     observer.getOptimisticResult(resolvedOptions),
   )
 
