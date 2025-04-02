@@ -16,7 +16,7 @@
     "react-dom": "^19.0.0",
     "react-router": "^6.25.1",
     "react-router-dom": "^6.25.1",
-    "rooks": "^7.14.1",
+    "rooks": "^8.0.0",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {

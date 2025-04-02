@@ -2631,7 +2631,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
-  it('should be in "pending" state by default', async () => {
+  it('should be in "pending" state by default', () => {
     const key = queryKey()
 
     function Page() {
