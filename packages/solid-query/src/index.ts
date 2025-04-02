@@ -6,7 +6,6 @@ export * from '@tanstack/query-core'
 // Solid Query
 export * from './types'
 
-
 export type {
   UseQueryOptions,
   UseBaseQueryResult,
@@ -24,8 +23,8 @@ export type {
   UseBaseQueryOptions,
   SolidQueryOptions,
   SolidInfiniteQueryOptions,
-  SolidMutationOptions
-} from './types';
+  SolidMutationOptions,
+} from './types'
 
 // Compatibility types
 export type {
@@ -43,9 +42,7 @@ export type {
   UseBaseMutationResult as CreateBaseMutationResult,
   UseMutationResult as CreateMutationResult,
   UseBaseQueryOptions as CreateBaseQueryOptions,
-} from './types';
-
-
+} from './types'
 
 export { QueryClient } from './QueryClient'
 export type {
