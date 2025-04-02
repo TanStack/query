@@ -33,7 +33,7 @@ describe('useQuery().promise', () => {
     })
   })
 
-  it.only('should work with a basic test', async () => {
+  it('should work with a basic test', async () => {
     const key = queryKey()
 
     const renderStream = createRenderStream({ snapshotDOM: true })
