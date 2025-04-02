@@ -165,7 +165,7 @@ Setting up the full hydration solution is straightforward and does not have thes
 
 ## Using the Hydration APIs
 
-With just a little more setup, you can use a `queryClient` to prefetch queries during a preload phase, pass a serialized version of that `queryClient` to the rendering part of the app and reuse it there. This avoid the drawbacks above. Feel free to skip ahead for full Next.js pages router and Remix examples, but at a general level these are the extra steps:
+With just a little more setup, you can use a `queryClient` to prefetch queries during a preload phase, pass a serialized version of that `queryClient` to the rendering part of the app and reuse it there. This avoids the drawbacks above. Feel free to skip ahead for full Next.js pages router and Remix examples, but at a general level these are the extra steps:
 
 - In the framework loader function, create a `const queryClient = new QueryClient(options)`
 - In the loader function, do `await queryClient.prefetchQuery(...)` for each query you want to prefetch
