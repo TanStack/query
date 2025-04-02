@@ -12,7 +12,7 @@ export function broadcastQueryClient({
   queryClient,
   broadcastChannel = 'tanstack-query',
   options,
-}: BroadcastQueryClientOptions) {
+}: BroadcastQueryClientOptions): () => void {
   let transaction = false
   const tx = (cb: () => void) => {
     transaction = true
@@ -27,7 +27,7 @@ export function broadcastQueryClient({
 
   const queryCache = queryClient.getQueryCache()
 
-  queryClient.getQueryCache().subscribe((queryEvent) => {
+  const unsubscribe = queryClient.getQueryCache().subscribe((queryEvent) => {
     if (transaction) {
       return
     }
@@ -45,7 +45,7 @@ export function broadcastQueryClient({
       })
     }
 
-    if (queryEvent.type === 'removed' && observers?.length > 0) {
+    if (queryEvent.type === 'removed' && observers.length > 0) {
       channel.postMessage({
         type: 'removed',
         queryHash,
@@ -105,5 +105,9 @@ export function broadcastQueryClient({
         )
       }
     })
+  }
+  return () => {
+    unsubscribe()
+    channel.close()
   }
 }
