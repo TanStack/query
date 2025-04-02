@@ -14,7 +14,7 @@ import {
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import { noop } from './utils'
-import type { CreateQueryResult, SolidQueryOptions } from './types'
+import type { UseQueryResult, SolidQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -31,7 +31,7 @@ import type {
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
-type CreateQueryOptionsForCreateQueries<
+type UseQueryOptionsForUseQueries<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -43,7 +43,7 @@ type CreateQueryOptionsForCreateQueries<
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
   /**
    * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on createQueries is a plain object and not a SolidJS Resource.
+   * The `data` property on useQueries is a plain object and not a SolidJS Resource.
    * It will not suspend when the data is loading.
    * Setting `suspense` to `true` will be a no-op.
    */
@@ -63,18 +63,18 @@ type GetOptions<T> =
     error?: infer TError
     data: infer TData
   }
-    ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-      ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError>
+      ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
       : T extends { data: infer TData; error?: infer TError }
-        ? CreateQueryOptionsForCreateQueries<unknown, TError, TData>
+        ? UseQueryOptionsForUseQueries<unknown, TError, TData>
         : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
           T extends [infer TQueryFnData, infer TError, infer TData]
-          ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData>
+          ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
           : T extends [infer TQueryFnData, infer TError]
-            ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError>
+            ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
             : T extends [infer TQueryFnData]
-              ? CreateQueryOptionsForCreateQueries<TQueryFnData>
+              ? UseQueryOptionsForUseQueries<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
                     queryFn?:
@@ -83,30 +83,30 @@ type GetOptions<T> =
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? CreateQueryOptionsForCreateQueries<
+                ? UseQueryOptionsForUseQueries<
                     TQueryFnData,
                     unknown extends TError ? DefaultError : TError,
                     unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
                 : // Fallback
-                  CreateQueryOptionsForCreateQueries
+                  UseQueryOptionsForUseQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
-    ? CreateQueryResult<TData, TError>
+    ? UseQueryResult<TData, TError>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-      ? CreateQueryResult<TQueryFnData, TError>
+      ? UseQueryResult<TQueryFnData, TError>
       : T extends { data: infer TData; error?: infer TError }
-        ? CreateQueryResult<TData, TError>
+        ? UseQueryResult<TData, TError>
         : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
           T extends [any, infer TError, infer TData]
-          ? CreateQueryResult<TData, TError>
+          ? UseQueryResult<TData, TError>
           : T extends [infer TQueryFnData, infer TError]
-            ? CreateQueryResult<TQueryFnData, TError>
+            ? UseQueryResult<TQueryFnData, TError>
             : T extends [infer TQueryFnData]
-              ? CreateQueryResult<TQueryFnData>
+              ? UseQueryResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
                     queryFn?:
@@ -115,12 +115,12 @@ type GetResults<T> =
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? CreateQueryResult<
+                ? UseQueryResult<
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
                 : // Fallback
-                  CreateQueryResult
+                  UseQueryResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -130,7 +130,7 @@ type QueriesOptions<
   TResult extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
-  ? Array<CreateQueryOptionsForCreateQueries>
+  ? Array<UseQueryOptionsForUseQueries>
   : T extends []
     ? []
     : T extends [infer Head]
@@ -146,7 +146,7 @@ type QueriesOptions<
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
             T extends Array<
-                CreateQueryOptionsForCreateQueries<
+                UseQueryOptionsForUseQueries<
                   infer TQueryFnData,
                   infer TError,
                   infer TData,
@@ -154,7 +154,7 @@ type QueriesOptions<
                 >
               >
             ? Array<
-                CreateQueryOptionsForCreateQueries<
+                UseQueryOptionsForUseQueries<
                   TQueryFnData,
                   TError,
                   TData,
@@ -162,7 +162,7 @@ type QueriesOptions<
                 >
               >
             : // Fallback
-              Array<CreateQueryOptionsForCreateQueries>
+              Array<UseQueryOptionsForUseQueries>
 
 /**
  * QueriesResults reducer recursively maps type param to results
@@ -172,7 +172,7 @@ type QueriesResults<
   TResult extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
-  ? Array<CreateQueryResult>
+  ? Array<UseQueryResult>
   : T extends []
     ? []
     : T extends [infer Head]
@@ -185,7 +185,7 @@ type QueriesResults<
           >
         : { [K in keyof T]: GetResults<T[K]> }
 
-export function createQueries<
+export function useQueries<
   T extends Array<any>,
   TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
 >(

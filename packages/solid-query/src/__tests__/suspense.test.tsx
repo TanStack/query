@@ -12,14 +12,14 @@ import {
 import {
   QueryCache,
   QueryClientProvider,
-  createInfiniteQuery,
-  createQuery,
+  useInfiniteQuery,
+  useQuery,
 } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type {
-  CreateInfiniteQueryResult,
-  CreateQueryResult,
   InfiniteData,
+  UseInfiniteQueryResult,
+  UseQueryResult,
 } from '..'
 
 describe("useQuery's in Suspense mode", () => {
@@ -28,7 +28,7 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
-    const states: Array<CreateQueryResult<number>> = []
+    const states: Array<UseQueryResult<number>> = []
 
     let count = 0
     let renders = 0
@@ -36,7 +36,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [stateKey, setStateKey] = createSignal(key)
 
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: stateKey(),
         queryFn: async () => {
           count++
@@ -84,11 +84,11 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: Array<CreateInfiniteQueryResult<InfiniteData<number>>> = []
+    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
       const [multiplier, setMultiplier] = createSignal(1)
-      const state = createInfiniteQuery(() => ({
+      const state = useInfiniteQuery(() => ({
         queryKey: [`${key}_${multiplier()}`],
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -152,7 +152,7 @@ describe("useQuery's in Suspense mode", () => {
     })
 
     function Page() {
-      createQuery(() => ({ queryKey: [key], queryFn, suspense: true }))
+      useQuery(() => ({ queryKey: [key], queryFn, suspense: true }))
 
       return <>rendered</>
     }
@@ -174,7 +174,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      createQuery(() => ({
+      useQuery(() => ({
         queryKey: key,
         queryFn: () => {
           sleep(10)
@@ -226,7 +226,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -289,7 +289,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -350,7 +350,7 @@ describe("useQuery's in Suspense mode", () => {
     let count = 0
 
     function Component() {
-      const result = createQuery(() => ({
+      const result = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(100)
@@ -409,7 +409,7 @@ describe("useQuery's in Suspense mode", () => {
     const key2 = queryKey()
 
     function Component(props: { queryKey: Array<string> }) {
-      const result = createQuery(() => ({
+      const result = useQuery(() => ({
         queryKey: props.queryKey,
         queryFn: async () => {
           await sleep(100)
@@ -460,7 +460,7 @@ describe("useQuery's in Suspense mode", () => {
       .mockImplementation(() => undefined)
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
@@ -510,7 +510,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
@@ -562,7 +562,7 @@ describe("useQuery's in Suspense mode", () => {
       .mockImplementation(() => undefined)
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
@@ -612,7 +612,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
@@ -669,7 +669,7 @@ describe("useQuery's in Suspense mode", () => {
 
     function Page() {
       const [enabled, setEnabled] = createSignal(false)
-      const result = createQuery(() => ({
+      const result = useQuery(() => ({
         queryKey: [key],
         queryFn,
         suspense: true,
@@ -715,7 +715,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [nonce] = createSignal(0)
       const queryKeys = [`${key}-${succeed}`]
-      const result = createQuery(() => ({
+      const result = useQuery(() => ({
         queryKey: queryKeys,
         queryFn: async () => {
           await sleep(10)
@@ -784,7 +784,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [key, setKey] = createSignal(0)
 
-      const result = createQuery(() => ({
+      const result = useQuery(() => ({
         queryKey: [`${key()}-${succeed}`],
         queryFn: async () => {
           await sleep(10)
@@ -847,7 +847,7 @@ describe("useQuery's in Suspense mode", () => {
       const queryKeys = '1'
       const [enabled, setEnabled] = createSignal(false)
 
-      const result = createQuery<string>(() => ({
+      const result = useQuery<string>(() => ({
         queryKey: [queryKeys],
         queryFn: async () => {
           await sleep(10)
@@ -906,13 +906,13 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
     const key = queryKey()
-    let state: CreateQueryResult<number> | null = null
+    let state: UseQueryResult<number> | null = null
 
     let count = 0
     let renders = 0
 
     function Page() {
-      state = createQuery(() => ({
+      state = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           count++
