@@ -1,8 +1,8 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { queryOptions, useQueries } from '..'
-import type { UseQueryResult } from '..'
+import { createQueries, queryOptions } from '..'
+import type { CreateQueryResult } from '..'
 
-describe('useQueries', () => {
+describe('createQueries', () => {
   it('should return correct data for dynamic queries with mixed result types', () => {
     const Queries1 = {
       get: () =>
@@ -20,12 +20,15 @@ describe('useQueries', () => {
     }
 
     const queries1List = [1, 2, 3].map(() => ({ ...Queries1.get() }))
-    const result = useQueries(() => ({
+    const result = createQueries(() => ({
       queries: [...queries1List, { ...Queries2.get() }],
     }))
 
     expectTypeOf(result).toEqualTypeOf<
-      [...Array<UseQueryResult<number, Error>>, UseQueryResult<boolean, Error>]
+      [
+        ...Array<CreateQueryResult<number, Error>>,
+        CreateQueryResult<boolean, Error>,
+      ]
     >()
   })
 })
