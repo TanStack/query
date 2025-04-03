@@ -456,6 +456,10 @@
             {
               "label": "Testing",
               "to": "framework/solid/guides/testing"
+            },
+            {
+              "label": "Does this replace state managers?",
+              "to": "framework/angular/guides/does-this-replace-client-state"
             }
           ]
         },
