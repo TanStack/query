@@ -28,9 +28,9 @@
   "svelte": "./dist/index.js",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js",
-      "tanstack-internal": "./src/index.ts",
       "import": "./dist/index.js"
     },
     "./package.json": "./package.json"

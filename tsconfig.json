@@ -7,7 +7,7 @@
     "allowUnusedLabels": false,
     "checkJs": true,
     "composite": true,
-    "customConditions": ["tanstack-internal"],
+    "customConditions": ["@tanstack/custom-condition"],
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,

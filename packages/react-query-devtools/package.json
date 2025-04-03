@@ -41,8 +41,8 @@
   "exports": {
     ".": {
       "import": {
+        "@tanstack/custom-condition": "./src/index.ts",
         "types": "./build/modern/index.d.ts",
-        "tanstack-internal": "./src/index.ts",
         "default": "./build/modern/index.js"
       },
       "require": {
@@ -52,8 +52,8 @@
     },
     "./production": {
       "import": {
+        "@tanstack/custom-condition": "./src/production.ts",
         "types": "./build/modern/production.d.ts",
-        "tanstack-internal": "./src/production.ts",
         "default": "./build/modern/production.js"
       },
       "require": {
@@ -63,8 +63,8 @@
     },
     "./build/modern/production.js": {
       "import": {
+        "@tanstack/custom-condition": "./src/production.ts",
         "types": "./build/modern/production.d.ts",
-        "tanstack-internal": "./src/production.ts",
         "default": "./build/modern/production.js"
       },
       "require": {

@@ -40,8 +40,8 @@
   "exports": {
     ".": {
       "import": {
+        "@tanstack/custom-condition": "./src/index.ts",
         "types": "./dist/esm/index.d.ts",
-        "tanstack-internal": "./src/index.ts",
         "default": "./dist/esm/index.js"
       },
       "require": {

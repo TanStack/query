@@ -8,7 +8,7 @@ const config = defineConfig({
   plugins: [vue()],
   resolve: {
     alias: dynamicAliases,
-    conditions: ['tanstack-internal'],
+    conditions: ['@tanstack/custom-condition'],
   },
 })
 

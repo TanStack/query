@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [svelte(), svelteTesting()],
   resolve: {
     alias: dynamicAliases,
-    conditions: ['tanstack-internal'],
+    conditions: ['@tanstack/custom-condition'],
   },
   test: {
     name: packageJson.name,

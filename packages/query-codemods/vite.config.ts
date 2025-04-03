@@ -6,7 +6,7 @@ import packageJson from './package.json'
 export default defineConfig({
   resolve: {
     alias: dynamicAliases,
-    conditions: ['tanstack-internal'],
+    conditions: ['@tanstack/custom-condition'],
   },
   test: {
     name: packageJson.name,

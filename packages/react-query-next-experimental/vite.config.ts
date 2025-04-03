@@ -7,6 +7,6 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: dynamicAliases,
-    conditions: ['tanstack-internal'],
+    conditions: ['@tanstack/custom-condition'],
   },
 })
