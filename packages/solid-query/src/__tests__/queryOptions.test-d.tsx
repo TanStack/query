@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
-import { useQuery } from '../useQuery'
+import { createQuery } from '../createQuery'
 import { queryOptions } from '../queryOptions'
 
 describe('queryOptions', () => {
@@ -22,13 +22,13 @@ describe('queryOptions', () => {
       },
     })
   })
-  it('should work when passed to useQuery', () => {
+  it('should work when passed to createQuery', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
     })
 
-    const { data } = useQuery(() => options)
+    const { data } = createQuery(() => options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
   it('should work when passed to fetchQuery', async () => {

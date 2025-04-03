@@ -9,9 +9,18 @@ import {
   createSignal,
   on,
 } from 'solid-js'
-import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
+import {
+  QueryCache,
+  QueryClientProvider,
+  createInfiniteQuery,
+  createQuery,
+} from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
-import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
+import type {
+  CreateInfiniteQueryResult,
+  CreateQueryResult,
+  InfiniteData,
+} from '..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
@@ -19,7 +28,7 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
-    const states: Array<UseQueryResult<number>> = []
+    const states: Array<CreateQueryResult<number>> = []
 
     let count = 0
     let renders = 0
@@ -27,7 +36,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [stateKey, setStateKey] = createSignal(key)
 
-      const state = useQuery(() => ({
+      const state = createQuery(() => ({
         queryKey: stateKey(),
         queryFn: async () => {
           count++
@@ -75,11 +84,11 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
       const [multiplier, setMultiplier] = createSignal(1)
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: [`${key}_${multiplier()}`],
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -143,7 +152,7 @@ describe("useQuery's in Suspense mode", () => {
     })
 
     function Page() {
-      useQuery(() => ({ queryKey: [key], queryFn, suspense: true }))
+      createQuery(() => ({ queryKey: [key], queryFn, suspense: true }))
 
       return <>rendered</>
     }
@@ -165,7 +174,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      useQuery(() => ({
+      createQuery(() => ({
         queryKey: key,
         queryFn: () => {
           sleep(10)
@@ -217,7 +226,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      const state = useQuery(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -280,7 +289,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      const state = useQuery(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -341,7 +350,7 @@ describe("useQuery's in Suspense mode", () => {
     let count = 0
 
     function Component() {
-      const result = useQuery(() => ({
+      const result = createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(100)
@@ -400,7 +409,7 @@ describe("useQuery's in Suspense mode", () => {
     const key2 = queryKey()
 
     function Component(props: { queryKey: Array<string> }) {
-      const result = useQuery(() => ({
+      const result = createQuery(() => ({
         queryKey: props.queryKey,
         queryFn: async () => {
           await sleep(100)
@@ -451,7 +460,7 @@ describe("useQuery's in Suspense mode", () => {
       .mockImplementation(() => undefined)
 
     function Page() {
-      const state = useQuery(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
@@ -501,7 +510,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      const state = useQuery(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
@@ -553,7 +562,7 @@ describe("useQuery's in Suspense mode", () => {
       .mockImplementation(() => undefined)
 
     function Page() {
-      const state = useQuery(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
@@ -603,7 +612,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      const state = useQuery(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
@@ -660,7 +669,7 @@ describe("useQuery's in Suspense mode", () => {
 
     function Page() {
       const [enabled, setEnabled] = createSignal(false)
-      const result = useQuery(() => ({
+      const result = createQuery(() => ({
         queryKey: [key],
         queryFn,
         suspense: true,
@@ -706,7 +715,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [nonce] = createSignal(0)
       const queryKeys = [`${key}-${succeed}`]
-      const result = useQuery(() => ({
+      const result = createQuery(() => ({
         queryKey: queryKeys,
         queryFn: async () => {
           await sleep(10)
@@ -775,7 +784,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [key, setKey] = createSignal(0)
 
-      const result = useQuery(() => ({
+      const result = createQuery(() => ({
         queryKey: [`${key()}-${succeed}`],
         queryFn: async () => {
           await sleep(10)
@@ -838,7 +847,7 @@ describe("useQuery's in Suspense mode", () => {
       const queryKeys = '1'
       const [enabled, setEnabled] = createSignal(false)
 
-      const result = useQuery<string>(() => ({
+      const result = createQuery<string>(() => ({
         queryKey: [queryKeys],
         queryFn: async () => {
           await sleep(10)
@@ -897,13 +906,13 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
     const key = queryKey()
-    let state: UseQueryResult<number> | null = null
+    let state: CreateQueryResult<number> | null = null
 
     let count = 0
     let renders = 0
 
     function Page() {
-      state = useQuery(() => ({
+      state = createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           count++

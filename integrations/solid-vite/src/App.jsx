@@ -1,8 +1,8 @@
 import { Match, Switch } from 'solid-js'
-import { useQuery } from '@tanstack/solid-query'
+import { createQuery } from '@tanstack/solid-query'
 
 const App = () => {
-  const query = useQuery(() => ({
+  const query = createQuery(() => ({
     queryKey: ['test'],
     queryFn: async () => {
       await new Promise((r) => setTimeout(r, 1000))

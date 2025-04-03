@@ -1,8 +1,8 @@
 import {
   QueryClient,
   QueryClientProvider,
+  createQuery,
   keepPreviousData,
-  useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import {
@@ -13,9 +13,9 @@ import {
   createSignal,
   useContext,
 } from 'solid-js'
-import { isServer } from 'solid-js/web'
-import { getSearchParams, properCase } from '../utils'
 import { Link } from './Link'
+import { getSearchParams, properCase } from '../utils'
+import { isServer } from 'solid-js/web'
 
 const PokemonIdContext = createContext<() => string>()
 
@@ -72,7 +72,7 @@ const PokemonDetails = () => {
 }
 
 const PokemonDex = (props: { id: string }) => {
-  const pokemon = useQuery(() => ({
+  const pokemon = createQuery(() => ({
     queryKey: ['pokemon', props.id],
     queryFn: async () => {
       const res = await fetch(
@@ -83,7 +83,7 @@ const PokemonDex = (props: { id: string }) => {
     placeholderData: keepPreviousData,
   }))
 
-  const pokemon_stats = useQuery(() => ({
+  const pokemon_stats = createQuery(() => ({
     queryKey: ['pokemon', props.id],
     queryFn: async () => {
       const res = await fetch(
@@ -111,7 +111,7 @@ const PokemonDex = (props: { id: string }) => {
     reconcile: 'name',
   }))
 
-  const is_server_rendered = useQuery(() => ({
+  const is_server_rendered = createQuery(() => ({
     queryKey: ['is_server_rendered', props.id],
     queryFn: () => {
       if (isServer) return true
@@ -191,7 +191,7 @@ const PokemonDex = (props: { id: string }) => {
 const SideNav = () => {
   const id = usePokemonID()
 
-  const pokemonsList = useQuery(() => ({
+  const pokemonsList = createQuery(() => ({
     queryKey: ['pokemons'],
     queryFn: async () => {
       const res = await fetch(

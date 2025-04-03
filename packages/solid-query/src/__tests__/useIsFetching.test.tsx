@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
-import { QueryCache, QueryClientProvider, useIsFetching, useQuery } from '..'
+import { QueryCache, QueryClientProvider, createQuery, useIsFetching } from '..'
 import { createQueryClient, queryKey, setActTimeout, sleep } from './utils'
 
 describe('useIsFetching', () => {
@@ -19,7 +19,7 @@ describe('useIsFetching', () => {
     function Query() {
       const [ready, setReady] = createSignal(false)
 
-      useQuery(() => ({
+      createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(50)
@@ -70,7 +70,7 @@ describe('useIsFetching', () => {
     }
 
     function FirstQuery() {
-      useQuery(() => ({
+      createQuery(() => ({
         queryKey: key1,
         queryFn: async () => {
           await sleep(150)
@@ -81,7 +81,7 @@ describe('useIsFetching', () => {
     }
 
     function SecondQuery() {
-      useQuery(() => ({
+      createQuery(() => ({
         queryKey: key2,
         queryFn: async () => {
           await sleep(200)
@@ -128,7 +128,7 @@ describe('useIsFetching', () => {
     const isFetchingArray: Array<number> = []
 
     function One() {
-      useQuery(() => ({
+      createQuery(() => ({
         queryKey: key1,
         queryFn: async () => {
           await sleep(10)
@@ -139,7 +139,7 @@ describe('useIsFetching', () => {
     }
 
     function Two() {
-      useQuery(() => ({
+      createQuery(() => ({
         queryKey: key2,
         queryFn: async () => {
           await sleep(20)
@@ -192,7 +192,7 @@ describe('useIsFetching', () => {
     const key = queryKey()
 
     function Page() {
-      useQuery(() => ({
+      createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -224,7 +224,7 @@ describe('useIsFetching', () => {
     const key = queryKey()
 
     function Page() {
-      useQuery(
+      createQuery(
         () => ({
           queryKey: key,
           queryFn: async () => {
