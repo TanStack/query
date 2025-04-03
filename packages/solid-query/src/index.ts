@@ -5,45 +5,6 @@ export * from '@tanstack/query-core'
 
 // Solid Query
 export * from './types'
-
-export type {
-  UseQueryOptions,
-  UseBaseQueryResult,
-  UseQueryResult,
-  DefinedUseBaseQueryResult,
-  DefinedUseQueryResult,
-  UseInfiniteQueryOptions,
-  UseInfiniteQueryResult,
-  DefinedUseInfiniteQueryResult,
-  UseMutationOptions,
-  UseMutateFunction,
-  UseMutateAsyncFunction,
-  UseBaseMutationResult,
-  UseMutationResult,
-  UseBaseQueryOptions,
-  SolidQueryOptions,
-  SolidInfiniteQueryOptions,
-  SolidMutationOptions,
-} from './types'
-
-// Compatibility types
-export type {
-  UseQueryOptions as CreateQueryOptions,
-  UseBaseQueryResult as CreateBaseQueryResult,
-  UseQueryResult as CreateQueryResult,
-  DefinedUseBaseQueryResult as DefinedCreateBaseQueryResult,
-  DefinedUseQueryResult as DefinedCreateQueryResult,
-  UseInfiniteQueryOptions as CreateInfiniteQueryOptions,
-  UseInfiniteQueryResult as CreateInfiniteQueryResult,
-  DefinedUseInfiniteQueryResult as DefinedCreateInfiniteQueryResult,
-  UseMutationOptions as CreateMutationOptions,
-  UseMutateFunction as CreateMutateFunction,
-  UseMutateAsyncFunction as CreateMutateAsyncFunction,
-  UseBaseMutationResult as CreateBaseMutationResult,
-  UseMutationResult as CreateMutationResult,
-  UseBaseQueryOptions as CreateBaseQueryOptions,
-} from './types'
-
 export { QueryClient } from './QueryClient'
 export type {
   QueryObserverOptions,
