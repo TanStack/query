@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, waitFor } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
-import { QueryClientProvider, useQuery, useQueryClient } from '..'
+import { QueryClientProvider, createQuery, useQueryClient } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('QueryClientProvider', () => {
@@ -12,7 +12,7 @@ describe('QueryClientProvider', () => {
     const queryClient = createQueryClient({ queryCache })
 
     function Page() {
-      const query = useQuery(() => ({
+      const query = createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -51,7 +51,7 @@ describe('QueryClientProvider', () => {
     const queryClient2 = createQueryClient({ queryCache: queryCache2 })
 
     function Page1() {
-      const query = useQuery(() => ({
+      const query = createQuery(() => ({
         queryKey: key1,
         queryFn: async () => {
           await sleep(10)
@@ -66,7 +66,7 @@ describe('QueryClientProvider', () => {
       )
     }
     function Page2() {
-      const query = useQuery(() => ({
+      const query = createQuery(() => ({
         queryKey: key2,
         queryFn: async () => {
           await sleep(10)
@@ -115,7 +115,7 @@ describe('QueryClientProvider', () => {
     })
 
     function Page() {
-      const query = useQuery(() => ({
+      const query = createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)

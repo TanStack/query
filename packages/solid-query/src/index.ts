@@ -12,8 +12,7 @@ export type {
   QueryClientConfig,
   InfiniteQueryObserverOptions,
 } from './QueryClient'
-export { useQuery } from './useQuery'
-export { useQuery as createQuery } from './useQuery'
+export { createQuery } from './createQuery'
 export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
@@ -26,17 +25,14 @@ export {
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export { useIsFetching } from './useIsFetching'
-export { useInfiniteQuery } from './useInfiniteQuery'
-export { useInfiniteQuery as createInfiniteQuery } from './useInfiniteQuery'
+export { createInfiniteQuery } from './createInfiniteQuery'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
-export { useMutation } from './useMutation'
-export { useMutation as createMutation } from './useMutation'
+export { createMutation } from './createMutation'
 export { useIsMutating } from './useIsMutating'
 export { useMutationState } from './useMutationState'
-export { useQueries } from './useQueries'
-export { useQueries as createQueries } from './useQueries'
+export { createQueries } from './createQueries'
 export { useIsRestoring, IsRestoringProvider } from './isRestoring'

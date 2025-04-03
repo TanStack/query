@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { createEffect } from 'solid-js'
 import { useMutationState } from '../useMutationState'
-import { useMutation } from '../useMutation'
+import { createMutation } from '../createMutation'
 import { QueryClientProvider } from '../QueryClientProvider'
 import { createQueryClient, sleep } from './utils'
 
@@ -26,7 +26,7 @@ describe('useMutationState', () => {
     }
 
     function Mutate() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationKey,
         mutationFn: async (input: number) => {
           await sleep(150)

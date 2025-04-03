@@ -1,6 +1,6 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { createMemo } from 'solid-js'
-import { useBaseQuery } from './useBaseQuery'
+import { createBaseQuery } from './createBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
@@ -9,9 +9,9 @@ import type {
 } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type {
-  DefinedUseInfiniteQueryResult,
-  UseInfiniteQueryOptions,
-  UseInfiniteQueryResult,
+  CreateInfiniteQueryOptions,
+  CreateInfiniteQueryResult,
+  DefinedCreateInfiniteQueryResult,
 } from './types'
 import type { Accessor } from 'solid-js'
 import type {
@@ -19,7 +19,7 @@ import type {
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
 
-export function useInfiniteQuery<
+export function createInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
@@ -34,8 +34,8 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: Accessor<QueryClient>,
-): DefinedUseInfiniteQueryResult<TData, TError>
-export function useInfiniteQuery<
+): DefinedCreateInfiniteQueryResult<TData, TError>
+export function createInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
@@ -50,16 +50,16 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: Accessor<QueryClient>,
-): UseInfiniteQueryResult<TData, TError>
+): CreateInfiniteQueryResult<TData, TError>
 
-export function useInfiniteQuery<
+export function createInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UseInfiniteQueryOptions<
+  options: CreateInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -67,10 +67,10 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: Accessor<QueryClient>,
-): UseInfiniteQueryResult<TData, TError> {
-  return useBaseQuery(
+): CreateInfiniteQueryResult<TData, TError> {
+  return createBaseQuery(
     createMemo(() => options()),
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-  ) as UseInfiniteQueryResult<TData, TError>
+  ) as CreateInfiniteQueryResult<TData, TError>
 }
