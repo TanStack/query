@@ -13,9 +13,5 @@
     "*.config.js",
     "*.config.ts",
     "package.json"
-  ],
-  "references": [
-    { "path": "../query-persist-client-core" },
-    { "path": "../react-query" }
   ]
 }
