@@ -8,27 +8,23 @@ ref: docs/framework/react/guides/background-fetching-indicators.md
 
 ```angular-ts
 @Component({
-  selector: 'posts',
+  selector: 'todos',
   template: `
-    @switch (query.status()) {
-      @case ('pending') {
-        Loading...
+    @if (todosQuery.isPending()) {
+      Loading...
+    } @else if (todosQuery.isError()) {
+      An error has occurred: {{ todosQuery.error().message }}
+    } @else if (todosQuery.isSuccess()) {
+      @if (todosQuery.isFetching()) {
+        Refreshing...
       }
-      @case ('error') {
-        An error has occurred: {{ query.error()?.message }}
-      }
-      @default {
-        @if (query.isFetching()) {
-          Refreshing...
-        }
-        @for (todo of query.data()) {
-          <todo [todo]="todo" />
-        }
+      @for (todos of todosQuery.data(); track todo.id) {
+        <todo [todo]="todo" />
       }
     }
   `,
 })
-export class TodosComponent {
+class TodosComponent {
   todosQuery = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: fetchTodos,

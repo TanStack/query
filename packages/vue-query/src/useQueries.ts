@@ -225,23 +225,7 @@ export type UseQueriesResults<
             [...TResults, GetUseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              UseQueryOptionsForUseQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              QueryObserverResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<QueryObserverResult>
+        : { [K in keyof T]: GetUseQueryResult<T[K]> }
 
 type UseQueriesOptionsArg<T extends Array<any>> = readonly [
   ...UseQueriesOptions<T>,
@@ -255,7 +239,13 @@ export function useQueries<
     queries,
     ...options
   }: {
-    queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
+    queries:
+      | MaybeRefDeep<UseQueriesOptionsArg<T>>
+      | MaybeRefDeep<
+          readonly [
+            ...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> },
+          ]
+        >
     combine?: (result: UseQueriesResults<T>) => TCombinedResult
     shallow?: boolean
   },

@@ -1,9 +1,12 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   addToEnd,
   addToStart,
+  hashKey,
+  hashQueryKeyByOptions,
   isPlainArray,
   isPlainObject,
+  keepPreviousData,
   matchMutation,
   partialMatchKey,
   replaceEqualDeep,
@@ -13,6 +16,28 @@ import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
 
 describe('core/utils', () => {
+  describe('hashQueryKeyByOptions', () => {
+    it('should use custom hash function when provided in options', () => {
+      const queryKey = ['test', { a: 1, b: 2 }]
+      const customHashFn = vi.fn(() => 'custom-hash')
+
+      const result = hashQueryKeyByOptions(queryKey, {
+        queryKeyHashFn: customHashFn,
+      })
+
+      expect(customHashFn).toHaveBeenCalledWith(queryKey)
+      expect(result).toEqual('custom-hash')
+    })
+
+    it('should use default hash function when no options provided', () => {
+      const queryKey = ['test', { a: 1, b: 2 }]
+      const defaultResult = hashKey(queryKey)
+      const result = hashQueryKeyByOptions(queryKey)
+
+      expect(result).toEqual(defaultResult)
+    })
+  })
+
   describe('shallowEqualObjects', () => {
     it('should return `true` for shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toEqual(true)
@@ -405,6 +430,13 @@ describe('core/utils', () => {
     })
   })
 
+  describe('keepPreviousData', () => {
+    it('should return the parameter as is', () => {
+      const x = { a: 1, b: 2 }
+      expect(keepPreviousData(x)).toEqual(x)
+    })
+  })
+
   describe('addToEnd', () => {
     it('should add item to the end of the array', () => {
       const items = [1, 2, 3]
@@ -463,6 +495,39 @@ describe('core/utils', () => {
       const max = 0
       const newItems = addToStart(items, item, max)
       expect(newItems).toEqual([4, 1, 2, 3])
+    })
+  })
+
+  describe('hashKey', () => {
+    it('should hash primitives correctly', () => {
+      expect(hashKey(['test'])).toEqual(JSON.stringify(['test']))
+      expect(hashKey([123])).toEqual(JSON.stringify([123]))
+      expect(hashKey([null])).toEqual(JSON.stringify([null]))
+    })
+
+    it('should hash objects with sorted keys consistently', () => {
+      const key1 = [{ b: 2, a: 1 }]
+      const key2 = [{ a: 1, b: 2 }]
+
+      const hash1 = hashKey(key1)
+      const hash2 = hashKey(key2)
+
+      expect(hash1).toEqual(hash2)
+      expect(hash1).toEqual(JSON.stringify([{ a: 1, b: 2 }]))
+    })
+
+    it('should hash arrays consistently', () => {
+      const arr1 = [{ b: 2, a: 1 }, 'test', 123]
+      const arr2 = [{ a: 1, b: 2 }, 'test', 123]
+
+      expect(hashKey(arr1)).toEqual(hashKey(arr2))
+    })
+
+    it('should handle nested objects with sorted keys', () => {
+      const nested1 = [{ a: { d: 4, c: 3 }, b: 2 }]
+      const nested2 = [{ b: 2, a: { c: 3, d: 4 } }]
+
+      expect(hashKey(nested1)).toEqual(hashKey(nested2))
     })
   })
 })

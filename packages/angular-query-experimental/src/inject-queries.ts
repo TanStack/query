@@ -193,6 +193,10 @@ export type QueriesResults<
             Array<QueryObserverResult>
 
 /**
+ * @param root0
+ * @param root0.queries
+ * @param root0.combine
+ * @param injector
  * @public
  */
 export function injectQueries<
@@ -235,7 +239,6 @@ export function injectQueries<
       observer.setQueries(
         defaultedQueries(),
         options as QueriesObserverOptions<TCombinedResult>,
-        { listeners: false },
       )
     })
 

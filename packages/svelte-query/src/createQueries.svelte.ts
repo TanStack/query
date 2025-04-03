@@ -1,8 +1,7 @@
-import { untrack } from 'svelte'
-import { QueriesObserver, notifyManager } from '@tanstack/query-core'
+import { QueriesObserver } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import type { FunctionedParams } from './types.js'
+import { createRawRef } from './containers.svelte.js'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -182,23 +181,7 @@ export type QueriesResults<
             [...TResults, GetCreateQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              QueryObserverOptionsForCreateQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
-            Array<
-              QueryObserverResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<QueryObserverResult>
+        : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 
 export function createQueries<
   T extends Array<any>,
@@ -206,9 +189,9 @@ export function createQueries<
 >(
   {
     queries,
-    ...options
+    combine,
   }: {
-    queries: FunctionedParams<[...QueriesOptions<T>]>
+    queries: () => [...QueriesOptions<T>]
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
@@ -216,62 +199,47 @@ export function createQueries<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 
-  const defaultedQueries = $derived(() => {
-    return queries().map((opts) => {
-      const defaultedOptions = client.defaultQueryOptions(opts)
+  const resolvedQueryOptions = $derived(
+    queries().map((opts) => {
+      const resolvedOptions = client.defaultQueryOptions(opts)
       // Make sure the results are already in fetching state before subscribing or updating options
-      defaultedOptions._optimisticResults = isRestoring()
+      resolvedOptions._optimisticResults = isRestoring.current
         ? 'isRestoring'
         : 'optimistic'
-      return defaultedOptions as QueryObserverOptions
-    })
-  })
+      return resolvedOptions
+    }),
+  )
 
   const observer = new QueriesObserver<TCombinedResult>(
     client,
-    defaultedQueries(),
-    options as QueriesObserverOptions<TCombinedResult>,
+    resolvedQueryOptions,
+    combine as QueriesObserverOptions<TCombinedResult>,
   )
 
-  const [_, getCombinedResult, trackResult] = $derived(
-    observer.getOptimisticResult(
-      defaultedQueries(),
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
-    ),
-  )
-
-  $effect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setQueries(
-      defaultedQueries(),
-      options as QueriesObserverOptions<TCombinedResult>,
-      { listeners: false },
+  function createResult() {
+    const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
+      resolvedQueryOptions,
+      combine as QueriesObserverOptions<TCombinedResult>['combine'],
     )
-  })
+    return getCombinedResult(trackResult())
+  }
 
-  let result = $state(getCombinedResult(trackResult()))
+  // @ts-expect-error - the crazy-complex TCombinedResult type doesn't like being called an array
+  const [results, update] = createRawRef<TCombinedResult>(createResult())
 
   $effect(() => {
-    if (isRestoring()) {
-      return () => null
-    }
-    untrack(() => {
-      // @ts-expect-error
-      Object.assign(result, getCombinedResult(trackResult()))
-    })
-
-    return observer.subscribe((_result) => {
-      notifyManager.batchCalls(() => {
-        const res = observer.getOptimisticResult(
-          defaultedQueries(),
-          (options as QueriesObserverOptions<TCombinedResult>).combine,
-        )
-        // @ts-expect-error
-        Object.assign(result, res[1](res[2]()))
-      })()
-    })
+    const unsubscribe = isRestoring.current
+      ? () => undefined
+      : observer.subscribe(() => update(createResult()))
+    return unsubscribe
   })
 
-  return result
+  $effect.pre(() => {
+    observer.setQueries(resolvedQueryOptions, {
+      combine,
+    } as QueriesObserverOptions<TCombinedResult>)
+    update(createResult())
+  })
+
+  return results
 }

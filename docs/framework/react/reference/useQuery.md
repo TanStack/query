@@ -65,20 +65,20 @@ const {
 - `queryKey: unknown[]`
   - **Required**
   - The query key to use for this query.
-  - The query key will be hashed into a stable hash. See [Query Keys](../../guides/query-keys) for more information.
+  - The query key will be hashed into a stable hash. See [Query Keys](../guides/query-keys.md) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
-  - **Required, but only if no default query function has been defined** See [Default Query Function](../../guides/default-query-function) for more information.
+  - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function.md) for more information.
   - The function that the query will use to request data.
-  - Receives a [QueryFunctionContext](../../guides/query-functions#queryfunctioncontext)
+  - Receives a [QueryFunctionContext](../guides/query-functions.md#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
 - `enabled: boolean | (query: Query) => boolean`
   - Set this to `false` to disable this query from automatically running.
-  - Can be used for [Dependent Queries](../../guides/dependent-queries).
+  - Can be used for [Dependent Queries](../guides/dependent-queries.md).
 - `networkMode: 'online' | 'always' | 'offlineFirst`
   - optional
   - defaults to `'online'`
-  - see [Network Mode](../../guides/network-mode) for more information.
+  - see [Network Mode](../guides/network-mode.md) for more information.
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
@@ -167,7 +167,6 @@ const {
   - Defaults to `true`
   - If set to `false`, this instance of `useQuery` will not be subscribed to the cache. This means it won't trigger the `queryFn` on its own, and it won't receive updates if data gets into cache by other means.
 - `throwOnError: undefined | boolean | (error: TError, query: Query) => boolean`
-  - Defaults to the global query config's `throwOnError` value, which is `undefined`
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable `suspense`'s default behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
@@ -220,7 +219,7 @@ const {
   - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetches.
   - `paused`: The query wanted to fetch, but has been `paused`.
   - `idle`: The query is not fetching.
-  - see [Network Mode](../../guides/network-mode) for more information.
+  - see [Network Mode](../guides/network-mode) for more information.
 - `isFetching: boolean`
   - A derived boolean from the `fetchStatus` variable above, provided for convenience.
 - `isPaused: boolean`

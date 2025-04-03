@@ -1,9 +1,16 @@
-import { describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/dom'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { MutationCache, MutationObserver } from '..'
 import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
 
 describe('mutationCache', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   describe('MutationCacheConfig error callbacks', () => {
     test('should call onError and onSettled when a mutation errors', async () => {
       const key = queryKey()
@@ -49,12 +56,12 @@ describe('mutationCache', () => {
       const states: Array<number> = []
       const onError = async () => {
         states.push(1)
-        await sleep(1)
+        await vi.advanceTimersByTimeAsync(1)
         states.push(2)
       }
       const onSettled = async () => {
         states.push(5)
-        await sleep(1)
+        await vi.advanceTimersByTimeAsync(1)
         states.push(6)
       }
       const testCache = new MutationCache({ onError, onSettled })
@@ -68,12 +75,12 @@ describe('mutationCache', () => {
             mutationFn: () => Promise.reject(new Error('error')),
             onError: async () => {
               states.push(3)
-              await sleep(1)
+              await vi.advanceTimersByTimeAsync(1)
               states.push(4)
             },
             onSettled: async () => {
               states.push(7)
-              await sleep(1)
+              await vi.advanceTimersByTimeAsync(1)
               states.push(8)
             },
           },
@@ -81,6 +88,7 @@ describe('mutationCache', () => {
         )
       } catch {}
 
+      await vi.runAllTimersAsync()
       expect(states).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     })
   })
@@ -139,7 +147,7 @@ describe('mutationCache', () => {
       const testCache = new MutationCache({ onSuccess, onSettled })
       const testClient = createQueryClient({ mutationCache: testCache })
 
-      await executeMutation(
+      executeMutation(
         testClient,
         {
           mutationKey: key,
@@ -157,6 +165,7 @@ describe('mutationCache', () => {
         },
         'vars',
       )
+      await vi.runAllTimersAsync()
 
       expect(states).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     })
@@ -195,7 +204,7 @@ describe('mutationCache', () => {
       const testCache = new MutationCache({ onMutate })
       const testClient = createQueryClient({ mutationCache: testCache })
 
-      await executeMutation(
+      executeMutation(
         testClient,
         {
           mutationKey: key,
@@ -208,6 +217,7 @@ describe('mutationCache', () => {
         },
         'vars',
       )
+      await vi.runAllTimersAsync()
 
       expect(states).toEqual([1, 2, 3, 4])
     })
@@ -288,7 +298,7 @@ describe('mutationCache', () => {
       const testCache = new MutationCache()
       const testClient = createQueryClient({ mutationCache: testCache })
       const onSuccess = vi.fn()
-      await executeMutation(
+      executeMutation(
         testClient,
         {
           mutationKey: ['a', 1],
@@ -298,10 +308,8 @@ describe('mutationCache', () => {
         },
         1,
       )
-
       expect(testCache.getAll()).toHaveLength(1)
-      await sleep(10)
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(testCache.getAll()).toHaveLength(0)
       })
       expect(onSuccess).toHaveBeenCalledTimes(1)
@@ -318,12 +326,12 @@ describe('mutationCache', () => {
       expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       observer.mutate(1)
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       unsubscribe()
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
-      await sleep(10)
-      await waitFor(() => {
+      await vi.advanceTimersByTimeAsync(10)
+      await vi.waitFor(() => {
         expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       })
     })
@@ -343,12 +351,12 @@ describe('mutationCache', () => {
       observer.mutate(1)
       unsubscribe()
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
       // unsubscribe should not remove even though gcTime has elapsed b/c mutation is still pending
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
       // should be removed after an additional gcTime wait
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       })
       expect(onSuccess).toHaveBeenCalledTimes(1)
@@ -359,15 +367,15 @@ describe('mutationCache', () => {
       const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {
         gcTime: 0,
-        mutationFn: async () => {
-          return 'data'
+        mutationFn: () => {
+          return Promise.resolve('data')
         },
         onSuccess,
       })
       const unsubscribe = observer.subscribe(() => undefined)
       observer.mutate(1)
       unsubscribe()
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       })
       expect(onSuccess).toHaveBeenCalledTimes(1)

@@ -15,7 +15,7 @@ describe('InfiniteQueryObserver', () => {
     queryClient.clear()
   })
 
-  it('should be inferred as a correct result type', async () => {
+  it('should be inferred as a correct result type', () => {
     const next: number | undefined = 2
     const queryFn = vi.fn(({ pageParam }) => String(pageParam))
     const observer = new InfiniteQueryObserver(queryClient, {

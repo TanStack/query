@@ -16,11 +16,11 @@ import { QueriesService } from '../services/queries-service'
   imports: [RouterLink],
 })
 export default class PostComponent {
-  private queries = inject(QueriesService)
+  private readonly queries = inject(QueriesService)
 
-  postId = input.required({
+  readonly postId = input.required({
     transform: numberAttribute,
   })
 
-  postQuery = injectQuery(() => this.queries.post(this.postId()))
+  readonly postQuery = injectQuery(() => this.queries.post(this.postId()))
 }

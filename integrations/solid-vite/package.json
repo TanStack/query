@@ -8,8 +8,8 @@
   "dependencies": {
     "@tanstack/solid-query": "workspace:*",
     "@tanstack/solid-query-devtools": "workspace:*",
-    "solid-js": "^1.9.3",
-    "vite": "^5.3.5",
-    "vite-plugin-solid": "^2.10.2"
+    "solid-js": "^1.9.5",
+    "vite": "^6.2.4",
+    "vite-plugin-solid": "^2.11.6"
   }
 }

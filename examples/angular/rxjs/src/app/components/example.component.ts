@@ -15,14 +15,14 @@ import { AutocompleteService } from '../services/autocomplete-service'
   imports: [ReactiveFormsModule],
 })
 export class ExampleComponent {
-  #autocompleteService = inject(AutocompleteService)
-  #fb = inject(NonNullableFormBuilder)
+  readonly #autocompleteService = inject(AutocompleteService)
+  readonly #fb = inject(NonNullableFormBuilder)
 
-  form = this.#fb.group({
+  readonly form = this.#fb.group({
     term: '',
   })
 
-  term = toSignal(
+  readonly term = toSignal(
     this.form.controls.term.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -30,7 +30,7 @@ export class ExampleComponent {
     { initialValue: '' },
   )
 
-  query = injectQuery(() => ({
+  readonly query = injectQuery(() => ({
     queryKey: ['suggestions', this.term()],
     queryFn: () => {
       return lastValueFrom(

@@ -7,19 +7,21 @@ describe('InfiniteQueryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
+    vi.useFakeTimers()
     queryClient = createQueryClient()
     queryClient.mount()
   })
 
   afterEach(() => {
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   test('InfiniteQueryObserver should be able to fetch an infinite query with selector', async () => {
     const key = queryKey()
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
-      queryFn: () => 1,
+      queryFn: () => sleep(10).then(() => 1),
       select: (data) => ({
         pages: data.pages.map((x) => `${x}`),
         pageParams: data.pageParams,
@@ -31,7 +33,7 @@ describe('InfiniteQueryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(10)
     unsubscribe()
     expect(observerResult).toMatchObject({
       data: { pages: ['1'], pageParams: [1] },
@@ -44,7 +46,7 @@ describe('InfiniteQueryObserver', () => {
     }
 
     const key = queryKey()
-    const queryFn = vi.fn(() => 1)
+    const queryFn = vi.fn(() => sleep(10).then(() => 1))
     const observer = new InfiniteQueryObserver(queryClient, {
       meta,
       queryKey: key,
@@ -60,7 +62,7 @@ describe('InfiniteQueryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(10)
     unsubscribe()
     expect(observerResult).toMatchObject({
       data: { pages: ['1'], pageParams: [1] },
@@ -74,7 +76,7 @@ describe('InfiniteQueryObserver', () => {
     let all: Array<string> = []
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
-      queryFn: ({ pageParam }) => String(pageParam),
+      queryFn: ({ pageParam }) => sleep(10).then(() => String(pageParam)),
       initialPageParam: 1,
       getNextPageParam: (_, __, lastPageParam, allPageParams) => {
         single.push('next' + lastPageParam)
@@ -87,9 +89,12 @@ describe('InfiniteQueryObserver', () => {
         return firstPageParam - 1
       },
     })
+    await vi.advanceTimersByTimeAsync(10)
 
-    await observer.fetchNextPage()
-    await observer.fetchPreviousPage()
+    observer.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    observer.fetchPreviousPage()
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(single).toEqual(['next1', 'prev1', 'prev1', 'next1', 'prev0'])
     expect(all).toEqual(['next1', 'prev1', 'prev1', 'next0,1', 'prev0,1'])
@@ -97,13 +102,14 @@ describe('InfiniteQueryObserver', () => {
     single = []
     all = []
 
-    await observer.refetch()
+    observer.refetch()
+    await vi.advanceTimersByTimeAsync(20)
 
     expect(single).toEqual(['next0', 'next1', 'prev0'])
     expect(all).toEqual(['next0', 'next0,1', 'prev0,1'])
   })
 
-  test('should not invoke getNextPageParam and getPreviousPageParam on empty pages', async () => {
+  test('should not invoke getNextPageParam and getPreviousPageParam on empty pages', () => {
     const key = queryKey()
 
     const getNextPageParam = vi.fn()
@@ -111,17 +117,13 @@ describe('InfiniteQueryObserver', () => {
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
-      queryFn: ({ pageParam }) => String(pageParam),
+      queryFn: ({ pageParam }) => sleep(10).then(() => String(pageParam)),
       initialPageParam: 1,
       getNextPageParam: getNextPageParam.mockImplementation(
-        (_, __, lastPageParam) => {
-          return lastPageParam + 1
-        },
+        (_, __, lastPageParam) => lastPageParam + 1,
       ),
       getPreviousPageParam: getPreviousPageParam.mockImplementation(
-        (_, __, firstPageParam) => {
-          return firstPageParam - 1
-        },
+        (_, __, firstPageParam) => firstPageParam - 1,
       ),
     })
 
@@ -142,7 +144,7 @@ describe('InfiniteQueryObserver', () => {
     const key = queryKey()
     let next: number | undefined = 2
     const queryFn = vi.fn<(...args: Array<any>) => any>(({ pageParam }) =>
-      String(pageParam),
+      sleep(10).then(() => String(pageParam)),
     )
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -151,8 +153,10 @@ describe('InfiniteQueryObserver', () => {
       getNextPageParam: () => next,
     })
 
-    await observer.fetchNextPage()
-    await observer.fetchNextPage()
+    observer.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    observer.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
     expect(queryFn).toBeCalledTimes(2)
@@ -160,7 +164,8 @@ describe('InfiniteQueryObserver', () => {
 
     next = undefined
 
-    await observer.refetch()
+    observer.refetch()
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
     expect(queryFn).toBeCalledTimes(3)
@@ -171,7 +176,7 @@ describe('InfiniteQueryObserver', () => {
     const key = queryKey()
     let next: number | null = 2
     const queryFn = vi.fn<(...args: Array<any>) => any>(({ pageParam }) =>
-      String(pageParam),
+      sleep(10).then(() => String(pageParam)),
     )
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -180,8 +185,10 @@ describe('InfiniteQueryObserver', () => {
       getNextPageParam: () => next,
     })
 
-    await observer.fetchNextPage()
-    await observer.fetchNextPage()
+    observer.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
+    observer.fetchNextPage()
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
     expect(queryFn).toBeCalledTimes(2)
@@ -189,7 +196,8 @@ describe('InfiniteQueryObserver', () => {
 
     next = null
 
-    await observer.refetch()
+    observer.refetch()
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
     expect(queryFn).toBeCalledTimes(3)

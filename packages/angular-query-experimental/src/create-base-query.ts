@@ -1,12 +1,10 @@
 import {
   DestroyRef,
-  Injector,
   NgZone,
   VERSION,
   computed,
   effect,
   inject,
-  runInInjectionContext,
   signal,
   untracked,
 } from '@angular/core'
@@ -22,6 +20,8 @@ import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
+ * @param optionsFn
+ * @param Observer
  */
 export function createBaseQuery<
   TQueryFnData,
@@ -39,10 +39,9 @@ export function createBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ) {
-  const injector = inject(Injector)
-  const ngZone = injector.get(NgZone)
-  const destroyRef = injector.get(DestroyRef)
-  const queryClient = injector.get(QueryClient)
+  const ngZone = inject(NgZone)
+  const destroyRef = inject(DestroyRef)
+  const queryClient = inject(QueryClient)
 
   /**
    * Signal that has the default options from query client applied
@@ -51,8 +50,7 @@ export function createBaseQuery<
    * are preserved and can keep being applied after signal changes
    */
   const defaultedOptionsSignal = computed(() => {
-    const options = runInInjectionContext(injector, () => optionsFn())
-    const defaultedOptions = queryClient.defaultQueryOptions(options)
+    const defaultedOptions = queryClient.defaultQueryOptions(optionsFn())
     defaultedOptions._optimisticResults = 'optimistic'
     return defaultedOptions
   })
@@ -86,11 +84,7 @@ export function createBaseQuery<
       const defaultedOptions = defaultedOptionsSignal()
 
       untracked(() => {
-        observer.setOptions(defaultedOptions, {
-          // Do not notify on updates because of changes in the options because
-          // these changes should already be reflected in the optimistic result.
-          listeners: false,
-        })
+        observer.setOptions(defaultedOptions)
       })
       onCleanup(() => {
         ngZone.run(() => resultFromSubscriberSignal.set(null))
@@ -100,7 +94,6 @@ export function createBaseQuery<
       // Set allowSignalWrites to support Angular < v19
       // Set to undefined to avoid warning on newer versions
       allowSignalWrites: VERSION.major < '19' || undefined,
-      injector,
     },
   )
 
@@ -122,6 +115,7 @@ export function createBaseQuery<
                   observer.getCurrentQuery(),
                 ])
               ) {
+                ngZone.onError.emit(state.error)
                 throw state.error
               }
               resultFromSubscriberSignal.set(state)

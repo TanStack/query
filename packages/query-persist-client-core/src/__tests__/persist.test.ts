@@ -20,7 +20,7 @@ describe('persistQueryClientSubscribe', () => {
     })
 
     queryClient.getMutationCache().build(queryClient, {
-      mutationFn: async (text: string) => text,
+      mutationFn: (text: string) => Promise.resolve(text),
     })
 
     const result = await persister.restoreClient()
@@ -32,7 +32,7 @@ describe('persistQueryClientSubscribe', () => {
 })
 
 describe('persistQueryClientSave', () => {
-  test('should not be triggered on observer type events', async () => {
+  test('should not be triggered on observer type events', () => {
     const queryClient = createQueryClient()
 
     const persister = createSpyPersister()

@@ -42,7 +42,7 @@ describe('queryObserver', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
-  test('should be able to read latest data after subscribing', async () => {
+  test('should be able to read latest data after subscribing', () => {
     const key = queryKey()
     queryClient.setQueryData(key, 'data')
     const observer = new QueryObserver(queryClient, {
@@ -163,7 +163,7 @@ describe('queryObserver', () => {
       unsubscribe()
     })
 
-    test('should not be re-fetched if not subscribed to after enabled was toggled to true (fetchStatus: "idle")', async () => {
+    test('should not be re-fetched if not subscribed to after enabled was toggled to true (fetchStatus: "idle")', () => {
       const unsubscribe = observer.subscribe(vi.fn())
 
       // Toggle enabled
@@ -772,7 +772,7 @@ describe('queryObserver', () => {
     expect(results[1]).toMatchObject({ status: 'success', data: 'data' })
   })
 
-  test('should structurally share placeholder data', async () => {
+  test('should structurally share placeholder data', () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -790,7 +790,7 @@ describe('queryObserver', () => {
     expect(firstData).toBe(secondData)
   })
 
-  test('should throw an error if enabled option type is not valid', async () => {
+  test('should throw an error if enabled option type is not valid', () => {
     const key = queryKey()
 
     expect(
@@ -804,7 +804,7 @@ describe('queryObserver', () => {
     ).toThrowError('Expected enabled to be a boolean')
   })
 
-  test('getCurrentQuery should return the current query', async () => {
+  test('getCurrentQuery should return the current query', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1082,7 +1082,7 @@ describe('queryObserver', () => {
     }) // Successful fetch for new key
   })
 
-  test('setOptions should notify cache listeners', async () => {
+  test('setOptions should notify cache listeners', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -1102,7 +1102,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  test('disabled observers should not be stale', async () => {
+  test('disabled observers should not be stale', () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {

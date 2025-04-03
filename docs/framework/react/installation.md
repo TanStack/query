@@ -66,7 +66,7 @@ Opera >= 77
 
 ### Recommendations
 
-It is recommended to also use our [ESLint Plugin Query](../../../eslint/eslint-plugin-query) to help you catch bugs and inconsistencies while you code. You can install it via:
+It is recommended to also use our [ESLint Plugin Query](../../eslint/eslint-plugin-query.md) to help you catch bugs and inconsistencies while you code. You can install it via:
 
 ```bash
 npm i -D @tanstack/eslint-plugin-query

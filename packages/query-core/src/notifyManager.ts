@@ -10,6 +10,8 @@ type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
 
 type ScheduleFunction = (callback: () => void) => void
 
+export const defaultScheduler: ScheduleFunction = (cb) => setTimeout(cb, 0)
+
 export function createNotifyManager() {
   let queue: Array<NotifyCallback> = []
   let transactions = 0
@@ -19,7 +21,7 @@ export function createNotifyManager() {
   let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
     callback()
   }
-  let scheduleFn: ScheduleFunction = (cb) => setTimeout(cb, 0)
+  let scheduleFn = defaultScheduler
 
   const schedule = (callback: NotifyCallback): void => {
     if (transactions) {

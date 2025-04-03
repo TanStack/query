@@ -1,35 +1,31 @@
 <div>
   <h1>Posts</h1>
-  @switch (postsQuery.status()) {
-    @case ('pending') {
-      Loading...
-    }
-    @case ('error') {
-      Error: {{ postsQuery.error()?.message }}
-    }
-    @default {
-      <div class="todo-container">
-        @for (post of postsQuery.data(); track post.id) {
-          <p>
-            <!--          We can access the query data here to show bold links for-->
-            <!--          ones that are cached-->
-            <a
-              href="#"
-              (click)="setPostId.emit(post.id)"
-              [style]="
-                queryClient.getQueryData(['post', post.id])
-                  ? {
-                      fontWeight: 'bold',
-                      color: 'green',
-                    }
-                  : {}
-              "
-              >{{ post.title }}</a
-            >
-          </p>
-        }
-      </div>
-    }
+  @if (postsQuery.isPending()) {
+    Loading...
+  } @else if (postsQuery.isError()) {
+    Error: {{ postsQuery.error().message }}
+  } @else if (postsQuery.isSuccess()) {
+    <div class="todo-container">
+      @for (post of postsQuery.data(); track post.id) {
+        <p>
+          <!--          We can access the query data here to show bold links for-->
+          <!--          ones that are cached-->
+          <a
+            href="#"
+            (click)="setPostId.emit(post.id)"
+            [style]="
+              queryClient.getQueryData(['post', post.id])
+                ? {
+                    fontWeight: 'bold',
+                    color: 'green',
+                  }
+                : {}
+            "
+            >{{ post.title }}</a
+          >
+        </p>
+      }
+    </div>
   }
   <div>
     @if (postsQuery.isFetching()) {

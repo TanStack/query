@@ -12,8 +12,8 @@ import { lastValueFrom } from 'rxjs'
   providedIn: 'root',
 })
 export class TasksService {
-  #queryClient = inject(QueryClient) // Manages query state and caching
-  #http = inject(HttpClient) // Handles HTTP requests
+  readonly #queryClient = inject(QueryClient) // Manages query state and caching
+  readonly #http = inject(HttpClient) // Handles HTTP requests
 
   /**
    * Fetches all tasks from the API.

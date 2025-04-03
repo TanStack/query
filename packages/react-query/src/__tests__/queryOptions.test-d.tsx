@@ -225,7 +225,7 @@ describe('queryOptions', () => {
     const testFn = (id?: string) => {
       const options = queryOptions({
         queryKey: ['test'],
-        queryFn: async () => 'something string',
+        queryFn: () => Promise.resolve('something string'),
         initialData: id ? 'initial string' : undefined,
       })
       expectTypeOf(options.initialData).toMatchTypeOf<

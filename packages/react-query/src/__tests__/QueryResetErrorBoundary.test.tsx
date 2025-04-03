@@ -216,9 +216,7 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data, refetch, status, fetchStatus } = useQuery<string>({
           queryKey: key,
-          queryFn: async () => {
-            throw new Error('Error')
-          },
+          queryFn: () => Promise.reject(new Error('Error')),
           retry: false,
           enabled: false,
           throwOnError: true,
@@ -578,7 +576,7 @@ describe('QueryErrorResetBoundary', () => {
       consoleMock.mockRestore()
     })
 
-    it('should render children', async () => {
+    it('should render children', () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)

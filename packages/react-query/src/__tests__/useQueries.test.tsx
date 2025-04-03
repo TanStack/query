@@ -110,7 +110,7 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 2 }])
   })
 
-  it('handles type parameter - tuple of tuples', async () => {
+  it('handles type parameter - tuple of tuples', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -215,7 +215,7 @@ describe('useQueries', () => {
     }
   })
 
-  it('handles type parameter - tuple of objects', async () => {
+  it('handles type parameter - tuple of objects', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -389,7 +389,7 @@ describe('useQueries', () => {
     }
   })
 
-  it('handles array literal without type parameter to infer result type', async () => {
+  it('handles array literal without type parameter to infer result type', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -676,8 +676,8 @@ describe('useQueries', () => {
     type QueryKeyA = ['queryA']
     const getQueryKeyA = (): QueryKeyA => ['queryA']
     type GetQueryFunctionA = () => QueryFunction<number, QueryKeyA>
-    const getQueryFunctionA: GetQueryFunctionA = () => async () => {
-      return 1
+    const getQueryFunctionA: GetQueryFunctionA = () => () => {
+      return Promise.resolve(1)
     }
     type SelectorA = (data: number) => [number, string]
     const getSelectorA = (): SelectorA => (data) => [data, data.toString()]
@@ -685,8 +685,8 @@ describe('useQueries', () => {
     type QueryKeyB = ['queryB', string]
     const getQueryKeyB = (id: string): QueryKeyB => ['queryB', id]
     type GetQueryFunctionB = () => QueryFunction<string, QueryKeyB>
-    const getQueryFunctionB: GetQueryFunctionB = () => async () => {
-      return '1'
+    const getQueryFunctionB: GetQueryFunctionB = () => () => {
+      return Promise.resolve('1')
     }
     type SelectorB = (data: string) => [string, number]
     const getSelectorB = (): SelectorB => (data) => [data, +data]
@@ -805,7 +805,7 @@ describe('useQueries', () => {
           },
           {
             queryKey: key3,
-            queryFn: async () => 2,
+            queryFn: () => Promise.resolve(2),
           },
           {
             queryKey: key4,
@@ -866,7 +866,7 @@ describe('useQueries', () => {
           },
           {
             queryKey: key2,
-            queryFn: async () => 2,
+            queryFn: () => Promise.resolve(2),
           },
           {
             queryKey: key3,
@@ -989,10 +989,12 @@ describe('useQueries', () => {
         queries: ids.map((id) => {
           return {
             queryKey: [key, id],
-            queryFn: async () => async () => {
-              return {
-                id,
-                content: { value: Math.random() },
+            queryFn: () => {
+              return () => {
+                return Promise.resolve({
+                  id,
+                  content: { value: Math.random() },
+                })
               }
             },
           }

@@ -20,11 +20,11 @@ import { ProjectsService } from '../services/projects.service'
   templateUrl: './example.component.html',
 })
 export class ExampleComponent {
-  queryClient = inject(QueryClient)
-  projectsService = inject(ProjectsService)
-  page = signal(0)
+  readonly queryClient = inject(QueryClient)
+  readonly projectsService = inject(ProjectsService)
+  readonly page = signal(0)
 
-  query = injectQuery(() => ({
+  readonly query = injectQuery(() => ({
     queryKey: ['projects', this.page()],
     queryFn: () => {
       return lastValueFrom(this.projectsService.getProjects(this.page()))
@@ -33,14 +33,14 @@ export class ExampleComponent {
     staleTime: 5000,
   }))
 
-  prefetchEffect = effect(() => {
+  readonly prefetchEffect = effect(() => {
     const data = this.query.data()
     const isPlaceholderData = this.query.isPlaceholderData()
     const newPage = this.page() + 1
 
     untracked(() => {
       if (!isPlaceholderData && data?.hasMore) {
-        this.queryClient.prefetchQuery({
+        void this.queryClient.prefetchQuery({
           queryKey: ['projects', newPage],
           queryFn: () =>
             lastValueFrom(this.projectsService.getProjects(newPage)),

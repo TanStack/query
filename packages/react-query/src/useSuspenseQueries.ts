@@ -160,23 +160,20 @@ export type SuspenseQueriesResults<
             [...TResults, GetUseSuspenseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              UseSuspenseQueryOptions<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              UseSuspenseQueryResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<UseSuspenseQueryResult>
+        : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> }
+
+export function useSuspenseQueries<
+  T extends Array<any>,
+  TCombinedResult = SuspenseQueriesResults<T>,
+>(
+  options: {
+    queries:
+      | readonly [...SuspenseQueriesOptions<T>]
+      | readonly [...{ [K in keyof T]: GetUseSuspenseQueryOptions<T[K]> }]
+    combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
+  },
+  queryClient?: QueryClient,
+): TCombinedResult
 
 export function useSuspenseQueries<
   T extends Array<any>,
@@ -187,11 +184,13 @@ export function useSuspenseQueries<
     combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): TCombinedResult {
+): TCombinedResult
+
+export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
   return useQueries(
     {
       ...options,
-      queries: options.queries.map((query) => {
+      queries: options.queries.map((query: any) => {
         if (process.env.NODE_ENV !== 'production') {
           if (query.queryFn === skipToken) {
             console.error('skipToken is not allowed for useSuspenseQueries')
@@ -206,7 +205,7 @@ export function useSuspenseQueries<
           placeholderData: undefined,
         }
       }),
-    } as any,
+    },
     queryClient,
   )
 }

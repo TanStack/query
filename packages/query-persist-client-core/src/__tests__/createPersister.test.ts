@@ -12,11 +12,13 @@ function getFreshStorage() {
   const storage = new Map()
   return {
     getItem: (key: string) => Promise.resolve(storage.get(key)),
-    setItem: async (key: string, value: unknown) => {
+    setItem: (key: string, value: unknown) => {
       storage.set(key, value)
+      return Promise.resolve()
     },
-    removeItem: async (key: string) => {
+    removeItem: (key: string) => {
       storage.delete(key)
+      return Promise.resolve()
     },
   }
 }

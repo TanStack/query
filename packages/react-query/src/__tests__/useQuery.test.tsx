@@ -64,7 +64,7 @@ describe('useQuery', () => {
       // it should provide the result type in the configuration
       useQuery({
         queryKey: [key],
-        queryFn: async () => true,
+        queryFn: () => Promise.resolve(true),
       })
 
       // it should be possible to specify a union type as result type
@@ -109,10 +109,10 @@ describe('useQuery', () => {
       type MyData = number
       type MyQueryKey = readonly ['my-data', number]
 
-      const getMyDataArrayKey: QueryFunction<MyData, MyQueryKey> = async ({
+      const getMyDataArrayKey: QueryFunction<MyData, MyQueryKey> = ({
         queryKey: [, n],
       }) => {
-        return n + 42
+        return Promise.resolve(n + 42)
       }
 
       useQuery({
@@ -120,11 +120,9 @@ describe('useQuery', () => {
         queryFn: getMyDataArrayKey,
       })
 
-      const getMyDataStringKey: QueryFunction<MyData, ['1']> = async (
-        context,
-      ) => {
+      const getMyDataStringKey: QueryFunction<MyData, ['1']> = (context) => {
         expectTypeOf(context.queryKey).toEqualTypeOf<['1']>()
-        return Number(context.queryKey[0]) + 42
+        return Promise.resolve(Number(context.queryKey[0]) + 42)
       }
 
       useQuery({
@@ -161,7 +159,7 @@ describe('useQuery', () => {
           queryFn: () => fetcher(qk[1], 'token'),
           ...options,
         })
-      const testQuery = useWrappedQuery([''], async () => '1')
+      const testQuery = useWrappedQuery([''], () => Promise.resolve('1'))
       expectTypeOf(testQuery.data).toEqualTypeOf<string | undefined>()
 
       // handles wrapped queries with custom fetcher passed directly to useQuery
@@ -178,7 +176,9 @@ describe('useQuery', () => {
           'queryKey' | 'queryFn' | 'initialData'
         >,
       ) => useQuery({ queryKey: qk, queryFn: fetcher, ...options })
-      const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)
+      const testFuncStyle = useWrappedFuncStyleQuery([''], () =>
+        Promise.resolve(true),
+      )
       expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
     }
   })
@@ -2165,6 +2165,64 @@ describe('useQuery', () => {
     expect(states[2]).toMatchObject({ isStale: true })
   })
 
+  it('should re-render disabled observers when other observers trigger a query (#8741)', async () => {
+    const key = queryKey()
+
+    const useUserInfoQuery = ({
+      id,
+      enabled,
+    }: {
+      id: number | null
+      enabled: boolean
+    }) => {
+      return useQuery({
+        queryKey: [key, id],
+        queryFn: async () => {
+          await sleep(10)
+          return { id, name: 'John' }
+        },
+        enabled: !!id && enabled,
+      })
+    }
+
+    const Page = () => {
+      const [id, setId] = React.useState<number | null>(null)
+
+      const searchQuery = useUserInfoQuery({ id, enabled: false })
+
+      return (
+        <>
+          <div>User fetching status is {searchQuery.fetchStatus}</div>
+          <UserInfo id={id} />
+          <button onClick={() => setId(42)}>
+            Set ID and trigger user load
+          </button>
+        </>
+      )
+    }
+
+    function UserInfo({ id }: { id: number | null }) {
+      const searchQuery = useUserInfoQuery({ id, enabled: true })
+
+      return <div>UserInfo data is {JSON.stringify(searchQuery.data)} </div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    rendered.getByText('User fetching status is idle')
+
+    fireEvent.click(rendered.getByRole('button', { name: /set id/i }))
+
+    await waitFor(() => {
+      rendered.getByText('User fetching status is fetching')
+    })
+    await waitFor(() => {
+      rendered.getByText('UserInfo data is {"id":42,"name":"John"}')
+    })
+
+    rendered.getByText('User fetching status is idle')
+  })
+
   describe('notifyOnChangeProps', () => {
     it('should not re-render when it should only re-render only data change and the selected data did not change', async () => {
       const key = queryKey()
@@ -2429,7 +2487,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/137
-  it('should not override initial data in dependent queries', async () => {
+  it('should not override initial data in dependent queries', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -2466,7 +2524,7 @@ describe('useQuery', () => {
     rendered.getByText('Second Status: success')
   })
 
-  it('should update query options', async () => {
+  it('should update query options', () => {
     const key = queryKey()
 
     const queryFn = async () => {
@@ -2573,7 +2631,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
-  it('should be in "pending" state by default', async () => {
+  it('should be in "pending" state by default', () => {
     const key = queryKey()
 
     function Page() {
@@ -3719,12 +3777,12 @@ describe('useQuery', () => {
     function Page() {
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
+        queryFn: () => {
           if (counter < 2) {
             counter++
-            throw new Error('error')
+            return Promise.reject(new Error('error'))
           } else {
-            return 'data'
+            return Promise.resolve('data')
           }
         },
         retryDelay: 10,
@@ -3897,9 +3955,11 @@ describe('useQuery', () => {
       const [filter, setFilter] = React.useState('')
       const { data: todos } = useQuery({
         queryKey: [...key, filter],
-        queryFn: async () => {
-          return ALL_TODOS.filter((todo) =>
-            filter ? todo.priority === filter : true,
+        queryFn: () => {
+          return Promise.resolve(
+            ALL_TODOS.filter((todo) =>
+              filter ? todo.priority === filter : true,
+            ),
           )
         },
         initialData() {
@@ -3989,7 +4049,7 @@ describe('useQuery', () => {
     expect(results[2]).toMatchObject({ data: 'fetched data', isStale: false })
   })
 
-  it('should support enabled:false in query object syntax', async () => {
+  it('should support enabled:false in query object syntax', () => {
     const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
@@ -5967,7 +6027,7 @@ describe('useQuery', () => {
   describe('subscribed', () => {
     it('should be able to toggle subscribed', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(async () => 'data')
+      const queryFn = vi.fn(() => Promise.resolve('data'))
       function Page() {
         const [subscribed, setSubscribed] = React.useState(true)
         const { data } = useQuery({
@@ -6009,7 +6069,7 @@ describe('useQuery', () => {
 
     it('should not be attached to the query when subscribed is false', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(async () => 'data')
+      const queryFn = vi.fn(() => Promise.resolve('data'))
       function Page() {
         const { data } = useQuery({
           queryKey: key,
@@ -6039,7 +6099,7 @@ describe('useQuery', () => {
       function Page() {
         const { data } = useQuery({
           queryKey: key,
-          queryFn: async () => 'data',
+          queryFn: () => Promise.resolve('data'),
           subscribed: false,
         })
         renders++
@@ -6073,8 +6133,8 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<unknown>> = []
     const error = new Error('oops')
 
-    const queryFn = async (): Promise<unknown> => {
-      throw error
+    const queryFn = (): Promise<unknown> => {
+      return Promise.reject(error)
     }
 
     function Page() {
@@ -6140,8 +6200,8 @@ describe('useQuery', () => {
     function Page() {
       const { refetch, errorUpdateCount } = useQuery({
         queryKey: key,
-        queryFn: async (): Promise<unknown> => {
-          throw error
+        queryFn: (): Promise<unknown> => {
+          return Promise.reject(error)
         },
         retry: false,
       })
@@ -6459,7 +6519,7 @@ describe('useQuery', () => {
   })
 
   // For Project without TS, when migrating from v4 to v5, make sure invalid calls due to bad parameters are tracked.
-  it('should throw in case of bad arguments to enhance DevX', async () => {
+  it('should throw in case of bad arguments to enhance DevX', () => {
     // Mock console error to avoid noise when test is run
     const consoleMock = vi
       .spyOn(console, 'error')
@@ -6770,5 +6830,22 @@ describe('useQuery', () => {
     )
 
     consoleMock.mockRestore()
+  })
+
+  it('should console.error when there is no queryFn', () => {
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    const key = queryKey()
+    function Example() {
+      useQuery({ queryKey: key })
+      return <></>
+    }
+    renderWithClient(queryClient, <Example />)
+
+    expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+    expect(consoleErrorMock).toHaveBeenCalledWith(
+      `[${queryClient.getQueryCache().find({ queryKey: key })?.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
+    )
+
+    consoleErrorMock.mockRestore()
   })
 })

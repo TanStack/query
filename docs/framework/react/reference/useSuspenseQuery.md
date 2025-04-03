@@ -9,7 +9,7 @@ const result = useSuspenseQuery(options)
 
 **Options**
 
-The same as for [useQuery](../useQuery), except for:
+The same as for [useQuery](../reference/useQuery.md), except for:
 
 - `throwOnError`
 - `enabled`
@@ -17,7 +17,7 @@ The same as for [useQuery](../useQuery), except for:
 
 **Returns**
 
-Same object as [useQuery](../useQuery), except that:
+Same object as [useQuery](../reference/useQuery.md), except that:
 
 - `data` is guaranteed to be defined
 - `isPlaceholderData` is missing
@@ -26,4 +26,4 @@ Same object as [useQuery](../useQuery), except that:
 
 **Caveat**
 
-[Cancelation](../guides/query-cancellation.md) does not work.
+[Cancellation](../guides/query-cancellation.md) does not work.

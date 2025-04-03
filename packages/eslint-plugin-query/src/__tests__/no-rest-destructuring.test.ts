@@ -365,5 +365,30 @@ ruleTester.run('no-rest-destructuring', rule, {
       `,
       errors: [{ messageId: 'objectRestDestructure' }],
     },
+    {
+      name: 'useQuery result is spread in return statement',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const query = useQuery()
+          return { ...query, data: query.data[0] }
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
+    {
+      name: 'useQuery result is spread in object expression',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        function Component() {
+          const query = useQuery()
+          const result = { ...query, data: query.data[0] }
+          return result
+        }
+      `,
+      errors: [{ messageId: 'objectRestDestructure' }],
+    },
   ],
 })
