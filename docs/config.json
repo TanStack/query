@@ -759,6 +759,42 @@
             {
               "label": "useQuery",
               "to": "framework/solid/reference/useQuery"
+            },
+            {
+              "label": "useQueries",
+              "to": "framework/solid/reference/useQueries"
+            },
+            {
+              "label": "useInfiniteQuery",
+              "to": "framework/solid/reference/useInfiniteQuery"
+            },
+            {
+              "label": "useMutation",
+              "to": "framework/solid/reference/useMutation"
+            },
+            {
+              "label": "useIsFetching",
+              "to": "framework/solid/reference/useIsFetching"
+            },
+            {
+              "label": "useIsMutating",
+              "to": "framework/solid/reference/useIsMutating"
+            },
+            {
+              "label": "useMutationState",
+              "to": "framework/solid/reference/useMutationState"
+            },
+            {
+              "label": "queryOptions",
+              "to": "framework/solid/reference/queryOptions"
+            },
+            {
+              "label": "infiniteQueryOptions",
+              "to": "framework/solid/reference/infiniteQueryOptions"
+            },
+            {
+              "label": "hydration",
+              "to": "framework/solid/reference/hydration"
             }
           ]
         },
@@ -1128,6 +1164,19 @@
             {
               "label": "createPersister (Experimental)",
               "to": "framework/react/plugins/createPersister"
+            }
+          ]
+        },
+        {
+          "label": "solid",
+          "children": [
+            {
+              "label": "broadcastQueryClient (Experimental)",
+              "to": "framework/solid/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "framework/solid/plugins/createPersister"
             }
           ]
         },
