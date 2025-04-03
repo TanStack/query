@@ -17,10 +17,9 @@ import { shouldThrowError } from './utils'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions } from './types'
 import type { Accessor, Signal } from 'solid-js'
-
+import type { QueryClient } from './QueryClient'
 import type {
   Query,
-  QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
