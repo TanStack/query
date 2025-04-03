@@ -2,7 +2,7 @@
 import {
   QueryClient,
   QueryClientProvider,
-  createQuery,
+  useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { Match, Switch } from 'solid-js'
@@ -20,7 +20,7 @@ export default function App() {
 }
 
 function Example() {
-  const state = createQuery(() => ({
+  const state = useQuery(() => ({
     queryKey: ['repoData'],
     queryFn: async () => {
       const response = await fetch(

@@ -757,8 +757,8 @@
           "label": "solid",
           "children": [
             {
-              "label": "createQuery",
-              "to": "framework/solid/reference/createQuery"
+              "label": "useQuery",
+              "to": "framework/solid/reference/useQuery"
             }
           ]
         },
