@@ -4,7 +4,6 @@ import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
-  InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
@@ -12,13 +11,15 @@ import type {
   OmitKeyof,
   Override,
   QueryKey,
-  QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-
+import type {
+  InfiniteQueryObserverOptions,
+  QueryObserverOptions,
+} from './QueryClient'
 import type { Accessor } from 'solid-js'
 
-export interface UseBaseQueryOptions<
+export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -37,7 +38,7 @@ export interface UseBaseQueryOptions<
   deferStream?: boolean
   /**
    * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useQuery is a SolidJS resource and will automatically suspend when the data is loading.
+   * The `data` property on createQuery is a SolidJS resource and will automatically suspend when the data is loading.
    * Setting `suspense` to `false` will be a no-op.
    */
   suspense?: boolean
@@ -48,7 +49,7 @@ export interface SolidQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends UseBaseQueryOptions<
+> extends CreateBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -56,7 +57,7 @@ export interface SolidQueryOptions<
     TQueryKey
   > {}
 
-export type UseQueryOptions<
+export type CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -65,25 +66,25 @@ export type UseQueryOptions<
 
 /* --- Create Query and Create Base Query  Types --- */
 
-export type UseBaseQueryResult<
+export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = QueryObserverResult<TData, TError>
 
-export type UseQueryResult<
+export type CreateQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = UseBaseQueryResult<TData, TError>
+> = CreateBaseQueryResult<TData, TError>
 
-export type DefinedUseBaseQueryResult<
+export type DefinedCreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = DefinedQueryObserverResult<TData, TError>
 
-export type DefinedUseQueryResult<
+export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedUseBaseQueryResult<TData, TError>
+> = DefinedCreateBaseQueryResult<TData, TError>
 
 /* --- Create Infinite Queries Types --- */
 export interface SolidInfiniteQueryOptions<
@@ -114,13 +115,13 @@ export interface SolidInfiniteQueryOptions<
   deferStream?: boolean
   /**
    * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
-   * The `data` property on useInfiniteQuery is a SolidJS resource and will automatically suspend when the data is loading.
+   * The `data` property on createInfiniteQuery is a SolidJS resource and will automatically suspend when the data is loading.
    * Setting `suspense` to `false` will be a no-op.
    */
   suspense?: boolean
 }
 
-export type UseInfiniteQueryOptions<
+export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -137,12 +138,12 @@ export type UseInfiniteQueryOptions<
   >
 >
 
-export type UseInfiniteQueryResult<
+export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = InfiniteQueryObserverResult<TData, TError>
 
-export type DefinedUseInfiniteQueryResult<
+export type DefinedCreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = DefinedInfiniteQueryObserverResult<TData, TError>
@@ -158,14 +159,14 @@ export interface SolidMutationOptions<
     '_defaulted'
   > {}
 
-export type UseMutationOptions<
+export type CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = Accessor<SolidMutationOptions<TData, TError, TVariables, TContext>>
 
-export type UseMutateFunction<
+export type CreateMutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -174,28 +175,28 @@ export type UseMutateFunction<
   ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
 ) => void
 
-export type UseMutateAsyncFunction<
+export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
-export type UseBaseMutationResult<
+export type CreateBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
 > = Override<
   MutationObserverResult<TData, TError, TVariables, TContext>,
-  { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
+  { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
 > & {
-  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>
+  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
 }
 
-export type UseMutationResult<
+export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-> = UseBaseMutationResult<TData, TError, TVariables, TContext>
+> = CreateBaseMutationResult<TData, TError, TVariables, TContext>

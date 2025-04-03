@@ -17,9 +17,9 @@ Things to keep in mind:
 Types in Solid Query generally flow through very well so that you don't have to provide type annotations for yourself
 
 ```tsx
-import { useQuery } from '@tanstack/solid-query'
+import { createQuery } from '@tanstack/solid-query'
 
-const query = useQuery(() => ({
+const query = createQuery(() => ({
   queryKey: ['number'],
   queryFn: () => Promise.resolve(5),
 }))
@@ -31,9 +31,9 @@ query.data
 [typescript playground](https://www.typescriptlang.org/play/?#code/JYWwDg9gTgLgBAbzgYygUwIYzQRQK5pQCecAvnAGZQQhwDkAAjBgHYDOzyA1gPRsQAbYABMAtAEcCxOgFgAUPOQR28SYRIBeFOiy4pRABQGAlHA0A+OAYTy4duGuIBpNEQBccANp0WeEACNCOgBdABo4W3tHIgAxFg8TM0sABWoQYDY0ADp0fgEANzQDAFZjeVJjMoU5aKzhLAx5Hh57OAA9AH55brkgA)
 
 ```tsx
-import { useQuery } from '@tanstack/solid-query'
+import { createQuery } from '@tanstack/solid-query'
 
-const query = useQuery(() => ({
+const query = createQuery(() => ({
   queryKey: ['test'],
   queryFn: () => Promise.resolve(5),
   select: (data) => data.toString(),
@@ -51,7 +51,7 @@ This works best if your `queryFn` has a well-defined returned type. Keep in mind
 const fetchGroups = (): Promise<Group[]> =>
   axios.get('/groups').then((response) => response.data)
 
-const query = useQuery(() => ({
+const query = createQuery(() => ({
   queryKey: ['groups'],
   queryFn: fetchGroups,
 }))
@@ -67,7 +67,7 @@ query.data
 Solid Query uses a [discriminated union type](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions) for the query result, discriminated by the `status` field and the derived status boolean flags. This will allow you to check for e.g. `success` status to make `data` defined:
 
 ```tsx
-const query = useQuery(() => ({
+const query = createQuery(() => ({
   queryKey: ['number'],
   queryFn: () => Promise.resolve(5),
 }))
@@ -85,7 +85,7 @@ if (query.isSuccess) {
 The type for error defaults to `Error`, because that is what most users expect.
 
 ```tsx
-const query = useQuery(() => ({
+const query = createQuery(() => ({
   queryKey: ['groups'],
   queryFn: fetchGroups,
 }))
@@ -99,7 +99,7 @@ query.error
 If you want to throw a custom error, or something that isn't an `Error` at all, you can specify the type of the error field:
 
 ```tsx
-const query = useQuery<Group[], string>(() => ({
+const query = createQuery<Group[], string>(() => ({
   queryKey: ['groups'],
   queryFn: fetchGroups,
 }))
@@ -113,7 +113,7 @@ However, this has the drawback that type inference for all other generics of `us
 ```tsx
 import axios from 'axios'
 
-const query = useQuery(() => ({
+const query = createQuery(() => ({
   queryKey: ['groups'],
   queryFn: fetchGroups,
 }))
@@ -142,7 +142,7 @@ declare module '@tanstack/solid-query' {
   }
 }
 
-const query = useQuery(() => ({
+const query = createQuery(() => ({
   queryKey: ['groups'],
   queryFn: fetchGroups,
 }))
@@ -153,7 +153,7 @@ query.error
 
 ## Registering global `Meta`
 
-Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../useQuery) and [mutations](../createMutation) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
+Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../createQuery) and [mutations](../createMutation) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
 
 ```ts
 import '@tanstack/solid-query'
@@ -172,7 +172,7 @@ declare module '@tanstack/solid-query' {
 
 ## Typing Query Options
 
-If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use `queryOptions` helper:
+If you inline query options into `createQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `createQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use `queryOptions` helper:
 
 ```ts
 import { queryOptions } from '@tanstack/solid-query'
@@ -185,7 +185,7 @@ function groupOptions() {
   })
 }
 
-useQuery(groupOptions)
+createQuery(groupOptions)
 queryClient.prefetchQuery(groupOptions())
 ```
 

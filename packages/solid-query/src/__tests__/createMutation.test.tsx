@@ -6,7 +6,12 @@ import {
   createSignal,
 } from 'solid-js'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
-import { MutationCache, QueryCache, QueryClientProvider, useMutation } from '..'
+import {
+  MutationCache,
+  QueryCache,
+  QueryClientProvider,
+  createMutation,
+} from '..'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
@@ -14,16 +19,16 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import type { UseMutationResult } from '../types'
+import type { CreateMutationResult } from '../types'
 
-describe('useMutation', () => {
+describe('createMutation', () => {
   const queryCache = new QueryCache()
   const mutationCache = new MutationCache()
   const queryClient = createQueryClient({ queryCache, mutationCache })
 
   it('should be able to reset `data`', async () => {
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: () => Promise.resolve('mutation'),
       }))
 
@@ -63,7 +68,7 @@ describe('useMutation', () => {
       .mockImplementation(() => undefined)
 
     function Page() {
-      const mutation = useMutation<string, Error>(() => ({
+      const mutation = createMutation<string, Error>(() => ({
         mutationFn: () => {
           const err = new Error('Expected mock error. All is well!')
           err.stack = ''
@@ -113,7 +118,7 @@ describe('useMutation', () => {
     const onSettledMock = vi.fn()
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: (vars: { count: number }) => Promise.resolve(vars.count),
         onSuccess: (data) => {
           onSuccessMock(data)
@@ -187,7 +192,7 @@ describe('useMutation', () => {
     })
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: mutateFn,
       }))
 
@@ -237,7 +242,7 @@ describe('useMutation', () => {
     const [count, setCount] = createSignal(0)
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: (vars: { count: number }) => {
           const error = new Error(
             `Expected mock error. All is well! ${vars.count}`,
@@ -315,7 +320,7 @@ describe('useMutation', () => {
     const callbacks: Array<string> = []
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (text: string) => text,
         onSuccess: async () => {
           callbacks.push('useMutation.onSuccess')
@@ -366,7 +371,7 @@ describe('useMutation', () => {
     const callbacks: Array<string> = []
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => Promise.reject(new Error('oops')),
 
         onError: async () => {
@@ -425,10 +430,10 @@ describe('useMutation', () => {
       },
     })
 
-    const states: Array<UseMutationResult<any, any, any, any>> = []
+    const states: Array<CreateMutationResult<any, any, any, any>> = []
 
     function Page() {
-      const mutation = useMutation<string, unknown, string>(() => ({
+      const mutation = createMutation<string, unknown, string>(() => ({
         mutationKey: key,
       }))
 
@@ -464,7 +469,7 @@ describe('useMutation', () => {
     let count = 0
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: (_text: string) => {
           count++
           return Promise.reject(new Error('oops'))
@@ -500,7 +505,7 @@ describe('useMutation', () => {
     let count = 0
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: (_text: string) => {
           count++
           return Promise.reject(new Error('oops'))
@@ -567,7 +572,7 @@ describe('useMutation', () => {
     let count = 0
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           count++
           await sleep(10)
@@ -619,7 +624,7 @@ describe('useMutation', () => {
     const states: Array<string> = []
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           count++
           await sleep(10)
@@ -670,10 +675,10 @@ describe('useMutation', () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
-    const states: Array<UseMutationResult<any, any, any, any>> = []
+    const states: Array<CreateMutationResult<any, any, any, any>> = []
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           await sleep(1)
           count++
@@ -758,7 +763,7 @@ describe('useMutation', () => {
 
   it('should not change state if unmounted', async () => {
     function Mutates() {
-      const mutation = useMutation(() => ({ mutationFn: () => sleep(10) }))
+      const mutation = createMutation(() => ({ mutationFn: () => sleep(10) }))
       return <button onClick={() => mutation.mutate()}>mutate</button>
     }
     function Page() {
@@ -786,7 +791,7 @@ describe('useMutation', () => {
       .mockImplementation(() => undefined)
 
     function Page() {
-      const mutation = useMutation<string, Error>(() => ({
+      const mutation = createMutation<string, Error>(() => ({
         mutationFn: () => {
           const err = new Error('Expected mock error. All is well!')
           err.stack = ''
@@ -832,7 +837,7 @@ describe('useMutation', () => {
 
     let boundary = false
     function Page() {
-      const mutation = useMutation<string, Error>(() => ({
+      const mutation = createMutation<string, Error>(() => ({
         mutationFn: () => {
           const err = new Error('mock error')
           err.stack = ''
@@ -900,11 +905,11 @@ describe('useMutation', () => {
     const metaErrorMessage = 'mutation failed'
 
     function Page() {
-      const mutationSucceed = useMutation(() => ({
+      const mutationSucceed = createMutation(() => ({
         mutationFn: async () => '',
         meta: { metaSuccessMessage },
       }))
-      const mutationError = useMutation(() => ({
+      const mutationError = createMutation(() => ({
         mutationFn: async () => {
           throw new Error('')
         },
@@ -960,7 +965,7 @@ describe('useMutation', () => {
     }
 
     function Component() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           count++
           await sleep(10)
@@ -1025,7 +1030,7 @@ describe('useMutation', () => {
     let count = 0
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           count++
           await sleep(10)
@@ -1087,7 +1092,7 @@ describe('useMutation', () => {
     const onError = vi.fn()
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           await sleep(10)
           return 'result'
@@ -1124,7 +1129,7 @@ describe('useMutation', () => {
     const mutateFnError = new Error('mutateFnError')
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           await sleep(10)
           throw mutateFnError
@@ -1163,7 +1168,7 @@ describe('useMutation', () => {
     const onError = vi.fn()
 
     function Page() {
-      const mutation = useMutation(() => ({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           await sleep(10)
           throw mutateFnError
@@ -1201,7 +1206,7 @@ describe('useMutation', () => {
 
   it('should use provided custom queryClient', async () => {
     function Page() {
-      const mutation = useMutation(
+      const mutation = createMutation(
         () => ({
           mutationFn: async (text: string) => {
             return Promise.resolve(text)
