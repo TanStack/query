@@ -2,7 +2,7 @@
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery,
+  createQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Match, Switch, createSignal } from 'solid-js'
@@ -24,7 +24,7 @@ type Post = {
 }
 
 function createPosts() {
-  return useQuery(() => ({
+  return createQuery(() => ({
     queryKey: ['posts'],
     queryFn: async (): Promise<Array<Post>> => {
       const response = await fetch('https://jsonplaceholder.typicode.com/posts')
@@ -88,7 +88,7 @@ const getPostById = async (id: number): Promise<Post> => {
 }
 
 function createPost(postId: number) {
-  return useQuery(() => ({
+  return createQuery(() => ({
     queryKey: ['post', postId],
     queryFn: () => getPostById(postId),
     enabled: !!postId,

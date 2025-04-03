@@ -1,14 +1,14 @@
 /* @refresh reload */
+import type { QueryFunction } from '@tanstack/solid-query'
 import {
+  createQuery,
   QueryClient,
   QueryClientProvider,
-  useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import { For, Match, Show, Switch, createSignal } from 'solid-js'
-import { render } from 'solid-js/web'
 import type { Setter } from 'solid-js'
-import type { QueryFunction } from '@tanstack/solid-query'
+import { createSignal, For, Match, Show, Switch } from 'solid-js'
+import { render } from 'solid-js/web'
 
 // Define a default query function that will receive the query key
 const defaultQueryFn: QueryFunction<unknown> = async ({ queryKey }) => {
@@ -55,7 +55,7 @@ function App() {
 
 function Posts(props: { setPostId: Setter<number> }) {
   // All you have to do now is pass a key!
-  const state = useQuery<any[]>(() => ({ queryKey: ['/posts'] }))
+  const state = createQuery<any[]>(() => ({ queryKey: ['/posts'] }))
 
   return (
     <div>
@@ -103,7 +103,7 @@ function Posts(props: { setPostId: Setter<number> }) {
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {
   // You can even leave out the queryFn and just go straight into options
-  const state = useQuery<any>(() => ({
+  const state = createQuery<any>(() => ({
     queryKey: [`/posts/${props.postId}`],
     enabled: !!props.postId,
   }))
