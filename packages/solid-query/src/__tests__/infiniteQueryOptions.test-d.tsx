@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { dataTagSymbol } from '@tanstack/query-core'
-import { useInfiniteQuery } from '../useInfiniteQuery'
+import { createInfiniteQuery } from '../createInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type { InfiniteData } from '@tanstack/query-core'
 import type {
@@ -24,7 +24,7 @@ describe('infiniteQueryOptions', () => {
     })
 
     doNotRun(() => {
-      expectTypeOf(useInfiniteQuery(() => options).data).toEqualTypeOf<
+      expectTypeOf(createInfiniteQuery(() => options).data).toEqualTypeOf<
         InfiniteData<{ wow: boolean }, unknown>
       >()
 
@@ -55,7 +55,7 @@ describe('infiniteQueryOptions', () => {
     })
 
     doNotRun(() => {
-      expectTypeOf(() => useInfiniteQuery(() => options).data).toEqualTypeOf<
+      expectTypeOf(() => createInfiniteQuery(() => options).data).toEqualTypeOf<
         () => InfiniteData<{ wow: boolean }, unknown> | undefined
       >()
 

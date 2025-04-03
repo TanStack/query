@@ -14,9 +14,9 @@ import {
 import {
   QueryCache,
   QueryClientProvider,
+  createInfiniteQuery,
   infiniteQueryOptions,
   keepPreviousData,
-  useInfiniteQuery,
 } from '..'
 import {
   Blink,
@@ -27,9 +27,9 @@ import {
 } from './utils'
 
 import type {
+  CreateInfiniteQueryResult,
   InfiniteData,
   QueryFunctionContext,
-  UseInfiniteQueryResult,
 } from '..'
 import type { Mock } from 'vitest'
 
@@ -63,10 +63,10 @@ describe('useInfiniteQuery', () => {
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
@@ -166,7 +166,7 @@ describe('useInfiniteQuery', () => {
 
     function Page() {
       const start = 1
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) => {
           if (pageParam === 2) {
@@ -206,13 +206,14 @@ describe('useInfiniteQuery', () => {
 
   it('should keep the previous data when placeholderData is set', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<string>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<string>>>
+    > = []
 
     function Page() {
       const [order, setOrder] = createSignal('desc')
 
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: [key, order()],
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -305,10 +306,10 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to select a part of the data', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<string>>> = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<string>>> = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: () => ({ count: 1 }),
         select: (data) => ({
@@ -346,12 +347,12 @@ describe('useInfiniteQuery', () => {
   it('should be able to select a new result and not cause infinite renders', async () => {
     const key = queryKey()
     const states: Array<
-      UseInfiniteQueryResult<InfiniteData<{ count: number; id: number }>>
+      CreateInfiniteQueryResult<InfiniteData<{ count: number; id: number }>>
     > = []
     let selectCalled = 0
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: () => ({ count: 1 }),
         select: (data: InfiniteData<{ count: number }>) => {
@@ -392,11 +393,12 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to reverse the data', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -467,12 +469,13 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to fetch a previous page', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
       const start = 10
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -555,11 +558,12 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to refetch when providing page params automatically', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -678,13 +682,14 @@ describe('useInfiniteQuery', () => {
 
   it('should return the correct states when refetch fails', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     let isRefetch = false
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -790,11 +795,12 @@ describe('useInfiniteQuery', () => {
 
   it('should return the correct states when fetchNextPage fails', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -893,11 +899,12 @@ describe('useInfiniteQuery', () => {
 
   it('should return the correct states when fetchPreviousPage fails', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -1000,12 +1007,13 @@ describe('useInfiniteQuery', () => {
 
   it('should silently cancel any ongoing fetch when fetching more', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
       const start = 10
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }) => {
           await sleep(50)
@@ -1106,7 +1114,7 @@ describe('useInfiniteQuery', () => {
     })
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: fetchPage,
         getNextPageParam: (lastPage) => lastPage + 1,
@@ -1187,7 +1195,7 @@ describe('useInfiniteQuery', () => {
     })
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: fetchPage,
         getNextPageParam: (lastPage) => lastPage + 1,
@@ -1241,11 +1249,11 @@ describe('useInfiniteQuery', () => {
 
   it('should keep fetching first page when not loaded yet and triggering fetch more', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
       const start = 10
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }) => {
           await sleep(50)
@@ -1303,7 +1311,7 @@ describe('useInfiniteQuery', () => {
     const initialData = { pages: [1, 2, 3, 4], pageParams: [0, 1, 2, 3] }
 
     function List() {
-      useInfiniteQuery(() => ({
+      createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam, signal: _ }) => {
           fetches++
@@ -1351,13 +1359,14 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to set new pages with the query client', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
       const [firstPage, setFirstPage] = createSignal(0)
 
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }) => {
           await sleep(10)
@@ -1446,11 +1455,12 @@ describe('useInfiniteQuery', () => {
 
   it('should only refetch the first page when initialData is provided', async () => {
     const key = queryKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: async ({ pageParam }): Promise<number> => {
           await sleep(10)
@@ -1524,10 +1534,10 @@ describe('useInfiniteQuery', () => {
 
   it('should set hasNextPage to false if getNextPageParam returns undefined', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
         initialPageParam: 1,
@@ -1568,10 +1578,10 @@ describe('useInfiniteQuery', () => {
 
   it('should compute hasNextPage correctly using initialData', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }): number => pageParam,
         initialPageParam: 10,
@@ -1612,10 +1622,10 @@ describe('useInfiniteQuery', () => {
 
   it('should compute hasNextPage correctly for falsy getFetchMore return value using initialData', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<number>>> = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }): number => pageParam,
         initialPageParam: 10,
@@ -1656,10 +1666,10 @@ describe('useInfiniteQuery', () => {
 
   it('should not use selected data when computing hasNextPage', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<InfiniteData<string>>> = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<string>>> = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
         initialPageParam: 1,
@@ -1721,7 +1731,7 @@ describe('useInfiniteQuery', () => {
 
     function Page() {
       let fetchCountRef = 0
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) =>
           fetchItemsWithLimit(pageParam, fetchCountRef++),
@@ -1851,7 +1861,7 @@ describe('useInfiniteQuery', () => {
       let fetchCountRef = 0
       const [isRemovedLastPage, setIsRemovedLastPage] =
         createSignal<boolean>(false)
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) =>
           fetchItems(
@@ -1989,7 +1999,7 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
+      const state = createInfiniteQuery(() => ({
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
@@ -2022,7 +2032,7 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
-      const state = useInfiniteQuery(
+      const state = createInfiniteQuery(
         () => ({
           queryKey: key,
           queryFn,
@@ -2056,7 +2066,7 @@ describe('useInfiniteQuery', () => {
     })
 
     function Page() {
-      const state = useInfiniteQuery(
+      const state = createInfiniteQuery(
         () => options,
         () => queryClient,
       )

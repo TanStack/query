@@ -1,6 +1,6 @@
 ---
-id: useQuery
-title: useQuery
+id: createQuery
+title: createQuery
 ---
 
 ```tsx
@@ -28,7 +28,7 @@ const {
   isSuccess,
   refetch,
   status,
-} = useQuery(
+} = createQuery(
   () => ({
     queryKey,
     queryFn,
@@ -60,17 +60,17 @@ const {
 
 ## Usage example
 
-Here are some examples of how to use the `useQuery` primitive in Solid Query.
+Here are some examples of how to use the `createQuery` primitive in Solid Query.
 
 ### Basic
 
-The most basic usage of `useQuery` is to create a query that fetches data from an API.
+The most basic usage of `createQuery` is to create a query that fetches data from an API.
 
 ```tsx
-import { useQuery } from '@tanstack/solid-query'
+import { createQuery } from '@tanstack/solid-query'
 
 function App() {
-  const todos = useQuery(() => ({
+  const todos = createQuery(() => ({
     queryKey: 'todos',
     queryFn: async () => {
       const response = await fetch('/api/todos')
@@ -104,15 +104,15 @@ function App() {
 
 ### Reactive Options
 
-The reason why `useQuery` accepts a function that returns an object is to allow for reactive options. This is useful when query options depend on other values/signals that might change over time. Solid Query can track the passed function in a reactive scope and re-run it whenever the dependencies change.
+The reason why `createQuery` accepts a function that returns an object is to allow for reactive options. This is useful when query options depend on other values/signals that might change over time. Solid Query can track the passed function in a reactive scope and re-run it whenever the dependencies change.
 
 ```tsx
-import { useQuery } from '@tanstack/solid-query'
+import { createQuery } from '@tanstack/solid-query'
 
 function App() {
   const [filter, setFilter] = createSignal('all')
 
-  const todos = useQuery(() => ({
+  const todos = createQuery(() => ({
     queryKey: ['todos', filter()],
     queryFn: async () => {
       const response = await fetch(`/api/todos?filter=${filter()}`)
@@ -151,13 +151,13 @@ function App() {
 
 ### Usage with `Suspense`
 
-`useQuery` supports triggering SolidJS `Suspense` and `ErrorBoundary` components when the query is in a pending or error state. This allows you to easily handle loading and error states in your components.
+`createQuery` supports triggering SolidJS `Suspense` and `ErrorBoundary` components when the query is in a pending or error state. This allows you to easily handle loading and error states in your components.
 
 ```tsx
-import { useQuery } from '@tanstack/solid-query'
+import { createQuery } from '@tanstack/solid-query'
 
 function App() {
-  const todos = useQuery(() => ({
+  const todos = createQuery(() => ({
     queryKey: 'todos',
     queryFn: async () => {
       const response = await fetch('/api/todos')
@@ -184,7 +184,7 @@ function App() {
 }
 ```
 
-## `useQuery` Parameters
+## `createQuery` Parameters
 
 - ### Query Options - `Accessor<QueryOptions>`
 
@@ -298,9 +298,9 @@ function App() {
   - Optional
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
-## `useQuery` Return Value - `Store<QueryResult<TData, TError>>`
+## `createQuery` Return Value - `Store<QueryResult<TData, TError>>`
 
-`useQuery` returns a SolidJS store with the following properties:
+`createQuery` returns a SolidJS store with the following properties:
 
 - ##### `status: QueryStatus`
   - Will be:
