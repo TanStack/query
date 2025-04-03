@@ -16,12 +16,12 @@ import { useIsRestoring } from './isRestoring'
 import { noop } from './utils'
 import type { SolidQueryOptions, UseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
+import type { QueryClient } from './QueryClient'
 import type {
   DefaultError,
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
-  QueryClient,
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
