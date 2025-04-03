@@ -15,14 +15,14 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
+  options: () => CreateMutationOptions<TData, TError, TVariables, TContext>,
   queryClient?: QueryClient,
 ): () => CreateMutationResult<TData, TError, TVariables, TContext> {
   const client = useQueryClient(queryClient)
 
   const observer = new MutationObserver<TData, TError, TVariables, TContext>(
     client,
-    options,
+    options(),
   )
 
   const mutate = $state<
@@ -45,6 +45,9 @@ export function createMutation<
   const [mutation, update] = createRawRef(createResult())
 
   $effect(() => update(createResult()))
+  $effect.pre(() => {
+    observer.setOptions(options())
+  })
 
   // @ts-expect-error
   return mutation

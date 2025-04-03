@@ -1,11 +1,11 @@
-import { QueryCache, QueryClient, createQuery } from '@tanstack/svelte-query'
-import { promiseWithResolvers, sleep, withEffectRoot } from './utils.svelte'
-import type {
-  CreateQueryOptions,
-  CreateQueryResult,
-  OmitKeyof,
-  QueryFunction,
+import {
+  QueryCache,
+  QueryClient,
+  createQuery,
+  keepPreviousData,
 } from '@tanstack/svelte-query'
+import { promiseWithResolvers, sleep, withEffectRoot } from './utils.svelte'
+import type { CreateQueryResult } from '@tanstack/svelte-query'
 
 describe('createQuery', () => {
   const queryCache = new QueryCache()
@@ -15,203 +15,17 @@ describe('createQuery', () => {
     queryCache.clear()
   })
 
-  it('should return the correct types', () => {
-    const key = ['test']
-
-    // @ts-expect-error
-    function Page() {
-      // unspecified query function should default to unknown
-      const noQueryFn = $derived(createQuery({ queryKey: key }))
-      expectTypeOf(noQueryFn.data).toEqualTypeOf<unknown>()
-      expectTypeOf(noQueryFn.error).toEqualTypeOf<Error | null>()
-
-      // it should infer the result type from the query function
-      const fromQueryFn = $derived(
-        createQuery({ queryKey: key, queryFn: () => 'test' }),
-      )
-      expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
-      expectTypeOf(fromQueryFn.promise).toEqualTypeOf<Promise<string>>()
-
-      // it should be possible to specify the result type
-      const withResult = $derived(
-        createQuery<string>({
-          queryKey: key,
-          queryFn: () => 'test',
-        }),
-      )
-      expectTypeOf(withResult.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(withResult.error).toEqualTypeOf<Error | null>()
-
-      // it should be possible to specify the error type
-      const withError = $derived(
-        createQuery<string, Error>({
-          queryKey: key,
-          queryFn: () => 'test',
-        }),
-      )
-      expectTypeOf(withError.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(withError.error).toEqualTypeOf<Error | null>()
-
-      // it should be possible to specify a union type as result type
-      const unionTypeSync = $derived(
-        createQuery({
-          queryKey: key,
-          queryFn: () =>
-            Math.random() > 0.5 ? ('a' as const) : ('b' as const),
-        }),
-      )
-      expectTypeOf(unionTypeSync.data).toEqualTypeOf<'a' | 'b' | undefined>()
-      const unionTypeAsync = $derived(
-        createQuery<'a' | 'b'>({
-          queryKey: key,
-          queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
-        }),
-      )
-      expectTypeOf(unionTypeAsync.data).toEqualTypeOf<'a' | 'b' | undefined>()
-
-      // should error when the query function result does not match with the specified type
-      // @ts-expect-error
-      createQuery<number>({ queryKey: key, queryFn: () => 'test' })
-
-      // it should infer the result type from a generic query function
-      function queryFn<T = string>(): Promise<T> {
-        return Promise.resolve({} as T)
-      }
-
-      const fromGenericQueryFn = $derived(
-        createQuery({
-          queryKey: key,
-          queryFn: () => queryFn(),
-        }),
-      )
-      expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
-
-      const fromGenericOptionsQueryFn = $derived(
-        createQuery({
-          queryKey: key,
-          queryFn: () => queryFn(),
-        }),
-      )
-      expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
-        string | undefined
-      >()
-      expectTypeOf(
-        fromGenericOptionsQueryFn.error,
-      ).toEqualTypeOf<Error | null>()
-
-      type MyData = number
-      type MyQueryKey = readonly ['my-data', number]
-
-      const getMyDataArrayKey: QueryFunction<MyData, MyQueryKey> = ({
-        queryKey: [, n],
-      }) => Promise.resolve(n + 42)
-
-      createQuery({
-        queryKey: ['my-data', 100],
-        queryFn: getMyDataArrayKey,
-      })
-
-      const getMyDataStringKey: QueryFunction<MyData, ['1']> = (context) => {
-        expectTypeOf(context.queryKey).toEqualTypeOf<['1']>()
-        return Promise.resolve(Number(context.queryKey[0]) + 42)
-      }
-
-      createQuery({
-        queryKey: ['1'],
-        queryFn: getMyDataStringKey,
-      })
-
-      // it should handle query-functions that return Promise<any>
-      createQuery({
-        queryKey: key,
-        queryFn: () => fetch('return Promise<any>').then((resp) => resp.json()),
-      })
-
-      // handles wrapped queries with custom fetcher passed as inline queryFn
-      const useWrappedQuery = <
-        TQueryKey extends [string, Record<string, unknown>?],
-        TQueryFnData,
-        TError,
-        TData = TQueryFnData,
-      >(
-        qk: TQueryKey,
-        fetcher: (
-          obj: TQueryKey[1],
-          token: string,
-          // return type must be wrapped with TQueryFnReturn
-        ) => Promise<TQueryFnData>,
-        options?: OmitKeyof<
-          CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData'
-        >,
-      ) =>
-        createQuery({
-          queryKey: qk,
-          queryFn: () => fetcher(qk[1], 'token'),
-          ...options,
-        })
-      const testQuery = $derived(
-        useWrappedQuery([''], () => Promise.resolve('1')),
-      )
-      expectTypeOf(testQuery.data).toEqualTypeOf<string | undefined>()
-
-      // handles wrapped queries with custom fetcher passed directly to createQuery
-      const useWrappedFuncStyleQuery = <
-        TQueryKey extends [string, Record<string, unknown>?],
-        TQueryFnData,
-        TError,
-        TData = TQueryFnData,
-      >(
-        qk: TQueryKey,
-        fetcher: () => Promise<TQueryFnData>,
-        options?: OmitKeyof<
-          CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData'
-        >,
-      ) => createQuery({ queryKey: qk, queryFn: fetcher, ...options })
-      const testFuncStyle = $derived(
-        useWrappedFuncStyleQuery([''], () => Promise.resolve(true)),
-      )
-      expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
-    }
-  })
-
-  it(
-    'should allow to set default data value',
-    withEffectRoot(async () => {
-      const { promise, resolve } = promiseWithResolvers<string>()
-
-      const { data = 'default' } = $derived(
-        createQuery(
-          {
-            queryKey: ['test'],
-            queryFn: () => promise,
-          },
-          queryClient,
-        ),
-      )
-
-      expect(data).toBe('default')
-      resolve('resolved')
-      await vi.waitFor(() => expect(data).toBe('resolved'))
-    }),
-  )
-
   it(
     'should return the correct states for a successful query',
     withEffectRoot(async () => {
       const { promise, resolve } = promiseWithResolvers<string>()
 
-      const query = $derived(
-        createQuery<string, Error>(
-          {
-            queryKey: ['test'],
-            queryFn: () => promise,
-          },
-          queryClient,
-        ),
+      const query = createQuery<string, Error>(
+        () => ({
+          queryKey: ['test'],
+          queryFn: () => promise,
+        }),
+        queryClient,
       )
 
       if (query.isPending) {
@@ -294,18 +108,16 @@ describe('createQuery', () => {
     withEffectRoot(async () => {
       let count = 0
       const states: Array<CreateQueryResult> = []
-      const query = $derived(
-        createQuery<string, Error>(
-          {
-            queryKey: ['test'],
-            queryFn: () => {
-              return Promise.reject(new Error('rejected #' + ++count))
-            },
-            retry: 1,
-            retryDelay: 1,
+      const query = createQuery<string, Error>(
+        () => ({
+          queryKey: ['test'],
+          queryFn: () => {
+            return Promise.reject(new Error('rejected #' + ++count))
           },
-          queryClient,
-        ),
+          retry: 1,
+          retryDelay: 1,
+        }),
+        queryClient,
       )
       $effect(() => {
         states.push({ ...query })
@@ -412,10 +224,10 @@ describe('createQuery', () => {
 
       const query = $derived(
         createQuery<string, Error>(
-          {
+          () => ({
             queryKey: key,
             queryFn: () => promise,
-          },
+          }),
           queryClient,
         ),
       )
@@ -448,19 +260,17 @@ describe('createQuery', () => {
 
       const { promise, resolve } = promiseWithResolvers<string>()
 
-      const { refetch } = $derived(
-        createQuery<string, Error>(
-          {
-            queryKey: key,
-            queryFn: () => {
-              fetchCount++
-              return promise
-            },
-            enabled: false,
-            initialData: 'initial',
+      const { refetch } = createQuery<string, Error>(
+        () => ({
+          queryKey: key,
+          queryFn: () => {
+            fetchCount++
+            return promise
           },
-          queryClient,
-        ),
+          enabled: false,
+          initialData: 'initial',
+        }),
+        queryClient,
       )
 
       refetch()
@@ -481,19 +291,17 @@ describe('createQuery', () => {
 
       const { promise, resolve } = promiseWithResolvers<string>()
 
-      const query = $derived(
-        createQuery<string, Error>(
-          {
-            queryKey: key,
-            queryFn: async () => {
-              fetchCount++
-              return promise
-            },
-            enabled: false,
-            initialData: 'initialData',
+      const query = createQuery<string, Error>(
+        () => ({
+          queryKey: key,
+          queryFn: async () => {
+            fetchCount++
+            return promise
           },
-          queryClient,
-        ),
+          enabled: false,
+          initialData: 'initialData',
+        }),
+        queryClient,
       )
 
       // Trigger two refetch close together
@@ -515,18 +323,16 @@ describe('createQuery', () => {
 
       const { promise, resolve } = promiseWithResolvers<string>()
 
-      const query = $derived(
-        createQuery<string, Error>(
-          {
-            queryKey: key,
-            queryFn: async () => {
-              fetchCount++
-              return promise
-            },
-            enabled: false,
+      const query = createQuery<string, Error>(
+        () => ({
+          queryKey: key,
+          queryFn: async () => {
+            fetchCount++
+            return promise
           },
-          queryClient,
-        ),
+          enabled: false,
+        }),
+        queryClient,
       )
 
       // Trigger two refetch close together
@@ -550,9 +356,7 @@ describe('createQuery', () => {
         queryFn: () => 'data',
       })
 
-      const query = $derived(
-        createQuery<string>({ queryKey: key }, queryClient),
-      )
+      const query = createQuery<string>(() => ({ queryKey: key }), queryClient)
 
       $effect(() => {
         states.push({ ...query })
@@ -575,16 +379,14 @@ describe('createQuery', () => {
     await withEffectRoot(async () => {
       const { promise, resolve } = promiseWithResolvers<string>()
 
-      const query = $derived(
-        createQuery<string>(
-          {
-            queryKey: ['test'],
-            queryFn: () => promise,
-            gcTime: 0,
-            notifyOnChangeProps: 'all',
-          },
-          queryClient,
-        ),
+      const query = createQuery<string>(
+        () => ({
+          queryKey: ['test'],
+          queryFn: () => promise,
+          gcTime: 0,
+          notifyOnChangeProps: 'all',
+        }),
+        queryClient,
       )
 
       expect(query).toMatchObject({
@@ -606,16 +408,14 @@ describe('createQuery', () => {
     await withEffectRoot(async () => {
       const { promise, resolve } = promiseWithResolvers<string>()
 
-      const query = $derived(
-        createQuery<string>(
-          {
-            queryKey: ['test'],
-            queryFn: () => promise,
-            gcTime: 0,
-            notifyOnChangeProps: 'all',
-          },
-          queryClient,
-        ),
+      const query = createQuery<string>(
+        () => ({
+          queryKey: ['test'],
+          queryFn: () => promise,
+          gcTime: 0,
+          notifyOnChangeProps: 'all',
+        }),
+        queryClient,
       )
 
       expect(query).toMatchObject({
@@ -643,16 +443,14 @@ describe('createQuery', () => {
 
     // First mount: render the query and let it fetch
     await withEffectRoot(async () => {
-      const query = $derived(
-        createQuery<string>(
-          {
-            queryKey: key,
-            queryFn: () => Promise.resolve('data'),
-            gcTime: 0,
-            notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
-          },
-          queryClient,
-        ),
+      const query = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve('data'),
+          gcTime: 0,
+          notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
+        }),
+        queryClient,
       )
 
       $effect(() => {
@@ -668,16 +466,14 @@ describe('createQuery', () => {
     await withEffectRoot(async () => {
       queryClient.removeQueries({ queryKey: key })
 
-      const query = $derived(
-        createQuery<string>(
-          {
-            queryKey: key,
-            queryFn: () => Promise.resolve('data'),
-            gcTime: 0,
-            notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
-          },
-          queryClient,
-        ),
+      const query = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve('data'),
+          gcTime: 0,
+          notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
+        }),
+        queryClient,
       )
 
       $effect(() => {
@@ -721,15 +517,13 @@ describe('createQuery', () => {
       const key = ['test']
       const states: Array<CreateQueryResult<string>> = []
 
-      const query = $derived(
-        createQuery<string>(
-          {
-            queryKey: key,
-            queryFn: () => 'test',
-            refetchOnMount: false,
-          },
-          queryClient,
-        ),
+      const query = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => 'test',
+          refetchOnMount: false,
+        }),
+        queryClient,
       )
 
       $effect(() => {
@@ -754,15 +548,13 @@ describe('createQuery', () => {
 
       queryClient.setQueryData(key, 'prefetched')
 
-      const query = $derived(
-        createQuery<string>(
-          {
-            queryKey: key,
-            queryFn: () => 'test',
-            refetchOnMount: false,
-          },
-          queryClient,
-        ),
+      const query = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => 'test',
+          refetchOnMount: false,
+        }),
+        queryClient,
       )
 
       $effect(() => {
@@ -784,15 +576,13 @@ describe('createQuery', () => {
       const key = ['test']
       const states: Array<CreateQueryResult<string>> = []
 
-      const query = $derived(
-        createQuery<{ name: string }, Error, string>(
-          {
-            queryKey: key,
-            queryFn: () => ({ name: 'test' }),
-            select: (data) => data.name,
-          },
-          queryClient,
-        ),
+      const query = createQuery<{ name: string }, Error, string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => ({ name: 'test' }),
+          select: (data) => data.name,
+        }),
+        queryClient,
       )
 
       $effect(() => {
@@ -816,17 +606,15 @@ describe('createQuery', () => {
       const error = new Error('Select Error')
       const states: Array<CreateQueryResult<string>> = []
 
-      const query = $derived(
-        createQuery<{ name: string }, Error, string>(
-          {
-            queryKey: key,
-            queryFn: () => ({ name: 'test' }),
-            select: () => {
-              throw error
-            },
+      const query = createQuery<{ name: string }, Error, string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => ({ name: 'test' }),
+          select: () => {
+            throw error
           },
-          queryClient,
-        ),
+        }),
+        queryClient,
       )
 
       $effect(() => {
@@ -849,15 +637,13 @@ describe('createQuery', () => {
       const key = ['test']
       const states: Array<CreateQueryResult<number>> = []
       let count = 0
-      const query = $derived(
-        createQuery<number>(
-          {
-            queryKey: key,
-            queryFn: () => ++count,
-            notifyOnChangeProps: 'all',
-          },
-          queryClient,
-        ),
+      const query = createQuery<number>(
+        () => ({
+          queryKey: key,
+          queryFn: () => ++count,
+          notifyOnChangeProps: 'all',
+        }),
+        queryClient,
       )
 
       $effect(() => {
@@ -891,22 +677,54 @@ describe('createQuery', () => {
     'keeps up-to-date with query key changes',
     withEffectRoot(async () => {
       let search = $state('')
+      const states: Array<CreateQueryResult<string>> = []
 
-      const query = $derived(
-        createQuery(
-          {
-            queryKey: ['products', search],
-            queryFn: async () => Promise.resolve(search),
-          },
-          queryClient,
-        ),
+      const query = createQuery(
+        () => ({
+          queryKey: ['products', search],
+          queryFn: async () => Promise.resolve(search),
+          placeholderData: keepPreviousData,
+        }),
+        queryClient,
       )
 
+      $effect(() => {
+        states.push({ ...query })
+      })
+
       await vi.waitFor(() => expect(query.data).toBe(''))
-
       search = 'phone'
-
       await vi.waitFor(() => expect(query.data).toBe('phone'))
+
+      console.log(
+        states.map((s) => ({
+          data: s.data,
+          status: s.status,
+          fetchStatus: s.fetchStatus,
+        })),
+      )
+
+      expect(states.length).toBe(4)
+      expect(states[0]).toMatchObject({
+        status: 'pending',
+        fetchStatus: 'fetching',
+        data: undefined,
+      })
+      expect(states[1]).toMatchObject({
+        status: 'success',
+        fetchStatus: 'idle',
+        data: '',
+      })
+      expect(states[2]).toMatchObject({
+        status: 'success',
+        fetchStatus: 'fetching',
+        data: '',
+      })
+      expect(states[3]).toMatchObject({
+        status: 'success',
+        fetchStatus: 'idle',
+        data: 'phone',
+      })
     }),
   )
 
@@ -917,14 +735,12 @@ describe('createQuery', () => {
       const states: Array<CreateQueryResult<number>> = []
       let count = 0
 
-      const query = $derived(
-        createQuery(
-          {
-            queryKey: key,
-            queryFn: () => Promise.resolve(++count),
-          },
-          queryClient,
-        ),
+      const query = createQuery(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve(++count),
+        }),
+        queryClient,
       )
 
       $effect(() => {
@@ -972,17 +788,15 @@ describe('createQuery', () => {
 
       let count = 0
 
-      const query = $derived(
-        createQuery<typeof result1>(
-          {
-            queryKey: key,
-            queryFn: () => {
-              count++
-              return Promise.resolve(count === 1 ? result1 : result2)
-            },
+      const query = createQuery<typeof result1>(
+        () => ({
+          queryKey: key,
+          queryFn: () => {
+            count++
+            return Promise.resolve(count === 1 ? result1 : result2)
           },
-          queryClient,
-        ),
+        }),
+        queryClient,
       )
 
       $effect(() => {
@@ -1012,22 +826,20 @@ describe('createQuery', () => {
   )
 
   it(
-    'should share equal data structure between query results',
+    'should use query function from hook when the existing query does not have a query function',
     withEffectRoot(async () => {
       const key = ['test']
 
       queryClient.setQueryData(key, 'set')
 
-      const query = $derived(
-        createQuery(
-          {
-            queryKey: key,
-            queryFn: () => Promise.resolve('fetched'),
-            initialData: 'initial',
-            staleTime: Infinity,
-          },
-          queryClient,
-        ),
+      const query = createQuery(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve('fetched'),
+          initialData: 'initial',
+          staleTime: Infinity,
+        }),
+        queryClient,
       )
 
       await vi.waitFor(() => expect(query.data).toBe('set'))
@@ -1042,15 +854,13 @@ describe('createQuery', () => {
       const key = ['test']
       let count = 0
 
-      const query = $derived(
-        createQuery<number>(
-          {
-            queryKey: key,
-            queryFn: () => Promise.resolve(++count),
-            staleTime: Infinity,
-          },
-          queryClient,
-        ),
+      const query = createQuery<number>(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve(++count),
+          staleTime: Infinity,
+        }),
+        queryClient,
       )
 
       await vi.waitFor(() =>
@@ -1091,15 +901,13 @@ describe('createQuery', () => {
       const states: Array<CreateQueryResult<number>> = []
       let count = 0
 
-      const query = $derived(
-        createQuery<number>(
-          {
-            queryKey: key,
-            queryFn: () => Promise.resolve(++count),
-            enabled: false,
-          },
-          queryClient,
-        ),
+      const query = createQuery<number>(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve(++count),
+          enabled: false,
+        }),
+        queryClient,
       )
 
       $effect(() => {

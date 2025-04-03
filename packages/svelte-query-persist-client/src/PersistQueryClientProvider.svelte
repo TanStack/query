@@ -12,6 +12,7 @@
     OmitKeyof,
     QueryClientProviderProps,
   } from '@tanstack/svelte-query'
+  import { box } from './utils.svelte'
 
   type PersistQueryClientProviderProps = QueryClientProviderProps & {
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
@@ -25,9 +26,9 @@
     ...props
   }: PersistQueryClientProviderProps = $props()
 
-  let isRestoring = $state(true)
+  let isRestoring = box(true)
 
-  setIsRestoringContext(() => isRestoring)
+  setIsRestoringContext(isRestoring)
 
   const options = $derived({
     ...persistOptions,
@@ -39,12 +40,12 @@
   })
 
   $effect(() => {
-    isRestoring = true
+    isRestoring.current = true
     persistQueryClientRestore(options).then(async () => {
       try {
         await props.onSuccess?.()
       } finally {
-        isRestoring = false
+        isRestoring.current = false
       }
     })
   })

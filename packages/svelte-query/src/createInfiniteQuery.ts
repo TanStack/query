@@ -19,7 +19,7 @@ export function createInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: CreateInfiniteQueryOptions<
+  options: () => CreateInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,

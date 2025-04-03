@@ -4,7 +4,8 @@
     "outDir": "./dist-ts",
     "rootDir": ".",
     "baseUrl": ".",
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "types": ["vitest/globals"]
   },
   "include": [
     "src/**/*.js",

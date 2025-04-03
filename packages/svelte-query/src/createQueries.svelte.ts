@@ -190,19 +190,17 @@ export function createQueries<
   {
     queries,
     combine,
-    subscribed,
   }: {
-    queries: [...QueriesOptions<T>]
+    queries: () => [...QueriesOptions<T>]
     combine?: (result: QueriesResults<T>) => TCombinedResult
-    subscribed?: boolean
   },
   queryClient?: QueryClient,
 ): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 
-  const resolvedQueries = $derived(
-    queries.map((opts) => {
+  const resolvedQueryOptions = $derived(
+    queries().map((opts) => {
       const resolvedOptions = client.defaultQueryOptions(opts)
       // Make sure the results are already in fetching state before subscribing or updating options
       resolvedOptions._optimisticResults = isRestoring.current
@@ -214,13 +212,13 @@ export function createQueries<
 
   const observer = new QueriesObserver<TCombinedResult>(
     client,
-    resolvedQueries,
+    resolvedQueryOptions,
     combine as QueriesObserverOptions<TCombinedResult>,
   )
 
   function createResult() {
     const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
-      resolvedQueries,
+      resolvedQueryOptions,
       combine as QueriesObserverOptions<TCombinedResult>['combine'],
     )
     return getCombinedResult(trackResult())
@@ -230,14 +228,14 @@ export function createQueries<
   const [results, update] = createRawRef<TCombinedResult>(createResult())
 
   $effect(() => {
-    if (isRestoring.current || subscribed === false) {
-      return
-    }
-    return observer.subscribe(() => update(createResult()))
+    const unsubscribe = isRestoring.current
+      ? () => undefined
+      : observer.subscribe(() => update(createResult()))
+    return unsubscribe
   })
 
   $effect.pre(() => {
-    observer.setQueries(resolvedQueries, {
+    observer.setQueries(resolvedQueryOptions, {
       combine,
     } as QueriesObserverOptions<TCombinedResult>)
     update(createResult())

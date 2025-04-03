@@ -11,7 +11,7 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: CreateBaseQueryOptions<
+  options: () => CreateBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -26,7 +26,7 @@ export function createBaseQuery<
   const isRestoring = useIsRestoring()
 
   const resolvedOptions = $derived.by(() => {
-    const opts = client.defaultQueryOptions(options)
+    const opts = client.defaultQueryOptions(options())
     opts._optimisticResults = isRestoring.current ? 'isRestoring' : 'optimistic'
     return opts
   })
@@ -44,16 +44,27 @@ export function createBaseQuery<
     observer.getOptimisticResult(resolvedOptions),
   )
 
-  // if you update this effect in the future, _make sure_ the unsubscribe function is still being returned
-  $effect(() =>
-    observer.subscribe(() => {
-      const result = observer.getOptimisticResult(resolvedOptions)
-      update(result)
-    }),
-  )
+  $effect(() => {
+    const unsubscribe = isRestoring.current
+      ? () => undefined
+      : observer.subscribe(() =>
+          update(observer.getOptimisticResult(resolvedOptions)),
+        )
+    observer.updateResult()
+    return unsubscribe
+  })
 
   $effect.pre(() => {
     observer.setOptions(resolvedOptions)
+    // The only reason this is necessary is because of `isRestoring`.
+    // Because we don't subscribe while restoring, the following can occur:
+    // - `isRestoring` is true
+    // - `isRestoring` becomes false
+    // - `observer.subscribe` and `observer.updateResult` is called in the above effect,
+    //   but the subsequent `fetch` has already completed
+    // - `result` misses the intermediate restored-but-not-fetched state
+    //
+    // this could technically be its own effect but that doesn't seem necessary
     const result = observer.getOptimisticResult(resolvedOptions)
     update(result)
   })
