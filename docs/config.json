@@ -426,12 +426,20 @@
               "to": "framework/solid/guides/filters"
             },
             {
+              "label": "Request Waterfalls",
+              "to": "framework/solid/guides/request-waterfalls"
+            },
+            {
               "label": "Prefetching",
               "to": "framework/solid/guides/prefetching"
             },
             {
               "label": "SSR",
               "to": "framework/solid/guides/ssr"
+            },
+            {
+              "label": "Advanced SSR",
+              "to": "framework/solid/guides/advanced-ssr"
             },
             {
               "label": "Caching",
