@@ -73,13 +73,13 @@ In the example below, you can see Solid Query in its most basic and simple form 
 ```tsx
 import { ErrorBoundary, Suspense } from 'solid-js'
 import {
-  useQuery,
+  createQuery,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/solid-query'
 
 function App() {
-  const repositoryQuery = useQuery(() => ({
+  const repositoryQuery = createQuery(() => ({
     queryKey: ['TanStack Query'],
     queryFn: async () => {
       const result = await fetch('https://api.github.com/repos/TanStack/query')
