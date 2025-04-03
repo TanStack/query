@@ -2,7 +2,8 @@
 id: dependent-queries
 title: Dependent Queries
 ref: docs/framework/react/guides/dependent-queries.md
-replace: {
+replace:
+  {
     '@tanstack/react-query': '@tanstack/solid-query',
     'useMutationState[(]': 'useMutationState(() => ',
     'useMutation[(]': 'useMutation(() => ',

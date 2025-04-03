@@ -2,7 +2,8 @@
 id: infinite-queries
 title: Infinite Queries
 ref: docs/framework/react/guides/infinite-queries.md
-replace: {
+replace:
+  {
     '@tanstack/react-query': '@tanstack/solid-query',
     'useMutationState[(]': 'useMutationState(() => ',
     'useMutation[(]': 'useMutation(() => ',

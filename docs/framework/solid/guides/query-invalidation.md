@@ -2,7 +2,8 @@
 id: query-invalidation
 title: Query Invalidation
 ref: docs/framework/react/guides/query-invalidation.md
-replace: {
+replace:
+  {
     '@tanstack/react-query': '@tanstack/solid-query',
     'useMutationState[(]': 'useMutationState(() => ',
     'useMutation[(]': 'useMutation(() => ',

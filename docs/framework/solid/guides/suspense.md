@@ -8,13 +8,11 @@ Solid Query can also be used with Solid's [Suspense](https://docs.solidjs.com/re
 To do that you need to wrap your suspendable component with `Suspense` component provided by Vue
 
 ```tsx
-import { Suspense } from "solid-js"
+import { Suspense } from 'solid-js'
 
-
-<Suspense fallback={<LoadingSpinner />}>
+;<Suspense fallback={<LoadingSpinner />}>
   <SuspendableComponent />
 </Suspense>
-
 ```
 
 You can use async `suspense` function that is provided by `solid-query`.

@@ -2,7 +2,8 @@
 id: query-functions
 title: Query Functions
 ref: docs/framework/react/guides/query-functions.md
-replace: {
+replace:
+  {
     '@tanstack/react-query': '@tanstack/solid-query',
     'useMutationState[(]': 'useMutationState(() => ',
     'useMutation[(]': 'useMutation(() => ',

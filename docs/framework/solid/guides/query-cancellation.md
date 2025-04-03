@@ -2,14 +2,15 @@
 id: query-cancellation
 title: Query Cancellation
 ref: docs/framework/react/guides/query-cancellation.md
-replace: {
+replace:
+  {
     '@tanstack/react-query': '@tanstack/solid-query',
     'useMutationState[(]': 'useMutationState(() => ',
     'useMutation[(]': 'useMutation(() => ',
     'useQuery[(]': 'useQuery(() => ',
     'useQueries[(]': 'useQueries(() => ',
     'useInfiniteQuery[(]': 'useInfiniteQuery(() => ',
-}
+  }
 ---
 
 [//]: # 'Example7'

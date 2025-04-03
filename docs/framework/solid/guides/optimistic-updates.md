@@ -2,7 +2,8 @@
 id: optimistic-updates
 title: Optimistic Updates
 ref: docs/framework/react/guides/optimistic-updates.md
-replace: {
+replace:
+  {
     'React': 'Solid',
     '@tanstack/react-query': '@tanstack/solid-query',
     'useMutationState[(]': 'useMutationState(() => ',
@@ -10,5 +11,5 @@ replace: {
     'useQuery[(]': 'useQuery(() => ',
     'useQueries[(]': 'useQueries(() => ',
     'useInfiniteQuery[(]': 'useInfiniteQuery(() => ',
-}
+  }
 ---

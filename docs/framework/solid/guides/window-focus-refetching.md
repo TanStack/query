@@ -2,7 +2,8 @@
 id: window-focus-refetching
 title: Window Focus Refetching
 ref: docs/framework/react/guides/window-focus-refetching.md
-replace: {
+replace:
+  {
     '@tanstack/react-query': '@tanstack/solid-query',
     'useMutationState[(]': 'useMutationState(() => ',
     'useMutation[(]': 'useMutation(() => ',
@@ -10,6 +11,4 @@ replace: {
     'useQueries[(]': 'useQueries(() => ',
     'useInfiniteQuery[(]': 'useInfiniteQuery(() => ',
   }
-
 ---
-

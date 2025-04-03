@@ -2,7 +2,8 @@
 id: query-retries
 title: Query Retries
 ref: docs/framework/react/guides/query-retries.md
-replace: {
+replace:
+  {
     '@tanstack/react-query': '@tanstack/solid-query',
     'useMutationState[(]': 'useMutationState(() => ',
     'useMutation[(]': 'useMutation(() => ',
