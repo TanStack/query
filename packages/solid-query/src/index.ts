@@ -1,5 +1,27 @@
 /* istanbul ignore file */
 
+import { useQuery } from './useQuery'
+import { useInfiniteQuery } from './useInfiniteQuery'
+import { useMutation } from './useMutation'
+import { useQueries } from './useQueries'
+
+import type {
+  DefinedUseBaseQueryResult,
+  DefinedUseInfiniteQueryResult,
+  DefinedUseQueryResult,
+  UseBaseMutationResult,
+  UseBaseQueryOptions,
+  UseBaseQueryResult,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
+  UseMutateAsyncFunction,
+  UseMutateFunction,
+  UseMutationOptions,
+  UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult,
+} from './types'
+
 // Re-export core
 export * from '@tanstack/query-core'
 
@@ -7,82 +29,54 @@ export * from '@tanstack/query-core'
 export * from './types'
 
 export type {
-  UseQueryOptions,
-  UseBaseQueryResult,
-  UseQueryResult,
   DefinedUseBaseQueryResult,
-  DefinedUseQueryResult,
-  UseInfiniteQueryOptions,
-  UseInfiniteQueryResult,
   DefinedUseInfiniteQueryResult,
-  UseMutationOptions,
-  UseMutateFunction,
-  UseMutateAsyncFunction,
-  UseBaseMutationResult,
-  UseMutationResult,
-  UseBaseQueryOptions,
-  SolidQueryOptions,
+  DefinedUseQueryResult,
   SolidInfiniteQueryOptions,
   SolidMutationOptions,
+  SolidQueryOptions,
+  UseBaseMutationResult,
+  UseBaseQueryOptions,
+  UseBaseQueryResult,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
+  UseMutateAsyncFunction,
+  UseMutateFunction,
+  UseMutationOptions,
+  UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult,
 } from './types'
 
 // Compatibility types (deprecated)
-/**
- * @deprecated Use UseQueryOptions instead
- */
-export type { UseQueryOptions as CreateQueryOptions } from './types'
-/**
- * @deprecated Use UseBaseQueryResult instead
- */
-export type { UseBaseQueryResult as CreateBaseQueryResult } from './types'
-/**
- * @deprecated Use UseQueryResult instead
- */
-export type { UseQueryResult as CreateQueryResult } from './types'
-/**
- * @deprecated Use DefinedUseBaseQueryResult instead
- */
-export type { DefinedUseBaseQueryResult as DefinedCreateBaseQueryResult } from './types'
-/**
- * @deprecated Use DefinedUseQueryResult instead
- */
-export type { DefinedUseQueryResult as DefinedCreateQueryResult } from './types'
-/**
- * @deprecated Use UseInfiniteQueryOptions instead
- */
-export type { UseInfiniteQueryOptions as CreateInfiniteQueryOptions } from './types'
-/**
- * @deprecated Use UseInfiniteQueryResult instead
- */
-export type { UseInfiniteQueryResult as CreateInfiniteQueryResult } from './types'
-/**
- * @deprecated Use DefinedUseInfiniteQueryResult instead
- */
-export type { DefinedUseInfiniteQueryResult as DefinedCreateInfiniteQueryResult } from './types'
-/**
- * @deprecated Use UseMutationOptions instead
- */
-export type { UseMutationOptions as CreateMutationOptions } from './types'
-/**
- * @deprecated Use UseMutateFunction instead
- */
-export type { UseMutateFunction as CreateMutateFunction } from './types'
-/**
- * @deprecated Use UseMutateAsyncFunction instead
- */
-export type { UseMutateAsyncFunction as CreateMutateAsyncFunction } from './types'
-/**
- * @deprecated Use UseBaseMutationResult instead
- */
-export type { UseBaseMutationResult as CreateBaseMutationResult } from './types'
-/**
- * @deprecated Use UseMutationResult instead
- */
-export type { UseMutationResult as CreateMutationResult } from './types'
-/**
- * @deprecated Use UseBaseQueryOptions instead
- */
-export type { UseBaseQueryOptions as CreateBaseQueryOptions } from './types'
+/** @deprecated Use UseQueryOptions instead */
+export type CreateQueryOptions = UseQueryOptions
+/** @deprecated Use UseBaseQueryResult instead */
+export type CreateBaseQueryResult = UseBaseQueryResult
+/** @deprecated Use UseQueryResult instead */
+export type CreateQueryResult = UseQueryResult
+/** @deprecated Use DefinedUseBaseQueryResult instead */
+export type DefinedCreateBaseQueryResult = DefinedUseBaseQueryResult
+/** @deprecated Use DefinedUseQueryResult instead */
+export type DefinedCreateQueryResult = DefinedUseQueryResult
+/** @deprecated Use UseInfiniteQueryOptions instead */
+export type CreateInfiniteQueryOptions = UseInfiniteQueryOptions
+/** @deprecated Use UseInfiniteQueryResult instead */
+export type CreateInfiniteQueryResult = UseInfiniteQueryResult
+/** @deprecated Use DefinedUseInfiniteQueryResult instead */
+export type DefinedCreateInfiniteQueryResult = DefinedUseInfiniteQueryResult
+/** @deprecated Use UseMutationOptions instead */
+export type CreateMutationOptions = UseMutationOptions
+/** @deprecated Use UseMutateFunction instead */
+export type CreateMutateFunction = UseMutateFunction
+/** @deprecated Use UseMutateAsyncFunction instead */
+export type CreateMutateAsyncFunction = UseMutateAsyncFunction
+/** @deprecated Use UseBaseMutationResult instead */
+export type CreateBaseMutationResult = UseBaseMutationResult
+/** @deprecated Use UseMutationResult instead */
+export type CreateMutationResult = UseMutationResult
+/** @deprecated Use UseBaseQueryOptions instead */
+export type CreateBaseQueryOptions = UseBaseQueryOptions
 
 export { QueryClient } from './QueryClient'
 export type {
@@ -92,10 +86,8 @@ export type {
   InfiniteQueryObserverOptions,
 } from './QueryClient'
 export { useQuery } from './useQuery'
-/**
- * @deprecated Use useQuery instead
- */
-export { useQuery as createQuery } from './useQuery'
+/** @deprecated Use useQuery instead */
+export const createQuery = useQuery
 export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
@@ -108,26 +100,20 @@ export {
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export { useIsFetching } from './useIsFetching'
-export { useInfiniteQuery } from './useInfiniteQuery'
-/**
- * @deprecated Use useInfiniteQuery instead
- */
-export { useInfiniteQuery as createInfiniteQuery } from './useInfiniteQuery'
+export { useInfiniteQuery }
+/** @deprecated Use useInfiniteQuery instead */
+export const createInfiniteQuery = useInfiniteQuery
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
 export { useMutation } from './useMutation'
-/**
- * @deprecated Use useMutation instead
- */
-export { useMutation as createMutation } from './useMutation'
+/** @deprecated Use useMutation instead */
+export const createMutation = useMutation
 export { useIsMutating } from './useIsMutating'
 export { useMutationState } from './useMutationState'
 export { useQueries } from './useQueries'
-/**
- * @deprecated Use useQueries instead
- */
-export { useQueries as createQueries } from './useQueries'
+/** @deprecated Use useQueries instead */
+export const createQueries = useQueries
 export { useIsRestoring, IsRestoringProvider } from './isRestoring'
