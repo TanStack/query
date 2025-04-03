@@ -15,7 +15,7 @@ import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import { shouldThrowError } from './utils'
 import { useIsRestoring } from './isRestoring'
-import type { CreateBaseQueryOptions } from './types'
+import type { UseBaseQueryOptions } from './types'
 import type { Accessor, Signal } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -101,7 +101,7 @@ const hydratableObserverResult = <
 }
 
 // Base Query Function that is used to create the query.
-export function createBaseQuery<
+export function useBaseQuery<
   TQueryFnData,
   TError,
   TData,
@@ -109,7 +109,7 @@ export function createBaseQuery<
   TQueryKey extends QueryKey,
 >(
   options: Accessor<
-    CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+    UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
   queryClient?: Accessor<QueryClient>,
