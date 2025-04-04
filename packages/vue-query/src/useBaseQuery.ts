@@ -49,7 +49,7 @@ type UseQueryOptionsGeneric<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
+      TQueryFnData,
       TQueryKey,
       TPageParam
     >
