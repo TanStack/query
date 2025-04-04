@@ -1,6 +1,9 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { DefinedInitialDataInfiniteOptions, UndefinedInitialDataInfiniteOptions } from './infiniteQueryOptions'
+import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
 import type {
   DefaultError,
   InfiniteData,
@@ -12,7 +15,12 @@ import type {
 
 import type { UseBaseQueryReturnType } from './useBaseQuery'
 
-import type { DeepUnwrapRef, MaybeRef, MaybeRefDeep, MaybeRefOrGetter } from './types'
+import type {
+  DeepUnwrapRef,
+  MaybeRef,
+  MaybeRefDeep,
+  MaybeRefOrGetter,
+} from './types'
 import type { QueryClient } from './queryClient'
 
 export type UseInfiniteQueryOptions<
