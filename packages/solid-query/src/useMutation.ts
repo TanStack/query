@@ -6,22 +6,22 @@ import { noop, shouldThrowError } from './utils'
 import type { DefaultError } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type {
-  CreateMutateFunction,
-  CreateMutationOptions,
-  CreateMutationResult,
+  UseMutateFunction,
+  UseMutationOptions,
+  UseMutationResult,
 } from './types'
 import type { Accessor } from 'solid-js'
 
 // HOOK
-export function createMutation<
+export function useMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 >(
-  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
+  options: UseMutationOptions<TData, TError, TVariables, TContext>,
   queryClient?: Accessor<QueryClient>,
-): CreateMutationResult<TData, TError, TVariables, TContext> {
+): UseMutationResult<TData, TError, TVariables, TContext> {
   const client = createMemo(() => useQueryClient(queryClient?.()))
 
   const observer = new MutationObserver<TData, TError, TVariables, TContext>(
@@ -29,7 +29,7 @@ export function createMutation<
     options(),
   )
 
-  const mutate: CreateMutateFunction<TData, TError, TVariables, TContext> = (
+  const mutate: UseMutateFunction<TData, TError, TVariables, TContext> = (
     variables,
     mutateOptions,
   ) => {
@@ -37,7 +37,7 @@ export function createMutation<
   }
 
   const [state, setState] = createStore<
-    CreateMutationResult<TData, TError, TVariables, TContext>
+    UseMutationResult<TData, TError, TVariables, TContext>
   >({
     ...observer.getCurrentResult(),
     mutate,
