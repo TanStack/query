@@ -58,7 +58,7 @@
     "premove": "^4.0.0",
     "prettier": "^3.4.2",
     "prettier-plugin-svelte": "^3.3.2",
-    "publint": "^0.2.12",
+    "publint": "^0.3.10",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sherif": "^1.0.0",
@@ -73,7 +73,6 @@
     "typescript56": "npm:typescript@5.6",
     "typescript57": "npm:typescript@5.7",
     "vite": "^6.2.4",
-    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.1.1"
   },
   "pnpm": {

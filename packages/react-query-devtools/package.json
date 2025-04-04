@@ -41,6 +41,7 @@
   "exports": {
     ".": {
       "import": {
+        "@tanstack/custom-condition": "./src/index.ts",
         "types": "./build/modern/index.d.ts",
         "default": "./build/modern/index.js"
       },
@@ -51,6 +52,7 @@
     },
     "./production": {
       "import": {
+        "@tanstack/custom-condition": "./src/production.ts",
         "types": "./build/modern/production.d.ts",
         "default": "./build/modern/production.js"
       },
@@ -61,6 +63,7 @@
     },
     "./build/modern/production.js": {
       "import": {
+        "@tanstack/custom-condition": "./src/production.ts",
         "types": "./build/modern/production.d.ts",
         "default": "./build/modern/production.js"
       },
