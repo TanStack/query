@@ -31,7 +31,7 @@ export interface QueryFilters<
   /**
    * Include queries matching this predicate function
    */
-  predicate?: (query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean
+  predicate?: (query: Query) => boolean
   /**
    * Include queries matching this query key
    */
