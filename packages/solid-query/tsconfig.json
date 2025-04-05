@@ -6,7 +6,6 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "moduleResolution": "Bundler"
   },
   "include": [
     "src",

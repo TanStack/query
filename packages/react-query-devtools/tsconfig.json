@@ -5,7 +5,6 @@
     "rootDir": ".",
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "moduleResolution": "Bundler"
   },
   "include": [
     "src",

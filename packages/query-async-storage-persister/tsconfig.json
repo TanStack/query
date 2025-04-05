@@ -4,7 +4,6 @@
     "outDir": "./dist-ts",
     "rootDir": ".",
     "baseUrl": ".",
-    "moduleResolution": "Bundler"
   },
   "include": ["src", "*.config.js", "*.config.ts", "package.json"],
   "references": [{ "path": "../query-persist-client-core" }]
