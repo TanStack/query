@@ -3,8 +3,6 @@ id: QueryObserver
 title: QueryObserver
 ---
 
-## `QueryObserver`
-
 The `QueryObserver` can be used to observe and switch between queries.
 
 ```tsx

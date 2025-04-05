@@ -1,13 +1,17 @@
-import { beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { sleep } from '../utils'
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { FocusManager } from '../focusManager'
 import { setIsServer } from './utils'
 
 describe('focusManager', () => {
   let focusManager: FocusManager
   beforeEach(() => {
+    vi.useFakeTimers()
     vi.resetModules()
     focusManager = new FocusManager()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   it('should call previous remove handler when replacing an event listener', () => {
@@ -34,7 +38,7 @@ describe('focusManager', () => {
 
     focusManager.setEventListener(setup)
 
-    await sleep(30)
+    await vi.advanceTimersByTimeAsync(20)
     expect(count).toEqual(1)
     expect(focusManager.isFocused()).toBeTruthy()
   })

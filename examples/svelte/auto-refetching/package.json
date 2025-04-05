@@ -8,16 +8,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^5.67.3",
-    "@tanstack/svelte-query-devtools": "^5.67.3"
+    "@tanstack/svelte-query": "^5.71.10",
+    "@tanstack/svelte-query-devtools": "^5.71.10"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.3.1",
     "@sveltejs/kit": "^2.14.0",
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
-    "svelte": "^4.2.18",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "typescript": "5.8.2",
-    "vite": "^5.3.5"
+    "vite": "^6.2.4"
   }
 }

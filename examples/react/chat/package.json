@@ -1,0 +1,23 @@
+{
+  "name": "@tanstack/query-example-chat",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.71.10",
+    "@tanstack/react-query-devtools": "^5.71.10",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.14",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tailwindcss": "^4.0.14",
+    "typescript": "5.8.2",
+    "vite": "^6.2.4"
+  }
+}

@@ -554,9 +554,9 @@ describe('useSuspenseQueries 2', () => {
     function Page() {
       useSuspenseQuery({
         queryKey: key,
-        queryFn: async () => {
+        queryFn: () => {
           count++
-          throw new Error('Query failed')
+          return Promise.reject(new Error('Query failed'))
         },
         gcTime: 0,
         retry: false,
