@@ -34,7 +34,6 @@ import type {
   QueryClient,
   QueryFunction,
   QueryKey,
-  QueryObserverOptions,
   ThrowOnError,
 } from '@tanstack/query-core'
 
@@ -228,9 +227,7 @@ export function useQueries<
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(
-          opts as QueryObserverOptions,
-        )
+        const defaultedOptions = client.defaultQueryOptions(opts)
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
