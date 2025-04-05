@@ -1142,4 +1142,130 @@ describe('dehydration and rehydration', () => {
     clientQueryClient.clear()
     serverQueryClient.clear()
   })
+
+  test('should not redact errors when shouldRedactErrors returns false', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({
+      queryCache,
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+          shouldRedactErrors: () => false,
+        },
+      },
+    })
+
+    const testError = new Error('original error')
+
+    const promise = queryClient
+      .prefetchQuery({
+        queryKey: ['error'],
+        queryFn: () => Promise.reject(testError),
+        retry: false,
+      })
+      .catch(() => undefined)
+
+    const dehydrated = dehydrate(queryClient)
+
+    expect(dehydrated.queries[0]?.promise).toBeInstanceOf(Promise)
+
+    try {
+      await dehydrated.queries[0]?.promise
+      expect(true).toBe(false)
+    } catch (error) {
+      expect(error).toBe(testError)
+    }
+
+    await promise
+    queryClient.clear()
+  })
+
+  test('should handle errors in promises for pending queries', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
+    const originalNodeEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'production'
+
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({
+      queryCache,
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+
+    const promise = queryClient
+      .prefetchQuery({
+        queryKey: ['error'],
+        queryFn: () => Promise.reject(new Error('test error')),
+        retry: false,
+      })
+      .catch(() => undefined)
+
+    const dehydrated = dehydrate(queryClient)
+
+    expect(dehydrated.queries[0]?.promise).toBeInstanceOf(Promise)
+
+    try {
+      await dehydrated.queries[0]?.promise
+      expect(true).toBe(false)
+    } catch (error) {}
+
+    process.env.NODE_ENV = originalNodeEnv
+
+    await promise
+    consoleMock.mockRestore()
+    queryClient.clear()
+  })
+
+  test('should log error in development environment when redacting errors', async () => {
+    const originalNodeEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+
+    const consoleMock = vi.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({
+      queryCache,
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+          shouldRedactErrors: () => true,
+        },
+      },
+    })
+
+    const testError = new Error('test error')
+
+    const promise = queryClient
+      .prefetchQuery({
+        queryKey: ['error'],
+        queryFn: () => Promise.reject(testError),
+        retry: false,
+      })
+      .catch(() => undefined)
+
+    const dehydrated = dehydrate(queryClient)
+
+    try {
+      await dehydrated.queries[0]?.promise
+      expect(true).toBe(false)
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(error.message).toBe('redacted')
+      }
+      expect(consoleMock).toHaveBeenCalledWith(
+        expect.stringContaining('test error'),
+      )
+    }
+
+    process.env.NODE_ENV = originalNodeEnv
+    consoleMock.mockRestore()
+    await promise
+    queryClient.clear()
+  })
 })
