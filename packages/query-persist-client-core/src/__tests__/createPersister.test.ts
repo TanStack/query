@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { Query, QueryClient, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
-  experimental_createPersister,
+  experimental_createQueryPersister,
 } from '../createPersister'
 import { sleep } from './utils'
 import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
@@ -40,7 +40,7 @@ function setupPersister(
 
   const queryFn = vi.fn()
 
-  const persisterFn = experimental_createPersister(persisterOptions)
+  const { persisterFn } = experimental_createQueryPersister(persisterOptions)
 
   const query = new Query({
     client,
@@ -206,7 +206,7 @@ describe('createPersister', () => {
       storageKey,
       JSON.stringify({
         buster: '',
-        state: { dataUpdatedAt },
+        state: { dataUpdatedAt, data: '' },
       }),
     )
 
@@ -235,7 +235,7 @@ describe('createPersister', () => {
       storageKey,
       JSON.stringify({
         buster: '',
-        state: { dataUpdatedAt: Date.now() },
+        state: { dataUpdatedAt: Date.now(), data: '' },
       }),
     )
 
@@ -329,7 +329,7 @@ describe('createPersister', () => {
       storageKey,
       JSON.stringify({
         buster: '',
-        state: { dataUpdatedAt: Date.now() },
+        state: { dataUpdatedAt: Date.now(), data: '' },
       }),
     )
 
