@@ -386,20 +386,20 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Fetch Page 1
-    await vi.waitFor(async () => {
-      const page1Data = await observer.fetchNextPage()
-      expect(page1Data.data?.pageParams).toEqual([1])
+    const page1Data = await observer.fetchNextPage()
+    await vi.waitFor(() => {
+      expect(page1Data.data?.pageParams).toEqual([1, 2])
     })
 
     // Fetch Page 2, as per the queryFn, this will reject 2 times then resolves
-    await vi.waitFor(async () => {
-      const page2Data = await observer.fetchNextPage()
+    const page2Data = await observer.fetchNextPage()
+    await vi.waitFor(() => {
       expect(page2Data.data?.pageParams).toEqual([1, 2])
     })
 
     // Fetch Page 3
-    await vi.waitFor(async () => {
-      const page3Data = await observer.fetchNextPage()
+    const page3Data = await observer.fetchNextPage()
+    await vi.waitFor(() => {
       expect(page3Data.data?.pageParams).toEqual([1, 2, 3])
     })
 
@@ -408,8 +408,8 @@ describe('InfiniteQueryBehavior', () => {
     // once it reaches the page where it errors.
     // For this to work, we'd need to reset the error count so we actually retry
     errorCount = 0
-    await vi.waitFor(async () => {
-      const reFetchedData = await observer.refetch()
+    const reFetchedData = await observer.refetch()
+    await vi.waitFor(() => {
       expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
     })
   })
