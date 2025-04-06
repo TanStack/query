@@ -100,7 +100,7 @@ pnpm i
 pnpm dev
 ```
 
-4. Now you can visit http://localhost:3000/query/latest/docs/overview in the browser and see the changes you make in `tanstack/query/docs` there.
+4. Now you can visit http://localhost:3000/query/latest/docs/framework/react/overview in the browser and see the changes you make in `tanstack/query/docs` there.
 
 > [!WARNING]
 > You will need to update the `docs/config.json` file (in `TanStack/query`) if you add a new documentation page!

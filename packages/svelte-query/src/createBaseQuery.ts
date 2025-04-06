@@ -56,9 +56,7 @@ export function createBaseQuery<
   >(client, get(defaultedOptionsStore))
 
   defaultedOptionsStore.subscribe(($defaultedOptions) => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setOptions($defaultedOptions, { listeners: false })
+    observer.setOptions($defaultedOptions)
   })
 
   const result = derived<

@@ -367,8 +367,8 @@ describe('mutationCache', () => {
       const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {
         gcTime: 0,
-        mutationFn: async () => {
-          return 'data'
+        mutationFn: () => {
+          return Promise.resolve('data')
         },
         onSuccess,
       })

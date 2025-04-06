@@ -17,7 +17,7 @@
 
 <button on:click={() => $mutation.mutate({ count: ++$count })}>Mutate</button>
 
-<div>Data: {$mutation.data?.count}</div>
+<div>Data: {$mutation.data?.count ?? 'undefined'}</div>
 <div>Status: {$mutation.status}</div>
-<div>Failure Count: {$mutation.failureCount}</div>
-<div>Failure Reason: {$mutation.failureReason}</div>
+<div>Failure Count: {$mutation.failureCount ?? 'undefined'}</div>
+<div>Failure Reason: {$mutation.failureReason ?? 'null'}</div>
