@@ -2,7 +2,7 @@
 import {
   QueryClient,
   QueryClientProvider,
-  createQuery,
+  useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Match, Switch, createSignal } from 'solid-js'
@@ -46,7 +46,7 @@ function App() {
 }
 
 function createPosts() {
-  return createQuery(() => ({
+  return useQuery(() => ({
     queryKey: ['posts'],
     queryFn: async () => {
       const {
@@ -117,7 +117,7 @@ function Posts(props: { setPostId: Setter<number> }) {
 }
 
 function createPost(postId: Accessor<number>) {
-  return createQuery(() => ({
+  return useQuery(() => ({
     queryKey: ['post', postId()],
     queryFn: async () => {
       const { post } = await request<{ post: Post }>(
