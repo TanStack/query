@@ -40,9 +40,9 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
+    "@tanstack/custom-condition": "./src/index.ts",
     "development": {
       "import": {
-        "@tanstack/custom-condition": "./src/index.ts",
         "types": "./build/index.d.ts",
         "default": "./build/dev.js"
       },
@@ -52,7 +52,6 @@
       }
     },
     "import": {
-      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./build/index.d.ts",
       "default": "./build/index.js"
     },
