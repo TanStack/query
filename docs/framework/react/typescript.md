@@ -239,6 +239,24 @@ const data = queryClient.getQueryData<Group[]>(['groups'])
 [//]: # 'TypingQueryOptions'
 [//]: # 'Materials'
 
+## Typing Mutation Options
+
+Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation options into a separate function:
+
+```ts
+function useGroupPostMutation() {
+  const queryClient = useQueryClient()
+
+  return mutationOptions({
+    mutationKey: ['groups'],
+    mutationFn: executeGroups,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+    },
+  })
+}
+```
+
 ## Further Reading
 
 For tips and tricks around type inference, have a look at [React Query and TypeScript](./community/tkdodos-blog.md#6-react-query-and-typescript) from
