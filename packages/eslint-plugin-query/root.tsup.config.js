@@ -16,7 +16,7 @@ export function modernConfig(opts) {
     dts: true,
     sourcemap: true,
     clean: true,
-    external: ["typescript"],
+    external: ['typescript'],
   }
 }
 
@@ -34,6 +34,6 @@ export function legacyConfig(opts) {
     dts: true,
     sourcemap: true,
     clean: true,
-    external: ["typescript"],
+    external: ['typescript'],
   }
 }
