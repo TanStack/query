@@ -102,8 +102,6 @@ export async function persistQueryClientRestore({
 
     try {
       await persister.removeClient()
-
-      throw restoreClientError
     } catch (removeClientError) {
       if (process.env.NODE_ENV !== 'production') {
         console.error(removeClientError)
@@ -111,6 +109,8 @@ export async function persistQueryClientRestore({
 
       throw removeClientError
     }
+
+    throw restoreClientError
   }
 }
 
