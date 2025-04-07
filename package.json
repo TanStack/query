@@ -100,8 +100,7 @@
       "@tanstack/vue-query": "workspace:*",
       "@tanstack/vue-query-devtools": "workspace:*",
       "@types/react": "^19.0.1",
-      "@types/react-dom": "^19.0.2",
-      "eslint": "$eslint"
+      "@types/react-dom": "^19.0.2"
     }
   }
 }
