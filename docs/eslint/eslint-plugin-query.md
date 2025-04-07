@@ -46,6 +46,21 @@ export default [
 ]
 ```
 
+### Recommended type-checked setup
+
+If you're using TypeScript and want to enable rules that require type information, you can use the `flat/recommendedTypeChecked` config:
+
+```js
+import pluginQuery from '@tanstack/eslint-plugin-query'
+
+export default [
+  ...pluginQuery.configs['flat/recommendedTypeChecked'],
+  // Any other config...
+]
+```
+
+> ℹ️ This setup requires type-aware linting. You can follow the [TypeScript ESLint documentation on type-checking](https://typescript-eslint.io/linting/typed-linting/) to set up your ESLint config accordingly.
+
 ### Custom setup
 
 Alternatively, you can load the plugin and configure only the rules you want to use:

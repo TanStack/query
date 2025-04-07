@@ -36,4 +36,5 @@ useQuery({
 ## Attributes
 
 - [x] ✅ Recommended
+- [x] 💭 Type checked
 - [ ] 🔧 Fixable
