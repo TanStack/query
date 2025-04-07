@@ -97,6 +97,7 @@ describe('persistQueryClientRestore', () => {
     expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
 
     consoleMock.mockRestore()
+    consoleWarn.mockRestore()
   })
 
   test('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
@@ -130,6 +131,7 @@ describe('persistQueryClientRestore', () => {
     expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
 
     consoleMock.mockRestore()
+    consoleWarn.mockRestore()
   })
 
   test('should rethrow error in `removeClient`', async () => {
