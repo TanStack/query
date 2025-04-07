@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
 import { render, screen, waitFor } from '@solidjs/testing-library'
-import { QueryClient, createQueries, createQuery } from '@tanstack/solid-query'
+import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createEffect, createSignal, onMount } from 'solid-js'
 
@@ -69,7 +69,7 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -147,7 +147,7 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const [state] = createQueries(() => ({
+      const [state] = useQueries(() => ({
         queries: [
           {
             queryKey: key,
@@ -230,7 +230,7 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -315,7 +315,7 @@ describe('PersistQueryClientProvider', () => {
     let fetched = false
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           fetched = true
@@ -386,7 +386,7 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -432,7 +432,7 @@ describe('PersistQueryClientProvider', () => {
     const [error, persister] = createMockErrorPersister(removeClient)
 
     function Page() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -530,7 +530,7 @@ describe('PersistQueryClientProvider', () => {
     }
 
     function Page() {
-      const state = createQuery(() => ({ queryKey: key }))
+      const state = useQuery(() => ({ queryKey: key }))
 
       createEffect(() =>
         states.push({

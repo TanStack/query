@@ -16,10 +16,6 @@ import {
 } from '..'
 import { setFixtureSignalInputs, successMutator } from './test-utils'
 
-const MUTATION_DURATION = 1000
-
-const resolveMutations = () => vi.advanceTimersByTimeAsync(MUTATION_DURATION)
-
 describe('injectMutationState', () => {
   let queryClient: QueryClient
 
@@ -163,6 +159,7 @@ describe('injectMutationState', () => {
       const fixture = TestBed.createComponent(FakeComponent)
       const { debugElement } = fixture
       setFixtureSignalInputs(fixture, { name: fakeName })
+      vi.advanceTimersByTime(0.1)
 
       let spans = debugElement
         .queryAll(By.css('span'))
@@ -170,7 +167,7 @@ describe('injectMutationState', () => {
 
       expect(spans).toEqual(['pending', 'pending'])
 
-      await resolveMutations()
+      await vi.runAllTimersAsync()
       fixture.detectChanges()
 
       spans = debugElement

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.71.2",
+  "version": "5.71.5",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -41,17 +41,20 @@
   "browser": {},
   "exports": {
     "solid": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "development": "./build/index.js",
       "import": "./build/index.js"
     },
     "development": {
       "import": {
+        "@tanstack/custom-condition": "./src/index.ts",
         "types": "./build/index.d.ts",
         "default": "./build/dev.js"
       },
       "require": "./build/dev.cjs"
     },
     "import": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./build/index.d.ts",
       "default": "./build/index.js"
     },
@@ -71,7 +74,7 @@
     "@tanstack/query-core": "workspace:*",
     "clsx": "^2.1.1",
     "goober": "^2.1.16",
-    "npm-run-all": "^4.1.5",
+    "npm-run-all2": "^5.0.0",
     "solid-js": "^1.9.5",
     "solid-transition-group": "^0.2.3",
     "superjson": "^2.2.1",
