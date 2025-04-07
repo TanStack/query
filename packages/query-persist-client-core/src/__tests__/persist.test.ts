@@ -69,6 +69,14 @@ describe('persistQueryClientSave', () => {
 
 describe('persistQueryClientRestore', () => {
   test('should rethrow exceptions in `restoreClient`', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const consoleWarn = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
+
     const queryClient = createQueryClient()
 
     const restoreError = new Error('Error restoring client')
@@ -83,9 +91,23 @@ describe('persistQueryClientRestore', () => {
         persister,
       }),
     ).rejects.toBe(restoreError)
+
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleWarn).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
+
+    consoleMock.mockRestore()
   })
 
   test('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const consoleWarn = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
+
     const queryClient = createQueryClient()
 
     const restoreError = new Error('Error restoring client')
@@ -102,6 +124,12 @@ describe('persistQueryClientRestore', () => {
         persister,
       }),
     ).rejects.toBe(removeError)
+
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleWarn).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
+
+    consoleMock.mockRestore()
   })
 
   test('should rethrow error in `removeClient`', async () => {
