@@ -809,6 +809,46 @@ importers:
         specifier: ^6.2.4
         version: 6.2.5(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)
 
+  examples/react/eslint-type-checked:
+    dependencies:
+      '@tanstack/query-sync-storage-persister':
+        specifier: workspace:*
+        version: link:../../../packages/query-sync-storage-persister
+      '@tanstack/react-query':
+        specifier: workspace:*
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: workspace:*
+        version: link:../../../packages/react-query-devtools
+      '@tanstack/react-query-persist-client':
+        specifier: workspace:*
+        version: link:../../../packages/react-query-persist-client
+      react:
+        specifier: ^19.0.0
+        version: 19.0.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.0.0(react@19.0.0)
+    devDependencies:
+      '@tanstack/eslint-plugin-query':
+        specifier: workspace:*
+        version: link:../../../packages/eslint-plugin-query
+      '@types/react':
+        specifier: ^19.0.1
+        version: 19.0.1
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.0.2(@types/react@19.0.1)
+      '@vitejs/plugin-react':
+        specifier: ^4.3.4
+        version: 4.3.4(vite@6.2.5(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
+      vite:
+        specifier: ^6.2.4
+        version: 6.2.5(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)
+
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
