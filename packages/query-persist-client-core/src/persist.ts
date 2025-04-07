@@ -92,14 +92,25 @@ export async function persistQueryClientRestore({
         persister.removeClient()
       }
     }
-  } catch (err) {
+  } catch (restoreClientError) {
     if (process.env.NODE_ENV !== 'production') {
-      console.error(err)
+      console.error(restoreClientError)
       console.warn(
         'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.',
       )
     }
-    persister.removeClient()
+
+    try {
+      await persister.removeClient()
+
+      throw restoreClientError
+    } catch (removeClientError) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(removeClientError)
+      }
+
+      throw removeClientError
+    }
   }
 }
 

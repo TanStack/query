@@ -1,11 +1,15 @@
 import { describe, expect, test, vi } from 'vitest'
 import { QueriesObserver } from '@tanstack/query-core'
-import { persistQueryClientSubscribe } from '../persist'
+import {
+  persistQueryClientRestore,
+  persistQueryClientSubscribe,
+} from '../persist'
 import {
   createMockPersister,
   createQueryClient,
   createSpyPersister,
 } from './utils'
+import type { Persister } from '../persist'
 
 describe('persistQueryClientSubscribe', () => {
   test('should persist mutations', async () => {
@@ -61,5 +65,43 @@ describe('persistQueryClientSave', () => {
     expect(persister.persistClient).toHaveBeenCalledTimes(3)
 
     unsubscribe()
+  })
+})
+
+describe('persistQueryClientRestore', () => {
+  test('should rethrow exceptions in `restoreClient`', async () => {
+    const queryClient = createQueryClient()
+
+    const restoreError = new Error('Error restoring client')
+
+    const persister = createSpyPersister()
+
+    persister.restoreClient = () => Promise.reject(restoreError)
+
+    await expect(
+      persistQueryClientRestore({
+        queryClient,
+        persister,
+      }),
+    ).rejects.toBe(restoreError)
+  })
+
+  test('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
+    const queryClient = createQueryClient()
+
+    const restoreError = new Error('Error restoring client')
+    const removeError = new Error('Error removing client')
+
+    const persister = createSpyPersister()
+
+    persister.restoreClient = () => Promise.reject(restoreError)
+    persister.removeClient = () => Promise.reject(removeError)
+
+    await expect(
+      persistQueryClientRestore({
+        queryClient,
+        persister,
+      }),
+    ).rejects.toBe(removeError)
   })
 })
