@@ -84,12 +84,12 @@ export async function persistQueryClientRestore({
         const expired = Date.now() - persistedClient.timestamp > maxAge
         const busted = persistedClient.buster !== buster
         if (expired || busted) {
-          persister.removeClient()
+          return persister.removeClient()
         } else {
           hydrate(queryClient, persistedClient.clientState, hydrateOptions)
         }
       } else {
-        persister.removeClient()
+        return persister.removeClient()
       }
     }
   } catch (restoreClientError) {

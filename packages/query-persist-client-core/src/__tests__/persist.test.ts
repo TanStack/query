@@ -9,7 +9,6 @@ import {
   createQueryClient,
   createSpyPersister,
 } from './utils'
-import type { Persister } from '../persist'
 
 describe('persistQueryClientSubscribe', () => {
   test('should persist mutations', async () => {
@@ -96,6 +95,32 @@ describe('persistQueryClientRestore', () => {
 
     persister.restoreClient = () => Promise.reject(restoreError)
     persister.removeClient = () => Promise.reject(removeError)
+
+    await expect(
+      persistQueryClientRestore({
+        queryClient,
+        persister,
+      }),
+    ).rejects.toBe(removeError)
+  })
+
+  test('should rethrow error in `removeClient`', async () => {
+    const queryClient = createQueryClient()
+
+    const persister = createSpyPersister()
+    const removeError = new Error('Error removing client')
+
+    persister.removeClient = () => Promise.reject(removeError)
+    persister.restoreClient = () => {
+      return Promise.resolve({
+        buster: 'random-buster',
+        clientState: {
+          mutations: [],
+          queries: [],
+        },
+        timestamp: new Date().getTime(),
+      })
+    }
 
     await expect(
       persistQueryClientRestore({
