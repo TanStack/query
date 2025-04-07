@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/eslint-plugin-query"
   },
   "homepage": "https://tanstack.com/query",
@@ -31,36 +31,35 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
-    "build": "vite build"
+    "build": "tsup && node ./scripts/patch-missing-export-equals.js"
   },
   "type": "module",
-  "types": "dist/esm/index.d.ts",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "exports": {
     ".": {
       "import": {
         "@tanstack/custom-condition": "./src/index.ts",
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       },
       "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
       }
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "dist",
-    "src",
-    "!src/__tests__"
+    "dist"
   ],
   "dependencies": {
     "@typescript-eslint/utils": "^8.18.1"
   },
   "devDependencies": {
+    "@typescript-eslint/parser": "^8.18.1",
     "@typescript-eslint/rule-tester": "^8.18.1",
     "combinate": "^1.1.11",
     "eslint": "^9.15.0",

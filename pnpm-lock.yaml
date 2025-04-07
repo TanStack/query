@@ -2243,6 +2243,9 @@ importers:
         specifier: ^8.18.1
         version: 8.18.1(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.2)
     devDependencies:
+      '@typescript-eslint/parser':
+        specifier: ^8.18.1
+        version: 8.18.1(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.2)
       '@typescript-eslint/rule-tester':
         specifier: ^8.18.1
         version: 8.18.1(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.2)
