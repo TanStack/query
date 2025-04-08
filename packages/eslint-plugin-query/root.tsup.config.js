@@ -1,7 +1,5 @@
 // @ts-check
 
-import { esbuildPluginFilePathExtensions } from 'esbuild-plugin-file-path-extensions'
-
 /**
  * @param {Object} opts - Options for building configurations.
  * @param {string[]} opts.entry - The entry array.
