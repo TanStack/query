@@ -5,18 +5,37 @@ import { svelteTesting } from '@testing-library/svelte/vite'
 import packageJson from './package.json'
 
 export default defineConfig({
-  plugins: [svelte(), svelteTesting()],
+  plugins: [svelte()],
   resolve: {
     conditions: ['@tanstack/custom-condition'],
   },
   test: {
     name: packageJson.name,
-    dir: './tests',
-    watch: false,
-    environment: 'jsdom',
-    setupFiles: ['./tests/test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
-    typecheck: { enabled: true },
-    restoreMocks: true,
+    globals: true,
+
+    workspace: [
+      {
+        extends: './vite.config.ts',
+        plugins: [svelteTesting()],
+
+        test: {
+          name: 'client',
+          environment: 'jsdom',
+          clearMocks: true,
+          include: ['tests/**/*.svelte.{test,spec}.{js,ts}'],
+          setupFiles: ['./tests/vitest-setup-client.ts'],
+        },
+      },
+      {
+        extends: './vite.config.ts',
+
+        test: {
+          name: 'server',
+          environment: 'node',
+          include: ['tests/**/*.{test,spec}.{js,ts}'],
+          exclude: ['tests/**/*.svelte.{test,spec}.{js,ts}'],
+        },
+      },
+    ],
   },
 })

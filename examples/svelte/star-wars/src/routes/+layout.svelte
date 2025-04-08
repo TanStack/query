@@ -4,6 +4,8 @@
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 
+  const { children } = $props()
+
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -25,6 +27,6 @@
     <a href="/films">Films</a>
     <a href="/characters">Characters</a>
   </nav>
-  <slot />
+  {@render children()}
   <SvelteQueryDevtools />
 </QueryClientProvider>
