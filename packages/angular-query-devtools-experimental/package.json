@@ -36,7 +36,6 @@
   "module": "build/index.mjs",
   "exports": {
     ".": {
-      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./build/index.d.ts",
       "default": "./build/index.mjs"
     },
