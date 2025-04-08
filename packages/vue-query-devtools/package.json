@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "5.72.0",
+  "version": "5.72.1",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",

@@ -18,4 +18,11 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   external: ['typescript'],
+  footer: ({ format }) => {
+    if (format === 'cjs') {
+      return { js: `module.exports = module.exports.default` }
+    }
+
+    return
+  },
 })
