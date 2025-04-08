@@ -1168,11 +1168,8 @@ describe('dehydration and rehydration', () => {
     const dehydrated = dehydrate(queryClient)
 
     expect(dehydrated.queries[0]?.promise).toBeInstanceOf(Promise)
-
     await expect(dehydrated.queries[0]?.promise).rejects.toBe(testError)
-
     await promise
-    queryClient.clear()
   })
 
   test('should handle errors in promises for pending queries', async () => {
@@ -1208,7 +1205,6 @@ describe('dehydration and rehydration', () => {
 
     await promise
     consoleMock.mockRestore()
-    queryClient.clear()
   })
 
   test('should log error in development environment when redacting errors', async () => {
@@ -1256,6 +1252,5 @@ describe('dehydration and rehydration', () => {
     process.env.NODE_ENV = originalNodeEnv
     consoleMock.mockRestore()
     await promise
-    queryClient.clear()
   })
 })
