@@ -10,7 +10,8 @@
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/*.js",
       "{workspaceRoot}/tsconfig.json",
-      "{workspaceRoot}/eslint.config.js"
+      "{workspaceRoot}/eslint.config.js",
+      "{workspaceRoot}/pnpm-workspace.yaml"
     ],
     "default": [
       "sharedGlobals",
@@ -44,7 +45,7 @@
     },
     "test:lib": {
       "cache": true,
-      "dependsOn": ["^compile"],
+      "dependsOn": ["^build"],
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/coverage"]
     },
