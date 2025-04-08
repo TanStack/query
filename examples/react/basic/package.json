@@ -5,18 +5,19 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.71.10",
-    "@tanstack/react-query": "^5.71.10",
-    "@tanstack/react-query-devtools": "^5.71.10",
-    "@tanstack/react-query-persist-client": "^5.71.10",
+    "@tanstack/query-sync-storage-persister": "^5.72.1",
+    "@tanstack/react-query": "^5.72.1",
+    "@tanstack/react-query-devtools": "^5.72.1",
+    "@tanstack/react-query-persist-client": "^5.72.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.71.5",
+    "@tanstack/eslint-plugin-query": "^5.72.1",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.3.4",
