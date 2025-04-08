@@ -1169,12 +1169,7 @@ describe('dehydration and rehydration', () => {
 
     expect(dehydrated.queries[0]?.promise).toBeInstanceOf(Promise)
 
-    try {
-      await dehydrated.queries[0]?.promise
-      expect(true).toBe(false)
-    } catch (error) {
-      expect(error).toBe(testError)
-    }
+    await expect(dehydrated.queries[0]?.promise).rejects.toBe(testError)
 
     await promise
     queryClient.clear()
