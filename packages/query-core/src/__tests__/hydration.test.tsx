@@ -1179,9 +1179,6 @@ describe('dehydration and rehydration', () => {
     const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    const originalNodeEnv = process.env.NODE_ENV
-    process.env.NODE_ENV = 'production'
-
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({
       queryCache,
@@ -1208,8 +1205,6 @@ describe('dehydration and rehydration', () => {
       await dehydrated.queries[0]?.promise
       expect(true).toBe(false)
     } catch (error) {}
-
-    process.env.NODE_ENV = originalNodeEnv
 
     await promise
     consoleMock.mockRestore()
