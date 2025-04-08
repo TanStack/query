@@ -6,23 +6,19 @@ import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
 import type { UseSuspenseQueryOptions } from '..'
 
-const generateQueryFn = (data: string) =>
-  vi
-    .fn<(...args: Array<any>) => Promise<string>>()
-    .mockImplementation(async () => {
-      await sleep(10)
+const generateQueryFn = <T,>(data: T) =>
+  vi.fn<(...args: Array<any>) => Promise<T>>().mockImplementation(async () => {
+    await sleep(10)
 
-      return data
-    })
+    return data
+  })
 
 describe('usePrefetchQueries', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
-  function Suspended<TData = unknown>(props: {
-    queriesOpts: Array<
-      UseSuspenseQueryOptions<TData, Error, TData, Array<string>>
-    >
+  function Suspended(props: {
+    queriesOpts: Array<UseSuspenseQueryOptions>
     children?: React.ReactNode
   }) {
     const state = useSuspenseQueries({
@@ -46,7 +42,7 @@ describe('usePrefetchQueries', () => {
 
     const queryOpts2 = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('prefetchQuery2'),
+      queryFn: generateQueryFn(2),
     }
 
     const componentQueryOpts1 = {
@@ -56,7 +52,7 @@ describe('usePrefetchQueries', () => {
 
     const componentQueryOpts2 = {
       ...queryOpts2,
-      queryFn: generateQueryFn('useSuspenseQuery2'),
+      queryFn: generateQueryFn(2),
     }
 
     function App() {
@@ -73,9 +69,7 @@ describe('usePrefetchQueries', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() =>
-      rendered.getByText('data: prefetchQuery1, prefetchQuery2'),
-    )
+    await waitFor(() => rendered.getByText('data: prefetchQuery1, 2'))
     expect(queryOpts1.queryFn).toHaveBeenCalledTimes(1)
     expect(queryOpts2.queryFn).toHaveBeenCalledTimes(1)
   })
@@ -88,7 +82,7 @@ describe('usePrefetchQueries', () => {
 
     const queryOpts2 = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('The usePrefetchQueries hook is smart! 2'),
+      queryFn: generateQueryFn(2),
     }
 
     function App() {
@@ -112,9 +106,7 @@ describe('usePrefetchQueries', () => {
 
     expect(rendered.queryByText('fetching: true')).not.toBeInTheDocument()
     await waitFor(() =>
-      rendered.getByText(
-        'data: The usePrefetchQueries hook is smart! 1, The usePrefetchQueries hook is smart! 2',
-      ),
+      rendered.getByText('data: The usePrefetchQueries hook is smart! 1, 2'),
     )
     expect(queryOpts1.queryFn).not.toHaveBeenCalled()
     expect(queryOpts2.queryFn).not.toHaveBeenCalled()
@@ -128,7 +120,7 @@ describe('usePrefetchQueries', () => {
 
     const queryOpts2 = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('The usePrefetchQueries hook is smart! 2'),
+      queryFn: generateQueryFn(2),
     }
 
     function App() {
@@ -150,9 +142,7 @@ describe('usePrefetchQueries', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     await waitFor(() =>
-      rendered.getByText(
-        'data: The usePrefetchQueries hook is smart! 1, The usePrefetchQueries hook is smart! 2',
-      ),
+      rendered.getByText('data: The usePrefetchQueries hook is smart! 1, 2'),
     )
     expect(queryOpts1.queryFn).not.toHaveBeenCalled()
     expect(queryOpts2.queryFn).toHaveBeenCalledTimes(1)
@@ -166,7 +156,7 @@ describe('usePrefetchQueries', () => {
 
     const queryOpts2 = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('prefetchedQuery2'),
+      queryFn: generateQueryFn(2),
     }
 
     function Prefetch({ children }: { children: React.ReactNode }) {
@@ -187,9 +177,7 @@ describe('usePrefetchQueries', () => {
     }
 
     const rendered = renderWithClient(queryClient, <App />)
-    await waitFor(() =>
-      rendered.getByText('data: prefetchedQuery1, prefetchedQuery2'),
-    )
+    await waitFor(() => rendered.getByText('data: prefetchedQuery1, 2'))
     expect(queryOpts1.queryFn).toHaveBeenCalledTimes(1)
     expect(queryOpts2.queryFn).toHaveBeenCalledTimes(1)
   })
