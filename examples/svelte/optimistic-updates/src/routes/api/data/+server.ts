@@ -6,7 +6,7 @@ type Todo = {
   text: string
 }
 
-const items: Todo[] = []
+const items: Array<Todo> = []
 
 /** @type {import('./$types').RequestHandler} */
 export const GET: RequestHandler = async (req) => {

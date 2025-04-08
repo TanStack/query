@@ -8,6 +8,7 @@ import type {
   QueryObserver,
 } from '@tanstack/query-core'
 import type {
+  Accessor,
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
 } from './types.js'
@@ -19,15 +20,17 @@ export function createInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: () => CreateInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey,
-    TPageParam
+  options: Accessor<
+    CreateInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey,
+      TPageParam
+    >
   >,
-  queryClient?: QueryClient,
+  queryClient?: Accessor<QueryClient>,
 ): CreateInfiniteQueryResult<TData, TError> {
   return createBaseQuery(
     options,

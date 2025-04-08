@@ -20,7 +20,7 @@
 
   const client = useQueryClient()
 
-  const endpoint = 'http://localhost:5173/api/data'
+  const endpoint = '/api/data'
 
   const fetchTodos = async (): Promise<Todos> =>
     await fetch(endpoint).then((r) => r.json())

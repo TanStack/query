@@ -17,6 +17,8 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 
+export type Accessor<T> = () => T
+
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<
   TQueryFnData = unknown,

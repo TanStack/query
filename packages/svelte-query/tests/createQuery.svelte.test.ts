@@ -4,6 +4,7 @@ import {
   createQuery,
   keepPreviousData,
 } from '@tanstack/svelte-query'
+import { flushSync } from 'svelte'
 import { promiseWithResolvers, sleep, withEffectRoot } from './utils.svelte'
 import type { CreateQueryResult } from '@tanstack/svelte-query'
 
@@ -25,7 +26,7 @@ describe('createQuery', () => {
           queryKey: ['test'],
           queryFn: () => promise,
         }),
-        queryClient,
+        () => queryClient,
       )
 
       if (query.isPending) {
@@ -117,7 +118,7 @@ describe('createQuery', () => {
           retry: 1,
           retryDelay: 1,
         }),
-        queryClient,
+        () => queryClient,
       )
       $effect(() => {
         states.push({ ...query })
@@ -228,7 +229,7 @@ describe('createQuery', () => {
             queryKey: key,
             queryFn: () => promise,
           }),
-          queryClient,
+          () => queryClient,
         ),
       )
 
@@ -270,7 +271,7 @@ describe('createQuery', () => {
           enabled: false,
           initialData: 'initial',
         }),
-        queryClient,
+        () => queryClient,
       )
 
       refetch()
@@ -301,7 +302,7 @@ describe('createQuery', () => {
           enabled: false,
           initialData: 'initialData',
         }),
-        queryClient,
+        () => queryClient,
       )
 
       // Trigger two refetch close together
@@ -332,7 +333,7 @@ describe('createQuery', () => {
           },
           enabled: false,
         }),
-        queryClient,
+        () => queryClient,
       )
 
       // Trigger two refetch close together
@@ -356,7 +357,10 @@ describe('createQuery', () => {
         queryFn: () => 'data',
       })
 
-      const query = createQuery<string>(() => ({ queryKey: key }), queryClient)
+      const query = createQuery<string>(
+        () => ({ queryKey: key }),
+        () => queryClient,
+      )
 
       $effect(() => {
         states.push({ ...query })
@@ -386,7 +390,7 @@ describe('createQuery', () => {
           gcTime: 0,
           notifyOnChangeProps: 'all',
         }),
-        queryClient,
+        () => queryClient,
       )
 
       expect(query).toMatchObject({
@@ -415,7 +419,7 @@ describe('createQuery', () => {
           gcTime: 0,
           notifyOnChangeProps: 'all',
         }),
-        queryClient,
+        () => queryClient,
       )
 
       expect(query).toMatchObject({
@@ -450,7 +454,7 @@ describe('createQuery', () => {
           gcTime: 0,
           notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -473,7 +477,7 @@ describe('createQuery', () => {
           gcTime: 0,
           notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -523,7 +527,7 @@ describe('createQuery', () => {
           queryFn: () => 'test',
           refetchOnMount: false,
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -554,7 +558,7 @@ describe('createQuery', () => {
           queryFn: () => 'test',
           refetchOnMount: false,
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -582,7 +586,7 @@ describe('createQuery', () => {
           queryFn: () => ({ name: 'test' }),
           select: (data) => data.name,
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -614,7 +618,7 @@ describe('createQuery', () => {
             throw error
           },
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -643,7 +647,7 @@ describe('createQuery', () => {
           queryFn: () => ++count,
           notifyOnChangeProps: 'all',
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -685,7 +689,7 @@ describe('createQuery', () => {
           queryFn: async () => Promise.resolve(search),
           placeholderData: keepPreviousData,
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -695,14 +699,6 @@ describe('createQuery', () => {
       await vi.waitFor(() => expect(query.data).toBe(''))
       search = 'phone'
       await vi.waitFor(() => expect(query.data).toBe('phone'))
-
-      console.log(
-        states.map((s) => ({
-          data: s.data,
-          status: s.status,
-          fetchStatus: s.fetchStatus,
-        })),
-      )
 
       expect(states.length).toBe(4)
       expect(states[0]).toMatchObject({
@@ -740,7 +736,7 @@ describe('createQuery', () => {
           queryKey: key,
           queryFn: () => Promise.resolve(++count),
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -796,7 +792,7 @@ describe('createQuery', () => {
             return Promise.resolve(count === 1 ? result1 : result2)
           },
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -839,7 +835,7 @@ describe('createQuery', () => {
           initialData: 'initial',
           staleTime: Infinity,
         }),
-        queryClient,
+        () => queryClient,
       )
 
       await vi.waitFor(() => expect(query.data).toBe('set'))
@@ -860,7 +856,7 @@ describe('createQuery', () => {
           queryFn: () => Promise.resolve(++count),
           staleTime: Infinity,
         }),
-        queryClient,
+        () => queryClient,
       )
 
       await vi.waitFor(() =>
@@ -907,7 +903,7 @@ describe('createQuery', () => {
           queryFn: () => Promise.resolve(++count),
           enabled: false,
         }),
-        queryClient,
+        () => queryClient,
       )
 
       $effect(() => {
@@ -924,5 +920,450 @@ describe('createQuery', () => {
         isStale: false,
       })
     }),
+  )
+
+  it(
+    'should not refetch disabled query when invalidated with invalidateQueries',
+    withEffectRoot(async () => {
+      const key = ['test-key']
+      const states: Array<CreateQueryResult<number>> = []
+      let count = 0
+
+      const query = createQuery<number>(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve(++count),
+          enabled: false,
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        states.push({ ...query })
+      })
+
+      queryClient.invalidateQueries({ queryKey: key })
+
+      // Wait long enough for the invalidation and potential refetch
+      await sleep(100)
+
+      expect(states.length).toBe(1)
+      expect(states[0]).toMatchObject({
+        data: undefined,
+        isFetching: false,
+        isSuccess: false,
+        isStale: false,
+      })
+    }),
+  )
+
+  it(
+    'should not fetch when switching to a disabled query',
+    withEffectRoot(async () => {
+      const key = ['test-key']
+      const states: Array<CreateQueryResult<number>> = []
+      let count = $state<number>(0)
+
+      const query = createQuery<number>(
+        () => ({
+          queryKey: [key, count],
+          queryFn: () => Promise.resolve(count),
+          enabled: count === 0,
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        states.push({ ...query })
+      })
+
+      await vi.waitFor(() => expect(query.data).toBe(0))
+      count = 1
+      await vi.waitFor(() => expect(states.length).toBe(3))
+
+      // Fetch query
+      expect(states[0]).toMatchObject({
+        isFetching: true,
+        isSuccess: false,
+      })
+      // Fetched query
+      expect(states[1]).toMatchObject({
+        data: 0,
+        isFetching: false,
+        isSuccess: true,
+      })
+      // Switch to disabled query
+      expect(states[2]).toMatchObject({
+        isFetching: false,
+        isSuccess: false,
+      })
+    }),
+  )
+
+  it(
+    'should keep the previous data when placeholderData is set',
+    withEffectRoot(async () => {
+      const key = ['test-key']
+      const states: Array<CreateQueryResult<number>> = []
+      let count = $state(0)
+
+      const query = createQuery<number>(
+        () => ({
+          queryKey: [key, count],
+          queryFn: () => Promise.resolve(count),
+          placeholderData: keepPreviousData,
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        states.push({ ...query })
+      })
+
+      // Wait for the initial fetch to complete
+      await vi.waitFor(() => expect(query.data).toBe(0))
+
+      // Update count to trigger a new fetch
+      count = 1
+
+      // Wait for all state updates to complete
+      await vi.waitFor(() => expect(states.length).toBe(4))
+
+      // Initial
+      expect(states[0]).toMatchObject({
+        data: undefined,
+        isFetching: true,
+        isSuccess: false,
+        isPlaceholderData: false,
+      })
+      // Fetched
+      expect(states[1]).toMatchObject({
+        data: 0,
+        isFetching: false,
+        isSuccess: true,
+        isPlaceholderData: false,
+      })
+      // Set state
+      expect(states[2]).toMatchObject({
+        data: 0,
+        isFetching: true,
+        isSuccess: true,
+        isPlaceholderData: true,
+      })
+      // New data
+      expect(states[3]).toMatchObject({
+        data: 1,
+        isFetching: false,
+        isSuccess: true,
+        isPlaceholderData: false,
+      })
+    }),
+  )
+
+  it(
+    'should not show initial data from next query if placeholderData is set',
+    withEffectRoot(async () => {
+      const key = ['test-key']
+      const states: Array<CreateQueryResult<number>> = []
+      let count = $state<number>(0)
+
+      const query = createQuery<number>(
+        () => ({
+          queryKey: [key, count],
+          queryFn: () => Promise.resolve(count),
+          initialData: 99,
+          placeholderData: keepPreviousData,
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        states.push({ ...query })
+      })
+
+      // Wait for the initial fetch to complete
+      await vi.waitFor(() => expect(query.data).toBe(0))
+
+      // Update count to trigger a new fetch
+      count = 1
+
+      // Wait for the new fetch to complete
+      await vi.waitFor(() => expect(query.data).toBe(1))
+
+      // Wait for all state updates to complete
+      await vi.waitFor(() => expect(states.length).toBe(4))
+
+      // Initial
+      expect(states[0]).toMatchObject({
+        data: 99,
+        isFetching: true,
+        isSuccess: true,
+        isPlaceholderData: false,
+      })
+      // Fetched
+      expect(states[1]).toMatchObject({
+        data: 0,
+        isFetching: false,
+        isSuccess: true,
+        isPlaceholderData: false,
+      })
+      // Set state
+      expect(states[2]).toMatchObject({
+        data: 99,
+        isFetching: true,
+        isSuccess: true,
+        isPlaceholderData: false,
+      })
+      // New data
+      expect(states[3]).toMatchObject({
+        data: 1,
+        isFetching: false,
+        isSuccess: true,
+        isPlaceholderData: false,
+      })
+    }),
+  )
+
+  it(
+    'should keep the previous data on disabled query when placeholderData is set and switching query key multiple times',
+    withEffectRoot(async () => {
+      const key = ['test-key']
+      const states: Array<CreateQueryResult<number>> = []
+
+      // Set initial query data
+      queryClient.setQueryData([key, 10], 10)
+
+      let count = $state(10)
+
+      const query = createQuery<number>(
+        () => ({
+          queryKey: [key, count],
+          queryFn: () => Promise.resolve(count),
+          enabled: false,
+          placeholderData: keepPreviousData,
+          notifyOnChangeProps: 'all',
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        states.push({ ...query })
+      })
+
+      // let that effect ^ run to push the initial state
+      flushSync()
+      flushSync(() => (count = 11))
+      flushSync(() => (count = 12))
+      await query.refetch()
+      // Wait for all operations to complete
+      await vi.waitFor(() => expect(query.data).toBe(12))
+
+      // Disabled query
+      expect(states[0]).toMatchObject({
+        data: 10,
+        isFetching: false,
+        isSuccess: true,
+        isPlaceholderData: false,
+      })
+      // Set state (11)
+      expect(states[1]).toMatchObject({
+        data: 10,
+        isFetching: false,
+        isSuccess: true,
+        isPlaceholderData: true,
+      })
+      // Set state (12)
+      expect(states[2]).toMatchObject({
+        data: 10,
+        isFetching: false,
+        isSuccess: true,
+        isPlaceholderData: true,
+      })
+      // Refetch
+      expect(states[3]).toMatchObject({
+        data: 10,
+        isFetching: true,
+        isSuccess: true,
+        isPlaceholderData: true,
+      })
+      // Refetch done
+      expect(states[4]).toMatchObject({
+        data: 12,
+        isFetching: false,
+        isSuccess: true,
+        isPlaceholderData: false,
+      })
+    }),
+  )
+
+  it(
+    'should use the correct query function when components use different configurations',
+    withEffectRoot(async () => {
+      const key = ['test-key']
+      const states: Array<CreateQueryResult<number>> = []
+      const { promise, resolve } = promiseWithResolvers<number>()
+
+      // Simulate FirstComponent
+      const firstQuery = createQuery<number>(
+        () => ({
+          queryKey: key,
+          queryFn: () => promise,
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        states.push({ ...firstQuery })
+      })
+
+      // Simulate SecondComponent
+      createQuery<number>(
+        () => ({
+          queryKey: key,
+          queryFn: () => 2,
+        }),
+        () => queryClient,
+      )
+
+      // Resolve the first query
+      resolve(1)
+
+      // Wait for the first query to complete
+      await vi.waitFor(() => expect(firstQuery.data).toBe(1))
+
+      // Refetch the first query
+      await firstQuery.refetch()
+
+      // Wait for all state updates to complete
+      await vi.waitFor(() => expect(states.length).toBe(4))
+
+      expect(states[0]).toMatchObject({
+        data: undefined,
+      })
+      expect(states[1]).toMatchObject({
+        data: 1,
+      })
+      expect(states[2]).toMatchObject({
+        data: 1,
+      })
+      // This state should be 1 instead of 2
+      expect(states[3]).toMatchObject({
+        data: 1,
+      })
+    }),
+  )
+
+  it.todo(
+    'should be able to set different stale times for a query',
+    async () => {
+      /**
+       * TODO: There's a super weird bug with this test, and I think it's caused by a race condition in query-core.
+       *
+       * If you add this to the top `updateResult` in `packages/query-core/src/queryObserver.ts:647`:
+       * ```
+       * for (let i = 0; i < 10_000_000; i++) {
+       *   continue
+       * }
+       * ```
+       *
+       * This test will miraculously start to pass. I'm suspicious that there's some race condition between props
+       * being tracked and `updateResult` being called, but that _should_ be fixed by `notifyOnChangeProps: 'all'`,
+       * and that's not doing anything.
+       *
+       * This test will also start to magically pass if you put `$inspect(firstQuery)` before `vi.waitFor` near
+       * the end of the test.
+       */
+
+      const key = ['test-key']
+      const states1: Array<CreateQueryResult<string>> = []
+      const states2: Array<CreateQueryResult<string>> = []
+
+      // Prefetch the query
+      await queryClient.prefetchQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'prefetch'
+        },
+      })
+
+      await vi.waitFor(() =>
+        expect(queryClient.getQueryState(key)?.data).toBe('prefetch'),
+      )
+
+      await withEffectRoot(async () => {
+        const firstQuery = createQuery<string>(
+          () => ({
+            queryKey: key,
+            queryFn: () => Promise.resolve('one'),
+            staleTime: 100,
+          }),
+          () => queryClient,
+        )
+
+        $effect(() => {
+          states1.push({ ...firstQuery })
+        })
+
+        const secondQuery = createQuery<string>(
+          () => ({
+            queryKey: key,
+            queryFn: () => Promise.resolve('two'),
+            staleTime: 10,
+          }),
+          () => queryClient,
+        )
+
+        $effect(() => {
+          states2.push({ ...secondQuery })
+        })
+
+        await vi.waitFor(() => {
+          expect(firstQuery).toMatchObject({ data: 'two', isStale: true })
+          expect(secondQuery).toMatchObject({ data: 'two', isStale: true })
+        })
+
+        expect(states1).toMatchObject([
+          // First render
+          {
+            data: 'prefetch',
+            isStale: false,
+          },
+          // Second createQuery started fetching
+          {
+            data: 'prefetch',
+            isStale: false,
+          },
+          // Second createQuery data came in
+          {
+            data: 'two',
+            isStale: false,
+          },
+          // Data became stale after 100ms
+          {
+            data: 'two',
+            isStale: true,
+          },
+        ])
+
+        expect(states2).toMatchObject([
+          // First render, data is stale and starts fetching
+          {
+            data: 'prefetch',
+            isStale: true,
+          },
+          // Second createQuery data came in
+          {
+            data: 'two',
+            isStale: false,
+          },
+          // Data became stale after 10ms
+          {
+            data: 'two',
+            isStale: true,
+          },
+        ])
+      })()
+    },
   )
 })

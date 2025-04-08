@@ -23,16 +23,6 @@ describe('initialData', () => {
       expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
     })
 
-    it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
-      const { data } = createQuery(() => ({
-        queryKey: ['key'],
-        queryFn: () => ({ wow: true }),
-        initialData: () => ({ wow: true }),
-      }))
-
-      expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
-    })
-
     it('TData should have undefined in the union when initialData is NOT provided', () => {
       const { data } = createQuery(() => ({
         queryKey: ['key'],

@@ -14,7 +14,6 @@
   let name = $state('')
 
   const postTodo = async ({ name, notes }: Omit<Todo, 'id'>) => {
-    console.info('postTodo', { name, notes })
     return new Promise((resolve, reject) => {
       setTimeout(
         () => {
@@ -31,7 +30,7 @@
           }
           const todo = { name, notes, id: id.value }
           id.value = id.value + 1
-          list.value = [...list.value, todo]
+          list.value.push(todo)
           resolve(todo)
         },
         queryTimeMin.value +

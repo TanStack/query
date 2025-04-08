@@ -1,8 +1,13 @@
+import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
-import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types.js'
+import type {
+  Accessor,
+  CreateBaseQueryOptions,
+  CreateBaseQueryResult,
+} from './types.js'
 
 export function createBaseQuery<
   TQueryFnData,
@@ -11,18 +16,15 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: () => CreateBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
+  options: Accessor<
+    CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
-  queryClient?: QueryClient,
+  queryClientOption?: Accessor<QueryClient>,
 ): CreateBaseQueryResult<TData, TError> {
   /** Load query client */
-  const client = useQueryClient(queryClient)
+  const queryClient = $derived(queryClientOption?.())
+  const client = $derived(useQueryClient(queryClient))
   const isRestoring = useIsRestoring()
 
   const resolvedOptions = $derived.by(() => {
@@ -32,24 +34,28 @@ export function createBaseQuery<
   })
 
   /** Creates the observer */
-  const observer = new Observer<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >(client, resolvedOptions)
+  const observer = $derived(
+    new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
+      client,
+      untrack(() => resolvedOptions),
+    ),
+  )
 
+  function createResult() {
+    const result = observer.getOptimisticResult(resolvedOptions)
+    return !resolvedOptions.notifyOnChangeProps
+      ? observer.trackResult(result)
+      : result
+  }
   const [query, update] = createRawRef(
-    observer.getOptimisticResult(resolvedOptions),
+    // svelte-ignore state_referenced_locally - intentional, initial value
+    createResult(),
   )
 
   $effect(() => {
     const unsubscribe = isRestoring.current
       ? () => undefined
-      : observer.subscribe(() =>
-          update(observer.getOptimisticResult(resolvedOptions)),
-        )
+      : observer.subscribe(() => update(createResult()))
     observer.updateResult()
     return unsubscribe
   })
@@ -65,11 +71,8 @@ export function createBaseQuery<
     // - `result` misses the intermediate restored-but-not-fetched state
     //
     // this could technically be its own effect but that doesn't seem necessary
-    const result = observer.getOptimisticResult(resolvedOptions)
-    update(result)
+    update(createResult())
   })
 
-  return resolvedOptions.notifyOnChangeProps
-    ? observer.trackResult(query)
-    : query
+  return query
 }

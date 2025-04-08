@@ -1,12 +1,13 @@
 import { MutationObserver } from '@tanstack/query-core'
+import { untrack } from 'svelte'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
 import type {
+  Accessor,
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
 } from './types.js'
-
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 
 export function createMutation<
@@ -15,14 +16,17 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: () => CreateMutationOptions<TData, TError, TVariables, TContext>,
-  queryClient?: QueryClient,
-): () => CreateMutationResult<TData, TError, TVariables, TContext> {
-  const client = useQueryClient(queryClient)
+  options: Accessor<CreateMutationOptions<TData, TError, TVariables, TContext>>,
+  queryClientOption?: Accessor<QueryClient>,
+): CreateMutationResult<TData, TError, TVariables, TContext> {
+  const queryClient = $derived(queryClientOption?.())
+  const client = $derived(useQueryClient(queryClient))
 
-  const observer = new MutationObserver<TData, TError, TVariables, TContext>(
-    client,
-    options(),
+  const observer = $derived(
+    new MutationObserver<TData, TError, TVariables, TContext>(
+      client,
+      untrack(() => options()),
+    ),
   )
 
   const mutate = $state<
@@ -33,23 +37,20 @@ export function createMutation<
 
   function createResult() {
     const result = observer.getCurrentResult()
-    Object.defineProperty(result, 'mutateAsync', {
-      value: result.mutate,
-    })
-    Object.defineProperty(result, 'mutate', {
-      value: mutate,
-    })
-    return result
+    return {
+      ...result,
+      mutateAsync: result.mutate,
+      mutate,
+    }
   }
 
+  // svelte-ignore state_referenced_locally
   const [mutation, update] = createRawRef(createResult())
 
   $effect(() => update(createResult()))
   $effect.pre(() => {
     observer.setOptions(options())
   })
-
-  // @ts-expect-error
   return mutation
 }
 

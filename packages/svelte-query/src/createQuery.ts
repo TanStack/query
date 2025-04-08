@@ -2,6 +2,7 @@ import { QueryObserver } from '@tanstack/query-core'
 import { createBaseQuery } from './createBaseQuery.svelte.js'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type {
+  Accessor,
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
@@ -17,43 +18,32 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: () => DefinedInitialDataOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey
+  options: Accessor<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
   >,
-  queryClient?: QueryClient,
+  queryClient?: Accessor<QueryClient>,
+): CreateQueryResult<TData, TError>
+
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: Accessor<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+  queryClient?: Accessor<QueryClient>,
 ): DefinedCreateQueryResult<TData, TError>
 
 export function createQuery<
-  TQueryFnData = unknown,
+  TQueryFnData,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: () => UndefinedInitialDataOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey
-  >,
-  queryClient?: QueryClient,
-): CreateQueryResult<TData, TError>
-
-export function createQuery<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  queryClient?: QueryClient,
-): CreateQueryResult<TData, TError>
-
-export function createQuery(
-  options: () => CreateQueryOptions,
-  queryClient?: QueryClient,
+  options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
+  queryClient?: Accessor<QueryClient>,
 ) {
   return createBaseQuery(options, QueryObserver, queryClient)
 }

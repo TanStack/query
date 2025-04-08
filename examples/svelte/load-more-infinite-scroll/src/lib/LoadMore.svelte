@@ -60,5 +60,6 @@
   .card {
     background-color: #111;
     margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.87);
   }
 </style>

@@ -10,6 +10,8 @@
     queryKey: ['films'],
     queryFn: getFilms,
   }))
+
+  $inspect(query)
 </script>
 
 {#if query.status === 'pending'}
