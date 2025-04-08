@@ -1,0 +1,28 @@
+{
+  "name": "@tanstack/query-example-eslint-legacy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "eslint ./src"
+  },
+  "dependencies": {
+    "@tanstack/query-sync-storage-persister": "^5.72.0",
+    "@tanstack/react-query": "^5.72.0",
+    "@tanstack/react-query-devtools": "^5.72.0",
+    "@tanstack/react-query-persist-client": "^5.72.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.72.0",
+    "eslint": "^8.16.0",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "5.8.2",
+    "vite": "^6.2.4"
+  }
+}

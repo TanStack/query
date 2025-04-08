@@ -100,7 +100,7 @@ pnpm i
 pnpm dev
 ```
 
-4. Now you can visit http://localhost:3000/query/latest/docs/overview in the browser and see the changes you make in `tanstack/query/docs` there.
+4. Now you can visit http://localhost:3000/query/latest/docs/framework/react/overview in the browser and see the changes you make in `tanstack/query/docs` there.
 
 > [!WARNING]
 > You will need to update the `docs/config.json` file (in `TanStack/query`) if you add a new documentation page!
@@ -236,3 +236,36 @@ Use an appropriate commit type. Be especially careful with breaking changes.
 ## Releases
 
 For each new commit added to `main` with `git push` or by merging a pull request or merging from another branch, a GitHub action is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
+
+## 🧪 Test
+
+TanStack Query uses [Nx](https://nx.dev/) as its monorepo tool.
+To run tests in a local environment, you should use `nx` commands from the root directory.
+
+### ✅ Run all tests
+
+To run tests for **all packages**, run:
+
+```bash
+npm run test
+```
+
+### ✅ Run tests for a specific package
+
+To run tests for a specific package, use the following command:
+
+```bash
+npx nx run @tanstack/{package-name}:test:lib
+```
+
+For example:
+
+```bash
+npx nx run @tanstack/react-query:test:lib
+```
+
+### ⚠️ Caution
+
+Do not run `pnpm run test:lib` inside individual package folders.
+This can cause test failures due to dependencies between packages.
+Always run tests from the **root folder** using `nx` commands.

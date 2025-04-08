@@ -1,14 +1,12 @@
 import { defineConfig } from 'vitest/config'
 import solid from 'vite-plugin-solid'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
-import { dynamicAliases } from './root.vite.config'
 import packageJson from './package.json'
 
 export default defineConfig({
-  plugins: [solid(), tsconfigPaths({ ignoreConfigErrors: true })],
+  plugins: [solid()],
   resolve: {
-    alias: dynamicAliases,
+    conditions: ['@tanstack/custom-condition'],
   },
   test: {
     name: packageJson.name,

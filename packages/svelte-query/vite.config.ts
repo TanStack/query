@@ -2,13 +2,12 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { defineConfig } from 'vitest/config'
 import { svelteTesting } from '@testing-library/svelte/vite'
 
-import { dynamicAliases } from './root.vite.config'
 import packageJson from './package.json'
 
 export default defineConfig({
   plugins: [svelte()],
   resolve: {
-    alias: dynamicAliases,
+    conditions: ['@tanstack/custom-condition'],
   },
   test: {
     name: packageJson.name,
