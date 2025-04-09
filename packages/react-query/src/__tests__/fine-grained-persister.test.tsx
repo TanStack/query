@@ -21,11 +21,13 @@ describe('fine grained persister', () => {
     const mapStorage = new Map()
     const storage = {
       getItem: (itemKey: string) => Promise.resolve(mapStorage.get(itemKey)),
-      setItem: async (itemKey: string, value: unknown) => {
+      setItem: (itemKey: string, value: unknown) => {
         mapStorage.set(itemKey, value)
+        return Promise.resolve()
       },
-      removeItem: async (itemKey: string) => {
+      removeItem: (itemKey: string) => {
         mapStorage.delete(itemKey)
+        return Promise.resolve()
       },
     }
 
@@ -75,11 +77,13 @@ describe('fine grained persister', () => {
     const mapStorage = new Map()
     const storage = {
       getItem: (itemKey: string) => Promise.resolve(mapStorage.get(itemKey)),
-      setItem: async (itemKey: string, value: unknown) => {
+      setItem: (itemKey: string, value: unknown) => {
         mapStorage.set(itemKey, value)
+        return Promise.resolve()
       },
-      removeItem: async (itemKey: string) => {
+      removeItem: (itemKey: string) => {
         mapStorage.delete(itemKey)
+        return Promise.resolve()
       },
     }
 
@@ -125,11 +129,13 @@ describe('fine grained persister', () => {
     const mapStorage = new Map()
     const storage = {
       getItem: (itemKey: string) => Promise.resolve(mapStorage.get(itemKey)),
-      setItem: async (itemKey: string, value: unknown) => {
+      setItem: (itemKey: string, value: unknown) => {
         mapStorage.set(itemKey, value)
+        return Promise.resolve()
       },
-      removeItem: async (itemKey: string) => {
+      removeItem: (itemKey: string) => {
         mapStorage.delete(itemKey)
+        return Promise.resolve()
       },
     }
 
