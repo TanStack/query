@@ -45,7 +45,7 @@
     },
     "test:lib": {
       "cache": true,
-      "dependsOn": ["^build"],
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/coverage"]
     },
