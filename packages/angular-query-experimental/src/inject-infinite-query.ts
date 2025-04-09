@@ -11,12 +11,21 @@ import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
   DefinedCreateInfiniteQueryResult,
-  WithOptionalInjector,
 } from './types'
 import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infinite-query-options'
+import type { Injector } from '@angular/core'
+
+export interface InjectInfiniteQueryOptions {
+  /**
+   * The `Injector` in which to create the infinite query.
+   *
+   * If this is not provided, the current injection context will be used instead (via `inject`).
+   */
+  injector?: Injector
+}
 
 /**
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -40,7 +49,7 @@ export function injectInfiniteQuery<
     TQueryKey,
     TPageParam
   >,
-  options?: WithOptionalInjector,
+  options?: InjectInfiniteQueryOptions,
 ): DefinedCreateInfiniteQueryResult<TData, TError>
 
 /**
@@ -65,7 +74,7 @@ export function injectInfiniteQuery<
     TQueryKey,
     TPageParam
   >,
-  options?: WithOptionalInjector,
+  options?: InjectInfiniteQueryOptions,
 ): CreateInfiniteQueryResult<TData, TError>
 
 /**
@@ -91,7 +100,7 @@ export function injectInfiniteQuery<
     TQueryKey,
     TPageParam
   >,
-  options?: WithOptionalInjector,
+  options?: InjectInfiniteQueryOptions,
 ): CreateInfiniteQueryResult<TData, TError>
 
 /**
@@ -104,7 +113,7 @@ export function injectInfiniteQuery<
  */
 export function injectInfiniteQuery(
   injectInfiniteQueryFn: () => CreateInfiniteQueryOptions,
-  options?: WithOptionalInjector,
+  options?: InjectInfiniteQueryOptions,
 ) {
   return assertInjector(injectInfiniteQuery, options?.injector, () =>
     createBaseQuery(
@@ -112,4 +121,8 @@ export function injectInfiniteQuery(
       InfiniteQueryObserver as typeof QueryObserver,
     ),
   )
+}
+
+export interface InjectInfiniteQueryOptions {
+  injector?: Injector
 }

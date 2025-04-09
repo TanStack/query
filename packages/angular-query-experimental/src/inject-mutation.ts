@@ -15,13 +15,19 @@ import {
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { noop, shouldThrowError } from './util'
+import type { Injector } from '@angular/core'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
-import type {
-  CreateMutateFunction,
-  CreateMutationResult,
-  WithOptionalInjector,
-} from './types'
+import type { CreateMutateFunction, CreateMutationResult } from './types'
 import type { CreateMutationOptions } from './mutation-options'
+
+export interface InjectMutationOptions {
+  /**
+   * The `Injector` in which to create the mutation.
+   *
+   * If this is not provided, the current injection context will be used instead (via `inject`).
+   */
+  injector?: Injector
+}
 
 /**
  * Injects a mutation: an imperative function that can be invoked which typically performs server side effects.
@@ -44,7 +50,7 @@ export function injectMutation<
     TVariables,
     TContext
   >,
-  options?: WithOptionalInjector,
+  options?: InjectMutationOptions,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   return assertInjector(injectMutation, options?.injector, () => {
     const destroyRef = inject(DestroyRef)

@@ -1,17 +1,26 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { createBaseQuery } from './create-base-query'
+import type { Injector } from '@angular/core'
 import type { DefaultError, QueryKey } from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
-  WithOptionalInjector,
 } from './types'
 import type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
 } from './query-options'
+
+export interface InjectQueryOptions {
+  /**
+   * The `Injector` in which to create the query.
+   *
+   * If this is not provided, the current injection context will be used instead (via `inject`).
+   */
+  injector?: Injector
+}
 
 /**
  * Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -62,7 +71,7 @@ export function injectQuery<
     TData,
     TQueryKey
   >,
-  options?: WithOptionalInjector,
+  options?: InjectQueryOptions,
 ): DefinedCreateQueryResult<TData, TError>
 
 /**
@@ -114,7 +123,7 @@ export function injectQuery<
     TData,
     TQueryKey
   >,
-  options?: WithOptionalInjector,
+  options?: InjectQueryOptions,
 ): CreateQueryResult<TData, TError>
 
 /**
@@ -166,7 +175,7 @@ export function injectQuery<
     TData,
     TQueryKey
   >,
-  options?: WithOptionalInjector,
+  options?: InjectQueryOptions,
 ): CreateQueryResult<TData, TError>
 
 /**
@@ -208,7 +217,7 @@ export function injectQuery<
  */
 export function injectQuery(
   injectQueryFn: () => CreateQueryOptions,
-  options?: WithOptionalInjector,
+  options?: InjectQueryOptions,
 ) {
   return assertInjector(injectQuery, options?.injector, () =>
     createBaseQuery(injectQueryFn, QueryObserver),

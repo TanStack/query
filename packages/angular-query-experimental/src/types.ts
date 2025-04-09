@@ -14,7 +14,7 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Injector, Signal } from '@angular/core'
+import type { Signal } from '@angular/core'
 import type { MapToSignals } from './signal-proxy'
 
 /**
@@ -313,7 +313,3 @@ export type CreateMutationResult<
  * @public
  */
 export type NonUndefinedGuard<T> = T extends undefined ? never : T
-
-export type WithOptionalInjector = {
-  injector?: Injector
-}

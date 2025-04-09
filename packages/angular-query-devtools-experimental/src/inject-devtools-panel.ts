@@ -15,9 +15,17 @@ import {
   onlineManager,
 } from '@tanstack/angular-query-experimental'
 import { isPlatformBrowser } from '@angular/common'
-import type { WithOptionalInjector } from '@tanstack/angular-query-experimental'
 import type { ElementRef } from '@angular/core'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
+
+export interface InjectDevtoolsPanelOptions {
+  /**
+   * The `Injector` in which to create the devtools panel.
+   *
+   * If this is not provided, the current injection context will be used instead (via `inject`).
+   */
+  injector?: Injector
+}
 
 /**
  * Inject a TanStack Query devtools panel and render it in the DOM.
@@ -33,7 +41,7 @@ import type { DevtoolsErrorType } from '@tanstack/query-devtools'
  */
 export function injectDevtoolsPanel(
   injectDevtoolsPanelFn: () => DevtoolsPanelOptions,
-  options?: WithOptionalInjector,
+  options?: InjectDevtoolsPanelOptions,
 ): DevtoolsPanelRef {
   !options?.injector && assertInInjectionContext(injectDevtoolsPanel)
   const currentInjector = options?.injector ?? inject(Injector)
