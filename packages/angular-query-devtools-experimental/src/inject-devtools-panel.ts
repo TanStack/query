@@ -26,13 +26,13 @@ import type { DevtoolsErrorType } from '@tanstack/query-devtools'
  * the devtools as part of your own devtools.
  *
  * Consider `withDevtools` instead if you don't need this.
- * @param optionsFn - A function that returns devtools panel options.
+ * @param injectDevtoolsPanelFn - A function that returns devtools panel options.
  * @param options - Additional configuration
  * @returns DevtoolsPanelRef
  * @see https://tanstack.com/query/v5/docs/framework/angular/devtools
  */
 export function injectDevtoolsPanel(
-  optionsFn: () => DevtoolsPanelOptions,
+  injectDevtoolsPanelFn: () => DevtoolsPanelOptions,
   options?: WithOptionalInjector,
 ): DevtoolsPanelRef {
   !options?.injector && assertInInjectionContext(injectDevtoolsPanel)
@@ -43,7 +43,7 @@ export function injectDevtoolsPanel(
     const isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
     const injectedClient = inject(QueryClient, { optional: true })
 
-    const queryOptions = computed(optionsFn)
+    const queryOptions = computed(injectDevtoolsPanelFn)
     let devtools: TanstackQueryDevtoolsPanel | null = null
 
     const destroy = () => {

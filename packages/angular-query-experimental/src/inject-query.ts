@@ -44,7 +44,7 @@ import type {
  *   }))
  * }
  * ```
- * @param optionsFn - A function that returns query options.
+ * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
  * @returns The query result.
  * @public
@@ -56,7 +56,7 @@ export function injectQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  optionsFn: () => DefinedInitialDataOptions<
+  injectQueryFn: () => DefinedInitialDataOptions<
     TQueryFnData,
     TError,
     TData,
@@ -96,7 +96,7 @@ export function injectQuery<
  *   }))
  * }
  * ```
- * @param optionsFn - A function that returns query options.
+ * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
  * @returns The query result.
  * @public
@@ -108,7 +108,7 @@ export function injectQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  optionsFn: () => UndefinedInitialDataOptions<
+  injectQueryFn: () => UndefinedInitialDataOptions<
     TQueryFnData,
     TError,
     TData,
@@ -148,7 +148,7 @@ export function injectQuery<
  *   }))
  * }
  * ```
- * @param optionsFn - A function that returns query options.
+ * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
  * @returns The query result.
  * @public
@@ -160,7 +160,12 @@ export function injectQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  optionsFn: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  injectQueryFn: () => CreateQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  >,
   options?: WithOptionalInjector,
 ): CreateQueryResult<TData, TError>
 
@@ -195,17 +200,17 @@ export function injectQuery<
  *   }))
  * }
  * ```
- * @param optionsFn - A function that returns query options.
+ * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
  * @returns The query result.
  * @public
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */
 export function injectQuery(
-  optionsFn: () => CreateQueryOptions,
+  injectQueryFn: () => CreateQueryOptions,
   options?: WithOptionalInjector,
 ) {
   return assertInjector(injectQuery, options?.injector, () =>
-    createBaseQuery(optionsFn, QueryObserver),
+    createBaseQuery(injectQueryFn, QueryObserver),
   ) as unknown as CreateQueryResult
 }

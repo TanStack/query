@@ -38,13 +38,13 @@ export type InjectMutationStateOptions = WithOptionalInjector
 
 /**
  * Injects a signal that tracks the state of all mutations.
- * @param mutationStateOptionsFn - A function that returns mutation state options.
+ * @param injectMutationStateFn - A function that returns mutation state options.
  * @param options - The Angular injector to use.
  * @returns The signal that tracks the state of all mutations.
  * @public
  */
 export function injectMutationState<TResult = MutationState>(
-  mutationStateOptionsFn: () => MutationStateOptions<TResult> = () => ({}),
+  injectMutationStateFn: () => MutationStateOptions<TResult> = () => ({}),
   options?: InjectMutationStateOptions,
 ): Signal<Array<TResult>> {
   return assertInjector(injectMutationState, options?.injector, () => {
@@ -60,7 +60,7 @@ export function injectMutationState<TResult = MutationState>(
      */
     const resultFromOptionsSignal = computed(() => {
       return [
-        getResult(mutationCache, mutationStateOptionsFn()),
+        getResult(mutationCache, injectMutationStateFn()),
         performance.now(),
       ] as const
     })
@@ -90,7 +90,7 @@ export function injectMutationState<TResult = MutationState>(
           const [lastResult] = effectiveResultSignal()
           const nextResult = replaceEqualDeep(
             lastResult,
-            getResult(mutationCache, mutationStateOptionsFn()),
+            getResult(mutationCache, injectMutationStateFn()),
           )
           if (lastResult !== nextResult) {
             ngZone.run(() => {

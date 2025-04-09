@@ -27,7 +27,7 @@ import type { CreateMutationOptions } from './mutation-options'
  * Injects a mutation: an imperative function that can be invoked which typically performs server side effects.
  *
  * Unlike queries, mutations are not run automatically.
- * @param optionsFn - A function that returns mutation options.
+ * @param injectMutationFn - A function that returns mutation options.
  * @param options - Additional configuration
  * @returns The mutation.
  * @public
@@ -38,7 +38,12 @@ export function injectMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  optionsFn: () => CreateMutationOptions<TData, TError, TVariables, TContext>,
+  injectMutationFn: () => CreateMutationOptions<
+    TData,
+    TError,
+    TVariables,
+    TContext
+  >,
   options?: WithOptionalInjector,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   return assertInjector(injectMutation, options?.injector, () => {
@@ -51,7 +56,7 @@ export function injectMutation<
      * making it reactive. Wrapping options in a function ensures embedded expressions
      * are preserved and can keep being applied after signal changes
      */
-    const optionsSignal = computed(optionsFn)
+    const optionsSignal = computed(injectMutationFn)
 
     const observerSignal = (() => {
       let instance: MutationObserver<
