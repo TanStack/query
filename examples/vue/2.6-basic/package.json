@@ -8,13 +8,13 @@
     "_preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.66.9",
+    "@tanstack/vue-query": "^5.72.2",
     "@vue/composition-api": "1.7.2",
     "vue": "2.6.14",
     "vue-template-compiler": "2.6.14"
   },
   "devDependencies": {
-    "typescript": "5.7.2",
+    "typescript": "5.8.2",
     "vite": "^4.5.3",
     "vite-plugin-vue2": "2.0.3"
   }

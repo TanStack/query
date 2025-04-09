@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
-import { QueryClientProvider, createMutation, useIsMutating } from '..'
+import { QueryClientProvider, useIsMutating, useMutation } from '..'
 import { createQueryClient, setActTimeout, sleep } from './utils'
 
 describe('useIsMutating', () => {
@@ -19,14 +19,14 @@ describe('useIsMutating', () => {
     }
 
     function Mutations() {
-      const { mutate: mutate1 } = createMutation(() => ({
+      const { mutate: mutate1 } = useMutation(() => ({
         mutationKey: ['mutation1'],
         mutationFn: async () => {
           await sleep(150)
           return 'data'
         },
       }))
-      const { mutate: mutate2 } = createMutation(() => ({
+      const { mutate: mutate2 } = useMutation(() => ({
         mutationKey: ['mutation2'],
         mutationFn: async () => {
           await sleep(50)
@@ -74,14 +74,14 @@ describe('useIsMutating', () => {
     }
 
     function Page() {
-      const { mutate: mutate1 } = createMutation(() => ({
+      const { mutate: mutate1 } = useMutation(() => ({
         mutationKey: ['mutation1'],
         mutationFn: async () => {
           await sleep(100)
           return 'data'
         },
       }))
-      const { mutate: mutate2 } = createMutation(() => ({
+      const { mutate: mutate2 } = useMutation(() => ({
         mutationKey: ['mutation2'],
         mutationFn: async () => {
           await sleep(100)
@@ -122,14 +122,14 @@ describe('useIsMutating', () => {
     }
 
     function Page() {
-      const { mutate: mutate1 } = createMutation(() => ({
+      const { mutate: mutate1 } = useMutation(() => ({
         mutationKey: ['mutation1'],
         mutationFn: async () => {
           await sleep(100)
           return 'data'
         },
       }))
-      const { mutate: mutate2 } = createMutation(() => ({
+      const { mutate: mutate2 } = useMutation(() => ({
         mutationKey: ['mutation2'],
         mutationFn: async () => {
           await sleep(100)
@@ -160,7 +160,7 @@ describe('useIsMutating', () => {
 
     function Page() {
       const isMutating = useIsMutating(undefined, () => queryClient)
-      const { mutate } = createMutation(
+      const { mutate } = useMutation(
         () => ({
           mutationKey: ['mutation1'],
           mutationFn: async () => {
@@ -210,7 +210,7 @@ describe('useIsMutating', () => {
 
     function Page() {
       const [mounted, setMounted] = createSignal(true)
-      const { mutate: mutate1 } = createMutation(() => ({
+      const { mutate: mutate1 } = useMutation(() => ({
         mutationKey: ['mutation1'],
         mutationFn: async () => {
           await sleep(10)

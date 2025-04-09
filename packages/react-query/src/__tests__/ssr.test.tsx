@@ -94,7 +94,7 @@ describe('Server Side Rendering', () => {
       const [page, setPage] = React.useState(1)
       const { data } = useQuery({
         queryKey: [key, page],
-        queryFn: async () => page,
+        queryFn: () => Promise.resolve(page),
         initialData: 1,
       })
 

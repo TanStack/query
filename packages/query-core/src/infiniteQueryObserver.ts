@@ -17,7 +17,6 @@ import type {
   QueryKey,
 } from './types'
 import type { QueryClient } from './queryClient'
-import type { NotifyOptions } from './queryObserver'
 import type { Query } from './query'
 
 type InfiniteQueryObserverListener<TData, TError> = (
@@ -96,15 +95,11 @@ export class InfiniteQueryObserver<
       TQueryKey,
       TPageParam
     >,
-    notifyOptions?: NotifyOptions,
   ): void {
-    super.setOptions(
-      {
-        ...options,
-        behavior: infiniteQueryBehavior(),
-      },
-      notifyOptions,
-    )
+    super.setOptions({
+      ...options,
+      behavior: infiniteQueryBehavior(),
+    })
   }
 
   getOptimisticResult(

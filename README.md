@@ -51,4 +51,4 @@ View the contributing guidelines [here](/CONTRIBUTING.md)
 
 ### [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)
 
-<!-- Use the force, Luke! -->
+<!-- Use the force, Luke -->
