@@ -15,7 +15,6 @@ import {
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { noop, shouldThrowError } from './util'
-import type { Injector } from '@angular/core'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
@@ -97,10 +96,10 @@ export function injectMutation<
     effect(
       () => {
         const observer = observerSignal()
-        const options = optionsSignal()
+        const observerOptions = optionsSignal()
 
         untracked(() => {
-          observer.setOptions(options)
+          observer.setOptions(observerOptions)
         })
       },
       {
