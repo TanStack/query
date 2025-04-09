@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.72.0",
+  "version": "5.72.1",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",

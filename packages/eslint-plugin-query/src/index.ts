@@ -12,7 +12,7 @@ export interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
   }
 }
 
-const plugin: Plugin = {
+export const plugin: Plugin = {
   meta: {
     name: '@tanstack/eslint-plugin-query',
   },

@@ -13,7 +13,7 @@
     "test": "pnpm run test:ci",
     "test:pr": "nx affected --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
     "test:ci": "nx run-many --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
-    "test:eslint": "nx affected --target=test:eslint --exclude=examples/**",
+    "test:eslint": "nx affected --target=test:eslint",
     "test:format": "pnpm run prettier --check",
     "test:sherif": "sherif -i typescript -p \"./integrations/*\" -p \"./examples/*\"",
     "test:lib": "nx affected --target=test:lib --exclude=examples/**",
@@ -101,8 +101,7 @@
       "@tanstack/vue-query": "workspace:*",
       "@tanstack/vue-query-devtools": "workspace:*",
       "@types/react": "^19.0.1",
-      "@types/react-dom": "^19.0.2",
-      "eslint": "$eslint"
+      "@types/react-dom": "^19.0.2"
     }
   }
 }
