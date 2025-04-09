@@ -5,9 +5,10 @@ import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
 import { createQueryClient, queryKey, setIsServer } from './utils'
 
 describe('Server Side Rendering', () => {
+  setIsServer(true)
+
   beforeEach(() => {
     vi.useFakeTimers()
-    setIsServer(true)
   })
 
   afterEach(() => {
