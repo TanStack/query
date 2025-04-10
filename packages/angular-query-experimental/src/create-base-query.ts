@@ -1,5 +1,4 @@
 import {
-  Injector,
   NgZone,
   VERSION,
   computed,
@@ -40,10 +39,9 @@ export function createBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ) {
-  const injector = inject(Injector)
   const ngZone = inject(NgZone)
   const queryClient = inject(QueryClient)
-  const isRestoring = injectIsRestoring(injector)
+  const isRestoring = injectIsRestoring()
 
   /**
    * Signal that has the default options from query client applied
