@@ -580,7 +580,7 @@ describe('dehydration and rehydration', () => {
     consoleMock.mockRestore()
   })
 
-  test('should not hydrate if the hydratedState is null or is not an object', async () => {
+  test('should not hydrate if the hydratedState is null or is not an object', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
 
@@ -590,7 +590,7 @@ describe('dehydration and rehydration', () => {
     queryClient.clear()
   })
 
-  test('should support hydratedState with undefined queries and mutations', async () => {
+  test('should support hydratedState with undefined queries and mutations', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
 
@@ -791,7 +791,7 @@ describe('dehydration and rehydration', () => {
     ).toBe('idle')
   })
 
-  test('should dehydrate and hydrate mutation scopes', async () => {
+  test('should dehydrate and hydrate mutation scopes', () => {
     const queryClient = createQueryClient()
     const onlineMock = mockOnlineManagerIsOnline(false)
 
@@ -799,8 +799,8 @@ describe('dehydration and rehydration', () => {
       queryClient,
       {
         mutationKey: ['mutation'],
-        mutationFn: async () => {
-          return 'mutation'
+        mutationFn: () => {
+          return Promise.resolve('mutation')
         },
         scope: {
           id: 'scope',

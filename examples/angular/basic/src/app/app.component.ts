@@ -9,5 +9,5 @@ import { PostsComponent } from './components/posts.component'
   imports: [PostComponent, PostsComponent],
 })
 export class BasicExampleComponent {
-  postId = signal(-1)
+  readonly postId = signal(-1)
 }
