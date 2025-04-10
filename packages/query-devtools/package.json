@@ -62,6 +62,9 @@
     "src",
     "!src/__tests__"
   ],
+  "dependencies": {
+    "solid-js": "^1.9.5"
+  },
   "devDependencies": {
     "@kobalte/core": "^0.13.4",
     "@solid-primitives/keyed": "^1.2.2",
@@ -72,7 +75,6 @@
     "clsx": "^2.1.1",
     "goober": "^2.1.16",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "^1.9.5",
     "solid-transition-group": "^0.2.3",
     "superjson": "^2.2.1",
     "tsup-preset-solid": "^2.2.0",
