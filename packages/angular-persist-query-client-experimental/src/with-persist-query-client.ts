@@ -1,5 +1,5 @@
 import {
-  injectQueryClient,
+  QueryClient,
   provideIsRestoring,
   queryFeature,
 } from '@tanstack/angular-query-experimental'
@@ -65,7 +65,7 @@ export function withPersistQueryClient(
       useValue: () => {
         if (!isPlatformBrowser(inject(PLATFORM_ID))) return
         const destroyRef = inject(DestroyRef)
-        const queryClient = injectQueryClient()
+        const queryClient = inject(QueryClient)
 
         isRestoring.set(true)
         const restorations = persistQueryClientOptions.map(
