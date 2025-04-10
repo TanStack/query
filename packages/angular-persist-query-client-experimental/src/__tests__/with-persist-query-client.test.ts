@@ -5,7 +5,11 @@ import {
   provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-import { Component, effect } from '@angular/core'
+import {
+  Component,
+  effect,
+  provideExperimentalZonelessChangeDetection,
+} from '@angular/core'
 import { render, screen, waitFor } from '@testing-library/angular'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import { queryKey, sleep } from './utils'
@@ -98,6 +102,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient([{ persistOptions: { persister } }]),
@@ -185,6 +190,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient([{ persistOptions: { persister } }]),
@@ -266,6 +272,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient([{ persistOptions: { persister } }]),
@@ -328,6 +335,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient([
@@ -374,6 +382,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient([
@@ -471,6 +480,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient([
