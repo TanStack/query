@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.72.1",
+  "version": "5.72.2",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -31,29 +31,31 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
-    "build": "tsup && node ./scripts/patch-missing-export-equals.js"
+    "build": "tsup --tsconfig tsconfig.prod.json"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
+  "react-native": "src/index.ts",
   "exports": {
     ".": {
       "import": {
-        "@tanstack/custom-condition": "./src/index.ts",
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
       }
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "dist"
+    "build",
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
     "@typescript-eslint/utils": "^8.18.1"
