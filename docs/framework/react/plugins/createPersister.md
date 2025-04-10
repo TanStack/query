@@ -41,7 +41,6 @@ bun add @tanstack/query-persist-client-core
   - If you provide this `persister` to a single `useQuery` hook, only this Query will be persisted.
 - Note: `queryClient.setQueryData()` operations are not persisted, this means that if you perform an optimistic update and refresh the page before the query has been invalidated, your changes to the query data will be lost. See https://github.com/TanStack/query/issues/6310
 
-
 This way, you do not need to store whole `QueryClient`, but choose what is worth to be persisted in your application. Each query is lazily restored (when the Query is first used) and persisted (after each run of the `queryFn`), so it does not need to be throttled. `staleTime` is also respected after restoring the Query, so if data is considered `stale`, it will be refetched immediately after restoring. If data is `fresh`, the `queryFn` will not run.
 
 Garbage collecting a Query from memory **does not** affect the persisted data. That means Queries can be kept in memory for a shorter period of time to be more **memory efficient**. If they are used the next time, they will just be restored from the persistent storage again.
