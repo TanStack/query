@@ -429,11 +429,9 @@ export interface QueryObserverOptions<
   experimental_prefetchInRender?: boolean
 }
 
-export type WithRequired<TTarget, TKey extends keyof TTarget> = Pick<
-  Required<TTarget>,
-  TKey
-> &
-  Omit<TTarget, TKey>
+export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
+  [_ in TKey]: {}
+}
 
 export type Optional<TTarget, TKey extends keyof TTarget> = Pick<
   Partial<TTarget>,
