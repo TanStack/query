@@ -436,7 +436,7 @@ export type Optional<TTarget, TKey extends keyof TTarget> = Pick<
   Partial<TTarget>,
   TKey
 > &
-  OmitKeyof<TTarget, TKey>
+  Omit<TTarget, TKey>
 
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,
