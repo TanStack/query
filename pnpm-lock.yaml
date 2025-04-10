@@ -238,19 +238,19 @@ importers:
   examples/angular/basic-persister:
     dependencies:
       '@angular/common':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
       '@angular/platform-browser':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
       '@angular/platform-browser-dynamic':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
@@ -262,27 +262,27 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/query-sync-storage-persister
       rxjs:
-        specifier: ^7.8.1
+        specifier: ^7.8.2
         version: 7.8.2
       tslib:
-        specifier: ^2.6.3
+        specifier: ^2.8.1
         version: 2.8.1
       zone.js:
         specifier: ^0.15.0
         version: 0.15.0
     devDependencies:
       '@angular/build':
-        specifier: ^19.0.2
-        version: 19.2.5(@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.7.2))(@angular/compiler@19.2.4)(@types/node@22.14.0)(chokidar@4.0.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(postcss@8.5.3)(tailwindcss@4.0.14)(terser@5.39.0)(typescript@5.7.2)(yaml@2.6.1)
+        specifier: ^19.2.5
+        version: 19.2.5(@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.8.2))(@angular/compiler@19.2.4)(@types/node@22.14.0)(chokidar@4.0.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(postcss@8.5.3)(tailwindcss@4.0.14)(terser@5.39.0)(typescript@5.8.2)(yaml@2.6.1)
       '@angular/cli':
-        specifier: ^19.0.2
+        specifier: ^19.2.5
         version: 19.2.5(@types/node@22.14.0)(chokidar@4.0.3)
       '@angular/compiler-cli':
-        specifier: ^19.1.0-next.0
-        version: 19.2.4(@angular/compiler@19.2.4)(typescript@5.7.2)
+        specifier: ^19.2.4
+        version: 19.2.4(@angular/compiler@19.2.4)(typescript@5.8.2)
       typescript:
-        specifier: 5.7.2
-        version: 5.7.2
+        specifier: 5.8.2
+        version: 5.8.2
 
   examples/angular/devtools-panel:
     dependencies:
@@ -379,19 +379,19 @@ importers:
   examples/angular/multiple-persisters:
     dependencies:
       '@angular/common':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4
       '@angular/core':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
       '@angular/platform-browser':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
       '@angular/platform-browser-dynamic':
-        specifier: ^19.1.0-next.0
+        specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
@@ -403,24 +403,24 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/query-sync-storage-persister
       rxjs:
-        specifier: ^7.8.1
+        specifier: ^7.8.2
         version: 7.8.2
       tslib:
-        specifier: ^2.6.3
+        specifier: ^2.8.1
         version: 2.8.1
       zone.js:
         specifier: ^0.15.0
         version: 0.15.0
     devDependencies:
       '@angular/build':
-        specifier: ^19.0.2
-        version: 19.2.5(@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.7.2))(@angular/compiler@19.2.4)(@types/node@22.14.0)(chokidar@4.0.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(postcss@8.5.3)(tailwindcss@3.4.7)(terser@5.39.0)(typescript@5.7.2)(yaml@2.6.1)
+        specifier: ^19.2.5
+        version: 19.2.5(@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.8.2))(@angular/compiler@19.2.4)(@types/node@22.14.0)(chokidar@4.0.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(postcss@8.5.3)(tailwindcss@3.4.7)(terser@5.39.0)(typescript@5.8.2)(yaml@2.6.1)
       '@angular/cli':
-        specifier: ^19.0.2
+        specifier: ^19.2.5
         version: 19.2.5(@types/node@22.14.0)(chokidar@4.0.3)
       '@angular/compiler-cli':
-        specifier: ^19.1.0-next.0
-        version: 19.2.4(@angular/compiler@19.2.4)(typescript@5.7.2)
+        specifier: ^19.2.4
+        version: 19.2.4(@angular/compiler@19.2.4)(typescript@5.8.2)
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.21(postcss@8.5.3)
@@ -431,8 +431,8 @@ importers:
         specifier: ^3.4.7
         version: 3.4.7
       typescript:
-        specifier: 5.7.2
-        version: 5.7.2
+        specifier: 5.8.2
+        version: 5.8.2
 
   examples/angular/optimistic-updates:
     dependencies:
@@ -16269,104 +16269,6 @@ snapshots:
       '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
       tslib: 2.8.1
 
-  '@angular/build@19.2.5(@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.7.2))(@angular/compiler@19.2.4)(@types/node@22.14.0)(chokidar@4.0.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(postcss@8.5.3)(tailwindcss@3.4.7)(terser@5.39.0)(typescript@5.7.2)(yaml@2.6.1)':
-    dependencies:
-      '@ampproject/remapping': 2.3.0
-      '@angular-devkit/architect': 0.1902.5(chokidar@4.0.3)
-      '@angular/compiler': 19.2.4
-      '@angular/compiler-cli': 19.2.4(@angular/compiler@19.2.4)(typescript@5.7.2)
-      '@babel/core': 7.26.10
-      '@babel/helper-annotate-as-pure': 7.25.9
-      '@babel/helper-split-export-declaration': 7.24.7
-      '@babel/plugin-syntax-import-attributes': 7.26.0(@babel/core@7.26.10)
-      '@inquirer/confirm': 5.1.6(@types/node@22.14.0)
-      '@vitejs/plugin-basic-ssl': 1.2.0(vite@6.2.3(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.0)(terser@5.39.0)(yaml@2.6.1))
-      beasties: 0.2.0
-      browserslist: 4.24.4
-      esbuild: 0.25.1
-      fast-glob: 3.3.3
-      https-proxy-agent: 7.0.6
-      istanbul-lib-instrument: 6.0.3
-      listr2: 8.2.5
-      magic-string: 0.30.17
-      mrmime: 2.0.1
-      parse5-html-rewriting-stream: 7.0.0
-      picomatch: 4.0.2
-      piscina: 4.8.0
-      rollup: 4.34.8
-      sass: 1.85.0
-      semver: 7.7.1
-      source-map-support: 0.5.21
-      typescript: 5.7.2
-      vite: 6.2.3(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.0)(terser@5.39.0)(yaml@2.6.1)
-      watchpack: 2.4.2
-    optionalDependencies:
-      less: 4.2.2
-      lmdb: 3.2.6
-      postcss: 8.5.3
-      tailwindcss: 3.4.7
-    transitivePeerDependencies:
-      - '@types/node'
-      - chokidar
-      - jiti
-      - lightningcss
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
-
-  '@angular/build@19.2.5(@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.7.2))(@angular/compiler@19.2.4)(@types/node@22.14.0)(chokidar@4.0.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(postcss@8.5.3)(tailwindcss@4.0.14)(terser@5.39.0)(typescript@5.7.2)(yaml@2.6.1)':
-    dependencies:
-      '@ampproject/remapping': 2.3.0
-      '@angular-devkit/architect': 0.1902.5(chokidar@4.0.3)
-      '@angular/compiler': 19.2.4
-      '@angular/compiler-cli': 19.2.4(@angular/compiler@19.2.4)(typescript@5.7.2)
-      '@babel/core': 7.26.10
-      '@babel/helper-annotate-as-pure': 7.25.9
-      '@babel/helper-split-export-declaration': 7.24.7
-      '@babel/plugin-syntax-import-attributes': 7.26.0(@babel/core@7.26.10)
-      '@inquirer/confirm': 5.1.6(@types/node@22.14.0)
-      '@vitejs/plugin-basic-ssl': 1.2.0(vite@6.2.3(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.0)(terser@5.39.0)(yaml@2.6.1))
-      beasties: 0.2.0
-      browserslist: 4.24.4
-      esbuild: 0.25.1
-      fast-glob: 3.3.3
-      https-proxy-agent: 7.0.6
-      istanbul-lib-instrument: 6.0.3
-      listr2: 8.2.5
-      magic-string: 0.30.17
-      mrmime: 2.0.1
-      parse5-html-rewriting-stream: 7.0.0
-      picomatch: 4.0.2
-      piscina: 4.8.0
-      rollup: 4.34.8
-      sass: 1.85.0
-      semver: 7.7.1
-      source-map-support: 0.5.21
-      typescript: 5.7.2
-      vite: 6.2.3(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.0)(terser@5.39.0)(yaml@2.6.1)
-      watchpack: 2.4.2
-    optionalDependencies:
-      less: 4.2.2
-      lmdb: 3.2.6
-      postcss: 8.5.3
-      tailwindcss: 4.0.14
-    transitivePeerDependencies:
-      - '@types/node'
-      - chokidar
-      - jiti
-      - lightningcss
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
-
   '@angular/build@19.2.5(@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.8.2))(@angular/compiler@19.2.4)(@types/node@22.14.0)(chokidar@4.0.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(postcss@8.5.2)(tailwindcss@4.0.14)(terser@5.39.0)(typescript@5.8.2)(yaml@2.6.1)':
     dependencies:
       '@ampproject/remapping': 2.3.0
@@ -16403,6 +16305,55 @@ snapshots:
       lmdb: 3.2.6
       postcss: 8.5.2
       tailwindcss: 4.0.14
+    transitivePeerDependencies:
+      - '@types/node'
+      - chokidar
+      - jiti
+      - lightningcss
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - yaml
+
+  '@angular/build@19.2.5(@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.8.2))(@angular/compiler@19.2.4)(@types/node@22.14.0)(chokidar@4.0.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(postcss@8.5.3)(tailwindcss@3.4.7)(terser@5.39.0)(typescript@5.8.2)(yaml@2.6.1)':
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@angular-devkit/architect': 0.1902.5(chokidar@4.0.3)
+      '@angular/compiler': 19.2.4
+      '@angular/compiler-cli': 19.2.4(@angular/compiler@19.2.4)(typescript@5.8.2)
+      '@babel/core': 7.26.10
+      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-split-export-declaration': 7.24.7
+      '@babel/plugin-syntax-import-attributes': 7.26.0(@babel/core@7.26.10)
+      '@inquirer/confirm': 5.1.6(@types/node@22.14.0)
+      '@vitejs/plugin-basic-ssl': 1.2.0(vite@6.2.3(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.0)(terser@5.39.0)(yaml@2.6.1))
+      beasties: 0.2.0
+      browserslist: 4.24.4
+      esbuild: 0.25.1
+      fast-glob: 3.3.3
+      https-proxy-agent: 7.0.6
+      istanbul-lib-instrument: 6.0.3
+      listr2: 8.2.5
+      magic-string: 0.30.17
+      mrmime: 2.0.1
+      parse5-html-rewriting-stream: 7.0.0
+      picomatch: 4.0.2
+      piscina: 4.8.0
+      rollup: 4.34.8
+      sass: 1.85.0
+      semver: 7.7.1
+      source-map-support: 0.5.21
+      typescript: 5.8.2
+      vite: 6.2.3(@types/node@22.14.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.0)(terser@5.39.0)(yaml@2.6.1)
+      watchpack: 2.4.2
+    optionalDependencies:
+      less: 4.2.2
+      lmdb: 3.2.6
+      postcss: 8.5.3
+      tailwindcss: 3.4.7
     transitivePeerDependencies:
       - '@types/node'
       - chokidar
@@ -16495,21 +16446,6 @@ snapshots:
       '@angular/core': 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
       rxjs: 7.8.2
       tslib: 2.8.1
-
-  '@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.7.2)':
-    dependencies:
-      '@angular/compiler': 19.2.4
-      '@babel/core': 7.26.9
-      '@jridgewell/sourcemap-codec': 1.5.0
-      chokidar: 4.0.3
-      convert-source-map: 1.9.0
-      reflect-metadata: 0.2.2
-      semver: 7.7.1
-      tslib: 2.8.1
-      typescript: 5.7.2
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - supports-color
 
   '@angular/compiler-cli@19.2.4(@angular/compiler@19.2.4)(typescript@5.8.2)':
     dependencies:
