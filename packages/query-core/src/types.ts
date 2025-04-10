@@ -432,12 +432,11 @@ export interface QueryObserverOptions<
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
   [_ in TKey]: {}
 }
-
 export type Optional<TTarget, TKey extends keyof TTarget> = Pick<
   Partial<TTarget>,
   TKey
 > &
-  Omit<TTarget, TKey>
+  OmitKeyof<TTarget, TKey>
 
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,
