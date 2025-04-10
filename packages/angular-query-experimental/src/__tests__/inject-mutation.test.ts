@@ -466,7 +466,9 @@ describe('injectMutation', () => {
             mutationKey: ['injectionContextError'],
             mutationFn: () => Promise.resolve(),
           }),
-          TestBed.inject(Injector),
+          {
+            injector: TestBed.inject(Injector),
+          },
         )
       }).not.toThrow()
     })
