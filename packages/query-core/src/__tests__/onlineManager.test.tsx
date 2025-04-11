@@ -1,11 +1,17 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { OnlineManager } from '../onlineManager'
-import { setIsServer, sleep } from './utils'
+import { setIsServer } from './utils'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager
+
   beforeEach(() => {
+    vi.useFakeTimers()
     onlineManager = new OnlineManager()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   test('isOnline should return true if navigator is undefined', () => {
@@ -41,7 +47,7 @@ describe('onlineManager', () => {
 
     onlineManager.setEventListener(setup)
 
-    await sleep(30)
+    await vi.advanceTimersByTimeAsync(30)
     expect(count).toEqual(1)
     expect(onlineManager.isOnline()).toBeFalsy()
   })
