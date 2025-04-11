@@ -51,7 +51,9 @@ export default class LazyLoadDevtoolsPanelExampleComponent {
       this.devtools.set(
         import('@tanstack/angular-query-devtools-experimental').then(
           ({ injectDevtoolsPanel }) =>
-            injectDevtoolsPanel(this.devToolsOptions, this.injector),
+            injectDevtoolsPanel(this.devToolsOptions, {
+              injector: this.injector,
+            }),
         ),
       )
     }

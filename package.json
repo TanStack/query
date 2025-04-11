@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.7.0",
   "type": "module",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
@@ -13,7 +13,7 @@
     "test": "pnpm run test:ci",
     "test:pr": "nx affected --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
     "test:ci": "nx run-many --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
-    "test:eslint": "nx affected --target=test:eslint --exclude=examples/**",
+    "test:eslint": "nx affected --target=test:eslint",
     "test:format": "pnpm run prettier --check",
     "test:sherif": "sherif -i typescript -p \"./integrations/*\" -p \"./examples/*\"",
     "test:lib": "nx affected --target=test:lib --exclude=examples/**",
@@ -46,10 +46,10 @@
     "@types/node": "^22.9.3",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
-    "@vitest/coverage-istanbul": "^2.1.9",
+    "@vitest/coverage-istanbul": "^3.1.1",
     "@vitest/eslint-plugin": "^1.1.36",
     "cpy-cli": "^5.0.0",
-    "esbuild-plugin-file-path-extensions": "^2.1.2",
+    "esbuild-plugin-file-path-extensions": "^2.1.4",
     "eslint": "^9.15.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "jsdom": "^25.0.1",
@@ -62,7 +62,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sherif": "^1.0.0",
-    "tsup": "8.0.2",
+    "tsup": "^8.4.0",
     "typescript": "5.8.2",
     "typescript50": "npm:typescript@5.0",
     "typescript51": "npm:typescript@5.1",
@@ -72,15 +72,36 @@
     "typescript55": "npm:typescript@5.5",
     "typescript56": "npm:typescript@5.6",
     "typescript57": "npm:typescript@5.7",
-    "vite": "^5.3.5",
+    "vite": "^6.2.4",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^2.1.9"
+    "vitest": "^3.1.1"
   },
   "pnpm": {
     "overrides": {
+      "@tanstack/angular-query-devtools-experimental": "workspace:*",
+      "@tanstack/angular-query-experimental": "workspace:*",
+      "@tanstack/eslint-plugin-query": "workspace:*",
+      "@tanstack/query-async-storage-persister": "workspace:*",
+      "@tanstack/query-broadcast-client-experimental": "workspace:*",
+      "@tanstack/query-codemods": "workspace:*",
+      "@tanstack/query-core": "workspace:*",
+      "@tanstack/query-devtools": "workspace:*",
+      "@tanstack/query-persist-client-core": "workspace:*",
+      "@tanstack/query-sync-storage-persister": "workspace:*",
+      "@tanstack/react-query": "workspace:*",
+      "@tanstack/react-query-devtools": "workspace:*",
+      "@tanstack/react-query-next-experimental": "workspace:*",
+      "@tanstack/react-query-persist-client": "workspace:*",
+      "@tanstack/solid-query": "workspace:*",
+      "@tanstack/solid-query-devtools": "workspace:*",
+      "@tanstack/solid-query-persist-client": "workspace:*",
+      "@tanstack/svelte-query": "workspace:*",
+      "@tanstack/svelte-query-devtools": "workspace:*",
+      "@tanstack/svelte-query-persist-client": "workspace:*",
+      "@tanstack/vue-query": "workspace:*",
+      "@tanstack/vue-query-devtools": "workspace:*",
       "@types/react": "^19.0.1",
-      "@types/react-dom": "^19.0.2",
-      "eslint": "$eslint"
+      "@types/react-dom": "^19.0.2"
     }
   }
 }

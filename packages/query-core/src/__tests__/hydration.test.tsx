@@ -799,8 +799,8 @@ describe('dehydration and rehydration', () => {
       queryClient,
       {
         mutationKey: ['mutation'],
-        mutationFn: async () => {
-          return 'mutation'
+        mutationFn: () => {
+          return Promise.resolve('mutation')
         },
         scope: {
           id: 'scope',
