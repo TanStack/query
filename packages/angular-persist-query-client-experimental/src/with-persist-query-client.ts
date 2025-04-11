@@ -21,6 +21,7 @@ import type { PersistQueryClientFeature } from '@tanstack/angular-query-experime
 type PersistQueryClientOptions = {
   persistOptions: Omit<PersistQueryClientOptionsCore, 'queryClient'>
   onSuccess?: () => Promise<unknown> | unknown
+  onError?: () => Promise<unknown> | unknown
 }
 
 /**
@@ -34,27 +35,25 @@ type PersistQueryClientOptions = {
  * })
  *
  * export const appConfig: ApplicationConfig = {
- *  providers: [
- *    provideTanStackQuery(
- *      new QueryClient(),
- *      withPersistQueryClient([
- *        {
- *          persistOptions: {
- *            persister: localStoragePersister,
- *          },
- *          onSuccess: () => console.log('Restoration completed successfully.'),
- *        },
- *      ])
- *    )
- *  ]
- * }
+ *   providers: [
+ *     provideTanStackQuery(
+ *       new QueryClient(),
+ *       withPersistQueryClient({
+ *         persistOptions: {
+ *           persister: localStoragePersister,
+ *         },
+ *         onSuccess: () => console.log('Restoration completed successfully.'),
+ *       })
+ *     ),
+ *   ],
+ * };
  * ```
  * @param persistQueryClientOptions - An array of objects containing persistOptions and an onSuccess callback which gets called when the restoration process is complete.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  */
 export function withPersistQueryClient(
-  persistQueryClientOptions: Array<PersistQueryClientOptions>,
+  persistQueryClientOptions: PersistQueryClientOptions,
 ): PersistQueryClientFeature {
   const isRestoring = signal(false)
   const providers = [
@@ -68,24 +67,20 @@ export function withPersistQueryClient(
         const queryClient = inject(QueryClient)
 
         isRestoring.set(true)
-        const restorations = persistQueryClientOptions.map(
-          ({ onSuccess, persistOptions }) => {
-            const options = { queryClient, ...persistOptions }
-            return persistQueryClientRestore(options).then(async () => {
-              try {
-                if (onSuccess) {
-                  await onSuccess()
-                }
-              } finally {
-                const cleanup = persistQueryClientSubscribe(options)
-                destroyRef.onDestroy(cleanup)
-              }
-            })
-          },
-        )
-        Promise.all(restorations).finally(() => {
-          isRestoring.set(false)
-        })
+        const { onSuccess, onError, persistOptions } = persistQueryClientOptions
+        const options = { queryClient, ...persistOptions }
+        persistQueryClientRestore(options)
+          .then(() => {
+            onSuccess?.()
+          })
+          .catch(() => {
+            onError?.()
+          })
+          .finally(() => {
+            isRestoring.set(false)
+            const cleanup = persistQueryClientSubscribe(options)
+            destroyRef.onDestroy(cleanup)
+          })
       },
     },
   ]

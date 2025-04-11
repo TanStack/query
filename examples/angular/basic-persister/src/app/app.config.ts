@@ -25,13 +25,11 @@ export const appConfig: ApplicationConfig = {
         },
       }),
       withDevtools(),
-      withPersistQueryClient([
-        {
-          persistOptions: {
-            persister: localStoragePersister,
-          },
+      withPersistQueryClient({
+        persistOptions: {
+          persister: localStoragePersister,
         },
-      ]),
+      }),
     ),
   ],
 }

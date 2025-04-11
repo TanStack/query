@@ -105,7 +105,7 @@ describe('withPersistQueryClient', () => {
         provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
-          withPersistQueryClient([{ persistOptions: { persister } }]),
+          withPersistQueryClient({ persistOptions: { persister } }),
         ),
       ],
     })
@@ -136,7 +136,7 @@ describe('withPersistQueryClient', () => {
   })
 
   test.todo(
-    '(Write this test after injectQueries is working) should also put injectQueries into idle state',
+    '(Once injectQueries is functional) verify that injectQueries transitions to an idle state',
   )
 
   test('should show initialData while restoring', async () => {
@@ -193,7 +193,7 @@ describe('withPersistQueryClient', () => {
         provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
-          withPersistQueryClient([{ persistOptions: { persister } }]),
+          withPersistQueryClient({ persistOptions: { persister } }),
         ),
       ],
     })
@@ -275,7 +275,7 @@ describe('withPersistQueryClient', () => {
         provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
-          withPersistQueryClient([{ persistOptions: { persister } }]),
+          withPersistQueryClient({ persistOptions: { persister } }),
         ),
       ],
     })
@@ -338,12 +338,10 @@ describe('withPersistQueryClient', () => {
         provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
-          withPersistQueryClient([
-            {
-              persistOptions: { persister },
-              onSuccess,
-            },
-          ]),
+          withPersistQueryClient({
+            persistOptions: { persister },
+            onSuccess,
+          }),
         ),
       ],
     })
@@ -361,6 +359,8 @@ describe('withPersistQueryClient', () => {
     const queryClient = new QueryClient()
     const removeClient = vi.fn()
     const [error, persister] = createMockErrorPersister(removeClient)
+    const onSuccess = vi.fn()
+    const onError = vi.fn()
 
     @Component({
       template: `
@@ -385,127 +385,22 @@ describe('withPersistQueryClient', () => {
         provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
-          withPersistQueryClient([
-            {
-              persistOptions: { persister },
-            },
-          ]),
+          withPersistQueryClient({
+            persistOptions: { persister },
+            onSuccess,
+            onError,
+          }),
         ),
       ],
     })
 
     await waitFor(() => screen.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledTimes(0)
+    expect(onError).toHaveBeenCalledTimes(1)
+
     expect(onErrorMock).toHaveBeenCalledTimes(1)
     expect(onErrorMock).toHaveBeenNthCalledWith(1, error)
     onErrorMock.mockRestore()
-  })
-
-  test('should be able to support multiple persisters', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const states1: Array<{
-      status: string
-      fetchStatus: string
-      data: string | undefined
-    }> = []
-    const states2: Array<{
-      status: string
-      fetchStatus: string
-      data: string | undefined
-    }> = []
-
-    const queryClient = new QueryClient()
-    await queryClient.prefetchQuery({
-      queryKey: key1,
-      queryFn: () => Promise.resolve('hydrated 1'),
-    })
-
-    const persister1 = createMockPersister()
-    await persistQueryClientSave({ queryClient, persister: persister1 })
-    queryClient.clear()
-
-    const persister2 = createMockPersister()
-    await queryClient.prefetchQuery({
-      queryKey: key2,
-      queryFn: () => Promise.resolve('hydrated 2'),
-    })
-    await persistQueryClientSave({ queryClient, persister: persister2 })
-    queryClient.clear()
-
-    @Component({
-      template: `
-        <div>
-          <h1>{{ query1.data() }}</h1>
-          <h2>fetchStatus: {{ query1.fetchStatus() }}</h2>
-        </div>
-        <div>
-          <h1>{{ query2.data() }}</h1>
-          <h2>fetchStatus: {{ query2.fetchStatus() }}</h2>
-        </div>
-      `,
-    })
-    class Page {
-      query1 = injectQuery(() => ({
-        queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return 'fetched 1'
-        },
-      }))
-      query2 = injectQuery(() => ({
-        queryKey: key2,
-        queryFn: async () => {
-          await sleep(10)
-          return 'fetched 2'
-        },
-      }))
-
-      _ = effect(() => {
-        states1.push({
-          status: this.query1.status(),
-          fetchStatus: this.query1.fetchStatus(),
-          data: this.query1.data(),
-        })
-        states2.push({
-          status: this.query2.status(),
-          fetchStatus: this.query2.fetchStatus(),
-          data: this.query2.data(),
-        })
-      })
-    }
-
-    const onSuccess1 = vi.fn()
-    const onSuccess2 = vi.fn()
-
-    render(Page, {
-      providers: [
-        provideExperimentalZonelessChangeDetection(),
-        provideTanStackQuery(
-          queryClient,
-          withPersistQueryClient([
-            {
-              persistOptions: {
-                persister: persister1,
-              },
-              onSuccess: onSuccess1,
-            },
-            {
-              persistOptions: {
-                persister: persister2,
-              },
-              onSuccess: onSuccess2,
-            },
-          ]),
-        ),
-      ],
-    })
-
-    expect(onSuccess1).toHaveBeenCalledTimes(0)
-    expect(onSuccess2).toHaveBeenCalledTimes(0)
-    await waitFor(() => screen.getByText('fetched 1'))
-    await waitFor(() => screen.getByText('fetched 2'))
-    expect(onSuccess1).toHaveBeenCalledTimes(1)
-    expect(onSuccess2).toHaveBeenCalledTimes(1)
   })
 })
