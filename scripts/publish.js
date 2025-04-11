@@ -94,8 +94,8 @@ await publish({
     },
     // publish when angular-query is stable
     // {
-    //   name: '@tanstack/angular-query-persist-client-experimental',
-    //   packageDir: 'packages/angular-persist-query-client-experimental',
+    //   name: '@tanstack/angular-query-persist-client',
+    //   packageDir: 'packages/angular-persist-query-client',
     // },
   ],
   branchConfigs: {
