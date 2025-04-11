@@ -1,0 +1,1 @@
+../../scripts/getViteAliases.js
