@@ -1,7 +1,7 @@
 'package: angular-query-devtools-experimental':
-  - 'packages/angular-query-devtools-experimental/**/*'
-'package: angular-query-experimental':
-  - 'packages/angular-query-experimental/**/*'
+  - 'packages/angular-query-devtools/**/*'
+'package: angular-query':
+  - 'packages/angular-query/**/*'
 'package: eslint-plugin-query':
   - 'packages/eslint-plugin-query/**/*'
 'package: query-async-storage-persister':

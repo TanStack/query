@@ -1,13 +1,11 @@
 ![TanStack Query Header](https://github.com/TanStack/query/raw/main/media/repo-header.png)
 
-[![npm version](https://img.shields.io/npm/v/@tanstack/angular-query-experimental)](https://www.npmjs.com/package/@tanstack/angular-query-experimental)
-[![npm license](https://img.shields.io/npm/l/@tanstack/angular-query-experimental)](https://github.com/TanStack/query/blob/main/LICENSE)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@tanstack/angular-query-experimental)](https://bundlephobia.com/package/@tanstack/angular-query-experimental)
-[![npm](https://img.shields.io/npm/dm/@tanstack/angular-query-experimental)](https://www.npmjs.com/package/@tanstack/angular-query-experimental)
+[![npm version](https://img.shields.io/npm/v/@tanstack/angular-query)](https://www.npmjs.com/package/@tanstack/angular-query)
+[![npm license](https://img.shields.io/npm/l/@tanstack/angular-query)](https://github.com/TanStack/query/blob/main/LICENSE)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@tanstack/angular-query)](https://bundlephobia.com/package/@tanstack/angular-query)
+[![npm](https://img.shields.io/npm/dm/@tanstack/angular-query)](https://www.npmjs.com/package/@tanstack/angular-query)
 
 # Angular Query
-
-> IMPORTANT: This library is currently in an experimental stage. This means that breaking changes may happen in minor AND patch releases. Upgrade carefully. If you use this in production while in experimental stage, please lock your version to a patch-level version to avoid unexpected breaking changes.
 
 Functions for fetching, caching and updating asynchronous data in Angular
 
@@ -34,32 +32,32 @@ Visit https://tanstack.com/query/latest/docs/framework/angular/overview
 1. Install `angular-query`
 
 ```bash
-$ npm i @tanstack/angular-query-experimental
+$ npm i @tanstack/angular-query
 ```
 
 or
 
 ```bash
-$ pnpm add @tanstack/angular-query-experimental
+$ pnpm add @tanstack/angular-query
 ```
 
 or
 
 ```bash
-$ yarn add @tanstack/angular-query-experimental
+$ yarn add @tanstack/angular-query
 ```
 
 or
 
 ```bash
-$ bun add @tanstack/angular-query-experimental
+$ bun add @tanstack/angular-query
 ```
 
 2. Initialize **TanStack Query** by adding **provideTanStackQuery** to your application
 
 ```ts
-import { provideTanStackQuery } from '@tanstack/angular-query-experimental'
-import { QueryClient } from '@tanstack/angular-query-experimental'
+import { provideTanStackQuery } from '@tanstack/angular-query'
+import { QueryClient } from '@tanstack/angular-query'
 
 bootstrapApplication(AppComponent, {
   providers: [provideTanStackQuery(new QueryClient())],
@@ -73,7 +71,7 @@ import { provideHttpClient } from '@angular/common/http'
 import {
   provideTanStackQuery,
   QueryClient,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 
 @NgModule({
   declarations: [AppComponent],
@@ -86,7 +84,7 @@ import {
 3. Inject query
 
 ```ts
-import { injectQuery } from '@tanstack/angular-query-experimental'
+import { injectQuery } from '@tanstack/angular-query'
 import { Component } from '@angular/core'
 
 @Component({...})
