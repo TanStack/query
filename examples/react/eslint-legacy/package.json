@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:eslint": "eslint ./src"
+    "test:eslint": "ESLINT_USE_FLAT_CONFIG=false eslint ./src/**/*.tsx"
   },
   "dependencies": {
     "@tanstack/query-sync-storage-persister": "^5.73.1",
@@ -18,11 +18,19 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.72.2",
-    "eslint": "^8.16.0",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "5.8.2",
     "vite": "^6.2.4"
+  },
+  "nx": {
+    "targets": {
+      "test:eslint": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
   }
 }
