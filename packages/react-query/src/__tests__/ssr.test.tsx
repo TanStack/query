@@ -1,11 +1,19 @@
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
-import { createQueryClient, queryKey, setIsServer, sleep } from './utils'
+import { createQueryClient, queryKey, setIsServer } from './utils'
 
 describe('Server Side Rendering', () => {
   setIsServer(true)
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
 
   it('should not trigger fetch', () => {
     const queryCache = new QueryCache()
@@ -54,8 +62,8 @@ describe('Server Side Rendering', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
-    const queryFn = vi.fn(() => {
-      sleep(10)
+    const queryFn = vi.fn(async () => {
+      await vi.advanceTimersByTimeAsync(10)
       return 'data'
     })
 
@@ -123,7 +131,7 @@ describe('Server Side Rendering', () => {
     const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
     const queryFn = vi.fn(async () => {
-      await sleep(5)
+      await vi.advanceTimersByTimeAsync(5)
       return 'page 1'
     })
 
