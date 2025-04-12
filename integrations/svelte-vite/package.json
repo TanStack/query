@@ -9,7 +9,7 @@
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@tanstack/svelte-query": "workspace:*",
     "@tanstack/svelte-query-devtools": "workspace:*",
-    "svelte": "^5.0.0",
+    "svelte": "^5.26.1",
     "vite": "^6.2.4"
   }
 }
