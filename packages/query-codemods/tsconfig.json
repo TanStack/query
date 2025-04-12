@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "baseUrl": ".",
+    "baseUrl": "."
   },
   "include": ["src", "*.config.js", "*.config.ts", "package.json"]
 }

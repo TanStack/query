@@ -5,7 +5,7 @@
     "rootDir": ".",
     "baseUrl": ".",
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
+    "jsxImportSource": "solid-js"
   },
   "include": [
     "src",
