@@ -8,7 +8,7 @@ RuleTester.afterAll = afterAll
 RuleTester.describe = describe
 RuleTester.it = it
 
-const ruleTester = new RuleTester({
+const ruleTesterTypeChecked = new RuleTester({
   languageOptions: {
     parser: await import('@typescript-eslint/parser'),
     parserOptions: {
@@ -18,7 +18,7 @@ const ruleTester = new RuleTester({
   },
 })
 
-ruleTester.run('no-void-query-fn', rule, {
+ruleTesterTypeChecked.run('no-void-query-fn', rule, {
   valid: [
     {
       name: 'queryFn returns a value',
@@ -320,6 +320,34 @@ ruleTester.run('no-void-query-fn', rule, {
         }
       `,
       errors: [{ messageId: 'noVoidReturn' }],
+    },
+  ],
+})
+
+const ruleTester = new RuleTester({
+  languageOptions: {
+    parser: await import('@typescript-eslint/parser'),
+  },
+})
+
+ruleTester.run('no-void-query-fn with no program', rule, {
+  valid: [],
+  invalid: [
+    {
+      name: 'queryFn returns void',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+        function Component() {
+          const query = useQuery({
+            queryKey: ['test'],
+            queryFn: () => {
+              console.log('test')
+            },
+          })
+          return null
+        }
+      `,
+      errors: [{ messageId: 'noProgram' }],
     },
   ],
 })

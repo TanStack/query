@@ -19,6 +19,7 @@ export const rule = createRule({
     },
     messages: {
       noVoidReturn: 'queryFn must return a non-undefined value',
+      noProgram: `Type information is not available for this file. See https://typescript-eslint.io/getting-started/typed-linting/ for how to set this up.`,
     },
     schema: [],
   },
@@ -41,7 +42,10 @@ export const rule = createRule({
           !parserServices.esTreeNodeToTSNodeMap ||
           !parserServices.program
         ) {
-          return
+          return context.report({
+            node: node.value,
+            messageId: 'noProgram',
+          })
         }
 
         const checker = parserServices.program.getTypeChecker()
