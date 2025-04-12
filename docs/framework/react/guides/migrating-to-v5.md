@@ -9,7 +9,7 @@ v5 is a major version, so there are some breaking changes to be aware of:
 
 ### Supports a single signature, one object
 
-useQuery and friends used to have many overloads in TypeScript - different ways how the function can be invoked. Not only this was tough to maintain, type wise, it also required a runtime check to see which type the first and the second parameter, to correctly create options.
+useQuery and friends used to have many overloads in TypeScript: different ways how the function could be invoked. Not only was this tough to maintain, type wise, it also required a runtime check to see which types the first and the second parameter were, to correctly create options.
 
 now we only support the object format.
 
