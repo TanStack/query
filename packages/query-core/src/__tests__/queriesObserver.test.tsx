@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/dom'
 import { QueriesObserver } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
@@ -8,12 +7,14 @@ describe('queriesObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
+    vi.useFakeTimers()
     queryClient = createQueryClient()
     queryClient.mount()
   })
 
   afterEach(() => {
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   test('should return an array with all query results', async () => {
@@ -29,7 +30,7 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
   })
@@ -48,9 +49,9 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     queryClient.setQueryData(key2, 3)
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     unsubscribe()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
@@ -93,9 +94,9 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     observer.setQueries([{ queryKey: key2, queryFn: queryFn2 }])
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     const queryCache = queryClient.getQueryCache()
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeDefined()
@@ -140,12 +141,12 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     observer.setQueries([
       { queryKey: key2, queryFn: queryFn2 },
       { queryKey: key1, queryFn: queryFn1 },
     ])
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     unsubscribe()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
@@ -188,12 +189,12 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     observer.setQueries([
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     unsubscribe()
     expect(results.length).toBe(5)
     expect(results[0]).toMatchObject([
@@ -228,7 +229,7 @@ describe('queriesObserver', () => {
       { queryKey: key2, queryFn: queryFn2 },
     ])
     const unsubscribe = observer.subscribe(() => undefined)
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     unsubscribe()
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -254,7 +255,7 @@ describe('queriesObserver', () => {
 
     unsubscribe1()
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       // 1 call: pending
       expect(subscription1Handler).toBeCalledTimes(1)
       // 1 call: success
@@ -293,7 +294,7 @@ describe('queriesObserver', () => {
       results.push(result)
     })
 
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     unsubscribe()
 
     expect(results.length).toBe(6)
