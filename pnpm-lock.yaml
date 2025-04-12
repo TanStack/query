@@ -49,9 +49,6 @@ importers:
       '@testing-library/jest-dom':
         specifier: ^6.6.3
         version: 6.6.3
-      '@types/eslint':
-        specifier: ^9.6.1
-        version: 9.6.1
       '@types/node':
         specifier: ^22.9.3
         version: 22.14.1
@@ -643,7 +640,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -860,7 +857,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -888,7 +885,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -919,7 +916,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -947,7 +944,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^15.1.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
       react:
         specifier: ^19.0.0
@@ -978,7 +975,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-next-experimental
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -1043,7 +1040,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -1071,7 +1068,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -1099,7 +1096,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -1152,7 +1149,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -2020,7 +2017,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/react-query-devtools
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
@@ -2048,7 +2045,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/react-query-devtools
       next:
-        specifier: ^15.1.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
       react:
         specifier: ^19.0.0
@@ -2487,7 +2484,7 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       next:
-        specifier: ^15.0.0
+        specifier: ^15.1.2
         version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
       npm-run-all2:
         specifier: ^5.0.0
