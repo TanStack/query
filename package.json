@@ -12,7 +12,7 @@
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...')} else {process.exit(1)}\" || npx -y only-allow pnpm",
     "test": "pnpm run test:ci",
     "test:pr": "nx affected --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
-    "test:ci": "nx run-many --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
+    "test:ci": "nx run-many --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build --skip-nx-cache",
     "test:eslint": "nx affected --target=test:eslint",
     "test:format": "pnpm run prettier --check",
     "test:sherif": "sherif -i typescript -p \"./integrations/*\" -p \"./examples/*\"",
