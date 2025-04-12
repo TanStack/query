@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@tanstack/query-sync-storage-persister": "^5.73.1",
-    "@tanstack/svelte-query": "^5.72.2",
-    "@tanstack/svelte-query-devtools": "^5.72.2",
-    "@tanstack/svelte-query-persist-client": "^5.73.1"
+    "@tanstack/svelte-query": "^5.73.2",
+    "@tanstack/svelte-query-devtools": "^5.73.2",
+    "@tanstack/svelte-query-persist-client": "^5.73.2"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.3.1",
