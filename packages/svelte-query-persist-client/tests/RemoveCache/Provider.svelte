@@ -6,8 +6,15 @@
 
   export let queryClient: QueryClient
   export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+  export let onSuccess: () => void
+  export let onError: () => void
 </script>
 
-<PersistQueryClientProvider client={queryClient} {persistOptions}>
+<PersistQueryClientProvider
+  client={queryClient}
+  {persistOptions}
+  {onSuccess}
+  {onError}
+>
   <RemoveCache />
 </PersistQueryClientProvider>

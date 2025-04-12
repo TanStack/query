@@ -4,8 +4,7 @@
     "outDir": "./dist-ts",
     "rootDir": ".",
     "baseUrl": ".",
-    "jsx": "react-jsx",
-    "moduleResolution": "Bundler"
+    "jsx": "react-jsx"
   },
   "include": [
     "src",
