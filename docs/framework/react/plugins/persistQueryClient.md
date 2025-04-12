@@ -219,6 +219,10 @@ ReactDOM.createRoot(rootElement).render(
   - will be called when the initial restore is finished
   - can be used to [resumePausedMutations](../../../reference/QueryClient.md#queryclientresumepausedmutations)
   - if a Promise is returned, it will be awaited; restoring is seen as ongoing until then
+- `onError?: () => Promise<unknown> | unknown`
+  - optional
+  - will be called when an error is thrown during restoration
+  - if a Promise is returned, it will be awaited
 
 ### useIsRestoring
 
