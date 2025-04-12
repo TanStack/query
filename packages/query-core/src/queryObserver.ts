@@ -526,7 +526,11 @@ export class QueryObserver<
             : options.placeholderData
         if (options.select && placeholderData !== undefined) {
           try {
-            placeholderData = options.select(placeholderData)
+            placeholderData =
+              this.#selectResult !== 'undefined' &&
+              placeholderData === this.#lastQueryWithDefinedData?.state.data
+                ? this.#selectResult
+                : options.select(placeholderData)
             this.#selectError = null
           } catch (selectError) {
             this.#selectError = selectError as TError
