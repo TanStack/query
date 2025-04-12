@@ -927,42 +927,6 @@ describe('queryObserver', () => {
     expect(observer.getCurrentResult().data).toBe(selectedData2)
   })
 
-  test('should not use an undefined value returned by select as placeholderData', () => {
-    const key = queryKey()
-
-    const data = { value: 'data' }
-    const selectedData = { value: 'data' }
-    const placeholderData1 = { value: 'data' }
-    const placeholderData2 = { value: 'data' }
-
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => data,
-      select: () => data,
-    })
-
-    observer.setOptions({
-      queryKey: key,
-      queryFn: () => data,
-      select: () => {
-        return selectedData
-      },
-      placeholderData: placeholderData1,
-    })
-
-    expect(observer.getCurrentResult().isPlaceholderData).toBe(true)
-
-    observer.setOptions({
-      queryKey: key,
-      queryFn: () => data,
-      // @ts-expect-error
-      select: () => undefined,
-      placeholderData: placeholderData2,
-    })
-
-    expect(observer.getCurrentResult().isPlaceholderData).toBe(false)
-  })
-
   test('should pass the correct previous queryKey (from prevQuery) to placeholderData function params with select', async () => {
     const results: Array<QueryObserverResult> = []
     const keys: Array<ReadonlyArray<unknown> | null> = []
@@ -1038,11 +1002,16 @@ describe('queryObserver', () => {
     const data1 = { value: 'data1' }
     const data2 = { value: 'data2' }
 
+    let selectCount = 0
+
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
       queryFn: () => data1,
       placeholderData: (prev) => prev,
-      select: (data) => data.value,
+      select: (data) => {
+        selectCount++
+        return data.value
+      },
     })
 
     const unsubscribe = observer.subscribe((result) => {
@@ -1055,7 +1024,10 @@ describe('queryObserver', () => {
       queryKey: key2,
       queryFn: () => data2,
       placeholderData: (prev) => prev,
-      select: (data) => data.value,
+      select: (data) => {
+        selectCount++
+        return data.value
+      },
     })
 
     await vi.advanceTimersByTimeAsync(1)
@@ -1082,6 +1054,70 @@ describe('queryObserver', () => {
       status: 'success',
       fetchStatus: 'idle',
     }) // Successful fetch for new key
+
+    // it's 3 because select is an inline function
+    expect(selectCount).toBe(3)
+  })
+
+  test('should use cached selectResult when switching between queries and placeholderData returns previousData', async () => {
+    const results: Array<QueryObserverResult> = []
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const data1 = { value: 'data1' }
+    const data2 = { value: 'data2' }
+
+    const stableSelect = vi.fn((data: { value: string }) => data.value)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key1,
+      queryFn: () => data1,
+      placeholderData: (prev) => prev,
+      select: stableSelect,
+    })
+
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await sleep(1)
+
+    observer.setOptions({
+      queryKey: key2,
+      queryFn: () => data2,
+      placeholderData: (prev) => prev,
+      select: stableSelect,
+    })
+
+    await sleep(1)
+    unsubscribe()
+
+    expect(results.length).toBe(4)
+    expect(results[0]).toMatchObject({
+      data: undefined,
+      status: 'pending',
+      fetchStatus: 'fetching',
+    }) // Initial fetch
+    expect(results[1]).toMatchObject({
+      data: 'data1',
+      status: 'success',
+      fetchStatus: 'idle',
+    }) // Successful fetch
+    expect(results[2]).toMatchObject({
+      data: 'data1',
+      status: 'success',
+      fetchStatus: 'fetching',
+    }) // Fetch for new key, but using previous data as placeholder
+    expect(results[3]).toMatchObject({
+      data: 'data2',
+      status: 'success',
+      fetchStatus: 'idle',
+    }) // Successful fetch for new key
+
+    expect(stableSelect).toHaveBeenCalledTimes(2)
+    expect(stableSelect.mock.calls[0]![0]).toEqual(data1)
+    expect(stableSelect.mock.calls[1]![0]).toEqual(data2)
   })
 
   test('setOptions should notify cache listeners', () => {
