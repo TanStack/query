@@ -30,9 +30,7 @@
       "@tanstack/angular-query-devtools": [
         "../../packages/angular-query-devtools/src"
       ],
-      "@tanstack/angular-query": [
-        "../../packages/angular-query/src"
-      ],
+      "@tanstack/angular-query": ["../../packages/angular-query/src"],
       "@tanstack/angular-query-persist-client": [
         "../../packages/angular-query-persist-client/src"
       ],
