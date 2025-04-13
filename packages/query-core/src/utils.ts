@@ -14,12 +14,7 @@ import type { FetchOptions, Query } from './query'
 
 // TYPES
 
-export interface QueryFilters<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> {
+export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
    */
