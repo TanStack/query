@@ -5,8 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@tanstack/angular-query-devtools-experimental': workspace:*
-  '@tanstack/angular-query-experimental': workspace:*
+  '@tanstack/angular-query-devtools': workspace:*
+  '@tanstack/angular-query': workspace:*
+  '@tanstack/angular-query-persist-client': workspace:*
   '@tanstack/eslint-plugin-query': workspace:*
   '@tanstack/query-async-storage-persister': workspace:*
   '@tanstack/query-broadcast-client-experimental': workspace:*
@@ -163,9 +164,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -206,9 +207,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -249,12 +250,12 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       '@tanstack/angular-query-persist-client':
-        specifier: ^5.62.7
-        version: link:../../../packages/angular-persist-query-client
+        specifier: workspace:*
+        version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-sync-storage-persister':
         specifier: workspace:*
         version: link:../../../packages/query-sync-storage-persister
@@ -301,12 +302,12 @@ importers:
       '@angular/router':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
-      '@tanstack/angular-query-devtools-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-devtools-experimental
-      '@tanstack/angular-query-experimental':
+        version: link:../../../packages/angular-query
+      '@tanstack/angular-query-devtools':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query-devtools
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -347,9 +348,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -393,9 +394,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -436,9 +437,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -482,9 +483,9 @@ importers:
       '@angular/router':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -528,9 +529,9 @@ importers:
       '@angular/router':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -574,9 +575,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -617,9 +618,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
+        version: link:../../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -2031,9 +2032,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
+      '@tanstack/angular-query':
         specifier: workspace:*
-        version: link:../../packages/angular-query-experimental
+        version: link:../../packages/angular-query
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -2269,69 +2270,7 @@ importers:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.3)
 
-  packages/angular-persist-query-client:
-    dependencies:
-      '@angular/common':
-        specifier: '>=16.0.0'
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@tanstack/query-persist-client-core':
-        specifier: workspace:*
-        version: link:../query-persist-client-core
-    devDependencies:
-      '@angular/compiler':
-        specifier: ^19.2.4
-        version: 19.2.4
-      '@angular/core':
-        specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
-      '@angular/platform-browser':
-        specifier: ^19.2.4
-        version: 19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
-      '@angular/platform-browser-dynamic':
-        specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
-        specifier: workspace:*
-        version: link:../angular-query-experimental
-      '@testing-library/angular':
-        specifier: ^17.3.2
-        version: 17.3.7(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/router@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2))(@testing-library/dom@10.4.0)
-      '@testing-library/dom':
-        specifier: ^10.4.0
-        version: 10.4.0
-      eslint-plugin-jsdoc:
-        specifier: ^50.5.0
-        version: 50.5.0(eslint@9.15.0(jiti@2.4.2))
-      npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
-
-  packages/angular-query-devtools-experimental:
-    dependencies:
-      '@angular/common':
-        specifier: '>=16.0.0'
-        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@tanstack/query-devtools':
-        specifier: workspace:*
-        version: link:../query-devtools
-    devDependencies:
-      '@angular/core':
-        specifier: ^19.2.4
-        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
-      '@angular/platform-browser-dynamic':
-        specifier: ^19.2.4
-        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
-      '@tanstack/angular-query-experimental':
-        specifier: workspace:*
-        version: link:../angular-query-experimental
-      eslint-plugin-jsdoc:
-        specifier: ^50.5.0
-        version: 50.5.0(eslint@9.15.0(jiti@2.4.2))
-      npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
-
-  packages/angular-query-experimental:
+  packages/angular-query:
     dependencies:
       '@angular/common':
         specifier: '>=16.0.0'
@@ -2355,6 +2294,68 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+      eslint-plugin-jsdoc:
+        specifier: ^50.5.0
+        version: 50.5.0(eslint@9.15.0(jiti@2.4.2))
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
+
+  packages/angular-query-devtools:
+    dependencies:
+      '@angular/common':
+        specifier: '>=16.0.0'
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+      '@tanstack/query-devtools':
+        specifier: workspace:*
+        version: link:../query-devtools
+    devDependencies:
+      '@angular/core':
+        specifier: ^19.2.4
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+      '@angular/platform-browser-dynamic':
+        specifier: ^19.2.4
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+      '@tanstack/angular-query':
+        specifier: workspace:*
+        version: link:../angular-query
+      eslint-plugin-jsdoc:
+        specifier: ^50.5.0
+        version: 50.5.0(eslint@9.15.0(jiti@2.4.2))
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
+
+  packages/angular-query-persist-client:
+    dependencies:
+      '@angular/common':
+        specifier: '>=16.0.0'
+        version: 19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+      '@tanstack/query-persist-client-core':
+        specifier: workspace:*
+        version: link:../query-persist-client-core
+    devDependencies:
+      '@angular/compiler':
+        specifier: ^19.2.4
+        version: 19.2.4
+      '@angular/core':
+        specifier: ^19.2.4
+        version: 19.2.4(rxjs@7.8.2)(zone.js@0.15.0)
+      '@angular/platform-browser':
+        specifier: ^19.2.4
+        version: 19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))
+      '@angular/platform-browser-dynamic':
+        specifier: ^19.2.4
+        version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+      '@tanstack/angular-query':
+        specifier: workspace:*
+        version: link:../angular-query
+      '@testing-library/angular':
+        specifier: ^17.3.2
+        version: 17.3.7(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/router@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2))(@testing-library/dom@10.4.0)
+      '@testing-library/dom':
+        specifier: ^10.4.0
+        version: 10.4.0
       eslint-plugin-jsdoc:
         specifier: ^50.5.0
         version: 50.5.0(eslint@9.15.0(jiti@2.4.2))
