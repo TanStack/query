@@ -19,4 +19,10 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
     },
   },
+  {
+    files: ['**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/require-await': 'error',
+    },
+  },
 ]
