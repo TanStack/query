@@ -10,7 +10,7 @@ import {
 } from '@angular/core'
 import { ExampleQueryComponent } from './example-query.component'
 import type { ElementRef } from '@angular/core'
-import type { DevtoolsPanelRef } from '@tanstack/angular-query-devtools-experimental'
+import type { DevtoolsPanelRef } from '@tanstack/angular-query-devtools'
 
 @Component({
   selector: 'lazy-load-devtools-panel-example',
@@ -49,7 +49,7 @@ export default class LazyLoadDevtoolsPanelExampleComponent {
     if (this.devtools()) return
     if (this.isOpen()) {
       this.devtools.set(
-        import('@tanstack/angular-query-devtools-experimental').then(
+        import('@tanstack/angular-query-devtools').then(
           ({ injectDevtoolsPanel }) =>
             injectDevtoolsPanel(this.devToolsOptions, {
               injector: this.injector,
