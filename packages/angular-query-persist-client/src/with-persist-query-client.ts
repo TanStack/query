@@ -2,7 +2,7 @@ import {
   QueryClient,
   provideIsRestoring,
   queryFeature,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 import {
   DestroyRef,
   ENVIRONMENT_INITIALIZER,
@@ -16,7 +16,7 @@ import {
   persistQueryClientSubscribe,
 } from '@tanstack/query-persist-client-core'
 import type { PersistQueryClientOptions as PersistQueryClientOptionsCore } from '@tanstack/query-persist-client-core'
-import type { PersistQueryClientFeature } from '@tanstack/angular-query-experimental'
+import type { PersistQueryClientFeature } from '@tanstack/angular-query'
 
 type PersistQueryClientOptions = {
   persistOptions: Omit<PersistQueryClientOptionsCore, 'queryClient'>

@@ -27,11 +27,14 @@
     "strict": true,
     "target": "ES2020",
     "paths": {
-      "@tanstack/angular-query-devtools-experimental": [
-        "../../packages/angular-query-devtools-experimental/src"
+      "@tanstack/angular-query-devtools": [
+        "../../packages/angular-query-devtools/src"
       ],
-      "@tanstack/angular-query-experimental": [
-        "../../packages/angular-query-experimental/src"
+      "@tanstack/angular-query": [
+        "../../packages/angular-query/src"
+      ],
+      "@tanstack/angular-query-persist-client": [
+        "../../packages/angular-query-persist-client/src"
       ],
       "@tanstack/eslint-plugin-query": [
         "../../packages/eslint-plugin-query/src"
