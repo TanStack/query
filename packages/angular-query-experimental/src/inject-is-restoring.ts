@@ -1,20 +1,38 @@
-import { InjectionToken, computed, inject } from '@angular/core'
-import { assertInjector } from './util/assert-injector/assert-injector'
-import type { Injector, Provider, Signal } from '@angular/core'
+import {
+  InjectionToken,
+  Injector,
+  assertInInjectionContext,
+  computed,
+  inject,
+} from '@angular/core'
+import type { Provider, Signal } from '@angular/core'
 
 const IsRestoring = new InjectionToken<Signal<boolean>>('IsRestoring')
 
 /**
+ * The `Injector` in which to create the isRestoring signal.
+ *
+ * If this is not provided, the current injection context will be used instead (via `inject`).
+ */
+interface InjectIsRestoringOptions {
+  injector?: Injector
+}
+
+/**
  * Injects a signal that tracks whether a restore is currently in progress. {@link injectQuery} and friends also check this internally to avoid race conditions between the restore and mounting queries.
- * @param injector - The Angular injector to use.
+ * @param options - Options for injectIsRestoring.
  * @returns signal with boolean that indicates whether a restore is in progress.
  * @public
  */
-export function injectIsRestoring(injector?: Injector): Signal<boolean> {
-  return assertInjector(
-    injectIsRestoring,
-    injector,
-    () => inject(IsRestoring, { optional: true }) ?? computed(() => false),
+export function injectIsRestoring(
+  options?: InjectIsRestoringOptions,
+): Signal<boolean> {
+  !options?.injector && assertInInjectionContext(injectIsRestoring)
+  const injector = options?.injector ?? inject(Injector)
+  return injector.get(
+    IsRestoring,
+    computed(() => false),
+    { optional: true },
   )
 }
 

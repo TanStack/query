@@ -218,7 +218,7 @@ export function injectQueries<
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
     const queryClient = inject(QueryClient)
-    const isRestoring = injectIsRestoring(injector)
+    const isRestoring = injectIsRestoring()
 
     const defaultedQueries = computed(() => {
       return queries().map((opts) => {
