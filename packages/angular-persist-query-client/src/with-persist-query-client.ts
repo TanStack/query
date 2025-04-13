@@ -48,7 +48,7 @@ type PersistQueryClientOptions = {
  *   ],
  * };
  * ```
- * @param persistQueryClientOptions - An array of objects containing persistOptions and an onSuccess callback which gets called when the restoration process is complete.
+ * @param persistQueryClientOptions - persistence options and optional onSuccess and onError callbacks which get called when the restoration process is complete.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  */
