@@ -4,7 +4,7 @@ import {
   provideTanStackQuery,
   withDevtools,
 } from '@tanstack/angular-query-experimental'
-import { withPersistQueryClient } from '@tanstack/angular-query-persist-client-experimental'
+import { withPersistQueryClient } from '@tanstack/angular-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import type { ApplicationConfig } from '@angular/core'
 
@@ -19,7 +19,7 @@ export const appConfig: ApplicationConfig = {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 1000 * 60,
+            staleTime: 1000 * 60, // 1 minute
             gcTime: 1000 * 60 * 60 * 24, // 24 hours
           },
         },
