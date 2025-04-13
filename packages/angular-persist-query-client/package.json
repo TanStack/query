@@ -1,5 +1,6 @@
 {
   "name": "@tanstack/angular-query-persist-client",
+  "private": true,
   "version": "5.62.7",
   "description": "Angular bindings to work with persisters in TanStack/angular-query",
   "author": "Omer Gronich",
