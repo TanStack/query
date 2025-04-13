@@ -29,7 +29,6 @@ export default [
     rules: {
       '@typescript-eslint/no-unnecessary-condition': 'off',
       'react-compiler/react-compiler': 'off',
-      '@typescript-eslint/require-await': 'error',
     },
   },
 ]
