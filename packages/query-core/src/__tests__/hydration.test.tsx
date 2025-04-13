@@ -1258,11 +1258,7 @@ describe('dehydration and rehydration', () => {
 
     expect(dehydrated.queries[0]?.promise).toBeInstanceOf(Promise)
 
-    try {
-      await dehydrated.queries[0]?.promise
-      expect(true).toBe(false)
-    } catch (error) {}
-
+    await expect(dehydrated.queries[0]?.promise).rejects.toThrow('redacted')
     await promise
     consoleMock.mockRestore()
   })
@@ -1297,20 +1293,13 @@ describe('dehydration and rehydration', () => {
 
     const dehydrated = dehydrate(queryClient)
 
-    try {
-      await dehydrated.queries[0]?.promise
-      expect(true).toBe(false)
-    } catch (error) {
-      if (error instanceof Error) {
-        expect(error.message).toBe('redacted')
-      }
-      expect(consoleMock).toHaveBeenCalledWith(
-        expect.stringContaining('test error'),
-      )
-    }
+    await expect(dehydrated.queries[0]?.promise).rejects.toThrow('redacted')
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.stringContaining('test error'),
+    )
+    await promise
 
     process.env.NODE_ENV = originalNodeEnv
     consoleMock.mockRestore()
-    await promise
   })
 })
