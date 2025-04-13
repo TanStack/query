@@ -136,7 +136,7 @@ describe('dehydration and rehydration', () => {
   test('should not dehydrate queries if dehydrateQueries is set to false', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
-    vi.waitFor(() =>
+    await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
         queryFn: () => fetchData('string'),
