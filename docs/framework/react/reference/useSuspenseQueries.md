@@ -22,7 +22,7 @@ Same structure as [useQueries](../reference/useQueries.md), except that for each
 
 - `data` is guaranteed to be defined
 - `isPlaceholderData` is missing
-- `status` is always `success`
+- `status` is either `success` or `error`
   - the derived flags are set accordingly.
 
 **Caveats**

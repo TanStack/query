@@ -12,6 +12,7 @@ import {
   signal,
 } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
+import { injectIsRestoring } from './inject-is-restoring'
 import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
@@ -217,12 +218,15 @@ export function injectQueries<
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
     const queryClient = inject(QueryClient)
+    const isRestoring = injectIsRestoring()
 
     const defaultedQueries = computed(() => {
       return queries().map((opts) => {
         const defaultedOptions = queryClient.defaultQueryOptions(opts)
         // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = 'optimistic'
+        defaultedOptions._optimisticResults = isRestoring()
+          ? 'isRestoring'
+          : 'optimistic'
 
         return defaultedOptions as QueryObserverOptions
       })
@@ -250,10 +254,14 @@ export function injectQueries<
 
     const result = signal(getCombinedResult() as any)
 
-    const unsubscribe = ngZone.runOutsideAngular(() =>
-      observer.subscribe(notifyManager.batchCalls(result.set)),
-    )
-    destroyRef.onDestroy(unsubscribe)
+    effect(() => {
+      const unsubscribe = isRestoring()
+        ? () => undefined
+        : ngZone.runOutsideAngular(() =>
+            observer.subscribe(notifyManager.batchCalls(result.set)),
+          )
+      destroyRef.onDestroy(unsubscribe)
+    })
 
     return result
   })
