@@ -1081,7 +1081,7 @@ describe('queryObserver', () => {
       results.push(result)
     })
 
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
 
     observer.setOptions({
       queryKey: key2,
@@ -1090,7 +1090,7 @@ describe('queryObserver', () => {
       select: stableSelect,
     })
 
-    await sleep(1)
+    await vi.advanceTimersByTimeAsync(1)
     unsubscribe()
 
     expect(results.length).toBe(4)
