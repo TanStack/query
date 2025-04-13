@@ -18,6 +18,15 @@ import { isPlatformBrowser } from '@angular/common'
 import type { ElementRef } from '@angular/core'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 
+export interface InjectDevtoolsPanelOptions {
+  /**
+   * The `Injector` in which to create the devtools panel.
+   *
+   * If this is not provided, the current injection context will be used instead (via `inject`).
+   */
+  injector?: Injector
+}
+
 /**
  * Inject a TanStack Query devtools panel and render it in the DOM.
  *
@@ -25,24 +34,24 @@ import type { DevtoolsErrorType } from '@tanstack/query-devtools'
  * the devtools as part of your own devtools.
  *
  * Consider `withDevtools` instead if you don't need this.
- * @param optionsFn - A function that returns devtools panel options.
- * @param injector - The Angular injector to use.
+ * @param injectDevtoolsPanelFn - A function that returns devtools panel options.
+ * @param options - Additional configuration
  * @returns DevtoolsPanelRef
  * @see https://tanstack.com/query/v5/docs/framework/angular/devtools
  */
 export function injectDevtoolsPanel(
-  optionsFn: () => DevtoolsPanelOptions,
-  injector?: Injector,
+  injectDevtoolsPanelFn: () => DevtoolsPanelOptions,
+  options?: InjectDevtoolsPanelOptions,
 ): DevtoolsPanelRef {
-  !injector && assertInInjectionContext(injectDevtoolsPanel)
-  const currentInjector = injector ?? inject(Injector)
+  !options?.injector && assertInInjectionContext(injectDevtoolsPanel)
+  const currentInjector = options?.injector ?? inject(Injector)
 
   return runInInjectionContext(currentInjector, () => {
     const destroyRef = inject(DestroyRef)
     const isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
     const injectedClient = inject(QueryClient, { optional: true })
 
-    const options = computed(optionsFn)
+    const queryOptions = computed(injectDevtoolsPanelFn)
     let devtools: TanstackQueryDevtoolsPanel | null = null
 
     const destroy = () => {
@@ -63,7 +72,7 @@ export function injectDevtoolsPanel(
         shadowDOMTarget,
         onClose,
         hostElement,
-      } = options()
+      } = queryOptions()
 
       untracked(() => {
         if (!client) throw new Error('No QueryClient found')

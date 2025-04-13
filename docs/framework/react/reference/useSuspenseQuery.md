@@ -21,7 +21,7 @@ Same object as [useQuery](../reference/useQuery.md), except that:
 
 - `data` is guaranteed to be defined
 - `isPlaceholderData` is missing
-- `status` is always `success`
+- `status` is either `success` or `error`
   - the derived flags are set accordingly.
 
 **Caveat**

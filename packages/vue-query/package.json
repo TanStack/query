@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query",
-  "version": "5.71.10",
+  "version": "5.73.3",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in Vue",
   "author": "Damian Osipiuk",
   "license": "MIT",
@@ -43,7 +43,6 @@
   "exports": {
     ".": {
       "import": {
-        "@tanstack/custom-condition": "./src/index.ts",
         "types": "./build/modern/index.d.ts",
         "default": "./build/modern/index.js"
       },
@@ -60,15 +59,6 @@
     "src",
     "!src/__tests__"
   ],
-  "nx": {
-    "targets": {
-      "test:lib": {
-        "dependsOn": [
-          "test:types"
-        ]
-      }
-    }
-  },
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/query-core": "workspace:*",
