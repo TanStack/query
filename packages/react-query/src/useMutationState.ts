@@ -47,7 +47,7 @@ export function useMutationState<TResult = MutationState>(
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
   const optionsRef = React.useRef(options)
-  const result = React.useRef<Array<TResult>>(null)
+  const result = React.useRef<Array<TResult | null>>(null)
   if (!result.current) {
     result.current = getResult(mutationCache, options)
   }
