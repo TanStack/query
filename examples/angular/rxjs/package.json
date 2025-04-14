@@ -15,7 +15,7 @@
     "@angular/forms": "^19.2.4",
     "@angular/platform-browser": "^19.2.4",
     "@angular/platform-browser-dynamic": "^19.2.4",
-    "@tanstack/angular-query-experimental": "^5.73.3",
+    "@tanstack/angular-query-experimental": "^5.74.1",
     "rxjs": "^7.8.2",
     "tslib": "^2.8.1",
     "zone.js": "0.15.0"

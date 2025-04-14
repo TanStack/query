@@ -1,8 +1,14 @@
-import { DestroyRef, NgZone, inject, signal } from '@angular/core'
+import {
+  DestroyRef,
+  Injector,
+  NgZone,
+  assertInInjectionContext,
+  inject,
+  signal,
+} from '@angular/core'
 import { QueryClient, notifyManager } from '@tanstack/query-core'
-import { assertInjector } from './util/assert-injector/assert-injector'
 import type { QueryFilters } from '@tanstack/query-core'
-import type { Injector, Signal } from '@angular/core'
+import type { Signal } from '@angular/core'
 
 export interface InjectIsFetchingOptions {
   /**
@@ -27,34 +33,34 @@ export function injectIsFetching(
   filters?: QueryFilters,
   options?: InjectIsFetchingOptions,
 ): Signal<number> {
-  return assertInjector(injectIsFetching, options?.injector, () => {
-    const destroyRef = inject(DestroyRef)
-    const ngZone = inject(NgZone)
-    const queryClient = inject(QueryClient)
+  !options?.injector && assertInInjectionContext(injectIsFetching)
+  const injector = options?.injector ?? inject(Injector)
+  const destroyRef = injector.get(DestroyRef)
+  const ngZone = injector.get(NgZone)
+  const queryClient = injector.get(QueryClient)
 
-    const cache = queryClient.getQueryCache()
-    // isFetching is the prev value initialized on mount *
-    let isFetching = queryClient.isFetching(filters)
+  const cache = queryClient.getQueryCache()
+  // isFetching is the prev value initialized on mount *
+  let isFetching = queryClient.isFetching(filters)
 
-    const result = signal(isFetching)
+  const result = signal(isFetching)
 
-    const unsubscribe = ngZone.runOutsideAngular(() =>
-      cache.subscribe(
-        notifyManager.batchCalls(() => {
-          const newIsFetching = queryClient.isFetching(filters)
-          if (isFetching !== newIsFetching) {
-            // * and update with each change
-            isFetching = newIsFetching
-            ngZone.run(() => {
-              result.set(isFetching)
-            })
-          }
-        }),
-      ),
-    )
+  const unsubscribe = ngZone.runOutsideAngular(() =>
+    cache.subscribe(
+      notifyManager.batchCalls(() => {
+        const newIsFetching = queryClient.isFetching(filters)
+        if (isFetching !== newIsFetching) {
+          // * and update with each change
+          isFetching = newIsFetching
+          ngZone.run(() => {
+            result.set(isFetching)
+          })
+        }
+      }),
+    ),
+  )
 
-    destroyRef.onDestroy(unsubscribe)
+  destroyRef.onDestroy(unsubscribe)
 
-    return result
-  })
+  return result
 }
