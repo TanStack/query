@@ -290,7 +290,7 @@ describe('mutations', () => {
       submittedAt: 1,
     })
 
-    queryClient.resumePausedMutations()
+    void queryClient.resumePausedMutations()
     await vi.advanceTimersByTimeAsync(0)
 
     // check that the mutation is correctly resumed
