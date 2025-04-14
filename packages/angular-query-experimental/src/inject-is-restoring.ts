@@ -7,7 +7,7 @@ import {
 } from '@angular/core'
 import type { Provider, Signal } from '@angular/core'
 
-const IsRestoring = new InjectionToken<Signal<boolean>>('IsRestoring')
+const IS_RESTORING = new InjectionToken<Signal<boolean>>('')
 
 /**
  * The `Injector` in which to create the isRestoring signal.
@@ -30,7 +30,7 @@ export function injectIsRestoring(
   !options?.injector && assertInInjectionContext(injectIsRestoring)
   const injector = options?.injector ?? inject(Injector)
   return injector.get(
-    IsRestoring,
+    IS_RESTORING,
     computed(() => false),
     { optional: true },
   )
@@ -44,7 +44,7 @@ export function injectIsRestoring(
  */
 export function provideIsRestoring(isRestoring: Signal<boolean>): Provider {
   return {
-    provide: IsRestoring,
+    provide: IS_RESTORING,
     useValue: isRestoring,
   }
 }
