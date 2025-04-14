@@ -252,7 +252,7 @@ describe('mutations', () => {
     const onSettled = vi.fn()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: (text: string) => Promise.resolve(text),
+      mutationFn: (text: string) => sleep(10).then(() => text),
       onMutate,
       onSuccess,
       onSettled,
@@ -290,7 +290,23 @@ describe('mutations', () => {
       submittedAt: 1,
     })
 
-    await queryClient.resumePausedMutations()
+    queryClient.resumePausedMutations()
+    await vi.advanceTimersByTimeAsync(0)
+
+    // check that the mutation is correctly resumed
+    expect(mutation.state).toEqual({
+      context: 'todo',
+      data: undefined,
+      error: null,
+      failureCount: 1,
+      failureReason: 'err',
+      isPaused: false,
+      status: 'pending',
+      variables: 'todo',
+      submittedAt: 1,
+    })
+
+    await vi.advanceTimersByTimeAsync(20)
 
     expect(mutation.state).toEqual({
       context: 'todo',
