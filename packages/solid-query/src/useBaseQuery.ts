@@ -116,10 +116,7 @@ export function useBaseQuery<
 ) {
   type ResourceData = QueryObserverResult<TData, TError>
 
-  const client = createMemo(
-    () => useQueryClient(queryClient?.()),
-    useQueryClient(queryClient?.()),
-  )
+  const client = createMemo(() => useQueryClient(queryClient?.()))
 
   const isRestoring = useIsRestoring()
   // There are times when we run a query on the server but the resource is never read
