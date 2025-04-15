@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { untrack } from 'svelte'
   import { createQuery } from '@tanstack/svelte-query'
   import { sleep } from '../utils.svelte.js'
-  import type { StatusResult } from '../utils.svelte.js'
+  import type { StatelessRef, StatusResult } from '../utils.svelte.js'
 
-  let { states }: { states: { value: Array<StatusResult<string>> } } = $props()
+  let { states }: { states: StatelessRef<Array<StatusResult<string>>> } =
+    $props()
 
   const query = createQuery(() => ({
     queryKey: ['test'],
@@ -21,7 +21,8 @@
 
   $effect(() => {
     // svelte-ignore state_snapshot_uncloneable
-    states.value = [...untrack(() => states.value), $state.snapshot(query)]
+    const snapshot = $state.snapshot(query)
+    states.current.push(snapshot)
   })
 </script>
 

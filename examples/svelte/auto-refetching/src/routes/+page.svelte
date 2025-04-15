@@ -10,7 +10,7 @@
 
   const client = useQueryClient()
 
-  const endpoint = 'http://localhost:5173/api/data'
+  const endpoint = '/api/data'
 
   const todos = createQuery<{ items: string[] }>(() => ({
     queryKey: ['refetch'],
@@ -21,8 +21,13 @@
 
   const addMutation = createMutation(() => ({
     mutationFn: (value: string) =>
-      fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+      fetch(`${endpoint}?add=${encodeURIComponent(value)}`).then((r) =>
+        r.json(),
+      ),
+    onSuccess: async () => {
+      await todos.refetch()
+      value = ''
+    },
   }))
 
   const clearMutation = createMutation(() => ({
@@ -31,7 +36,7 @@
   }))
 </script>
 
-<h1>Auto Refetch with stale-time set to 1s</h1>
+<h1>Auto Refetch with stale-time set to {(intervalMs / 1000).toFixed(2)}s</h1>
 
 <p>
   This example is best experienced on your own machine, where you can open
@@ -86,14 +91,22 @@
     <button onclick={() => clearMutation.mutate(undefined)}> Clear All </button>
   </div>
 {/if}
-{#if todos.isFetching}
-  <div style="color:darkgreen; font-weight:700">
-    'Background Updating...' : ' '
-  </div>
-{/if}
+
+<pre
+  class={['updating-text', todos.isFetching && 'on']}
+  style="font-weight:700">Background Updating...</pre>
 
 <style>
   li {
     text-align: left;
+  }
+
+  .updating-text {
+    color: transparent;
+    transition: all 0.3s ease;
+  }
+  .updating-text.on {
+    color: green;
+    transition: none;
   }
 </style>

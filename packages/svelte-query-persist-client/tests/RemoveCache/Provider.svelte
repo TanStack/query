@@ -7,18 +7,11 @@
   interface Props {
     queryClient: QueryClient
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-    onSuccess: () => void
-    onError: () => void
   }
 
   let { queryClient, persistOptions, onError, onSuccess }: Props = $props()
 </script>
 
-<PersistQueryClientProvider
-  client={queryClient}
-  {persistOptions}
-  {onSuccess}
-  {onError}
->
+<PersistQueryClientProvider client={queryClient} {persistOptions}>
   <RemoveCache />
 </PersistQueryClientProvider>

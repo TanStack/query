@@ -38,11 +38,9 @@
           </article>
         {/each}
       </ul>
-      {#if posts.isFetching}
-        <div style="color:darkgreen; font-weight:700">
-          Background Updating...
-        </div>
-      {/if}
+      <pre
+        class={['updating-text', posts.isFetching && 'on']}
+        style="font-weight:700">Background Updating...</pre>
     {/if}
   </div>
 </div>
@@ -53,8 +51,16 @@
   }
   a {
     display: block;
-    color: white;
     font-size: 1.5rem;
     margin-bottom: 1rem;
+  }
+
+  .updating-text {
+    color: transparent;
+    transition: all 0.3s ease;
+  }
+  .updating-text.on {
+    color: green;
+    transition: none;
   }
 </style>
