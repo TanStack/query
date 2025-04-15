@@ -3,9 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "baseUrl": ".",
-    "moduleResolution": "Bundler",
-    "types": ["vitest/globals"]
+    "baseUrl": "."
   },
   "include": [
     "src/**/*.js",

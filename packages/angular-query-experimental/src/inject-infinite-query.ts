@@ -1,7 +1,6 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { createBaseQuery } from './create-base-query'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import type { Injector } from '@angular/core'
 import type {
   DefaultError,
   InfiniteData,
@@ -17,12 +16,22 @@ import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infinite-query-options'
+import type { Injector } from '@angular/core'
+
+export interface InjectInfiniteQueryOptions {
+  /**
+   * The `Injector` in which to create the infinite query.
+   *
+   * If this is not provided, the current injection context will be used instead (via `inject`).
+   */
+  injector?: Injector
+}
 
 /**
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
- * @param optionsFn - A function that returns infinite query options.
- * @param injector - The Angular injector to use.
+ * @param injectInfiniteQueryFn - A function that returns infinite query options.
+ * @param options - Additional configuration.
  * @returns The infinite query result.
  * @public
  */
@@ -33,21 +42,21 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  optionsFn: () => DefinedInitialDataInfiniteOptions<
+  injectInfiniteQueryFn: () => DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
     TPageParam
   >,
-  injector?: Injector,
+  options?: InjectInfiniteQueryOptions,
 ): DefinedCreateInfiniteQueryResult<TData, TError>
 
 /**
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
- * @param optionsFn - A function that returns infinite query options.
- * @param injector - The Angular injector to use.
+ * @param injectInfiniteQueryFn - A function that returns infinite query options.
+ * @param options - Additional configuration.
  * @returns The infinite query result.
  * @public
  */
@@ -58,21 +67,21 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  optionsFn: () => UndefinedInitialDataInfiniteOptions<
+  injectInfiniteQueryFn: () => UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
     TPageParam
   >,
-  injector?: Injector,
+  options?: InjectInfiniteQueryOptions,
 ): CreateInfiniteQueryResult<TData, TError>
 
 /**
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
- * @param optionsFn - A function that returns infinite query options.
- * @param injector - The Angular injector to use.
+ * @param injectInfiniteQueryFn - A function that returns infinite query options.
+ * @param options - Additional configuration.
  * @returns The infinite query result.
  * @public
  */
@@ -83,7 +92,7 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  optionsFn: () => CreateInfiniteQueryOptions<
+  injectInfiniteQueryFn: () => CreateInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -91,22 +100,29 @@ export function injectInfiniteQuery<
     TQueryKey,
     TPageParam
   >,
-  injector?: Injector,
+  options?: InjectInfiniteQueryOptions,
 ): CreateInfiniteQueryResult<TData, TError>
 
 /**
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
- * @param optionsFn - A function that returns infinite query options.
- * @param injector - The Angular injector to use.
+ * @param injectInfiniteQueryFn - A function that returns infinite query options.
+ * @param options - Additional configuration.
  * @returns The infinite query result.
  * @public
  */
 export function injectInfiniteQuery(
-  optionsFn: () => CreateInfiniteQueryOptions,
-  injector?: Injector,
+  injectInfiniteQueryFn: () => CreateInfiniteQueryOptions,
+  options?: InjectInfiniteQueryOptions,
 ) {
-  return assertInjector(injectInfiniteQuery, injector, () =>
-    createBaseQuery(optionsFn, InfiniteQueryObserver as typeof QueryObserver),
+  return assertInjector(injectInfiniteQuery, options?.injector, () =>
+    createBaseQuery(
+      injectInfiniteQueryFn,
+      InfiniteQueryObserver as typeof QueryObserver,
+    ),
   )
+}
+
+export interface InjectInfiniteQueryOptions {
+  injector?: Injector
 }

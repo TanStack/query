@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-next-experimental",
-  "version": "5.72.1",
+  "version": "5.72.2",
   "description": "Hydration utils for React Query in the NextJs app directory",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -38,7 +38,6 @@
   "exports": {
     ".": {
       "import": {
-        "@tanstack/custom-condition": "./src/index.ts",
         "types": "./build/modern/index.d.ts",
         "default": "./build/modern/index.js"
       },
@@ -59,7 +58,7 @@
     "@tanstack/react-query": "workspace:*",
     "@types/react": "^19.0.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "next": "^15.0.0",
+    "next": "^15.1.2",
     "npm-run-all2": "^5.0.0",
     "react": "^19.0.0"
   },

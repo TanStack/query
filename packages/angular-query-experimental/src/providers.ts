@@ -233,17 +233,17 @@ export interface DevtoolsOptions {
  * If you need more control over when devtools are loaded, you can use the `loadDevtools` option. This is particularly useful if you want to load devtools based on environment configurations. For instance, you might have a test environment running in production mode but still require devtools to be available.
  *
  * If you need more control over where devtools are rendered, consider `injectDevtoolsPanel`. This allows rendering devtools inside your own devtools for example.
- * @param optionsFn - A function that returns `DevtoolsOptions`.
+ * @param withDevtoolsFn - A function that returns `DevtoolsOptions`.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  * @see {@link provideTanStackQuery}
  * @see {@link DevtoolsOptions}
  */
 export function withDevtools(
-  optionsFn?: () => DevtoolsOptions,
+  withDevtoolsFn?: () => DevtoolsOptions,
 ): DeveloperToolsFeature {
   let providers: Array<Provider> = []
-  if (!isDevMode() && !optionsFn) {
+  if (!isDevMode() && !withDevtoolsFn) {
     providers = []
   } else {
     providers = [
@@ -258,7 +258,7 @@ export function withDevtools(
           })
           const destroyRef = inject(DestroyRef)
 
-          const options = computed(() => optionsFn?.() ?? {})
+          const options = computed(() => withDevtoolsFn?.() ?? {})
 
           let devtools: TanstackQueryDevtools | null = null
           let el: HTMLElement | null = null
