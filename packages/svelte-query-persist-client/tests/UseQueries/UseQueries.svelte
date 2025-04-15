@@ -5,14 +5,14 @@
   let { states }: { states: StatelessRef<Array<StatusResult<string>>> } =
     $props()
 
-  const queries = createQueries({
-    queries: () => [
+  const queries = createQueries(() => ({
+    queries: [
       {
         queryKey: ['test'],
         queryFn: () => Promise.resolve('fetched'),
       },
     ],
-  })
+  }))
 
   $effect(() => {
     // svelte-ignore state_snapshot_uncloneable

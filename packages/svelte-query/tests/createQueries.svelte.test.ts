@@ -1,4 +1,5 @@
 import { QueryCache, QueryClient, createQueries } from '@tanstack/svelte-query'
+import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { promiseWithResolvers, withEffectRoot } from './utils.svelte'
 import type {
   CreateQueryOptions,

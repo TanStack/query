@@ -5,6 +5,7 @@ import {
   keepPreviousData,
 } from '@tanstack/svelte-query'
 import { flushSync } from 'svelte'
+import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { promiseWithResolvers, sleep, withEffectRoot } from './utils.svelte'
 import type { CreateQueryResult } from '@tanstack/svelte-query'
 

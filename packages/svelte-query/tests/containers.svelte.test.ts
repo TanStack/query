@@ -1,4 +1,5 @@
 import { flushSync } from 'svelte'
+import { describe, expect, it } from 'vitest'
 import { createRawRef } from '../src/containers.svelte'
 import { withEffectRoot } from './utils.svelte'
 

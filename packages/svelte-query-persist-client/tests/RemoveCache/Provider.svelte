@@ -9,7 +9,7 @@
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
   }
 
-  let { queryClient, persistOptions }: Props = $props()
+  let { queryClient, persistOptions, onError, onSuccess }: Props = $props()
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>
