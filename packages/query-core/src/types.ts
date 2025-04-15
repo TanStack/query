@@ -1088,33 +1088,13 @@ export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables,
 ) => Promise<TData>
 
-export interface MutationOptions<
+export interface MutationBaseOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
 > {
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
-  onMutate?: (
-    variables: TVariables,
-  ) => Promise<TContext | undefined> | TContext | undefined
-  onSuccess?: (
-    data: TData,
-    variables: TVariables,
-    context: TContext,
-  ) => Promise<unknown> | unknown
-  onError?: (
-    error: TError,
-    variables: TVariables,
-    context: TContext | undefined,
-  ) => Promise<unknown> | unknown
-  onSettled?: (
-    data: TData | undefined,
-    error: TError | null,
-    variables: TVariables,
-    context: TContext | undefined,
-  ) => Promise<unknown> | unknown
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
@@ -1122,6 +1102,41 @@ export interface MutationOptions<
   _defaulted?: boolean
   meta?: MutationMeta
   scope?: MutationScope
+}
+
+export interface MutationOptions<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TContext = unknown,
+> extends MutationBaseOptions<TData, TError, TVariables> {
+  onMutate?:
+    | ((
+        variables: TVariables,
+      ) => Promise<TContext | undefined> | TContext | undefined)
+    | null
+  onSuccess?:
+    | ((
+        data: TData,
+        variables: TVariables,
+        context: TContext,
+      ) => Promise<unknown> | unknown)
+    | null
+  onError?:
+    | ((
+        error: TError,
+        variables: TVariables,
+        context: TContext | undefined,
+      ) => Promise<unknown> | unknown)
+    | null
+  onSettled?:
+    | ((
+        data: TData | undefined,
+        error: TError | null,
+        variables: TVariables,
+        context: TContext | undefined,
+      ) => Promise<unknown> | unknown)
+    | null
 }
 
 export interface MutationObserverOptions<
