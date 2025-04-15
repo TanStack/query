@@ -48,6 +48,7 @@ export default [
     rules: {
       ...vitest.configs.recommended.rules,
       'vitest/expect-expect': 'warn',
+      '@typescript-eslint/require-await': 'error',
     },
     settings: { vitest: { typecheck: true } },
   },
