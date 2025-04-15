@@ -4,7 +4,7 @@ import * as React from 'react'
 import { QueryCache, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
-  experimental_createPersister,
+  experimental_createQueryPersister,
 } from '@tanstack/query-persist-client-core'
 import { useQuery } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
@@ -50,9 +50,9 @@ describe('fine grained persister', () => {
       const { data } = useQuery({
         queryKey: key,
         queryFn: spy,
-        persister: experimental_createPersister({
+        persister: experimental_createQueryPersister({
           storage,
-        }),
+        }).persisterFn,
         staleTime: 5000,
       })
 
@@ -106,9 +106,9 @@ describe('fine grained persister', () => {
       const { data } = useQuery({
         queryKey: key,
         queryFn: spy,
-        persister: experimental_createPersister({
+        persister: experimental_createQueryPersister({
           storage,
-        }),
+        }).persisterFn,
       })
 
       return <div ref={(value) => setRef(value)}>{data}</div>
@@ -145,9 +145,9 @@ describe('fine grained persister', () => {
       const { data } = useQuery({
         queryKey: key,
         queryFn: spy,
-        persister: experimental_createPersister({
+        persister: experimental_createQueryPersister({
           storage,
-        }),
+        }).persisterFn,
       })
 
       return <div ref={(value) => setRef(value)}>{data}</div>
