@@ -5,15 +5,17 @@ import {
 } from '@tanstack/query-core'
 import {
   DestroyRef,
+  Injector,
   NgZone,
+  assertInInjectionContext,
   computed,
   effect,
   inject,
+  runInInjectionContext,
   signal,
 } from '@angular/core'
-import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectIsRestoring } from './inject-is-restoring'
-import type { Injector, Signal } from '@angular/core'
+import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   OmitKeyof,
@@ -214,7 +216,8 @@ export function injectQueries<
   },
   injector?: Injector,
 ): Signal<TCombinedResult> {
-  return assertInjector(injectQueries, injector, () => {
+  !injector && assertInInjectionContext(injectQueries)
+  return runInInjectionContext(injector ?? inject(Injector), () => {
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
     const queryClient = inject(QueryClient)
