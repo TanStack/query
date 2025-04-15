@@ -288,7 +288,7 @@ function createDevtoolsFeature(withDevtoolsFn?: () => DevtoolsOptions) {
  */
 export type QueryFeatures = DeveloperToolsFeature | PersistQueryClientFeature
 
-export const enum QueryFeatureKind {
+export enum QueryFeatureKind {
   DeveloperTools,
   PersistQueryClient,
 }
