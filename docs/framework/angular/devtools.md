@@ -7,7 +7,7 @@ title: Devtools
 
 The devtools help you debug and inspect your queries and mutations. You can enable the devtools by adding `withDevtools` to `provideTanStackQuery`.
 
-By default, the devtools are enabled when Angular [`isDevMode`](https://angular.dev/api/core/isDevMode) returns true. So you don't need to worry about excluding them during a production build. The core tools are lazily loaded and excluded from bundled code. In most cases, all you'll need to do is add `withDevtools()` to `provideTanStackQuery` without any additional configuration.
+By default, the devtools are enabled when Angular is in development mode. So you don't need to worry about excluding them during a production build. The tools are lazily loaded and excluded from bundled code. In most cases, all you'll need to do is add `withDevtools()` to `provideTanStackQuery` without any additional configuration.
 
 ```ts
 import {
@@ -61,7 +61,7 @@ Using this technique allows you to support on-demand loading of the devtools eve
 
 ```ts
 @Injectable({ providedIn: 'root' })
-class DevtoolsOptionsManager {
+export class DevtoolsOptionsManager {
   loadDevtools = toSignal(
     fromEvent<KeyboardEvent>(document, 'keydown').pipe(
       map(

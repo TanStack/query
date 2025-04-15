@@ -1,24 +1,23 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import {
   ENVIRONMENT_INITIALIZER,
+  PLATFORM_ID,
   provideExperimentalZonelessChangeDetection,
   signal,
 } from '@angular/core'
-import { isDevMode } from '../util/is-dev-mode/is-dev-mode'
-import { provideTanStackQuery, withDevtools } from '../providers'
+import {
+  QueryFeatureKind,
+  provideTanStackQuery,
+  withDevtools,
+} from '../providers'
 import type { DevtoolsOptions } from '../providers'
-import type { Mock } from 'vitest'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
 } from '@tanstack/query-devtools'
-
-vi.mock('../util/is-dev-mode/is-dev-mode', () => ({
-  isDevMode: vi.fn(),
-}))
 
 const mockDevtoolsInstance = {
   mount: vi.fn(),
@@ -37,104 +36,170 @@ vi.mock('@tanstack/query-devtools', () => ({
 }))
 
 describe('withDevtools feature', () => {
-  let isDevModeMock: Mock
-
   beforeEach(() => {
     vi.useFakeTimers()
-    isDevModeMock = isDevMode as Mock
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+  })
+
+  describe('tree shaking', () => {
+    it('should return empty providers when ngDevMode and withDevtoolsFn are undefined', () => {
+      vi.stubGlobal('ngDevMode', undefined)
+      const feature = withDevtools()
+      expect(feature.ɵkind).toEqual(QueryFeatureKind.DeveloperTools)
+      expect(feature.ɵproviders.length).toEqual(0)
+    })
+
+    it('should return providers when ngDevMode is undefined and withDevtoolsFn is defined', () => {
+      vi.stubGlobal('ngDevMode', undefined)
+      const feature = withDevtools(() => ({}))
+      expect(feature.ɵkind).toEqual(QueryFeatureKind.DeveloperTools)
+      expect(feature.ɵproviders.length).toBeGreaterThan(0)
+    })
+
+    it('should return providers when ngDevMode is defined and withDevtoolsFn is undefined', () => {
+      vi.stubGlobal('ngDevMode', {})
+      const feature = withDevtools()
+      expect(feature.ɵkind).toEqual(QueryFeatureKind.DeveloperTools)
+      expect(feature.ɵproviders.length).toBeGreaterThan(0)
+    })
   })
 
   test.each([
     {
       description:
         'should provide developer tools in development mode by default',
-      isDevModeValue: true,
+      isDevMode: true,
       expectedCalled: true,
     },
     {
       description:
         'should not provide developer tools in production mode by default',
-      isDevModeValue: false,
+      isDevMode: false,
       expectedCalled: false,
     },
     {
       description: `should provide developer tools in development mode when 'loadDeveloperTools' is set to 'auto'`,
-      isDevModeValue: true,
+      isDevMode: true,
       loadDevtools: 'auto',
       expectedCalled: true,
     },
     {
       description: `should not provide developer tools in production mode when 'loadDeveloperTools' is set to 'auto'`,
-      isDevModeValue: false,
+      isDevMode: false,
       loadDevtools: 'auto',
       expectedCalled: false,
     },
     {
       description:
         "should provide developer tools in development mode when 'loadDevtools' is set to true",
-      isDevModeValue: true,
+      isDevMode: true,
       loadDevtools: true,
       expectedCalled: true,
     },
     {
       description:
         "should provide developer tools in production mode when 'loadDevtools' is set to true",
-      isDevModeValue: false,
+      isDevMode: false,
       loadDevtools: true,
       expectedCalled: true,
     },
     {
       description:
         "should not provide developer tools in development mode when 'loadDevtools' is set to false",
-      isDevModeValue: true,
+      isDevMode: true,
       loadDevtools: false,
       expectedCalled: false,
     },
     {
       description:
         "should not provide developer tools in production mode when 'loadDevtools' is set to false",
-      isDevModeValue: false,
+      isDevMode: false,
       loadDevtools: false,
       expectedCalled: false,
     },
-  ])(
-    '$description',
-    async ({ isDevModeValue, loadDevtools, expectedCalled }) => {
-      isDevModeMock.mockReturnValue(isDevModeValue)
+  ])('$description', async ({ isDevMode, loadDevtools, expectedCalled }) => {
+    vi.stubGlobal('ngDevMode', isDevMode ? {} : undefined)
 
-      const providers = [
+    const providers = [
+      provideExperimentalZonelessChangeDetection(),
+      provideTanStackQuery(
+        new QueryClient(),
+        loadDevtools !== undefined
+          ? withDevtools(
+              () =>
+                ({
+                  loadDevtools,
+                }) as DevtoolsOptions,
+            )
+          : withDevtools(),
+      ),
+    ]
+
+    TestBed.configureTestingModule({
+      providers,
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+    TestBed.flushEffects()
+    await vi.dynamicImportSettled()
+    TestBed.flushEffects()
+    await vi.dynamicImportSettled()
+
+    if (expectedCalled) {
+      expect(mockTanstackQueryDevtools).toHaveBeenCalled()
+    } else {
+      expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+    }
+  })
+
+  it('should not load devtools if injector is destroyed', async () => {
+    TestBed.configureTestingModule({
+      providers: [
         provideExperimentalZonelessChangeDetection(),
         provideTanStackQuery(
           new QueryClient(),
-          loadDevtools !== undefined
-            ? withDevtools(
-                () =>
-                  ({
-                    loadDevtools,
-                  }) as DevtoolsOptions,
-              )
-            : withDevtools(),
+          withDevtools(() => ({
+            loadDevtools: true,
+          })),
         ),
-      ]
+      ],
+    })
 
-      TestBed.configureTestingModule({
-        providers,
-      })
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    // Destroys injector
+    TestBed.resetTestingModule()
+    await vi.runAllTimersAsync()
 
-      TestBed.inject(ENVIRONMENT_INITIALIZER)
-      await vi.runAllTimersAsync()
+    expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+  })
 
-      if (expectedCalled) {
-        expect(mockTanstackQueryDevtools).toHaveBeenCalled()
-      } else {
-        expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
-      }
-    },
-  )
+  it('should not load devtools if platform is not browser', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: PLATFORM_ID,
+          useValue: 'server',
+        },
+        provideExperimentalZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+  })
 
   it('should update error types', async () => {
     const errorTypes = signal([] as Array<DevtoolsErrorType>)

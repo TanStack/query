@@ -1,5 +1,6 @@
 import {
   QueryClient,
+  QueryFeatureKind,
   provideIsRestoring,
   queryFeature,
 } from '@tanstack/angular-query-experimental'
@@ -84,5 +85,5 @@ export function withPersistQueryClient(
       },
     },
   ]
-  return queryFeature('PersistQueryClient', providers)
+  return queryFeature(QueryFeatureKind.PersistQueryClient, providers)
 }
