@@ -140,7 +140,7 @@ export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
  * @param providers -
  * @returns A Query feature.
  */
-function queryFeature<TFeatureKind extends QueryFeatureKind>(
+export function queryFeature<TFeatureKind extends QueryFeatureKind>(
   kind: TFeatureKind,
   providers: Array<Provider>,
 ): QueryFeature<TFeatureKind> {
@@ -154,6 +154,13 @@ function queryFeature<TFeatureKind extends QueryFeatureKind>(
  * @see {@link withDevtools}
  */
 export type DeveloperToolsFeature = QueryFeature<'DeveloperTools'>
+
+/**
+ * A type alias that represents a feature which enables persistence.
+ * The type is used to describe the return value of the `withPersistQueryClient` function.
+ * @public
+ */
+export type PersistQueryClientFeature = QueryFeature<'PersistQueryClient'>
 
 /**
  * Options for configuring the TanStack Query devtools.
@@ -342,8 +349,8 @@ export function withDevtools(
  * @public
  * @see {@link provideTanStackQuery}
  */
-export type QueryFeatures = DeveloperToolsFeature // Union type of features but just one now
+export type QueryFeatures = DeveloperToolsFeature | PersistQueryClientFeature
 
-export const queryFeatures = ['DeveloperTools'] as const
+export const queryFeatures = ['DeveloperTools', 'PersistQueryClient'] as const
 
 export type QueryFeatureKind = (typeof queryFeatures)[number]
