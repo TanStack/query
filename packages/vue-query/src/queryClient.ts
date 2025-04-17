@@ -114,17 +114,17 @@ export class QueryClient extends QC {
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: MaybeRefDeep<SetDataOptions>,
-  ): TInferredQueryFnData | undefined
+  ): NoInfer<TInferredQueryFnData> | undefined
   setQueryData<TQueryFnData, TData = NoUnknown<TQueryFnData>>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
     options?: MaybeRefDeep<SetDataOptions>,
-  ): TData | undefined
+  ): NoInfer<TData> | undefined
   setQueryData<TData>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<TData | undefined, TData | undefined>,
     options: MaybeRefDeep<SetDataOptions> = {},
-  ): TData | undefined {
+  ): NoInfer<TData> | undefined {
     return super.setQueryData(
       cloneDeepUnref(queryKey),
       updater,
