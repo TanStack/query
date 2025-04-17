@@ -40,6 +40,7 @@ export default [
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'no-case-declarations': 'off',
+      '@typescript-eslint/require-await': 'error',
     },
   },
   {
@@ -48,7 +49,6 @@ export default [
     rules: {
       ...vitest.configs.recommended.rules,
       'vitest/expect-expect': 'warn',
-      '@typescript-eslint/require-await': 'error',
     },
     settings: { vitest: { typecheck: true } },
   },
