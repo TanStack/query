@@ -1382,4 +1382,72 @@ describe('useQuery().promise', () => {
         .observers.length,
     ).toBe(2)
   })
+
+  it('should handle enabled state changes with suspense', async () => {
+    const key = queryKey()
+    const renderStream = createRenderStream({ snapshotDOM: true })
+    const queryFn = vi.fn(async () => {
+      await sleep(1)
+      return 'test'
+    })
+
+    function MyComponent(props: { enabled: boolean }) {
+      const query = useQuery({
+        queryKey: key,
+        queryFn,
+        enabled: props.enabled,
+        staleTime: Infinity,
+      })
+
+      const data = React.use(query.promise)
+      return <>{data}</>
+    }
+
+    function Loading() {
+      return <>loading..</>
+    }
+
+    function Page() {
+      const enabledState = React.useState(false)
+      const enabled = enabledState[0]
+      const setEnabled = enabledState[1]
+
+      return (
+        <div>
+          <button onClick={() => setEnabled(true)}>enable</button>
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent enabled={enabled} />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    {
+      const result = await renderStream.takeRender()
+      result.withinDOM().getByText('loading..')
+    }
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    rendered.getByText('enable').click()
+
+    {
+      const result = await renderStream.takeRender()
+      result.withinDOM().getByText('loading..')
+    }
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    {
+      const result = await renderStream.takeRender()
+      result.withinDOM().getByText('test')
+    }
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
 })

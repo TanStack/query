@@ -78,9 +78,7 @@ export function useBaseQuery<
   useClearResetErrorBoundary(errorResetBoundary)
 
   // this needs to be invoked before creating the Observer because that can create a cache entry
-  const isNewCacheEntry = !client
-    .getQueryCache()
-    .get(defaultedOptions.queryHash)
+  const cacheEntry = client.getQueryCache().get(defaultedOptions.queryHash)
 
   const [observer] = React.useState(
     () =>
@@ -152,7 +150,16 @@ export function useBaseQuery<
     !isServer &&
     willFetch(result, isRestoring)
   ) {
-    const promise = isNewCacheEntry
+    // This fetching in the render should likely be done as part of the getOptimisticResult() considering https://github.com/TanStack/query/issues/8507
+    const state = cacheEntry?.state
+
+    const shouldFetch =
+      !state ||
+      (state.data === undefined &&
+        state.status === 'pending' &&
+        state.fetchStatus === 'idle')
+
+    const promise = shouldFetch
       ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
         fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
       : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
