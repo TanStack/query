@@ -113,6 +113,19 @@ describe('setQueryData', () => {
 
     expectTypeOf(data).toEqualTypeOf<string | undefined>()
   })
+
+  it('should preserve updater parameter type inference when used in functions with explicit return types', () => {
+    const queryKey = ['key'] as DataTag<Array<string>, number>
+    const queryClient = new QueryClient()
+
+    // Simulate usage inside a function with explicit return type
+    // The outer function returns 'unknown' but this shouldn't affect the updater's type inference
+    ;(() =>
+      queryClient.setQueryData(queryKey, (data) => {
+        expectTypeOf(data).toEqualTypeOf<number | undefined>()
+        return data
+      })) satisfies () => unknown
+  })
 })
 
 describe('getQueryState', () => {
@@ -225,18 +238,13 @@ describe('fully typed usage', () => {
       }
     const mutationOptions: MutationOptions<TData, TError> = {}
 
-    const queryFilters: QueryFilters<
-      TData,
-      TError,
-      TData,
-      DataTag<QueryKey, TData, TError>
-    > = {
+    const queryFilters: QueryFilters<DataTag<QueryKey, TData, TError>> = {
       predicate(query) {
         expectTypeOf(query).toEqualTypeOf<
-          Query<TData, TError, TData, DataTag<QueryKey, TData, TError>>
+          Query<unknown, Error, unknown, ReadonlyArray<unknown>>
         >()
-        expectTypeOf(query.state.data).toEqualTypeOf<TData | undefined>()
-        expectTypeOf(query.state.error).toEqualTypeOf<TError | null>()
+        expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
+        expectTypeOf(query.state.error).toEqualTypeOf<Error | null>()
         return false
       },
     }
@@ -267,7 +275,7 @@ describe('fully typed usage', () => {
 
     const queriesData = queryClient.getQueriesData(queryFilters)
     expectTypeOf(queriesData).toEqualTypeOf<
-      Array<[QueryKey, TData | undefined]>
+      Array<[ReadonlyArray<unknown>, unknown]>
     >()
 
     const queryData3 = queryClient.setQueryData(queryKey, { foo: '' })
@@ -286,11 +294,9 @@ describe('fully typed usage', () => {
     >[1]
 
     expectTypeOf<SetQueriesDataUpdaterArg>().toEqualTypeOf<
-      Updater<TData | undefined, TData | undefined>
+      Updater<unknown, unknown>
     >()
-    expectTypeOf(queriesData2).toEqualTypeOf<
-      Array<[QueryKey, TData | undefined]>
-    >()
+    expectTypeOf(queriesData2).toEqualTypeOf<Array<[QueryKey, unknown]>>()
 
     const queryState = queryClient.getQueryState(queryKey)
     expectTypeOf(queryState).toEqualTypeOf<
@@ -530,10 +536,8 @@ describe('invalidateQueries', () => {
     queryClient.invalidateQueries({
       queryKey,
       predicate: (query) => {
-        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
-        expectTypeOf(query.queryKey).toEqualTypeOf<
-          DataTag<Array<string>, number>
-        >()
+        expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<QueryKey>()
         return true
       },
     })
@@ -547,10 +551,8 @@ describe('cancelQueries', () => {
     queryClient.cancelQueries({
       queryKey,
       predicate: (query) => {
-        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
-        expectTypeOf(query.queryKey).toEqualTypeOf<
-          DataTag<Array<string>, number>
-        >()
+        expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<QueryKey>()
         return true
       },
     })
@@ -564,10 +566,8 @@ describe('removeQueries', () => {
     queryClient.removeQueries({
       queryKey,
       predicate: (query) => {
-        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
-        expectTypeOf(query.queryKey).toEqualTypeOf<
-          DataTag<Array<string>, number>
-        >()
+        expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<QueryKey>()
         return true
       },
     })
@@ -581,10 +581,8 @@ describe('refetchQueries', () => {
     queryClient.refetchQueries({
       queryKey,
       predicate: (query) => {
-        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
-        expectTypeOf(query.queryKey).toEqualTypeOf<
-          DataTag<Array<string>, number>
-        >()
+        expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<QueryKey>()
         return true
       },
     })
@@ -598,12 +596,35 @@ describe('resetQueries', () => {
     queryClient.resetQueries({
       queryKey,
       predicate: (query) => {
-        expectTypeOf(query.state.data).toEqualTypeOf<number | undefined>()
-        expectTypeOf(query.queryKey).toEqualTypeOf<
-          DataTag<Array<string>, number>
-        >()
+        expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
+        expectTypeOf(query.queryKey).toEqualTypeOf<QueryKey>()
         return true
       },
     })
   })
+})
+type SuccessCallback = () => unknown
+it('should infer types correctly with expression body arrow functions', () => {
+  const queryKey = ['key'] as DataTag<Array<string>, number>
+  const queryClient = new QueryClient()
+
+  // @ts-expect-error
+  const callbackTest: SuccessCallback = () =>
+    queryClient.setQueryData(queryKey, (data) => {
+      expectTypeOf(data).toEqualTypeOf<number | undefined>()
+      return data
+    })
+})
+
+it('should infer types correctly with block body arrow functions', () => {
+  const queryKey = ['key'] as DataTag<Array<string>, number>
+  const queryClient = new QueryClient()
+
+  // @ts-expect-error
+  const callbackTest2: SuccessCallback = () => {
+    queryClient.setQueryData(queryKey, (data) => {
+      expectTypeOf(data).toEqualTypeOf<number | undefined>()
+      return data
+    })
+  }
 })

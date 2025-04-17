@@ -1,8 +1,14 @@
-import { DestroyRef, NgZone, inject, signal } from '@angular/core'
+import {
+  DestroyRef,
+  Injector,
+  NgZone,
+  assertInInjectionContext,
+  inject,
+  signal,
+} from '@angular/core'
 import { QueryClient, notifyManager } from '@tanstack/query-core'
-import { assertInjector } from './util/assert-injector/assert-injector'
 import type { MutationFilters } from '@tanstack/query-core'
-import type { Injector, Signal } from '@angular/core'
+import type { Signal } from '@angular/core'
 
 export interface InjectIsMutatingOptions {
   /**
@@ -26,34 +32,34 @@ export function injectIsMutating(
   filters?: MutationFilters,
   options?: InjectIsMutatingOptions,
 ): Signal<number> {
-  return assertInjector(injectIsMutating, options?.injector, () => {
-    const destroyRef = inject(DestroyRef)
-    const ngZone = inject(NgZone)
-    const queryClient = inject(QueryClient)
+  !options?.injector && assertInInjectionContext(injectIsMutating)
+  const injector = options?.injector ?? inject(Injector)
+  const destroyRef = injector.get(DestroyRef)
+  const ngZone = injector.get(NgZone)
+  const queryClient = injector.get(QueryClient)
 
-    const cache = queryClient.getMutationCache()
-    // isMutating is the prev value initialized on mount *
-    let isMutating = queryClient.isMutating(filters)
+  const cache = queryClient.getMutationCache()
+  // isMutating is the prev value initialized on mount *
+  let isMutating = queryClient.isMutating(filters)
 
-    const result = signal(isMutating)
+  const result = signal(isMutating)
 
-    const unsubscribe = ngZone.runOutsideAngular(() =>
-      cache.subscribe(
-        notifyManager.batchCalls(() => {
-          const newIsMutating = queryClient.isMutating(filters)
-          if (isMutating !== newIsMutating) {
-            // * and update with each change
-            isMutating = newIsMutating
-            ngZone.run(() => {
-              result.set(isMutating)
-            })
-          }
-        }),
-      ),
-    )
+  const unsubscribe = ngZone.runOutsideAngular(() =>
+    cache.subscribe(
+      notifyManager.batchCalls(() => {
+        const newIsMutating = queryClient.isMutating(filters)
+        if (isMutating !== newIsMutating) {
+          // * and update with each change
+          isMutating = newIsMutating
+          ngZone.run(() => {
+            result.set(isMutating)
+          })
+        }
+      }),
+    ),
+  )
 
-    destroyRef.onDestroy(unsubscribe)
+  destroyRef.onDestroy(unsubscribe)
 
-    return result
-  })
+  return result
 }

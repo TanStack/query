@@ -8,8 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.72.2",
-    "@tanstack/react-query-devtools": "^5.72.2",
+    "@tanstack/react-query": "^5.74.3",
+    "@tanstack/react-query-devtools": "^5.74.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -17,7 +17,7 @@
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "5.8.2",
+    "typescript": "5.8.3",
     "vite": "^6.2.4"
   }
 }

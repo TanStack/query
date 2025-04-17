@@ -114,17 +114,17 @@ export class QueryClient extends QC {
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: MaybeRefDeep<SetDataOptions>,
-  ): TInferredQueryFnData | undefined
+  ): NoInfer<TInferredQueryFnData> | undefined
   setQueryData<TQueryFnData, TData = NoUnknown<TQueryFnData>>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
     options?: MaybeRefDeep<SetDataOptions>,
-  ): TData | undefined
+  ): NoInfer<TData> | undefined
   setQueryData<TData>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<TData | undefined, TData | undefined>,
     options: MaybeRefDeep<SetDataOptions> = {},
-  ): TData | undefined {
+  ): NoInfer<TData> | undefined {
     return super.setQueryData(
       cloneDeepUnref(queryKey),
       updater,
@@ -156,14 +156,7 @@ export class QueryClient extends QC {
     TTaggedQueryKey extends QueryKey = QueryKey,
     TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
     TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters?: QueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
-  ): void
+  >(filters?: QueryFilters<TTaggedQueryKey>): void
   removeQueries(filters: MaybeRefDeep<QueryFilters> = {}): void {
     return super.removeQueries(cloneDeepUnref(filters))
   }
@@ -175,12 +168,7 @@ export class QueryClient extends QC {
     TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
     TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
-    filters?: QueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+    filters?: QueryFilters<TTaggedQueryKey>,
     options?: MaybeRefDeep<ResetOptions>,
   ): Promise<void>
   resetQueries(
@@ -197,12 +185,7 @@ export class QueryClient extends QC {
     TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
     TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
-    filters?: QueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+    filters?: QueryFilters<TTaggedQueryKey>,
     options?: MaybeRefDeep<CancelOptions>,
   ): Promise<void>
   cancelQueries(
@@ -219,29 +202,11 @@ export class QueryClient extends QC {
     TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
     TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
-    filters?: InvalidateQueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+    filters?: InvalidateQueryFilters<TTaggedQueryKey>,
     options?: MaybeRefDeep<InvalidateOptions>,
   ): Promise<void>
-  invalidateQueries<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
-    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
-  >(
-    filters: MaybeRefDeep<
-      InvalidateQueryFilters<
-        TInferredQueryFnData,
-        TInferredError,
-        TInferredQueryFnData,
-        TTaggedQueryKey
-      >
-    > = {},
+  invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters: MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>> = {},
     options: MaybeRefDeep<InvalidateOptions> = {},
   ): Promise<void> {
     const filtersCloned = cloneDeepUnref(filters)
@@ -256,12 +221,7 @@ export class QueryClient extends QC {
       return Promise.resolve()
     }
 
-    const refetchFilters: RefetchQueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    > = {
+    const refetchFilters: RefetchQueryFilters<TTaggedQueryKey> = {
       ...filtersCloned,
       type: filtersCloned.refetchType ?? filtersCloned.type ?? 'active',
     }
@@ -280,12 +240,7 @@ export class QueryClient extends QC {
     TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
     TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
-    filters?: RefetchQueryFilters<
-      TInferredQueryFnData,
-      TInferredError,
-      TInferredQueryFnData,
-      TTaggedQueryKey
-    >,
+    filters?: RefetchQueryFilters<TTaggedQueryKey>,
     options?: MaybeRefDeep<RefetchOptions>,
   ): Promise<void>
   refetchQueries(
