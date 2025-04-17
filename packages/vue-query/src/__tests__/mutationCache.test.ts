@@ -10,7 +10,7 @@ describe('MutationCache', () => {
   })
 
   describe('find', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const mutationCache = new MutationCache()
 
       mutationCache.find({
@@ -24,7 +24,7 @@ describe('MutationCache', () => {
   })
 
   describe('findAll', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const mutationCache = new MutationCache()
 
       mutationCache.findAll({
