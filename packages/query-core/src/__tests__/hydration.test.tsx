@@ -133,7 +133,7 @@ describe('dehydration and rehydration', () => {
     hydrationClient.clear()
   })
 
-  test('should not dehydrate queries if dehydrateQueries is set to false', async () => {
+  test('should not dehydrate queries if dehydrateQueries is set to false', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     vi.waitFor(() =>
