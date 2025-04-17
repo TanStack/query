@@ -14,7 +14,7 @@ const fn = () => 'mock'
 
 describe('QueryCache', () => {
   describe('isFetching', () => {
-    test('should properly unwrap 1 parameter', async () => {
+    test('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.isFetching({
@@ -28,7 +28,7 @@ describe('QueryCache', () => {
   })
 
   describe('isMutating', () => {
-    test('should properly unwrap 1 parameter', async () => {
+    test('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.isMutating({
@@ -42,7 +42,7 @@ describe('QueryCache', () => {
   })
 
   describe('getQueryData', () => {
-    test('should properly unwrap 1 parameter', async () => {
+    test('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueryData(queryKeyRef)
@@ -54,7 +54,7 @@ describe('QueryCache', () => {
   })
 
   describe('getQueriesData', () => {
-    test('should properly unwrap queryKey param', async () => {
+    test('should properly unwrap queryKey param', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueriesData({ queryKey: queryKeyRef })
@@ -64,7 +64,7 @@ describe('QueryCache', () => {
       })
     })
 
-    test('should properly unwrap filters param', async () => {
+    test('should properly unwrap filters param', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueriesData({ queryKey: queryKeyRef })
@@ -76,7 +76,7 @@ describe('QueryCache', () => {
   })
 
   describe('setQueryData', () => {
-    test('should properly unwrap 3 parameter', async () => {
+    test('should properly unwrap 3 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.setQueryData(queryKeyRef, fn, {
@@ -92,7 +92,7 @@ describe('QueryCache', () => {
   })
 
   describe('setQueriesData', () => {
-    test('should properly unwrap params with queryKey', async () => {
+    test('should properly unwrap params with queryKey', () => {
       const queryClient = new QueryClient()
 
       queryClient.setQueriesData({ queryKey: queryKeyRef }, fn, {
@@ -106,7 +106,7 @@ describe('QueryCache', () => {
       )
     })
 
-    test('should properly unwrap params with filters', async () => {
+    test('should properly unwrap params with filters', () => {
       const queryClient = new QueryClient()
 
       queryClient.setQueriesData({ queryKey: queryKeyRef }, fn, {
@@ -122,7 +122,7 @@ describe('QueryCache', () => {
   })
 
   describe('getQueryState', () => {
-    test('should properly unwrap 1 parameter', async () => {
+    test('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueryState(queryKeyRef)
@@ -134,7 +134,7 @@ describe('QueryCache', () => {
   })
 
   describe('removeQueries', () => {
-    test('should properly unwrap 1 parameter', async () => {
+    test('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.removeQueries({
@@ -148,7 +148,7 @@ describe('QueryCache', () => {
   })
 
   describe('resetQueries', () => {
-    test('should properly unwrap 2 parameter', async () => {
+    test('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.resetQueries(
@@ -168,7 +168,7 @@ describe('QueryCache', () => {
   })
 
   describe('cancelQueries', () => {
-    test('should properly unwrap 2 parameter', async () => {
+    test('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.cancelQueries(
@@ -259,7 +259,7 @@ describe('QueryCache', () => {
   })
 
   describe('refetchQueries', () => {
-    test('should properly unwrap 2 parameter', async () => {
+    test('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.refetchQueries(
@@ -279,7 +279,7 @@ describe('QueryCache', () => {
   })
 
   describe('fetchQuery', () => {
-    test('should properly unwrap parameter', async () => {
+    test('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.fetchQuery({
@@ -293,7 +293,7 @@ describe('QueryCache', () => {
   })
 
   describe('prefetchQuery', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.prefetchQuery({ queryKey: queryKeyRef, queryFn: fn })
@@ -306,7 +306,7 @@ describe('QueryCache', () => {
   })
 
   describe('fetchInfiniteQuery', () => {
-    test('should properly unwrap parameter', async () => {
+    test('should properly unwrap parameter', () => {
       const queryClient = new QueryClient()
 
       queryClient.fetchInfiniteQuery({
@@ -319,7 +319,7 @@ describe('QueryCache', () => {
         queryKey: queryKeyUnref,
       })
     })
-    test('should properly unwrap parameter using infiniteQueryOptions with unref', async () => {
+    test('should properly unwrap parameter using infiniteQueryOptions with unref', () => {
       const queryClient = new QueryClient()
 
       const options = infiniteQueryOptions({
@@ -338,7 +338,7 @@ describe('QueryCache', () => {
   })
 
   describe('prefetchInfiniteQuery', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.prefetchInfiniteQuery({
@@ -356,7 +356,7 @@ describe('QueryCache', () => {
   })
 
   describe('setDefaultOptions', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.setDefaultOptions({
@@ -374,7 +374,7 @@ describe('QueryCache', () => {
   })
 
   describe('setQueryDefaults', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.setQueryDefaults(queryKeyRef, {
@@ -391,7 +391,7 @@ describe('QueryCache', () => {
   })
 
   describe('getQueryDefaults', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.getQueryDefaults(queryKeyRef)
@@ -403,7 +403,7 @@ describe('QueryCache', () => {
   })
 
   describe('setMutationDefaults', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.setMutationDefaults(queryKeyRef, {
@@ -420,7 +420,7 @@ describe('QueryCache', () => {
   })
 
   describe('getMutationDefaults', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
       queryClient.getMutationDefaults(queryKeyRef)
