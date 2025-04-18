@@ -118,6 +118,6 @@ queryCache.clear()
 ## Further reading
 
 To get a better understanding how the QueryCache works internally, have a look at [#18: Inside React Query
-](../../framework/react/community/tkdodos-blog#18-inside-react-query) from the Community Resources.
+](../framework/react/community/tkdodos-blog#18-inside-react-query) from the Community Resources.
 
 [//]: # 'Materials'
