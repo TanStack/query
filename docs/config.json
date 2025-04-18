@@ -708,6 +708,10 @@
               "to": "framework/angular/guides/default-query-function"
             },
             {
+              "label": "Testing",
+              "to": "framework/angular/guides/testing"
+            },
+            {
               "label": "Does this replace state managers?",
               "to": "framework/angular/guides/does-this-replace-client-state"
             }
@@ -1283,6 +1287,10 @@
             {
               "label": "Devtools embedded panel",
               "to": "framework/angular/examples/devtools-panel"
+            },
+            {
+              "label": "Unit Testing / Jest",
+              "to": "framework/angular/examples/unit-testing"
             }
           ]
         }

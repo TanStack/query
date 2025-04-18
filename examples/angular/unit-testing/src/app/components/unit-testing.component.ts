@@ -9,16 +9,11 @@ import { TasksService } from '../services/tasks.service'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'optimistic-updates',
+  selector: 'unit-testing',
   imports: [FormsModule, DatePipe],
   template: `
     <p>
-      In this example, new items can be created using a mutation. The new item
-      will be optimistically added to the list in hopes that the server accepts
-      the item. If it does, the list is refetched with the true items from the
-      list. Every now and then, the mutation may fail though. When that happens,
-      the previous list of items is restored and the list is again refetched
-      from the server.
+      This example is the same as the optimistic-updates one but where we show how to test your service.
     </p>
 
     <hr />
@@ -51,7 +46,7 @@ import { TasksService } from '../services/tasks.service'
     </div>
   `,
 })
-export class OptimisticUpdatesComponent {
+export class UnitTestingComponent {
   #tasksService = inject(TasksService)
 
   tasks = injectQuery(() => this.#tasksService.allTasks())
