@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.10",
+    "@solidjs/router": "^0.15.3",
     "npm-run-all2": "^5.0.0",
     "solid-js": "^1.9.5",
     "tsup-preset-solid": "^2.2.0",

@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   Match,
+  Suspense,
   Switch,
   createEffect,
   createMemo,
@@ -11,6 +12,7 @@ import {
 } from 'solid-js'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { reconcile } from 'solid-js/store'
+import { MemoryRouter, Route, createMemoryHistory } from '@solidjs/router'
 import { QueryCache, QueryClientProvider, keepPreviousData, useQuery } from '..'
 import {
   Blink,
@@ -6044,5 +6046,80 @@ describe('useQuery', () => {
     const rendered = render(() => <Page />)
 
     await waitFor(() => rendered.getByText('Status: custom client'))
+  })
+
+  // See https://github.com/tannerlinsley/react-query/issues/8469
+  it('should correctly manage dependent queries', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({ queryCache })
+
+    const history = createMemoryHistory()
+
+    const errorHandler = vi.fn<(err: unknown) => void>()
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallback={(err) => {
+            errorHandler(err)
+            return err.message
+          }}
+        >
+          <Suspense>
+            <MemoryRouter history={history}>
+              <Route path="/" component={Index} />
+              <Route path="/sub" component={Sub} />
+            </MemoryRouter>
+          </Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    queryClient.setQueryData(['parent'], { id: 123 })
+
+    function Index() {
+      return 'Index'
+    }
+
+    function Sub() {
+      const parent = useQuery(() => ({
+        queryKey: ['parent'],
+        async queryFn() {
+          await new Promise((r) => setTimeout(r, 100))
+          return {
+            id: 123,
+          }
+        },
+      }))
+
+      const childQuery = useQuery(() => ({
+        queryKey: ['sub', parent.data?.id],
+        async queryFn() {
+          await new Promise((r) => setTimeout(r, 200))
+          return Promise.resolve('child' + parent.data?.id)
+        },
+      }))
+      return <pre>{childQuery.data}</pre>
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('Index'))
+
+    history.set({
+      value: '/sub',
+    })
+
+    await sleep(200)
+
+    expect(errorHandler).not.toHaveBeenCalled()
+
+    await waitFor(() => {
+      expect(rendered.getByText('child123')).toBeInTheDocument()
+    })
   })
 })
