@@ -316,11 +316,11 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation(() => ({
-        mutationFn: async (text: string) => text,
-        onSuccess: async () => {
+        mutationFn: (text: string) => Promise.resolve(text),
+        onSuccess: () => {
           callbacks.push('useMutation.onSuccess')
         },
-        onSettled: async () => {
+        onSettled: () => {
           callbacks.push('useMutation.onSettled')
         },
       }))
@@ -330,10 +330,10 @@ describe('useMutation', () => {
         setActTimeout(async () => {
           try {
             const result = await mutateAsync('todo', {
-              onSuccess: async () => {
+              onSuccess: () => {
                 callbacks.push('mutateAsync.onSuccess')
               },
-              onSettled: async () => {
+              onSettled: () => {
                 callbacks.push('mutateAsync.onSettled')
               },
             })
@@ -369,10 +369,10 @@ describe('useMutation', () => {
       const mutation = useMutation(() => ({
         mutationFn: async (_text: string) => Promise.reject(new Error('oops')),
 
-        onError: async () => {
+        onError: () => {
           callbacks.push('useMutation.onError')
         },
-        onSettled: async () => {
+        onSettled: () => {
           callbacks.push('useMutation.onSettled')
         },
       }))
@@ -382,10 +382,10 @@ describe('useMutation', () => {
         setActTimeout(async () => {
           try {
             await mutateAsync('todo', {
-              onError: async () => {
+              onError: () => {
                 callbacks.push('mutateAsync.onError')
               },
-              onSettled: async () => {
+              onSettled: () => {
                 callbacks.push('mutateAsync.onSettled')
               },
             })
@@ -756,7 +756,7 @@ describe('useMutation', () => {
     })
   })
 
-  it('should not change state if unmounted', async () => {
+  it('should not change state if unmounted', () => {
     function Mutates() {
       const mutation = useMutation(() => ({ mutationFn: () => sleep(10) }))
       return <button onClick={() => mutation.mutate()}>mutate</button>
@@ -901,11 +901,11 @@ describe('useMutation', () => {
 
     function Page() {
       const mutationSucceed = useMutation(() => ({
-        mutationFn: async () => '',
+        mutationFn: () => Promise.resolve(''),
         meta: { metaSuccessMessage },
       }))
       const mutationError = useMutation(() => ({
-        mutationFn: async () => {
+        mutationFn: () => {
           throw new Error('')
         },
         meta: { metaErrorMessage },

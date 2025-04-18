@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "5.72.1",
+  "version": "5.74.4",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -41,7 +41,6 @@
   "exports": {
     ".": {
       "import": {
-        "@tanstack/custom-condition": "./src/index.ts",
         "types": "./build/modern/index.d.ts",
         "default": "./build/modern/index.js"
       },
@@ -52,7 +51,6 @@
     },
     "./production": {
       "import": {
-        "@tanstack/custom-condition": "./src/production.ts",
         "types": "./build/modern/production.d.ts",
         "default": "./build/modern/production.js"
       },
@@ -63,7 +61,6 @@
     },
     "./build/modern/production.js": {
       "import": {
-        "@tanstack/custom-condition": "./src/production.ts",
         "types": "./build/modern/production.d.ts",
         "default": "./build/modern/production.js"
       },

@@ -162,6 +162,10 @@ export class Mutation<
   }
 
   async execute(variables: TVariables): Promise<TData> {
+    const onContinue = () => {
+      this.#dispatch({ type: 'continue' })
+    }
+
     this.#retryer = createRetryer({
       fn: () => {
         if (!this.options.mutationFn) {
@@ -175,9 +179,7 @@ export class Mutation<
       onPause: () => {
         this.#dispatch({ type: 'pause' })
       },
-      onContinue: () => {
-        this.#dispatch({ type: 'continue' })
-      },
+      onContinue,
       retry: this.options.retry ?? 0,
       retryDelay: this.options.retryDelay,
       networkMode: this.options.networkMode,
@@ -188,7 +190,10 @@ export class Mutation<
     const isPaused = !this.#retryer.canStart()
 
     try {
-      if (!restored) {
+      if (restored) {
+        // Dispatch continue action to unpause restored mutation
+        onContinue()
+      } else {
         this.#dispatch({ type: 'pending', variables, isPaused })
         // Notify cache callback
         await this.#mutationCache.config.onMutate?.(

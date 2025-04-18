@@ -14,12 +14,7 @@ import type { FetchOptions, Query } from './query'
 
 // TYPES
 
-export interface QueryFilters<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> {
+export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
    */
@@ -31,7 +26,7 @@ export interface QueryFilters<
   /**
    * Include queries matching this predicate function
    */
-  predicate?: (query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean
+  predicate?: (query: Query) => boolean
   /**
    * Include queries matching this query key
    */
