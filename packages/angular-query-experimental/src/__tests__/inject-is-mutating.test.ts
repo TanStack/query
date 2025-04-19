@@ -31,7 +31,7 @@ describe('injectIsMutating', () => {
     vi.useRealTimers()
   })
 
-  test('should properly return isMutating state', async () => {
+  test('should properly return isMutating state', () => {
     TestBed.runInInjectionContext(() => {
       const isMutating = injectIsMutating()
       const mutation = injectMutation(() => ({
