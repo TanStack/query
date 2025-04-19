@@ -232,7 +232,7 @@ describe('injectQuery', () => {
         ...options,
       }))
     const fromWrappedQuery = TestBed.runInInjectionContext(() =>
-      createWrappedQuery([''], async () => '1'),
+      createWrappedQuery([''], () => Promise.resolve('1')),
     )
     expectTypeOf(fromWrappedQuery.data()).toEqualTypeOf<string | undefined>()
 
@@ -252,7 +252,7 @@ describe('injectQuery', () => {
       >,
     ) => injectQuery(() => ({ queryKey: qk, queryFn: fetcher, ...options }))
     const fromWrappedFuncStyleQuery = TestBed.runInInjectionContext(() =>
-      createWrappedFuncStyleQuery([''], async () => true),
+      createWrappedFuncStyleQuery([''], () => Promise.resolve(true)),
     )
     expectTypeOf(fromWrappedFuncStyleQuery.data()).toEqualTypeOf<
       boolean | undefined
