@@ -7,12 +7,12 @@
     QueryClientProvider,
     setIsRestoringContext,
   } from '@tanstack/svelte-query'
+  import { box } from './utils.svelte.js'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
   import type {
     OmitKeyof,
     QueryClientProviderProps,
   } from '@tanstack/svelte-query'
-  import { box } from './utils.svelte.js'
 
   type PersistQueryClientProviderProps = QueryClientProviderProps & {
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
