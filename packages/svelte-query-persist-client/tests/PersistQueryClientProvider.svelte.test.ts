@@ -73,6 +73,8 @@ describe('PersistQueryClientProvider', () => {
       },
     })
 
+    await waitFor(() => rendered.getByText('fetchStatus: idle'))
+    await waitFor(() => rendered.getByText('hydrated'))
     await waitFor(() => rendered.getByText('fetched'))
 
     expect(states.current).toHaveLength(3)
@@ -96,7 +98,7 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  test.only('should also put useQueries into idle state', async () => {
+  test('should also put useQueries into idle state', async () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
@@ -167,8 +169,9 @@ describe('PersistQueryClientProvider', () => {
       },
     })
 
+    await waitFor(() => rendered.getByText('initial'))
+    await waitFor(() => rendered.getByText('hydrated'))
     await waitFor(() => rendered.getByText('fetched'))
-    console.log(states.current)
 
     expect(states.current).toHaveLength(3)
 
