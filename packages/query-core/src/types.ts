@@ -430,7 +430,7 @@ export interface QueryObserverOptions<
 }
 
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
-  [K in TKey]-?: TTarget[K]
+  [_ in TKey]: {}
 }
 
 export type DefaultedQueryObserverOptions<
