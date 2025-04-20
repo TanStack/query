@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-core",
-  "version": "5.66.4",
+  "version": "5.74.4",
   "description": "The framework agnostic core that powers TanStack Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -26,7 +26,8 @@
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json",
-    "test:types:ts57": "tsc --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
@@ -58,6 +59,6 @@
   ],
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all2": "^5.0.0"
   }
 }

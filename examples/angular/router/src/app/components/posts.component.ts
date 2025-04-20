@@ -11,12 +11,12 @@ import { PostsService } from '../services/posts-service'
   imports: [RouterLink],
 })
 export default class PostsComponent {
-  #postsService = inject(PostsService)
+  readonly #postsService = inject(PostsService)
 
-  postsQuery = injectQuery(() => ({
+  readonly postsQuery = injectQuery(() => ({
     queryKey: ['posts'],
     queryFn: () => lastValueFrom(this.#postsService.allPosts$()),
   }))
 
-  queryClient = inject(QueryClient)
+  readonly queryClient = inject(QueryClient)
 }

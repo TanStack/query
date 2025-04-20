@@ -32,10 +32,6 @@ type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
 ) => void
 
-export interface NotifyOptions {
-  listeners?: boolean
-}
-
 interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
@@ -151,7 +147,6 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
-    notifyOptions?: NotifyOptions,
   ): void {
     const prevOptions = this.options
     const prevQuery = this.#currentQuery
@@ -200,7 +195,7 @@ export class QueryObserver<
     }
 
     // Update result
-    this.updateResult(notifyOptions)
+    this.updateResult()
 
     // Update stale interval if needed
     if (
@@ -479,33 +474,11 @@ export class QueryObserver<
 
     let { error, errorUpdatedAt, status } = newState
 
-    // Select data if needed
-    if (options.select && newState.data !== undefined) {
-      // Memoize select result
-      if (
-        prevResult &&
-        newState.data === prevResultState?.data &&
-        options.select === this.#selectFn
-      ) {
-        data = this.#selectResult
-      } else {
-        try {
-          this.#selectFn = options.select
-          data = options.select(newState.data)
-          data = replaceData(prevResult?.data, data, options)
-          this.#selectResult = data
-          this.#selectError = null
-        } catch (selectError) {
-          this.#selectError = selectError as TError
-        }
-      }
-    }
-    // Use query data
-    else {
-      data = newState.data as unknown as TData
-    }
+    // Per default, use query data
+    data = newState.data as unknown as TData
+    let skipSelect = false
 
-    // Show placeholder data if needed
+    // use placeholderData if needed
     if (
       options.placeholderData !== undefined &&
       data === undefined &&
@@ -519,7 +492,11 @@ export class QueryObserver<
         options.placeholderData === prevResultOptions?.placeholderData
       ) {
         placeholderData = prevResult.data
+        // we have to skip select when reading this memoization
+        // because prevResult.data is already "selected"
+        skipSelect = true
       } else {
+        // compute placeholderData
         placeholderData =
           typeof options.placeholderData === 'function'
             ? (
@@ -529,14 +506,6 @@ export class QueryObserver<
                 this.#lastQueryWithDefinedData as any,
               )
             : options.placeholderData
-        if (options.select && placeholderData !== undefined) {
-          try {
-            placeholderData = options.select(placeholderData)
-            this.#selectError = null
-          } catch (selectError) {
-            this.#selectError = selectError as TError
-          }
-        }
       }
 
       if (placeholderData !== undefined) {
@@ -547,6 +516,29 @@ export class QueryObserver<
           options,
         ) as TData
         isPlaceholderData = true
+      }
+    }
+
+    // Select data if needed
+    // this also runs placeholderData through the select function
+    if (options.select && data !== undefined && !skipSelect) {
+      // Memoize select result
+      if (
+        prevResult &&
+        data === prevResultState?.data &&
+        options.select === this.#selectFn
+      ) {
+        data = this.#selectResult
+      } else {
+        try {
+          this.#selectFn = options.select
+          data = options.select(data as any)
+          data = replaceData(prevResult?.data, data, options)
+          this.#selectResult = data
+          this.#selectError = null
+        } catch (selectError) {
+          this.#selectError = selectError as TError
+        }
       }
     }
 
@@ -648,7 +640,7 @@ export class QueryObserver<
     return nextResult
   }
 
-  updateResult(notifyOptions?: NotifyOptions): void {
+  updateResult(): void {
     const prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
@@ -668,9 +660,6 @@ export class QueryObserver<
     }
 
     this.#currentResult = nextResult
-
-    // Determine which callbacks to trigger
-    const defaultNotifyOptions: NotifyOptions = {}
 
     const shouldNotifyListeners = (): boolean => {
       if (!prevResult) {
@@ -706,11 +695,7 @@ export class QueryObserver<
       })
     }
 
-    if (notifyOptions?.listeners !== false && shouldNotifyListeners()) {
-      defaultNotifyOptions.listeners = true
-    }
-
-    this.#notify({ ...defaultNotifyOptions, ...notifyOptions })
+    this.#notify({ listeners: shouldNotifyListeners() })
   }
 
   #updateQuery(): void {
@@ -740,7 +725,7 @@ export class QueryObserver<
     }
   }
 
-  #notify(notifyOptions: NotifyOptions): void {
+  #notify(notifyOptions: { listeners: boolean }): void {
     notifyManager.batch(() => {
       // First, trigger the listeners
       if (notifyOptions.listeners) {

@@ -4,7 +4,6 @@
     "outDir": "./dist-ts",
     "rootDir": ".",
     "baseUrl": ".",
-    "moduleResolution": "Bundler",
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noFallthroughCasesInSwitch": true,

@@ -74,6 +74,18 @@ export type DataTag<
       [dataTagErrorSymbol]: TError
     }
 
+export type InferDataFromTag<TQueryFnData, TTaggedQueryKey extends QueryKey> =
+  TTaggedQueryKey extends DataTag<unknown, infer TaggedValue, unknown>
+    ? TaggedValue
+    : TQueryFnData
+
+export type InferErrorFromTag<TError, TTaggedQueryKey extends QueryKey> =
+  TTaggedQueryKey extends DataTag<unknown, unknown, infer TaggedError>
+    ? TaggedError extends UnsetMarker
+      ? TError
+      : TaggedError
+    : TError
+
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
@@ -564,21 +576,13 @@ export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {
+export interface InvalidateQueryFilters<TQueryKey extends QueryKey = QueryKey>
+  extends QueryFilters<TQueryKey> {
   refetchType?: QueryTypeFilter | 'none'
 }
 
-export interface RefetchQueryFilters<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> extends QueryFilters<TQueryFnData, TError, TData, TQueryKey> {}
+export interface RefetchQueryFilters<TQueryKey extends QueryKey = QueryKey>
+  extends QueryFilters<TQueryKey> {}
 
 export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}

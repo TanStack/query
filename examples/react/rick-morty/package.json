@@ -12,16 +12,16 @@
     "@emotion/styled": "^11.13.5",
     "@mui/material": "^6.1.8",
     "@mui/styles": "^6.1.8",
-    "@tanstack/react-query": "^5.66.10",
-    "@tanstack/react-query-devtools": "^5.66.10",
+    "@tanstack/react-query": "^5.74.4",
+    "@tanstack/react-query-devtools": "^5.74.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^6.25.1",
     "react-router-dom": "^6.25.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.3",
-    "typescript": "5.7.2",
-    "vite": "^5.3.5"
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "5.8.3",
+    "vite": "^6.2.4"
   }
 }

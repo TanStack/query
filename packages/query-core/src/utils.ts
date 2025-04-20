@@ -14,12 +14,7 @@ import type { FetchOptions, Query } from './query'
 
 // TYPES
 
-export interface QueryFilters<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> {
+export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
    */
@@ -31,7 +26,7 @@ export interface QueryFilters<
   /**
    * Include queries matching this predicate function
    */
-  predicate?: (query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean
+  predicate?: (query: Query) => boolean
   /**
    * Include queries matching this query key
    */
@@ -241,7 +236,7 @@ export function partialMatchKey(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    return !Object.keys(b).some((key) => !partialMatchKey(a[key], b[key]))
+    return Object.keys(b).every((key) => partialMatchKey(a[key], b[key]))
   }
 
   return false
@@ -373,6 +368,9 @@ export function replaceData<
         console.error(
           `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
         )
+
+        // Prevent the replaceEqualDeep from being called again down below.
+        throw error
       }
     }
     // Structurally share data between prev and new data if needed

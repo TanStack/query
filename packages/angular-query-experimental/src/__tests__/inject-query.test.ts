@@ -1,10 +1,8 @@
 import {
   Component,
-  Injectable,
   Injector,
   computed,
   effect,
-  inject,
   input,
   provideExperimentalZonelessChangeDetection,
   signal,
@@ -234,7 +232,7 @@ describe('injectQuery', () => {
         ...options,
       }))
     const fromWrappedQuery = TestBed.runInInjectionContext(() =>
-      createWrappedQuery([''], async () => '1'),
+      createWrappedQuery([''], () => Promise.resolve('1')),
     )
     expectTypeOf(fromWrappedQuery.data()).toEqualTypeOf<string | undefined>()
 
@@ -254,7 +252,7 @@ describe('injectQuery', () => {
       >,
     ) => injectQuery(() => ({ queryKey: qk, queryFn: fetcher, ...options }))
     const fromWrappedFuncStyleQuery = TestBed.runInInjectionContext(() =>
-      createWrappedFuncStyleQuery([''], async () => true),
+      createWrappedFuncStyleQuery([''], () => Promise.resolve(true)),
     )
     expectTypeOf(fromWrappedFuncStyleQuery.data()).toEqualTypeOf<
       boolean | undefined
@@ -537,91 +535,6 @@ describe('injectQuery', () => {
     )
   })
 
-  test('should run optionsFn in injection context', async () => {
-    @Injectable()
-    class FakeService {
-      getData(name: string) {
-        return Promise.resolve(name)
-      }
-    }
-
-    @Component({
-      selector: 'app-fake',
-      template: `{{ query.data() }}`,
-      standalone: true,
-      providers: [FakeService],
-    })
-    class FakeComponent {
-      name = signal<string>('test name')
-
-      query = injectQuery(() => {
-        const service = inject(FakeService)
-
-        return {
-          queryKey: ['fake', this.name()],
-          queryFn: () => {
-            return service.getData(this.name())
-          },
-        }
-      })
-    }
-
-    const fixture = TestBed.createComponent(FakeComponent)
-    fixture.detectChanges()
-    await resolveQueries()
-
-    expect(fixture.componentInstance.query.data()).toEqual('test name')
-
-    fixture.componentInstance.name.set('test name 2')
-    fixture.detectChanges()
-    await resolveQueries()
-
-    expect(fixture.componentInstance.query.data()).toEqual('test name 2')
-  })
-
-  test('should run optionsFn in injection context and allow passing injector to queryFn', async () => {
-    @Injectable()
-    class FakeService {
-      getData(name: string) {
-        return Promise.resolve(name)
-      }
-    }
-
-    @Component({
-      selector: 'app-fake',
-      template: `{{ query.data() }}`,
-      standalone: true,
-      providers: [FakeService],
-    })
-    class FakeComponent {
-      name = signal<string>('test name')
-
-      query = injectQuery(() => {
-        const injector = inject(Injector)
-
-        return {
-          queryKey: ['fake', this.name()],
-          queryFn: () => {
-            const service = injector.get(FakeService)
-            return service.getData(this.name())
-          },
-        }
-      })
-    }
-
-    const fixture = TestBed.createComponent(FakeComponent)
-    fixture.detectChanges()
-    await resolveQueries()
-
-    expect(fixture.componentInstance.query.data()).toEqual('test name')
-
-    fixture.componentInstance.name.set('test name 2')
-    fixture.detectChanges()
-    await resolveQueries()
-
-    expect(fixture.componentInstance.query.data()).toEqual('test name 2')
-  })
-
   describe('injection context', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
       expect(() => {
@@ -638,7 +551,9 @@ describe('injectQuery', () => {
           queryKey: ['manualInjector'],
           queryFn: simpleFetcher,
         }),
-        TestBed.inject(Injector),
+        {
+          injector: TestBed.inject(Injector),
+        },
       )
 
       expect(query.status()).toBe('pending')

@@ -4,43 +4,13 @@ import type { QueryFilters } from '../utils'
 import type { DataTag, QueryKey } from '../types'
 
 describe('QueryFilters', () => {
-  it('should be typed if generics are passed', () => {
-    type TData = { a: number; b: string }
-
-    const filters: QueryFilters<
-      TData,
-      Error,
-      TData,
-      DataTag<QueryKey, TData>
-    > = {
-      predicate(query) {
-        expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
-        return true
-      },
-      queryKey: ['key'] as DataTag<undefined, TData>,
-    }
-
-    const queryClient = new QueryClient()
-
-    const data = queryClient.getQueryData(filters.queryKey!)
-    expectTypeOf(data).toEqualTypeOf<TData | undefined>()
-
-    const error = queryClient.getQueryState(filters.queryKey!)?.error
-    expectTypeOf(error).toEqualTypeOf<Error | null | undefined>()
-  })
-
-  it('should be typed if generics are passed including an error type', () => {
+  it('should be typed unknown even if tagged generics are passed', () => {
     type TData = { a: number; b: string }
     type TError = Error & { message: string }
 
-    const filters: QueryFilters<
-      TData,
-      TError,
-      TData,
-      DataTag<QueryKey, TData, TError>
-    > = {
+    const filters: QueryFilters<DataTag<QueryKey, TData, TError>> = {
       predicate(query) {
-        expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<TData>()
+        expectTypeOf(query.setData({ a: 1, b: '1' })).toEqualTypeOf<unknown>()
         return true
       },
       queryKey: ['key'] as DataTag<undefined, TData, TError>,
