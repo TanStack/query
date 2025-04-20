@@ -1,4 +1,4 @@
-export type Box<T> = { current: T }
+type Box<T> = { current: T }
 
 export function box<T>(initial: T): Box<T> {
   let current = $state(initial)

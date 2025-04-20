@@ -6,7 +6,7 @@ import {
 } from '@tanstack/svelte-query'
 import { flushSync } from 'svelte'
 import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { promiseWithResolvers, sleep, withEffectRoot } from './utils.svelte'
+import { promiseWithResolvers, sleep, withEffectRoot } from './utils.svelte.js'
 import type { CreateQueryResult } from '@tanstack/svelte-query'
 
 describe('createQuery', () => {
@@ -41,7 +41,7 @@ describe('createQuery', () => {
         expectTypeOf(query.error).toEqualTypeOf<Error | null>()
       }
 
-      let promise1 = query.promise
+      const promise1 = query.promise
 
       expect(query).toEqual({
         data: undefined,

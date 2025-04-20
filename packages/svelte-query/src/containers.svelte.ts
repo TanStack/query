@@ -3,6 +3,8 @@ import { createSubscriber } from 'svelte/reactivity'
 type VoidFn = () => void
 type Subscriber = (update: VoidFn) => void | VoidFn
 
+export type Box<T> = { current: T }
+
 export class ReactiveValue<T> implements Box<T> {
   #fn
   #subscribe
@@ -15,20 +17,6 @@ export class ReactiveValue<T> implements Box<T> {
   get current() {
     this.#subscribe()
     return this.#fn()
-  }
-}
-
-export type Box<T> = { current: T }
-
-export function box<T>(value: T): Box<T> {
-  let current = $state(value)
-  return {
-    get current() {
-      return current
-    },
-    set current(newValue) {
-      current = newValue
-    },
   }
 }
 

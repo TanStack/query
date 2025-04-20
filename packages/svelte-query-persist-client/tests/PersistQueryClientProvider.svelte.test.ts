@@ -8,8 +8,7 @@ import InitialData from './InitialData/Provider.svelte'
 import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
-import { StatelessRef, createQueryClient, sleep } from './utils.svelte'
-
+import { StatelessRef, createQueryClient, sleep } from './utils.svelte.js'
 import type {
   PersistedClient,
   Persister,
@@ -52,7 +51,7 @@ const createMockErrorPersister = (
 
 describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
-    let states = new StatelessRef<Array<StatusResult<string>>>([])
+    const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -98,7 +97,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test.only('should also put useQueries into idle state', async () => {
-    let states = new StatelessRef<Array<StatusResult<string>>>([])
+    const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -146,7 +145,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should show initialData while restoring', async () => {
-    let states = new StatelessRef<Array<StatusResult<string>>>([])
+    const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -193,7 +192,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should not refetch after restoring when data is fresh', async () => {
-    let states = new StatelessRef<Array<StatusResult<string>>>([])
+    const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -280,7 +279,7 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
-    let states = new StatelessRef<Array<string>>([])
+    const states = new StatelessRef<Array<string>>([])
 
     const rendered = render(AwaitOnSuccess, {
       props: {

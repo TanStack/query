@@ -12,11 +12,12 @@
     OmitKeyof,
     QueryClientProviderProps,
   } from '@tanstack/svelte-query'
-  import { box } from './utils.svelte'
+  import { box } from './utils.svelte.js'
 
   type PersistQueryClientProviderProps = QueryClientProviderProps & {
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
     onSuccess?: () => void
+    onError?: () => void
   }
 
   let {
@@ -41,13 +42,12 @@
 
   $effect(() => {
     isRestoring.current = true
-    persistQueryClientRestore(options).then(async () => {
-      try {
-        await props.onSuccess?.()
-      } finally {
+    persistQueryClientRestore(options)
+      .then(() => props.onSuccess?.())
+      .catch(() => props.onError?.())
+      .finally(() => {
         isRestoring.current = false
-      }
-    })
+      })
   })
 </script>
 

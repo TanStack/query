@@ -1,7 +1,7 @@
 import { flushSync } from 'svelte'
 import { describe, expect, it } from 'vitest'
-import { createRawRef } from '../src/containers.svelte'
-import { withEffectRoot } from './utils.svelte'
+import { createRawRef } from '../src/containers.svelte.js'
+import { withEffectRoot } from './utils.svelte.js'
 
 describe('createRawRef', () => {
   it('should create a reactive reference', () => {
