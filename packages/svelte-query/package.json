@@ -48,10 +48,12 @@
     "src",
     "!src/__tests__"
   ],
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*"
+  },
   "devDependencies": {
     "@sveltejs/package": "^2.3.10",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
-    "@tanstack/query-core": "workspace:*",
     "@testing-library/svelte": "^5.2.6",
     "eslint-plugin-svelte": "^2.46.0",
     "svelte": "^5.26.1",

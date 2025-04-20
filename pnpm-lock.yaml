@@ -2588,6 +2588,10 @@ importers:
         version: 2.11.6(@testing-library/jest-dom@6.6.3)(solid-js@1.9.5)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.39.0)(yaml@2.6.1))
 
   packages/svelte-query:
+    dependencies:
+      '@tanstack/query-core':
+        specifier: workspace:*
+        version: link:../query-core
     devDependencies:
       '@sveltejs/package':
         specifier: ^2.3.10
@@ -2595,9 +2599,6 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.3
         version: 5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.39.0)(yaml@2.6.1))
-      '@tanstack/query-core':
-        specifier: workspace:*
-        version: link:../query-core
       '@testing-library/svelte':
         specifier: ^5.2.6
         version: 5.2.6(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.85.1)(terser@5.39.0)(yaml@2.6.1))(vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.14.1)(jiti@2.4.2)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.14.1)(typescript@5.8.3))(sass@1.85.1)(terser@5.39.0)(yaml@2.6.1))

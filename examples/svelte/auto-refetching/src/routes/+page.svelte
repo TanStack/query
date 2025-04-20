@@ -24,10 +24,7 @@
       fetch(`${endpoint}?add=${encodeURIComponent(value)}`).then((r) =>
         r.json(),
       ),
-    onSuccess: async () => {
-      await todos.refetch()
-      value = ''
-    },
+    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
   }))
 
   const clearMutation = createMutation(() => ({

@@ -41,8 +41,15 @@ export function createQuery<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
->(
-  options: Accessor<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
+  >(
+    options: Accessor<
+      CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    >,
+    queryClient?: Accessor<QueryClient>,
+  ): CreateQueryResult<TData, TError>
+
+export function createQuery(
+  options: Accessor<CreateQueryOptions>,
   queryClient?: Accessor<QueryClient>,
 ) {
   return createBaseQuery(options, QueryObserver, queryClient)
