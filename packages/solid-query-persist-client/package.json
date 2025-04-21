@@ -37,6 +37,7 @@
   "main": "./build/index.cjs",
   "module": "./build/index.js",
   "exports": {
+    "@tanstack/custom-condition": "./src/index.ts",
     "development": {
       "import": {
         "types": "./build/index.d.ts",
