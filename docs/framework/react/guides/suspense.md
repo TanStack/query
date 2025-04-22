@@ -10,7 +10,7 @@ React Query can also be used with React's Suspense for Data Fetching APIs. For t
 - [useSuspenseQueries](../reference/useSuspenseQueries.md)
 - Additionally, you can use the `useQuery().promise` and `React.use()` (Experimental)
 
-When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](../examples/react/suspense) for more information on how to set up suspense mode.
+When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](../examples/suspense) for more information on how to set up suspense mode.
 
 If you want mutations to propagate errors to the nearest error boundary (similar to queries), you can set the `throwOnError` option to `true` as well.
 
@@ -172,7 +172,7 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../examples/react/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](./advanced-ssr.md) guide.
+For more information, check out the [NextJs Suspense Streaming Example](../examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](./advanced-ssr.md) guide.
 
 ## Using `useQuery().promise` and `React.use()` (Experimental)
 
