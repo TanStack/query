@@ -5,7 +5,7 @@ import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
-export interface DevtoolsPanelOptions {
+interface DevtoolsPanelOptions {
   /**
    * Custom instance of QueryClient
    */

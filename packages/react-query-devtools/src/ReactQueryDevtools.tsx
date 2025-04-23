@@ -9,7 +9,7 @@ import type {
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
-export interface DevtoolsOptions {
+interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
    */
