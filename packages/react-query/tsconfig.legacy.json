@@ -6,8 +6,5 @@
   },
   "include": ["src"],
   "exclude": ["src/__tests__"],
-  "references": [
-    { "path": "../query-core" },
-    { "path": "../query-persist-client-core" }
-  ]
+  "references": [{ "path": "../query-persist-client-core" }]
 }
