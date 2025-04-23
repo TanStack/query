@@ -58,7 +58,6 @@
     "!src/__tests__"
   ],
   "devDependencies": {
-    "@testing-library/dom": "^10.4.0",
     "npm-run-all2": "^5.0.0"
   }
 }
