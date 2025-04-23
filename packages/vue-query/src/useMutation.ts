@@ -2,6 +2,7 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
+  reactive,
   readonly,
   shallowReactive,
   shallowReadonly,
@@ -87,7 +88,9 @@ export function useMutation<
     return client.defaultMutationOptions(cloneDeepUnref(mutationOptions))
   })
   const observer = new MutationObserver(client, options.value)
-  const state = shallowReactive(observer.getCurrentResult())
+  const state = options.value.shallow
+    ? shallowReactive(observer.getCurrentResult())
+    : reactive(observer.getCurrentResult())
 
   const unsubscribe = observer.subscribe((result) => {
     updateState(state, result)
@@ -110,12 +113,9 @@ export function useMutation<
     unsubscribe()
   })
 
-  const readonlyState =
-    process.env.NODE_ENV === 'production'
-      ? state
-      : options.value.shallow
-        ? shallowReadonly(state)
-        : readonly(state)
+  const readonlyState = options.value.shallow
+    ? shallowReadonly(state)
+    : readonly(state)
 
   const resultRefs = toRefs(readonlyState) as ToRefs<
     Readonly<MutationResult<TData, TError, TVariables, TContext>>

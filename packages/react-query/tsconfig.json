@@ -6,9 +6,5 @@
     "baseUrl": ".",
     "jsx": "react-jsx"
   },
-  "include": ["src", "*.config.js", "*.config.ts", "package.json"],
-  "references": [
-    { "path": "../query-core" },
-    { "path": "../query-persist-client-core" }
-  ]
+  "include": ["src", "*.config.js", "*.config.ts", "package.json"]
 }
