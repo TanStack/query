@@ -185,7 +185,7 @@ export class QueryClient {
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: SetDataOptions,
-  ): TInferredQueryFnData | undefined {
+  ): NoInfer<TInferredQueryFnData> | undefined {
     const defaultedOptions = this.defaultQueryOptions<
       any,
       any,
