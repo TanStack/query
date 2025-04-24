@@ -6,7 +6,6 @@ import type { QueryCache } from '@tanstack/query-core'
 describe('broadcastQueryClient', () => {
   let queryClient: QueryClient
   let queryCache: QueryCache
-  let unsubscribe: () => void
 
   beforeEach(() => {
     queryClient = new QueryClient()
@@ -14,7 +13,7 @@ describe('broadcastQueryClient', () => {
   })
 
   it('should subscribe to the query cache', async () => {
-    unsubscribe = broadcastQueryClient({
+    broadcastQueryClient({
       queryClient,
       broadcastChannel: 'test_channel',
     })
@@ -22,6 +21,10 @@ describe('broadcastQueryClient', () => {
   })
 
   it('should not have any listeners after cleanup', async () => {
+    const unsubscribe = broadcastQueryClient({
+      queryClient,
+      broadcastChannel: 'test_channel',
+    })
     unsubscribe()
     expect(queryCache.hasListeners()).toBe(false)
   })
