@@ -8,8 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^5.74.3",
-    "@tanstack/svelte-query-devtools": "^5.74.3"
+    "@tanstack/svelte-query": "^5.74.4",
+    "@tanstack/svelte-query-devtools": "^5.74.6"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
