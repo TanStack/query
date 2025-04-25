@@ -5,7 +5,7 @@ title: streamedQuery
 
 `streamedQuery` is a helper function to create a query function that streams data from an [AsyncIterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncIterator). Data will be an Array of all the chunks received. The query will be in a `pending` state until the first chunk of data is received, but will go to `success` after that. The query will stay in fetchStatus `fetching` until the stream ends.
 
-To see `streamedQuery` in action, take a look at our [chat example](../framework/react/examples/chat/react/nextjs-app-prefetching).
+To see `streamedQuery` in action, take a look at our [chat example](../framework/react/examples/chat).
 
 ```tsx
 import { experimental_streamedQuery as streamedQuery } from '@tanstack/react-query'
