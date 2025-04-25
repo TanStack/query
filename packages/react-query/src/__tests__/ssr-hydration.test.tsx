@@ -10,7 +10,7 @@ import {
   hydrate,
   useQuery,
 } from '..'
-import { createQueryClient, setIsServer, sleep } from './utils'
+import { createQueryClient, setIsServer } from './utils'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   let root: any
@@ -23,7 +23,7 @@ const ReactHydrate = (element: React.ReactElement, container: Element) => {
 }
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
-  await sleep(ms || 1)
+  await vi.advanceTimersByTimeAsync(ms || 1)
   return value
 }
 
@@ -36,12 +36,15 @@ describe('Server side rendering with de/rehydration', () => {
   beforeAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
     previousIsReactActEnvironment = globalThis.IS_REACT_ACT_ENVIRONMENT = true
+    vi.useFakeTimers()
   })
 
   afterAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
     globalThis.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
+    vi.useRealTimers()
   })
+
   it('should not mismatch on success', async () => {
     const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
@@ -185,7 +188,7 @@ describe('Server side rendering with de/rehydration', () => {
     expect(consoleMock).toHaveBeenCalledTimes(0)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
-    await sleep(50)
+    await vi.advanceTimersByTimeAsync(50)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(
       'ErrorComponent - status:error fetching:false data:undefined',
@@ -253,7 +256,7 @@ describe('Server side rendering with de/rehydration', () => {
     expect(consoleMock).toHaveBeenCalledTimes(0)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
-    await sleep(50)
+    await vi.advanceTimersByTimeAsync(50)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(
       'SuccessComponent - status:success fetching:false data:success!',
