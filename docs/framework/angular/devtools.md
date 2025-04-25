@@ -81,10 +81,15 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideTanStackQuery(
       new QueryClient(),
-      withDevtools(() => ({
-        initialIsOpen: true,
-        loadDevtools: inject(DevtoolsOptionsManager).loadDevtools(),
-      })),
+      withDevtools(
+        (devToolsOptionsManager: DevtoolsOptionsManager) => ({
+          loadDevtools: devToolsOptionsManager.loadDevtools(),
+        }),
+        {
+          // `deps` can be used to pass one or more injectables as parameters to the `withDevtools` callback.
+          deps: [DevtoolsOptionsManager],
+        },
+      ),
     ),
   ],
 }
@@ -92,7 +97,7 @@ export const appConfig: ApplicationConfig = {
 
 ### Options
 
-Of these options `client`, `position`, `errorTypes`, `buttonPosition`, and `initialIsOpen` support reactivity through signals.
+Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosition`, and `initialIsOpen` support reactivity through signals.
 
 - `loadDevtools?: 'auto' | boolean`
   - Defaults to `auto`: lazily loads devtools when in development mode. Skips loading in production mode.

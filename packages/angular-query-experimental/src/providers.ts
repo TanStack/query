@@ -1,15 +1,17 @@
 import {
   DestroyRef,
   ENVIRONMENT_INITIALIZER,
+  InjectionToken,
   Injector,
   PLATFORM_ID,
+  computed,
   inject,
   makeEnvironmentProviders,
 } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { isPlatformBrowser } from '@angular/common'
 import { noop } from './util'
-import type { EnvironmentProviders, Provider } from '@angular/core'
+import type { EnvironmentProviders, Provider, Signal } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
@@ -17,6 +19,13 @@ import type {
 } from '@tanstack/query-devtools'
 
 declare const ngDevMode: unknown
+
+/**
+ * @internal
+ */
+const DEVTOOLS_OPTIONS_SIGNAL = new InjectionToken<Signal<DevtoolsOptions>>(
+  'devtools options signal',
+)
 
 /**
  * Usually {@link provideTanStackQuery} is used once to set up TanStack Query and the
@@ -164,6 +173,36 @@ export type PersistQueryClientFeature =
   QueryFeature<QueryFeatureKind.PersistQueryClient>
 
 /**
+ * Options for configuring withDevtools.
+ * @public
+ */
+export interface WithDevtoolsOptions {
+  /**
+   * An array of dependencies to be injected and passed to the `withDevtoolsFn` function.
+   *
+   * **Example**
+   * ```ts
+   * export const appConfig: ApplicationConfig = {
+   *   providers: [
+   *     provideTanStackQuery(
+   *       new QueryClient(),
+   *       withDevtools(
+   *         (devToolsOptionsManager: DevtoolsOptionsManager) => ({
+   *           loadDevtools: devToolsOptionsManager.loadDevtools(),
+   *         }),
+   *         {
+   *           deps: [DevtoolsOptionsManager],
+   *         },
+   *       ),
+   *     ),
+   *   ],
+   * }
+   * ```
+   */
+  deps?: Array<any>
+}
+
+/**
  * Options for configuring the TanStack Query devtools.
  * @public
  */
@@ -242,39 +281,47 @@ export interface DevtoolsOptions {
  *
  * If you need more control over where devtools are rendered, consider `injectDevtoolsPanel`. This allows rendering devtools inside your own devtools for example.
  * @param withDevtoolsFn - A function that returns `DevtoolsOptions`.
+ * @param options - Additional options for configuring `withDevtools`.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  * @see {@link provideTanStackQuery}
  * @see {@link DevtoolsOptions}
  */
 export function withDevtools(
-  withDevtoolsFn?: () => DevtoolsOptions,
+  withDevtoolsFn?: (...deps: Array<any>) => DevtoolsOptions,
+  options: WithDevtoolsOptions = {},
 ): DeveloperToolsFeature {
+  let providers: Array<Provider> = []
   if (withDevtoolsFn === undefined && typeof ngDevMode === 'undefined') {
-    return queryFeature(QueryFeatureKind.DeveloperTools, [])
+    return queryFeature(QueryFeatureKind.DeveloperTools, providers)
   } else {
-    return createDevtoolsFeature(withDevtoolsFn)
-  }
-}
-
-function createDevtoolsFeature(withDevtoolsFn?: () => DevtoolsOptions) {
-  const providers = [
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useFactory: () => {
-        if (!isPlatformBrowser(inject(PLATFORM_ID))) return noop
-        let destroyed = false
-        const injector = inject(Injector)
-        inject(DestroyRef).onDestroy(() => (destroyed = true))
-
-        return () =>
-          import('./devtools-setup').then((module) => {
-            !destroyed && module.setupDevtools(injector, withDevtoolsFn)
-          })
+    providers = [
+      {
+        provide: DEVTOOLS_OPTIONS_SIGNAL,
+        useFactory: (...deps: Array<any>) =>
+          computed(() => withDevtoolsFn?.(...deps) ?? {}),
+        deps: options.deps || [],
       },
-    },
-  ]
+      {
+        // Do not use provideEnvironmentInitializer while Angular < v19 is supported
+        provide: ENVIRONMENT_INITIALIZER,
+        multi: true,
+        useFactory: (devtoolsOptionsSignal: Signal<DevtoolsOptions>) => {
+          if (!isPlatformBrowser(inject(PLATFORM_ID))) return noop
+          let destroyed = false
+          const injector = inject(Injector)
+          inject(DestroyRef).onDestroy(() => (destroyed = true))
+
+          return () =>
+            import('./devtools-setup').then((module) => {
+              !destroyed &&
+                module.setupDevtools(injector, devtoolsOptionsSignal)
+            })
+        },
+        deps: [DEVTOOLS_OPTIONS_SIGNAL],
+      },
+    ]
+  }
   return queryFeature(QueryFeatureKind.DeveloperTools, providers)
 }
 

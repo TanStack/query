@@ -1,6 +1,6 @@
 import { DestroyRef, computed, effect } from '@angular/core'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
-import type { Injector } from '@angular/core'
+import type { Injector, Signal } from '@angular/core'
 import type { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type { DevtoolsOptions } from './providers'
 
@@ -10,7 +10,7 @@ declare const ngDevMode: unknown
 // and to minimize bundle size
 export function setupDevtools(
   injector: Injector,
-  withDevtoolsFn?: () => DevtoolsOptions,
+  devtoolsOptions: Signal<DevtoolsOptions>,
 ) {
   const isDevMode = typeof ngDevMode !== 'undefined' && ngDevMode
   const injectedClient = injector.get(QueryClient, {
@@ -18,18 +18,16 @@ export function setupDevtools(
   })
   const destroyRef = injector.get(DestroyRef)
 
-  const options = computed(() => withDevtoolsFn?.() ?? {})
-
   let devtools: TanstackQueryDevtools | null = null
   let el: HTMLElement | null = null
 
   const shouldLoadToolsSignal = computed(() => {
-    const { loadDevtools } = options()
+    const { loadDevtools } = devtoolsOptions()
     return typeof loadDevtools === 'boolean' ? loadDevtools : isDevMode
   })
 
   const getResolvedQueryClient = () => {
-    const client = options().client ?? injectedClient
+    const client = devtoolsOptions().client ?? injectedClient
     if (!client) {
       throw new Error('No QueryClient found')
     }
@@ -46,7 +44,7 @@ export function setupDevtools(
     () => {
       const shouldLoadTools = shouldLoadToolsSignal()
       const { client, position, errorTypes, buttonPosition, initialIsOpen } =
-        options()
+        devtoolsOptions()
 
       if (devtools && !shouldLoadTools) {
         destroyDevtools()
@@ -67,7 +65,7 @@ export function setupDevtools(
 
       import('@tanstack/query-devtools').then((queryDevtools) => {
         devtools = new queryDevtools.TanstackQueryDevtools({
-          ...options(),
+          ...devtoolsOptions(),
           client: getResolvedQueryClient(),
           queryFlavor: 'Angular Query',
           version: '5',
