@@ -1,5 +1,13 @@
-import { describe, expect, expectTypeOf, it } from 'vitest'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  it,
+  vi,
+} from 'vitest'
+import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { useMutation } from '../useMutation'
@@ -12,6 +20,14 @@ import {
 import type { MutationState, MutationStatus } from '@tanstack/query-core'
 
 describe('useIsMutating', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = createQueryClient()
@@ -25,17 +41,11 @@ describe('useIsMutating', () => {
     function Mutations() {
       const { mutate: mutate1 } = useMutation({
         mutationKey: ['mutation1'],
-        mutationFn: async () => {
-          await sleep(50)
-          return 'data'
-        },
+        mutationFn: () => sleep(50).then(() => 'data'),
       })
       const { mutate: mutate2 } = useMutation({
         mutationKey: ['mutation2'],
-        mutationFn: async () => {
-          await sleep(10)
-          return 'data'
-        },
+        mutationFn: () => sleep(10).then(() => 'data'),
       })
 
       return (
@@ -57,7 +67,7 @@ describe('useIsMutating', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
-    await sleep(10)
+    await vi.advanceTimersByTimeAsync(10)
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
 
     // we don't really care if this yields
@@ -66,10 +76,10 @@ describe('useIsMutating', () => {
     // [ +0, 1, 2, 1, +0 ]
     // our batching strategy might yield different results
 
-    await waitFor(() => expect(isMutatingArray[0]).toEqual(0))
-    await waitFor(() => expect(isMutatingArray[1]).toEqual(1))
-    await waitFor(() => expect(isMutatingArray[2]).toEqual(2))
-    await waitFor(() =>
+    await vi.waitFor(() => expect(isMutatingArray[0]).toEqual(0))
+    await vi.waitFor(() => expect(isMutatingArray[1]).toEqual(1))
+    await vi.waitFor(() => expect(isMutatingArray[2]).toEqual(2))
+    await vi.waitFor(() =>
       expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0),
     )
   })
@@ -87,17 +97,11 @@ describe('useIsMutating', () => {
     function Page() {
       const { mutate: mutate1 } = useMutation({
         mutationKey: ['mutation1'],
-        mutationFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        mutationFn: () => sleep(100).then(() => 'data'),
       })
       const { mutate: mutate2 } = useMutation({
         mutationKey: ['mutation2'],
-        mutationFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        mutationFn: () => sleep(100).then(() => 'data'),
       })
 
       React.useEffect(() => {
@@ -109,7 +113,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
+    await vi.waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
@@ -128,17 +132,11 @@ describe('useIsMutating', () => {
     function Page() {
       const { mutate: mutate1 } = useMutation({
         mutationKey: ['mutation1'],
-        mutationFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        mutationFn: () => sleep(100).then(() => 'data'),
       })
       const { mutate: mutate2 } = useMutation({
         mutationKey: ['mutation2'],
-        mutationFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        mutationFn: () => sleep(100).then(() => 'data'),
       })
 
       React.useEffect(() => {
@@ -150,7 +148,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
+    await vi.waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
   })
 
   it('should use provided custom queryClient', async () => {
@@ -161,10 +159,7 @@ describe('useIsMutating', () => {
       const { mutate } = useMutation(
         {
           mutationKey: ['mutation1'],
-          mutationFn: async () => {
-            await sleep(10)
-            return 'data'
-          },
+          mutationFn: () => sleep(10).then(() => 'data'),
         },
         queryClient,
       )
@@ -182,7 +177,7 @@ describe('useIsMutating', () => {
 
     const rendered = render(<Page></Page>)
 
-    await waitFor(() => rendered.getByText('mutating: 1'))
+    await vi.waitFor(() => rendered.getByText('mutating: 1'))
   })
 })
 
@@ -227,10 +222,7 @@ describe('useMutationState', () => {
     function Mutate() {
       const { mutate, data } = useMutation({
         mutationKey,
-        mutationFn: async (input: number) => {
-          await sleep(150)
-          return 'data' + input
-        },
+        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
       })
 
       return (
@@ -252,11 +244,11 @@ describe('useMutationState', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: null'))
+    await vi.waitFor(() => rendered.getByText('data: null'))
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await waitFor(() => rendered.getByText('data: data1'))
+    await vi.waitFor(() => rendered.getByText('data: data1'))
 
     expect(variables).toEqual([[], [1], []])
   })
