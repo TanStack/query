@@ -23,6 +23,7 @@ export default [
     files: ['**/__tests__/**'],
     rules: {
       '@typescript-eslint/no-unnecessary-condition': 'off',
+      'react-hooks/react-compiler': 'off',
     },
   },
 ]
