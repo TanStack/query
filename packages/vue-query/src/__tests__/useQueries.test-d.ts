@@ -35,7 +35,7 @@ describe('UseQueries config object overload', () => {
     })
 
     expectTypeOf(queriesState[0].data).toEqualTypeOf<{ wow: boolean }>()
-    expectTypeOf(queriesState[1].data).toEqualTypeOf<string>()
+    expectTypeOf(queriesState[1].data).toEqualTypeOf<string | undefined>()
     expectTypeOf(queriesState[2].data).toEqualTypeOf<string | undefined>()
   })
 
@@ -54,7 +54,7 @@ describe('UseQueries config object overload', () => {
 
     const { value: queriesState } = useQueries({ queries: [options] })
 
-    expectTypeOf(queriesState[0].data).toEqualTypeOf<{ wow: boolean }>()
+    expectTypeOf(queriesState[0].data).toEqualTypeOf<{ wow: boolean } | undefined>()
   })
 
   it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQueries', () => {
