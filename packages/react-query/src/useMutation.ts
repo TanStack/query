@@ -10,8 +10,6 @@ import type {
 } from './types'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 
-// HOOK
-
 export function useMutation<
   TData = unknown,
   TError = DefaultError,
@@ -23,40 +21,41 @@ export function useMutation<
 ): UseMutationResult<TData, TError, TVariables, TContext> {
   const client = useQueryClient(queryClient)
 
-  const [observer] = React.useState(
-    () =>
-      new MutationObserver<TData, TError, TVariables, TContext>(
-        client,
-        options,
-      ),
-  )
+  const observerRef =
+    React.useRef<MutationObserver<TData, TError, TVariables, TContext>>(null)
+
+  if (!observerRef.current) {
+    observerRef.current = new MutationObserver<
+      TData,
+      TError,
+      TVariables,
+      TContext
+    >(client, options)
+  }
 
   React.useEffect(() => {
-    observer.setOptions(options)
-  }, [observer, options])
+    observerRef.current!.setOptions(options)
+  }, [options])
 
   const result = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
-        observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer],
+        observerRef.current!.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [],
     ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
+    () => observerRef.current!.getCurrentResult(),
+    () => observerRef.current!.getCurrentResult(),
   )
 
   const mutate = React.useCallback<
     UseMutateFunction<TData, TError, TVariables, TContext>
-  >(
-    (variables, mutateOptions) => {
-      observer.mutate(variables, mutateOptions).catch(noop)
-    },
-    [observer],
-  )
+  >((variables, mutateOptions) => {
+    observerRef.current!.mutate(variables, mutateOptions).catch(noop)
+  }, [])
 
   if (
     result.error &&
-    shouldThrowError(observer.options.throwOnError, [result.error])
+    shouldThrowError(observerRef.current.options.throwOnError, [result.error])
   ) {
     throw result.error
   }
