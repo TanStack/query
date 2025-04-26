@@ -3,6 +3,7 @@ import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
+  InitialDataFunction,
   QueryKey,
   QueryObserverOptions,
 } from '@tanstack/query-core'
@@ -64,7 +65,10 @@ export type UndefinedInitialQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  initialData?: undefined
+  initialData?:
+  | undefined
+  | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+  | NonUndefinedGuard<TQueryFnData>
 }
 
 export type DefinedInitialQueryOptions<
