@@ -74,8 +74,8 @@ importers:
         specifier: ^9.15.0
         version: 9.15.0(jiti@2.4.2)
       eslint-plugin-react-hooks:
-        specifier: ^5.2.0
-        version: 5.2.0(eslint@9.15.0(jiti@2.4.2))
+        specifier: 6.0.0-rc.1
+        version: 6.0.0-rc.1(eslint@9.15.0(jiti@2.4.2))
       jsdom:
         specifier: ^25.0.1
         version: 25.0.1
@@ -690,7 +690,7 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -907,7 +907,7 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -935,7 +935,7 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -966,7 +966,7 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -994,7 +994,7 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -1025,7 +1025,7 @@ importers:
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -1090,7 +1090,7 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -1118,7 +1118,7 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -1146,7 +1146,7 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -1199,7 +1199,7 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -1227,7 +1227,7 @@ importers:
         version: 6.1.18(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0)
       '@react-navigation/stack':
         specifier: ^6.4.1
-        version: 6.4.1(e9c097e00fee89f3cf54c317dda4adb5)
+        version: 6.4.1(44i6xs33lapt7cl2pkawmwjtru)
       '@tanstack/react-query':
         specifier: workspace:*
         version: link:../../../packages/react-query
@@ -1519,7 +1519,7 @@ importers:
         version: 6.0.2(astro@5.5.6(@types/node@22.14.1)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.39.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.3)(yaml@2.6.1))(tailwindcss@3.4.7)
       '@astrojs/vercel':
         specifier: ^8.1.3
-        version: 8.1.3(@sveltejs/kit@2.20.5(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(astro@5.5.6(@types/node@22.14.1)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.39.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.3)(yaml@2.6.1))(encoding@0.1.13)(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(rollup@4.39.0)(svelte@5.26.1)(vue@3.4.35(typescript@5.8.3))
+        version: 8.1.3(@sveltejs/kit@2.20.5(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(astro@5.5.6(@types/node@22.14.1)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.39.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.3)(yaml@2.6.1))(encoding@0.1.13)(next@15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(rollup@4.39.0)(svelte@5.26.1)(vue@3.4.35(typescript@5.8.3))
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../../../packages/solid-query
@@ -2067,7 +2067,7 @@ importers:
         version: link:../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -2095,7 +2095,7 @@ importers:
         version: link:../../packages/react-query-devtools
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -2517,9 +2517,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
         version: 4.3.4(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
-      eslint-plugin-react-compiler:
-        specifier: 19.0.0-beta-df7b47d-20241124
-        version: 19.0.0-beta-df7b47d-20241124(eslint@9.15.0(jiti@2.4.2))
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
@@ -2571,7 +2568,7 @@ importers:
         version: 4.3.4(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
       next:
         specifier: ^15.1.2
-        version: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
+        version: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
@@ -9310,12 +9307,6 @@ packages:
     peerDependencies:
       eslint: '>=8.23.0'
 
-  eslint-plugin-react-compiler@19.0.0-beta-df7b47d-20241124:
-    resolution: {integrity: sha512-82PfnllC8jP/68KdLAbpWuYTcfmtGLzkqy2IW85WopKMTr+4rdQpp+lfliQ/QE79wWrv/dRoADrk3Pdhq25nTw==}
-    engines: {node: ^14.17.0 || ^16.0.0 || >= 18.0.0}
-    peerDependencies:
-      eslint: '>=7'
-
   eslint-plugin-react-debug@1.21.0:
     resolution: {integrity: sha512-ftBeA++SfKkGosxOt6Pl9BGLhi09ry9pqVrciYXt+jhAzW2xYLC8sFkIiHQgYULpPhXCQZioJiSkRWWPy/VPJg==}
     engines: {bun: '>=1.0.15', node: '>=18.18.0'}
@@ -9346,9 +9337,9 @@ packages:
       typescript:
         optional: true
 
-  eslint-plugin-react-hooks@5.2.0:
-    resolution: {integrity: sha512-+f15FfK64YQwZdJNELETdn5ibXEUQmW1DZL6KXhNnc2heoy/sg9VJJeT7n8TlMWouzWqSWavFkIhHyIbIAEapg==}
-    engines: {node: '>=10'}
+  eslint-plugin-react-hooks@6.0.0-rc.1:
+    resolution: {integrity: sha512-7C4c7bdtd/B7Q+HruZxYhGjwZVvJawvQpilEYlRG1Jncuk1ZNqrFy9bO8SJNieyj3iDh8WPQA7BzzPO7sNAyEA==}
+    engines: {node: '>=18'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
 
@@ -16457,10 +16448,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/vercel@8.1.3(@sveltejs/kit@2.20.5(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(astro@5.5.6(@types/node@22.14.1)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.39.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.3)(yaml@2.6.1))(encoding@0.1.13)(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(rollup@4.39.0)(svelte@5.26.1)(vue@3.4.35(typescript@5.8.3))':
+  '@astrojs/vercel@8.1.3(@sveltejs/kit@2.20.5(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(astro@5.5.6(@types/node@22.14.1)(db0@0.3.1)(idb-keyval@6.2.1)(ioredis@5.6.0)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(rollup@4.39.0)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.3)(yaml@2.6.1))(encoding@0.1.13)(next@15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(rollup@4.39.0)(svelte@5.26.1)(vue@3.4.35(typescript@5.8.3))':
     dependencies:
       '@astrojs/internal-helpers': 0.6.1
-      '@vercel/analytics': 1.5.0(@sveltejs/kit@2.20.5(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(svelte@5.26.1)(vue@3.4.35(typescript@5.8.3))
+      '@vercel/analytics': 1.5.0(@sveltejs/kit@2.20.5(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(next@15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(svelte@5.26.1)(vue@3.4.35(typescript@5.8.3))
       '@vercel/edge': 1.2.1
       '@vercel/nft': 0.29.2(encoding@0.1.13)(rollup@4.39.0)
       '@vercel/routing-utils': 5.0.4
@@ -19763,7 +19754,7 @@ snapshots:
     dependencies:
       nanoid: 3.3.8
 
-  '@react-navigation/stack@6.4.1(e9c097e00fee89f3cf54c317dda4adb5)':
+  '@react-navigation/stack@6.4.1(44i6xs33lapt7cl2pkawmwjtru)':
     dependencies:
       '@react-navigation/elements': 1.3.31(@react-navigation/native@6.1.18(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0))(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0)
       '@react-navigation/native': 6.1.18(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0)
@@ -20937,10 +20928,10 @@ snapshots:
       '@urql/core': 5.0.8(graphql@16.9.0)
       wonka: 6.3.4
 
-  '@vercel/analytics@1.5.0(@sveltejs/kit@2.20.5(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(svelte@5.26.1)(vue@3.4.35(typescript@5.8.3))':
+  '@vercel/analytics@1.5.0(@sveltejs/kit@2.20.5(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(next@15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0))(react@19.0.0)(svelte@5.26.1)(vue@3.4.35(typescript@5.8.3))':
     optionalDependencies:
       '@sveltejs/kit': 2.20.5(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1)))(svelte@5.26.1)(vite@6.2.6(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
-      next: 15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
+      next: 15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0)
       react: 19.0.0
       svelte: 5.26.1
       vue: 3.4.35(typescript@5.8.3)
@@ -23818,18 +23809,6 @@ snapshots:
       minimatch: 9.0.5
       semver: 7.7.1
 
-  eslint-plugin-react-compiler@19.0.0-beta-df7b47d-20241124(eslint@9.15.0(jiti@2.4.2)):
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/parser': 7.27.0
-      '@babel/plugin-transform-private-methods': 7.25.9(@babel/core@7.26.10)
-      eslint: 9.15.0(jiti@2.4.2)
-      hermes-parser: 0.25.1
-      zod: 3.24.2
-      zod-validation-error: 3.3.0(zod@3.24.2)
-    transitivePeerDependencies:
-      - supports-color
-
   eslint-plugin-react-debug@1.21.0(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.3):
     dependencies:
       '@eslint-react/ast': 1.21.0(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.3)
@@ -23891,9 +23870,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-hooks@5.2.0(eslint@9.15.0(jiti@2.4.2)):
+  eslint-plugin-react-hooks@6.0.0-rc.1(eslint@9.15.0(jiti@2.4.2)):
     dependencies:
+      '@babel/core': 7.26.10
+      '@babel/parser': 7.27.0
+      '@babel/plugin-transform-private-methods': 7.25.9(@babel/core@7.26.10)
       eslint: 9.15.0(jiti@2.4.2)
+      hermes-parser: 0.25.1
+      zod: 3.24.2
+      zod-validation-error: 3.3.0(zod@3.24.2)
+    transitivePeerDependencies:
+      - supports-color
 
   eslint-plugin-react-naming-convention@1.21.0(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.3):
     dependencies:
@@ -27313,7 +27300,7 @@ snapshots:
 
   nested-error-stacks@2.1.1: {}
 
-  next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0):
+  next@15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.86.0):
     dependencies:
       '@next/env': 15.1.2
       '@swc/counter': 0.1.3
@@ -27323,7 +27310,7 @@ snapshots:
       postcss: 8.4.31
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      styled-jsx: 5.1.6(react@18.3.1)
+      styled-jsx: 5.1.6(@babel/core@7.26.10)(react@18.3.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.1.2
       '@next/swc-darwin-x64': 15.1.2
@@ -27340,7 +27327,7 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@15.1.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0):
+  next@15.1.2(@babel/core@7.26.10)(babel-plugin-react-compiler@0.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.86.0):
     dependencies:
       '@next/env': 15.1.2
       '@swc/counter': 0.1.3
@@ -27350,7 +27337,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
-      styled-jsx: 5.1.6(react@19.0.0)
+      styled-jsx: 5.1.6(@babel/core@7.26.10)(react@19.0.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.1.2
       '@next/swc-darwin-x64': 15.1.2
@@ -30026,15 +30013,19 @@ snapshots:
 
   structured-headers@0.4.1: {}
 
-  styled-jsx@5.1.6(react@18.3.1):
+  styled-jsx@5.1.6(@babel/core@7.26.10)(react@18.3.1):
     dependencies:
       client-only: 0.0.1
       react: 18.3.1
+    optionalDependencies:
+      '@babel/core': 7.26.10
 
-  styled-jsx@5.1.6(react@19.0.0):
+  styled-jsx@5.1.6(@babel/core@7.26.10)(react@19.0.0):
     dependencies:
       client-only: 0.0.1
       react: 19.0.0
+    optionalDependencies:
+      '@babel/core': 7.26.10
 
   styleq@0.1.3: {}
 

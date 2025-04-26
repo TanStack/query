@@ -50,7 +50,7 @@
     "cpy-cli": "^5.0.0",
     "esbuild-plugin-file-path-extensions": "^2.1.4",
     "eslint": "^9.15.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-hooks": "6.0.0-rc.1",
     "jsdom": "^25.0.1",
     "knip": "^5.50.2",
     "nx": "20.7.2",
