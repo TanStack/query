@@ -66,9 +66,9 @@ export type UndefinedInitialQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
   initialData?:
-  | undefined
-  | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-  | NonUndefinedGuard<TQueryFnData>
+    | undefined
+    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+    | NonUndefinedGuard<TQueryFnData>
 }
 
 export type DefinedInitialQueryOptions<
