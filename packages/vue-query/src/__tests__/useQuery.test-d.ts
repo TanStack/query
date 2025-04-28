@@ -74,7 +74,7 @@ describe('useQuery', () => {
         }),
       )
 
-      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
     })
 
     it('TData should have undefined in the union when initialData is NOT provided', () => {
