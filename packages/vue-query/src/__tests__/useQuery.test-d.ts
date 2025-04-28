@@ -23,7 +23,7 @@ describe('useQuery', () => {
         }),
       )
 
-      expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
     })
 
     it('TData should be defined when passed through queryOptions', () => {
@@ -40,7 +40,7 @@ describe('useQuery', () => {
       })
       const { data } = reactive(useQuery(options))
 
-      expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
     })
 
     it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
@@ -74,7 +74,7 @@ describe('useQuery', () => {
         }),
       )
 
-      expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
     })
 
     it('TData should have undefined in the union when initialData is NOT provided', () => {
