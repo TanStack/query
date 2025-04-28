@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query-persist-client",
-  "version": "5.74.4",
+  "version": "5.74.7",
   "description": "Svelte bindings to work with persisters in TanStack/svelte-query",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -30,6 +30,7 @@
   "svelte": "./dist/index.js",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js",
       "import": "./dist/index.js"

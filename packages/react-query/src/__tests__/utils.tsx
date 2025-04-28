@@ -92,5 +92,3 @@ export function setIsServer(isServer: boolean) {
     })
   }
 }
-
-export const doNotExecute = (_func: () => void) => true

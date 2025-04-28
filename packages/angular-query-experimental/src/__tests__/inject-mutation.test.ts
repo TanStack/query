@@ -120,7 +120,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('reactive options should update mutation', async () => {
+  test('reactive options should update mutation', () => {
     const mutationCache = queryClient.getMutationCache()
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
