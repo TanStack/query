@@ -905,42 +905,40 @@ describe('useQuery', () => {
   it('should track properties and only re-render when a tracked property changes', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
+    let count = 0
 
     function Page() {
       const state = useQuery({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
-          return 'test'
+          count++
+          return 'test' + count
         },
       })
 
       states.push(state)
 
-      const { refetch, data } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          if (data) {
-            refetch()
-          }
-        }, 20)
-      }, [refetch, data])
-
       return (
         <div>
-          <h1>{data ?? null}</h1>
+          <h1>{state.data ?? null}</h1>
+          <button onClick={() => state.refetch()}>refetch</button>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('test'))
+    await waitFor(() => rendered.getByText('test1'))
 
-    expect(states.length).toBe(2)
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await waitFor(() => rendered.getByText('test2'))
+
+    expect(states.length).toBe(3)
     expect(states[0]).toMatchObject({ data: undefined })
-    expect(states[1]).toMatchObject({ data: 'test' })
+    expect(states[1]).toMatchObject({ data: 'test1' })
+    expect(states[2]).toMatchObject({ data: 'test2' })
   })
 
   it('should always re-render if we are tracking props but not using any', async () => {
