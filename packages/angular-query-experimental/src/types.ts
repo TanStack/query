@@ -308,8 +308,3 @@ export type CreateMutationResult<
   >,
 > = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
   MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
-
-/**
- * @public
- */
-export type NonUndefinedGuard<T> = T extends undefined ? never : T
