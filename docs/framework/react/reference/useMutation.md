@@ -60,7 +60,7 @@ mutate(variables, {
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
   - Useful to perform optimistic updates to a resource in hopes that the mutation succeeds
-  - The value returned from this function will be passed to both the `onError` and `onSettled` functions in the event of a mutation failure and can be useful for rolling back optimistic updates.
+  - The value returned from this function will be passed to the `onSuccess`, `onError`, and `onSettled` functions and can be useful for rolling back optimistic updates.
 - `onSuccess: (data: TData, variables: TVariables, context?: TContext) => Promise<unknown> | unknown`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
