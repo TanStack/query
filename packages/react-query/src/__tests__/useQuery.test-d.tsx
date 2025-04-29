@@ -2,7 +2,7 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
-import type { UseQueryOptions } from '../types'
+import type { UseQueryOptions, UseQueryResult } from '../types'
 
 describe('initialData', () => {
   describe('Config object overload', () => {
@@ -133,6 +133,59 @@ describe('initialData', () => {
       const { data } = useCustomQuery()
 
       expectTypeOf(data).toEqualTypeOf<Data | undefined>()
+    })
+  })
+
+  describe('TData type inference', () => {
+    it('no inference of TData from return annotations', () => {
+      const _testFn = (): UseQueryResult<string, unknown> => {
+        // @ts-expect-error expect number to be un-assignable to string
+        return useQuery({
+          queryKey: [],
+          queryFn: () => 5,
+        })
+      }
+
+      // @ts-expect-error expect number to be un-assignable to string
+      const _val: UseQueryResult<string, unknown> = useQuery({
+        queryKey: [],
+        queryFn: () => 5,
+      })
+    })
+
+    it('correct or superset type annotations produce no type errors', () => {
+      const _testFn = (): UseQueryResult<number | string, unknown> => {
+        return useQuery({
+          queryKey: [],
+          queryFn: () => 5,
+        })
+      }
+
+      expectTypeOf(_testFn()['data']).toEqualTypeOf<string | number>()
+
+      const _val: UseQueryResult<string | number, unknown> = useQuery({
+        queryKey: [],
+        queryFn: () => 5,
+      })
+
+      expectTypeOf(_val['data']).toEqualTypeOf<string | number | undefined>()
+    })
+
+    it('usage of select function still changes generic inference', () => {
+      const result = useQuery({
+        queryKey: [],
+        queryFn: () => 5,
+        select: () => 'foo',
+      })
+
+      expectTypeOf(result['data']).toEqualTypeOf<string | undefined>()
+
+      const _result2 = useQuery<number, unknown, string, unknown[]>({
+        queryKey: [],
+        queryFn: () => 5,
+        // @ts-expect-error select fn differs from generic (when provided), so correctly type errors)
+        select: () => 5,
+      })
     })
   })
 
