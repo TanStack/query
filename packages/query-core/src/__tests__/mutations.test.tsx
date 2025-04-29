@@ -22,9 +22,9 @@ describe('mutations', () => {
     let variables
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async (vars: unknown) => {
+      mutationFn: (vars: unknown) => {
         variables = vars
-        return vars
+        return Promise.resolve(vars)
       },
     })
 
@@ -252,7 +252,7 @@ describe('mutations', () => {
     const onSettled = vi.fn()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: async (text: string) => text,
+      mutationFn: (text: string) => sleep(10).then(() => text),
       onMutate,
       onSuccess,
       onSettled,
@@ -290,7 +290,23 @@ describe('mutations', () => {
       submittedAt: 1,
     })
 
-    await queryClient.resumePausedMutations()
+    void queryClient.resumePausedMutations()
+    await vi.advanceTimersByTimeAsync(0)
+
+    // check that the mutation is correctly resumed
+    expect(mutation.state).toEqual({
+      context: 'todo',
+      data: undefined,
+      error: null,
+      failureCount: 1,
+      failureReason: 'err',
+      isPaused: false,
+      status: 'pending',
+      variables: 'todo',
+      submittedAt: 1,
+    })
+
+    await vi.advanceTimersByTimeAsync(20)
 
     expect(mutation.state).toEqual({
       context: 'todo',
@@ -349,8 +365,8 @@ describe('mutations', () => {
     const onSettled = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
-        return 'update'
+      mutationFn: () => {
+        return Promise.resolve('update')
       },
     })
 
@@ -365,8 +381,8 @@ describe('mutations', () => {
     const onSettled = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
-        return 'update'
+      mutationFn: () => {
+        return Promise.resolve('update')
       },
     })
 
@@ -380,9 +396,9 @@ describe('mutations', () => {
     const onSuccess = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
+      mutationFn: () => {
         sleep(100)
-        return 'update'
+        return Promise.resolve('update')
       },
       onSuccess: () => {
         onSuccess(1)
@@ -392,9 +408,9 @@ describe('mutations', () => {
     void mutation.mutate()
 
     mutation.setOptions({
-      mutationFn: async () => {
+      mutationFn: () => {
         sleep(100)
-        return 'update'
+        return Promise.resolve('update')
       },
       onSuccess: () => {
         onSuccess(2)

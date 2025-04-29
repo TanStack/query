@@ -110,4 +110,4 @@ interface Response {
 
 ## You talked me into it, so what now?
 
-- Learn TanStack Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/functions/injectquery)
+- Learn TanStack Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation.md) and [API Reference](../reference/functions/injectquery.md)

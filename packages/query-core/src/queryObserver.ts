@@ -268,21 +268,13 @@ export class QueryObserver<
     result: QueryObserverResult<TData, TError>,
     onPropTracked?: (key: keyof QueryObserverResult) => void,
   ): QueryObserverResult<TData, TError> {
-    const trackedResult = {} as QueryObserverResult<TData, TError>
-
-    Object.keys(result).forEach((key) => {
-      Object.defineProperty(trackedResult, key, {
-        configurable: false,
-        enumerable: true,
-        get: () => {
-          this.trackProp(key as keyof QueryObserverResult)
-          onPropTracked?.(key as keyof QueryObserverResult)
-          return result[key as keyof QueryObserverResult]
-        },
-      })
+    return new Proxy(result, {
+      get: (target, key) => {
+        this.trackProp(key as keyof QueryObserverResult)
+        onPropTracked?.(key as keyof QueryObserverResult)
+        return Reflect.get(target, key)
+      },
     })
-
-    return trackedResult
   }
 
   trackProp(key: keyof QueryObserverResult) {
@@ -474,33 +466,11 @@ export class QueryObserver<
 
     let { error, errorUpdatedAt, status } = newState
 
-    // Select data if needed
-    if (options.select && newState.data !== undefined) {
-      // Memoize select result
-      if (
-        prevResult &&
-        newState.data === prevResultState?.data &&
-        options.select === this.#selectFn
-      ) {
-        data = this.#selectResult
-      } else {
-        try {
-          this.#selectFn = options.select
-          data = options.select(newState.data)
-          data = replaceData(prevResult?.data, data, options)
-          this.#selectResult = data
-          this.#selectError = null
-        } catch (selectError) {
-          this.#selectError = selectError as TError
-        }
-      }
-    }
-    // Use query data
-    else {
-      data = newState.data as unknown as TData
-    }
+    // Per default, use query data
+    data = newState.data as unknown as TData
+    let skipSelect = false
 
-    // Show placeholder data if needed
+    // use placeholderData if needed
     if (
       options.placeholderData !== undefined &&
       data === undefined &&
@@ -514,7 +484,11 @@ export class QueryObserver<
         options.placeholderData === prevResultOptions?.placeholderData
       ) {
         placeholderData = prevResult.data
+        // we have to skip select when reading this memoization
+        // because prevResult.data is already "selected"
+        skipSelect = true
       } else {
+        // compute placeholderData
         placeholderData =
           typeof options.placeholderData === 'function'
             ? (
@@ -524,14 +498,6 @@ export class QueryObserver<
                 this.#lastQueryWithDefinedData as any,
               )
             : options.placeholderData
-        if (options.select && placeholderData !== undefined) {
-          try {
-            placeholderData = options.select(placeholderData)
-            this.#selectError = null
-          } catch (selectError) {
-            this.#selectError = selectError as TError
-          }
-        }
       }
 
       if (placeholderData !== undefined) {
@@ -542,6 +508,29 @@ export class QueryObserver<
           options,
         ) as TData
         isPlaceholderData = true
+      }
+    }
+
+    // Select data if needed
+    // this also runs placeholderData through the select function
+    if (options.select && data !== undefined && !skipSelect) {
+      // Memoize select result
+      if (
+        prevResult &&
+        data === prevResultState?.data &&
+        options.select === this.#selectFn
+      ) {
+        data = this.#selectResult
+      } else {
+        try {
+          this.#selectFn = options.select
+          data = options.select(data as any)
+          data = replaceData(prevResult?.data, data, options)
+          this.#selectResult = data
+          this.#selectError = null
+        } catch (selectError) {
+          this.#selectError = selectError as TError
+        }
       }
     }
 

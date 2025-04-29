@@ -75,7 +75,7 @@ const {
 - `enabled: boolean | (query: Query) => boolean`
   - Set this to `false` to disable this query from automatically running.
   - Can be used for [Dependent Queries](../guides/dependent-queries.md).
-- `networkMode: 'online' | 'always' | 'offlineFirst`
+- `networkMode: 'online' | 'always' | 'offlineFirst'`
   - optional
   - defaults to `'online'`
   - see [Network Mode](../guides/network-mode.md) for more information.

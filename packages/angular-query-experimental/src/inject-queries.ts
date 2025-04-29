@@ -5,14 +5,17 @@ import {
 } from '@tanstack/query-core'
 import {
   DestroyRef,
+  Injector,
   NgZone,
+  assertInInjectionContext,
   computed,
   effect,
   inject,
+  runInInjectionContext,
   signal,
 } from '@angular/core'
-import { assertInjector } from './util/assert-injector/assert-injector'
-import type { Injector, Signal } from '@angular/core'
+import { injectIsRestoring } from './inject-is-restoring'
+import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   OmitKeyof,
@@ -197,6 +200,7 @@ export type QueriesResults<
  * @param root0.queries
  * @param root0.combine
  * @param injector
+ * @param injector
  * @public
  */
 export function injectQueries<
@@ -212,16 +216,20 @@ export function injectQueries<
   },
   injector?: Injector,
 ): Signal<TCombinedResult> {
-  return assertInjector(injectQueries, injector, () => {
+  !injector && assertInInjectionContext(injectQueries)
+  return runInInjectionContext(injector ?? inject(Injector), () => {
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
     const queryClient = inject(QueryClient)
+    const isRestoring = injectIsRestoring()
 
     const defaultedQueries = computed(() => {
       return queries().map((opts) => {
         const defaultedOptions = queryClient.defaultQueryOptions(opts)
         // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = 'optimistic'
+        defaultedOptions._optimisticResults = isRestoring()
+          ? 'isRestoring'
+          : 'optimistic'
 
         return defaultedOptions as QueryObserverOptions
       })
@@ -249,10 +257,14 @@ export function injectQueries<
 
     const result = signal(getCombinedResult() as any)
 
-    const unsubscribe = ngZone.runOutsideAngular(() =>
-      observer.subscribe(notifyManager.batchCalls(result.set)),
-    )
-    destroyRef.onDestroy(unsubscribe)
+    effect(() => {
+      const unsubscribe = isRestoring()
+        ? () => undefined
+        : ngZone.runOutsideAngular(() =>
+            observer.subscribe(notifyManager.batchCalls(result.set)),
+          )
+      destroyRef.onDestroy(unsubscribe)
+    })
 
     return result
   })
