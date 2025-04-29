@@ -125,17 +125,19 @@ describe('queryOptions', () => {
 
   it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
     const { data } = reactive(
-      useQuery(queryOptions({
-        queryKey: ['key'],
-        queryFn: () => {
-          return {
+      useQuery(
+        queryOptions({
+          queryKey: ['key'],
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: () => ({
             wow: true,
-          }
-        },
-        initialData: () => ({
-          wow: true,
+          }),
         }),
-      })),
+      ),
     )
 
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
@@ -143,14 +145,16 @@ describe('queryOptions', () => {
 
   it('TData should have undefined in the union when initialData is NOT provided', () => {
     const { data } = reactive(
-      useQuery(queryOptions({
-        queryKey: ['key'],
-        queryFn: () => {
-          return {
-            wow: true,
-          }
-        },
-      })),
+      useQuery(
+        queryOptions({
+          queryKey: ['key'],
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+        }),
+      ),
     )
 
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
@@ -158,23 +162,8 @@ describe('queryOptions', () => {
 
   it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
     const { data } = reactive(
-      useQuery(queryOptions({
-        queryKey: ['key'],
-        queryFn: () => {
-          return {
-            wow: true,
-          }
-        },
-        initialData: () => undefined as { wow: boolean } | undefined,
-      })),
-    )
-
-    expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
-  })
-
-  it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
-    const { data, isSuccess } = reactive(
-      useQuery(queryOptions({
+      useQuery(
+        queryOptions({
           queryKey: ['key'],
           queryFn: () => {
             return {
@@ -182,8 +171,26 @@ describe('queryOptions', () => {
             }
           },
           initialData: () => undefined as { wow: boolean } | undefined,
-        }
-      )),
+        }),
+      ),
+    )
+
+    expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+  })
+
+  it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+    const { data, isSuccess } = reactive(
+      useQuery(
+        queryOptions({
+          queryKey: ['key'],
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: () => undefined as { wow: boolean } | undefined,
+        }),
+      ),
     )
 
     if (isSuccess) {
@@ -193,10 +200,13 @@ describe('queryOptions', () => {
 
   it('data should not have undefined when initialData is provided', () => {
     const { data } = reactive(
-      useQuery(queryOptions({
-        queryKey: ['query-key'],
-        initialData: 42,
-    })))
+      useQuery(
+        queryOptions({
+          queryKey: ['query-key'],
+          initialData: 42,
+        }),
+      ),
+    )
 
     expectTypeOf(data).toEqualTypeOf<number>()
   })

@@ -131,7 +131,8 @@ describe('useQuery', () => {
         useQuery({
           queryKey: ['query-key'],
           initialData: 42,
-      }))
+        }),
+      )
 
       expectTypeOf(data).toEqualTypeOf<number>()
     })
