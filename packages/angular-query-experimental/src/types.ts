@@ -145,7 +145,8 @@ export type DefinedCreateQueryResult<
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+> = BaseQueryNarrowing<TData, TError> &
+  MapToSignals<InfiniteQueryObserverResult<TData, TError>>
 
 /**
  * @public
