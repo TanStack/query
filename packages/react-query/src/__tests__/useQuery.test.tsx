@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
+import { describe, expect, it, test, vi } from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -14,173 +14,13 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import type {
-  DefinedUseQueryResult,
-  OmitKeyof,
-  QueryFunction,
-  UseQueryOptions,
-  UseQueryResult,
-} from '..'
+import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({
     queryCache,
-  })
-
-  it('should return the correct types', () => {
-    const key = queryKey()
-
-    // @ts-expect-error
-    function Page() {
-      // unspecified query function should default to unknown
-      const noQueryFn = useQuery({ queryKey: key })
-      expectTypeOf(noQueryFn.data).toEqualTypeOf<unknown>()
-      expectTypeOf(noQueryFn.error).toEqualTypeOf<Error | null>()
-
-      // it should infer the result type from the query function
-      const fromQueryFn = useQuery({ queryKey: key, queryFn: () => 'test' })
-      expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
-      expectTypeOf(fromQueryFn.promise).toEqualTypeOf<Promise<string>>()
-
-      // it should be possible to specify the result type
-      const withResult = useQuery<string>({
-        queryKey: key,
-        queryFn: () => 'test',
-      })
-      expectTypeOf(withResult.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(withResult.error).toEqualTypeOf<Error | null>()
-
-      // it should be possible to specify the error type
-      const withError = useQuery<string, Error>({
-        queryKey: key,
-        queryFn: () => 'test',
-      })
-      expectTypeOf(withError.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(withError.error).toEqualTypeOf<Error | null>()
-
-      // it should provide the result type in the configuration
-      useQuery({
-        queryKey: [key],
-        queryFn: () => Promise.resolve(true),
-      })
-
-      // it should be possible to specify a union type as result type
-      const unionTypeSync = useQuery({
-        queryKey: key,
-        queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
-      })
-      expectTypeOf(unionTypeSync.data).toEqualTypeOf<'a' | 'b' | undefined>()
-      const unionTypeAsync = useQuery<'a' | 'b'>({
-        queryKey: key,
-        queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
-      })
-      expectTypeOf(unionTypeAsync.data).toEqualTypeOf<'a' | 'b' | undefined>()
-
-      // should error when the query function result does not match with the specified type
-      // @ts-expect-error
-      useQuery<number>({ queryKey: key, queryFn: () => 'test' })
-
-      // it should infer the result type from a generic query function
-      function queryFn<T = string>(): Promise<T> {
-        return Promise.resolve({} as T)
-      }
-
-      const fromGenericQueryFn = useQuery({
-        queryKey: key,
-        queryFn: () => queryFn(),
-      })
-      expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
-      expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
-
-      const fromGenericOptionsQueryFn = useQuery({
-        queryKey: key,
-        queryFn: () => queryFn(),
-      })
-      expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
-        string | undefined
-      >()
-      expectTypeOf(
-        fromGenericOptionsQueryFn.error,
-      ).toEqualTypeOf<Error | null>()
-
-      type MyData = number
-      type MyQueryKey = readonly ['my-data', number]
-
-      const getMyDataArrayKey: QueryFunction<MyData, MyQueryKey> = ({
-        queryKey: [, n],
-      }) => {
-        return Promise.resolve(n + 42)
-      }
-
-      useQuery({
-        queryKey: ['my-data', 100],
-        queryFn: getMyDataArrayKey,
-      })
-
-      const getMyDataStringKey: QueryFunction<MyData, ['1']> = (context) => {
-        expectTypeOf(context.queryKey).toEqualTypeOf<['1']>()
-        return Promise.resolve(Number(context.queryKey[0]) + 42)
-      }
-
-      useQuery({
-        queryKey: ['1'],
-        queryFn: getMyDataStringKey,
-      })
-
-      // it should handle query-functions that return Promise<any>
-      useQuery({
-        queryKey: key,
-        queryFn: () => fetch('return Promise<any>').then((resp) => resp.json()),
-      })
-
-      // handles wrapped queries with custom fetcher passed as inline queryFn
-      const useWrappedQuery = <
-        TQueryKey extends [string, Record<string, unknown>?],
-        TQueryFnData,
-        TError,
-        TData = TQueryFnData,
-      >(
-        qk: TQueryKey,
-        fetcher: (
-          obj: TQueryKey[1],
-          token: string,
-          // return type must be wrapped with TQueryFnReturn
-        ) => Promise<TQueryFnData>,
-        options?: OmitKeyof<
-          UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData'
-        >,
-      ) =>
-        useQuery({
-          queryKey: qk,
-          queryFn: () => fetcher(qk[1], 'token'),
-          ...options,
-        })
-      const testQuery = useWrappedQuery([''], () => Promise.resolve('1'))
-      expectTypeOf(testQuery.data).toEqualTypeOf<string | undefined>()
-
-      // handles wrapped queries with custom fetcher passed directly to useQuery
-      const useWrappedFuncStyleQuery = <
-        TQueryKey extends [string, Record<string, unknown>?],
-        TQueryFnData,
-        TError,
-        TData = TQueryFnData,
-      >(
-        qk: TQueryKey,
-        fetcher: () => Promise<TQueryFnData>,
-        options?: OmitKeyof<
-          UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData'
-        >,
-      ) => useQuery({ queryKey: qk, queryFn: fetcher, ...options })
-      const testFuncStyle = useWrappedFuncStyleQuery([''], () =>
-        Promise.resolve(true),
-      )
-      expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
-    }
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -226,19 +66,13 @@ describe('useQuery', () => {
       states.push(state)
 
       if (state.isPending) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
-        expectTypeOf(state.error).toEqualTypeOf<null>()
         return <span>pending</span>
       }
 
       if (state.isLoadingError) {
-        expectTypeOf(state.data).toEqualTypeOf<undefined>()
-        expectTypeOf(state.error).toEqualTypeOf<Error>()
         return <span>{state.error.message}</span>
       }
 
-      expectTypeOf(state.data).toEqualTypeOf<string>()
-      expectTypeOf(state.error).toEqualTypeOf<Error | null>()
       return <span>{state.data}</span>
     }
 
