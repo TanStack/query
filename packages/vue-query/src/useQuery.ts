@@ -64,7 +64,7 @@ export type UndefinedInitialQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  initialData?: undefined
+  initialData?: undefined | (() => undefined)
 }
 
 export type DefinedInitialQueryOptions<
