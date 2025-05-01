@@ -50,7 +50,7 @@ export interface UseSuspenseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'enabled' | 'suspense' | 'placeholderData'
+    'enabled' | 'suspense' | 'placeholderData' | 'keepPreviousData'
   > {}
 
 export interface UseInfiniteQueryOptions<
@@ -80,7 +80,7 @@ export type UseQueryResult<
 
 export type UseSuspenseQueryResult<TData = unknown, TError = unknown> = Omit<
   DefinedQueryObserverResult<TData, TError>,
-  'isPlaceholderData' | 'promise'
+  'isPlaceholderData' | 'isPreviousData'
 >
 
 export type DefinedUseBaseQueryResult<
