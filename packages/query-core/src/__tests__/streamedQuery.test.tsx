@@ -74,6 +74,61 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
+  test('should allow Arrays to be returned from the stream', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        queryFn: async function* () {
+          for await (const num of createAsyncNumberGenerator(3)) {
+            yield [num, num] as const
+          }
+        },
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [[0, 0]],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [
+        [0, 0],
+        [1, 1],
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ],
+    })
+
+    unsubscribe()
+  })
+
   test('should replace on refetch', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
