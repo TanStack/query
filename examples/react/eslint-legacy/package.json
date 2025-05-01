@@ -1,0 +1,36 @@
+{
+  "name": "@tanstack/query-example-eslint-legacy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:eslint": "ESLINT_USE_FLAT_CONFIG=false eslint ./src/**/*.tsx"
+  },
+  "dependencies": {
+    "@tanstack/query-sync-storage-persister": "^5.74.9",
+    "@tanstack/react-query": "^5.74.11",
+    "@tanstack/react-query-devtools": "^5.74.11",
+    "@tanstack/react-query-persist-client": "^5.74.11",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.74.7",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "5.8.3",
+    "vite": "^6.2.4"
+  },
+  "nx": {
+    "targets": {
+      "test:eslint": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
+  }
+}

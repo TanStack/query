@@ -11,6 +11,7 @@
 
   export let client: QueryClient
   export let onSuccess: () => Promise<unknown> | unknown = () => undefined
+  export let onError: () => Promise<unknown> | unknown = () => undefined
   export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
 
   const isRestoring = writable(true)
@@ -22,15 +23,22 @@
       ...persistOptions,
       queryClient: client,
     })
-    promise.then(async () => {
-      if (!isStale) {
-        try {
+    promise
+      .then(async () => {
+        if (!isStale) {
           await onSuccess()
-        } finally {
+        }
+      })
+      .catch(async () => {
+        if (!isStale) {
+          await onError()
+        }
+      })
+      .finally(() => {
+        if (!isStale) {
           isRestoring.set(false)
         }
-      }
-    })
+      })
     onDestroy(() => {
       isStale = true
       unsubscribe()

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-persist-client-core",
-  "version": "5.71.10",
+  "version": "5.74.9",
   "description": "Set of utilities for interacting with persisters, which can save your queryClient for later use",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -40,8 +40,8 @@
   "react-native": "src/index.ts",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "import": {
-        "@tanstack/custom-condition": "./src/index.ts",
         "types": "./build/modern/index.d.ts",
         "default": "./build/modern/index.js"
       },

@@ -51,6 +51,9 @@ export type UseQueryOptions<
           >[Property]
         >
   } & {
+    /**
+     * Return data in a shallow ref object (it is `false` by default). It can be set to `true` to return data in a shallow ref object, which can improve performance if your data does not need to be deeply reactive.
+     */
     shallow?: boolean
   }
 >
@@ -61,7 +64,7 @@ export type UndefinedInitialQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  initialData?: undefined
+  initialData?: undefined | (() => undefined)
 }
 
 export type DefinedInitialQueryOptions<

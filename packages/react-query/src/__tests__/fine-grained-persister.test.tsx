@@ -1,5 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
-import { waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { QueryCache, hashKey } from '@tanstack/query-core'
 import {
@@ -10,6 +9,14 @@ import { useQuery } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
 describe('fine grained persister', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
@@ -61,7 +68,7 @@ describe('fine grained persister', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
 
-    await waitFor(() => rendered.getByText('Works from persister'))
+    await vi.waitFor(() => rendered.getByText('Works from persister'))
     expect(spy).not.toHaveBeenCalled()
   })
 
@@ -116,8 +123,8 @@ describe('fine grained persister', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
 
-    await waitFor(() => rendered.getByText('Works from persister'))
-    await waitFor(() => rendered.getByText('Works from queryFn'))
+    await vi.waitFor(() => rendered.getByText('Works from persister'))
+    await vi.waitFor(() => rendered.getByText('Works from queryFn'))
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
@@ -155,7 +162,7 @@ describe('fine grained persister', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
 
-    await waitFor(() => rendered.getByText('Works from queryFn'))
+    await vi.waitFor(() => rendered.getByText('Works from queryFn'))
     expect(spy).toHaveBeenCalledTimes(1)
 
     const storedItem = await storage.getItem(`${PERSISTER_KEY_PREFIX}-${hash}`)
