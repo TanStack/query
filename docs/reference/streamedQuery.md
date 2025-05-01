@@ -26,8 +26,10 @@ const query = queryOptions({
   - **Required**
   - The function that returns a Promise of an AsyncIterable of data to stream in.
   - Receives a [QueryFunctionContext](../guides/query-functions.md#queryfunctioncontext)
-- `refetchMode?: 'append' | 'reset'`
-  - optional
-  - when set to `'reset'`, the query will erase all data and go back into `pending` state when a refetch occurs.
-  - when set to `'append'`, data will be appended on a refetch.
-  - defaults to `'reset'`
+- `refetchMode?: 'append' | 'reset' | 'replace`
+  - Optional
+  - Defines how refetches are handled.
+  - Defaults to `'reset'`
+  - When set to `'reset'`, the query will erase all data and go back into `pending` state.
+  - When set to `'append'`, data will be appended to existing data.
+  - When set to `'replace'`, data will be written to the cache at the end of the stream.
