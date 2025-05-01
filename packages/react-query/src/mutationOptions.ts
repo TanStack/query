@@ -8,8 +8,6 @@ export function mutationOptions<
   TContext = unknown,
 >(
   options: UseMutationOptions<TData, TError, TVariables, TContext>,
-): UseMutationOptions<TData, TError, TVariables, TContext>
-
-export function mutationOptions(options: unknown) {
+): UseMutationOptions<TData, TError, TVariables, TContext> {
   return options
 }
