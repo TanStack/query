@@ -1,3 +1,4 @@
+import { noop } from './utils'
 import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
 
 /**
@@ -13,39 +14,66 @@ export function streamedQuery<
   TQueryKey extends QueryKey = QueryKey,
 >({
   queryFn,
-  refetchMode,
+  refetchMode = 'reset',
 }: {
   queryFn: (
     context: QueryFunctionContext<TQueryKey>,
   ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
-  refetchMode?: 'append' | 'reset'
+  refetchMode?: 'append' | 'reset' | 'replace'
 }): QueryFunction<Array<TQueryFnData>, TQueryKey> {
-  return async (context) => {
-    if (refetchMode !== 'append') {
-      const query = context.client
-        .getQueryCache()
-        .find({ queryKey: context.queryKey, exact: true })
-      if (query && query.state.data !== undefined) {
-        query.setState({
-          status: 'pending',
-          data: undefined,
-          error: null,
-          fetchStatus: 'fetching',
-        })
+  return (context) => {
+    const query = context.client
+      .getQueryCache()
+      .find({ queryKey: context.queryKey, exact: true })
+    const isRefetch = !!query && query.state.data !== undefined
+
+    async function readFromStream(
+      onChunk: (chunk: TQueryFnData) => void,
+      finalize: () => void,
+    ) {
+      const stream = await queryFn(context)
+      for await (const chunk of stream) {
+        if (context.signal.aborted) {
+          break
+        }
+        onChunk(chunk)
       }
+      finalize()
+      return context.client.getQueryData<Array<TQueryFnData>>(context.queryKey)!
     }
-    const stream = await queryFn(context)
-    for await (const chunk of stream) {
-      if (context.signal.aborted) {
-        break
-      }
+
+    let onChunk = (chunk: TQueryFnData) => {
       context.client.setQueryData<Array<TQueryFnData>>(
         context.queryKey,
         (prev = []) => {
-          return prev.concat(chunk)
+          return prev.concat([chunk])
         },
       )
     }
-    return context.client.getQueryData(context.queryKey)!
+    let finalize = noop
+
+    if (isRefetch && refetchMode === 'reset') {
+      query.setState({
+        status: 'pending',
+        data: undefined,
+        error: null,
+        fetchStatus: 'fetching',
+      })
+    }
+    if (isRefetch && refetchMode === 'replace') {
+      const result: Array<TQueryFnData> = []
+      onChunk = (chunk) => {
+        result.push(chunk)
+      }
+      finalize = () => {
+        console.log('finalize', result)
+        context.client.setQueryData<Array<TQueryFnData>>(
+          context.queryKey,
+          result,
+        )
+      }
+    }
+
+    return readFromStream(onChunk, finalize)
   }
 }
