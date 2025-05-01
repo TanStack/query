@@ -1,4 +1,3 @@
-import { noop } from './utils'
 import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
 
 /**
@@ -7,7 +6,10 @@ import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
  * The query will be in a 'pending' state until the first chunk of data is received, but will go to 'success' after that.
  * The query will stay in fetchStatus 'fetching' until the stream ends.
  * @param queryFn - The function that returns an AsyncIterable to stream data from.
- * @param refetchMode - Defaults to 'reset', which replaces data when a refetch happens. Set to 'append' to append new data to the existing data.
+ * @param refetchMode - Defines how re-fetches are handled.
+ * Defaults to `'reset'`, erases all data and puts the query back into `pending` state.
+ * Set to `'append'` to append new data to the existing data.
+ * Set to `'replace'` to write the data to the cache at the end of the stream.
  */
 export function streamedQuery<
   TQueryFnData = unknown,
@@ -21,36 +23,11 @@ export function streamedQuery<
   ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
   refetchMode?: 'append' | 'reset' | 'replace'
 }): QueryFunction<Array<TQueryFnData>, TQueryKey> {
-  return (context) => {
+  return async (context) => {
     const query = context.client
       .getQueryCache()
       .find({ queryKey: context.queryKey, exact: true })
     const isRefetch = !!query && query.state.data !== undefined
-
-    async function readFromStream(
-      onChunk: (chunk: TQueryFnData) => void,
-      finalize: () => void,
-    ) {
-      const stream = await queryFn(context)
-      for await (const chunk of stream) {
-        if (context.signal.aborted) {
-          break
-        }
-        onChunk(chunk)
-      }
-      finalize()
-      return context.client.getQueryData<Array<TQueryFnData>>(context.queryKey)!
-    }
-
-    let onChunk = (chunk: TQueryFnData) => {
-      context.client.setQueryData<Array<TQueryFnData>>(
-        context.queryKey,
-        (prev = []) => {
-          return prev.concat([chunk])
-        },
-      )
-    }
-    let finalize = noop
 
     if (isRefetch && refetchMode === 'reset') {
       query.setState({
@@ -60,20 +37,32 @@ export function streamedQuery<
         fetchStatus: 'fetching',
       })
     }
-    if (isRefetch && refetchMode === 'replace') {
-      const result: Array<TQueryFnData> = []
-      onChunk = (chunk) => {
-        result.push(chunk)
+
+    const result: Array<TQueryFnData> = []
+    const stream = await queryFn(context)
+
+    for await (const chunk of stream) {
+      if (context.signal.aborted) {
+        break
       }
-      finalize = () => {
-        console.log('finalize', result)
+
+      // don't append to the cache directly when replace-refetching
+      if (!isRefetch || refetchMode !== 'replace') {
         context.client.setQueryData<Array<TQueryFnData>>(
           context.queryKey,
-          result,
+          (prev = []) => {
+            return prev.concat([chunk])
+          },
         )
       }
+      result.push(chunk)
     }
 
-    return readFromStream(onChunk, finalize)
+    // finalize result: replace-refetching needs to write to the cache
+    if (isRefetch && refetchMode === 'replace' && !context.signal.aborted) {
+      context.client.setQueryData<Array<TQueryFnData>>(context.queryKey, result)
+    }
+
+    return context.client.getQueryData(context.queryKey)!
   }
 }
