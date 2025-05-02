@@ -17,9 +17,11 @@ vi.mock('../useBaseQuery')
 
 describe('useQuery', () => {
   test('should properly execute query', () => {
+    const queryFn = () => sleep(0).then(() => 'Some data')
+
     useQuery({
       queryKey: ['key0'],
-      queryFn: () => sleep(0).then(() => 'Some data'),
+      queryFn,
       staleTime: 1000,
     })
 
@@ -27,7 +29,7 @@ describe('useQuery', () => {
       QueryObserver,
       {
         queryKey: ['key0'],
-        queryFn: () => sleep(0).then(() => 'Some data'),
+        queryFn,
         staleTime: 1000,
       },
       undefined,
