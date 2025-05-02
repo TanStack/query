@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationObserver } from '../mutationObserver'
-import { createQueryClient, executeMutation } from './utils'
-import type { QueryClient } from '..'
+import { QueryClient } from '..'
+import { executeMutation } from './utils'
 import type { MutationState } from '../mutation'
 
 describe('mutations', () => {
@@ -10,7 +10,7 @@ describe('mutations', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryClient.mount()
   })
 

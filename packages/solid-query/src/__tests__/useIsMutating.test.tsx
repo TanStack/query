@@ -3,13 +3,18 @@ import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
-import { QueryClientProvider, useIsMutating, useMutation } from '..'
-import { createQueryClient, setActTimeout } from './utils'
+import {
+  QueryClient,
+  QueryClientProvider,
+  useIsMutating,
+  useMutation,
+} from '..'
+import { setActTimeout } from './utils'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -64,7 +69,7 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({ mutationKey: ['mutation1'] }))
@@ -109,7 +114,7 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({
@@ -157,7 +162,7 @@ describe('useIsMutating', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function Page() {
       const isMutating = useIsMutating(undefined, () => queryClient)
@@ -205,7 +210,7 @@ describe('useIsMutating', () => {
         return new MutationCacheMock(fn)
       })
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function IsMutating() {
       useIsMutating()

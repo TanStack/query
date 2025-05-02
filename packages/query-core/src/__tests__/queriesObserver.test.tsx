@@ -1,15 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueriesObserver } from '..'
-import { createQueryClient } from './utils'
-import type { QueryClient, QueryObserverResult } from '..'
+import { QueriesObserver, QueryClient } from '..'
+import type { QueryObserverResult } from '..'
 
 describe('queriesObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryClient.mount()
   })
 

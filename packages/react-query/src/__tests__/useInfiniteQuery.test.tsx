@@ -8,11 +8,12 @@ import {
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   QueryClientProvider,
   keepPreviousData,
   useInfiniteQuery,
 } from '..'
-import { createQueryClient, renderWithClient, setActTimeout } from './utils'
+import { renderWithClient, setActTimeout } from './utils'
 import type {
   InfiniteData,
   QueryFunctionContext,
@@ -46,7 +47,7 @@ const fetchItems = async (
 
 describe('useInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({
+  const queryClient = new QueryClient({
     queryCache,
     defaultOptions: {
       queries: {

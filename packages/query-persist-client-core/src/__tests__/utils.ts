@@ -4,10 +4,6 @@ import { sleep } from '@tanstack/query-test-utils'
 import type { QueryClientConfig } from '@tanstack/query-core'
 import type { PersistedClient, Persister } from '../persist'
 
-export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  return new QueryClient(config)
-}
-
 export function createMockPersister(): Persister {
   let storedState: PersistedClient | undefined
 

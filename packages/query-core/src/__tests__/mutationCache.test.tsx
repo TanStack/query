@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { MutationCache, MutationObserver } from '..'
-import { createQueryClient, executeMutation } from './utils'
+import { MutationCache, MutationObserver, QueryClient } from '..'
+import { executeMutation } from './utils'
 
 describe('mutationCache', () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('mutationCache', () => {
       const onSuccess = vi.fn()
       const onSettled = vi.fn()
       const testCache = new MutationCache({ onError, onSuccess, onSettled })
-      const testClient = createQueryClient({ mutationCache: testCache })
+      const testClient = new QueryClient({ mutationCache: testCache })
 
       try {
         await executeMutation(
@@ -66,7 +66,7 @@ describe('mutationCache', () => {
         states.push(6)
       }
       const testCache = new MutationCache({ onError, onSettled })
-      const testClient = createQueryClient({ mutationCache: testCache })
+      const testClient = new QueryClient({ mutationCache: testCache })
 
       try {
         await executeMutation(
@@ -100,7 +100,7 @@ describe('mutationCache', () => {
       const onSuccess = vi.fn()
       const onSettled = vi.fn()
       const testCache = new MutationCache({ onError, onSuccess, onSettled })
-      const testClient = createQueryClient({ mutationCache: testCache })
+      const testClient = new QueryClient({ mutationCache: testCache })
 
       try {
         await executeMutation(
@@ -146,7 +146,7 @@ describe('mutationCache', () => {
         states.push(6)
       }
       const testCache = new MutationCache({ onSuccess, onSettled })
-      const testClient = createQueryClient({ mutationCache: testCache })
+      const testClient = new QueryClient({ mutationCache: testCache })
 
       executeMutation(
         testClient,
@@ -176,7 +176,7 @@ describe('mutationCache', () => {
       const key = queryKey()
       const onMutate = vi.fn()
       const testCache = new MutationCache({ onMutate })
-      const testClient = createQueryClient({ mutationCache: testCache })
+      const testClient = new QueryClient({ mutationCache: testCache })
 
       try {
         await executeMutation(
@@ -203,7 +203,7 @@ describe('mutationCache', () => {
         states.push(2)
       }
       const testCache = new MutationCache({ onMutate })
-      const testClient = createQueryClient({ mutationCache: testCache })
+      const testClient = new QueryClient({ mutationCache: testCache })
 
       executeMutation(
         testClient,
@@ -227,7 +227,7 @@ describe('mutationCache', () => {
   describe('find', () => {
     test('should filter correctly', async () => {
       const testCache = new MutationCache()
-      const testClient = createQueryClient({ mutationCache: testCache })
+      const testClient = new QueryClient({ mutationCache: testCache })
       const key = ['mutation', 'vars']
       await executeMutation(
         testClient,
@@ -254,7 +254,7 @@ describe('mutationCache', () => {
   describe('findAll', () => {
     test('should filter correctly', async () => {
       const testCache = new MutationCache()
-      const testClient = createQueryClient({ mutationCache: testCache })
+      const testClient = new QueryClient({ mutationCache: testCache })
       await executeMutation(
         testClient,
         {
@@ -297,7 +297,7 @@ describe('mutationCache', () => {
   describe('garbage collection', () => {
     test('should remove unused mutations after gcTime has elapsed', async () => {
       const testCache = new MutationCache()
-      const testClient = createQueryClient({ mutationCache: testCache })
+      const testClient = new QueryClient({ mutationCache: testCache })
       const onSuccess = vi.fn()
       executeMutation(
         testClient,
@@ -317,7 +317,7 @@ describe('mutationCache', () => {
     })
 
     test('should not remove mutations if there are active observers', async () => {
-      const queryClient = createQueryClient()
+      const queryClient = new QueryClient()
       const observer = new MutationObserver(queryClient, {
         gcTime: 10,
         mutationFn: (input: number) => Promise.resolve(input),
@@ -338,7 +338,7 @@ describe('mutationCache', () => {
     })
 
     test('should be garbage collected later when unsubscribed and mutation is pending', async () => {
-      const queryClient = createQueryClient()
+      const queryClient = new QueryClient()
       const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {
         gcTime: 10,
@@ -364,7 +364,7 @@ describe('mutationCache', () => {
     })
 
     test('should call callbacks even with gcTime 0 and mutation still pending', async () => {
-      const queryClient = createQueryClient()
+      const queryClient = new QueryClient()
       const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {
         gcTime: 0,

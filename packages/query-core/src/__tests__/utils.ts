@@ -1,12 +1,8 @@
 import { vi } from 'vitest'
-import { QueryClient, onlineManager } from '..'
+import { onlineManager } from '..'
 import * as utils from '../utils'
 import type { MockInstance } from 'vitest'
-import type { MutationOptions, QueryClientConfig } from '..'
-
-export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  return new QueryClient(config)
-}
+import type { MutationOptions, QueryClient } from '..'
 
 export function mockVisibilityState(
   value: DocumentVisibilityState,

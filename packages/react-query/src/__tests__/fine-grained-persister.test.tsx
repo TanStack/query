@@ -1,13 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
-import { QueryCache, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createPersister,
 } from '@tanstack/query-persist-client-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { useQuery } from '..'
-import { createQueryClient, renderWithClient } from './utils'
+import { QueryCache, QueryClient, hashKey, useQuery } from '..'
+import { renderWithClient } from './utils'
 
 describe('fine grained persister', () => {
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('fine grained persister', () => {
   })
 
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should restore query state from persister and not refetch', async () => {
     const key = queryKey()

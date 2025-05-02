@@ -1,14 +1,13 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
-import { QueryObserver } from '..'
-import { createQueryClient } from './utils'
-import type { DefaultError, QueryClient } from '..'
+import { QueryClient, QueryObserver } from '..'
+import type { DefaultError } from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryClient.mount()
   })
 
@@ -105,7 +104,7 @@ describe('queryObserver', () => {
     it('previousQuery should have typed queryKey', () => {
       const testQueryKey = ['SomeQuery', 42, { foo: 'bar' }] as const
 
-      new QueryObserver(createQueryClient(), {
+      new QueryObserver(new QueryClient(), {
         queryKey: testQueryKey,
         placeholderData: (_, previousQuery) => {
           if (previousQuery) {
@@ -122,7 +121,7 @@ describe('queryObserver', () => {
         name = 'CustomError' as const
       }
 
-      new QueryObserver<boolean, CustomError>(createQueryClient(), {
+      new QueryObserver<boolean, CustomError>(new QueryClient(), {
         queryKey: ['key'],
         placeholderData: (_, previousQuery) => {
           if (previousQuery) {
@@ -138,7 +137,7 @@ describe('queryObserver', () => {
     it('previousData should have the same type as query data', () => {
       const queryData = { foo: 'bar' } as const
 
-      new QueryObserver(createQueryClient(), {
+      new QueryObserver(new QueryClient(), {
         queryKey: ['key'],
         queryFn: () => queryData,
         select: (data) => data.foo,

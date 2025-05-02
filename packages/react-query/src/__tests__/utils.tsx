@@ -2,8 +2,8 @@ import { vi } from 'vitest'
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
 import * as utils from '@tanstack/query-core'
-import { QueryClient, QueryClientProvider, onlineManager } from '..'
-import type { QueryClientConfig } from '..'
+import { QueryClientProvider, onlineManager } from '..'
+import type { QueryClient } from '..'
 import type { MockInstance } from 'vitest'
 
 export function renderWithClient(
@@ -40,10 +40,6 @@ export function Blink({
   }, [duration, children])
 
   return shouldShow ? <>{children}</> : <>off</>
-}
-
-export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  return new QueryClient(config)
 }
 
 export function mockVisibilityState(

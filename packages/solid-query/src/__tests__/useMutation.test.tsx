@@ -7,12 +7,14 @@ import {
 } from 'solid-js'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { MutationCache, QueryCache, QueryClientProvider, useMutation } from '..'
 import {
-  createQueryClient,
-  mockOnlineManagerIsOnline,
-  setActTimeout,
-} from './utils'
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+} from '..'
+import { mockOnlineManagerIsOnline, setActTimeout } from './utils'
 import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
@@ -26,7 +28,7 @@ describe('useMutation', () => {
 
   const queryCache = new QueryCache()
   const mutationCache = new MutationCache()
-  const queryClient = createQueryClient({ queryCache, mutationCache })
+  const queryClient = new QueryClient({ queryCache, mutationCache })
 
   it('should be able to reset `data`', async () => {
     function Page() {
@@ -897,7 +899,7 @@ describe('useMutation', () => {
     const errorMock = vi.fn()
     const successMock = vi.fn()
 
-    const queryClientMutationMeta = createQueryClient({
+    const queryClientMutationMeta = new QueryClient({
       mutationCache: new MutationCache({
         onSuccess: (_, __, ___, mutation) => {
           successMock(mutation.meta?.metaSuccessMessage)

@@ -1,12 +1,17 @@
 import { describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { queryKey } from '@tanstack/query-test-utils'
-import { QueryCache, skipToken, useSuspenseInfiniteQuery } from '..'
-import { createQueryClient, renderWithClient } from './utils'
+import {
+  QueryCache,
+  QueryClient,
+  skipToken,
+  useSuspenseInfiniteQuery,
+} from '..'
+import { renderWithClient } from './utils'
 
 describe('useSuspenseInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should log an error when skipToken is passed as queryFn', () => {
     const consoleErrorSpy = vi

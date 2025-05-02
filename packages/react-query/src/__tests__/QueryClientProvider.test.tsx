@@ -1,8 +1,13 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { render } from '@testing-library/react'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryCache, QueryClientProvider, useQuery, useQueryClient } from '..'
-import { createQueryClient } from './utils'
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+  useQueryClient,
+} from '..'
 
 describe('QueryClientProvider', () => {
   beforeEach(() => {
@@ -17,7 +22,7 @@ describe('QueryClientProvider', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
 
     function Page() {
       const { data } = useQuery({
@@ -50,8 +55,8 @@ describe('QueryClientProvider', () => {
     const queryCache1 = new QueryCache()
     const queryCache2 = new QueryCache()
 
-    const queryClient1 = createQueryClient({ queryCache: queryCache1 })
-    const queryClient2 = createQueryClient({ queryCache: queryCache2 })
+    const queryClient1 = new QueryClient({ queryCache: queryCache1 })
+    const queryClient2 = new QueryClient({ queryCache: queryCache2 })
 
     function Page1() {
       const { data } = useQuery({
@@ -102,7 +107,7 @@ describe('QueryClientProvider', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: {
         queries: {

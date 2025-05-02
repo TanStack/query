@@ -10,7 +10,7 @@ import {
   onlineManager,
   skipToken,
 } from '..'
-import { createQueryClient, mockOnlineManagerIsOnline } from './utils'
+import { mockOnlineManagerIsOnline } from './utils'
 import type { QueryCache, QueryFunction, QueryObserverOptions } from '..'
 
 describe('queryClient', () => {
@@ -19,7 +19,7 @@ describe('queryClient', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
@@ -35,7 +35,7 @@ describe('queryClient', () => {
       const key = queryKey()
 
       const queryFn = () => 'data'
-      const testClient = createQueryClient({
+      const testClient = new QueryClient({
         defaultOptions: { queries: { queryFn } },
       })
 
@@ -45,7 +45,7 @@ describe('queryClient', () => {
     test('should merge defaultOptions when query is added to cache', async () => {
       const key = queryKey()
 
-      const testClient = createQueryClient({
+      const testClient = new QueryClient({
         defaultOptions: {
           queries: { gcTime: Infinity },
         },
@@ -60,7 +60,7 @@ describe('queryClient', () => {
     test('should get defaultOptions', () => {
       const queryFn = () => 'data'
       const defaultOptions = { queries: { queryFn } }
-      const testClient = createQueryClient({
+      const testClient = new QueryClient({
         defaultOptions,
       })
       expect(testClient.getDefaultOptions()).toMatchObject(defaultOptions)
@@ -146,7 +146,7 @@ describe('queryClient', () => {
   describe('defaultQueryOptions', () => {
     test('should default networkMode when persister is present', () => {
       expect(
-        createQueryClient({
+        new QueryClient({
           defaultOptions: {
             queries: {
               persister: 'ignore' as any,
@@ -158,7 +158,7 @@ describe('queryClient', () => {
 
     test('should not default networkMode without persister', () => {
       expect(
-        createQueryClient({
+        new QueryClient({
           defaultOptions: {
             queries: {
               staleTime: 1000,
@@ -170,7 +170,7 @@ describe('queryClient', () => {
 
     test('should not default networkMode when already present', () => {
       expect(
-        createQueryClient({
+        new QueryClient({
           defaultOptions: {
             queries: {
               persister: 'ignore' as any,
@@ -204,7 +204,7 @@ describe('queryClient', () => {
 
     test('should use default options', () => {
       const key = queryKey()
-      const testClient = createQueryClient({
+      const testClient = new QueryClient({
         defaultOptions: { queries: { queryKeyHashFn: () => 'someKey' } },
       })
       const testCache = testClient.getQueryCache()
@@ -1637,7 +1637,7 @@ describe('queryClient', () => {
       focusManager.setFocused(undefined)
     })
     test('should notify queryCache and mutationCache if focused', async () => {
-      const testClient = createQueryClient()
+      const testClient = new QueryClient()
       testClient.mount()
 
       const queryCacheOnFocusSpy = vi.spyOn(
@@ -1671,7 +1671,7 @@ describe('queryClient', () => {
     })
 
     test('should notify queryCache and mutationCache if online', async () => {
-      const testClient = createQueryClient()
+      const testClient = new QueryClient()
       testClient.mount()
 
       const queryCacheOnFocusSpy = vi.spyOn(
@@ -1987,7 +1987,7 @@ describe('queryClient', () => {
     })
 
     test('should notify queryCache and mutationCache after multiple mounts and single unmount', async () => {
-      const testClient = createQueryClient()
+      const testClient = new QueryClient()
       testClient.mount()
       testClient.mount()
       testClient.unmount()
@@ -2026,7 +2026,7 @@ describe('queryClient', () => {
     })
 
     test('should not notify queryCache and mutationCache after multiple mounts/unmounts', () => {
-      const testClient = createQueryClient()
+      const testClient = new QueryClient()
       testClient.mount()
       testClient.mount()
       testClient.unmount()

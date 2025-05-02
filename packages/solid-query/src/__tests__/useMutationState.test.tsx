@@ -2,14 +2,16 @@ import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { createEffect } from 'solid-js'
 import { sleep } from '@tanstack/query-test-utils'
-import { useMutationState } from '../useMutationState'
-import { useMutation } from '../useMutation'
-import { QueryClientProvider } from '../QueryClientProvider'
-import { createQueryClient } from './utils'
+import {
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+  useMutationState,
+} from '..'
 
 describe('useMutationState', () => {
   it('should return variables after calling mutate', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const variables: Array<Array<unknown>> = []
     const mutationKey = ['mutation']
 

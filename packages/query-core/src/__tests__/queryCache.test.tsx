@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, QueryObserver } from '..'
-import { createQueryClient } from './utils'
 
 describe('queryCache', () => {
   let queryClient: QueryClient
@@ -9,7 +8,7 @@ describe('queryCache', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryCache = queryClient.getQueryCache()
   })
 
@@ -321,7 +320,7 @@ describe('queryCache', () => {
       const onSettled = vi.fn()
       const onError = vi.fn()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
-      const testClient = createQueryClient({ queryCache: testCache })
+      const testClient = new QueryClient({ queryCache: testCache })
       testClient.prefetchQuery({
         queryKey: key,
         queryFn: () => sleep(100).then(() => Promise.reject<unknown>('error')),
@@ -343,7 +342,7 @@ describe('queryCache', () => {
       const onSettled = vi.fn()
       const onError = vi.fn()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
-      const testClient = createQueryClient({ queryCache: testCache })
+      const testClient = new QueryClient({ queryCache: testCache })
       testClient.prefetchQuery({
         queryKey: key,
         queryFn: () => sleep(100).then(() => ({ data: 5 })),

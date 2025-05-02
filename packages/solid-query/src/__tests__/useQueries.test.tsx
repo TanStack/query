@@ -6,16 +6,21 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueriesObserver,
   QueryCache,
+  QueryClient,
   QueryClientProvider,
   useQueries,
 } from '..'
-import { createQueryClient } from './utils'
-import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
-import type { QueryFunction, SolidQueryOptions, UseQueryResult } from '..'
+import type {
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+  SolidQueryOptions,
+  UseQueryResult,
+} from '..'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states', async () => {
     const key1 = queryKey()

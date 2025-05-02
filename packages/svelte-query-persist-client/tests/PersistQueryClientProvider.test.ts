@@ -3,6 +3,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { get, writable } from 'svelte/store'
 import { sleep } from '@tanstack/query-test-utils'
+import { QueryClient } from '@tanstack/svelte-query'
 import AwaitOnSuccess from './AwaitOnSuccess/Provider.svelte'
 import FreshData from './FreshData/Provider.svelte'
 import OnSuccess from './OnSuccess/Provider.svelte'
@@ -10,7 +11,6 @@ import InitialData from './InitialData/Provider.svelte'
 import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
-import { createQueryClient } from './utils.js'
 
 import type {
   PersistedClient,
@@ -59,7 +59,7 @@ describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -120,7 +120,7 @@ describe('PersistQueryClientProvider', () => {
   test('should also put useQueries into idle state', async () => {
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -182,7 +182,7 @@ describe('PersistQueryClientProvider', () => {
   test('should show initialData while restoring', async () => {
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -243,7 +243,7 @@ describe('PersistQueryClientProvider', () => {
   test('should not refetch after restoring when data is fresh', async () => {
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -288,7 +288,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should call onSuccess after successful restoring', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -318,7 +318,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should await onSuccess after successful restoring', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -365,7 +365,7 @@ describe('PersistQueryClientProvider', () => {
       .mockImplementation(() => undefined)
     consoleMock.mockImplementation(() => undefined)
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const removeClient = vi.fn()
     const onSuccess = vi.fn()
     const onError = vi.fn()

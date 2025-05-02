@@ -2,12 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, Suspense, createSignal, startTransition } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryCache, QueryClientProvider, useQuery } from '..'
-import { createQueryClient } from './utils'
+import { QueryCache, QueryClient, QueryClientProvider, useQuery } from '..'
 
 describe("useQuery's in Suspense mode with transitions", () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should render the content when the transition is done', async () => {
     const key = queryKey()

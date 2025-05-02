@@ -26,10 +26,6 @@ export function Blink(
   )
 }
 
-export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  return new QueryClient(config)
-}
-
 export function mockVisibilityState(
   value: DocumentVisibilityState,
 ): MockInstance<() => DocumentVisibilityState> {

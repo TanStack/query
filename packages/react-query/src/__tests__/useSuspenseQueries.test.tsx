@@ -11,8 +11,13 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { skipToken, useSuspenseQueries, useSuspenseQuery } from '..'
-import { createQueryClient, renderWithClient } from './utils'
+import {
+  QueryClient,
+  skipToken,
+  useSuspenseQueries,
+  useSuspenseQuery,
+} from '..'
+import { renderWithClient } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
 
 type NumberQueryOptions = UseSuspenseQueryOptions<number>
@@ -28,7 +33,7 @@ const createQuery: (id: number) => NumberQueryOptions = (id) => ({
 })
 const resolveQueries = () => vi.advanceTimersByTimeAsync(QUERY_DURATION)
 
-const queryClient = createQueryClient()
+const queryClient = new QueryClient()
 
 describe('useSuspenseQueries', () => {
   const onSuspend = vi.fn()
@@ -507,7 +512,7 @@ describe('useSuspenseQueries 2', () => {
 
   it('should still suspense if queryClient has placeholderData config', async () => {
     const key = queryKey()
-    const queryClientWithPlaceholder = createQueryClient({
+    const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
           placeholderData: (previousData: any) => previousData,

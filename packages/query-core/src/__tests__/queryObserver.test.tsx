@@ -8,16 +8,15 @@ import {
   vi,
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryObserver, focusManager } from '..'
-import { createQueryClient } from './utils'
-import type { QueryClient, QueryObserverResult } from '..'
+import { QueryClient, QueryObserver, focusManager } from '..'
+import type { QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient({
+    queryClient = new QueryClient({
       defaultOptions: {
         queries: {
           experimental_prefetchInRender: true,

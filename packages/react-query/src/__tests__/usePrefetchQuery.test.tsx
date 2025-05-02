@@ -5,11 +5,12 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   usePrefetchQuery,
   useQueryErrorResetBoundary,
   useSuspenseQuery,
 } from '..'
-import { createQueryClient, renderWithClient } from './utils'
+import { renderWithClient } from './utils'
 
 import type { UseSuspenseQueryOptions } from '..'
 
@@ -24,7 +25,7 @@ const generateQueryFn = (data: string) =>
 
 describe('usePrefetchQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   beforeEach(() => {
     vi.useFakeTimers()
