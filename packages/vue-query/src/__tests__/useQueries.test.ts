@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, ref } from 'vue-demi'
-import { simpleFetcher, sleep } from '@tanstack/query-test-utils'
+import { sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
@@ -17,11 +17,11 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key1'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
         queryKey: ['key2'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
     const queriesState = useQueries({ queries })
@@ -46,11 +46,11 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key11'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
         queryKey: ['key12'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
     const queriesState = useQueries({ queries })
@@ -82,7 +82,7 @@ describe('useQueries', () => {
       },
       {
         queryKey: ['key22'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
     const queriesState = useQueries({ queries })
@@ -168,11 +168,11 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key41'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
         queryKey: ['key42'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
     const queriesState = useQueries({ queries })
@@ -199,11 +199,11 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key41'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
         queryKey: ['key42'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
 

@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
-import { simpleFetcher } from '@tanstack/query-test-utils'
+import { sleep } from '@tanstack/query-test-utils'
 import { queryOptions, useQuery } from '..'
 import type { OmitKeyof, UseQueryOptions } from '..'
 
@@ -178,7 +178,7 @@ describe('useQuery', () => {
       const query = reactive(
         useQuery({
           queryKey: ['key'],
-          queryFn: simpleFetcher,
+          queryFn: () => sleep(0).then(() => 'Some data'),
         }),
       )
 
@@ -189,7 +189,7 @@ describe('useQuery', () => {
       const query = reactive(
         useQuery({
           queryKey: ['key'],
-          queryFn: simpleFetcher,
+          queryFn: () => sleep(0).then(() => 'Some data'),
         }),
       )
 
@@ -202,7 +202,7 @@ describe('useQuery', () => {
       const query = reactive(
         useQuery({
           queryKey: ['key'],
-          queryFn: simpleFetcher,
+          queryFn: () => sleep(0).then(() => 'Some data'),
         }),
       )
 
@@ -215,7 +215,7 @@ describe('useQuery', () => {
       const query = reactive(
         useQuery({
           queryKey: ['key'],
-          queryFn: simpleFetcher,
+          queryFn: () => sleep(0).then(() => 'Some data'),
         }),
       )
 
@@ -228,7 +228,7 @@ describe('useQuery', () => {
       const query = reactive(
         useQuery({
           queryKey: ['key'],
-          queryFn: simpleFetcher,
+          queryFn: () => sleep(0).then(() => 'Some data'),
         }),
       )
 
@@ -242,7 +242,7 @@ describe('useQuery', () => {
     it('should accept ref options', () => {
       const options = ref({
         queryKey: ['key'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       })
 
       const query = reactive(useQuery(options))
@@ -255,7 +255,7 @@ describe('useQuery', () => {
     it('should accept computed options', () => {
       const options = computed(() => ({
         queryKey: ['key'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       }))
 
       const query = reactive(useQuery(options))
@@ -269,7 +269,7 @@ describe('useQuery', () => {
       const options = computed(() =>
         queryOptions({
           queryKey: ['key'],
-          queryFn: simpleFetcher,
+          queryFn: () => sleep(0).then(() => 'Some data'),
         }),
       )
 

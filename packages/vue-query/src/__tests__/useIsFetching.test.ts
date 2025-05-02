@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, reactive } from 'vue-demi'
-import { simpleFetcher, sleep } from '@tanstack/query-test-utils'
+import { sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
 import type { MockedFunction } from 'vitest'
@@ -11,9 +11,12 @@ describe('useIsFetching', () => {
   test('should properly return isFetching state', async () => {
     const { isFetching: isFetchingQuery } = useQuery({
       queryKey: ['isFetching1'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     })
-    useQuery({ queryKey: ['isFetching2'], queryFn: simpleFetcher })
+    useQuery({
+      queryKey: ['isFetching2'],
+      queryFn: () => sleep(0).then(() => 'Some data'),
+    })
     const isFetching = useIsFetching()
 
     expect(isFetchingQuery.value).toStrictEqual(true)
@@ -33,7 +36,7 @@ describe('useIsFetching', () => {
 
     const { status } = useQuery({
       queryKey: ['onScopeDispose'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     })
     const isFetching = useIsFetching()
 

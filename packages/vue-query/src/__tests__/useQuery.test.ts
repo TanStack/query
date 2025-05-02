@@ -7,7 +7,7 @@ import {
   ref,
 } from 'vue-demi'
 import { QueryObserver } from '@tanstack/query-core'
-import { simpleFetcher, sleep } from '@tanstack/query-test-utils'
+import { sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
 import type { Mock, MockedFunction } from 'vitest'
@@ -17,13 +17,17 @@ vi.mock('../useBaseQuery')
 
 describe('useQuery', () => {
   test('should properly execute query', () => {
-    useQuery({ queryKey: ['key0'], queryFn: simpleFetcher, staleTime: 1000 })
+    useQuery({
+      queryKey: ['key0'],
+      queryFn: () => sleep(0).then(() => 'Some data'),
+      staleTime: 1000,
+    })
 
     expect(useBaseQuery).toBeCalledWith(
       QueryObserver,
       {
         queryKey: ['key0'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
         staleTime: 1000,
       },
       undefined,
@@ -31,7 +35,10 @@ describe('useQuery', () => {
   })
 
   test('should return pending status initially', () => {
-    const query = useQuery({ queryKey: ['key1'], queryFn: simpleFetcher })
+    const query = useQuery({
+      queryKey: ['key1'],
+      queryFn: () => sleep(0).then(() => 'Some data'),
+    })
 
     expect(query).toMatchObject({
       status: { value: 'pending' },
@@ -123,7 +130,7 @@ describe('useQuery', () => {
     const secondKeyRef = ref('key7')
     const query = useQuery({
       queryKey: ['key6', secondKeyRef],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
     await sleep(0)
@@ -151,7 +158,7 @@ describe('useQuery', () => {
     const enabled = ref(false)
     const query = useQuery({
       queryKey: ['key9'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
       enabled,
     })
 
@@ -181,12 +188,14 @@ describe('useQuery', () => {
   test('should properly execute dependant queries', async () => {
     const { data } = useQuery({
       queryKey: ['dependant1'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
     const enabled = computed(() => !!data.value)
 
-    const dependentQueryFn = vi.fn().mockImplementation(simpleFetcher)
+    const dependentQueryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(0).then(() => 'Some data'))
     const { fetchStatus, status } = useQuery(
       reactive({
         queryKey: ['dependant2'],
@@ -222,7 +231,7 @@ describe('useQuery', () => {
 
     const { status } = useQuery({
       queryKey: ['onScopeDispose'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
     expect(status.value).toStrictEqual('pending')
@@ -395,7 +404,10 @@ describe('useQuery', () => {
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
-      const query = useQuery({ queryKey: ['suspense'], queryFn: simpleFetcher })
+      const query = useQuery({
+        queryKey: ['suspense'],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
       const result = query.suspense()
 
       expect(result).toBeInstanceOf(Promise)
@@ -409,7 +421,7 @@ describe('useQuery', () => {
       const isEnabled = ref(false)
       const query = useQuery({
         queryKey: ['suspense2'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
         enabled: isEnabled,
       })
 
@@ -427,12 +439,12 @@ describe('useQuery', () => {
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
-      const fetcherSpy = vi.fn(() => simpleFetcher())
+      const fetcherSpy = vi.fn(() => sleep(0).then(() => 'Some data'))
 
       // let afterTimeout = false;
       const query = useQuery({
         queryKey: ['suspense3'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
         staleTime: 10000,
         initialData: 'foo',
       })

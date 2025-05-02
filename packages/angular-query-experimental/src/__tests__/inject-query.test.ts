@@ -17,7 +17,7 @@ import {
   test,
   vi,
 } from 'vitest'
-import { queryKey, simpleFetcher, sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
 import { setSignalInputs } from './test-utils'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
@@ -265,7 +265,7 @@ describe('injectQuery', () => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: ['key1'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       }))
     })
 
@@ -318,7 +318,7 @@ describe('injectQuery', () => {
 
   test('should update query on options contained signal change', async () => {
     const key = signal(['key6', 'key7'])
-    const spy = vi.fn(simpleFetcher)
+    const spy = vi.fn(() => sleep(0).then(() => 'Some data'))
 
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
@@ -347,7 +347,7 @@ describe('injectQuery', () => {
   })
 
   test('should only run query once enabled signal is set to true', async () => {
-    const spy = vi.fn(simpleFetcher)
+    const spy = vi.fn(() => sleep(0).then(() => 'Some data'))
     const enabled = signal(false)
 
     const query = TestBed.runInInjectionContext(() => {
@@ -371,7 +371,7 @@ describe('injectQuery', () => {
     const query1 = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: ['dependant1'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       }))
     })
 
@@ -409,7 +409,7 @@ describe('injectQuery', () => {
   })
 
   test('should use the current value for the queryKey when refetch is called', async () => {
-    const fetchFn = vi.fn(simpleFetcher)
+    const fetchFn = vi.fn(() => sleep(0).then(() => 'Some data'))
     const keySignal = signal('key11')
 
     const query = TestBed.runInInjectionContext(() => {
@@ -549,7 +549,7 @@ describe('injectQuery', () => {
       expect(() => {
         injectQuery(() => ({
           queryKey: ['injectionContextError'],
-          queryFn: simpleFetcher,
+          queryFn: () => sleep(0).then(() => 'Some data'),
         }))
       }).toThrowError(/NG0203(.*?)injectQuery/)
     })
@@ -558,7 +558,7 @@ describe('injectQuery', () => {
       const query = injectQuery(
         () => ({
           queryKey: ['manualInjector'],
-          queryFn: simpleFetcher,
+          queryFn: () => sleep(0).then(() => 'Some data'),
         }),
         {
           injector: TestBed.inject(Injector),

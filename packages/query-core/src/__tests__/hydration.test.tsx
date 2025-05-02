@@ -1,20 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
-import { QueryClient } from 'src/queryClient'
+import { QueryClient } from '../queryClient'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
-
-async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
-  await sleep(ms || 0)
-  return value
-}
-
-async function fetchDate(value: string, ms?: number): Promise<Date> {
-  await sleep(ms || 0)
-  return new Date(value)
-}
 
 describe('dehydration and rehydration', () => {
   beforeEach(() => {
@@ -31,38 +21,38 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['number'],
-        queryFn: () => fetchData(1),
+        queryFn: () => sleep(0).then(() => 1),
       }),
     )
 
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['boolean'],
-        queryFn: () => fetchData(true),
+        queryFn: () => sleep(0).then(() => true),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['null'],
-        queryFn: () => fetchData(null),
+        queryFn: () => sleep(0).then(() => null),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['array'],
-        queryFn: () => fetchData(['string', 0]),
+        queryFn: () => sleep(0).then(() => ['string', 0]),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['nested'],
-        queryFn: () => fetchData({ key: [{ nestedKey: 1 }] }),
+        queryFn: () => sleep(0).then(() => ({ key: [{ nestedKey: 1 }] })),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -136,7 +126,7 @@ describe('dehydration and rehydration', () => {
     vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
 
@@ -155,7 +145,7 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
         gcTime: 50,
       }),
     )
@@ -186,7 +176,7 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -290,7 +280,7 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string', { key: ['string'], key2: 0 }],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -332,12 +322,12 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['success'],
-        queryFn: () => fetchData('success'),
+        queryFn: () => sleep(0).then(() => 'success'),
       }),
     )
     queryClient.prefetchQuery({
       queryKey: ['loading'],
-      queryFn: () => fetchData('loading', 10000),
+      queryFn: () => sleep(10000).then(() => 'loading'),
     })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
@@ -372,13 +362,13 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['number'],
-        queryFn: () => fetchData(1),
+        queryFn: () => sleep(0).then(() => 1),
       }),
     )
     const dehydrated = dehydrate(queryClient, {
@@ -413,7 +403,7 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string-older', 5),
+        queryFn: () => sleep(5).then(() => 'string-older'),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -427,7 +417,7 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       hydrationClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string-newer', 5),
+        queryFn: () => sleep(5).then(() => 'string-newer'),
       }),
     )
 
@@ -446,7 +436,7 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       hydrationClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string-older', 5),
+        queryFn: () => sleep(5).then(() => 'string-older'),
       }),
     )
 
@@ -457,7 +447,7 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string-newer', 5),
+        queryFn: () => sleep(5).then(() => 'string-newer'),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -883,13 +873,13 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['success'],
-        queryFn: () => fetchData('success'),
+        queryFn: () => sleep(0).then(() => 'success'),
       }),
     )
 
     const promise = queryClient.prefetchQuery({
       queryKey: ['pending'],
-      queryFn: () => fetchData('pending', 10),
+      queryFn: () => sleep(10).then(() => 'pending'),
     })
     const dehydrated = dehydrate(queryClient)
 
@@ -909,13 +899,13 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['success'],
-        queryFn: () => fetchData('success'),
+        queryFn: () => sleep(0).then(() => 'success'),
       }),
     )
 
     void queryClient.prefetchQuery({
       queryKey: ['pending'],
-      queryFn: () => fetchData('pending', 20),
+      queryFn: () => sleep(20).then(() => 'pending'),
     })
     const dehydrated = dehydrate(queryClient)
     // no stringify/parse here because promises can't be serialized to json
@@ -981,7 +971,7 @@ describe('dehydration and rehydration', () => {
 
     const promise = queryClient.prefetchQuery({
       queryKey: ['transformedStringToDate'],
-      queryFn: () => fetchDate('2024-01-01T00:00:00.000Z', 20),
+      queryFn: () => sleep(20).then(() => new Date('2024-01-01T00:00:00.000Z')),
     })
     const dehydrated = dehydrate(queryClient)
     expect(dehydrated.queries[0]?.promise).toBeInstanceOf(Promise)
@@ -1017,7 +1007,7 @@ describe('dehydration and rehydration', () => {
 
     const promise = queryClient.prefetchQuery({
       queryKey: ['transformedStringToDate'],
-      queryFn: () => fetchDate('2024-01-01T00:00:00.000Z', 0),
+      queryFn: () => sleep(0).then(() => new Date('2024-01-01T00:00:00.000Z')),
     })
     await vi.advanceTimersByTimeAsync(20)
     const dehydrated = dehydrate(queryClient)
@@ -1052,7 +1042,8 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       hydrationClient.prefetchQuery({
         queryKey: ['date'],
-        queryFn: () => fetchDate('2024-01-01T00:00:00.000Z', 5),
+        queryFn: () =>
+          sleep(5).then(() => new Date('2024-01-01T00:00:00.000Z')),
       }),
     )
 
@@ -1069,7 +1060,8 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['date'],
-        queryFn: () => fetchDate('2024-01-02T00:00:00.000Z', 10),
+        queryFn: () =>
+          sleep(10).then(() => new Date('2024-01-02T00:00:00.000Z')),
       }),
     )
     const dehydrated = dehydrate(queryClient)
