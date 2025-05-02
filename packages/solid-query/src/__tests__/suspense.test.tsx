@@ -9,8 +9,9 @@ import {
   createSignal,
   on,
 } from 'solid-js'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient } from './utils'
 import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {

@@ -2,13 +2,14 @@ import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueriesObserver,
   QueryCache,
   QueryClientProvider,
   useQueries,
 } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient } from './utils'
 import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
 import type { QueryFunction, SolidQueryOptions, UseQueryResult } from '..'
 

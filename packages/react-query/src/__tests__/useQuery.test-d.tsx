@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
-import { queryKey } from './utils'
 import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 
 describe('useQuery', () => {

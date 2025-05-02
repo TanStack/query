@@ -17,11 +17,11 @@ import {
   test,
   vi,
 } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
 import {
   delayedFetcher,
   getSimpleFetcherWithReturnData,
-  queryKey,
   rejectFetcher,
   setSignalInputs,
   simpleFetcher,

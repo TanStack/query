@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from 'vitest'
 import React from 'react'
 import { fireEvent, waitFor } from '@testing-library/react'
-
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   usePrefetchInfiniteQuery,
   useSuspenseInfiniteQuery,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { createQueryClient, renderWithClient } from './utils'
 
 import type { InfiniteData, UseSuspenseInfiniteQueryOptions } from '..'
 import type { Mock } from 'vitest'

@@ -3,16 +3,15 @@ import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
   createQueryClient,
   mockOnlineManagerIsOnline,
   mockVisibilityState,
-  queryKey,
   renderWithClient,
   setActTimeout,
-  sleep,
 } from './utils'
 import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import type { Mock } from 'vitest'

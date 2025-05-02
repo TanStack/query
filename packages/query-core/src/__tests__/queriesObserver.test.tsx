@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueriesObserver } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
 
 describe('queriesObserver', () => {

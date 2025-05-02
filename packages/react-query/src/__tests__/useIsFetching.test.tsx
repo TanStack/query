@@ -1,13 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryCache, useIsFetching, useQuery } from '..'
-import {
-  createQueryClient,
-  queryKey,
-  renderWithClient,
-  setActTimeout,
-} from './utils'
+import { createQueryClient, renderWithClient, setActTimeout } from './utils'
 
 describe('useIsFetching', () => {
   beforeEach(() => {

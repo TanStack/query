@@ -1,43 +1,26 @@
 import { isSignal, untracked } from '@angular/core'
 import { SIGNAL, signalSetFn } from '@angular/core/primitives/signals'
 import { expect } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
 import type { InputSignal, Signal } from '@angular/core'
 import type { ComponentFixture } from '@angular/core/testing'
 
-let queryKeyCount = 0
-export function queryKey() {
-  queryKeyCount++
-  return [`query_${queryKeyCount}`]
-}
+/* eslint jsdoc/require-jsdoc: 0, jsdoc/require-param: 0 */
 
 export function simpleFetcher(): Promise<string> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve('Some data')
-    }, 0)
-  })
+  return sleep(0).then(() => 'Some data')
 }
 
 export function delayedFetcher(timeout = 0): () => Promise<string> {
-  return () =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        return resolve('Some data')
-      }, timeout)
-    })
+  return () => sleep(timeout).then(() => 'Some data')
 }
 
 export function getSimpleFetcherWithReturnData(returnData: unknown) {
-  return () =>
-    new Promise((resolve) => setTimeout(() => resolve(returnData), 0))
+  return () => sleep(0).then(() => returnData)
 }
 
 export function rejectFetcher(): Promise<Error> {
-  return new Promise((_, reject) => {
-    setTimeout(() => {
-      return reject(new Error('Some error'))
-    }, 0)
-  })
+  return sleep(0).then(() => Promise.reject(new Error('Some error')))
 }
 
 export function infiniteFetcher({
@@ -45,19 +28,11 @@ export function infiniteFetcher({
 }: {
   pageParam?: number
 }): Promise<string> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve('data on page ' + pageParam)
-    }, 0)
-  })
+  return sleep(0).then(() => 'data on page ' + pageParam)
 }
 
 export function successMutator<T>(param: T): Promise<T> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve(param)
-    }, 0)
-  })
+  return sleep(0).then(() => param)
 }
 
 export function errorMutator(_parameter?: unknown): Promise<Error> {

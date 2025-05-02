@@ -6,12 +6,6 @@ import type { QueryClientConfig } from '..'
 import type { ParentProps } from 'solid-js'
 import type { MockInstance } from 'vitest'
 
-let queryKeyCount = 0
-export function queryKey() {
-  queryKeyCount++
-  return [`query_${queryKeyCount}`]
-}
-
 export function Blink(
   props: {
     duration: number
@@ -46,12 +40,6 @@ export function mockOnlineManagerIsOnline(
   value: boolean,
 ): MockInstance<() => boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
-}
-
-export function sleep(timeout: number): Promise<void> {
-  return new Promise((resolve, _reject) => {
-    setTimeout(resolve, timeout)
-  })
 }
 
 export function setActTimeout(fn: () => void, ms?: number) {

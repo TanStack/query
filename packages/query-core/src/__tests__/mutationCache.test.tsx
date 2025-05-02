@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, MutationObserver } from '..'
-import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
+import { createQueryClient, executeMutation } from './utils'
 
 describe('mutationCache', () => {
   beforeEach(() => {

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it, vi } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { InfiniteQueryObserver } from '..'
-import { createQueryClient, queryKey } from './utils'
+import { createQueryClient } from './utils'
 import type { InfiniteData, QueryClient } from '..'
 
 describe('InfiniteQueryObserver', () => {

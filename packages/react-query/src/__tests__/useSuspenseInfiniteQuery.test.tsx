@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryCache, skipToken, useSuspenseInfiniteQuery } from '..'
-import { createQueryClient, queryKey, renderWithClient } from './utils'
+import { createQueryClient, renderWithClient } from './utils'
 
 describe('useSuspenseInfiniteQuery', () => {
   const queryCache = new QueryCache()

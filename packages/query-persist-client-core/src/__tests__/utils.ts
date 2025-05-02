@@ -1,16 +1,11 @@
 import { vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { sleep } from '@tanstack/query-test-utils'
 import type { QueryClientConfig } from '@tanstack/query-core'
 import type { PersistedClient, Persister } from '../persist'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
-}
-
-function sleep(timeout: number): Promise<void> {
-  return new Promise((resolve, _reject) => {
-    setTimeout(resolve, timeout)
-  })
 }
 
 export function createMockPersister(): Persister {

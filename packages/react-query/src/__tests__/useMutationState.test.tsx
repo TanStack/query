@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
+import { sleep } from '@tanstack/query-test-utils'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { useMutation } from '../useMutation'
-import { createQueryClient, renderWithClient, sleep } from './utils'
+import { createQueryClient, renderWithClient } from './utils'
 
 describe('useIsMutating', () => {
   beforeEach(() => {

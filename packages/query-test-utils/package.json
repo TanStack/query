@@ -1,0 +1,39 @@
+{
+  "name": "@tanstack/query-test-utils",
+  "description": "Internal test utilities for TanStack Query",
+  "author": "Jonghyeon Ko <manudeli.ko@gmail.com>",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/query-test-utils"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "module": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "test:eslint": "eslint ./src",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:tscurrent": "tsc --build",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch"
+  },
+  "type": "module",
+  "devDependencies": {
+    "npm-run-all2": "^5.0.0"
+  }
+}

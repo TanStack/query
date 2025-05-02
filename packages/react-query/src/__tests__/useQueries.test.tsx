@@ -3,8 +3,9 @@ import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient } from '@tanstack/query-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, queryOptions, skipToken, useQueries } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { createQueryClient, renderWithClient } from './utils'
 import type {
   QueryFunction,
   QueryKey,

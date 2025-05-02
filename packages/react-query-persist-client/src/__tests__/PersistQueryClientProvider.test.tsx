@@ -3,9 +3,9 @@ import * as React from 'react'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { QueryClient, useQueries, useQuery } from '@tanstack/react-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient } from './utils'
 import type {
   PersistedClient,
   Persister,

@@ -7,8 +7,9 @@ import {
   test,
   vi,
 } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryObserver, focusManager } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
 
 describe('queryObserver', () => {

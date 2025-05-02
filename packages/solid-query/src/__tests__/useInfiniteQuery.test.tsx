@@ -11,6 +11,7 @@ import {
   createSignal,
   on,
 } from 'solid-js'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClientProvider,
@@ -18,14 +19,7 @@ import {
   keepPreviousData,
   useInfiniteQuery,
 } from '..'
-import {
-  Blink,
-  createQueryClient,
-  queryKey,
-  setActTimeout,
-  sleep,
-} from './utils'
-
+import { Blink, createQueryClient, setActTimeout } from './utils'
 import type {
   InfiniteData,
   QueryFunctionContext,

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryObserver } from '..'
-import { createQueryClient, queryKey } from './utils'
+import { createQueryClient } from './utils'
 import type { DefaultError, QueryClient } from '..'
 
 describe('queryObserver', () => {

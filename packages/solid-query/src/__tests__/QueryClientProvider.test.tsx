@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, waitFor } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClientProvider, useQuery, useQueryClient } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient } from './utils'
 
 describe('QueryClientProvider', () => {
   it('sets a specific cache for all queries to use', async () => {

@@ -6,13 +6,12 @@ import {
   createSignal,
 } from 'solid-js'
 import { fireEvent, render } from '@solidjs/testing-library'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, QueryCache, QueryClientProvider, useMutation } from '..'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
-  queryKey,
   setActTimeout,
-  sleep,
 } from './utils'
 import type { UseMutationResult } from '../types'
 

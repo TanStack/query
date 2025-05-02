@@ -10,8 +10,9 @@ import {
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { skipToken, useSuspenseQueries, useSuspenseQuery } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { createQueryClient, renderWithClient } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
 
 type NumberQueryOptions = UseSuspenseQueryOptions<number>

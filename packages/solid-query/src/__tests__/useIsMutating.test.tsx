@@ -2,8 +2,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
+import { sleep } from '@tanstack/query-test-utils'
 import { QueryClientProvider, useIsMutating, useMutation } from '..'
-import { createQueryClient, setActTimeout, sleep } from './utils'
+import { createQueryClient, setActTimeout } from './utils'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {

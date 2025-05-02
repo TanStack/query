@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
@@ -6,7 +7,6 @@ import {
   createQueryClient,
   executeMutation,
   mockOnlineManagerIsOnline,
-  sleep,
 } from './utils'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {

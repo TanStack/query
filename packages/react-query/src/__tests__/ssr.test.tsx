@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
-import { createQueryClient, queryKey, setIsServer } from './utils'
+import { createQueryClient, setIsServer } from './utils'
 
 describe('Server Side Rendering', () => {
   setIsServer(true)

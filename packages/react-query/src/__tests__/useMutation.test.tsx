@@ -4,14 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, QueryCache, useMutation } from '..'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
-  queryKey,
   renderWithClient,
   setActTimeout,
-  sleep,
 } from './utils'
 import type { UseMutationResult } from '../types'
 

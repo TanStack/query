@@ -1,52 +1,31 @@
 /* istanbul ignore file */
 
-export function flushPromises(timeout = 0): Promise<unknown> {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, timeout)
-  })
+import { sleep } from '@tanstack/query-test-utils'
+
+export function flushPromises(timeout = 0) {
+  return sleep(timeout)
 }
 
-export function simpleFetcher(): Promise<string> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve('Some data')
-    }, 0)
-  })
+export function simpleFetcher() {
+  return sleep(0).then(() => 'Some data')
 }
 
 export function getSimpleFetcherWithReturnData(returnData: unknown) {
-  return () =>
-    new Promise((resolve) => setTimeout(() => resolve(returnData), 0))
+  return () => sleep(0).then(() => returnData)
 }
 
-export function infiniteFetcher({
-  pageParam,
-}: {
-  pageParam?: number
-}): Promise<string> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve('data on page ' + pageParam)
-    }, 0)
-  })
+export function infiniteFetcher({ pageParam }: { pageParam?: number }) {
+  return sleep(0).then(() => 'data on page ' + pageParam)
 }
 
-export function rejectFetcher(): Promise<Error> {
-  return new Promise((_, reject) => {
-    setTimeout(() => {
-      return reject(new Error('Some error'))
-    }, 0)
-  })
+export function rejectFetcher() {
+  return sleep(0).then(() => Promise.reject(new Error('Some error')))
 }
 
-export function successMutator<T>(param: T): Promise<T> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve(param)
-    }, 0)
-  })
+export function successMutator<T>(param: T) {
+  return sleep(0).then(() => param)
 }
 
-export function errorMutator<T>(_: T): Promise<Error> {
+export function errorMutator<T>(_: T) {
   return rejectFetcher()
 }

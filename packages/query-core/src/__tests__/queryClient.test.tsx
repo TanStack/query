@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   MutationObserver,
   QueryClient,
@@ -9,12 +10,7 @@ import {
   onlineManager,
   skipToken,
 } from '..'
-import {
-  createQueryClient,
-  mockOnlineManagerIsOnline,
-  queryKey,
-  sleep,
-} from './utils'
+import { createQueryClient, mockOnlineManagerIsOnline } from './utils'
 import type { QueryCache, QueryFunction, QueryObserverOptions } from '..'
 
 describe('queryClient', () => {

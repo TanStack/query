@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClientProvider, useIsFetching, useQuery } from '..'
-import { createQueryClient, queryKey, setActTimeout, sleep } from './utils'
+import { createQueryClient, setActTimeout } from './utils'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105

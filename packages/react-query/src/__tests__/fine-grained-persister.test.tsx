@@ -5,8 +5,9 @@ import {
   PERSISTER_KEY_PREFIX,
   experimental_createPersister,
 } from '@tanstack/query-persist-client-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { createQueryClient, renderWithClient } from './utils'
 
 describe('fine grained persister', () => {
   beforeEach(() => {

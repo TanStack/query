@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { render } from '@testing-library/react'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClientProvider, useQuery, useQueryClient } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient } from './utils'
 
 describe('QueryClientProvider', () => {
   beforeEach(() => {

@@ -5,19 +5,14 @@ import {
   createRenderStream,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClientProvider,
   keepPreviousData,
   useInfiniteQuery,
 } from '..'
-import {
-  createQueryClient,
-  queryKey,
-  renderWithClient,
-  setActTimeout,
-  sleep,
-} from './utils'
+import { createQueryClient, renderWithClient, setActTimeout } from './utils'
 import type {
   InfiniteData,
   QueryFunctionContext,
