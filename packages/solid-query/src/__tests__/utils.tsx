@@ -1,8 +1,6 @@
 import { vi } from 'vitest'
 import { Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import { onlineManager } from '@tanstack/query-core'
-import { QueryClient } from '../QueryClient'
-import type { QueryClientConfig } from '..'
 import type { ParentProps } from 'solid-js'
 import type { MockInstance } from 'vitest'
 
@@ -24,12 +22,6 @@ export function Blink(
       <>{props.children}</>
     </Show>
   )
-}
-
-export function mockVisibilityState(
-  value: DocumentVisibilityState,
-): MockInstance<() => DocumentVisibilityState> {
-  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockOnlineManagerIsOnline(

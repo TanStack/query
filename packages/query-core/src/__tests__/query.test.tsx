@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import {
+  mockVisibilityState,
+  queryKey,
+  sleep,
+} from '@tanstack/query-test-utils'
 import {
   QueryClient,
   QueryObserver,
@@ -7,11 +11,7 @@ import {
   hydrate,
   isCancelledError,
 } from '..'
-import {
-  mockOnlineManagerIsOnline,
-  mockVisibilityState,
-  setIsServer,
-} from './utils'
+import { mockOnlineManagerIsOnline, setIsServer } from './utils'
 import type { QueryCache, QueryFunctionContext, QueryObserverResult } from '..'
 
 describe('query', () => {

@@ -42,12 +42,6 @@ export function Blink({
   return shouldShow ? <>{children}</> : <>off</>
 }
 
-export function mockVisibilityState(
-  value: DocumentVisibilityState,
-): MockInstance<() => DocumentVisibilityState> {
-  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
-}
-
 export function mockOnlineManagerIsOnline(
   value: boolean,
 ): MockInstance<() => boolean> {

@@ -11,7 +11,11 @@ import {
 } from 'solid-js'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { reconcile } from 'solid-js/store'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import {
+  mockVisibilityState,
+  queryKey,
+  sleep,
+} from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -19,12 +23,7 @@ import {
   keepPreviousData,
   useQuery,
 } from '..'
-import {
-  Blink,
-  mockOnlineManagerIsOnline,
-  mockVisibilityState,
-  setActTimeout,
-} from './utils'
+import { Blink, mockOnlineManagerIsOnline, setActTimeout } from './utils'
 import type {
   DefinedUseQueryResult,
   OmitKeyof,

@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, reactive } from 'vue-demi'
+import { simpleFetcher, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
-import { flushPromises, simpleFetcher } from './test-utils'
 import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
@@ -19,7 +19,7 @@ describe('useIsFetching', () => {
     expect(isFetchingQuery.value).toStrictEqual(true)
     expect(isFetching.value).toStrictEqual(2)
 
-    await flushPromises()
+    await sleep(0)
 
     expect(isFetchingQuery.value).toStrictEqual(false)
     expect(isFetching.value).toStrictEqual(0)
@@ -40,12 +40,12 @@ describe('useIsFetching', () => {
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
-    await flushPromises()
+    await sleep(0)
 
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
-    await flushPromises()
+    await sleep(0)
 
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
@@ -69,7 +69,7 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(0)
 
     filter.stale = true
-    await flushPromises()
+    await sleep(0)
 
     expect(isFetching.value).toStrictEqual(1)
   })

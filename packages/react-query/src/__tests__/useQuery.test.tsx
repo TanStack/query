@@ -2,7 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import {
+  mockVisibilityState,
+  queryKey,
+  sleep,
+} from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -15,7 +19,6 @@ import {
 import {
   Blink,
   mockOnlineManagerIsOnline,
-  mockVisibilityState,
   renderWithClient,
   setActTimeout,
 } from './utils'

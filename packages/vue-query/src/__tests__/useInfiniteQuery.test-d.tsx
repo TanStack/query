@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive } from 'vue-demi'
+import { simpleFetcher } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
-import { simpleFetcher } from './test-utils'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('Discriminated union return type', () => {

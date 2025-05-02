@@ -1,14 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, ref } from 'vue-demi'
+import { simpleFetcher, sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
-import {
-  flushPromises,
-  getSimpleFetcherWithReturnData,
-  rejectFetcher,
-  simpleFetcher,
-} from './test-utils'
 import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
@@ -60,7 +55,7 @@ describe('useQueries', () => {
     ]
     const queriesState = useQueries({ queries })
 
-    await flushPromises()
+    await sleep(0)
 
     expect(queriesState.value).toMatchObject([
       {
@@ -82,7 +77,8 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key21'],
-        queryFn: rejectFetcher,
+        queryFn: () =>
+          sleep(0).then(() => Promise.reject(new Error('Some error'))),
       },
       {
         queryKey: ['key22'],
@@ -91,7 +87,7 @@ describe('useQueries', () => {
     ]
     const queriesState = useQueries({ queries })
 
-    await flushPromises()
+    await sleep(0)
 
     expect(queriesState.value).toMatchObject([
       {
@@ -113,36 +109,36 @@ describe('useQueries', () => {
     const queries = ref([
       {
         queryKey: ['key31'],
-        queryFn: getSimpleFetcherWithReturnData('value31'),
+        queryFn: () => sleep(0).then(() => 'value31'),
       },
       {
         queryKey: ['key32'],
-        queryFn: getSimpleFetcherWithReturnData('value32'),
+        queryFn: () => sleep(0).then(() => 'value32'),
       },
       {
         queryKey: ['key33'],
-        queryFn: getSimpleFetcherWithReturnData('value33'),
+        queryFn: () => sleep(0).then(() => 'value33'),
       },
     ])
     const queriesState = useQueries({ queries })
 
-    await flushPromises()
+    await sleep(0)
 
     queries.value.splice(
       0,
       queries.value.length,
       {
         queryKey: ['key31'],
-        queryFn: getSimpleFetcherWithReturnData('value31'),
+        queryFn: () => sleep(0).then(() => 'value31'),
       },
       {
         queryKey: ['key34'],
-        queryFn: getSimpleFetcherWithReturnData('value34'),
+        queryFn: () => sleep(0).then(() => 'value34'),
       },
     )
 
-    await flushPromises()
-    await flushPromises()
+    await sleep(0)
+    await sleep(0)
 
     expect(queriesState.value.length).toEqual(2)
     expect(queriesState.value).toMatchObject([
@@ -180,7 +176,7 @@ describe('useQueries', () => {
       },
     ]
     const queriesState = useQueries({ queries })
-    await flushPromises()
+    await sleep(0)
 
     expect(queriesState.value).toMatchObject([
       {
@@ -212,7 +208,7 @@ describe('useQueries', () => {
     ]
 
     useQueries({ queries }, queryClient)
-    await flushPromises()
+    await sleep(0)
 
     expect(useQueryClient).toHaveBeenCalledTimes(0)
   })
@@ -225,11 +221,11 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key41'],
-        queryFn: getSimpleFetcherWithReturnData(firstResult),
+        queryFn: () => sleep(0).then(() => firstResult),
       },
       {
         queryKey: ['key42'],
-        queryFn: getSimpleFetcherWithReturnData(secondResult),
+        queryFn: () => sleep(0).then(() => secondResult),
       },
     ]
 
@@ -245,7 +241,7 @@ describe('useQueries', () => {
       },
       queryClient,
     )
-    await flushPromises()
+    await sleep(0)
 
     expect(queriesResult.value).toMatchObject({
       combined: true,
@@ -271,7 +267,7 @@ describe('useQueries', () => {
 
     checked.value = true
 
-    await flushPromises()
+    await sleep(0)
 
     expect(fetchFn).toHaveBeenCalled()
   })
@@ -294,13 +290,13 @@ describe('useQueries', () => {
 
     key1.value = 'key3'
 
-    await flushPromises()
+    await sleep(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key4'
 
-    await flushPromises()
+    await sleep(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(3)
   })
@@ -339,31 +335,31 @@ describe('useQueries', () => {
 
     key1.value = 'key1-updated'
 
-    await flushPromises()
+    await sleep(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key2-updated'
 
-    await flushPromises()
+    await sleep(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(3)
 
     key3.value = 'key3-updated'
 
-    await flushPromises()
+    await sleep(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(4)
 
     key4.value = 'key4-updated'
 
-    await flushPromises()
+    await sleep(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(5)
 
     key5.value = 'key5-updated'
 
-    await flushPromises()
+    await sleep(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(6)
   })

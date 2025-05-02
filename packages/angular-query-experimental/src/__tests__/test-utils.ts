@@ -1,43 +1,10 @@
 import { isSignal, untracked } from '@angular/core'
 import { SIGNAL, signalSetFn } from '@angular/core/primitives/signals'
 import { expect } from 'vitest'
-import { sleep } from '@tanstack/query-test-utils'
 import type { InputSignal, Signal } from '@angular/core'
 import type { ComponentFixture } from '@angular/core/testing'
 
 /* eslint jsdoc/require-jsdoc: 0, jsdoc/require-param: 0 */
-
-export function simpleFetcher(): Promise<string> {
-  return sleep(0).then(() => 'Some data')
-}
-
-export function delayedFetcher(timeout = 0): () => Promise<string> {
-  return () => sleep(timeout).then(() => 'Some data')
-}
-
-export function getSimpleFetcherWithReturnData(returnData: unknown) {
-  return () => sleep(0).then(() => returnData)
-}
-
-export function rejectFetcher(): Promise<Error> {
-  return sleep(0).then(() => Promise.reject(new Error('Some error')))
-}
-
-export function infiniteFetcher({
-  pageParam,
-}: {
-  pageParam?: number
-}): Promise<string> {
-  return sleep(0).then(() => 'data on page ' + pageParam)
-}
-
-export function successMutator<T>(param: T): Promise<T> {
-  return sleep(0).then(() => param)
-}
-
-export function errorMutator(_parameter?: unknown): Promise<Error> {
-  return rejectFetcher()
-}
 
 // Evaluate all signals on an object and return the result
 function evaluateSignals<T extends Record<string, any>>(

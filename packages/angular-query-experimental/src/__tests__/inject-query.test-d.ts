@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it, test } from 'vitest'
+import { simpleFetcher } from '@tanstack/query-test-utils'
 import { injectQuery, queryOptions } from '..'
-import { simpleFetcher } from './test-utils'
 import type { Signal } from '@angular/core'
 
 describe('initialData', () => {

@@ -4,12 +4,6 @@ import * as utils from '../utils'
 import type { MockInstance } from 'vitest'
 import type { MutationOptions, QueryClient } from '..'
 
-export function mockVisibilityState(
-  value: DocumentVisibilityState,
-): MockInstance<() => DocumentVisibilityState> {
-  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
-}
-
 export function mockOnlineManagerIsOnline(
   value: boolean,
 ): MockInstance<() => boolean> {

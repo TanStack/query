@@ -1,10 +1,8 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
-import { useQuery } from '../useQuery'
-import { queryOptions } from '../queryOptions'
-import { simpleFetcher } from './test-utils'
-import type { OmitKeyof } from '..'
-import type { UseQueryOptions } from '../useQuery'
+import { simpleFetcher } from '@tanstack/query-test-utils'
+import { queryOptions, useQuery } from '..'
+import type { OmitKeyof, UseQueryOptions } from '..'
 
 describe('useQuery', () => {
   describe('Config object overload', () => {

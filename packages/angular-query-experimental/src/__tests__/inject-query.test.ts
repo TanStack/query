@@ -17,15 +17,9 @@ import {
   test,
   vi,
 } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { queryKey, simpleFetcher, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
-import {
-  delayedFetcher,
-  getSimpleFetcherWithReturnData,
-  rejectFetcher,
-  setSignalInputs,
-  simpleFetcher,
-} from './test-utils'
+import { setSignalInputs } from './test-utils'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
 
 const QUERY_DURATION = 100
@@ -286,7 +280,7 @@ describe('injectQuery', () => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: ['key2'],
-        queryFn: getSimpleFetcherWithReturnData('result2'),
+        queryFn: () => sleep(0).then(() => 'result2'),
       }))
     })
 
@@ -305,7 +299,8 @@ describe('injectQuery', () => {
       return injectQuery(() => ({
         retry: false,
         queryKey: ['key3'],
-        queryFn: rejectFetcher,
+        queryFn: () =>
+          sleep(0).then(() => Promise.reject(new Error('Some error'))),
       }))
     })
 
@@ -380,7 +375,9 @@ describe('injectQuery', () => {
       }))
     })
 
-    const dependentQueryFn = vi.fn().mockImplementation(delayedFetcher(1000))
+    const dependentQueryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(1000).then(() => 'Some data'))
 
     const query2 = TestBed.runInInjectionContext(() => {
       return injectQuery(
@@ -458,7 +455,8 @@ describe('injectQuery', () => {
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
           queryKey: ['key12'],
-          queryFn: rejectFetcher,
+          queryFn: () =>
+            sleep(0).then(() => Promise.reject(new Error('Some error'))),
           throwOnError: boundaryFn,
         }))
       })
@@ -478,7 +476,8 @@ describe('injectQuery', () => {
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
           queryKey: ['key13'],
-          queryFn: rejectFetcher,
+          queryFn: () =>
+            sleep(0).then(() => Promise.reject(new Error('Some error'))),
           throwOnError: true,
         }))
       })
@@ -490,7 +489,8 @@ describe('injectQuery', () => {
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
           queryKey: ['key14'],
-          queryFn: rejectFetcher,
+          queryFn: () =>
+            sleep(0).then(() => Promise.reject(new Error('Some error'))),
           throwOnError: () => true,
         }))
       })
@@ -504,7 +504,8 @@ describe('injectQuery', () => {
       return injectQuery(() => ({
         retry: false,
         queryKey: ['key15'],
-        queryFn: rejectFetcher,
+        queryFn: () =>
+          sleep(0).then(() => Promise.reject(new Error('Some error'))),
       }))
     })
 
