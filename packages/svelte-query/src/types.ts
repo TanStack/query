@@ -17,7 +17,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 
-export type FunctionedParams<T> = () => T
+export type Accessor<T> = () => T
 
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<

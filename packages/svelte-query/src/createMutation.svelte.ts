@@ -1,14 +1,13 @@
-import { onDestroy } from 'svelte'
-
-import { MutationObserver, notifyManager } from '@tanstack/query-core'
+import { MutationObserver } from '@tanstack/query-core'
+import { untrack } from 'svelte'
 import { useQueryClient } from './useQueryClient.js'
+import { createRawRef } from './containers.svelte.js'
 import type {
+  Accessor,
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
-  FunctionedParams,
 } from './types.js'
-
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 
 export function createMutation<
@@ -17,17 +16,16 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: FunctionedParams<
-    CreateMutationOptions<TData, TError, TVariables, TContext>
-  >,
-  queryClient?: QueryClient,
+  options: Accessor<CreateMutationOptions<TData, TError, TVariables, TContext>>,
+  queryClientOption?: Accessor<QueryClient>,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
-  const client = useQueryClient(queryClient)
+  const queryClient = $derived(queryClientOption?.())
+  const client = $derived(useQueryClient(queryClient))
 
   const observer = $derived(
     new MutationObserver<TData, TError, TVariables, TContext>(
       client,
-      options(),
+      untrack(() => options()),
     ),
   )
 
@@ -37,35 +35,23 @@ export function createMutation<
     observer.mutate(variables, mutateOptions).catch(noop)
   })
 
+  function createResult() {
+    const result = observer.getCurrentResult()
+    return {
+      ...result,
+      mutateAsync: result.mutate,
+      mutate,
+    }
+  }
+
+  // svelte-ignore state_referenced_locally
+  const [mutation, update] = createRawRef(createResult())
+
+  $effect(() => update(createResult()))
   $effect.pre(() => {
     observer.setOptions(options())
   })
-
-  const result = $state(observer.getCurrentResult())
-
-  const unsubscribe = observer.subscribe((val) => {
-    notifyManager.batchCalls(() => {
-      Object.assign(result, val)
-    })()
-  })
-
-  onDestroy(() => {
-    unsubscribe()
-  })
-
-  // @ts-expect-error
-  return new Proxy(result, {
-    get: (_, prop) => {
-      const r = {
-        ...result,
-        mutate,
-        mutateAsync: result.mutate,
-      }
-      if (prop == 'value') return r
-      // @ts-expect-error
-      return r[prop]
-    },
-  })
+  return mutation
 }
 
 function noop() {}

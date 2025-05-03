@@ -14,13 +14,19 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "keywords": [
+    "tanstack",
+    "query",
+    "svelte",
+    "swr"
+  ],
   "scripts": {
     "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
     "compile": "tsc --build",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint ./src",
-    "test:lib": "vitest",
-    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:lib": "vitest run",
+    "test:lib:dev": "vitest",
     "test:build": "publint --strict && attw --pack",
     "build": "svelte-package --input ./src --output ./dist"
   },
@@ -54,6 +60,6 @@
     "svelte-check": "^4.1.5"
   },
   "peerDependencies": {
-    "svelte": "^5.0.0"
+    "svelte": "^5.7.0"
   }
 }

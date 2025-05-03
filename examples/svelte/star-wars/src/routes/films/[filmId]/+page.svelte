@@ -1,18 +1,17 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
   import Character from './Character.svelte'
-
-  let { data } = $props()
+  import { page } from '$app/state'
 
   const getFilm = async () => {
     const res = await fetch(
-      `https://swapi.dev/api/films/${data.params.filmId}/`,
+      `https://swapi.dev/api/films/${page.params.filmId}/`,
     )
     return await res.json()
   }
 
   const query = createQuery(() => ({
-    queryKey: ['film', data.params.filmId],
+    queryKey: ['film', page.params.filmId],
     queryFn: getFilm,
   }))
 </script>

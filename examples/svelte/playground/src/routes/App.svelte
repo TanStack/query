@@ -26,7 +26,7 @@
 
   <button
     onclick={() => {
-      views.value = [...views.value, '']
+      views.value.push('')
     }}
   >
     Add Filter List
