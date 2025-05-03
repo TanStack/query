@@ -145,7 +145,8 @@ export type DefinedCreateQueryResult<
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+> = BaseQueryNarrowing<TData, TError> &
+  MapToSignals<InfiniteQueryObserverResult<TData, TError>>
 
 /**
  * @public
@@ -308,8 +309,3 @@ export type CreateMutationResult<
   >,
 > = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
   MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
-
-/**
- * @public
- */
-export type NonUndefinedGuard<T> = T extends undefined ? never : T

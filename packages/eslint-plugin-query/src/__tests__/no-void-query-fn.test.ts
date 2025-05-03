@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { RuleTester } from '@typescript-eslint/rule-tester'
-import { afterAll, describe, it } from 'vitest'
+import { afterAll, describe, it, test } from 'vitest'
 import { rule } from '../rules/no-void-query-fn/no-void-query-fn.rule'
 import { normalizeIndent } from './test-utils'
 
@@ -18,11 +18,12 @@ const ruleTester = new RuleTester({
   },
 })
 
-ruleTester.run('no-void-query-fn', rule, {
-  valid: [
-    {
-      name: 'queryFn returns a value',
-      code: normalizeIndent`
+test('should run rule tests', () => {
+  ruleTester.run('no-void-query-fn', rule, {
+    valid: [
+      {
+        name: 'queryFn returns a value',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -33,10 +34,10 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-    },
-    {
-      name: 'queryFn returns a Promise',
-      code: normalizeIndent`
+      },
+      {
+        name: 'queryFn returns a Promise',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -47,10 +48,10 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-    },
-    {
-      name: 'queryFn returns Promise.resolve',
-      code: normalizeIndent`
+      },
+      {
+        name: 'queryFn returns Promise.resolve',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -61,10 +62,10 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-    },
-    {
-      name: 'queryFn with explicit Promise type',
-      code: normalizeIndent`
+      },
+      {
+        name: 'queryFn with explicit Promise type',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         interface Data {
@@ -81,10 +82,10 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-    },
-    {
-      name: 'queryFn with generic Promise type',
-      code: normalizeIndent`
+      },
+      {
+        name: 'queryFn with generic Promise type',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         interface Response<T> {
@@ -101,10 +102,10 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-    },
-    {
-      name: 'queryFn with external async function',
-      code: normalizeIndent`
+      },
+      {
+        name: 'queryFn with external async function',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         async function fetchData(): Promise<{ data: string }> {
@@ -119,10 +120,10 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-    },
-    {
-      name: 'queryFn returns null',
-      code: normalizeIndent`
+      },
+      {
+        name: 'queryFn returns null',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -133,10 +134,10 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-    },
-    {
-      name: 'queryFn returns 0',
-      code: normalizeIndent`
+      },
+      {
+        name: 'queryFn returns 0',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -147,10 +148,10 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-    },
-    {
-      name: 'queryFn returns false',
-      code: normalizeIndent`
+      },
+      {
+        name: 'queryFn returns false',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -161,12 +162,12 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-    },
-  ],
-  invalid: [
-    {
-      name: 'queryFn returns void',
-      code: normalizeIndent`
+      },
+    ],
+    invalid: [
+      {
+        name: 'queryFn returns void',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -179,11 +180,11 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'queryFn returns undefined',
-      code: normalizeIndent`
+        errors: [{ messageId: 'noVoidReturn' }],
+      },
+      {
+        name: 'queryFn returns undefined',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -194,11 +195,11 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'async queryFn returns void',
-      code: normalizeIndent`
+        errors: [{ messageId: 'noVoidReturn' }],
+      },
+      {
+        name: 'async queryFn returns void',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -211,11 +212,11 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'queryFn with explicit void Promise',
-      code: normalizeIndent`
+        errors: [{ messageId: 'noVoidReturn' }],
+      },
+      {
+        name: 'queryFn with explicit void Promise',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -228,11 +229,11 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'queryFn with Promise.resolve(undefined)',
-      code: normalizeIndent`
+        errors: [{ messageId: 'noVoidReturn' }],
+      },
+      {
+        name: 'queryFn with Promise.resolve(undefined)',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -243,11 +244,11 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'queryFn with external void async function',
-      code: normalizeIndent`
+        errors: [{ messageId: 'noVoidReturn' }],
+      },
+      {
+        name: 'queryFn with external void async function',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         async function voidOperation(): Promise<void> {
@@ -262,11 +263,11 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'queryFn with conditional return (one branch missing)',
-      code: normalizeIndent`
+        errors: [{ messageId: 'noVoidReturn' }],
+      },
+      {
+        name: 'queryFn with conditional return (one branch missing)',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -282,11 +283,11 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'queryFn with ternary operator returning undefined',
-      code: normalizeIndent`
+        errors: [{ messageId: 'noVoidReturn' }],
+      },
+      {
+        name: 'queryFn with ternary operator returning undefined',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -297,11 +298,11 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-    {
-      name: 'async queryFn with try/catch missing return in catch',
-      code: normalizeIndent`
+        errors: [{ messageId: 'noVoidReturn' }],
+      },
+      {
+        name: 'async queryFn with try/catch missing return in catch',
+        code: normalizeIndent`
         import { useQuery } from '@tanstack/react-query'
 
         function Component() {
@@ -319,7 +320,8 @@ ruleTester.run('no-void-query-fn', rule, {
           return null
         }
       `,
-      errors: [{ messageId: 'noVoidReturn' }],
-    },
-  ],
-})
+        errors: [{ messageId: 'noVoidReturn' }],
+      },
+    ],
+  })
+}, 10_000)

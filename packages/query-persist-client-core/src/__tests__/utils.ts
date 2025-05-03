@@ -7,7 +7,7 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
 }
 
-export function sleep(timeout: number): Promise<void> {
+function sleep(timeout: number): Promise<void> {
   return new Promise((resolve, _reject) => {
     setTimeout(resolve, timeout)
   })
@@ -17,7 +17,7 @@ export function createMockPersister(): Persister {
   let storedState: PersistedClient | undefined
 
   return {
-    async persistClient(persistClient: PersistedClient) {
+    persistClient(persistClient: PersistedClient) {
       storedState = persistClient
     },
     async restoreClient() {
