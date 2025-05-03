@@ -62,8 +62,6 @@ describe('injectMutation', () => {
       }))
     })
 
-    TestBed.flushEffects()
-
     mutation.mutate(result)
     vi.advanceTimersByTime(1)
 
