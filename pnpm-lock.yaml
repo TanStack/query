@@ -47,9 +47,6 @@ importers:
       '@tanstack/config':
         specifier: ^0.14.2
         version: 0.14.2(@types/node@22.15.3)(esbuild@0.25.3)(eslint@9.15.0(jiti@2.4.2))(rollup@4.40.1)(typescript@5.8.3)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
-      '@tanstack/query-test-utils':
-        specifier: workspace:*
-        version: link:packages/query-test-utils
       '@testing-library/jest-dom':
         specifier: ^6.6.3
         version: 6.6.3
@@ -1228,7 +1225,7 @@ importers:
         version: 6.1.18(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0)
       '@react-navigation/stack':
         specifier: ^6.4.1
-        version: 6.4.1(44i6xs33lapt7cl2pkawmwjtru)
+        version: 6.4.1(e9c097e00fee89f3cf54c317dda4adb5)
       '@tanstack/react-query':
         specifier: workspace:*
         version: link:../../../packages/react-query
@@ -2319,6 +2316,9 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^19.2.4
         version: 19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/compiler@19.2.4)(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       eslint-plugin-jsdoc:
         specifier: ^50.5.0
         version: 50.5.0(eslint@9.15.0(jiti@2.4.2))
@@ -2350,6 +2350,9 @@ importers:
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../angular-query-experimental
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       '@testing-library/angular':
         specifier: ^17.3.2
         version: 17.3.7(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/router@19.2.4(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.4(@angular/animations@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.4(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.4(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2))(@testing-library/dom@10.4.0)
@@ -2391,6 +2394,9 @@ importers:
         specifier: workspace:*
         version: link:../query-persist-client-core
     devDependencies:
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
@@ -2425,6 +2431,9 @@ importers:
 
   packages/query-core:
     devDependencies:
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
@@ -2480,6 +2489,9 @@ importers:
         specifier: workspace:*
         version: link:../query-core
     devDependencies:
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
@@ -2493,6 +2505,9 @@ importers:
         specifier: workspace:*
         version: link:../query-persist-client-core
     devDependencies:
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
@@ -2512,6 +2527,9 @@ importers:
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       '@testing-library/react':
         specifier: ^16.1.0
         version: 16.1.0(@testing-library/dom@10.4.0)(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2595,6 +2613,9 @@ importers:
         specifier: workspace:*
         version: link:../query-persist-client-core
     devDependencies:
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       '@tanstack/react-query':
         specifier: workspace:*
         version: link:../react-query
@@ -2623,6 +2644,9 @@ importers:
       '@solidjs/testing-library':
         specifier: ^0.8.10
         version: 0.8.10(@solidjs/router@0.15.3(solid-js@1.9.5))(solid-js@1.9.5)
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
@@ -2667,6 +2691,9 @@ importers:
       '@solidjs/testing-library':
         specifier: ^0.8.10
         version: 0.8.10(@solidjs/router@0.15.3(solid-js@1.9.5))(solid-js@1.9.5)
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../solid-query
@@ -2695,6 +2722,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.3
         version: 5.0.3(svelte@5.26.1)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       '@testing-library/svelte':
         specifier: ^5.2.6
         version: 5.2.6(svelte@5.26.1)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))(vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.15.3)(jiti@2.4.2)(jsdom@25.0.1)(less@4.2.2)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.15.3)(typescript@5.8.3))(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
@@ -2748,6 +2778,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.3
         version: 5.0.3(svelte@5.26.1)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2779,6 +2812,9 @@ importers:
         specifier: ^0.14.10
         version: 0.14.10(@vue/composition-api@1.7.2(vue@3.4.35(typescript@5.8.3)))(vue@3.4.35(typescript@5.8.3))
     devDependencies:
+      '@tanstack/query-test-utils':
+        specifier: workspace:*
+        version: link:../query-test-utils
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
         version: 5.2.1(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(less@4.2.2)(lightningcss@1.29.2)(sass@1.86.0)(terser@5.39.0)(yaml@2.6.1))(vue@3.4.35(typescript@5.8.3))
@@ -5033,6 +5069,7 @@ packages:
     resolution: {integrity: sha512-IVfGJa7gjChDET1dK9SekxFFdflarnUB8PwW8aGwEoF3oAsSDuNUTYS+SKDOyOJxQyDC1aPFMuRYLoDInyV9Ew==}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@img/sharp-libvips-linux-arm@1.0.5':
     resolution: {integrity: sha512-gvcC4ACAOPRNATg/ov8/MnbxFDJqf/pDePbBnuBDcjsI8PssmjoKMAz4LtLaVi+OnSb5FK/yIOamqDwGmXW32g==}
@@ -5044,11 +5081,13 @@ packages:
     resolution: {integrity: sha512-s8BAd0lwUIvYCJyRdFqvsj+BJIpDBSxs6ivrOPm/R7piTs5UIwY5OjXrP2bqXC9/moGsyRa37eYWYCOGVXxVrA==}
     cpu: [arm]
     os: [linux]
+    libc: [glibc]
 
   '@img/sharp-libvips-linux-ppc64@1.1.0':
     resolution: {integrity: sha512-tiXxFZFbhnkWE2LA8oQj7KYR+bWBkiV2nilRldT7bqoEZ4HiDOcePr9wVDAZPi/Id5fT1oY9iGnDq20cwUz8lQ==}
     cpu: [ppc64]
     os: [linux]
+    libc: [glibc]
 
   '@img/sharp-libvips-linux-s390x@1.0.4':
     resolution: {integrity: sha512-u7Wz6ntiSSgGSGcjZ55im6uvTrOxSIS8/dgoVMoiGE9I6JAfU50yH5BoDlYA1tcuGS7g/QNtetJnxA6QEsCVTA==}
@@ -5060,6 +5099,7 @@ packages:
     resolution: {integrity: sha512-xukSwvhguw7COyzvmjydRb3x/09+21HykyapcZchiCUkTThEQEOMtBj9UhkaBRLuBrgLFzQ2wbxdeCCJW/jgJA==}
     cpu: [s390x]
     os: [linux]
+    libc: [glibc]
 
   '@img/sharp-libvips-linux-x64@1.0.4':
     resolution: {integrity: sha512-MmWmQ3iPFZr0Iev+BAgVMb3ZyC4KeFc3jFxnNbEPas60e1cIfevbtuyf9nDGIzOaW9PdnDciJm+wFFaTlj5xYw==}
@@ -5071,6 +5111,7 @@ packages:
     resolution: {integrity: sha512-yRj2+reB8iMg9W5sULM3S74jVS7zqSzHG3Ol/twnAAkAhnGQnpjj6e4ayUz7V+FpKypwgs82xbRdYtchTTUB+Q==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@img/sharp-libvips-linuxmusl-arm64@1.0.4':
     resolution: {integrity: sha512-9Ti+BbTYDcsbp4wfYib8Ctm1ilkugkA/uscUn6UXK1ldpC1JjiXbLfFZtRlBhjPZ5o1NCLiDbg8fhUPKStHoTA==}
@@ -5082,6 +5123,7 @@ packages:
     resolution: {integrity: sha512-jYZdG+whg0MDK+q2COKbYidaqW/WTz0cc1E+tMAusiDygrM4ypmSCjOJPmFTvHHJ8j/6cAGyeDWZOsK06tP33w==}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@img/sharp-libvips-linuxmusl-x64@1.0.4':
     resolution: {integrity: sha512-viYN1KX9m+/hGkJtvYYp+CCLgnJXwiQB39damAO7WMdKWlIhmYTfHjwSbQeUK/20vY154mwezd9HflVFM1wVSw==}
@@ -5093,6 +5135,7 @@ packages:
     resolution: {integrity: sha512-wK7SBdwrAiycjXdkPnGCPLjYb9lD4l6Ze2gSdAGVZrEL05AOUJESWU2lhlC+Ffn5/G+VKuSm6zzbQSzFX/P65A==}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@img/sharp-linux-arm64@0.33.5':
     resolution: {integrity: sha512-JMVv+AMRyGOHtO1RFBiJy/MBsgz0x4AWrT6QoEVVTyh1E39TrCUpTRI7mx9VksGX4awWASxqCYLCV4wBZHAYxA==}
@@ -5106,6 +5149,7 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@img/sharp-linux-arm@0.33.5':
     resolution: {integrity: sha512-JTS1eldqZbJxjvKaAkxhZmBqPRGmxgu+qFKSInv8moZ2AmT5Yib3EQ1c6gp493HvrvV8QgdOXdyaIBrhvFhBMQ==}
@@ -5119,6 +5163,7 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [arm]
     os: [linux]
+    libc: [glibc]
 
   '@img/sharp-linux-s390x@0.33.5':
     resolution: {integrity: sha512-y/5PCd+mP4CA/sPDKl2961b+C9d+vPAveS33s6Z3zfASk2j5upL6fXVPZi7ztePZ5CuH+1kW8JtvxgbuXHRa4Q==}
@@ -5132,6 +5177,7 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [s390x]
     os: [linux]
+    libc: [glibc]
 
   '@img/sharp-linux-x64@0.33.5':
     resolution: {integrity: sha512-opC+Ok5pRNAzuvq1AG0ar+1owsu842/Ab+4qvU879ippJBHvyY5n2mxF1izXqkPYlGuP/M556uh53jRLJmzTWA==}
@@ -5145,6 +5191,7 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@img/sharp-linuxmusl-arm64@0.33.5':
     resolution: {integrity: sha512-XrHMZwGQGvJg2V/oRSUfSAfjfPxO+4DkiRh6p2AFjLQztWUuY/o8Mq0eMQVIY7HJ1CDQUJlxGGZRw1a5bqmd1g==}
@@ -5158,6 +5205,7 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@img/sharp-linuxmusl-x64@0.33.5':
     resolution: {integrity: sha512-WT+d/cgqKkkKySYmqoZ8y3pxx7lx9vVejxW/W4DOFMYVSkErR+w7mf2u8m/y4+xHe7yY9DAXQMWQhpnMuFfScw==}
@@ -5171,6 +5219,7 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@img/sharp-wasm32@0.33.5':
     resolution: {integrity: sha512-ykUW4LVGaMcU9lu9thv85CbRMAwfeadCJHRsg2GmeRa/cJxsVY9Rbd57JcMxBkKHag5U/x7TSBpScF4U8ElVzg==}
@@ -5817,19 +5866,21 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
+    libc: [glibc]
 
   '@next/swc-linux-arm64-musl@14.2.28':
     resolution: {integrity: sha512-p6gvatI1nX41KCizEe6JkF0FS/cEEF0u23vKDpl+WhPe/fCTBeGkEBh7iW2cUM0rvquPVwPWdiUR6Ebr/kQWxQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@next/swc-linux-arm64-musl@15.3.1':
     resolution: {integrity: sha512-IIxXEXRti/AulO9lWRHiCpUUR8AR/ZYLPALgiIg/9ENzMzLn3l0NSxVdva7R/VDcuSEBo0eGVCe3evSIHNz0Hg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@next/swc-linux-x64-gnu@14.2.28':
     resolution: {integrity: sha512-nsiSnz2wO6GwMAX2o0iucONlVL7dNgKUqt/mDTATGO2NY59EO/ZKnKEr80BJFhuA5UC1KZOMblJHWZoqIJddpA==}
@@ -5843,19 +5894,21 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
+    libc: [glibc]
 
   '@next/swc-linux-x64-musl@14.2.28':
     resolution: {integrity: sha512-+IuGQKoI3abrXFqx7GtlvNOpeExUH1mTIqCrh1LGFf8DnlUcTmOOCApEnPJUSLrSbzOdsF2ho2KhnQoO0I1RDw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@next/swc-linux-x64-musl@15.3.1':
     resolution: {integrity: sha512-FeAbR7FYMWR+Z+M5iSGytVryKHiAsc0x3Nc3J+FD5NVbD5Mqz7fTSy8CYliXinn7T26nDMbpExRUI/4ekTvoiA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@next/swc-win32-arm64-msvc@14.2.28':
     resolution: {integrity: sha512-l61WZ3nevt4BAnGksUVFKy2uJP5DPz2E0Ma/Oklvo3sGj9sw3q7vBWONFRgz+ICiHpW5mV+mBrkB3XEubMrKaA==}
@@ -20169,7 +20222,7 @@ snapshots:
     dependencies:
       nanoid: 3.3.8
 
-  '@react-navigation/stack@6.4.1(44i6xs33lapt7cl2pkawmwjtru)':
+  '@react-navigation/stack@6.4.1(e9c097e00fee89f3cf54c317dda4adb5)':
     dependencies:
       '@react-navigation/elements': 1.3.31(@react-navigation/native@6.1.18(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0))(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0)
       '@react-navigation/native': 6.1.18(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0)

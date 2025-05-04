@@ -67,6 +67,7 @@
     "vue-demi": "^0.14.10"
   },
   "devDependencies": {
+    "@tanstack/query-test-utils": "workspace:*",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/composition-api": "1.7.2",
     "eslint-plugin-vue": "^9.27.0",

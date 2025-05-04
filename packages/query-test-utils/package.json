@@ -1,5 +1,6 @@
 {
   "name": "@tanstack/query-test-utils",
+  "version": "0.0.0",
   "description": "Internal test utilities for TanStack Query",
   "author": "Jonghyeon Ko <manudeli.ko@gmail.com>",
   "private": true,

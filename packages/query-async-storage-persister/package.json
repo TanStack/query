@@ -62,6 +62,7 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
+    "@tanstack/query-test-utils": "workspace:*",
     "npm-run-all2": "^5.0.0"
   }
 }
