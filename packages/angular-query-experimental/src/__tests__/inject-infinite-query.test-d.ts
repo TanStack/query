@@ -23,7 +23,7 @@ describe('injectInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should narrow type after isSuccess', async () => {
+  test('should narrow type after isSuccess', () => {
     const query = TestBed.runInInjectionContext(() => {
       return injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
