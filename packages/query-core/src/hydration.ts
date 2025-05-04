@@ -22,6 +22,7 @@ export interface DehydrateOptions {
   serializeData?: TransformerFn
   shouldDehydrateMutation?: (mutation: Mutation) => boolean
   shouldDehydrateQuery?: (query: Query) => boolean
+  shouldRedactErrors?: (error: unknown) => boolean
 }
 
 export interface HydrateOptions {
@@ -70,6 +71,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
 function dehydrateQuery(
   query: Query,
   serializeData: TransformerFn,
+  shouldRedactErrors: (error: unknown) => boolean,
 ): DehydratedQuery {
   return {
     state: {
@@ -82,6 +84,11 @@ function dehydrateQuery(
     queryHash: query.queryHash,
     ...(query.state.status === 'pending' && {
       promise: query.promise?.then(serializeData).catch((error) => {
+        if (!shouldRedactErrors(error)) {
+          // Reject original error if it should not be redacted
+          return Promise.reject(error)
+        }
+        // If not in production, log original error before rejecting redacted error
         if (process.env.NODE_ENV !== 'production') {
           console.error(
             `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
@@ -100,6 +107,10 @@ export function defaultShouldDehydrateMutation(mutation: Mutation) {
 
 export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
+}
+
+function defaultShouldRedactErrors(_: unknown) {
+  return true
 }
 
 export function dehydrate(
@@ -123,6 +134,11 @@ export function dehydrate(
     client.getDefaultOptions().dehydrate?.shouldDehydrateQuery ??
     defaultShouldDehydrateQuery
 
+  const shouldRedactErrors =
+    options.shouldRedactErrors ??
+    client.getDefaultOptions().dehydrate?.shouldRedactErrors ??
+    defaultShouldRedactErrors
+
   const serializeData =
     options.serializeData ??
     client.getDefaultOptions().dehydrate?.serializeData ??
@@ -132,7 +148,9 @@ export function dehydrate(
     .getQueryCache()
     .getAll()
     .flatMap((query) =>
-      filterQuery(query) ? [dehydrateQuery(query, serializeData)] : [],
+      filterQuery(query)
+        ? [dehydrateQuery(query, serializeData, shouldRedactErrors)]
+        : [],
     )
 
   return { mutations, queries }

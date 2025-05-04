@@ -31,14 +31,28 @@ export class QueriesService {
 
 // usage:
 
+postId = input.required({
+  transform: numberAttribute,
+})
 queries = inject(QueriesService)
 
-injectQuery(this.queries.post(1))
-injectQueries({
-  queries: [this.queries.post(1), this.queries.post(2)],
-})
+postQuery = injectQuery(() => this.queries.post(this.postId()))
+
 queryClient.prefetchQuery(this.queries.post(23))
-queryClient.setQueryData(this.queries.post(42).queryKey, newGroups)
+queryClient.setQueryData(this.queries.post(42).queryKey, newPost)
 ```
 
 [//]: # 'Example1'
+[//]: # 'Example2'
+
+```ts
+// Type inference still works, so query.data will be the return type of select instead of queryFn
+queries = inject(QueriesService)
+
+query = injectQuery(() => ({
+  ...groupOptions(1),
+  select: (data) => data.title,
+}))
+```
+
+[//]: # 'Example2'

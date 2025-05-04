@@ -5,19 +5,18 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "test:types": "tsc"
+    "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.62.14",
-    "@tanstack/react-query-devtools": "^5.62.14",
-    "next": "^15.1.0",
+    "@tanstack/react-query": "^5.75.2",
+    "@tanstack/react-query-devtools": "^5.75.2",
+    "next": "^15.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
-    "typescript": "5.7.2"
+    "typescript": "5.8.3"
   }
 }

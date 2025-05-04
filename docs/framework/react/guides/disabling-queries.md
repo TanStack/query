@@ -104,6 +104,8 @@ If you are using TypeScript, you can use the `skipToken` to disable a query. Thi
 [//]: # 'Example3'
 
 ```tsx
+import { skipToken, useQuery } from '@tanstack/react-query'
+
 function Todos() {
   const [filter, setFilter] = React.useState<string | undefined>()
 

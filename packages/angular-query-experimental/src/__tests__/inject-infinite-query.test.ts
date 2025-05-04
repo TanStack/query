@@ -1,6 +1,9 @@
 import { TestBed } from '@angular/core/testing'
 import { afterEach } from 'vitest'
-import { Injector } from '@angular/core'
+import {
+  Injector,
+  provideExperimentalZonelessChangeDetection,
+} from '@angular/core'
 import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
 import { expectSignals, infiniteFetcher } from './test-utils'
 
@@ -15,7 +18,10 @@ describe('injectInfiniteQuery', () => {
     queryClient = new QueryClient()
     vi.useFakeTimers()
     TestBed.configureTestingModule({
-      providers: [provideTanStackQuery(queryClient)],
+      providers: [
+        provideExperimentalZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
     })
   })
 
@@ -81,7 +87,9 @@ describe('injectInfiniteQuery', () => {
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }),
-        TestBed.inject(Injector),
+        {
+          injector: TestBed.inject(Injector),
+        },
       )
 
       expect(query.status()).toBe('pending')

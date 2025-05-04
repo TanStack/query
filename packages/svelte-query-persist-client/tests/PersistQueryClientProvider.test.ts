@@ -22,7 +22,7 @@ const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
   return {
-    async persistClient(persistClient: PersistedClient) {
+    persistClient(persistClient: PersistedClient) {
       storedState = persistClient
     },
     async restoreClient() {
@@ -83,7 +83,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
 
     const states = get(statesStore)
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -104,6 +104,12 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[3]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -139,7 +145,7 @@ describe('PersistQueryClientProvider', () => {
 
     const states = get(statesStore)
 
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -160,6 +166,12 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[3]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -194,7 +206,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
 
     const states = get(statesStore)
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
       status: 'success',
@@ -215,6 +227,12 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[3]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -348,15 +366,19 @@ describe('PersistQueryClientProvider', () => {
 
     const queryClient = createQueryClient()
     const removeClient = vi.fn()
+    const onSuccess = vi.fn()
+    const onError = vi.fn()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
     const rendered = render(RemoveCache, {
-      props: { queryClient, persistOptions: { persister } },
+      props: { queryClient, persistOptions: { persister }, onError, onSuccess },
     })
 
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledTimes(0)
+    expect(onError).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenNthCalledWith(1, error)
     consoleMock.mockRestore()

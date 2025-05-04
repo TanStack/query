@@ -1,11 +1,17 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { OnlineManager } from '../onlineManager'
-import { setIsServer, sleep } from './utils'
+import { setIsServer } from './utils'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager
+
   beforeEach(() => {
+    vi.useFakeTimers()
     onlineManager = new OnlineManager()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   test('isOnline should return true if navigator is undefined', () => {
@@ -41,7 +47,7 @@ describe('onlineManager', () => {
 
     onlineManager.setEventListener(setup)
 
-    await sleep(30)
+    await vi.advanceTimersByTimeAsync(30)
     expect(count).toEqual(1)
     expect(onlineManager.isOnline()).toBeFalsy()
   })
@@ -57,7 +63,7 @@ describe('onlineManager', () => {
     expect(remove2Spy).not.toHaveBeenCalled()
   })
 
-  test('cleanup (removeEventListener) should not be called if window is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window is not defined', () => {
     const restoreIsServer = setIsServer(true)
 
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
@@ -71,7 +77,7 @@ describe('onlineManager', () => {
     restoreIsServer()
   })
 
-  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
@@ -88,7 +94,7 @@ describe('onlineManager', () => {
     globalThis.window.addEventListener = addEventListener
   })
 
-  test('it should replace default window listener when a new event listener is set', async () => {
+  test('it should replace default window listener when a new event listener is set', () => {
     const addEventListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
 
     const removeEventListenerSpy = vi.spyOn(

@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { reactive } from 'vue-demi'
+import { computed, reactive } from 'vue-demi'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { simpleFetcher } from './test-utils'
 import type { InfiniteData } from '@tanstack/query-core'
@@ -79,6 +79,20 @@ describe('Discriminated union return type', () => {
 
     if (query.isError) {
       expectTypeOf(query.error).toEqualTypeOf<Error>()
+    }
+  })
+
+  it('should accept computed options', () => {
+    const options = computed(() => ({
+      queryKey: ['infiniteQuery'],
+      queryFn: simpleFetcher,
+      getNextPageParam: () => undefined,
+      initialPageParam: 0,
+    }))
+    const query = reactive(useInfiniteQuery(options))
+
+    if (query.isSuccess) {
+      expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
   })
 })

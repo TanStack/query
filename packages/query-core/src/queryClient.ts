@@ -15,7 +15,6 @@ import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type {
   CancelOptions,
-  DataTag,
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
@@ -23,6 +22,8 @@ import type {
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
+  InferDataFromTag,
+  InferErrorFromTag,
   InfiniteData,
   InvalidateOptions,
   InvalidateQueryFilters,
@@ -39,7 +40,6 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   SetDataOptions,
-  UnsetMarker,
 } from './types'
 import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
@@ -106,9 +106,9 @@ export class QueryClient {
     this.#unsubscribeOnline = undefined
   }
 
-  isFetching<
-    TQueryFilters extends QueryFilters<any, any, any, any> = QueryFilters,
-  >(filters?: TQueryFilters): number {
+  isFetching<TQueryFilters extends QueryFilters<any> = QueryFilters>(
+    filters?: TQueryFilters,
+  ): number {
     return this.#queryCache.findAll({ ...filters, fetchStatus: 'fetching' })
       .length
   }
@@ -119,16 +119,17 @@ export class QueryClient {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
 
+  /**
+   * Imperative (non-reactive) way to retrieve data for a QueryKey.
+   * Should only be used in callbacks or functions where reading the latest data is necessary, e.g. for optimistic updates.
+   *
+   * Hint: Do not use this function inside a component, because it won't receive updates.
+   * Use `useQuery` to create a `QueryObserver` that subscribes to changes.
+   */
   getQueryData<
     TQueryFnData = unknown,
     TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue,
-      unknown
-    >
-      ? TaggedValue
-      : TQueryFnData,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
   >(queryKey: TTaggedQueryKey): TInferredQueryFnData | undefined {
     const options = this.defaultQueryOptions({ queryKey })
 
@@ -165,25 +166,10 @@ export class QueryClient {
 
   getQueriesData<
     TQueryFnData = unknown,
-    TQueryFilters extends QueryFilters<
-      any,
-      any,
-      any,
-      any
-    > = QueryFilters<TQueryFnData>,
-    TInferredQueryFnData = TQueryFilters extends QueryFilters<
-      infer TData,
-      any,
-      any,
-      any
-    >
-      ? TData
-      : TQueryFnData,
-  >(
-    filters: TQueryFilters,
-  ): Array<[QueryKey, TInferredQueryFnData | undefined]> {
+    TQueryFilters extends QueryFilters<any> = QueryFilters,
+  >(filters: TQueryFilters): Array<[QueryKey, TQueryFnData | undefined]> {
     return this.#queryCache.findAll(filters).map(({ queryKey, state }) => {
-      const data = state.data as TInferredQueryFnData | undefined
+      const data = state.data as TQueryFnData | undefined
       return [queryKey, data]
     })
   }
@@ -191,13 +177,7 @@ export class QueryClient {
   setQueryData<
     TQueryFnData = unknown,
     TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue,
-      unknown
-    >
-      ? TaggedValue
-      : TQueryFnData,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
   >(
     queryKey: TTaggedQueryKey,
     updater: Updater<
@@ -205,7 +185,7 @@ export class QueryClient {
       NoInfer<TInferredQueryFnData> | undefined
     >,
     options?: SetDataOptions,
-  ): TInferredQueryFnData | undefined {
+  ): NoInfer<TInferredQueryFnData> | undefined {
     const defaultedOptions = this.defaultQueryOptions<
       any,
       any,
@@ -231,34 +211,21 @@ export class QueryClient {
 
   setQueriesData<
     TQueryFnData,
-    TQueryFilters extends QueryFilters<
-      any,
-      any,
-      any,
-      any
-    > = QueryFilters<TQueryFnData>,
-    TInferredQueryFnData = TQueryFilters extends QueryFilters<
-      infer TData,
-      any,
-      any,
-      any
-    >
-      ? TData
-      : TQueryFnData,
+    TQueryFilters extends QueryFilters<any> = QueryFilters,
   >(
     filters: TQueryFilters,
     updater: Updater<
-      NoInfer<TInferredQueryFnData> | undefined,
-      NoInfer<TInferredQueryFnData> | undefined
+      NoInfer<TQueryFnData> | undefined,
+      NoInfer<TQueryFnData> | undefined
     >,
     options?: SetDataOptions,
-  ): Array<[QueryKey, TInferredQueryFnData | undefined]> {
+  ): Array<[QueryKey, TQueryFnData | undefined]> {
     return notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
         .map(({ queryKey }) => [
           queryKey,
-          this.setQueryData<TInferredQueryFnData>(queryKey, updater, options),
+          this.setQueryData<TQueryFnData>(queryKey, updater, options),
         ]),
     )
   }
@@ -267,22 +234,8 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = DefaultError,
     TTaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue,
-      unknown
-    >
-      ? TaggedValue
-      : TQueryFnData,
-    TInferredError = TTaggedQueryKey extends DataTag<
-      unknown,
-      unknown,
-      infer TaggedError
-    >
-      ? TaggedError extends UnsetMarker
-        ? TError
-        : TaggedError
-      : TError,
+    TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
+    TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
     queryKey: TTaggedQueryKey,
   ): QueryState<TInferredQueryFnData, TInferredError> | undefined {
@@ -292,9 +245,9 @@ export class QueryClient {
     )?.state
   }
 
-  removeQueries<
-    TQueryFilters extends QueryFilters<any, any, any, any> = QueryFilters,
-  >(filters?: TQueryFilters): void {
+  removeQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: QueryFilters<TTaggedQueryKey>,
+  ): void {
     const queryCache = this.#queryCache
     notifyManager.batch(() => {
       queryCache.findAll(filters).forEach((query) => {
@@ -303,27 +256,30 @@ export class QueryClient {
     })
   }
 
-  resetQueries<
-    TQueryFilters extends QueryFilters<any, any, any, any> = QueryFilters,
-  >(filters?: TQueryFilters, options?: ResetOptions): Promise<void> {
+  resetQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: QueryFilters<TTaggedQueryKey>,
+    options?: ResetOptions,
+  ): Promise<void> {
     const queryCache = this.#queryCache
-
-    const refetchFilters: RefetchQueryFilters = {
-      type: 'active',
-      ...filters,
-    }
 
     return notifyManager.batch(() => {
       queryCache.findAll(filters).forEach((query) => {
         query.reset()
       })
-      return this.refetchQueries(refetchFilters, options)
+      return this.refetchQueries(
+        {
+          type: 'active',
+          ...filters,
+        },
+        options,
+      )
     })
   }
 
-  cancelQueries<
-    TQueryFilters extends QueryFilters<any, any, any, any> = QueryFilters,
-  >(filters?: TQueryFilters, cancelOptions: CancelOptions = {}): Promise<void> {
+  cancelQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: QueryFilters<TTaggedQueryKey>,
+    cancelOptions: CancelOptions = {},
+  ): Promise<void> {
     const defaultedCancelOptions = { revert: true, ...cancelOptions }
 
     const promises = notifyManager.batch(() =>
@@ -335,15 +291,8 @@ export class QueryClient {
     return Promise.all(promises).then(noop).catch(noop)
   }
 
-  invalidateQueries<
-    TInvalidateQueryFilters extends InvalidateQueryFilters<
-      any,
-      any,
-      any,
-      any
-    > = InvalidateQueryFilters,
-  >(
-    filters?: TInvalidateQueryFilters,
+  invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: InvalidateQueryFilters<TTaggedQueryKey>,
     options: InvalidateOptions = {},
   ): Promise<void> {
     return notifyManager.batch(() => {
@@ -354,23 +303,18 @@ export class QueryClient {
       if (filters?.refetchType === 'none') {
         return Promise.resolve()
       }
-      const refetchFilters: RefetchQueryFilters = {
-        ...filters,
-        type: filters?.refetchType ?? filters?.type ?? 'active',
-      }
-      return this.refetchQueries(refetchFilters, options)
+      return this.refetchQueries(
+        {
+          ...filters,
+          type: filters?.refetchType ?? filters?.type ?? 'active',
+        },
+        options,
+      )
     })
   }
 
-  refetchQueries<
-    TRefetchQueryFilters extends RefetchQueryFilters<
-      any,
-      any,
-      any,
-      any
-    > = RefetchQueryFilters,
-  >(
-    filters?: TRefetchQueryFilters,
+  refetchQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
+    filters?: RefetchQueryFilters<TTaggedQueryKey>,
     options: RefetchOptions = {},
   ): Promise<void> {
     const fetchOptions = {
@@ -585,14 +529,17 @@ export class QueryClient {
 
   getMutationDefaults(
     mutationKey: MutationKey,
-  ): MutationObserverOptions<any, any, any, any> {
+  ): OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'> {
     const defaults = [...this.#mutationDefaults.values()]
 
-    let result: MutationObserverOptions<any, any, any, any> = {}
+    const result: OmitKeyof<
+      MutationObserverOptions<any, any, any, any>,
+      'mutationKey'
+    > = {}
 
     defaults.forEach((queryDefault) => {
       if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
-        result = { ...result, ...queryDefault.defaultOptions }
+        Object.assign(result, queryDefault.defaultOptions)
       }
     })
 

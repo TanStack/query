@@ -9,20 +9,20 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^19.1.0-next.0",
-    "@angular/compiler": "^19.1.0-next.0",
-    "@angular/core": "^19.1.0-next.0",
-    "@angular/platform-browser": "^19.1.0-next.0",
-    "@angular/platform-browser-dynamic": "^19.1.0-next.0",
-    "@tanstack/angular-query-experimental": "^5.62.13",
-    "rxjs": "^7.8.1",
-    "tslib": "^2.6.3",
-    "zone.js": "^0.15.0"
+    "@angular/common": "^19.2.4",
+    "@angular/compiler": "^19.2.4",
+    "@angular/core": "^19.2.4",
+    "@angular/platform-browser": "^19.2.4",
+    "@angular/platform-browser-dynamic": "^19.2.4",
+    "@tanstack/angular-query-experimental": "^5.75.0",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.8.1",
+    "zone.js": "0.15.0"
   },
   "devDependencies": {
-    "@angular/build": "^19.0.2",
-    "@angular/cli": "^19.0.2",
-    "@angular/compiler-cli": "^19.1.0-next.0",
-    "typescript": "5.7.2"
+    "@angular/build": "^19.2.5",
+    "@angular/cli": "^19.2.5",
+    "@angular/compiler-cli": "^19.2.4",
+    "typescript": "5.8.3"
   }
 }

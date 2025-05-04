@@ -1,12 +1,16 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "Bundler"
+    "outDir": "./dist-ts",
+    "rootDir": ".",
+    "baseUrl": "."
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.vue",
-    "eslint.config.js",
-    "vite.config.ts"
-  ]
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
+  "references": [{ "path": "../vue-query" }, { "path": "../query-devtools" }]
 }
