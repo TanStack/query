@@ -31,7 +31,7 @@ describe('queryObserver', () => {
     vi.useRealTimers()
   })
 
-  test('should trigger a fetch when subscribed', async () => {
+  test('should trigger a fetch when subscribed', () => {
     const key = queryKey()
     const queryFn = vi
       .fn<(...args: Array<unknown>) => string>()
