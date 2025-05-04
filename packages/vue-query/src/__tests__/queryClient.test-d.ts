@@ -96,6 +96,19 @@ describe('setQueryData', () => {
 
     expectTypeOf(data).toEqualTypeOf<string | undefined>()
   })
+
+  it('should preserve updater parameter type inference when used in functions with explicit return types', () => {
+    const queryKey = ['key'] as DataTag<Array<string>, number>
+    const queryClient = new QueryClient()
+
+    // Simulate usage inside a function with explicit return type
+    // The outer function returns 'unknown' but this shouldn't affect the updater's type inference
+    ;(() =>
+      queryClient.setQueryData(queryKey, (data) => {
+        expectTypeOf(data).toEqualTypeOf<number | undefined>()
+        return data
+      })) satisfies () => unknown
+  })
 })
 
 describe('fetchInfiniteQuery', () => {

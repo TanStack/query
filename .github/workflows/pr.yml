@@ -14,6 +14,7 @@ env:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   test:
@@ -38,7 +39,7 @@ jobs:
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           directory: packages
         env:
@@ -57,3 +58,17 @@ jobs:
         run: pnpm run build:all
       - name: Publish Previews
         run: pnpx pkg-pr-new publish --pnpm --compact './packages/*' --template './examples/*/*'
+      - name: Determine commit SHA
+        id: determine-sha
+        run: |
+          echo "COMMIT_SHA=${{ github.event.pull_request.head.sha || github.sha }}" >> $GITHUB_ENV
+      - name: Preview Bundle Size
+        uses: marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728
+        with:
+          message: |
+            Sizes for commit ${{ env.COMMIT_SHA }}:
+            | Branch | Bundle Size |
+            |--------|--------|
+            | Main | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.1.0/jsx-runtime?target=es2022%22,%22react@^19.1.0?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.1.0/jsx-runtime?target=es2022%22,%22react@%5E19.1.0?target=es2022%22%5D%7D%7D) |
+            | This PR | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.1.0/jsx-runtime?target=es2022%22,%22react@^19.1.0?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.1.0/jsx-runtime?target=es2022%22,%22react@%5E19.1.0?target=es2022%22%5D%7D%7D) |
+        continue-on-error: true

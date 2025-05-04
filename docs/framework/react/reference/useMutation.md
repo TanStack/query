@@ -62,7 +62,7 @@ mutate(variables, {
 - `networkMode: 'online' | 'always' | 'offlineFirst'`
   - Optional
   - defaults to `'online'`
-  - see [Network Mode](../../guides/network-mode) for more information.
+  - see [Network Mode](../guides/network-mode.md) for more information.
 - `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
@@ -94,7 +94,6 @@ mutate(variables, {
   - Defaults to a unique id (so that all mutations run in parallel)
   - Mutations with the same scope id will run in serial
 - `throwOnError: undefined | boolean | (error: TError) => boolean`
-  - Defaults to the global query config's `throwOnError` value, which is `undefined`
   - Set this to `true` if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable the behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
@@ -138,7 +137,7 @@ mutate(variables, {
 - `isIdle`, `isPending`, `isSuccess`, `isError`: boolean variables derived from `status`
 - `isPaused: boolean`
   - will be `true` if the mutation has been `paused`
-  - see [Network Mode](../../guides/network-mode) for more information.
+  - see [Network Mode](../guides/network-mode.md) for more information.
 - `data: undefined | unknown`
   - Defaults to `undefined`
   - The last successfully resolved data for the mutation.

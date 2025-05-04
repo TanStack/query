@@ -2,13 +2,13 @@ import type {
   DataTag,
   DefaultError,
   InfiniteData,
+  InitialDataFunction,
+  OmitKeyof,
   QueryKey,
+  SkipToken,
 } from '@tanstack/query-core'
-import type { CreateInfiniteQueryOptions, NonUndefinedGuard } from './types'
+import type { CreateInfiniteQueryOptions } from './types'
 
-/**
- * @public
- */
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -23,12 +23,46 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
-  initialData?: undefined
+  initialData?:
+    | undefined
+    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+    | InitialDataFunction<
+        NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+      >
 }
 
-/**
- * @public
- */
+export type UnusedSkipTokenInfiniteOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = OmitKeyof<
+  CreateInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey,
+    TPageParam
+  >,
+  'queryFn'
+> & {
+  queryFn?: Exclude<
+    CreateInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey,
+      TPageParam
+    >['queryFn'],
+    SkipToken | undefined
+  >
+}
+
+type NonUndefinedGuard<T> = T extends undefined ? never : T
+
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -46,6 +80,7 @@ export type DefinedInitialDataInfiniteOptions<
   initialData:
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
+    | undefined
 }
 
 /**
@@ -77,7 +112,39 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam
 > & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+}
+
+/**
+ * Allows to share and re-use infinite query options in a type-safe way.
+ *
+ * The `queryKey` will be tagged with the type from `queryFn`.
+ * @param options - The infinite query options to tag with the type from `queryFn`.
+ * @returns The tagged infinite query options.
+ * @public
+ */
+export function infiniteQueryOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UnusedSkipTokenInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+): UnusedSkipTokenInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> & {
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 }
 
 /**
@@ -109,7 +176,7 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam
 > & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 }
 
 /**

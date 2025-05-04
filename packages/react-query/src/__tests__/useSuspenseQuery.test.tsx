@@ -327,61 +327,6 @@ describe('useSuspenseQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should refetch when re-mounting', async () => {
-    const key = queryKey()
-    let count = 0
-
-    function Component() {
-      const result = useSuspenseQuery({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(100)
-          count++
-          return count
-        },
-        retry: false,
-        staleTime: 0,
-      })
-      return (
-        <div>
-          <span>data: {result.data}</span>
-          <span>fetching: {result.isFetching ? 'true' : 'false'}</span>
-        </div>
-      )
-    }
-
-    function Page() {
-      const [show, setShow] = React.useState(true)
-      return (
-        <div>
-          <button
-            onClick={() => {
-              setShow(!show)
-            }}
-          >
-            {show ? 'hide' : 'show'}
-          </button>
-          <React.Suspense fallback="Loading...">
-            {show && <Component />}
-          </React.Suspense>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('data: 1'))
-    await waitFor(() => rendered.getByText('fetching: false'))
-    await waitFor(() => rendered.getByText('hide'))
-    fireEvent.click(rendered.getByText('hide'))
-    await waitFor(() => rendered.getByText('show'))
-    fireEvent.click(rendered.getByText('show'))
-    await waitFor(() => rendered.getByText('fetching: true'))
-    await waitFor(() => rendered.getByText('data: 2'))
-    await waitFor(() => rendered.getByText('fetching: false'))
-  })
-
   it('should set staleTime when having passed a function', async () => {
     const key = queryKey()
     let count = 0
@@ -543,6 +488,49 @@ describe('useSuspenseQuery', () => {
           throw new Error('Suspense Error a1x')
         },
         retry: false,
+      })
+      return <div>rendered</div>
+    }
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallbackRender={() => (
+            <div>
+              <div>error boundary</div>
+            </div>
+          )}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
+  })
+
+  it('should throw select errors to the error boundary by default', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => {
+          const data = { a: { b: 'c' } }
+          return Promise.resolve(data)
+        },
+        select: () => {
+          throw new Error('foo')
+        },
       })
       return <div>rendered</div>
     }
@@ -832,11 +820,8 @@ describe('useSuspenseQuery', () => {
     const states: Array<UseSuspenseQueryResult<number>> = []
 
     let count = 0
-    let renders = 0
 
     function Page() {
-      renders++
-
       const [stateKey, setStateKey] = React.useState(key)
 
       const state = useSuspenseQuery({
@@ -902,5 +887,36 @@ describe('useSuspenseQuery', () => {
       'skipToken is not allowed for useSuspenseQuery',
     )
     consoleErrorSpy.mockRestore()
+  })
+  it('should properly refresh data when refetchInterval is set', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: key,
+        queryFn: async () => {
+          count++
+          await sleep(1)
+          return count
+        },
+        refetchInterval: 10,
+      })
+
+      return <div>count: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="Loading...">
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('count: 1'))
+    await waitFor(() => rendered.getByText('count: 2'))
+    await waitFor(() => rendered.getByText('count: 3'))
+
+    expect(count).toBeGreaterThanOrEqual(3)
   })
 })

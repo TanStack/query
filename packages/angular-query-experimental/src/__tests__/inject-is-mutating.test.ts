@@ -1,6 +1,9 @@
 import { beforeEach, describe } from 'vitest'
-import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { Injector } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
+import {
+  Injector,
+  provideExperimentalZonelessChangeDetection,
+} from '@angular/core'
 import {
   QueryClient,
   injectIsMutating,
@@ -13,14 +16,22 @@ describe('injectIsMutating', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
+    vi.useFakeTimers()
     queryClient = new QueryClient()
 
     TestBed.configureTestingModule({
-      providers: [provideTanStackQuery(queryClient)],
+      providers: [
+        provideExperimentalZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
     })
   })
 
-  test('should properly return isMutating state', fakeAsync(() => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test('should properly return isMutating state', () => {
     TestBed.runInInjectionContext(() => {
       const isMutating = injectIsMutating()
       const mutation = injectMutation(() => ({
@@ -34,11 +45,11 @@ describe('injectIsMutating', () => {
         par1: 'par1',
       })
 
-      tick()
+      vi.advanceTimersByTime(1)
 
       expect(isMutating()).toBe(1)
     })
-  }))
+  })
 
   describe('injection context', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
@@ -49,7 +60,9 @@ describe('injectIsMutating', () => {
 
     test('can be used outside injection context when passing an injector', () => {
       expect(
-        injectIsMutating(undefined, TestBed.inject(Injector)),
+        injectIsMutating(undefined, {
+          injector: TestBed.inject(Injector),
+        }),
       ).not.toThrow()
     })
   })

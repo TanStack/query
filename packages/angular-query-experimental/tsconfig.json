@@ -1,7 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "Bundler",
+    "outDir": "./dist-ts",
+    "rootDir": ".",
+    "baseUrl": ".",
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noFallthroughCasesInSwitch": true,
@@ -9,5 +11,6 @@
     "target": "ES2022",
     "types": ["vitest/globals"]
   },
-  "include": ["src", "eslint.config.js", "tsup.config.js", "vite.config.ts"]
+  "include": ["src", "*.config.js", "*.config.ts", "package.json"],
+  "references": [{ "path": "../query-core" }, { "path": "../query-devtools" }]
 }

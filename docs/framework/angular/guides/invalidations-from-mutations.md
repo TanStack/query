@@ -8,11 +8,9 @@ replace: { 'useMutation': 'injectMutation', 'hook': 'function' }
 [//]: # 'Example'
 
 ```ts
-class TodoItemComponent {
-  mutation = injectMutation(() => ({
-    mutationFn: postTodo,
-  }))
-}
+mutation = injectMutation(() => ({
+  mutationFn: postTodo,
+}))
 ```
 
 [//]: # 'Example'
@@ -33,9 +31,6 @@ export class TodosComponent {
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['todos'] })
       this.queryClient.invalidateQueries({ queryKey: ['reminders'] })
-
-      // OR use the queryClient that is injected into the component
-      // this.queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   }))
 }
@@ -43,4 +38,4 @@ export class TodosComponent {
 
 [//]: # 'Example2'
 
-You can wire up your invalidations to happen using any of the callbacks available in the [`injectMutation` function](../mutations)
+You can wire up your invalidations to happen using any of the callbacks available in the [`injectMutation` function](../mutations.md)

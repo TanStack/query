@@ -25,6 +25,12 @@ The Missing Fullstack Toolkit for Next.js
 
 Link: https://blitzjs.com/
 
+## Connect
+
+A family of libraries for building building browser and gRPC-compatible HTTP APIs.
+
+Link: https://connectrpc.com/docs
+
 ## GraphQL Code Generator
 
 Generate React Query hooks from your GraphQL schema
@@ -33,7 +39,7 @@ Link: https://the-guild.dev/graphql/codegen
 
 ## Http-wizard
 
-End-to-end type-safe Fastify API with typecript magic ✨
+End-to-end type-safe Fastify API with typeScript magic ✨
 
 Link: https://http-wizard.com
 
@@ -61,6 +67,13 @@ A tool for generating code based on an OpenAPI schema.
 
 Link: https://github.com/fabien0102/openapi-codegen
 
+## OpenAPI Qraft React
+
+Generate type-safe API clients and Hooks for TanStack Query directly from OpenAPI Documents.
+Zero-runtime overhead, Proxy-based design, seamless SSR support, and full TanStack Query functionality.
+
+Link: https://github.com/OpenAPI-Qraft/openapi-qraft
+
 ## OpenAPI React Query codegen
 
 Generate TanStack Query hooks based on an OpenAPI specification file.
@@ -77,7 +90,7 @@ Link: https://github.com/astahmer/openapi-zod-client
 
 A 2KB min, typesafe fetch wrapper that uses static TypeScript type inference and no runtime checks.
 
-Link: https://openapi-ts.pages.dev/openapi-fetch/
+Link: https://openapi-ts.dev/openapi-react-query/
 
 ## Orval
 

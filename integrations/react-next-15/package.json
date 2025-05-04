@@ -9,14 +9,13 @@
     "@js-temporal/polyfill": "^0.4.4",
     "@tanstack/react-query": "workspace:*",
     "@tanstack/react-query-devtools": "workspace:*",
-    "next": "^15.0.3",
+    "next": "^15.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tupleson": "0.23.1"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "typescript": "5.7.2"
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2"
   }
 }

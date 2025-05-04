@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { waitFor } from '@testing-library/dom'
 import { CancelledError, InfiniteQueryObserver } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type {
@@ -14,6 +13,7 @@ describe('InfiniteQueryBehavior', () => {
   let queryCache: QueryCache
 
   beforeEach(() => {
+    vi.useFakeTimers()
     queryClient = createQueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
@@ -21,6 +21,7 @@ describe('InfiniteQueryBehavior', () => {
 
   afterEach(() => {
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   test('InfiniteQueryBehavior should throw an error if the queryFn is not defined', async () => {
@@ -41,7 +42,7 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const query = queryCache.find({ queryKey: key })!
       return expect(observerResult).toMatchObject({
         isError: true,
@@ -79,7 +80,7 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Wait for the first page to be fetched
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(observerResult).toMatchObject({
         isFetching: false,
         data: { pages: [1], pageParams: [1] },
@@ -88,6 +89,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      client: queryClient,
       pageParam: 1,
       meta: undefined,
       direction: 'forward',
@@ -101,6 +103,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      client: queryClient,
       pageParam: 2,
       direction: 'forward',
       meta: undefined,
@@ -119,6 +122,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      client: queryClient,
       pageParam: 0,
       direction: 'backward',
       meta: undefined,
@@ -138,6 +142,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      client: queryClient,
       pageParam: -1,
       meta: undefined,
       direction: 'backward',
@@ -156,6 +161,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      client: queryClient,
       pageParam: 1,
       meta: undefined,
       direction: 'forward',
@@ -177,6 +183,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      client: queryClient,
       pageParam: 0,
       meta: undefined,
       direction: 'forward',
@@ -185,6 +192,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(2, {
       queryKey: key,
+      client: queryClient,
       pageParam: 1,
       meta: undefined,
       direction: 'forward',
@@ -224,7 +232,7 @@ describe('InfiniteQueryBehavior', () => {
     query.cancel()
 
     // Wait for the first page to be cancelled
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(observerResult).toMatchObject({
         isFetching: false,
         isError: true,
@@ -237,6 +245,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      client: queryClient,
       pageParam: 1,
       meta: undefined,
       direction: 'forward',
@@ -272,7 +281,7 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Wait for the first page to be fetched
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(observerResult).toMatchObject({
         isFetching: false,
         data: { pages: [1], pageParams: [1] },
@@ -293,6 +302,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      client: queryClient,
       pageParam: 2,
       meta: undefined,
       direction: 'forward',
@@ -376,25 +386,32 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Fetch Page 1
-    const page1Data = await observer.fetchNextPage()
-    expect(page1Data.data?.pageParams).toEqual([1])
+    await vi.waitFor(async () => {
+      const page1Data = await observer.fetchNextPage()
+      expect(page1Data.data?.pageParams).toEqual([1])
+    })
 
     // Fetch Page 2, as per the queryFn, this will reject 2 times then resolves
-    const page2Data = await observer.fetchNextPage()
-    expect(page2Data.data?.pageParams).toEqual([1, 2])
+    await vi.waitFor(async () => {
+      const page2Data = await observer.fetchNextPage()
+      expect(page2Data.data?.pageParams).toEqual([1, 2])
+    })
 
     // Fetch Page 3
-    const page3Data = await observer.fetchNextPage()
-    expect(page3Data.data?.pageParams).toEqual([1, 2, 3])
+    await vi.waitFor(async () => {
+      const page3Data = await observer.fetchNextPage()
+      expect(page3Data.data?.pageParams).toEqual([1, 2, 3])
+    })
 
     // Now the real deal; re-fetching this query **should not** stamp into an
     // infinite loop where the retryer every time restarts from page 1
     // once it reaches the page where it errors.
     // For this to work, we'd need to reset the error count so we actually retry
     errorCount = 0
-    const reFetchedData = await observer.refetch()
-
-    expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
+    await vi.waitFor(async () => {
+      const reFetchedData = await observer.refetch()
+      expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
+    })
   })
 
   test('should fetch even if initialPageParam is null', async () => {
@@ -402,7 +419,7 @@ describe('InfiniteQueryBehavior', () => {
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
-      queryFn: async () => 'data',
+      queryFn: () => 'data',
       getNextPageParam: () => null,
       initialPageParam: null,
     })
@@ -415,7 +432,7 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(observerResult).toMatchObject({
         isFetching: false,
         data: { pages: ['data'], pageParams: [null] },

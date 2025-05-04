@@ -1,9 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": ".",
+    "baseUrl": ".",
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
-    "moduleResolution": "Bundler"
+    "jsxImportSource": "solid-js"
   },
-  "include": ["src", "eslint.config.js", "tsup.config.js", "vite.config.ts"]
+  "include": ["src", "*.config.js", "*.config.ts", "package.json"],
+  "references": [{ "path": "../query-core" }]
 }

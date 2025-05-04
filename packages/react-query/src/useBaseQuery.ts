@@ -9,7 +9,7 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { useIsRestoring } from './isRestoring'
+import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
@@ -59,6 +59,14 @@ export function useBaseQuery<
     defaultedOptions,
   )
 
+  if (process.env.NODE_ENV !== 'production') {
+    if (!defaultedOptions.queryFn) {
+      console.error(
+        `[${defaultedOptions.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
+      )
+    }
+  }
+
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
@@ -82,14 +90,16 @@ export function useBaseQuery<
       ),
   )
 
+  // note: this must be called before useSyncExternalStore
   const result = observer.getOptimisticResult(defaultedOptions)
 
+  const shouldSubscribe = !isRestoring && options.subscribed !== false
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
-        const unsubscribe = isRestoring
-          ? noop
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange))
+        const unsubscribe = shouldSubscribe
+          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
+          : noop
 
         // Update result to make sure we did not miss any query updates
         // between creating the observer and subscribing to it.
@@ -97,16 +107,14 @@ export function useBaseQuery<
 
         return unsubscribe
       },
-      [observer, isRestoring],
+      [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
 
   React.useEffect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setOptions(defaultedOptions, { listeners: false })
+    observer.setOptions(defaultedOptions)
   }, [defaultedOptions, observer])
 
   // Handle suspense
@@ -128,6 +136,7 @@ export function useBaseQuery<
           TQueryData,
           TQueryKey
         >(defaultedOptions.queryHash),
+      suspense: defaultedOptions.suspense,
     })
   ) {
     throw result.error

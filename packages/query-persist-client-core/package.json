@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-persist-client-core",
-  "version": "5.62.7",
+  "version": "5.75.0",
   "description": "Set of utilities for interacting with persisters, which can save your queryClient for later use",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -15,28 +15,32 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "rimraf ./build ./coverage",
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "compile": "tsc --build",
     "test:eslint": "eslint ./src",
-    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
-    "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js",
-    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
-    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
-    "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js",
-    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js",
-    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js",
-    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js",
-    "test:types:ts57": "tsc",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
+    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
+    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js --build",
+    "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js --build",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
+    "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
-    "build": "tsup"
+    "build": "tsup --tsconfig tsconfig.prod.json"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",
   "main": "build/legacy/index.cjs",
   "module": "build/legacy/index.js",
+  "react-native": "src/index.ts",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "import": {
         "types": "./build/modern/index.d.ts",
         "default": "./build/modern/index.js"
@@ -56,5 +60,8 @@
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*"
+  },
+  "devDependencies": {
+    "npm-run-all2": "^5.0.0"
   }
 }

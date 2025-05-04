@@ -117,7 +117,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
     if (!query) {
       query = new Query({
-        cache: this,
+        client,
         queryKey,
         queryHash,
         options: client.defaultQueryOptions(options),
@@ -190,7 +190,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     ) as Query<TQueryFnData, TError, TData> | undefined
   }
 
-  findAll(filters: QueryFilters = {}): Array<Query> {
+  findAll(filters: QueryFilters<any> = {}): Array<Query> {
     const queries = this.getAll()
     return Object.keys(filters).length > 0
       ? queries.filter((query) => matchQuery(filters, query))
