@@ -22,7 +22,7 @@ const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
   return {
-    async persistClient(persistClient: PersistedClient) {
+    persistClient(persistClient: PersistedClient) {
       storedState = persistClient
     },
     async restoreClient() {
@@ -366,15 +366,19 @@ describe('PersistQueryClientProvider', () => {
 
     const queryClient = createQueryClient()
     const removeClient = vi.fn()
+    const onSuccess = vi.fn()
+    const onError = vi.fn()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
     const rendered = render(RemoveCache, {
-      props: { queryClient, persistOptions: { persister } },
+      props: { queryClient, persistOptions: { persister }, onError, onSuccess },
     })
 
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledTimes(0)
+    expect(onError).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenNthCalledWith(1, error)
     consoleMock.mockRestore()

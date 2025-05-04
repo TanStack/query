@@ -18,11 +18,11 @@ describe('streamedQuery', () => {
     vi.useRealTimers()
   })
 
-  function createAsyncNumberGenerator(amount: number) {
+  function createAsyncNumberGenerator(amount: number, start = 0) {
     return {
       async *[Symbol.asyncIterator]() {
-        let num = 0
-        while (num < amount) {
+        let num = start
+        while (num < amount + start) {
           await sleep(50)
           yield num++
         }
@@ -69,6 +69,61 @@ describe('streamedQuery', () => {
       status: 'success',
       fetchStatus: 'idle',
       data: [0, 1, 2],
+    })
+
+    unsubscribe()
+  })
+
+  test('should allow Arrays to be returned from the stream', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        queryFn: async function* () {
+          for await (const num of createAsyncNumberGenerator(3)) {
+            yield [num, num] as const
+          }
+        },
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [[0, 0]],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [
+        [0, 0],
+        [1, 1],
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ],
     })
 
     unsubscribe()
@@ -178,6 +233,64 @@ describe('streamedQuery', () => {
       status: 'success',
       fetchStatus: 'idle',
       data: [0, 1, 0, 1],
+    })
+
+    unsubscribe()
+  })
+
+  test('should support refetchMode replace', async () => {
+    const key = queryKey()
+    let offset = 0
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        queryFn: () => createAsyncNumberGenerator(2, offset),
+        refetchMode: 'replace',
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [0, 1],
+    })
+
+    offset = 100
+
+    void observer.refetch()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0, 1],
+    })
+
+    await vi.advanceTimersByTimeAsync(40)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0, 1],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [100, 101],
     })
 
     unsubscribe()
