@@ -145,7 +145,10 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     return
   }
 
-  async function persistQueryByKey(queryKey: QueryKey, queryClient: QueryClient) {
+  async function persistQueryByKey(
+    queryKey: QueryKey,
+    queryClient: QueryClient,
+  ) {
     if (storage != null) {
       const query = queryClient.getQueryCache().find({ queryKey })
       if (query) {
@@ -154,7 +157,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
         if (process.env.NODE_ENV === 'development') {
           console.warn(
             'Could not find query to be persisted. QueryKey:',
-            JSON.stringify(queryKey)
+            JSON.stringify(queryKey),
           )
         }
       }
