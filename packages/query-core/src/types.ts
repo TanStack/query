@@ -9,6 +9,10 @@ import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+export type DistributiveOmit<TKey, TValue> = TKey extends any
+  ? Pick<TKey, Exclude<keyof TKey, TValue>>
+  : never
+
 export type OmitKeyof<
   TObject,
   TKey extends TStrictly extends 'safely'
