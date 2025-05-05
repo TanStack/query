@@ -1,13 +1,20 @@
 // @ts-check
 
 import pluginJsdoc from 'eslint-plugin-jsdoc'
+import vitest from '@vitest/eslint-plugin'
 import rootConfig from './root.eslint.config.js'
 
 export default [
   ...rootConfig,
   pluginJsdoc.configs['flat/recommended-typescript'],
   {
+    files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
+    plugins: { vitest },
     rules: {
+      'vitest/expect-expect': [
+        'error',
+        { assertFunctionNames: ['expect', 'expectSignals'] },
+      ],
       'cspell/spellchecker': [
         'warn',
         {

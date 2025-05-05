@@ -27,6 +27,7 @@ export default [
   {
     files: ['**/__tests__/**'],
     rules: {
+      'vitest/expect-expect': 'warn',
       '@typescript-eslint/no-unnecessary-condition': 'off',
       'react-compiler/react-compiler': 'off',
     },

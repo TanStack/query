@@ -15,6 +15,7 @@ export default [
       'react-hooks': pluginReactHooks,
     },
     rules: {
+      'vitest/expect-expect': 'warn',
       '@eslint-react/no-unstable-context-value': 'off',
       'react-hooks/exhaustive-deps': 'error',
       'react-hooks/rules-of-hooks': 'error',

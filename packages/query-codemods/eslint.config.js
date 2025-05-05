@@ -6,6 +6,7 @@ export default [
   ...rootConfig,
   {
     rules: {
+      'vitest/expect-expect': 'warn',
       'cspell/spellchecker': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
       'import/no-duplicates': 'off',

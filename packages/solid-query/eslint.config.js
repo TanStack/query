@@ -2,4 +2,9 @@
 
 import rootConfig from './root.eslint.config.js'
 
-export default [...rootConfig]
+export default [
+  ...rootConfig,
+  {
+    'vitest/expect-expect': 'warn',
+  },
+]

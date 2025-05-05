@@ -8,6 +8,7 @@ export default [
   ...pluginSvelte.configs['flat/recommended'],
   {
     rules: {
+      'vitest/expect-expect': 'warn',
       'svelte/block-lang': ['error', { script: ['ts'] }],
       'svelte/no-svelte-internal': 'error',
       'svelte/valid-compile': 'off',
