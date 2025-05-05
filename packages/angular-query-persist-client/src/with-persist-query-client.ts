@@ -55,10 +55,11 @@ type PersistQueryClientOptions = {
 export function withPersistQueryClient(
   persistQueryClientOptions: PersistQueryClientOptions,
 ): PersistQueryClientFeature {
-  const isRestoring = signal(false)
+  const isRestoring = signal(true)
   const providers = [
     provideIsRestoring(isRestoring.asReadonly()),
     {
+      // Do not use provideEnvironmentInitializer while Angular < v19 is supported
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
       useValue: () => {
@@ -66,7 +67,6 @@ export function withPersistQueryClient(
         const destroyRef = inject(DestroyRef)
         const queryClient = inject(QueryClient)
 
-        isRestoring.set(true)
         const { onSuccess, onError, persistOptions } = persistQueryClientOptions
         const options = { queryClient, ...persistOptions }
         persistQueryClientRestore(options)
