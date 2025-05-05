@@ -8,13 +8,7 @@ export default [
   ...rootConfig,
   pluginJsdoc.configs['flat/recommended-typescript'],
   {
-    files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
-    plugins: { vitest },
     rules: {
-      'vitest/expect-expect': [
-        'error',
-        { assertFunctionNames: ['expect', 'expectSignals'] },
-      ],
       'cspell/spellchecker': [
         'warn',
         {
@@ -32,6 +26,16 @@ export default [
           // Not compatible with Api Extractor @public
           typed: false,
         },
+      ],
+    },
+  },
+  {
+    files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
+    plugins: { vitest },
+    rules: {
+      'vitest/expect-expect': [
+        'error',
+        { assertFunctionNames: ['expect', 'expectSignals'] },
       ],
     },
   },
