@@ -30,7 +30,6 @@ export default [
     },
   },
   {
-    files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
     rules: {
       'vitest/expect-expect': [

@@ -1,5 +1,6 @@
 // @ts-check
 
+import vitest from '@vitest/eslint-plugin'
 import pluginReact from '@eslint-react/eslint-plugin'
 import pluginReactHooks from 'eslint-plugin-react-hooks'
 import rootConfig from './root.eslint.config.js'
@@ -15,9 +16,15 @@ export default [
       'react-hooks': pluginReactHooks,
     },
     rules: {
-      'vitest/expect-expect': 'warn',
       'react-hooks/exhaustive-deps': 'error',
       'react-hooks/rules-of-hooks': 'error',
+    },
+  },
+  {
+    plugins: { vitest },
+    rules: {
+      ...vitest.configs.recommended.rules,
+      'vitest/expect-expect': 'warn',
     },
   },
 ]

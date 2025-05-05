@@ -15,9 +15,15 @@ export default [
       'react-hooks': pluginReactHooks,
     },
     rules: {
-      'vitest/expect-expect': 'warn',
       'react-hooks/exhaustive-deps': 'error',
       'react-hooks/rules-of-hooks': 'error',
+    },
+  },
+  {
+    plugins: { vitest },
+    rules: {
+      ...vitest.configs.recommended.rules,
+      'vitest/expect-expect': 'warn',
     },
   },
 ]
