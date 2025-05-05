@@ -1,5 +1,6 @@
 // @ts-check
 
+import vitest from '@vitest/eslint-plugin'
 import pluginReact from '@eslint-react/eslint-plugin'
 import pluginReactHooks from 'eslint-plugin-react-hooks'
 import rootConfig from './root.eslint.config.js'
