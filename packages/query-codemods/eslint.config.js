@@ -1,5 +1,6 @@
 // @ts-check
 
+import vitest from '@vitest/eslint-plugin'
 import rootConfig from './root.eslint.config.js'
 
 export default [
@@ -13,6 +14,13 @@ export default [
       'import/order': 'off',
       'no-shadow': 'off',
       'sort-imports': 'off',
+    },
+  },
+  {
+    plugins: { vitest },
+    rules: {
+      ...vitest.configs.recommended.rules,
+      'vitest/expect-expect': 'warn',
     },
   },
 ]

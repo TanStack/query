@@ -108,11 +108,14 @@ describe('initialData', () => {
   })
 
   describe('structuralSharing', () => {
-    it('should restrict to same types', () => {
+    it('should be able to use structuralSharing with unknown types', () => {
+      // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
       injectQuery(() => ({
         queryKey: ['key'],
         queryFn: () => 5,
-        structuralSharing: (_oldData, newData) => {
+        structuralSharing: (oldData, newData) => {
+          expectTypeOf(oldData).toBeUnknown()
+          expectTypeOf(newData).toBeUnknown()
           return newData
         },
       }))
