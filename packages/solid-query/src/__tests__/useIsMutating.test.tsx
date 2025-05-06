@@ -182,7 +182,7 @@ describe('useIsMutating', () => {
 
     const rendered = render(() => <Page></Page>)
 
-    await vi.waitFor(() =>
+    await waitFor(() =>
       expect(rendered.getByText('mutating: 1')).toBeInTheDocument(),
     )
   })

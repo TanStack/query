@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import { QueryCache, QueryClientProvider, useIsFetching, useQuery } from '..'
@@ -221,10 +221,10 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
 
-    await vi.waitFor(() =>
+    await waitFor(() =>
       expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
     )
-    await vi.waitFor(() =>
+    await waitFor(() =>
       expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
     )
   })
@@ -256,7 +256,7 @@ describe('useIsFetching', () => {
 
     const rendered = render(() => <Page></Page>)
 
-    await vi.waitFor(() =>
+    await waitFor(() =>
       expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
     )
   })
