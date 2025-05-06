@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import { QueryCache, QueryClientProvider, useIsFetching, useQuery } from '..'
@@ -46,10 +46,16 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
 
-    await rendered.findByText('isFetching: 0')
+    await waitFor(() =>
+      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByRole('button', { name: /setReady/i }))
-    await rendered.findByText('isFetching: 1')
-    await rendered.findByText('isFetching: 0')
+    await waitFor(() =>
+      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
+    )
   })
 
   it('should not update state while rendering', async () => {
@@ -215,8 +221,12 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
 
-    await rendered.findByText('isFetching: 1')
-    await rendered.findByText('isFetching: 0')
+    await vi.waitFor(() =>
+      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
+    )
   })
 
   it('should use provided custom queryClient', async () => {
@@ -246,6 +256,8 @@ describe('useIsFetching', () => {
 
     const rendered = render(() => <Page></Page>)
 
-    await rendered.findByText('isFetching: 1')
+    await vi.waitFor(() =>
+      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
+    )
   })
 })
