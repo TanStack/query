@@ -445,19 +445,15 @@ describe('InfiniteQueryBehavior', () => {
   test('InfiniteQueryBehavior should handle null page parameters correctly', async () => {
     const key = queryKey()
 
-    const queryFnSpy = vi.fn().mockImplementation(({ pageParam }) => {
-      return pageParam
-    })
-
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
-      queryFn: queryFnSpy,
+      queryFn: ({ pageParam }) => sleep(0).then(() => pageParam),
       getNextPageParam: (lastPage) => (lastPage === 1 ? null : lastPage + 1),
       initialPageParam: 1,
     })
 
     let observerResult:
-      | InfiniteQueryObserverResult<unknown, unknown>
+      | InfiniteQueryObserverResult<InfiniteData<number, unknown>, Error>
       | undefined
 
     const unsubscribe = observer.subscribe((result) => {
