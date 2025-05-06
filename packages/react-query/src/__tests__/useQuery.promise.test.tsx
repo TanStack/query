@@ -620,12 +620,12 @@ describe('useQuery().promise', () => {
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading..')
+      expect(withinDOM().getByText('loading..')).toBeInTheDocument()
     }
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('error boundary')
+      expect(withinDOM().getByText('error boundary')).toBeInTheDocument()
     }
 
     consoleMock.mockRestore()
@@ -979,7 +979,7 @@ describe('useQuery().promise', () => {
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading..')
+      expect(withinDOM().getByText('loading..')).toBeInTheDocument()
     }
 
     rendered.getByText('enable').click()
@@ -989,7 +989,7 @@ describe('useQuery().promise', () => {
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('test1')
+      expect(withinDOM().getByText('test1')).toBeInTheDocument()
     }
   })
 

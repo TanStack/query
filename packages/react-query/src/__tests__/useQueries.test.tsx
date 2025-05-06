@@ -836,8 +836,12 @@ describe('useQueries', () => {
       </ErrorBoundary>,
     )
 
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('single query error'))
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('single query error')).toBeInTheDocument(),
+    )
     consoleMock.mockRestore()
   })
 
@@ -903,8 +907,12 @@ describe('useQueries', () => {
       </ErrorBoundary>,
     )
 
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('single query error'))
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('single query error')).toBeInTheDocument(),
+    )
     consoleMock.mockRestore()
   })
 
@@ -932,7 +940,9 @@ describe('useQueries', () => {
 
     const rendered = render(<Page></Page>)
 
-    await waitFor(() => rendered.getByText('data: custom client'))
+    await waitFor(() =>
+      expect(rendered.getByText('data: custom client')).toBeInTheDocument(),
+    )
   })
 
   it('should combine queries', async () => {
@@ -974,7 +984,9 @@ describe('useQueries', () => {
     const rendered = render(<Page />)
 
     await waitFor(() =>
-      rendered.getByText('data: true first result,second result'),
+      expect(
+        rendered.getByText('data: true first result,second result'),
+      ).toBeInTheDocument(),
     )
   })
 
@@ -1085,9 +1097,11 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
     await waitFor(() =>
-      rendered.getByText(
-        'data: {"data":{"query1":"query1","query2":"query2"}}',
-      ),
+      expect(
+        rendered.getByText(
+          'data: {"data":{"query1":"query1","query2":"query2"}}',
+        ),
+      ).toBeInTheDocument(),
     )
   })
 
@@ -1144,7 +1158,9 @@ describe('useQueries', () => {
     const rendered = render(<Page />)
 
     await waitFor(() =>
-      rendered.getByText('data: true first result 0,second result 0'),
+      expect(
+        rendered.getByText('data: true first result 0,second result 0'),
+      ).toBeInTheDocument(),
     )
 
     expect(results.length).toBe(3)
@@ -1237,9 +1253,15 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('Loading Status: Loading...'))
+    await waitFor(() =>
+      expect(
+        rendered.getByText('Loading Status: Loading...'),
+      ).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('Loading Status: Loaded'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading Status: Loaded')).toBeInTheDocument(),
+    )
   })
 
   it('should not have stale closures with combine (#6648)', async () => {
@@ -1281,7 +1303,9 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
-    await waitFor(() => rendered.getByText('data: 1 result'))
+    await waitFor(() =>
+      expect(rendered.getByText('data: 1 result')).toBeInTheDocument(),
+    )
   })
 
   it('should optimize combine if it is a stable reference', async () => {
@@ -1610,17 +1634,23 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() => rendered.getByText('data: pending'))
     await waitFor(() =>
-      rendered.getByText('data: first result, second result, third result'),
+      expect(rendered.getByText('data: pending')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(
+        rendered.getByText('data: first result, second result, third result'),
+      ).toBeInTheDocument(),
     )
 
     fireEvent.click(rendered.getByRole('button', { name: /update/i }))
 
     await waitFor(() =>
-      rendered.getByText(
-        'data: first result updated, second result, third result',
-      ),
+      expect(
+        rendered.getByText(
+          'data: first result updated, second result, third result',
+        ),
+      ).toBeInTheDocument(),
     )
   })
 })
