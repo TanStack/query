@@ -1,4 +1,4 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { describe, expectTypeOf, it, test } from 'vitest'
 import { injectQuery, queryOptions } from '..'
 import { simpleFetcher } from './test-utils'
 import type { Signal } from '@angular/core'

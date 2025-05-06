@@ -315,15 +315,23 @@ describe('useSuspenseQuery', () => {
       </QueryErrorResetBoundary>,
     )
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('retry'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
+    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('retry'))
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
+    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
     consoleMock.mockRestore()
   })
 
@@ -404,11 +412,19 @@ describe('useSuspenseQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText(`data: ${key1}`))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText(`data: ${key1}`)).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByText('switch'))
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText(`data: ${key2}`))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText(`data: ${key2}`)).toBeInTheDocument(),
+    )
   })
 
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
@@ -462,15 +478,23 @@ describe('useSuspenseQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('retry'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
+    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('retry'))
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
+    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
     consoleMock.mockRestore()
   })
 
@@ -510,8 +534,12 @@ describe('useSuspenseQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
     consoleMock.mockRestore()
   })
 
@@ -553,8 +581,12 @@ describe('useSuspenseQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
     consoleMock.mockRestore()
   })
 
@@ -794,16 +826,22 @@ describe('useSuspenseQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     // render suspense fallback (Loading...)
-    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
     // resolve promise -> render Page (rendered)
-    await waitFor(() => rendered.getByText('rendered data success'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered data success')).toBeInTheDocument(),
+    )
 
     // change promise result to error
     succeed = false
     // refetch
     fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
     // we are now in error state but still have data to show
-    await waitFor(() => rendered.getByText('rendered data error'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered data error')).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -849,12 +887,20 @@ describe('useSuspenseQuery', () => {
         <Page />
       </React.Suspense>,
     )
-    await waitFor(() => rendered.getByText('loading'))
-    await waitFor(() => rendered.getByText('data: 1'))
+    await waitFor(() =>
+      expect(rendered.getByText('loading')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('data: 1')).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await waitFor(() => rendered.getByText('loading'))
-    await waitFor(() => rendered.getByText('data: 2'))
+    await waitFor(() =>
+      expect(rendered.getByText('loading')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('data: 2')).toBeInTheDocument(),
+    )
   })
 
   it('should log an error when skipToken is passed as queryFn', () => {
