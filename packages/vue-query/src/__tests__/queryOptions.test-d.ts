@@ -1,4 +1,4 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { reactive, ref } from 'vue-demi'
 import { dataTagSymbol } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
@@ -7,12 +7,14 @@ import { useQuery } from '../useQuery'
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
-    queryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(5),
-      // @ts-expect-error this is a good error, because stallTime does not exist!
-      stallTime: 1000,
-    })
+    assertType(
+      queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
+        // @ts-expect-error this is a good error, because stallTime does not exist!
+        stallTime: 1000,
+      }),
+    )
   })
   it('should infer types for callbacks', () => {
     queryOptions({

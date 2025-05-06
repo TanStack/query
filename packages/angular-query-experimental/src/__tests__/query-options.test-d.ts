@@ -1,4 +1,4 @@
-import { assertType, describe, expectTypeOf } from 'vitest'
+import { assertType, describe, expectTypeOf, test } from 'vitest'
 import { QueryClient, dataTagSymbol, injectQuery, queryOptions } from '..'
 import type { Signal } from '@angular/core'
 

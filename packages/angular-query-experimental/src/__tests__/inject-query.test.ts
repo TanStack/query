@@ -8,7 +8,15 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { afterEach, describe, expect, vi } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  test,
+  vi,
+} from 'vitest'
 import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
 import {
   delayedFetcher,

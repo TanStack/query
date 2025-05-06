@@ -1,4 +1,4 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData } from '@tanstack/query-core'
 
@@ -28,10 +28,10 @@ describe('getQueryData', () => {
   })
 
   it('should only allow Arrays to be passed', () => {
-    const queryKey = 'key'
-    const queryClient = new QueryClient()
-    // @ts-expect-error TS2345: Argument of type 'string' is not assignable to parameter of type 'QueryKey'
-    return queryClient.getQueryData(queryKey)
+    assertType<Parameters<QueryClient['getQueryData']>>([
+      // @ts-expect-error TS2345: Argument of type 'string' is not assignable to parameter of type 'QueryKey'
+      { queryKey: 'key' },
+    ])
   })
 })
 
@@ -125,21 +125,25 @@ describe('fetchInfiniteQuery', () => {
   })
 
   it('should not allow passing getNextPageParam without pages', () => {
-    new QueryClient().fetchInfiniteQuery({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve('string'),
-      initialPageParam: 1,
-      getNextPageParam: () => 1,
-    })
+    assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+      },
+    ])
   })
 
   it('should not allow passing pages without getNextPageParam', () => {
-    // @ts-expect-error Property 'getNextPageParam' is missing
-    new QueryClient().fetchInfiniteQuery({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve('string'),
-      initialPageParam: 1,
-      pages: 5,
-    })
+    assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
+      // @ts-expect-error Property 'getNextPageParam' is missing
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        initialPageParam: 1,
+        pages: 5,
+      },
+    ])
   })
 })

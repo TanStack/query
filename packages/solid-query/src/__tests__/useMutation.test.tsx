@@ -217,22 +217,38 @@ describe('useMutation', () => {
       </QueryClientProvider>
     ))
 
-    rendered.getByText('Data')
+    expect(rendered.getByText('Data')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    rendered.getByText('Data')
-    await vi.waitFor(() => rendered.getByText('Status error'))
-    await vi.waitFor(() => rendered.getByText('Failed 1 times'))
+    expect(rendered.getByText('Data')).toBeInTheDocument()
     await vi.waitFor(() =>
-      rendered.getByText('Failed because Error test Jonas'),
+      expect(rendered.getByText('Status error')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Failed 1 times')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('Failed because Error test Jonas'),
+      ).toBeInTheDocument(),
     )
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await vi.waitFor(() => rendered.getByText('Status pending'))
-    await vi.waitFor(() => rendered.getByText('Status success'))
-    await vi.waitFor(() => rendered.getByText('Data 2'))
-    await vi.waitFor(() => rendered.getByText('Failed 0 times'))
-    await vi.waitFor(() => rendered.getByText('Failed because null'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Status pending')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Status success')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data 2')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Failed 0 times')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Failed because null')).toBeInTheDocument(),
+    )
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
@@ -752,6 +768,7 @@ describe('useMutation', () => {
     })
   })
 
+  // eslint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', () => {
     function Mutates() {
       const mutation = useMutation(() => ({ mutationFn: () => sleep(10) }))
@@ -1148,12 +1165,20 @@ describe('useMutation', () => {
       </QueryClientProvider>
     ))
 
-    await rendered.findByText('error: null, status: idle')
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('error: null, status: idle'),
+      ).toBeInTheDocument(),
+    )
 
     rendered.getByRole('button', { name: /mutate/i }).click()
 
     await vi.advanceTimersByTimeAsync(10)
-    await rendered.findByText('error: mutateFnError, status: error')
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('error: mutateFnError, status: error'),
+      ).toBeInTheDocument(),
+    )
   })
 
   it('should go to error state if onSettled callback errors', async () => {
@@ -1224,10 +1249,18 @@ describe('useMutation', () => {
 
     const rendered = render(() => <Page></Page>)
 
-    await rendered.findByText('data: null, status: idle')
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('data: null, status: idle'),
+      ).toBeInTheDocument(),
+    )
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await rendered.findByText('data: custom client, status: success')
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('data: custom client, status: success'),
+      ).toBeInTheDocument(),
+    )
   })
 })
