@@ -1,5 +1,6 @@
 import { isSignal, untracked } from '@angular/core'
 import { SIGNAL, signalSetFn } from '@angular/core/primitives/signals'
+import { expect } from 'vitest'
 import type { InputSignal, Signal } from '@angular/core'
 import type { ComponentFixture } from '@angular/core/testing'
 

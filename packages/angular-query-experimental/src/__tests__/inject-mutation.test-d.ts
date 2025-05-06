@@ -1,4 +1,4 @@
-import { describe, expectTypeOf } from 'vitest'
+import { describe, expectTypeOf, test } from 'vitest'
 import { injectMutation } from '..'
 import { successMutator } from './test-utils'
 import type { Signal } from '@angular/core'
