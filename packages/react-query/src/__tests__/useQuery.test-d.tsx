@@ -277,6 +277,7 @@ describe('useQuery', () => {
         }
       })
 
+      // eslint-disable-next-line vitest/expect-expect
       it('TData should depend from only arguments, not the result', () => {
         // @ts-expect-error
         const result: UseQueryResult<{ wow: string }> = useQuery({
