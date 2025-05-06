@@ -480,17 +480,13 @@ describe('InfiniteQueryBehavior', () => {
   test('InfiniteQueryBehavior should use persister when provided', async () => {
     const key = queryKey()
 
-    const queryFnSpy = vi.fn().mockImplementation(({ pageParam }) => {
-      return pageParam
-    })
-
     const persisterSpy = vi.fn().mockImplementation(async (fn) => {
       return await fn()
     })
 
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
-      queryFn: queryFnSpy,
+      queryFn: ({ pageParam }) => sleep(0).then(() => pageParam),
       getNextPageParam: (lastPage) => lastPage + 1,
       initialPageParam: 1,
       persister: persisterSpy,
