@@ -1003,7 +1003,7 @@ describe('query', () => {
     const key = queryKey()
 
     const queryFn = vi
-      .fn()
+      .fn<() => Promise<string>>()
       .mockImplementation(() => sleep(10).then(() => 'data'))
 
     queryClient.prefetchQuery({
