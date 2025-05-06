@@ -1,23 +1,31 @@
 import {
   DestroyRef,
   ENVIRONMENT_INITIALIZER,
+  InjectionToken,
+  Injector,
   PLATFORM_ID,
   computed,
-  effect,
   inject,
   makeEnvironmentProviders,
 } from '@angular/core'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/query-core'
 import { isPlatformBrowser } from '@angular/common'
-import { isDevMode } from './util/is-dev-mode/is-dev-mode'
 import { noop } from './util'
-import type { EnvironmentProviders, Provider } from '@angular/core'
+import type { EnvironmentProviders, Provider, Signal } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
-  TanstackQueryDevtools,
 } from '@tanstack/query-devtools'
+
+declare const ngDevMode: unknown
+
+/**
+ * @internal
+ */
+const DEVTOOLS_OPTIONS_SIGNAL = new InjectionToken<Signal<DevtoolsOptions>>(
+  'devtools options signal',
+)
 
 /**
  * Usually {@link provideTanStackQuery} is used once to set up TanStack Query and the
@@ -153,14 +161,46 @@ export function queryFeature<TFeatureKind extends QueryFeatureKind>(
  * @public
  * @see {@link withDevtools}
  */
-export type DeveloperToolsFeature = QueryFeature<'DeveloperTools'>
+export type DeveloperToolsFeature =
+  QueryFeature<QueryFeatureKind.DeveloperTools>
 
 /**
  * A type alias that represents a feature which enables persistence.
  * The type is used to describe the return value of the `withPersistQueryClient` function.
  * @public
  */
-export type PersistQueryClientFeature = QueryFeature<'PersistQueryClient'>
+export type PersistQueryClientFeature =
+  QueryFeature<QueryFeatureKind.PersistQueryClient>
+
+/**
+ * Options for configuring withDevtools.
+ * @public
+ */
+export interface WithDevtoolsOptions {
+  /**
+   * An array of dependencies to be injected and passed to the `withDevtoolsFn` function.
+   *
+   * **Example**
+   * ```ts
+   * export const appConfig: ApplicationConfig = {
+   *   providers: [
+   *     provideTanStackQuery(
+   *       new QueryClient(),
+   *       withDevtools(
+   *         (devToolsOptionsManager: DevtoolsOptionsManager) => ({
+   *           loadDevtools: devToolsOptionsManager.loadDevtools(),
+   *         }),
+   *         {
+   *           deps: [DevtoolsOptionsManager],
+   *         },
+   *       ),
+   *     ),
+   *   ],
+   * }
+   * ```
+   */
+  deps?: Array<any>
+}
 
 /**
  * Options for configuring the TanStack Query devtools.
@@ -241,104 +281,48 @@ export interface DevtoolsOptions {
  *
  * If you need more control over where devtools are rendered, consider `injectDevtoolsPanel`. This allows rendering devtools inside your own devtools for example.
  * @param withDevtoolsFn - A function that returns `DevtoolsOptions`.
+ * @param options - Additional options for configuring `withDevtools`.
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  * @see {@link provideTanStackQuery}
  * @see {@link DevtoolsOptions}
  */
 export function withDevtools(
-  withDevtoolsFn?: () => DevtoolsOptions,
+  withDevtoolsFn?: (...deps: Array<any>) => DevtoolsOptions,
+  options: WithDevtoolsOptions = {},
 ): DeveloperToolsFeature {
   let providers: Array<Provider> = []
-  if (!isDevMode() && !withDevtoolsFn) {
-    providers = []
+  if (withDevtoolsFn === undefined && typeof ngDevMode === 'undefined') {
+    return queryFeature(QueryFeatureKind.DeveloperTools, providers)
   } else {
     providers = [
+      {
+        provide: DEVTOOLS_OPTIONS_SIGNAL,
+        useFactory: (...deps: Array<any>) =>
+          computed(() => withDevtoolsFn?.(...deps) ?? {}),
+        deps: options.deps || [],
+      },
       {
         // Do not use provideEnvironmentInitializer while Angular < v19 is supported
         provide: ENVIRONMENT_INITIALIZER,
         multi: true,
-        useFactory: () => {
+        useFactory: (devtoolsOptionsSignal: Signal<DevtoolsOptions>) => {
           if (!isPlatformBrowser(inject(PLATFORM_ID))) return noop
-          const injectedClient = inject(QueryClient, {
-            optional: true,
-          })
-          const destroyRef = inject(DestroyRef)
-
-          const options = computed(() => withDevtoolsFn?.() ?? {})
-
-          let devtools: TanstackQueryDevtools | null = null
-          let el: HTMLElement | null = null
-
-          const shouldLoadToolsSignal = computed(() => {
-            const { loadDevtools } = options()
-            return typeof loadDevtools === 'boolean'
-              ? loadDevtools
-              : isDevMode()
-          })
-
-          const getResolvedQueryClient = () => {
-            const client = options().client ?? injectedClient
-            if (!client) {
-              throw new Error('No QueryClient found')
-            }
-            return client
-          }
-
-          const destroyDevtools = () => {
-            devtools?.unmount()
-            el?.remove()
-            devtools = null
-          }
+          let destroyed = false
+          const injector = inject(Injector)
+          inject(DestroyRef).onDestroy(() => (destroyed = true))
 
           return () =>
-            effect(() => {
-              const shouldLoadTools = shouldLoadToolsSignal()
-              const {
-                client,
-                position,
-                errorTypes,
-                buttonPosition,
-                initialIsOpen,
-              } = options()
-
-              if (devtools && !shouldLoadTools) {
-                destroyDevtools()
-                return
-              } else if (devtools && shouldLoadTools) {
-                client && devtools.setClient(client)
-                position && devtools.setPosition(position)
-                errorTypes && devtools.setErrorTypes(errorTypes)
-                buttonPosition && devtools.setButtonPosition(buttonPosition)
-                initialIsOpen && devtools.setInitialIsOpen(initialIsOpen)
-                return
-              } else if (!shouldLoadTools) {
-                return
-              }
-
-              el = document.body.appendChild(document.createElement('div'))
-              el.classList.add('tsqd-parent-container')
-
-              import('@tanstack/query-devtools').then((queryDevtools) => {
-                devtools = new queryDevtools.TanstackQueryDevtools({
-                  ...options(),
-                  client: getResolvedQueryClient(),
-                  queryFlavor: 'Angular Query',
-                  version: '5',
-                  onlineManager,
-                })
-
-                el && devtools.mount(el)
-
-                // Unmount the devtools on application destroy
-                destroyRef.onDestroy(destroyDevtools)
-              })
+            import('./devtools-setup').then((module) => {
+              !destroyed &&
+                module.setupDevtools(injector, devtoolsOptionsSignal)
             })
         },
+        deps: [DEVTOOLS_OPTIONS_SIGNAL],
       },
     ]
   }
-  return queryFeature('DeveloperTools', providers)
+  return queryFeature(QueryFeatureKind.DeveloperTools, providers)
 }
 
 /**
@@ -351,6 +335,7 @@ export function withDevtools(
  */
 export type QueryFeatures = DeveloperToolsFeature | PersistQueryClientFeature
 
-export const queryFeatures = ['DeveloperTools', 'PersistQueryClient'] as const
-
-export type QueryFeatureKind = (typeof queryFeatures)[number]
+export enum QueryFeatureKind {
+  DeveloperTools,
+  PersistQueryClient,
+}
