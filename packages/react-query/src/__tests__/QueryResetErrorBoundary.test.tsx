@@ -68,11 +68,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(rendered.getByText('retry')).toBeInTheDocument(),
+      )
       succeed = true
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await waitFor(() =>
+        expect(rendered.getByText('data')).toBeInTheDocument(),
+      )
       consoleMock.mockRestore()
     })
 
@@ -132,11 +138,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(rendered.getByText('retry')).toBeInTheDocument(),
+      )
       succeed = true
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('status: error'))
+      await waitFor(() =>
+        expect(rendered.getByText('status: error')).toBeInTheDocument(),
+      )
       consoleMock.mockRestore()
     })
 
@@ -198,11 +210,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(rendered.getByText('retry')).toBeInTheDocument(),
+      )
       succeed = true
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await waitFor(() =>
+        expect(rendered.getByText('data')).toBeInTheDocument(),
+      )
       consoleMock.mockRestore()
     })
 
@@ -216,9 +234,7 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data, refetch, status, fetchStatus } = useQuery<string>({
           queryKey: key,
-          queryFn: async () => {
-            throw new Error('Error')
-          },
+          queryFn: () => Promise.reject(new Error('Error')),
           retry: false,
           enabled: false,
           throwOnError: true,
@@ -261,10 +277,14 @@ describe('QueryErrorResetBoundary', () => {
       )
 
       await waitFor(() =>
-        rendered.getByText('status: pending, fetchStatus: idle'),
+        expect(
+          rendered.getByText('status: pending, fetchStatus: idle'),
+        ).toBeInTheDocument(),
       )
       fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-      await waitFor(() => rendered.getByText('error boundary'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
       consoleMock.mockRestore()
     })
 
@@ -318,11 +338,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(rendered.getByText('retry')).toBeInTheDocument(),
+      )
       succeed = true
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('error boundary'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
       consoleMock.mockRestore()
     })
 
@@ -378,11 +404,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(rendered.getByText('retry')).toBeInTheDocument(),
+      )
       succeed = true
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await waitFor(() =>
+        expect(rendered.getByText('data')).toBeInTheDocument(),
+      )
       consoleMock.mockRestore()
     })
 
@@ -442,11 +474,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(rendered.getByText('retry')).toBeInTheDocument(),
+      )
       shouldReset = true
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('error boundary'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
       succeed = true
       shouldReset = false
       fireEvent.click(rendered.getByText('retry'))
@@ -578,7 +616,7 @@ describe('QueryErrorResetBoundary', () => {
       consoleMock.mockRestore()
     })
 
-    it('should render children', async () => {
+    it('should render children', () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
@@ -653,11 +691,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(rendered.getByText('retry')).toBeInTheDocument(),
+      )
       succeed = true
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await waitFor(() =>
+        expect(rendered.getByText('data')).toBeInTheDocument(),
+      )
       consoleMock.mockRestore()
     })
   })
@@ -717,11 +761,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(rendered.getByText('retry')).toBeInTheDocument(),
+      )
       succeed = true
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await waitFor(() =>
+        expect(rendered.getByText('data')).toBeInTheDocument(),
+      )
       consoleMock.mockRestore()
     })
 
@@ -781,11 +831,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await waitFor(() =>
+        expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(rendered.getByText('retry')).toBeInTheDocument(),
+      )
       succeed = true
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await waitFor(() =>
+        expect(rendered.getByText('data')).toBeInTheDocument(),
+      )
       consoleMock.mockRestore()
     })
   })

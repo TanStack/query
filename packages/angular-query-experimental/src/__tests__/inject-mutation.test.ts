@@ -1,14 +1,12 @@
 import {
   Component,
-  Injectable,
   Injector,
-  inject,
   input,
   provideExperimentalZonelessChangeDetection,
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { describe, expect, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import {
@@ -122,7 +120,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('reactive options should update mutation', async () => {
+  test('reactive options should update mutation', () => {
     const mutationCache = queryClient.getMutationCache()
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
@@ -451,47 +449,6 @@ describe('injectMutation', () => {
     await expect(() => mutateAsync()).rejects.toThrowError(err)
   })
 
-  test('should execute callback in injection context', async () => {
-    const errorSpy = vi.fn()
-    @Injectable()
-    class FakeService {
-      updateData(name: string) {
-        return Promise.resolve(name)
-      }
-    }
-
-    @Component({
-      selector: 'app-fake',
-      template: ``,
-      standalone: true,
-      providers: [FakeService],
-    })
-    class FakeComponent {
-      mutation = injectMutation(() => {
-        try {
-          const service = inject(FakeService)
-          return {
-            mutationFn: (name: string) => service.updateData(name),
-          }
-        } catch (e) {
-          errorSpy(e)
-          throw e
-        }
-      })
-    }
-
-    const fixture = TestBed.createComponent(FakeComponent)
-    fixture.detectChanges()
-
-    // check if injection contexts persist in a different task
-    await new Promise<void>((resolve) => queueMicrotask(() => resolve()))
-
-    expect(
-      await fixture.componentInstance.mutation.mutateAsync('test'),
-    ).toEqual('test')
-    expect(errorSpy).not.toHaveBeenCalled()
-  })
-
   describe('injection context', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
       expect(() => {
@@ -509,7 +466,9 @@ describe('injectMutation', () => {
             mutationKey: ['injectionContextError'],
             mutationFn: () => Promise.resolve(),
           }),
-          TestBed.inject(Injector),
+          {
+            injector: TestBed.inject(Injector),
+          },
         )
       }).not.toThrow()
     })

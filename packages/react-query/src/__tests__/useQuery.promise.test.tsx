@@ -12,7 +12,7 @@ import {
   useQuery,
 } from '..'
 import { QueryCache } from '../index'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey } from './utils'
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
@@ -21,11 +21,13 @@ describe('useQuery().promise', () => {
   })
 
   beforeAll(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
     queryClient.setDefaultOptions({
       queries: { experimental_prefetchInRender: true },
     })
   })
   afterAll(() => {
+    vi.useRealTimers()
     queryClient.setDefaultOptions({
       queries: { experimental_prefetchInRender: false },
     })
@@ -52,14 +54,17 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           return 'test'
         },
       })
 
       return (
         <React.Suspense fallback={<Loading />}>
-          <MyComponent promise={query.promise} />
+          <div>
+            <MyComponent promise={query.promise} />
+          </div>
+          <div>status:{query.status}</div>
         </React.Suspense>
       )
     }
@@ -95,7 +100,7 @@ describe('useQuery().promise', () => {
         queryKey: key,
         queryFn: async () => {
           callCount++
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           return 'test'
         },
         staleTime: 1000,
@@ -149,7 +154,7 @@ describe('useQuery().promise', () => {
         queryKey: key,
         queryFn: async () => {
           callCount++
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           return 'test'
         },
         staleTime: 1000,
@@ -227,7 +232,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           return 'test'
         },
         initialData: 'initial',
@@ -263,7 +268,7 @@ describe('useQuery().promise', () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
     const queryFn = vi.fn().mockImplementation(async () => {
-      await sleep(1)
+      await vi.advanceTimersByTimeAsync(1)
       return 'test'
     })
 
@@ -328,7 +333,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           return 'test'
         },
         placeholderData: 'placeholder',
@@ -381,7 +386,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: [...key, count],
         queryFn: async () => {
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           return 'test-' + count
         },
         placeholderData: keepPreviousData,
@@ -450,7 +455,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           return { name: 'test' }
         },
         select: (data) => data.name,
@@ -505,7 +510,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           if (++queryCount > 1) {
             // second time this query mounts, it should not throw
             return 'data'
@@ -587,7 +592,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           throw new Error('Error test')
         },
         retry: false,
@@ -615,12 +620,12 @@ describe('useQuery().promise', () => {
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading..')
+      expect(withinDOM().getByText('loading..')).toBeInTheDocument()
     }
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('error boundary')
+      expect(withinDOM().getByText('error boundary')).toBeInTheDocument()
     }
 
     consoleMock.mockRestore()
@@ -645,7 +650,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           return 'test1'
         },
       })
@@ -689,7 +694,7 @@ describe('useQuery().promise', () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
     const queryFn = vi.fn().mockImplementation(async () => {
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
       return 'test'
     })
 
@@ -746,7 +751,7 @@ describe('useQuery().promise', () => {
     let count = 0
     const renderStream = createRenderStream({ snapshotDOM: true })
     const queryFn = vi.fn().mockImplementation(async () => {
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
       return 'test' + count++
     })
 
@@ -805,7 +810,7 @@ describe('useQuery().promise', () => {
     const key = queryKey()
     let count = 0
     const queryFn = vi.fn().mockImplementation(async () => {
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
       return 'test' + count++
     })
 
@@ -880,7 +885,7 @@ describe('useQuery().promise', () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
     const key = queryKey()
     const queryFn = vi.fn().mockImplementation(async () => {
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
       return 'test'
     })
 
@@ -938,7 +943,7 @@ describe('useQuery().promise', () => {
     const options = (count: number) => ({
       queryKey: [...key, count],
       queryFn: async () => {
-        await sleep(10)
+        await vi.advanceTimersByTimeAsync(10)
         return 'test' + count
       },
     })
@@ -974,7 +979,7 @@ describe('useQuery().promise', () => {
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading..')
+      expect(withinDOM().getByText('loading..')).toBeInTheDocument()
     }
 
     rendered.getByText('enable').click()
@@ -984,7 +989,7 @@ describe('useQuery().promise', () => {
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('test1')
+      expect(withinDOM().getByText('test1')).toBeInTheDocument()
     }
   })
 
@@ -994,7 +999,7 @@ describe('useQuery().promise', () => {
     queryClient.setQueryData(key, 'initial')
 
     const queryFn = vi.fn().mockImplementation(async () => {
-      await sleep(1)
+      await vi.advanceTimersByTimeAsync(1)
       return 'test'
     })
 
@@ -1056,7 +1061,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: [key, count],
         queryFn: async () => {
-          await sleep(10)
+          await vi.advanceTimersByTimeAsync(10)
           return 'test' + count
         },
         staleTime: Infinity,
@@ -1136,7 +1141,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: [key, count],
         queryFn: async () => {
-          await sleep(10)
+          await vi.advanceTimersByTimeAsync(10)
           return 'test' + count
         },
         staleTime: Infinity,
@@ -1212,7 +1217,7 @@ describe('useQuery().promise', () => {
       const query = useQuery({
         queryKey: [key, count],
         queryFn: async () => {
-          await sleep(10)
+          await vi.advanceTimersByTimeAsync(10)
           return 'test' + count + modifier
         },
       })
@@ -1314,7 +1319,7 @@ describe('useQuery().promise', () => {
         staleTime: Infinity,
         queryKey: [key, input],
         queryFn: async () => {
-          await sleep(1)
+          await vi.advanceTimersByTimeAsync(1)
           return input + ' response'
         },
       })

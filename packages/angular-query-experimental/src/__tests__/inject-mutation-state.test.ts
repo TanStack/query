@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
 import {
   QueryClient,
@@ -15,10 +15,6 @@ import {
   provideTanStackQuery,
 } from '..'
 import { setFixtureSignalInputs, successMutator } from './test-utils'
-
-const MUTATION_DURATION = 1000
-
-const resolveMutations = () => vi.advanceTimersByTimeAsync(MUTATION_DURATION)
 
 describe('injectMutationState', () => {
   let queryClient: QueryClient
@@ -143,7 +139,7 @@ describe('injectMutationState', () => {
       @Component({
         selector: 'app-fake',
         template: `
-          @for (mutation of mutationState(); track mutation) {
+          @for (mutation of mutationState(); track $index) {
             <span>{{ mutation.status }}</span>
           }
         `,
@@ -163,6 +159,7 @@ describe('injectMutationState', () => {
       const fixture = TestBed.createComponent(FakeComponent)
       const { debugElement } = fixture
       setFixtureSignalInputs(fixture, { name: fakeName })
+      vi.advanceTimersByTime(0.1)
 
       let spans = debugElement
         .queryAll(By.css('span'))
@@ -170,7 +167,7 @@ describe('injectMutationState', () => {
 
       expect(spans).toEqual(['pending', 'pending'])
 
-      await resolveMutations()
+      await vi.runAllTimersAsync()
       fixture.detectChanges()
 
       spans = debugElement

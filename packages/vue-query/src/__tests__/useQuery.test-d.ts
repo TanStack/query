@@ -125,6 +125,17 @@ describe('useQuery', () => {
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       }
     })
+
+    it('data should not have undefined when initialData is provided', () => {
+      const { data } = reactive(
+        useQuery({
+          queryKey: ['query-key'],
+          initialData: 42,
+        }),
+      )
+
+      expectTypeOf(data).toEqualTypeOf<number>()
+    })
   })
 
   describe('custom composable', () => {
@@ -150,11 +161,14 @@ describe('useQuery', () => {
   })
 
   describe('structuralSharing', () => {
-    it('should restrict to same types', () => {
+    it('should be able to use structuralSharing with unknown types', () => {
+      // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
       useQuery({
         queryKey: ['key'],
         queryFn: () => 5,
-        structuralSharing: (_oldData, newData) => {
+        structuralSharing: (oldData, newData) => {
+          expectTypeOf(oldData).toBeUnknown()
+          expectTypeOf(newData).toBeUnknown()
           return newData
         },
       })

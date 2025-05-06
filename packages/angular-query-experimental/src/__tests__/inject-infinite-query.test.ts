@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   Injector,
   provideExperimentalZonelessChangeDetection,
@@ -87,7 +87,9 @@ describe('injectInfiniteQuery', () => {
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }),
-        TestBed.inject(Injector),
+        {
+          injector: TestBed.inject(Injector),
+        },
       )
 
       expect(query.status()).toBe('pending')

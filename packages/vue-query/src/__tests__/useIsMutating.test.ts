@@ -83,7 +83,7 @@ describe('useIsMutating', () => {
 })
 
 describe('useMutationState', () => {
-  it('should return variables after calling mutate 1', async () => {
+  it('should return variables after calling mutate 1', () => {
     const mutationKey = ['mutation']
     const variables = 'foo123'
 
@@ -102,7 +102,7 @@ describe('useMutationState', () => {
     expect(mutationState.value).toEqual([variables])
   })
 
-  it('should return variables after calling mutate 2', async () => {
+  it('should return variables after calling mutate 2', () => {
     const queryClient = useQueryClient()
     queryClient.clear()
     const mutationKey = ['mutation']

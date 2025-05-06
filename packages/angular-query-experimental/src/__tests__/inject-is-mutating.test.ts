@@ -1,4 +1,4 @@
-import { beforeEach, describe } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { TestBed } from '@angular/core/testing'
 import {
   Injector,
@@ -31,7 +31,7 @@ describe('injectIsMutating', () => {
     vi.useRealTimers()
   })
 
-  test('should properly return isMutating state', async () => {
+  test('should properly return isMutating state', () => {
     TestBed.runInInjectionContext(() => {
       const isMutating = injectIsMutating()
       const mutation = injectMutation(() => ({
@@ -60,7 +60,9 @@ describe('injectIsMutating', () => {
 
     test('can be used outside injection context when passing an injector', () => {
       expect(
-        injectIsMutating(undefined, TestBed.inject(Injector)),
+        injectIsMutating(undefined, {
+          injector: TestBed.inject(Injector),
+        }),
       ).not.toThrow()
     })
   })

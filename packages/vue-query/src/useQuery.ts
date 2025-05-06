@@ -3,6 +3,7 @@ import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
+  InitialDataFunction,
   QueryKey,
   QueryObserverOptions,
 } from '@tanstack/query-core'
@@ -51,6 +52,9 @@ export type UseQueryOptions<
           >[Property]
         >
   } & {
+    /**
+     * Return data in a shallow ref object (it is `false` by default). It can be set to `true` to return data in a shallow ref object, which can improve performance if your data does not need to be deeply reactive.
+     */
     shallow?: boolean
   }
 >
@@ -61,7 +65,10 @@ export type UndefinedInitialQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  initialData?: undefined
+  initialData?:
+    | undefined
+    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+    | NonUndefinedGuard<TQueryFnData>
 }
 
 export type DefinedInitialQueryOptions<
@@ -92,9 +99,9 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseQueryReturnType<TData, TError>
+): UseQueryDefinedReturnType<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -102,9 +109,9 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseQueryDefinedReturnType<TData, TError>
+): UseQueryReturnType<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,

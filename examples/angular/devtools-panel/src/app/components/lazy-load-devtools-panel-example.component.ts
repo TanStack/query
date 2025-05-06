@@ -3,7 +3,9 @@ import {
   Component,
   Injector,
   computed,
+  effect,
   inject,
+  signal,
   viewChild,
 } from '@angular/core'
 import { ExampleQueryComponent } from './example-query.component'
@@ -20,33 +22,40 @@ import type { DevtoolsPanelRef } from '@tanstack/angular-query-devtools-experime
       In this example, the devtools panel is loaded programmatically when the
       button is clicked. In addition, the code is lazy loaded.
     </p>
-    <button type="button" (click)="toggleDevtools()">
-      {{ isOpen ? 'Close' : 'Open' }} the devtools panel
+    <button type="button" (click)="toggleIsOpen()">
+      {{ isOpen() ? 'Close' : 'Open' }} the devtools panel
     </button>
-    @if (isOpen) {
+    @if (isOpen()) {
       <div #div style="height: 500px"></div>
     }
   `,
   imports: [ExampleQueryComponent],
 })
 export default class LazyLoadDevtoolsPanelExampleComponent {
-  isOpen = false
-  devtools?: Promise<DevtoolsPanelRef>
-  injector = inject(Injector)
+  readonly isOpen = signal(false)
+  readonly devtools = signal<Promise<DevtoolsPanelRef> | undefined>(undefined)
+  readonly injector = inject(Injector)
 
-  divEl = viewChild<ElementRef>('div')
-  devToolsOptions = computed(() => ({
+  readonly divEl = viewChild<ElementRef>('div')
+  readonly devToolsOptions = computed(() => ({
     hostElement: this.divEl(),
   }))
 
-  toggleDevtools() {
-    this.isOpen = !this.isOpen
-    if (!this.devtools) {
-      this.devtools = import(
-        '@tanstack/angular-query-devtools-experimental'
-      ).then(({ injectDevtoolsPanel }) =>
-        injectDevtoolsPanel(this.devToolsOptions, this.injector),
+  toggleIsOpen() {
+    this.isOpen.update((prev) => !prev)
+  }
+
+  readonly loadDevtoolsEffect = effect(() => {
+    if (this.devtools()) return
+    if (this.isOpen()) {
+      this.devtools.set(
+        import('@tanstack/angular-query-devtools-experimental').then(
+          ({ injectDevtoolsPanel }) =>
+            injectDevtoolsPanel(this.devToolsOptions, {
+              injector: this.injector,
+            }),
+        ),
       )
     }
-  }
+  })
 }

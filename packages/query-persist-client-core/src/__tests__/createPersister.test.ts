@@ -1,10 +1,9 @@
-import { describe, expect, test, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
 import { Query, QueryClient, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createPersister,
 } from '../createPersister'
-import { sleep } from './utils'
 import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
 import type { StoragePersisterOptions } from '../createPersister'
 
@@ -12,11 +11,13 @@ function getFreshStorage() {
   const storage = new Map()
   return {
     getItem: (key: string) => Promise.resolve(storage.get(key)),
-    setItem: async (key: string, value: unknown) => {
+    setItem: (key: string, value: unknown) => {
       storage.set(key, value)
+      return Promise.resolve()
     },
-    removeItem: async (key: string) => {
+    removeItem: (key: string) => {
       storage.delete(key)
+      return Promise.resolve()
     },
   }
 }
@@ -58,6 +59,14 @@ function setupPersister(
 }
 
 describe('createPersister', () => {
+  beforeAll(() => {
+    vi.useFakeTimers()
+  })
+
+  afterAll(() => {
+    vi.useRealTimers()
+  })
+
   test('should fetch if storage is not provided', async () => {
     const { context, persisterFn, query, queryFn } = setupPersister(['foo'], {
       storage: undefined,
@@ -213,7 +222,7 @@ describe('createPersister', () => {
     query.fetch = vi.fn()
     expect(query.state.dataUpdatedAt).toEqual(0)
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(0)
@@ -241,7 +250,7 @@ describe('createPersister', () => {
     query.state.isInvalidated = true
     query.fetch = vi.fn()
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(1)
@@ -264,7 +273,7 @@ describe('createPersister', () => {
     await persisterFn(queryFn, context, query)
     query.setData('baz')
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queryFn).toHaveBeenCalledOnce()
     expect(queryFn).toHaveBeenCalledWith(context)
@@ -306,7 +315,7 @@ describe('createPersister', () => {
     await persisterFn(queryFn, context, query)
     query.fetch = vi.fn()
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.fetch).toHaveBeenCalledTimes(0)
@@ -335,7 +344,7 @@ describe('createPersister', () => {
     query.state.isInvalidated = true
     query.fetch = vi.fn()
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(query.fetch).toHaveBeenCalledTimes(1)
@@ -360,7 +369,7 @@ describe('createPersister', () => {
     await persisterFn(queryFn, context, query)
     query.setData('baz')
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queryFn).toHaveBeenCalledOnce()
     expect(queryFn).toHaveBeenCalledWith(context)

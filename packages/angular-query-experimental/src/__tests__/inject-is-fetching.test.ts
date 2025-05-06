@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { beforeEach, describe, expect } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   Injector,
   provideExperimentalZonelessChangeDetection,
@@ -60,7 +60,9 @@ describe('injectIsFetching', () => {
 
     test('can be used outside injection context when passing an injector', () => {
       expect(
-        injectIsFetching(undefined, TestBed.inject(Injector)),
+        injectIsFetching(undefined, {
+          injector: TestBed.inject(Injector),
+        }),
       ).not.toThrow()
     })
   })

@@ -15,7 +15,7 @@ const isFetchingPosts = useIsFetching({ queryKey: ['posts'] })
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../../guides/filters#query-filters)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters.md#query-filters)
 - `queryClient?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
