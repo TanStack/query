@@ -68,4 +68,15 @@ describe('useSuspenseQuery', () => {
     // @ts-expect-error TS2339
     query.isPlaceholderData
   })
+
+  it('should type-narrow the error field', () => {
+    const query = useSuspenseQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    })
+
+    if (query.status === 'error') {
+      expectTypeOf(query.error).toEqualTypeOf<Error>()
+    }
+  })
 })
