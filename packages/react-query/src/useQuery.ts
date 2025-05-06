@@ -1,7 +1,12 @@
 'use client'
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  NoInfer,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -45,5 +50,3 @@ export function useQuery<
 export function useQuery(options: UseQueryOptions, queryClient?: QueryClient) {
   return useBaseQuery(options, QueryObserver, queryClient)
 }
-
-type NoInfer<T> = [T][T extends any ? 0 : never]
