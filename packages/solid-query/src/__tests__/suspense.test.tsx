@@ -263,15 +263,21 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('retry'))
+    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
 
     fireEvent.click(rendered.getByText('retry'))
 
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
   })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
@@ -325,15 +331,23 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('retry'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
+    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('retry'))
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
+    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
   })
 
   it('should refetch when re-mounting', async () => {
@@ -383,16 +397,28 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('data: 1'))
-    await waitFor(() => rendered.getByText('fetching: false'))
-    await waitFor(() => rendered.getByText('hide'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('data: 1')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('fetching: false')).toBeInTheDocument(),
+    )
+    await waitFor(() => expect(rendered.getByText('hide')).toBeInTheDocument())
     fireEvent.click(rendered.getByText('hide'))
-    await waitFor(() => rendered.getByText('show'))
+    await waitFor(() => expect(rendered.getByText('show')).toBeInTheDocument())
     fireEvent.click(rendered.getByText('show'))
-    await waitFor(() => rendered.getByText('fetching: true'))
-    await waitFor(() => rendered.getByText('data: 2'))
-    await waitFor(() => rendered.getByText('fetching: false'))
+    await waitFor(() =>
+      expect(rendered.getByText('fetching: true')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('data: 2')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('fetching: false')).toBeInTheDocument(),
+    )
   })
 
   it('should suspend when switching to a new query', async () => {
@@ -436,11 +462,19 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText(`data: ${key1}`))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText(`data: ${key1}`)).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByText('switch'))
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText(`data: ${key2}`))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText(`data: ${key2}`)).toBeInTheDocument(),
+    )
   })
 
   it('should throw errors to the error boundary by default', async () => {
@@ -491,8 +525,12 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -541,8 +579,12 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
   })
 
   it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
@@ -593,8 +635,12 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -645,8 +691,12 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
   })
 
   it('should not call the queryFn when not enabled', async () => {
@@ -751,16 +801,22 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     // render suspense fallback (Loading...)
-    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
     // resolve promise -> render Page (rendered)
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
 
     // change query key
     succeed = false
     // reset query -> and throw error
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
-    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -815,16 +871,22 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     // render suspense fallback (Loading...)
-    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
     // resolve promise -> render Page (rendered)
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
 
     // change promise result to error
     succeed = false
     // change query key
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
-    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -881,16 +943,22 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     // render empty data with 'rendered' when enabled is false
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
 
     // change enabled to true
     fireEvent.click(rendered.getByLabelText('fail'))
 
     // render pending fallback
-    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
 
     // render error boundary fallback (error boundary)
-    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })

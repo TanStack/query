@@ -648,6 +648,7 @@ describe('useQueries', () => {
     }
   })
 
+  // eslint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     const key1 = queryKey()
 
