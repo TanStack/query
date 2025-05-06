@@ -1,5 +1,6 @@
 // @ts-check
 
+import vitest from '@vitest/eslint-plugin'
 import pluginReact from '@eslint-react/eslint-plugin'
 // @ts-expect-error
 import pluginReactCompiler from 'eslint-plugin-react-compiler'
@@ -29,6 +30,13 @@ export default [
     rules: {
       '@typescript-eslint/no-unnecessary-condition': 'off',
       'react-compiler/react-compiler': 'off',
+    },
+  },
+  {
+    plugins: { vitest },
+    rules: {
+      ...vitest.configs.recommended.rules,
+      'vitest/expect-expect': 'warn',
     },
   },
 ]
