@@ -703,7 +703,7 @@ describe('useSuspenseQuery', () => {
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
     const key = queryKey()
-    let state: UseSuspenseQueryResult<number> | null = null
+    let state: UseSuspenseQueryResult<number, Error | null> | null = null
 
     let count = 0
     let renders = 0
