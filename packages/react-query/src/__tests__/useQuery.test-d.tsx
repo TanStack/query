@@ -272,25 +272,25 @@ describe('useQuery', () => {
           initialData: () => undefined as { wow: boolean } | undefined,
         })
 
-      if (isSuccess) {
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
-      }
-    })
-
-    it('TData should depend from only arguments, not the result', () => {
-      // @ts-expect-error
-      const result: UseQueryResult<{ wow: string }> = useQuery({
-        queryKey: ['key'],
-        queryFn: () => {
-          return {
-            wow: true,
-          }
-        },
-        initialData: () => undefined as { wow: boolean } | undefined,
+        if (isSuccess) {
+          expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        }
       })
 
-      void result
-    })
+      it('TData should depend from only arguments, not the result', () => {
+        // @ts-expect-error
+        const result: UseQueryResult<{ wow: string }> = useQuery({
+          queryKey: ['key'],
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: () => undefined as { wow: boolean } | undefined,
+        })
+
+        void result
+      })
 
       it('data should not have undefined when initialData is provided', () => {
         const { data } = useQuery({
