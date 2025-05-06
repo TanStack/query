@@ -442,7 +442,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should handle null page parameters correctly', async () => {
+  test('InfiniteQueryBehavior should not fetch next page when getNextPageParam returns null', async () => {
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
