@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, Suspense, createSignal, startTransition } from 'solid-js'
 import { QueryCache, QueryClientProvider, useQuery } from '..'
@@ -50,11 +50,13 @@ describe("useQuery's in Suspense mode with transitions", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Show'))
+    await waitFor(() => expect(rendered.getByText('Show')).toBeInTheDocument())
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await waitFor(() => rendered.getByText('Message'))
+    await waitFor(() =>
+      expect(rendered.getByText('Message')).toBeInTheDocument(),
+    )
     // verify that the button also updated. See https://github.com/solidjs/solid/issues/1249
-    await waitFor(() => rendered.getByText('Hide'))
+    await waitFor(() => expect(rendered.getByText('Hide')).toBeInTheDocument())
   })
 })

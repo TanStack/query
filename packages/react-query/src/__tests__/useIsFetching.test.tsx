@@ -53,20 +53,20 @@ describe('useIsFetching', () => {
       )
     }
 
-    const { findByText, getByRole } = renderWithClient(queryClient, <Page />)
+    const { getByText, getByRole } = renderWithClient(queryClient, <Page />)
 
     await vi.waitFor(() => {
-      findByText('isFetching: 0')
+      expect(getByText('isFetching: 0')).toBeInTheDocument()
     })
 
     fireEvent.click(getByRole('button', { name: /setReady/i }))
 
     await vi.waitFor(() => {
-      findByText('isFetching: 1')
+      expect(getByText('isFetching: 1')).toBeInTheDocument()
     })
 
     await vi.waitFor(() => {
-      findByText('isFetching: 0')
+      expect(getByText('isFetching: 0')).toBeInTheDocument()
     })
   })
 
@@ -226,11 +226,11 @@ describe('useIsFetching', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await vi.waitFor(() => {
-      rendered.findByText('isFetching: 1')
+      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     })
 
     await vi.waitFor(() => {
-      rendered.findByText('isFetching: 0')
+      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
     })
   })
 
@@ -262,7 +262,7 @@ describe('useIsFetching', () => {
     const rendered = render(<Page></Page>)
 
     await vi.waitFor(() => {
-      rendered.getByText('isFetching: 1')
+      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     })
   })
 })

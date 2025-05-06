@@ -16,11 +16,4 @@ export default [
       'sort-imports': 'off',
     },
   },
-  {
-    plugins: { vitest },
-    rules: {
-      ...vitest.configs.recommended.rules,
-      'vitest/expect-expect': 'warn',
-    },
-  },
 ]

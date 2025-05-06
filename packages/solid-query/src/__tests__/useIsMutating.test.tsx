@@ -182,9 +182,12 @@ describe('useIsMutating', () => {
 
     const rendered = render(() => <Page></Page>)
 
-    await waitFor(() => rendered.findByText('mutating: 1'))
+    await waitFor(() =>
+      expect(rendered.getByText('mutating: 1')).toBeInTheDocument(),
+    )
   })
 
+  // eslint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
