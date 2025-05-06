@@ -1,4 +1,4 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken, useSuspenseQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
@@ -90,25 +90,29 @@ describe('UseSuspenseQueries config object overload', () => {
   })
 
   it('should not allow skipToken in queryFn', () => {
-    useSuspenseQueries({
-      queries: [
-        {
-          queryKey: ['key'],
-          // @ts-expect-error
-          queryFn: skipToken,
-        },
-      ],
-    })
+    assertType(
+      useSuspenseQueries({
+        queries: [
+          {
+            queryKey: ['key'],
+            // @ts-expect-error
+            queryFn: skipToken,
+          },
+        ],
+      }),
+    )
 
-    useSuspenseQueries({
-      queries: [
-        {
-          queryKey: ['key'],
-          // @ts-expect-error
-          queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-        },
-      ],
-    })
+    assertType(
+      useSuspenseQueries({
+        queries: [
+          {
+            queryKey: ['key'],
+            // @ts-expect-error
+            queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+          },
+        ],
+      }),
+    )
   })
 
   it('TData should have correct type when conditional skipToken is passed', () => {
@@ -206,39 +210,47 @@ describe('UseSuspenseQueries config object overload', () => {
   })
 
   it('queryOptions with skipToken in queryFn should not work on useSuspenseQueries', () => {
-    const query1 = queryOptions({
-      queryKey: ['key1'],
-      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-    })
+    assertType(
+      useSuspenseQueries({
+        queries: [
+          // @ts-expect-error
+          queryOptions({
+            queryKey: ['key1'],
+            queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+          }),
+        ],
+      }),
+    )
 
-    const query2 = queryOptions({
-      queryKey: ['key1'],
-      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-      initialData: 5,
-    })
-
-    // @ts-expect-error
-    useSuspenseQueries({ queries: [query1] })
-    // @ts-expect-error
-    useSuspenseQueries({ queries: [query2] })
+    assertType(
+      useSuspenseQueries({
+        queries: [
+          // @ts-expect-error
+          queryOptions({
+            queryKey: ['key1'],
+            queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+            initialData: 5,
+          }),
+        ],
+      }),
+    )
   })
 
   it('should not show type error when using spreaded queryOptions', () => {
-    function myQueryOptions() {
-      return queryOptions({
-        queryKey: ['key1'],
-        queryFn: () => 'Query Data',
-      })
-    }
-    useSuspenseQueries({
-      queries: [
-        {
-          ...myQueryOptions(),
-          select(data: string) {
-            return data
+    assertType(
+      useSuspenseQueries({
+        queries: [
+          {
+            ...queryOptions({
+              queryKey: ['key1'],
+              queryFn: () => 'Query Data',
+            }),
+            select(data: string) {
+              return data
+            },
           },
-        },
-      ],
-    })
+        ],
+      }),
+    )
   })
 })

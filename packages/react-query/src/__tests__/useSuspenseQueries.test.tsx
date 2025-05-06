@@ -322,21 +322,27 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() =>
+      expect(rendered.getByText('loading')).toBeInTheDocument(),
+    )
     await waitFor(() => rendered.getByText('Data 0'))
 
     // go offline
     document.dispatchEvent(new CustomEvent('offline'))
 
     fireEvent.click(rendered.getByText('fetch'))
-    await waitFor(() => rendered.getByText('Data 0'))
+    await waitFor(() =>
+      expect(rendered.getByText('Data 0')).toBeInTheDocument(),
+    )
 
     // go back online
     document.dispatchEvent(new CustomEvent('online'))
     fireEvent.click(rendered.getByText('fetch'))
 
     // query should resume
-    await waitFor(() => rendered.getByText('Data 1'))
+    await waitFor(() =>
+      expect(rendered.getByText('Data 1')).toBeInTheDocument(),
+    )
   })
 
   it('should throw error when queryKey changes and new query fails', async () => {
@@ -426,15 +432,19 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('data0'))
+    await waitFor(() => expect(rendered.getByText('data0')).toBeInTheDocument())
 
     fireEvent.click(rendered.getByText('inc'))
 
-    await waitFor(() => rendered.getByText('Pending...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Pending...')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('data1'))
+    await waitFor(() => expect(rendered.getByText('data1')).toBeInTheDocument())
   })
 
   it('should not request old data inside transitions (issue #6486)', async () => {
@@ -533,15 +543,19 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('data0'))
+    await waitFor(() => expect(rendered.getByText('data0')).toBeInTheDocument())
 
     fireEvent.click(rendered.getByText('inc'))
 
-    await waitFor(() => rendered.getByText('Pending...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Pending...')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('data1'))
+    await waitFor(() => expect(rendered.getByText('data1')).toBeInTheDocument())
   })
 
   it('should show error boundary even with gcTime:0 (#7853)', async () => {
