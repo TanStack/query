@@ -15,12 +15,13 @@ import { useQueryClient } from './useQueryClient'
 import type { ToRefs } from 'vue-demi'
 import type {
   DefaultError,
+  DistributiveOmit,
   MutateFunction,
   MutateOptions,
   MutationObserverOptions,
   MutationObserverResult,
 } from '@tanstack/query-core'
-import type { DistributiveOmit, MaybeRefDeep } from './types'
+import type { MaybeRefDeep } from './types'
 import type { QueryClient } from './queryClient'
 
 type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<

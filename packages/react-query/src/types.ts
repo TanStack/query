@@ -4,6 +4,7 @@ import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
+  DistributiveOmit,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -155,7 +156,7 @@ export type UseQueryResult<
 export type UseSuspenseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = OmitKeyof<
+> = DistributiveOmit<
   DefinedQueryObserverResult<TData, TError>,
   'isPlaceholderData' | 'promise'
 >
