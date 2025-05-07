@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom'
 import {
   afterEach,
   beforeEach,
@@ -8,6 +9,7 @@ import {
   vi,
 } from 'vitest'
 import { QueryObserver, focusManager } from '..'
+import { pendingThenable } from '../thenable'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
 
@@ -1270,5 +1272,39 @@ describe('queryObserver', () => {
     }
 
     unsubscribe()
+  })
+
+  test('switching enabled state should reuse the same promise', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+      queryFn: () => 'data',
+    })
+    const results: Array<QueryObserverResult> = []
+
+    const success = pendingThenable<void>()
+
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+
+      if (result.status === 'success') {
+        success.resolve()
+      }
+    })
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => 'data',
+      enabled: true,
+    })
+
+    await success
+
+    unsubscribe()
+
+    const promises = new Set(results.map((result) => result.promise))
+    expect(promises.size).toBe(1)
   })
 })
