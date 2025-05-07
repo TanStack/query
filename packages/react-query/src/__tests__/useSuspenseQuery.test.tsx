@@ -967,4 +967,68 @@ describe('useSuspenseQuery', () => {
 
     expect(count).toBeGreaterThanOrEqual(3)
   })
+
+  it('should log an error when skipToken is used in development environment', () => {
+    const envCopy = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: skipToken as any,
+      })
+
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback="Loading...">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'skipToken is not allowed for useSuspenseQuery',
+    )
+
+    consoleErrorSpy.mockRestore()
+    process.env.NODE_ENV = envCopy
+  })
+
+  it('should not log an error when skipToken is used in production environment', () => {
+    const envCopy = process.env.NODE_ENV
+    process.env.NODE_ENV = 'production'
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: skipToken as any,
+      })
+
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback="Loading...">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(consoleErrorSpy).not.toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
+    process.env.NODE_ENV = envCopy
+  })
 })
