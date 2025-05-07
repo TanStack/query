@@ -2,15 +2,15 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { hydrateRoot } from 'react-dom/client'
 import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
-
 import {
   QueryCache,
+  QueryClient,
   QueryClientProvider,
   dehydrate,
   hydrate,
   useQuery,
 } from '..'
-import { createQueryClient, setIsServer } from './utils'
+import { setIsServer } from './utils'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   let root: any
@@ -66,7 +66,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(true)
 
     const prefetchCache = new QueryCache()
-    const prefetchClient = createQueryClient({
+    const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
     await prefetchClient.prefetchQuery({
@@ -75,7 +75,7 @@ describe('Server side rendering with de/rehydration', () => {
     })
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
-    const renderClient = createQueryClient({
+    const renderClient = new QueryClient({
       queryCache: renderCache,
     })
     hydrate(renderClient, dehydratedStateServer)
@@ -99,7 +99,7 @@ describe('Server side rendering with de/rehydration', () => {
     el.innerHTML = markup
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     hydrate(queryClient, JSON.parse(stringifiedState))
 
     const unmount = ReactHydrate(
@@ -143,7 +143,7 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
     const prefetchCache = new QueryCache()
-    const prefetchClient = createQueryClient({
+    const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
     await prefetchClient.prefetchQuery({
@@ -152,7 +152,7 @@ describe('Server side rendering with de/rehydration', () => {
     })
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
-    const renderClient = createQueryClient({
+    const renderClient = new QueryClient({
       queryCache: renderCache,
     })
     hydrate(renderClient, dehydratedStateServer)
@@ -175,7 +175,7 @@ describe('Server side rendering with de/rehydration', () => {
     el.innerHTML = markup
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     hydrate(queryClient, JSON.parse(stringifiedState))
 
     const unmount = ReactHydrate(
@@ -219,9 +219,9 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
 
-    const prefetchClient = createQueryClient()
+    const prefetchClient = new QueryClient()
     const dehydratedStateServer = dehydrate(prefetchClient)
-    const renderClient = createQueryClient()
+    const renderClient = new QueryClient()
     hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
@@ -242,7 +242,7 @@ describe('Server side rendering with de/rehydration', () => {
     el.innerHTML = markup
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     hydrate(queryClient, JSON.parse(stringifiedState))
 
     const unmount = ReactHydrate(

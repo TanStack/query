@@ -11,8 +11,8 @@ import {
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core'
 import { render, screen, waitFor } from '@testing-library/angular'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { withPersistQueryClient } from '../with-persist-query-client'
-import { queryKey, sleep } from './utils'
 import type {
   PersistedClient,
   Persister,

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { QueryClient } from '..'
 import {
   addToEnd,
   addToStart,
@@ -13,7 +14,6 @@ import {
   shallowEqualObjects,
 } from '../utils'
 import { Mutation } from '../mutation'
-import { createQueryClient } from './utils'
 
 describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
@@ -420,7 +420,7 @@ describe('core/utils', () => {
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
       const filters = { mutationKey: ['key1'] }
-      const queryClient = createQueryClient()
+      const queryClient = new QueryClient()
       const mutation = new Mutation({
         mutationId: 1,
         mutationCache: queryClient.getMutationCache(),
