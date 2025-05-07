@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-core",
-  "version": "5.75.4",
+  "version": "5.75.5",
   "description": "The framework agnostic core that powers TanStack Query",
   "author": "tannerlinsley",
   "license": "MIT",
