@@ -46,10 +46,7 @@ export default [
   {
     files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
-    rules: {
-      ...vitest.configs.recommended.rules,
-      '@typescript-eslint/require-await': 'error',
-    },
+    rules: vitest.configs.recommended.rules,
     settings: { vitest: { typecheck: true } },
   },
 ]
