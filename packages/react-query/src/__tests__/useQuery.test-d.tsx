@@ -152,7 +152,7 @@ describe('useQuery', () => {
   )
   expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
 
-  it('should return the correct states for a successful query', async () => {
+  it('should return the correct states for a successful query', () => {
     const state = useQuery<string, Error>({
       queryKey: key,
       queryFn: () => Promise.resolve('test'),
