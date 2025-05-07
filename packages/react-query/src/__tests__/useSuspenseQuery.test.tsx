@@ -992,7 +992,7 @@ describe('useSuspenseQuery', () => {
     )
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'skipToken is not allowed for useSuspenseQuery'
+      'skipToken is not allowed for useSuspenseQuery',
     )
 
     consoleErrorSpy.mockRestore()
