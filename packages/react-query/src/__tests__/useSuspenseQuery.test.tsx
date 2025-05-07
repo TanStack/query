@@ -988,11 +988,11 @@ describe('useSuspenseQuery', () => {
       queryClient,
       <React.Suspense fallback="Loading...">
         <Page />
-      </React.Suspense>
+      </React.Suspense>,
     )
 
     expect(consoleErrorSpy).not.toHaveBeenCalledWith(
-      'skipToken is not allowed for useSuspenseQuery'
+      'skipToken is not allowed for useSuspenseQuery',
     )
     consoleErrorSpy.mockRestore()
     process.env.NODE_ENV = envCopy
@@ -1020,7 +1020,7 @@ describe('useSuspenseQuery', () => {
       queryClient,
       <React.Suspense fallback="Loading...">
         <Page />
-      </React.Suspense>
+      </React.Suspense>,
     )
 
     expect(consoleErrorSpy).not.toHaveBeenCalled()
