@@ -244,17 +244,19 @@ const data = queryClient.getQueryData<Group[]>(['groups'])
 Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation options into a separate function:
 
 ```ts
-function useGroupPostMutation() {
-  const queryClient = useQueryClient()
-
+function groupMutationOptions() {
   return mutationOptions({
     mutationKey: ['groups'],
-    mutationFn: executeGroups,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
-    },
+    mutationFn: addGroup,
   })
 }
+
+useMutation({
+  ...groupMutationOptions()
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['groups'] })
+})
+useIsMutating(groupMutationOptions())
+queryClient.isMutating(groupMutationOptions())
 ```
 
 ## Further Reading
