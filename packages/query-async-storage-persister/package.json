@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-async-storage-persister",
-  "version": "5.75.4",
+  "version": "5.75.5",
   "description": "A persister for asynchronous storages, to be used with TanStack/Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -62,6 +62,7 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
+    "@tanstack/query-test-utils": "workspace:*",
     "npm-run-all2": "^5.0.0"
   }
 }

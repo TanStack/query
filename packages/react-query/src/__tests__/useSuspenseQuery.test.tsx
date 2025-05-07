@@ -2,15 +2,17 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   QueryErrorResetBoundary,
   skipToken,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { renderWithClient } from './utils'
 import type {
   InfiniteData,
   UseSuspenseInfiniteQueryResult,
@@ -19,7 +21,7 @@ import type {
 
 describe('useSuspenseQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
@@ -848,7 +850,7 @@ describe('useSuspenseQuery', () => {
 
   it('should still suspense if queryClient has placeholderData config', async () => {
     const key = queryKey()
-    const queryClientWithPlaceholder = createQueryClient({
+    const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
           placeholderData: (previousData: any) => previousData,
@@ -964,5 +966,69 @@ describe('useSuspenseQuery', () => {
     await waitFor(() => rendered.getByText('count: 3'))
 
     expect(count).toBeGreaterThanOrEqual(3)
+  })
+
+  it('should log an error when skipToken is used in development environment', () => {
+    const envCopy = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: skipToken as any,
+      })
+
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback="Loading...">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'skipToken is not allowed for useSuspenseQuery',
+    )
+
+    consoleErrorSpy.mockRestore()
+    process.env.NODE_ENV = envCopy
+  })
+
+  it('should not log an error when skipToken is used in production environment', () => {
+    const envCopy = process.env.NODE_ENV
+    process.env.NODE_ENV = 'production'
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: skipToken as any,
+      })
+
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback="Loading...">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(consoleErrorSpy).not.toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
+    process.env.NODE_ENV = envCopy
   })
 })

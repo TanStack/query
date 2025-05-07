@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it, vi } from 'vitest'
-import { InfiniteQueryObserver } from '..'
-import { createQueryClient, queryKey } from './utils'
-import type { InfiniteData, QueryClient } from '..'
+import { queryKey } from '@tanstack/query-test-utils'
+import { InfiniteQueryObserver, QueryClient } from '..'
+import type { InfiniteData } from '..'
 
 describe('InfiniteQueryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryClient.mount()
   })
 

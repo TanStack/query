@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
-import { queryKey } from './utils'
 import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
 
 describe('useQuery', () => {
@@ -275,6 +275,22 @@ describe('useQuery', () => {
         if (isSuccess) {
           expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
         }
+      })
+
+      // eslint-disable-next-line vitest/expect-expect
+      it('TData should depend from only arguments, not the result', () => {
+        // @ts-expect-error
+        const result: UseQueryResult<{ wow: string }> = useQuery({
+          queryKey: ['key'],
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: () => undefined as { wow: boolean } | undefined,
+        })
+
+        void result
       })
 
       it('data should not have undefined when initialData is provided', () => {

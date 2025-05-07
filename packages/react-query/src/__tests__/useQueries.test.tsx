@@ -2,9 +2,15 @@ import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { QueryClient } from '@tanstack/query-core'
-import { QueryCache, queryOptions, skipToken, useQueries } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import {
+  QueryCache,
+  QueryClient,
+  queryOptions,
+  skipToken,
+  useQueries,
+} from '..'
+import { renderWithClient } from './utils'
 import type {
   QueryFunction,
   QueryKey,
@@ -16,7 +22,7 @@ import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states', async () => {
     const key1 = queryKey()

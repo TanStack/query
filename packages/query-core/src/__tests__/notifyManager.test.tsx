@@ -8,8 +8,8 @@ import {
   it,
   vi,
 } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
 import { createNotifyManager } from '../notifyManager'
-import { sleep } from './utils'
 
 describe('notifyManager', () => {
   beforeEach(() => {

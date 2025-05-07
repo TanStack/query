@@ -1,12 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { CancelledError, InfiniteQueryObserver } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
-import type {
-  InfiniteData,
-  InfiniteQueryObserverResult,
-  QueryCache,
-  QueryClient,
-} from '..'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
+import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
@@ -14,7 +9,7 @@ describe('InfiniteQueryBehavior', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
@@ -438,6 +433,65 @@ describe('InfiniteQueryBehavior', () => {
         data: { pages: ['data'], pageParams: [null] },
       }),
     )
+
+    unsubscribe()
+  })
+
+  test('InfiniteQueryBehavior should not fetch next page when getNextPageParam returns null', async () => {
+    const key = queryKey()
+
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) => sleep(0).then(() => pageParam),
+      getNextPageParam: (lastPage) => (lastPage === 1 ? null : lastPage + 1),
+      initialPageParam: 1,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<InfiniteData<number, unknown>, Error>
+      | undefined
+
+    const unsubscribe = observer.subscribe((result) => {
+      observerResult = result
+    })
+
+    await vi.waitFor(() =>
+      expect(observerResult).toMatchObject({
+        isFetching: false,
+        data: { pages: [1], pageParams: [1] },
+      }),
+    )
+
+    await observer.fetchNextPage()
+
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1], pageParams: [1] },
+    })
+
+    unsubscribe()
+  })
+
+  test('InfiniteQueryBehavior should use persister when provided', async () => {
+    const key = queryKey()
+
+    const persisterSpy = vi.fn().mockImplementation(async (fn) => {
+      return await fn()
+    })
+
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) => sleep(0).then(() => pageParam),
+      getNextPageParam: (lastPage) => lastPage + 1,
+      initialPageParam: 1,
+      persister: persisterSpy,
+    })
+
+    const unsubscribe = observer.subscribe(() => {})
+
+    await vi.waitFor(() => {
+      expect(persisterSpy).toHaveBeenCalledTimes(1)
+    })
 
     unsubscribe()
   })

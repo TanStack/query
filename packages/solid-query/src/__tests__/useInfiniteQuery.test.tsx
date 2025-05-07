@@ -11,21 +11,16 @@ import {
   createSignal,
   on,
 } from 'solid-js'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   QueryClientProvider,
   infiniteQueryOptions,
   keepPreviousData,
   useInfiniteQuery,
 } from '..'
-import {
-  Blink,
-  createQueryClient,
-  queryKey,
-  setActTimeout,
-  sleep,
-} from './utils'
-
+import { Blink, setActTimeout } from './utils'
 import type {
   InfiniteData,
   QueryFunctionContext,
@@ -59,7 +54,7 @@ const fetchItems = async (
 
 describe('useInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
