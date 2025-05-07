@@ -8,13 +8,14 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
+import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectMutation,
   injectMutationState,
   provideTanStackQuery,
 } from '..'
-import { setFixtureSignalInputs, successMutator } from './test-utils'
+import { setFixtureSignalInputs } from './test-utils'
 
 describe('injectMutationState', () => {
   let queryClient: QueryClient
@@ -42,7 +43,7 @@ describe('injectMutationState', () => {
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationKey: mutationKey,
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
         }))
       })
 
@@ -68,11 +69,11 @@ describe('injectMutationState', () => {
         return [
           injectMutation(() => ({
             mutationKey: mutationKey1,
-            mutationFn: (params: string) => successMutator(params),
+            mutationFn: (params: string) => sleep(0).then(() => params),
           })),
           injectMutation(() => ({
             mutationKey: mutationKey2,
-            mutationFn: (params: string) => successMutator(params),
+            mutationFn: (params: string) => sleep(0).then(() => params),
           })),
         ]
       })
@@ -103,7 +104,7 @@ describe('injectMutationState', () => {
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationKey: mutationKey,
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
         }))
       })
 

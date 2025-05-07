@@ -2,20 +2,21 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
-
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   QueryErrorResetBoundary,
   useQueries,
   useQuery,
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { renderWithClient } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   describe('useQuery', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {

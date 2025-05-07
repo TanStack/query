@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, reactive } from 'vue-demi'
+import { sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
-import { flushPromises, simpleFetcher } from './test-utils'
 import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
@@ -11,15 +11,18 @@ describe('useIsFetching', () => {
   test('should properly return isFetching state', async () => {
     const { isFetching: isFetchingQuery } = useQuery({
       queryKey: ['isFetching1'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     })
-    useQuery({ queryKey: ['isFetching2'], queryFn: simpleFetcher })
+    useQuery({
+      queryKey: ['isFetching2'],
+      queryFn: () => sleep(0).then(() => 'Some data'),
+    })
     const isFetching = useIsFetching()
 
     expect(isFetchingQuery.value).toStrictEqual(true)
     expect(isFetching.value).toStrictEqual(2)
 
-    await flushPromises()
+    await sleep(0)
 
     expect(isFetchingQuery.value).toStrictEqual(false)
     expect(isFetching.value).toStrictEqual(0)
@@ -33,19 +36,19 @@ describe('useIsFetching', () => {
 
     const { status } = useQuery({
       queryKey: ['onScopeDispose'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     })
     const isFetching = useIsFetching()
 
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
-    await flushPromises()
+    await sleep(0)
 
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
-    await flushPromises()
+    await sleep(0)
 
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
@@ -69,7 +72,7 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(0)
 
     filter.stale = true
-    await flushPromises()
+    await sleep(0)
 
     expect(isFetching.value).toStrictEqual(1)
   })
