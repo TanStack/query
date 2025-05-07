@@ -59,6 +59,7 @@
     "!src/__tests__"
   ],
   "devDependencies": {
+    "@tanstack/query-test-utils": "workspace:*",
     "npm-run-all2": "^5.0.0"
   }
 }

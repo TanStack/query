@@ -1,14 +1,14 @@
 import { describe, expect, it, vi } from 'vitest'
 import React from 'react'
 import { fireEvent, waitFor } from '@testing-library/react'
-
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   usePrefetchInfiniteQuery,
   useSuspenseInfiniteQuery,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
-
+import { renderWithClient } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryOptions } from '..'
 import type { Mock } from 'vitest'
 
@@ -41,7 +41,7 @@ const generateInfiniteQueryOptions = (
 
 describe('usePrefetchInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
 

@@ -1,12 +1,12 @@
 import { describe, expect, test, vi } from 'vitest'
 import { isVue2, isVue3, ref } from 'vue-demi'
+import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'
 import { setupDevtools } from '../devtools/devtools'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
-import { flushPromises } from './test-utils'
 import type { App, ComponentOptions } from 'vue'
 import type { Mock } from 'vitest'
 
@@ -271,7 +271,7 @@ describe('VueQueryPlugin', () => {
 
       expect(customClient.isRestoring.value).toBeTruthy()
 
-      await flushPromises()
+      await sleep(0)
 
       expect(customClient.isRestoring.value).toBeFalsy()
     })
@@ -316,7 +316,7 @@ describe('VueQueryPlugin', () => {
       expect(query.data.value).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
 
-      await flushPromises()
+      await sleep(0)
 
       expect(customClient.isRestoring.value).toBeFalsy()
       expect(query.data.value).toStrictEqual({ foo: 'bar' })
@@ -382,7 +382,7 @@ describe('VueQueryPlugin', () => {
       expect(queries.value[0].data).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
 
-      await flushPromises()
+      await sleep(0)
 
       expect(customClient.isRestoring.value).toBeFalsy()
       expect(query.data.value).toStrictEqual({ foo1: 'bar1' })

@@ -2,7 +2,7 @@
   import { QueryClient } from '@tanstack/query-core'
   import { derived, writable } from 'svelte/store'
   import { createQuery, useIsFetching } from '../../src/index.js'
-  import { sleep } from '../utils.js'
+  import { sleep } from '@tanstack/query-test-utils'
 
   const queryClient = new QueryClient()
   const ready = writable(false)

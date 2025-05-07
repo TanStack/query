@@ -1,15 +1,15 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, waitFor } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
-import { QueryClientProvider, useQuery, useQueryClient } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '..'
 
 describe('QueryClientProvider', () => {
   it('sets a specific cache for all queries to use', async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
 
     function Page() {
       const query = useQuery(() => ({
@@ -47,8 +47,8 @@ describe('QueryClientProvider', () => {
     const queryCache1 = new QueryCache()
     const queryCache2 = new QueryCache()
 
-    const queryClient1 = createQueryClient({ queryCache: queryCache1 })
-    const queryClient2 = createQueryClient({ queryCache: queryCache2 })
+    const queryClient1 = new QueryClient({ queryCache: queryCache1 })
+    const queryClient2 = new QueryClient({ queryCache: queryCache2 })
 
     function Page1() {
       const query = useQuery(() => ({
@@ -105,7 +105,7 @@ describe('QueryClientProvider', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: {
         queries: {
@@ -167,7 +167,7 @@ describe('QueryClientProvider', () => {
       .mockImplementation(() => undefined)
 
     function Page() {
-      const client = createQueryClient()
+      const client = new QueryClient()
       useQueryClient(client)
       return null
     }

@@ -1,9 +1,9 @@
 import { describe, expect, it, test, vi } from 'vitest'
 import { onScopeDispose, reactive } from 'vue-demi'
+import { sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
-import { flushPromises, successMutator } from './test-utils'
 import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
@@ -11,10 +11,10 @@ vi.mock('../useQueryClient')
 describe('useIsMutating', () => {
   test('should properly return isMutating state', async () => {
     const mutation = useMutation({
-      mutationFn: (params: string) => successMutator(params),
+      mutationFn: (params: string) => sleep(0).then(() => params),
     })
     const mutation2 = useMutation({
-      mutationFn: (params: string) => successMutator(params),
+      mutationFn: (params: string) => sleep(0).then(() => params),
     })
     const isMutating = useIsMutating()
 
@@ -23,11 +23,11 @@ describe('useIsMutating', () => {
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
 
-    await flushPromises()
+    await sleep(0)
 
     expect(isMutating.value).toStrictEqual(2)
 
-    await flushPromises()
+    await sleep(0)
 
     expect(isMutating.value).toStrictEqual(0)
   })
@@ -39,10 +39,10 @@ describe('useIsMutating', () => {
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
     const mutation = useMutation({
-      mutationFn: (params: string) => successMutator(params),
+      mutationFn: (params: string) => sleep(0).then(() => params),
     })
     const mutation2 = useMutation({
-      mutationFn: (params: string) => successMutator(params),
+      mutationFn: (params: string) => sleep(0).then(() => params),
     })
     const isMutating = useIsMutating()
 
@@ -51,11 +51,11 @@ describe('useIsMutating', () => {
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
 
-    await flushPromises()
+    await sleep(0)
 
     expect(isMutating.value).toStrictEqual(0)
 
-    await flushPromises()
+    await sleep(0)
 
     expect(isMutating.value).toStrictEqual(0)
 
@@ -66,7 +66,7 @@ describe('useIsMutating', () => {
     const filter = reactive({ mutationKey: ['foo'] })
     const { mutate } = useMutation({
       mutationKey: ['isMutating'],
-      mutationFn: (params: string) => successMutator(params),
+      mutationFn: (params: string) => sleep(0).then(() => params),
     })
     mutate('foo')
 
@@ -76,7 +76,7 @@ describe('useIsMutating', () => {
 
     filter.mutationKey = ['isMutating']
 
-    await flushPromises()
+    await sleep(0)
 
     expect(isMutating.value).toStrictEqual(1)
   })
@@ -89,7 +89,7 @@ describe('useMutationState', () => {
 
     const { mutate } = useMutation({
       mutationKey: mutationKey,
-      mutationFn: (params: string) => successMutator(params),
+      mutationFn: (params: string) => sleep(0).then(() => params),
     })
 
     mutate(variables)
@@ -110,7 +110,7 @@ describe('useMutationState', () => {
 
     const { mutate } = useMutation({
       mutationKey: mutationKey,
-      mutationFn: (params: string) => successMutator(params),
+      mutationFn: (params: string) => sleep(0).then(() => params),
     })
 
     mutate(variables)

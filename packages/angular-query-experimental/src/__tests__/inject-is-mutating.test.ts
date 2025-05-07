@@ -4,13 +4,13 @@ import {
   Injector,
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core'
+import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectIsMutating,
   injectMutation,
   provideTanStackQuery,
 } from '..'
-import { successMutator } from './test-utils'
 
 describe('injectIsMutating', () => {
   let queryClient: QueryClient
@@ -36,7 +36,7 @@ describe('injectIsMutating', () => {
       const isMutating = injectIsMutating()
       const mutation = injectMutation(() => ({
         mutationKey: ['isMutating1'],
-        mutationFn: successMutator<{ par1: string }>,
+        mutationFn: (params: { par1: string }) => sleep(0).then(() => params),
       }))
 
       expect(isMutating()).toBe(0)

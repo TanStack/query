@@ -86,6 +86,7 @@
       "@tanstack/query-devtools": "workspace:*",
       "@tanstack/query-persist-client-core": "workspace:*",
       "@tanstack/query-sync-storage-persister": "workspace:*",
+      "@tanstack/query-test-utils": "workspace:*",
       "@tanstack/react-query": "workspace:*",
       "@tanstack/react-query-devtools": "workspace:*",
       "@tanstack/react-query-next-experimental": "workspace:*",
