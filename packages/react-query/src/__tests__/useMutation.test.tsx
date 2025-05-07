@@ -4,21 +4,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { MutationCache, QueryCache, useMutation } from '..'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
 import {
-  createQueryClient,
   mockOnlineManagerIsOnline,
-  queryKey,
   renderWithClient,
   setActTimeout,
-  sleep,
 } from './utils'
 import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
   let queryCache = new QueryCache()
   let mutationCache = new MutationCache()
-  let queryClient = createQueryClient({
+  let queryClient = new QueryClient({
     queryCache,
     mutationCache,
   })
@@ -26,7 +24,7 @@ describe('useMutation', () => {
   beforeEach(() => {
     queryCache = new QueryCache()
     mutationCache = new MutationCache()
-    queryClient = createQueryClient({
+    queryClient = new QueryClient({
       queryCache,
     })
     vi.useFakeTimers()
@@ -826,7 +824,7 @@ describe('useMutation', () => {
     const errorMock = vi.fn()
     const successMock = vi.fn()
 
-    const queryClientMutationMeta = createQueryClient({
+    const queryClientMutationMeta = new QueryClient({
       mutationCache: new MutationCache({
         onSuccess: (_, __, ___, mutation) => {
           successMock(mutation.meta?.metaSuccessMessage)

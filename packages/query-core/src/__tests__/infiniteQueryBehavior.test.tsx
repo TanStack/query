@@ -1,12 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { CancelledError, InfiniteQueryObserver } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
-import type {
-  InfiniteData,
-  InfiniteQueryObserverResult,
-  QueryCache,
-  QueryClient,
-} from '..'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
+import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
@@ -14,7 +9,7 @@ describe('InfiniteQueryBehavior', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })

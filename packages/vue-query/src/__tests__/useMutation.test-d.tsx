@@ -1,12 +1,14 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue-demi'
+import { sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
-import { successMutator } from './test-utils'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {
     const mutation = reactive(
-      useMutation({ mutationFn: successMutator<string> }),
+      useMutation({
+        mutationFn: (params: string) => sleep(0).then(() => params),
+      }),
     )
 
     expectTypeOf(mutation.data).toEqualTypeOf<string | undefined>()
@@ -14,7 +16,9 @@ describe('Discriminated union return type', () => {
 
   it('data should be defined when mutation is success', () => {
     const mutation = reactive(
-      useMutation({ mutationFn: successMutator<string> }),
+      useMutation({
+        mutationFn: (params: string) => sleep(0).then(() => params),
+      }),
     )
 
     if (mutation.isSuccess) {
@@ -24,7 +28,9 @@ describe('Discriminated union return type', () => {
 
   it('error should be null when mutation is success', () => {
     const mutation = reactive(
-      useMutation({ mutationFn: successMutator<string> }),
+      useMutation({
+        mutationFn: (params: string) => sleep(0).then(() => params),
+      }),
     )
 
     if (mutation.isSuccess) {
@@ -34,7 +40,9 @@ describe('Discriminated union return type', () => {
 
   it('data should be undefined when mutation is pending', () => {
     const mutation = reactive(
-      useMutation({ mutationFn: successMutator<string> }),
+      useMutation({
+        mutationFn: (params: string) => sleep(0).then(() => params),
+      }),
     )
 
     if (mutation.isPending) {
@@ -44,7 +52,9 @@ describe('Discriminated union return type', () => {
 
   it('error should be defined when mutation is error', () => {
     const mutation = reactive(
-      useMutation({ mutationFn: successMutator<string> }),
+      useMutation({
+        mutationFn: (params: string) => sleep(0).then(() => params),
+      }),
     )
 
     if (mutation.isError) {
@@ -54,7 +64,9 @@ describe('Discriminated union return type', () => {
 
   it('should narrow variables', () => {
     const mutation = reactive(
-      useMutation({ mutationFn: successMutator<string> }),
+      useMutation({
+        mutationFn: (params: string) => sleep(0).then(() => params),
+      }),
     )
 
     if (mutation.isIdle) {

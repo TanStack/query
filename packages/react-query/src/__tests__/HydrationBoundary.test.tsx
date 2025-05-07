@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import * as React from 'react'
 import { render } from '@testing-library/react'
-
 import * as coreModule from '@tanstack/query-core'
+import { sleep } from '@tanstack/query-test-utils'
 import {
   HydrationBoundary,
   QueryClient,
@@ -10,14 +10,13 @@ import {
   dehydrate,
   useQuery,
 } from '..'
-import { createQueryClient, sleep } from './utils'
 
 describe('React hydration', () => {
   let stringifiedState: string
 
   beforeEach(async () => {
     vi.useFakeTimers()
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     queryClient.prefetchQuery({
       queryKey: ['string'],
       queryFn: () => sleep(10).then(() => ['stringCached']),
@@ -33,7 +32,7 @@ describe('React hydration', () => {
 
   test('should hydrate queries to the cache on context', async () => {
     const dehydratedState = JSON.parse(stringifiedState)
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function Page() {
       const { data } = useQuery({
@@ -101,7 +100,7 @@ describe('React hydration', () => {
   describe('ReactQueryCacheProvider with hydration support', () => {
     test('should hydrate new queries if queries change', async () => {
       const dehydratedState = JSON.parse(stringifiedState)
-      const queryClient = createQueryClient()
+      const queryClient = new QueryClient()
 
       function Page({ queryKey }: { queryKey: [string] }) {
         const { data } = useQuery({
@@ -128,7 +127,7 @@ describe('React hydration', () => {
       await vi.advanceTimersByTimeAsync(20)
       expect(rendered.getByText('string')).toBeInTheDocument()
 
-      const intermediateClient = createQueryClient()
+      const intermediateClient = new QueryClient()
 
       intermediateClient.prefetchQuery({
         queryKey: ['string'],
@@ -174,7 +173,7 @@ describe('React hydration', () => {
     // since they don't have any observers on the current page that would update.
     test('should hydrate new but not existing queries if transition is aborted', async () => {
       const initialDehydratedState = JSON.parse(stringifiedState)
-      const queryClient = createQueryClient()
+      const queryClient = new QueryClient()
 
       function Page({ queryKey }: { queryKey: [string] }) {
         const { data } = useQuery({
@@ -201,7 +200,7 @@ describe('React hydration', () => {
       await vi.advanceTimersByTimeAsync(20)
       expect(rendered.getByText('string')).toBeInTheDocument()
 
-      const intermediateClient = createQueryClient()
+      const intermediateClient = new QueryClient()
       intermediateClient.prefetchQuery({
         queryKey: ['string'],
         queryFn: () => sleep(20).then(() => ['should not change']),
@@ -270,7 +269,7 @@ describe('React hydration', () => {
 
     test('should hydrate queries to new cache if cache changes', async () => {
       const dehydratedState = JSON.parse(stringifiedState)
-      const queryClient = createQueryClient()
+      const queryClient = new QueryClient()
 
       function Page() {
         const { data } = useQuery({
@@ -296,7 +295,7 @@ describe('React hydration', () => {
       expect(rendered.getByText('stringCached')).toBeInTheDocument()
       await vi.advanceTimersByTimeAsync(20)
       expect(rendered.getByText('string')).toBeInTheDocument()
-      const newClientQueryClient = createQueryClient()
+      const newClientQueryClient = new QueryClient()
 
       rendered.rerender(
         <QueryClientProvider client={newClientQueryClient}>
@@ -315,7 +314,7 @@ describe('React hydration', () => {
   })
 
   test('should not hydrate queries if state is null', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
 
@@ -343,7 +342,7 @@ describe('React hydration', () => {
   })
 
   test('should not hydrate queries if state is undefined', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
 

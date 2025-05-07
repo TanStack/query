@@ -2,30 +2,38 @@ import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
-import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
-  Blink,
-  createQueryClient,
-  mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
+  sleep,
+} from '@tanstack/query-test-utils'
+import {
+  QueryCache,
+  QueryClient,
+  dehydrate,
+  hydrate,
+  keepPreviousData,
+  skipToken,
+  useQuery,
+} from '..'
+import {
+  Blink,
+  mockOnlineManagerIsOnline,
   renderWithClient,
   setActTimeout,
-  sleep,
 } from './utils'
 import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   let queryCache = new QueryCache()
-  let queryClient = createQueryClient({
+  let queryClient = new QueryClient({
     queryCache,
   })
 
   beforeEach(() => {
     queryCache = new QueryCache()
-    queryClient = createQueryClient({
+    queryClient = new QueryClient({
       queryCache,
     })
     vi.useFakeTimers()
@@ -6735,7 +6743,7 @@ describe('useQuery', () => {
   it('should pick up an initialPromise', async () => {
     const key = queryKey()
 
-    const serverQueryClient = createQueryClient({
+    const serverQueryClient = new QueryClient({
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
     })
 
@@ -6769,7 +6777,7 @@ describe('useQuery', () => {
       )
     }
 
-    const clientQueryClient = createQueryClient()
+    const clientQueryClient = new QueryClient()
     hydrate(clientQueryClient, dehydrated)
 
     const rendered = renderWithClient(clientQueryClient, <Page />)
@@ -6789,7 +6797,7 @@ describe('useQuery', () => {
       .mockImplementation(() => undefined)
     const key = queryKey()
 
-    const serverQueryClient = createQueryClient({
+    const serverQueryClient = new QueryClient({
       defaultOptions: {
         dehydrate: { shouldDehydrateQuery: () => true },
       },
@@ -6825,7 +6833,7 @@ describe('useQuery', () => {
       )
     }
 
-    const clientQueryClient = createQueryClient({
+    const clientQueryClient = new QueryClient({
       defaultOptions: { hydrate: { queries: { retry: 1, retryDelay: 10 } } },
     })
     hydrate(clientQueryClient, dehydrated)
