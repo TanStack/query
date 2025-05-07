@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import { sleep } from '../utils.js'
+import { sleep } from '@tanstack/query-test-utils'
 import BaseExample from './BaseExample.svelte'
 import CombineExample from './CombineExample.svelte'
 

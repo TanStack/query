@@ -11,16 +11,19 @@ import {
 } from 'solid-js'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { reconcile } from 'solid-js/store'
-import { QueryCache, QueryClientProvider, keepPreviousData, useQuery } from '..'
 import {
-  Blink,
-  createQueryClient,
-  mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
-  setActTimeout,
   sleep,
-} from './utils'
+} from '@tanstack/query-test-utils'
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+  keepPreviousData,
+  useQuery,
+} from '..'
+import { Blink, mockOnlineManagerIsOnline, setActTimeout } from './utils'
 import type {
   DefinedUseQueryResult,
   OmitKeyof,
@@ -33,7 +36,7 @@ import type { JSX } from 'solid-js'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct types', () => {
     const key = queryKey()

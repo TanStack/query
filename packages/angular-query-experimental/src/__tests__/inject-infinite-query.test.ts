@@ -4,8 +4,9 @@ import {
   Injector,
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core'
+import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
-import { expectSignals, infiniteFetcher } from './test-utils'
+import { expectSignals } from './test-utils'
 
 const QUERY_DURATION = 1000
 
@@ -33,7 +34,8 @@ describe('injectInfiniteQuery', () => {
     const query = TestBed.runInInjectionContext(() => {
       return injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
-        queryFn: infiniteFetcher,
+        queryFn: ({ pageParam }) =>
+          sleep(0).then(() => 'data on page ' + pageParam),
         initialPageParam: 0,
         getNextPageParam: () => 12,
       }))
@@ -72,7 +74,8 @@ describe('injectInfiniteQuery', () => {
       expect(() => {
         injectInfiniteQuery(() => ({
           queryKey: ['injectionContextError'],
-          queryFn: infiniteFetcher,
+          queryFn: ({ pageParam }) =>
+            sleep(0).then(() => 'data on page ' + pageParam),
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }))
@@ -83,7 +86,8 @@ describe('injectInfiniteQuery', () => {
       const query = injectInfiniteQuery(
         () => ({
           queryKey: ['manualInjector'],
-          queryFn: infiniteFetcher,
+          queryFn: ({ pageParam }) =>
+            sleep(0).then(() => 'data on page ' + pageParam),
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }),

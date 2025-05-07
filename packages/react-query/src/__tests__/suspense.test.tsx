@@ -9,8 +9,8 @@ import {
   it,
   vi,
 } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
-import { queryKey } from './utils'
 import type { QueryKey } from '..'
 
 function renderWithSuspense(client: QueryClient, ui: React.ReactNode) {

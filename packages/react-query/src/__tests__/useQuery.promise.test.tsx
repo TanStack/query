@@ -5,18 +5,19 @@ import {
   createRenderStream,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
+import { queryKey } from '@tanstack/query-test-utils'
 import {
+  QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
   keepPreviousData,
   useQuery,
 } from '..'
 import { QueryCache } from '../index'
-import { createQueryClient, queryKey } from './utils'
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({
+  const queryClient = new QueryClient({
     queryCache,
   })
 

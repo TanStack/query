@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
-import { useIsMutating, useMutationState } from '../useMutationState'
-import { useMutation } from '../useMutation'
-import { createQueryClient, renderWithClient, sleep } from './utils'
+import { sleep } from '@tanstack/query-test-utils'
+import { QueryClient, useIsMutating, useMutation, useMutationState } from '..'
+import { renderWithClient } from './utils'
 
 describe('useIsMutating', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('useIsMutating', () => {
 
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -72,7 +72,7 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating({ mutationKey: ['mutation1'] })
@@ -104,7 +104,7 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating({
@@ -138,7 +138,7 @@ describe('useIsMutating', () => {
   })
 
   it('should use provided custom queryClient', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     function Page() {
       const isMutating = useIsMutating({}, queryClient)
@@ -171,7 +171,7 @@ describe('useIsMutating', () => {
 
 describe('useMutationState', () => {
   it('should return variables after calling mutate', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const variables: Array<Array<unknown>> = []
     const mutationKey = ['mutation']
 
