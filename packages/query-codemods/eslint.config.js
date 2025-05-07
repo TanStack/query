@@ -1,6 +1,5 @@
 // @ts-check
 
-import vitest from '@vitest/eslint-plugin'
 import rootConfig from './root.eslint.config.js'
 
 export default [
@@ -9,6 +8,7 @@ export default [
     rules: {
       'cspell/spellchecker': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/require-await': 'off',
       'import/no-duplicates': 'off',
       'import/no-unresolved': 'off',
       'import/order': 'off',
