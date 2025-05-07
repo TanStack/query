@@ -966,7 +966,7 @@ describe('useSuspenseQuery', () => {
     expect(count).toBeGreaterThanOrEqual(3)
   })
 
-  it('should not log an error when proper queryFn is provided', () => {
+  it('should log an error when skipToken is used in development environment', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'development'
 
@@ -978,7 +978,7 @@ describe('useSuspenseQuery', () => {
     function Page() {
       useSuspenseQuery({
         queryKey: key,
-        queryFn: () => Promise.resolve('data'),
+        queryFn: skipToken as any,
       })
 
       return null
@@ -991,14 +991,15 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
-    expect(consoleErrorSpy).not.toHaveBeenCalledWith(
-      'skipToken is not allowed for useSuspenseQuery',
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'skipToken is not allowed for useSuspenseQuery'
     )
+
     consoleErrorSpy.mockRestore()
     process.env.NODE_ENV = envCopy
   })
 
-  it('should handle non-production environment checks properly', () => {
+  it('should not log an error when skipToken is used in production environment', () => {
     const envCopy = process.env.NODE_ENV
     process.env.NODE_ENV = 'production'
 
