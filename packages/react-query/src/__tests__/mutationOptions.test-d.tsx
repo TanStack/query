@@ -8,6 +8,9 @@ describe('mutationOptions', () => {
       mutationKey: ['key'],
       // @ts-expect-error this is a good error, because onMutates does not exist!
       onMutates: 1000,
+      onSuccess: (data) => {
+        expectTypeOf(data).toEqualTypeOf<number>()
+      },
     })
   })
 
