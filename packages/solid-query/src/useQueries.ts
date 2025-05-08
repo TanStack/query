@@ -1,4 +1,4 @@
-import { QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, noop } from '@tanstack/query-core'
 import { createStore, unwrap } from 'solid-js/store'
 import {
   batch,
@@ -13,7 +13,6 @@ import {
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
-import { noop } from './utils'
 import type { SolidQueryOptions, UseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'

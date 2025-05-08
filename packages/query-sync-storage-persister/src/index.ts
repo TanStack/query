@@ -1,4 +1,4 @@
-import { noop } from './utils'
+import { noop } from '@tanstack/query-core'
 import type {
   PersistRetryer,
   PersistedClient,
