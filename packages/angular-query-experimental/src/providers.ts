@@ -7,7 +7,7 @@ import {
   inject,
   makeEnvironmentProviders,
 } from '@angular/core'
-import { QueryClient, noop, onlineManager,  } from '@tanstack/query-core'
+import { QueryClient, noop, onlineManager } from '@tanstack/query-core'
 import { isPlatformBrowser } from '@angular/common'
 import { isDevMode } from './util/is-dev-mode/is-dev-mode'
 import type { EnvironmentProviders, Provider } from '@angular/core'
