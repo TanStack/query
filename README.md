@@ -45,6 +45,16 @@ Still on **React Query v4**? No problem! Check out the v4 docs here: https://tan
 - [React Suspense](https://react.dev/reference/react/Suspense) + Fetch-As-You-Render Query Prefetching
 - Dedicated Devtools
 
+## Partners
+
+<a href="https://www.speakeasy.com/product/react-query?utm_source=tanstack&utm_campaign=tanstack">
+  <img
+    src="https://tanstack.com/_build/assets/speakeasy-light-UpY7QmwQ.svg"
+    alt="Speakeasy Logo"
+    style="background-color: white; padding: 8px; border-radius: 8px;"
+  />
+</a>
+
 ## Contributing
 
 View the contributing guidelines [here](/CONTRIBUTING.md)
@@ -52,3 +62,4 @@ View the contributing guidelines [here](/CONTRIBUTING.md)
 ### [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)
 
 <!-- Use the force, Luke -->
+[
