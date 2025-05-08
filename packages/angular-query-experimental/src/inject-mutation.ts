@@ -12,10 +12,11 @@ import {
 import {
   MutationObserver,
   QueryClient,
+  noop,
   notifyManager,
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { noop, shouldThrowError } from './util'
+import { shouldThrowError } from './util'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type { CreateMutateFunction, CreateMutationResult } from './types'
 import type { CreateMutationOptions } from './mutation-options'

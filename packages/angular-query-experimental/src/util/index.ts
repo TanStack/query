@@ -9,5 +9,3 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
 
   return !!throwError
 }
-
-export function noop(): void {}
