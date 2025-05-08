@@ -291,7 +291,7 @@ export function useQueries<
       })
     })
 
-  let unsubscribe = noop
+  let unsubscribe: () => void = noop
   createComputed<() => void>((cleanup) => {
     cleanup?.()
     unsubscribe = isRestoring() ? noop : subscribeToObserver()
