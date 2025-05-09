@@ -9,8 +9,8 @@ import {
   toRefs,
   watch,
 } from 'vue-demi'
-import { MutationObserver } from '@tanstack/query-core'
-import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
+import { MutationObserver, shouldThrowError } from '@tanstack/query-core'
+import { cloneDeepUnref, updateState } from './utils'
 import { useQueryClient } from './useQueryClient'
 import type { ToRefs } from 'vue-demi'
 import type {

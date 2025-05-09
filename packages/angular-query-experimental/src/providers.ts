@@ -1,6 +1,7 @@
 import {
   DestroyRef,
   ENVIRONMENT_INITIALIZER,
+  InjectionToken,
   PLATFORM_ID,
   computed,
   effect,
@@ -25,10 +26,19 @@ import type {
  * for the entire application. You can use `provideQueryClient` to provide a
  * different `QueryClient` instance for a part of the application.
  * @param queryClient - the `QueryClient` instance to provide.
- * @public
+ * @returns a provider object that can be used to provide the `QueryClient` instance.
  */
-export function provideQueryClient(queryClient: QueryClient) {
-  return { provide: QueryClient, useValue: queryClient }
+export function provideQueryClient(
+  queryClient: QueryClient | InjectionToken<QueryClient>,
+): Provider {
+  return {
+    provide: QueryClient,
+    useFactory: () => {
+      return queryClient instanceof InjectionToken
+        ? inject(queryClient)
+        : queryClient
+    },
+  }
 }
 
 /**
@@ -83,15 +93,14 @@ export function provideQueryClient(queryClient: QueryClient) {
  *   }
  * )
  * ```
- * @param queryClient - A `QueryClient` instance.
+ * @param queryClient - A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
  * @param features - Optional features to configure additional Query functionality.
  * @returns A set of providers to set up TanStack Query.
- * @public
  * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
  * @see withDevtools
  */
 export function provideTanStackQuery(
-  queryClient: QueryClient,
+  queryClient: QueryClient | InjectionToken<QueryClient>,
   ...features: Array<QueryFeatures>
 ): EnvironmentProviders {
   return makeEnvironmentProviders([
@@ -100,10 +109,16 @@ export function provideTanStackQuery(
       // Do not use provideEnvironmentInitializer while Angular < v19 is supported
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
-      useValue: () => {
-        queryClient.mount()
-        // Unmount the query client on application destroy
-        inject(DestroyRef).onDestroy(() => queryClient.unmount())
+      useFactory: () => {
+        const client =
+          queryClient instanceof InjectionToken
+            ? inject(queryClient)
+            : queryClient
+        return () => {
+          client.mount()
+          // Unmount the query client on application destroy
+          inject(DestroyRef).onDestroy(() => client.unmount())
+        }
       },
     },
     features.map((feature) => feature.ɵproviders),
