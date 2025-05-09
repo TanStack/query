@@ -12,7 +12,7 @@ describe('broadcastQueryClient', () => {
     queryCache = queryClient.getQueryCache()
   })
 
-  it('should subscribe to the query cache', async () => {
+  it('should subscribe to the query cache', () => {
     broadcastQueryClient({
       queryClient,
       broadcastChannel: 'test_channel',
@@ -20,7 +20,7 @@ describe('broadcastQueryClient', () => {
     expect(queryCache.hasListeners()).toBe(true)
   })
 
-  it('should not have any listeners after cleanup', async () => {
+  it('should not have any listeners after cleanup', () => {
     const unsubscribe = broadcastQueryClient({
       queryClient,
       broadcastChannel: 'test_channel',
