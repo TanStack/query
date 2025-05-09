@@ -99,6 +99,7 @@ const unsubscribe = queryCache.subscribe(callback)
 
 - `callback: (event: QueryCacheNotifyEvent) => void`
   - This function will be called with the query cache any time it is updated via its tracked update mechanisms (eg, `query.setState`, `queryClient.removeQueries`, etc). Out of scope mutations to the cache are not encouraged and will not fire subscription callbacks
+  - The [`QueryCacheNotifyEvent`](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L71) can have the following `type`s: `added`, `removed`, `updated`, `observerAdded`, `observerRemoved`, `observerResultsUpdated`, `observerOptionsUpdated`. All event objects contain the `type` property and the property `query` of type `Query`. The `updated` event includes the property `action` of type `Action`. The `observerAdded`, `observerRemoved`, and `observerOptionsUpdated` events include the property `observer` of type `QueryObserver`.
 
 **Returns**
 
