@@ -1,8 +1,12 @@
 'use client'
 import * as React from 'react'
-import { MutationObserver, noop, notifyManager } from '@tanstack/query-core'
+import {
+  MutationObserver,
+  noop,
+  notifyManager,
+  shouldThrowError,
+} from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { shouldThrowError } from './utils'
 import type {
   UseMutateFunction,
   UseMutationOptions,
