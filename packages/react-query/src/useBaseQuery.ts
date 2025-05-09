@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { isServer, notifyManager } from '@tanstack/query-core'
+import { isServer, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -16,7 +16,6 @@ import {
   shouldSuspend,
   willFetch,
 } from './suspense'
-import { noop } from './utils'
 import type {
   QueryClient,
   QueryKey,

@@ -2,11 +2,11 @@
 import * as React from 'react'
 import {
   MutationObserver,
+  noop,
   notifyManager,
   shouldThrowError,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { noop } from './utils'
 import type {
   UseMutateFunction,
   UseMutationOptions,

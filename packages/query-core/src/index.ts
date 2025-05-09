@@ -21,6 +21,7 @@ export {
   matchMutation,
   keepPreviousData,
   skipToken,
+  noop,
   shouldThrowError,
 } from './utils'
 export type { MutationFilters, QueryFilters, Updater, SkipToken } from './utils'
