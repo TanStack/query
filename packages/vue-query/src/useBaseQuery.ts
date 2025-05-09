@@ -9,8 +9,9 @@ import {
   toRefs,
   watch,
 } from 'vue-demi'
+import { shouldThrowError } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
+import { cloneDeepUnref, updateState } from './utils'
 import type { Ref } from 'vue-demi'
 import type {
   DefaultedQueryObserverOptions,
