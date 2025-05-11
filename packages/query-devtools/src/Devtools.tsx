@@ -1801,10 +1801,9 @@ const QueryDetails = () => {
       error,
       fetchMeta: {
         ...activeQueryVal.state.fetchMeta,
-        // @ts-ignore This does exist
         __previousQueryOptions,
-      },
-    })
+      } as any,
+    } as QueryState<unknown, Error>)
   }
 
   const restoreQueryAfterLoadingOrError = () => {
@@ -2025,8 +2024,8 @@ const QueryDetails = () => {
                   fetchMeta: {
                     ...activeQueryVal.state.fetchMeta,
                     __previousQueryOptions,
-                  },
-                } as unknown as QueryState<unknown, Error>)
+                  } as any,
+                } as QueryState<unknown, Error>)
               }
             }}
           >
