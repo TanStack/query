@@ -3168,7 +3168,8 @@ const stylesFactory = (
         min-height: ${tokens.size[6]};
         flex: 1;
         padding: ${tokens.size[1]} ${tokens.size[2]};
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           'Liberation Mono', 'Courier New', monospace;
         border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
         text-align: left;
