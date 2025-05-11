@@ -933,11 +933,6 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 
           <div class={cx(styles().actionsContainer, 'tsqd-actions-container')}>
             <button
-              id={
-                selectedView() === 'queries'
-                  ? 'clear-query-cache-btn'
-                  : 'clear-mutation-cache-btn'
-              }
               onClick={() => {
                 if (selectedView() === 'queries') {
                   sendDevToolsEvent({ type: 'CLEAR_QUERY_CACHE' })

@@ -9,8 +9,8 @@ React Query is designed to work out of the box with React Native.
 
 There are several options available for React Native DevTools integration:
 
-1. **Expo Plugin**: A 3rd party plugin for Expo. This is the recommended way to use React Query DevTools in React Native:
-   https://github.com/LovesWorking/tanstack-query-dev-tools-expo-plugin
+1. **Native macOS App**: A 3rd party app for debugging React Query in any js-based application:
+   https://github.com/LovesWorking/rn-better-dev-tools
 
 2. **Flipper Plugin**: A 3rd party plugin for Flipper users:
    https://github.com/bgaleotti/react-query-native-devtools
@@ -100,7 +100,7 @@ In the above code, `refetch` is skipped the first time because `useFocusEffect` 
 
 ## Disable queries on out of focus screens
 
-If you don’t want certain queries to remain “live” while a screen is out of focus, you can use the subscribed prop on useQuery. This prop lets you control whether a query stays subscribed to updates. Combined with React Navigation’s useIsFocused, it allows you to seamlessly unsubscribe from queries when a screen isn’t in focus:
+If you don't want certain queries to remain "live" while a screen is out of focus, you can use the subscribed prop on useQuery. This prop lets you control whether a query stays subscribed to updates. Combined with React Navigation's useIsFocused, it allows you to seamlessly unsubscribe from queries when a screen isn't in focus:
 
 Example usage:
 
@@ -123,4 +123,4 @@ function MyComponent() {
 }
 ```
 
-When subscribed is false, the query unsubscribes from updates and won’t trigger re-renders or fetch new data for that screen. Once it becomes true again (e.g., when the screen regains focus), the query re-subscribes and stays up to date.
+When subscribed is false, the query unsubscribes from updates and won't trigger re-renders or fetch new data for that screen. Once it becomes true again (e.g., when the screen regains focus), the query re-subscribes and stays up to date.
