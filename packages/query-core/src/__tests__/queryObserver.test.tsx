@@ -1298,4 +1298,20 @@ describe('queryObserver', () => {
 
     unsubscribe()
   })
+
+  test('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => 'data')
+    queryClient.setQueryData(key, 'initial')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: StaleTime.Static,
+      refetchOnMount: 'always',
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    unsubscribe()
+  })
 })

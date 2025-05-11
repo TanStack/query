@@ -12,7 +12,7 @@ import {
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
-import { resolveStaleTime } from './staleTime'
+import { StaleTime, resolveStaleTime } from './staleTime'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
 import type { PendingThenable, Thenable } from './thenable'
@@ -764,7 +764,10 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (resolveEnabled(options.enabled, query) !== false) {
+  if (
+    resolveEnabled(options.enabled, query) !== false &&
+    resolveStaleTime(options.staleTime, query) !== StaleTime.Static
+  ) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))
