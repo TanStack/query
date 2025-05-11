@@ -285,12 +285,20 @@ export class Query<
   }
 
   isStaleByTime(staleTime: AllowedStaleTime = 0): boolean {
-    return (
-      !isStatic(staleTime) &&
-      (this.state.isInvalidated ||
-        this.state.data === undefined ||
-        !timeUntilStale(this.state.dataUpdatedAt, staleTime))
-    )
+    // no data is always stale
+    if (this.state.data === undefined) {
+      return true
+    }
+    // static is never stale
+    if (isStatic(staleTime)) {
+      return false
+    }
+    // if the query is invalidated, it is stale
+    if (this.state.isInvalidated) {
+      return true
+    }
+
+    return !timeUntilStale(this.state.dataUpdatedAt, staleTime)
   }
 
   onFocus(): void {
