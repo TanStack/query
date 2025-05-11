@@ -307,7 +307,7 @@ export class QueryClient {
         {
           ...filters,
           type: filters?.refetchType ?? filters?.type ?? 'active',
-          stale: filters?.stale ?? true,
+          stale: true,
         },
         options,
       )
