@@ -1,7 +1,7 @@
 // Had to disable the lint rule because isServer type is defined as false
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
-import { hydrate, notifyManager } from '@tanstack/query-core'
+import { hydrate, notifyManager, shouldThrowError } from '@tanstack/query-core'
 import { isServer } from 'solid-js/web'
 import {
   createComputed,
@@ -13,7 +13,6 @@ import {
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
-import { shouldThrowError } from './utils'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions } from './types'
 import type { Accessor, Signal } from 'solid-js'
@@ -230,7 +229,7 @@ export function useBaseQuery<
     Fixes #7275
     In a few cases, the observer could unmount before the resource is loaded.
     This leads to Suspense boundaries to be suspended indefinitely.
-    This resolver will be called when the observer is unmounting 
+    This resolver will be called when the observer is unmounting
     but the resource is still in a loading state
   */
   let resolver: ((value: ResourceData) => void) | null = null

@@ -1,9 +1,9 @@
 import { describe, expect, test, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
+import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
-import { flushPromises } from './test-utils'
 
 vi.mock('@tanstack/query-core')
 
@@ -208,7 +208,7 @@ describe('QueryCache', () => {
     })
 
     // #7694
-    test('should call invalidateQueries immediately and refetchQueries after flushPromises', async () => {
+    test('should call invalidateQueries immediately and refetchQueries after sleep', async () => {
       const invalidateQueries = vi.spyOn(
         QueryClientOrigin.prototype,
         'invalidateQueries',
@@ -227,7 +227,7 @@ describe('QueryCache', () => {
       expect(invalidateQueries).toBeCalled()
       expect(refetchQueries).not.toBeCalled()
 
-      await flushPromises()
+      await sleep(0)
 
       expect(refetchQueries).toBeCalled()
     })
@@ -252,7 +252,7 @@ describe('QueryCache', () => {
       expect(invalidateQueries).toBeCalled()
       expect(refetchQueries).not.toBeCalled()
 
-      await flushPromises()
+      await sleep(0)
 
       expect(refetchQueries).not.toBeCalled()
     })

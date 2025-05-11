@@ -2,14 +2,16 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
+  reactive,
   readonly,
   shallowReactive,
   shallowReadonly,
   toRefs,
   watch,
 } from 'vue-demi'
+import { shouldThrowError } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
+import { cloneDeepUnref, updateState } from './utils'
 import type { Ref } from 'vue-demi'
 import type {
   DefaultedQueryObserverOptions,
@@ -106,7 +108,10 @@ export function useBaseQuery<
   })
 
   const observer = new Observer(client, defaultedOptions.value)
-  const state = shallowReactive(observer.getCurrentResult())
+  // @ts-expect-error
+  const state = defaultedOptions.value.shallow
+    ? shallowReactive(observer.getCurrentResult())
+    : reactive(observer.getCurrentResult())
 
   let unsubscribe = () => {
     // noop
@@ -202,13 +207,10 @@ export function useBaseQuery<
     },
   )
 
-  const readonlyState =
-    process.env.NODE_ENV === 'production'
-      ? state
-      : // @ts-expect-error
-        defaultedOptions.value.shallow
-        ? shallowReadonly(state)
-        : readonly(state)
+  // @ts-expect-error
+  const readonlyState = defaultedOptions.value.shallow
+    ? shallowReadonly(state)
+    : readonly(state)
 
   const object: any = toRefs(readonlyState)
   for (const key in state) {

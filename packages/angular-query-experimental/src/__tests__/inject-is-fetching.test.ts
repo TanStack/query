@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing'
-import { beforeEach, describe, expect } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   Injector,
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core'
+import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectIsFetching,
   injectQuery,
   provideTanStackQuery,
 } from '..'
-import { delayedFetcher } from './test-utils'
 
 const QUERY_DURATION = 100
 
@@ -39,7 +39,7 @@ describe('injectIsFetching', () => {
     const isFetching = TestBed.runInInjectionContext(() => {
       injectQuery(() => ({
         queryKey: ['isFetching1'],
-        queryFn: delayedFetcher(100),
+        queryFn: () => sleep(100).then(() => 'Some data'),
       }))
       return injectIsFetching()
     })

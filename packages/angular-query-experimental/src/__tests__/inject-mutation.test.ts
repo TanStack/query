@@ -6,15 +6,11 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { describe, expect, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
+import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
-import {
-  errorMutator,
-  expectSignals,
-  setFixtureSignalInputs,
-  successMutator,
-} from './test-utils'
+import { expectSignals, setFixtureSignalInputs } from './test-utils'
 
 const MUTATION_DURATION = 1000
 
@@ -41,7 +37,7 @@ describe('injectMutation', () => {
   test('should be in idle state initially', () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: (params) => successMutator(params),
+        mutationFn: (params) => sleep(0).then(() => params),
       }))
     })
 
@@ -58,7 +54,7 @@ describe('injectMutation', () => {
 
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: (params: string) => successMutator(params),
+        mutationFn: (params: string) => sleep(0).then(() => params),
       }))
     })
 
@@ -80,11 +76,12 @@ describe('injectMutation', () => {
   test('should return error when request fails', async () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: errorMutator,
+        mutationFn: () =>
+          sleep(0).then(() => Promise.reject(new Error('Some error'))),
       }))
     })
 
-    mutation.mutate({})
+    mutation.mutate()
 
     await resolveMutations()
 
@@ -102,7 +99,7 @@ describe('injectMutation', () => {
     const result = 'Mock data'
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: (params: string) => successMutator(params),
+        mutationFn: (params: string) => sleep(0).then(() => params),
       }))
     })
 
@@ -120,7 +117,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('reactive options should update mutation', async () => {
+  test('reactive options should update mutation', () => {
     const mutationCache = queryClient.getMutationCache()
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
@@ -128,7 +125,7 @@ describe('injectMutation', () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
         mutationKey: mutationKey(),
-        mutationFn: (params: string) => successMutator(params),
+        mutationFn: (params: string) => sleep(0).then(() => params),
       }))
     })
 
@@ -144,11 +141,12 @@ describe('injectMutation', () => {
   test('should reset state after invoking mutation.reset', async () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: (params: string) => errorMutator(params),
+        mutationFn: () =>
+          sleep(0).then(() => Promise.reject(new Error('Some error'))),
       }))
     })
 
-    mutation.mutate('')
+    mutation.mutate()
 
     await resolveMutations()
 
@@ -177,7 +175,7 @@ describe('injectMutation', () => {
       const onMutate = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
           onMutate,
         }))
       })
@@ -193,7 +191,8 @@ describe('injectMutation', () => {
       const onError = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => errorMutator(params),
+          mutationFn: (_params: string) =>
+            sleep(0).then(() => Promise.reject(new Error('Some error'))),
           onError,
         }))
       })
@@ -209,7 +208,7 @@ describe('injectMutation', () => {
       const onSuccess = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
           onSuccess,
         }))
       })
@@ -225,7 +224,7 @@ describe('injectMutation', () => {
       const onSettled = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
           onSettled,
         }))
       })
@@ -241,7 +240,8 @@ describe('injectMutation', () => {
       const onError = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => errorMutator(params),
+          mutationFn: (_params: string) =>
+            sleep(0).then(() => Promise.reject(new Error('Some error'))),
         }))
       })
 
@@ -256,7 +256,7 @@ describe('injectMutation', () => {
       const onSuccess = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
         }))
       })
 
@@ -271,7 +271,7 @@ describe('injectMutation', () => {
       const onSettled = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
         }))
       })
 
@@ -287,7 +287,7 @@ describe('injectMutation', () => {
       const onSettledOnFunction = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
           onSettled,
         }))
       })
@@ -317,7 +317,7 @@ describe('injectMutation', () => {
 
       mutation = injectMutation(() => ({
         mutationKey: ['fake', this.name()],
-        mutationFn: () => successMutator(this.name()),
+        mutationFn: () => sleep(0).then(() => this.name()),
       }))
 
       mutate(): void {
@@ -358,7 +358,7 @@ describe('injectMutation', () => {
 
       mutation = injectMutation(() => ({
         mutationKey: ['fake', this.name()],
-        mutationFn: () => successMutator(this.name()),
+        mutationFn: () => sleep(0).then(() => this.name()),
       }))
 
       mutate(): void {

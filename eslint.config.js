@@ -39,16 +39,14 @@ export default [
       ],
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
+      '@typescript-eslint/require-await': 'error',
       'no-case-declarations': 'off',
     },
   },
   {
     files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
-    rules: {
-      ...vitest.configs.recommended.rules,
-      'vitest/expect-expect': 'warn',
-    },
+    rules: vitest.configs.recommended.rules,
     settings: { vitest: { typecheck: true } },
   },
 ]

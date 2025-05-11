@@ -1,6 +1,15 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  assertType,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  it,
+  vi,
+} from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
 import { createNotifyManager } from '../notifyManager'
-import { sleep } from './utils'
 
 describe('notifyManager', () => {
   beforeEach(() => {
@@ -81,10 +90,13 @@ describe('notifyManager', () => {
     // now someFn expect to be called with args [a: string, b: number]
     const someFn = notifyManagerTest.batchCalls(fn)
 
-    someFn('im happy', 4)
-
-    // @ts-expect-error
-    someFn('im not happy', false)
+    expectTypeOf(someFn).parameters.toEqualTypeOf<Parameters<typeof fn>>()
+    assertType<Parameters<typeof someFn>>(['im happy', 4])
+    assertType<Parameters<typeof someFn>>([
+      'im not happy',
+      // @ts-expect-error
+      false,
+    ])
   })
 
   it('should use custom batch notify function', async () => {
