@@ -9,7 +9,7 @@ export const StaleTime = {
 
 export type AllowedStaleTime = number | typeof StaleTime.Static
 
-export function isStatic(
+export function isStaticStaleTime(
   staleTime: unknown,
 ): staleTime is typeof StaleTime.Static {
   return staleTime === StaleTime.Static

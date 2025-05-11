@@ -35,7 +35,7 @@ export {
 
 export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
 
-export { StaleTime } from './staleTime'
+export { StaleTime, isStaticStaleTime } from './staleTime'
 
 // Types
 export * from './types'

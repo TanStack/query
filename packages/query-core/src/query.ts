@@ -9,7 +9,7 @@ import {
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
-import { isStatic } from './staleTime'
+import { isStaticStaleTime } from './staleTime'
 import type { AllowedStaleTime } from './staleTime'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
@@ -290,7 +290,7 @@ export class Query<
       return true
     }
     // static is never stale
-    if (isStatic(staleTime)) {
+    if (isStaticStaleTime(staleTime)) {
       return false
     }
     // if the query is invalidated, it is stale
