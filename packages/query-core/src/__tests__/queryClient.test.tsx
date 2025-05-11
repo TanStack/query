@@ -1354,7 +1354,7 @@ describe('queryClient', () => {
       onlineMock.mockRestore()
     })
 
-    test('should not refetch static queries when matched against stale', async () => {
+    test('should not refetch static queries', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => 'data1')
       await queryClient.fetchQuery({ queryKey: key, queryFn: queryFn })
@@ -1367,7 +1367,7 @@ describe('queryClient', () => {
         staleTime: StaleTime.Static,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.refetchQueries({ stale: true })
+      await queryClient.refetchQueries()
 
       expect(queryFn).toHaveBeenCalledTimes(1)
       unsubscribe()

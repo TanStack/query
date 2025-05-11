@@ -9,7 +9,7 @@ import {
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
-import { isStaticStaleTime } from './staleTime'
+import { StaleTime, isStaticStaleTime, resolveStaleTime } from './staleTime'
 import type { AllowedStaleTime } from './staleTime'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
@@ -270,6 +270,18 @@ export class Query<
       this.options.queryFn === skipToken ||
       this.state.dataUpdateCount + this.state.errorUpdateCount === 0
     )
+  }
+
+  isStatic(): boolean {
+    if (this.getObserversCount() > 0) {
+      return this.observers.some(
+        (observer) =>
+          resolveStaleTime(observer.options.staleTime, this) ===
+          StaleTime.Static,
+      )
+    }
+
+    return false
   }
 
   isStale(): boolean {

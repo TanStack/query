@@ -307,7 +307,6 @@ export class QueryClient {
         {
           ...filters,
           type: filters?.refetchType ?? filters?.type ?? 'active',
-          stale: true,
         },
         options,
       )
@@ -325,7 +324,7 @@ export class QueryClient {
     const promises = notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
-        .filter((query) => !query.isDisabled())
+        .filter((query) => !query.isDisabled() && !query.isStatic())
         .map((query) => {
           let promise = query.fetch(undefined, fetchOptions)
           if (!fetchOptions.throwOnError) {
