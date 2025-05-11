@@ -4,6 +4,8 @@ import * as utils from '@tanstack/query-core'
 import { QueryClient, QueryClientProvider } from '..'
 import type { ContextOptions, MutationOptions, QueryClientConfig } from '..'
 
+export const doNotExecute = (_func: () => void) => true
+
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,

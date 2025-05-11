@@ -75,6 +75,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "expect-type": "^1.2.1",
     "git-log-parser": "^1.2.0",
     "jest": "^27.5.1",
     "jsonfile": "^6.1.0",
