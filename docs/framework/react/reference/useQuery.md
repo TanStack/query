@@ -90,12 +90,13 @@ const {
   - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
-- `staleTime: number | ((query: Query) => number)`
+- `staleTime: number | StaleTime.Static ((query: Query) => number | StaleTime.Static)`
   - Optional
   - Defaults to `0`
   - The time in milliseconds after which data is considered stale. This value only applies to the hook it is defined on.
-  - If set to `Infinity`, the data will never be considered stale
+  - If set to `Infinity`, the data will not be considered stale unless manually invalidated
   - If set to a function, the function will be executed with the query to compute a `staleTime`.
+  - If set to `StaleTime.Static`, the data will never be considered stale
 - `gcTime: number | Infinity`
   - Defaults to `5 * 60 * 1000` (5 minutes) or `Infinity` during SSR
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used.
