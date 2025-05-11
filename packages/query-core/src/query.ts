@@ -273,17 +273,15 @@ export class Query<
   }
 
   isStale(): boolean {
-    if (this.state.isInvalidated) {
-      return true
-    }
-
+    // check observers first, their `isStale` has the source of truth
+    // calculated with `isStaleByTime` and it takes `enabled` into account
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) => observer.getCurrentResult().isStale,
       )
     }
 
-    return this.state.data === undefined
+    return this.state.data === undefined || this.state.isInvalidated
   }
 
   isStaleByTime(staleTime: AllowedStaleTime = 0): boolean {
