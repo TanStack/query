@@ -4,7 +4,6 @@ import {
   hashQueryKeyByOptions,
   noop,
   partialMatchKey,
-  resolveStaleTime,
   skipToken,
 } from './utils'
 import { QueryCache } from './queryCache'
@@ -13,6 +12,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { resolveStaleTime } from './staleTime'
 import type {
   CancelOptions,
   DefaultError,

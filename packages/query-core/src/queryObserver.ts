@@ -9,10 +9,10 @@ import {
   noop,
   replaceData,
   resolveEnabled,
-  resolveStaleTime,
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
+import { resolveStaleTime } from './staleTime'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
 import type { PendingThenable, Thenable } from './thenable'

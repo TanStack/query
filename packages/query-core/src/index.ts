@@ -35,6 +35,8 @@ export {
 
 export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
 
+export { StaleTime } from './staleTime'
+
 // Types
 export * from './types'
 export type { QueryState } from './query'

@@ -9,6 +9,8 @@ import {
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
+import { isStatic } from './staleTime'
+import type { AllowedStaleTime } from './staleTime'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type {
@@ -284,11 +286,12 @@ export class Query<
     return this.state.data === undefined
   }
 
-  isStaleByTime(staleTime = 0): boolean {
+  isStaleByTime(staleTime: AllowedStaleTime = 0): boolean {
     return (
-      this.state.isInvalidated ||
-      this.state.data === undefined ||
-      !timeUntilStale(this.state.dataUpdatedAt, staleTime)
+      !isStatic(staleTime) &&
+      (this.state.isInvalidated ||
+        this.state.data === undefined ||
+        !timeUntilStale(this.state.dataUpdatedAt, staleTime))
     )
   }
 
