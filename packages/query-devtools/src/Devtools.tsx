@@ -76,7 +76,6 @@ import type {
   Query,
   QueryCache,
   QueryCacheNotifyEvent,
-  QueryClient,
   QueryState,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
