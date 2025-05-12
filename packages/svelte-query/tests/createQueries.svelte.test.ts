@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { QueryCache, QueryClient, createQueries } from '../src/index.js'
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
+import { QueryClient, createQueries } from '../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from './utils.svelte.js'
 import type {
   CreateQueryOptions,
@@ -11,11 +11,10 @@ import type {
 } from '../src/index.js'
 
 describe('createQueries', () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const queryClient = new QueryClient()
 
-  beforeEach(() => {
-    queryCache.clear()
+  afterEach(() => {
+    queryClient.clear()
   })
 
   it(

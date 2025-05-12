@@ -1,15 +1,16 @@
 import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
-import { QueryCache } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/query-core'
 import ParentComponent from './ParentComponent.svelte'
 
 describe('QueryClientProvider', () => {
   test('Sets a specific cache for all queries to use', async () => {
-    const queryCache = new QueryCache()
+    const queryClient = new QueryClient()
+    const queryCache = queryClient.getQueryCache()
 
     const rendered = render(ParentComponent, {
       props: {
-        queryCache: queryCache,
+        queryClient: queryClient,
       },
     })
 
