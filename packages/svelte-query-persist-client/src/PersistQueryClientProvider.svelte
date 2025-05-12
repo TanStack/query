@@ -37,7 +37,7 @@
   })
 
   $effect(() => {
-    return isRestoring ? () => {} : persistQueryClientSubscribe(options)
+    return isRestoring.current ? () => {} : persistQueryClientSubscribe(options)
   })
 
   $effect(() => {
