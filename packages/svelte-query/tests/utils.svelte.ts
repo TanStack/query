@@ -4,6 +4,19 @@ export function sleep(timeout: number): Promise<void> {
   })
 }
 
+export function ref<T>(initial: T) {
+  let value = $state(initial)
+
+  return {
+    get value() {
+      return value
+    },
+    set value(newValue) {
+      value = newValue
+    },
+  }
+}
+
 export function promiseWithResolvers<T>() {
   let resolve: (value: T) => void
   let reject: (reason?: any) => void

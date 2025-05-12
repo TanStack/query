@@ -1504,6 +1504,7 @@ describe('createQuery', () => {
 
       // Track changes to the query state
       $effect(() => {
+        // @ts-expect-error
         const _ = { ...query }
         renderCount++
       })
