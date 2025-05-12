@@ -2484,7 +2484,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   return value
 }
 
-export type DevToolsActionType =
+type DevToolsActionType =
   | 'REFETCH'
   | 'INVALIDATE'
   | 'RESET'
@@ -2496,9 +2496,9 @@ export type DevToolsActionType =
   | 'CLEAR_MUTATION_CACHE'
   | 'CLEAR_QUERY_CACHE'
 
-export const DEV_TOOLS_EVENT = '@tanstack/query-devtools-event'
+const DEV_TOOLS_EVENT = '@tanstack/query-devtools-event'
 
-export const sendDevToolsEvent = ({
+const sendDevToolsEvent = ({
   type,
   queryHash,
   metadata,
