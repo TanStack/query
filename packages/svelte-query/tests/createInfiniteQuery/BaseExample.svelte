@@ -1,8 +1,8 @@
 <script lang="ts">
   import { untrack } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
+  import { sleep } from '@tanstack/query-test-utils'
   import { createInfiniteQuery } from '../../src/index.js'
-  import { sleep } from '../utils.svelte.js'
   import type { QueryObserverResult } from '@tanstack/query-core'
 
   let { states }: { states: { value: Array<QueryObserverResult> } } = $props()
