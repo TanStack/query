@@ -5,7 +5,7 @@ import {
   dataTagSymbol,
   skipToken,
 } from '@tanstack/query-core'
-import { createQueries, queryOptions } from '../../src/index.js'
+import { createQueries, queryOptions } from '../src/index.js'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('queryOptions', () => {
