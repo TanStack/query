@@ -1,18 +1,20 @@
-import { notifyManager } from '@tanstack/query-core'
+import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
+import { createRawRef } from './containers.svelte.js'
+import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type {
+  Accessor,
   CreateBaseQueryOptions,
   CreateBaseQueryResult,
-  FunctionedParams,
 } from './types.js'
-import type {
-  QueryClient,
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
 
+/**
+ * Base implementation for `createQuery` and `createInfiniteQuery`
+ * @param options - A function that returns query options
+ * @param Observer - The observer from query-core
+ * @param queryClient - Custom query client which overrides provider
+ */
 export function createBaseQuery<
   TQueryFnData,
   TError,
@@ -20,64 +22,62 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: FunctionedParams<
+  options: Accessor<
     CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
-  queryClient?: QueryClient,
+  queryClient?: Accessor<QueryClient>,
 ): CreateBaseQueryResult<TData, TError> {
   /** Load query client */
-  const client = useQueryClient(queryClient)
+  const client = $derived(useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
-  /** Creates a store that has the default options applied */
-  const defaultedOptions = $derived(() => {
-    const defaultOptions = client.defaultQueryOptions(options())
-    defaultOptions._optimisticResults = isRestoring()
-      ? 'isRestoring'
-      : 'optimistic'
-    defaultOptions.structuralSharing = false
-    return defaultOptions
+  const resolvedOptions = $derived.by(() => {
+    const opts = client.defaultQueryOptions(options())
+    opts._optimisticResults = isRestoring.current ? 'isRestoring' : 'optimistic'
+    return opts
   })
 
   /** Creates the observer */
-  const observer = new Observer<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >(client, defaultedOptions())
-
-  const result = $state<QueryObserverResult<TData, TError>>(
-    observer.getOptimisticResult(defaultedOptions()),
+  const observer = $derived(
+    new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
+      client,
+      untrack(() => resolvedOptions),
+    ),
   )
 
-  function updateResult(r: QueryObserverResult<TData, TError>) {
-    Object.assign(result, r)
+  function createResult() {
+    const result = observer.getOptimisticResult(resolvedOptions)
+    return !resolvedOptions.notifyOnChangeProps
+      ? observer.trackResult(result)
+      : result
   }
+  const [query, update] = createRawRef(
+    // svelte-ignore state_referenced_locally - intentional, initial value
+    createResult(),
+  )
 
   $effect(() => {
-    const unsubscribe = isRestoring()
+    const unsubscribe = isRestoring.current
       ? () => undefined
-      : observer.subscribe(() => {
-          notifyManager.batchCalls(() => {
-            updateResult(observer.getOptimisticResult(defaultedOptions()))
-          })()
-        })
-
+      : observer.subscribe(() => update(createResult()))
     observer.updateResult()
-    return () => unsubscribe()
+    return unsubscribe
   })
 
-  /** Subscribe to changes in result and defaultedOptionsStore */
   $effect.pre(() => {
-    observer.setOptions(defaultedOptions())
-    updateResult(observer.getOptimisticResult(defaultedOptions()))
+    observer.setOptions(resolvedOptions)
+    // The only reason this is necessary is because of `isRestoring`.
+    // Because we don't subscribe while restoring, the following can occur:
+    // - `isRestoring` is true
+    // - `isRestoring` becomes false
+    // - `observer.subscribe` and `observer.updateResult` is called in the above effect,
+    //   but the subsequent `fetch` has already completed
+    // - `result` misses the intermediate restored-but-not-fetched state
+    //
+    // this could technically be its own effect but that doesn't seem necessary
+    update(createResult())
   })
 
-  // Handle result property usage tracking
-  return !defaultedOptions().notifyOnChangeProps
-    ? observer.trackResult(result)
-    : result
+  return query
 }

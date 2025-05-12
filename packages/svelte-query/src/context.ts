@@ -1,18 +1,19 @@
 import { getContext, setContext } from 'svelte'
 import type { QueryClient } from '@tanstack/query-core'
+import type { Box } from './containers.svelte'
 
-const _contextKey = '$$_queryClient'
+const _contextKey = Symbol('QueryClient')
 
 /** Retrieves a Client from Svelte's context */
 export const getQueryClientContext = (): QueryClient => {
-  const client = getContext(_contextKey)
+  const client = getContext<QueryClient | undefined>(_contextKey)
   if (!client) {
     throw new Error(
       'No QueryClient was found in Svelte context. Did you forget to wrap your component with QueryClientProvider?',
     )
   }
 
-  return client as QueryClient
+  return client
 }
 
 /** Sets a QueryClient on Svelte's context */
@@ -20,21 +21,21 @@ export const setQueryClientContext = (client: QueryClient): void => {
   setContext(_contextKey, client)
 }
 
-const _isRestoringContextKey = '$$_isRestoring'
+const _isRestoringContextKey = Symbol('isRestoring')
 
 /** Retrieves a `isRestoring` from Svelte's context */
-export const getIsRestoringContext = (): (() => boolean) => {
+export const getIsRestoringContext = (): Box<boolean> => {
   try {
-    const isRestoring = getContext<(() => boolean) | undefined>(
+    const isRestoring = getContext<Box<boolean> | undefined>(
       _isRestoringContextKey,
     )
-    return isRestoring ?? (() => false)
+    return isRestoring ?? { current: false }
   } catch (error) {
-    return () => false
+    return { current: false }
   }
 }
 
 /** Sets a `isRestoring` on Svelte's context */
-export const setIsRestoringContext = (isRestoring: () => boolean): void => {
+export const setIsRestoringContext = (isRestoring: Box<boolean>): void => {
   setContext(_isRestoringContextKey, isRestoring)
 }

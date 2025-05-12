@@ -127,10 +127,6 @@
             {
               "label": "SSR & SvelteKit",
               "to": "framework/svelte/ssr"
-            },
-            {
-              "label": "Reactivity",
-              "to": "framework/svelte/reactivity"
             }
           ]
         },

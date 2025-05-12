@@ -17,11 +17,11 @@
       },
       enabled: ready,
     }),
-    queryClient,
+    () => queryClient,
   )
 </script>
 
 <button onclick={() => (ready = true)}>setReady</button>
 
-<div>isFetching: {isFetching()}</div>
+<div>isFetching: {isFetching.current}</div>
 <div>Data: {query.data ?? 'undefined'}</div>

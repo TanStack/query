@@ -19,7 +19,7 @@
       getNextPageParam: () => undefined,
       initialPageParam: 0,
     }),
-    queryClient,
+    () => queryClient,
   )
 
   $effect(() => {

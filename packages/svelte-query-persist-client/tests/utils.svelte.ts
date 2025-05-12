@@ -1,5 +1,4 @@
 import { QueryClient } from '@tanstack/svelte-query'
-
 import type { QueryClientConfig } from '@tanstack/svelte-query'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
@@ -18,15 +17,9 @@ export type StatusResult<T = unknown> = {
   data: T | undefined
 }
 
-export function ref<T>(initial: T) {
-  let value = $state(initial)
-
-  return {
-    get value() {
-      return value
-    },
-    set value(newValue) {
-      value = newValue
-    },
+export class StatelessRef<T> {
+  current: T
+  constructor(value: T) {
+    this.current = value
   }
 }

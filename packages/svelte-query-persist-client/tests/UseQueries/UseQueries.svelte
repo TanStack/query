@@ -1,26 +1,23 @@
 <script lang="ts">
-  import { untrack } from 'svelte'
   import { createQueries } from '@tanstack/svelte-query'
-  import { sleep } from '../utils.svelte.js'
-  import type { StatusResult } from '../utils.svelte.js'
+  import type { StatelessRef, StatusResult } from '../utils.svelte.js'
 
-  let { states }: { states: { value: Array<StatusResult<string>> } } = $props()
+  let { states }: { states: StatelessRef<Array<StatusResult<string>>> } =
+    $props()
 
-  const queries = createQueries({
-    queries: () => [
+  const queries = createQueries(() => ({
+    queries: [
       {
         queryKey: ['test'],
-        queryFn: async (): Promise<string> => {
-          await sleep(5)
-          return 'fetched'
-        },
+        queryFn: () => Promise.resolve('fetched'),
       },
     ],
-  })
+  }))
 
   $effect(() => {
     // svelte-ignore state_snapshot_uncloneable
-    states.value = [...untrack(() => states.value), $state.snapshot(queries[0])]
+    const snapshot = $state.snapshot(queries[0])
+    states.current.push(snapshot)
   })
 </script>
 

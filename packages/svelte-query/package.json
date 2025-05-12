@@ -14,6 +14,12 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "keywords": [
+    "tanstack",
+    "query",
+    "svelte",
+    "swr"
+  ],
   "scripts": {
     "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
     "compile": "tsc --build",
@@ -54,6 +60,6 @@
     "svelte-check": "^4.1.5"
   },
   "peerDependencies": {
-    "svelte": "^5.0.0"
+    "svelte": "^5.7.0"
   }
 }

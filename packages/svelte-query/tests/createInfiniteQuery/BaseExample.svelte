@@ -19,7 +19,7 @@
       getNextPageParam: (lastPage) => lastPage + 1,
       initialPageParam: 0,
     }),
-    queryClient,
+    () => queryClient,
   )
 
   $effect(() => {

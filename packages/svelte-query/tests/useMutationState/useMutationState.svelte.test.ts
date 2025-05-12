@@ -3,7 +3,7 @@ import { fireEvent, render, waitFor } from '@testing-library/svelte'
 import BaseExample from './BaseExample.svelte'
 
 describe('useMutationState', () => {
-  test('Run few mutation functions and check from useMutationState ', async () => {
+  test('Run few mutation functions and check from useMutationState', async () => {
     const successMutationFn = vi.fn()
 
     const errorMutationFn = vi.fn().mockImplementation(() => {
