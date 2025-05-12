@@ -6,6 +6,7 @@
 
   const queryClient = new QueryClient()
   const isMutating = useIsMutating(undefined, queryClient)
+
   const mutation = createMutation(
     () => ({
       mutationKey: ['mutation-1'],

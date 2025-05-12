@@ -4,6 +4,7 @@
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
+
   const mutation = createMutation(() => ({
     mutationFn: () => {
       const err = new Error('Expected mock error')

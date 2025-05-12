@@ -5,7 +5,9 @@
 
   const queryClient = new QueryClient()
   let ready = $state(false)
+
   const isFetching = useIsFetching(undefined, queryClient)
+
   const query = createQuery(
     () => ({
       queryKey: ['test'],

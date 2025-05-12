@@ -5,7 +5,9 @@
   import type { QueryObserverResult } from '@tanstack/query-core'
 
   let { states }: { states: { value: Array<QueryObserverResult> } } = $props()
+
   const queryClient = new QueryClient()
+
   const query = createInfiniteQuery(
     () => ({
       queryKey: ['test'],
@@ -19,6 +21,7 @@
     }),
     () => queryClient,
   )
+
   $effect(() => {
     // @ts-expect-error
     // svelte-ignore state_snapshot_uncloneable

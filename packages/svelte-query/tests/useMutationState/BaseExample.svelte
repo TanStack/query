@@ -18,14 +18,15 @@
     errorMutationOpts: Accessor<CreateMutationOptions>
     mutationStateOpts?: MutationStateOptions | undefined
   } = $props()
+
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
+
   const successMutation = createMutation(successMutationOpts)
   const errorMutation = createMutation(errorMutationOpts)
+
   const mutationState = useMutationState(mutationStateOpts)
   let statuses = $derived(mutationState.map((state) => state.status))
-
-  $inspect(statuses)
 </script>
 
 <div data-testid="result">

@@ -6,9 +6,12 @@
     mutationFn,
   }: { mutationFn: (value: { count: number }) => Promise<{ count: number }> } =
     $props()
+
   let count = $state(0)
+
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
+
   const mutation = createMutation(() => ({ mutationFn: mutationFn }))
 </script>
 
