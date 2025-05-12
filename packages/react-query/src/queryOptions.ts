@@ -11,20 +11,13 @@ type SelectedQueryOptions<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     | 'getNextPageParam'
     | 'getPreviousPageParam'
-    | 'queryKeyHashFn'
-    | '_defaulted'
-    | 'behavior'
-    | 'structuralSharing'
-    | 'isDataEqual'
     | 'onSuccess'
     | 'onError'
     | 'onSettled'
-    | 'enabled'
+    | 'context'
     | 'refetchInterval'
-    | 'initialData'
-    | 'networkMode'
   >,
-  'queryKey' | 'queryFn'
+  'queryKey'
 > & {
   select: (data: TQueryFnData) => TData
 }
@@ -39,20 +32,13 @@ type UnSelectedQueryOptions<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     | 'getNextPageParam'
     | 'getPreviousPageParam'
-    | 'queryKeyHashFn'
-    | '_defaulted'
-    | 'behavior'
-    | 'structuralSharing'
-    | 'isDataEqual'
     | 'onSuccess'
     | 'onError'
     | 'onSettled'
-    | 'enabled'
+    | 'context'
     | 'refetchInterval'
-    | 'initialData'
-    | 'networkMode'
   >,
-  'queryKey' | 'queryFn'
+  'queryKey'
 > & {
   select?: undefined
 }
