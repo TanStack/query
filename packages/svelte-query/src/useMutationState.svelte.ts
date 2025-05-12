@@ -1,5 +1,5 @@
+import { replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient.js'
-import { createRawRef } from './containers.svelte.js'
 import type {
   MutationCache,
   MutationState,
@@ -24,7 +24,33 @@ export function useMutationState<TResult = MutationState>(
   queryClient?: QueryClient,
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
-  let [mutation, update] = createRawRef(getResult(mutationCache, options))
-  $effect(() => update(getResult(mutationCache, options)))
-  return mutation
+  const result = $state(getResult(mutationCache, options))
+
+  $effect(() => {
+    const unsubscribe = mutationCache.subscribe(() => {
+      const nextResult = replaceEqualDeep(
+        result,
+        getResult(mutationCache, options),
+      )
+      if (result !== nextResult) {
+        Object.assign(result, nextResult)
+      }
+    })
+
+    return unsubscribe
+  })
+
+  /*  $effect(() => {
+    mutationCache.subscribe(() => {
+      const nextResult = replaceEqualDeep(
+        result.current,
+        getResult(mutationCache, optionsRef),
+      )
+      if (result.current !== nextResult) {
+        result = nextResult
+        //notifyManager.schedule(onStoreChange)
+      }
+    })
+  }) */
+  return result
 }

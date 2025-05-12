@@ -1,8 +1,10 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { setQueryClientContext } from '../../src/index.js'
-  import { createMutation } from '../../src/createMutation.svelte'
-  import { useMutationState } from '../../src/useMutationState.svelte'
+  import {
+    createMutation,
+    setQueryClientContext,
+    useMutationState,
+  } from '../../src/index.js'
   import type {
     Accessor,
     CreateMutationOptions,

@@ -9,6 +9,12 @@ import type {
   CreateBaseQueryResult,
 } from './types.js'
 
+/**
+ * Base implementation for `createQuery` and `createInfiniteQuery`
+ * @param options - A function that returns query options
+ * @param Observer - The observer from query-core
+ * @param queryClient - Custom query client which overrides provider
+ */
 export function createBaseQuery<
   TQueryFnData,
   TError,
@@ -20,11 +26,10 @@ export function createBaseQuery<
     CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
-  queryClientOption?: Accessor<QueryClient>,
+  queryClient?: Accessor<QueryClient>,
 ): CreateBaseQueryResult<TData, TError> {
   /** Load query client */
-  const queryClient = $derived(queryClientOption?.())
-  const client = $derived(useQueryClient(queryClient))
+  const client = $derived(useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
   const resolvedOptions = $derived.by(() => {

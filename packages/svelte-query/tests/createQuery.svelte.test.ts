@@ -1,13 +1,13 @@
+import { flushSync } from 'svelte'
+import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import {
   QueryCache,
   QueryClient,
   createQuery,
   keepPreviousData,
-} from '@tanstack/svelte-query'
-import { flushSync } from 'svelte'
-import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
+} from '../src/index.js'
 import { promiseWithResolvers, sleep, withEffectRoot } from './utils.svelte.js'
-import type { CreateQueryResult } from '@tanstack/svelte-query'
+import type { CreateQueryResult } from '../src/index.js'
 
 describe('createQuery', () => {
   const queryCache = new QueryCache()

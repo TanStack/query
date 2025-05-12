@@ -1,8 +1,7 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { createMutation } from '../../src/createMutation.svelte'
+  import { createMutation, useIsMutating } from '../../src/index.js'
   import { sleep } from '../utils.svelte.js'
-  import { useIsMutating } from '../../src/useIsMutating.svelte'
 
   const queryClient = new QueryClient()
   const isMutating = useIsMutating(undefined, queryClient)

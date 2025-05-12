@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { createQueries, queryOptions } from '@tanstack/svelte-query'
-import type { CreateQueryResult } from '@tanstack/svelte-query'
+import { createQueries, queryOptions } from '../src/index.js'
+import type { CreateQueryResult } from '../src/index.js'
 
 describe('createQueries', () => {
   it('should return correct data for dynamic queries with mixed result types', () => {

@@ -199,10 +199,9 @@ export function createQueries<
         ]
     combine?: (result: QueriesResults<T>) => TCombinedResult
   }>,
-  queryClientOption?: Accessor<QueryClient>,
+  queryClient?: Accessor<QueryClient>,
 ): TCombinedResult {
-  const queryClient = $derived(queryClientOption?.())
-  const client = $derived(useQueryClient(queryClient))
+  const client = $derived(useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
   const { queries, combine } = $derived.by(createQueriesOptions)

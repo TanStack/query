@@ -1,5 +1,5 @@
-import { createQuery, queryOptions } from '@tanstack/svelte-query'
 import { describe, expectTypeOf, it } from 'vitest'
+import { createQuery, queryOptions } from '../src/index.js'
 
 describe('initialData', () => {
   describe('Config object overload', () => {
