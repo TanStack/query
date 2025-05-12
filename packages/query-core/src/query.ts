@@ -3,14 +3,13 @@ import {
   noop,
   replaceData,
   resolveEnabled,
+  resolveStaleTime,
   skipToken,
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
-import { StaleTime, isStaticStaleTime, resolveStaleTime } from './staleTime'
-import type { AllowedStaleTime } from './staleTime'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type {
@@ -26,6 +25,7 @@ import type {
   QueryOptions,
   QueryStatus,
   SetDataOptions,
+  StaleTime,
 } from './types'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
@@ -276,8 +276,7 @@ export class Query<
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) =>
-          resolveStaleTime(observer.options.staleTime, this) ===
-          StaleTime.Static,
+          resolveStaleTime(observer.options.staleTime, this) === 'static',
       )
     }
 
@@ -296,13 +295,13 @@ export class Query<
     return this.state.data === undefined || this.state.isInvalidated
   }
 
-  isStaleByTime(staleTime: AllowedStaleTime = 0): boolean {
+  isStaleByTime(staleTime: StaleTime = 0): boolean {
     // no data is always stale
     if (this.state.data === undefined) {
       return true
     }
     // static is never stale
-    if (isStaticStaleTime(staleTime)) {
+    if (staleTime === 'static') {
       return false
     }
     // if the query is invalidated, it is stale

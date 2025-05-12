@@ -1,6 +1,5 @@
 /* istanbul ignore file */
 
-import type { StaleTimeFn } from './staleTime'
 import type { QueryClient } from './queryClient'
 import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
@@ -97,6 +96,17 @@ export type QueryFunction<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
+
+export type StaleTime = number | 'static'
+
+export type StaleTimeFunction<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> =
+  | StaleTime
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => StaleTime)
 
 export type Enabled<
   TQueryFnData = unknown,
@@ -321,7 +331,7 @@ export interface QueryObserverOptions<
    * If set to a function, the function will be executed with the query to compute a `staleTime`.
    * Defaults to `0`.
    */
-  staleTime?: StaleTimeFn<TQueryFnData, TError, TQueryData, TQueryKey>
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
@@ -494,7 +504,7 @@ export interface FetchQueryOptions<
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
    */
-  staleTime?: StaleTimeFn<TQueryFnData, TError, TData, TQueryKey>
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
 }
 
 export interface EnsureQueryDataOptions<

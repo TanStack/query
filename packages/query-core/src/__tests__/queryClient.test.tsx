@@ -4,7 +4,6 @@ import {
   MutationObserver,
   QueryClient,
   QueryObserver,
-  StaleTime,
   dehydrate,
   focusManager,
   hydrate,
@@ -669,7 +668,7 @@ describe('queryClient', () => {
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
-        staleTime: StaleTime.Static,
+        staleTime: 'static',
       })
 
       expect(first.data).toBe('data')
@@ -683,7 +682,7 @@ describe('queryClient', () => {
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
-        staleTime: StaleTime.Static,
+        staleTime: 'static',
       })
 
       expect(fetchFn).toHaveBeenCalledTimes(1)
@@ -1364,7 +1363,7 @@ describe('queryClient', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn,
-        staleTime: StaleTime.Static,
+        staleTime: 'static',
       })
       const unsubscribe = observer.subscribe(() => undefined)
       await queryClient.refetchQueries()
@@ -1597,7 +1596,7 @@ describe('queryClient', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn,
-        staleTime: StaleTime.Static,
+        staleTime: 'static',
       })
       const unsubscribe = observer.subscribe(() => undefined)
       await queryClient.invalidateQueries()

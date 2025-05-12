@@ -7,6 +7,8 @@ import type {
   QueryFunction,
   QueryKey,
   QueryOptions,
+  StaleTime,
+  StaleTimeFunction,
 } from './types'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
@@ -93,6 +95,20 @@ export function isValidTimeout(value: unknown): value is number {
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
+}
+
+export function resolveStaleTime<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  staleTime:
+    | undefined
+    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+): StaleTime | undefined {
+  return typeof staleTime === 'function' ? staleTime(query) : staleTime
 }
 
 export function resolveEnabled<

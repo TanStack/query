@@ -1,4 +1,3 @@
-import { isStaticStaleTime } from '@tanstack/query-core'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -6,7 +5,6 @@ import type {
   QueryKey,
   QueryObserver,
   QueryObserverResult,
-  StaleTime,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
@@ -27,8 +25,8 @@ export const ensureSuspenseTimers = (
     // Handle staleTime to ensure minimum 1000ms in Suspense mode
     // This prevents unnecessary refetching when components remount after suspending
 
-    const clamp = (value: number | typeof StaleTime.Static | undefined) =>
-      isStaticStaleTime(value) ? value : Math.max(value ?? 1000, 1000)
+    const clamp = (value: number | 'static' | undefined) =>
+      value === 'static' ? value : Math.max(value ?? 1000, 1000)
 
     const originalStaleTime = defaultedOptions.staleTime
     defaultedOptions.staleTime =

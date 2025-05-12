@@ -8,7 +8,7 @@ import {
   vi,
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, QueryObserver, StaleTime, focusManager } from '..'
+import { QueryClient, QueryObserver, focusManager } from '..'
 import type { QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
@@ -1188,7 +1188,7 @@ describe('queryObserver', () => {
           data: 'data',
         }
       },
-      staleTime: StaleTime.Static,
+      staleTime: 'static',
     })
     const result = observer.getCurrentResult()
     expect(result.isStale).toBe(true) // no data = stale
@@ -1306,7 +1306,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      staleTime: StaleTime.Static,
+      staleTime: 'static',
       refetchOnMount: 'always',
     })
     const unsubscribe = observer.subscribe(() => undefined)

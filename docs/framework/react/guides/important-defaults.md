@@ -13,7 +13,7 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
   - set `staleTime` to e.g. `2 * 60 * 1000` to make sure data is read from the cache, without triggering any kinds of refetches, for 2 minutes, or until the Query is [invalidated manually](./query-invalidation.md).
   - set `staleTime` to `Infinity` to never trigger a refetch until the Query is [invalidated manually](./query-invalidation.md).
-  - set `staleTime` to `StaleTime.Static` to **never** trigger a refetch, even if the Query is [invalidated manually](./query-invalidation.md).
+  - set `staleTime` to `'static'` to **never** trigger a refetch, even if the Query is [invalidated manually](./query-invalidation.md).
 
 - Stale queries are refetched automatically in the background when:
   - New instances of the query mount
