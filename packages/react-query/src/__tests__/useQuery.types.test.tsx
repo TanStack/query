@@ -1,4 +1,5 @@
 import { useQuery } from '../useQuery'
+import { doNotExecute } from './utils'
 
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   T,
@@ -7,8 +8,6 @@ export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   : false
 
 export type Expect<T extends true> = T
-
-const doNotExecute = (_func: () => void) => true
 
 describe('initialData', () => {
   describe('Config object overload', () => {

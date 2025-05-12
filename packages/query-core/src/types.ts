@@ -8,6 +8,18 @@ import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 import type { Logger } from './logger'
 
+export type OmitKeyof<
+  TObject,
+  TKey extends TStrictly extends 'safely'
+    ?
+        | keyof TObject
+        | (string & Record<never, never>)
+        | (number & Record<never, never>)
+        | (symbol & Record<never, never>)
+    : keyof TObject,
+  TStrictly extends 'strictly' | 'safely' = 'strictly',
+> = Omit<TObject, TKey>
+
 export type QueryKey = readonly unknown[]
 
 export type QueryFunction<
@@ -646,6 +658,7 @@ export interface MutationObserverBaseResult<
   isError: boolean
   isIdle: boolean
   isLoading: boolean
+  isPending: boolean
   isSuccess: boolean
   mutate: MutateFunction<TData, TError, TVariables, TContext>
   reset: () => void
