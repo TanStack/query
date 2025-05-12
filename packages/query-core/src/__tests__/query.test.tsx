@@ -1,19 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { QueryObserver, dehydrate, hydrate, isCancelledError } from '..'
 import {
-  createQueryClient,
-  mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
-  setIsServer,
   sleep,
-} from './utils'
-import type {
-  QueryCache,
+} from '@tanstack/query-test-utils'
+import {
   QueryClient,
-  QueryFunctionContext,
-  QueryObserverResult,
+  QueryObserver,
+  dehydrate,
+  hydrate,
+  isCancelledError,
 } from '..'
+import { mockOnlineManagerIsOnline, setIsServer } from './utils'
+import type { QueryCache, QueryFunctionContext, QueryObserverResult } from '..'
 
 describe('query', () => {
   let queryClient: QueryClient
@@ -21,7 +20,7 @@ describe('query', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
@@ -387,7 +386,7 @@ describe('query', () => {
   })
 
   test('should reset to default state when created from hydration', async () => {
-    const client = createQueryClient()
+    const client = new QueryClient()
     await client.prefetchQuery({
       queryKey: ['string'],
       queryFn: () => Promise.resolve('string'),
@@ -395,7 +394,7 @@ describe('query', () => {
 
     const dehydrated = dehydrate(client)
 
-    const hydrationClient = createQueryClient()
+    const hydrationClient = new QueryClient()
     hydrate(hydrationClient, dehydrated)
 
     expect(hydrationClient.getQueryData(['string'])).toBe('string')
@@ -1003,7 +1002,7 @@ describe('query', () => {
     const key = queryKey()
 
     const queryFn = vi
-      .fn()
+      .fn<() => Promise<string>>()
       .mockImplementation(() => sleep(10).then(() => 'data'))
 
     queryClient.prefetchQuery({

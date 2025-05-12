@@ -1,7 +1,7 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { createQuery, useIsFetching } from '../../src/index.js'
-  import { sleep } from '../utils.svelte.js'
+  import { sleep } from '@tanstack/query-test-utils'
 
   const queryClient = new QueryClient()
   let ready = $state(false)

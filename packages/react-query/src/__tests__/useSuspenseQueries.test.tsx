@@ -10,8 +10,14 @@ import {
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { skipToken, useSuspenseQueries, useSuspenseQuery } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import {
+  QueryClient,
+  skipToken,
+  useSuspenseQueries,
+  useSuspenseQuery,
+} from '..'
+import { renderWithClient } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
 
 type NumberQueryOptions = UseSuspenseQueryOptions<number>
@@ -27,7 +33,7 @@ const createQuery: (id: number) => NumberQueryOptions = (id) => ({
 })
 const resolveQueries = () => vi.advanceTimersByTimeAsync(QUERY_DURATION)
 
-const queryClient = createQueryClient()
+const queryClient = new QueryClient()
 
 describe('useSuspenseQueries', () => {
   const onSuspend = vi.fn()
@@ -322,21 +328,27 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() =>
+      expect(rendered.getByText('loading')).toBeInTheDocument(),
+    )
     await waitFor(() => rendered.getByText('Data 0'))
 
     // go offline
     document.dispatchEvent(new CustomEvent('offline'))
 
     fireEvent.click(rendered.getByText('fetch'))
-    await waitFor(() => rendered.getByText('Data 0'))
+    await waitFor(() =>
+      expect(rendered.getByText('Data 0')).toBeInTheDocument(),
+    )
 
     // go back online
     document.dispatchEvent(new CustomEvent('online'))
     fireEvent.click(rendered.getByText('fetch'))
 
     // query should resume
-    await waitFor(() => rendered.getByText('Data 1'))
+    await waitFor(() =>
+      expect(rendered.getByText('Data 1')).toBeInTheDocument(),
+    )
   })
 
   it('should throw error when queryKey changes and new query fails', async () => {
@@ -426,15 +438,19 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('data0'))
+    await waitFor(() => expect(rendered.getByText('data0')).toBeInTheDocument())
 
     fireEvent.click(rendered.getByText('inc'))
 
-    await waitFor(() => rendered.getByText('Pending...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Pending...')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('data1'))
+    await waitFor(() => expect(rendered.getByText('data1')).toBeInTheDocument())
   })
 
   it('should not request old data inside transitions (issue #6486)', async () => {
@@ -496,7 +512,7 @@ describe('useSuspenseQueries 2', () => {
 
   it('should still suspense if queryClient has placeholderData config', async () => {
     const key = queryKey()
-    const queryClientWithPlaceholder = createQueryClient({
+    const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
           placeholderData: (previousData: any) => previousData,
@@ -533,15 +549,19 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('data0'))
+    await waitFor(() => expect(rendered.getByText('data0')).toBeInTheDocument())
 
     fireEvent.click(rendered.getByText('inc'))
 
-    await waitFor(() => rendered.getByText('Pending...'))
+    await waitFor(() =>
+      expect(rendered.getByText('Pending...')).toBeInTheDocument(),
+    )
 
-    await waitFor(() => rendered.getByText('data1'))
+    await waitFor(() => expect(rendered.getByText('data1')).toBeInTheDocument())
   })
 
   it('should show error boundary even with gcTime:0 (#7853)', async () => {
@@ -692,5 +712,77 @@ describe('useSuspenseQueries 2', () => {
       'skipToken is not allowed for useSuspenseQueries',
     )
     consoleErrorSpy.mockRestore()
+  })
+
+  it('should log an error when skipToken is used in development environment', () => {
+    const envCopy = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: skipToken as any,
+          },
+        ],
+      })
+
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback="Loading...">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'skipToken is not allowed for useSuspenseQueries',
+    )
+
+    consoleErrorSpy.mockRestore()
+    process.env.NODE_ENV = envCopy
+  })
+
+  it('should not log an error when skipToken is used in production environment', () => {
+    const envCopy = process.env.NODE_ENV
+    process.env.NODE_ENV = 'production'
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: skipToken as any,
+          },
+        ],
+      })
+
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback="Loading...">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(consoleErrorSpy).not.toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
+    process.env.NODE_ENV = envCopy
   })
 })

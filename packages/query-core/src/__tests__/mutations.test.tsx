@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationObserver } from '../mutationObserver'
-import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
-import type { QueryClient } from '..'
+import { QueryClient } from '..'
+import { executeMutation } from './utils'
 import type { MutationState } from '../mutation'
 
 describe('mutations', () => {
@@ -9,7 +10,7 @@ describe('mutations', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryClient.mount()
   })
 
@@ -252,7 +253,7 @@ describe('mutations', () => {
     const onSettled = vi.fn()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: (text: string) => Promise.resolve(text),
+      mutationFn: (text: string) => sleep(10).then(() => text),
       onMutate,
       onSuccess,
       onSettled,
@@ -290,7 +291,23 @@ describe('mutations', () => {
       submittedAt: 1,
     })
 
-    await queryClient.resumePausedMutations()
+    void queryClient.resumePausedMutations()
+    await vi.advanceTimersByTimeAsync(0)
+
+    // check that the mutation is correctly resumed
+    expect(mutation.state).toEqual({
+      context: 'todo',
+      data: undefined,
+      error: null,
+      failureCount: 1,
+      failureReason: 'err',
+      isPaused: false,
+      status: 'pending',
+      variables: 'todo',
+      submittedAt: 1,
+    })
+
+    await vi.advanceTimersByTimeAsync(20)
 
     expect(mutation.state).toEqual({
       context: 'todo',

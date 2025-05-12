@@ -344,9 +344,7 @@ export function useQueries<
     unsubscribe()
   })
 
-  return process.env.NODE_ENV === 'production'
-    ? state
-    : options.shallow
-      ? shallowReadonly(state)
-      : (readonly(state) as Readonly<Ref<TCombinedResult>>)
+  return options.shallow
+    ? shallowReadonly(state)
+    : (readonly(state) as Readonly<Ref<TCombinedResult>>)
 }

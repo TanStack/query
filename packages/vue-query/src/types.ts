@@ -55,15 +55,8 @@ export type DeepUnwrapRef<T> = T extends UnwrapLeaf
         }
       : UnwrapRef<T>
 
-export type DistributiveOmit<T, TKeyOfAny extends keyof any> = T extends any
-  ? Omit<T, TKeyOfAny>
-  : never
-
 export interface DefaultOptions<TError = DefaultError> {
-  queries?: OmitKeyof<
-    QueryObserverOptions<unknown, TError>,
-    'queryKey' | 'queryFn'
-  > & {
+  queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'> & {
     /**
      * Return data in a shallow ref object (it is `false` by default). It can be set to `true` to return data in a shallow ref object, which can improve performance if your data does not need to be deeply reactive.
      */

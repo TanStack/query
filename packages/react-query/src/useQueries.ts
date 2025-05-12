@@ -4,10 +4,11 @@ import * as React from 'react'
 import {
   QueriesObserver,
   QueryObserver,
+  noop,
   notifyManager,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { useIsRestoring } from './isRestoring'
+import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
   ensurePreventErrorBoundaryRetry,
@@ -20,7 +21,6 @@ import {
   shouldSuspend,
   willFetch,
 } from './suspense'
-import { noop } from './utils'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,

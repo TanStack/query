@@ -1,6 +1,7 @@
 // @ts-check
 
 import pluginJsdoc from 'eslint-plugin-jsdoc'
+import vitest from '@vitest/eslint-plugin'
 import rootConfig from './root.eslint.config.js'
 
 export default [
@@ -25,6 +26,15 @@ export default [
           // Not compatible with Api Extractor @public
           typed: false,
         },
+      ],
+    },
+  },
+  {
+    plugins: { vitest },
+    rules: {
+      'vitest/expect-expect': [
+        'error',
+        { assertFunctionNames: ['expect', 'expectSignals'] },
       ],
     },
   },

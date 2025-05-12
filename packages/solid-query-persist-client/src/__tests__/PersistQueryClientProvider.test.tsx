@@ -3,9 +3,8 @@ import { render, screen, waitFor } from '@solidjs/testing-library'
 import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createEffect, createSignal, onMount } from 'solid-js'
-
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
-import { createQueryClient, queryKey, sleep } from './utils'
 import type {
   PersistedClient,
   Persister,
@@ -15,7 +14,7 @@ const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
   return {
-    async persistClient(persistClient: PersistedClient) {
+    persistClient(persistClient: PersistedClient) {
       storedState = persistClient
     },
     async restoreClient() {
@@ -56,7 +55,7 @@ describe('PersistQueryClientProvider', () => {
       data: string | undefined
     }> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -134,7 +133,7 @@ describe('PersistQueryClientProvider', () => {
       data: string | undefined
     }> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -217,7 +216,7 @@ describe('PersistQueryClientProvider', () => {
       data: string | undefined
     }> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -300,7 +299,7 @@ describe('PersistQueryClientProvider', () => {
       data: string | undefined
     }> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -373,7 +372,7 @@ describe('PersistQueryClientProvider', () => {
   test('should call onSuccess after successful restoring', async () => {
     const key = queryKey()
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -426,7 +425,7 @@ describe('PersistQueryClientProvider', () => {
     const onErrorMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const removeClient = vi.fn()
     const onSuccess = vi.fn()
     const onError = vi.fn()
@@ -479,7 +478,7 @@ describe('PersistQueryClientProvider', () => {
       data: string | undefined
     }> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),

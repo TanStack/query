@@ -1,14 +1,16 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import React from 'react'
-import { fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { queryKey } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   usePrefetchQuery,
   useQueryErrorResetBoundary,
   useSuspenseQuery,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { renderWithClient } from './utils'
 
 import type { UseSuspenseQueryOptions } from '..'
 
@@ -16,14 +18,22 @@ const generateQueryFn = (data: string) =>
   vi
     .fn<(...args: Array<any>) => Promise<string>>()
     .mockImplementation(async () => {
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       return data
     })
 
 describe('usePrefetchQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
 
   function Suspended<TData = unknown>(props: {
     queryOpts: UseSuspenseQueryOptions<TData, Error, TData, Array<string>>
@@ -62,7 +72,7 @@ describe('usePrefetchQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('data: prefetchQuery'))
+    await vi.waitFor(() => rendered.getByText('data: prefetchQuery'))
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
   })
 
@@ -87,7 +97,7 @@ describe('usePrefetchQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     expect(rendered.queryByText('fetching: true')).not.toBeInTheDocument()
-    await waitFor(() =>
+    await vi.waitFor(() =>
       rendered.getByText('data: The usePrefetchQuery hook is smart!'),
     )
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
@@ -104,7 +114,7 @@ describe('usePrefetchQuery', () => {
     }
 
     queryFn.mockImplementationOnce(async () => {
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       throw new Error('Oops! Server error!')
     })
@@ -125,7 +135,7 @@ describe('usePrefetchQuery', () => {
     queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('Oops!'))
+    await vi.waitFor(() => rendered.getByText('Oops!'))
     expect(rendered.queryByText('data: Not an error')).not.toBeInTheDocument()
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
 
@@ -156,7 +166,7 @@ describe('usePrefetchQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <App />)
-    await waitFor(() => rendered.getByText('data: prefetchedQuery'))
+    await vi.waitFor(() => rendered.getByText('data: prefetchedQuery'))
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
   })
 
@@ -171,7 +181,7 @@ describe('usePrefetchQuery', () => {
     }
 
     queryFn.mockImplementationOnce(async () => {
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       throw new Error('Oops! Server error!')
     })
@@ -202,9 +212,11 @@ describe('usePrefetchQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('Oops!'))
+    await vi.waitFor(() => rendered.getByText('Oops!'))
     fireEvent.click(rendered.getByText('Try again'))
-    await waitFor(() => rendered.getByText('data: This is fine :dog: :fire:'))
+    await vi.waitFor(() =>
+      rendered.getByText('data: This is fine :dog: :fire:'),
+    )
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
     consoleMock.mockRestore()
   })
@@ -253,10 +265,12 @@ describe('usePrefetchQuery', () => {
     expect(
       queryClient.getQueryState(thirdQueryOpts.queryKey)?.fetchStatus,
     ).toBe('fetching')
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('data: Prefetch is nice!'))
-    await waitFor(() => rendered.getByText('data: Prefetch is really nice!!'))
-    await waitFor(() =>
+    await vi.waitFor(() => rendered.getByText('Loading...'))
+    await vi.waitFor(() => rendered.getByText('data: Prefetch is nice!'))
+    await vi.waitFor(() =>
+      rendered.getByText('data: Prefetch is really nice!!'),
+    )
+    await vi.waitFor(() =>
       rendered.getByText('data: Prefetch does not create waterfalls!!'),
     )
     expect(Fallback).toHaveBeenCalledTimes(1)

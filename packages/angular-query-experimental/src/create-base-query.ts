@@ -1,5 +1,4 @@
 import {
-  DestroyRef,
   NgZone,
   VERSION,
   computed,
@@ -8,9 +7,13 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import { QueryClient, notifyManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  notifyManager,
+  shouldThrowError,
+} from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { shouldThrowError } from './util'
+import { injectIsRestoring } from './inject-is-restoring'
 import type {
   QueryKey,
   QueryObserver,
@@ -40,8 +43,8 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ) {
   const ngZone = inject(NgZone)
-  const destroyRef = inject(DestroyRef)
   const queryClient = inject(QueryClient)
+  const isRestoring = injectIsRestoring()
 
   /**
    * Signal that has the default options from query client applied
@@ -51,7 +54,9 @@ export function createBaseQuery<
    */
   const defaultedOptionsSignal = computed(() => {
     const defaultedOptions = queryClient.defaultQueryOptions(optionsFn())
-    defaultedOptions._optimisticResults = 'optimistic'
+    defaultedOptions._optimisticResults = isRestoring()
+      ? 'isRestoring'
+      : 'optimistic'
     return defaultedOptions
   })
 
@@ -97,34 +102,34 @@ export function createBaseQuery<
     },
   )
 
-  effect(() => {
+  effect((onCleanup) => {
     // observer.trackResult is not used as this optimization is not needed for Angular
     const observer = observerSignal()
-
-    untracked(() => {
-      const unsubscribe = ngZone.runOutsideAngular(() =>
-        observer.subscribe(
-          notifyManager.batchCalls((state) => {
-            ngZone.run(() => {
-              if (
-                state.isError &&
-                !state.isFetching &&
-                // !isRestoring() && // todo: enable when client persistence is implemented
-                shouldThrowError(observer.options.throwOnError, [
-                  state.error,
-                  observer.getCurrentQuery(),
-                ])
-              ) {
-                ngZone.onError.emit(state.error)
-                throw state.error
-              }
-              resultFromSubscriberSignal.set(state)
-            })
-          }),
-        ),
-      )
-      destroyRef.onDestroy(unsubscribe)
-    })
+    const unsubscribe = isRestoring()
+      ? () => undefined
+      : untracked(() =>
+          ngZone.runOutsideAngular(() =>
+            observer.subscribe(
+              notifyManager.batchCalls((state) => {
+                ngZone.run(() => {
+                  if (
+                    state.isError &&
+                    !state.isFetching &&
+                    shouldThrowError(observer.options.throwOnError, [
+                      state.error,
+                      observer.getCurrentQuery(),
+                    ])
+                  ) {
+                    ngZone.onError.emit(state.error)
+                    throw state.error
+                  }
+                  resultFromSubscriberSignal.set(state)
+                })
+              }),
+            ),
+          ),
+        )
+    onCleanup(unsubscribe)
   })
 
   return signalProxy(

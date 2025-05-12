@@ -1,14 +1,13 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { MutationObserver } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
-import type { QueryClient } from '..'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { MutationObserver, QueryClient } from '..'
 
 describe('mutationObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryClient.mount()
   })
 
@@ -304,6 +303,66 @@ describe('mutationObserver', () => {
         status: 'pending',
       },
     })
+
+    unsubscribe()
+  })
+
+  test('mutation callbacks should be called in correct order with correct arguments for success case', async () => {
+    const onSuccess = vi.fn()
+    const onSettled = vi.fn()
+
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => Promise.resolve(text.toUpperCase()),
+    })
+
+    const subscriptionHandler = vi.fn()
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    mutationObserver.mutate('success', {
+      onSuccess,
+      onSettled,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('SUCCESS', 'success', undefined)
+    expect(onSettled).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledWith(
+      'SUCCESS',
+      null,
+      'success',
+      undefined,
+    )
+
+    unsubscribe()
+  })
+
+  test('mutation callbacks should be called in correct order with correct arguments for error case', async () => {
+    const onError = vi.fn()
+    const onSettled = vi.fn()
+
+    const error = new Error('error')
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: (_: string) => Promise.reject(error),
+    })
+
+    const subscriptionHandler = vi.fn()
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    mutationObserver
+      .mutate('error', {
+        onError,
+        onSettled,
+      })
+      .catch(() => {})
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(onError).toHaveBeenCalledTimes(1)
+    expect(onError).toHaveBeenCalledWith(error, 'error', undefined)
+    expect(onSettled).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledWith(undefined, error, 'error', undefined)
 
     unsubscribe()
   })

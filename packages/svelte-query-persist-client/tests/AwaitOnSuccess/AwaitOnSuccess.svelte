@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
+  import { sleep } from '@tanstack/query-test-utils'
   import { sleep, StatelessRef } from '../utils.svelte.js'
 
   let { states }: { states: StatelessRef<Array<string>> } = $props()
