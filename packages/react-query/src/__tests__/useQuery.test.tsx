@@ -26,10 +26,8 @@ import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
-  let queryCache = new QueryCache()
-  let queryClient = new QueryClient({
-    queryCache,
-  })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
 
   beforeEach(() => {
     queryCache = new QueryCache()
