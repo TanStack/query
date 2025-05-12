@@ -6,12 +6,12 @@ import {
   computed,
   effect,
   inject,
-  makeEnvironmentProviders,
 } from '@angular/core'
 import { QueryClient, noop, onlineManager } from '@tanstack/query-core'
 import { isPlatformBrowser } from '@angular/common'
 import { isDevMode } from './util/is-dev-mode/is-dev-mode'
 import type { EnvironmentProviders, Provider } from '@angular/core'
+import type { Provider } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
@@ -22,9 +22,10 @@ import type {
 /**
  * Usually {@link provideTanStackQuery} is used once to set up TanStack Query and the
  * {@link https://tanstack.com/query/latest/docs/reference/QueryClient|QueryClient}
- * for the entire application. You can use `provideQueryClient` to provide a
- * different `QueryClient` instance for a part of the application.
- * @param queryClient - the `QueryClient` instance to provide.
+ * for the entire application. Internally it calls `provideQueryClient`.
+ * You can use `provideQueryClient` to provide a different `QueryClient` instance for a part
+ * of the application or for unit testing purposes.
+ * @param queryClient - A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
  * @returns a provider object that can be used to provide the `QueryClient` instance.
  */
 export function provideQueryClient(
@@ -33,9 +34,14 @@ export function provideQueryClient(
   return {
     provide: QueryClient,
     useFactory: () => {
-      return queryClient instanceof InjectionToken
-        ? inject(queryClient)
-        : queryClient
+      const client =
+        queryClient instanceof InjectionToken
+          ? inject(queryClient)
+          : queryClient
+      // Unmount the query client on injector destroy
+      inject(DestroyRef).onDestroy(() => client.unmount())
+      client.mount()
+      return client
     },
   }
 }
@@ -92,6 +98,17 @@ export function provideQueryClient(
  *   }
  * )
  * ```
+ *
+ * **Example: using an InjectionToken**
+ *
+ * ```ts
+ * export const MY_QUERY_CLIENT = new InjectionToken('', {
+ *   factory: () => new QueryClient(),
+ * })
+ *
+ * // In a lazy loaded route or lazy loaded component's providers array:
+ * providers: [provideTanStackQuery(MY_QUERY_CLIENT)]
+ * ```
  * @param queryClient - A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
  * @param features - Optional features to configure additional Query functionality.
  * @returns A set of providers to set up TanStack Query.
@@ -101,27 +118,11 @@ export function provideQueryClient(
 export function provideTanStackQuery(
   queryClient: QueryClient | InjectionToken<QueryClient>,
   ...features: Array<QueryFeatures>
-): EnvironmentProviders {
-  return makeEnvironmentProviders([
+): Array<Provider> {
+  return [
     provideQueryClient(queryClient),
-    {
-      // Do not use provideEnvironmentInitializer while Angular < v19 is supported
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useFactory: () => {
-        const client =
-          queryClient instanceof InjectionToken
-            ? inject(queryClient)
-            : queryClient
-        return () => {
-          client.mount()
-          // Unmount the query client on application destroy
-          inject(DestroyRef).onDestroy(() => client.unmount())
-        }
-      },
-    },
     features.map((feature) => feature.ɵproviders),
-  ])
+  ]
 }
 
 /**
@@ -134,9 +135,7 @@ export function provideTanStackQuery(
  * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
  * @deprecated Use `provideTanStackQuery` instead.
  */
-export function provideAngularQuery(
-  queryClient: QueryClient,
-): EnvironmentProviders {
+export function provideAngularQuery(queryClient: QueryClient): Array<Provider> {
   return provideTanStackQuery(queryClient)
 }
 

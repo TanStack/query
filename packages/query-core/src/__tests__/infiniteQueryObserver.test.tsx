@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { InfiniteQueryObserver, QueryClient } from '..'
+import type {
+  DefaultedInfiniteQueryObserverOptions,
+  InfiniteData,
+} from '../types'
 
 describe('InfiniteQueryObserver', () => {
   let queryClient: QueryClient
@@ -201,5 +205,50 @@ describe('InfiniteQueryObserver', () => {
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
     expect(queryFn).toBeCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
+  })
+
+  test('getOptimisticResult should set infinite query behavior and return initial state', () => {
+    const key = queryKey()
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 1),
+      initialPageParam: 1,
+      getNextPageParam: () => 2,
+    })
+
+    const options: DefaultedInfiniteQueryObserverOptions<
+      number,
+      Error,
+      InfiniteData<number>,
+      number,
+      typeof key,
+      number
+    > = {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 1),
+      initialPageParam: 1,
+      getNextPageParam: () => 2,
+      throwOnError: true,
+      refetchOnReconnect: false,
+      queryHash: key.join(''),
+      behavior: undefined,
+    }
+
+    const result = observer.getOptimisticResult(options)
+
+    expect(options.behavior).toBeDefined()
+    expect(options.behavior?.onFetch).toBeDefined()
+
+    expect(result).toMatchObject({
+      data: undefined,
+      hasNextPage: false,
+      hasPreviousPage: false,
+      isFetching: false,
+      isFetchingNextPage: false,
+      isFetchingPreviousPage: false,
+      isError: false,
+      isRefetchError: false,
+      isRefetching: false,
+    })
   })
 })
