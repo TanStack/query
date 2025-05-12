@@ -12,6 +12,7 @@ import {
   hydrate,
   isCancelledError,
 } from '..'
+import { hashQueryKeyByOptions } from '../utils'
 import { mockOnlineManagerIsOnline, setIsServer } from './utils'
 import type {
   QueryCache,
@@ -1049,7 +1050,7 @@ describe('query', () => {
     const query = new Query({
       client: queryClient,
       queryKey: key,
-      queryHash: key.toString(),
+      queryHash: hashQueryKeyByOptions(key),
     })
 
     query.addObserver(observer)
