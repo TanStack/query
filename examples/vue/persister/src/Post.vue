@@ -1,5 +1,5 @@
 <script lang="ts">
-import { get, set, del } from 'idb-keyval'
+import { get, set, del, entries } from 'idb-keyval'
 import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 
@@ -29,6 +29,7 @@ export default defineComponent({
           getItem: (key: string) => get(key),
           setItem: (key: string, value: string) => set(key, value),
           removeItem: (key: string) => del(key),
+          entries: () => entries<string>()
         },
       }).persisterFn,
     })
