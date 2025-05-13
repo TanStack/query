@@ -764,7 +764,10 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (resolveEnabled(options.enabled, query) !== false) {
+  if (
+    resolveEnabled(options.enabled, query) !== false &&
+    resolveStaleTime(options.staleTime, query) !== 'static'
+  ) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))
