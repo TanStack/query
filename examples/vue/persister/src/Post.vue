@@ -29,7 +29,7 @@ export default defineComponent({
           getItem: (key: string) => get(key),
           setItem: (key: string, value: string) => set(key, value),
           removeItem: (key: string) => del(key),
-          entries: () => entries<string>()
+          entries: () => entries<string>(),
         },
       }).persisterFn,
     })

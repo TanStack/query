@@ -21,7 +21,7 @@ function getFreshStorage() {
     },
     entries: () => {
       return Promise.resolve(Array.from(storage.entries()))
-    }
+    },
   }
 }
 
@@ -388,18 +388,13 @@ describe('createPersister', () => {
     })
   })
 
-  describe("persistQuery", () => {
-    test("Should properly persiste basic query", async () => {
+  describe('persistQuery', () => {
+    test('Should properly persiste basic query', async () => {
       const storage = getFreshStorage()
-      const {
-        persister,
-        query,
-        queryHash,
-        queryKey,
-        storageKey,
-      } = setupPersister(['foo'], {
-        storage,
-      })
+      const { persister, query, queryHash, queryKey, storageKey } =
+        setupPersister(['foo'], {
+          storage,
+        })
 
       query.setData('baz')
       await persister.persistQuery(query)
@@ -409,21 +404,18 @@ describe('createPersister', () => {
         queryHash,
         queryKey,
         state: {
-          "dataUpdateCount": 1,
-          data: "baz",
-          "status": "success",
+          dataUpdateCount: 1,
+          data: 'baz',
+          status: 'success',
         },
       })
     })
 
-    test("Should skip persistance if storage is not provided", async () => {
+    test('Should skip persistance if storage is not provided', async () => {
       const serializeMock = vi.fn()
-      const {
-        persister,
-        query,
-      } = setupPersister(['foo'], {
+      const { persister, query } = setupPersister(['foo'], {
         storage: null,
-        serialize: serializeMock
+        serialize: serializeMock,
       })
 
       query.setData('baz')
@@ -433,55 +425,42 @@ describe('createPersister', () => {
     })
   })
 
-  describe("persistQueryByKey", () => {
-    test("Should skip persistance if storage is not provided", async () => {
+  describe('persistQueryByKey', () => {
+    test('Should skip persistance if storage is not provided', async () => {
       const serializeMock = vi.fn()
-      const {
-        persister,
-        client,
-        queryKey,
-      } = setupPersister(['foo'], {
+      const { persister, client, queryKey } = setupPersister(['foo'], {
         storage: null,
-        serialize: serializeMock
+        serialize: serializeMock,
       })
 
-      client.setQueryData(queryKey, "baz")
+      client.setQueryData(queryKey, 'baz')
       await persister.persistQueryByKey(queryKey, client)
 
       expect(serializeMock).toHaveBeenCalledTimes(0)
     })
 
-    test("should skip persistance if query was not found", async () => {
+    test('should skip persistance if query was not found', async () => {
       const serializeMock = vi.fn()
       const storage = getFreshStorage()
-      const {
-        client,
-        persister,
-        queryKey,
-      } = setupPersister(['foo'], {
+      const { client, persister, queryKey } = setupPersister(['foo'], {
         storage,
-        serialize: serializeMock
+        serialize: serializeMock,
       })
 
-      client.setQueryData(queryKey, "baz")
+      client.setQueryData(queryKey, 'baz')
       await persister.persistQueryByKey(['foo2'], client)
 
       expect(serializeMock).toHaveBeenCalledTimes(0)
     })
 
-    test("Should properly persiste basic query", async () => {
+    test('Should properly persiste basic query', async () => {
       const storage = getFreshStorage()
-      const {
-        persister,
-        client,
-        queryHash,
-        queryKey,
-        storageKey,
-      } = setupPersister(['foo'], {
-        storage,
-      })
+      const { persister, client, queryHash, queryKey, storageKey } =
+        setupPersister(['foo'], {
+          storage,
+        })
 
-      client.setQueryData(queryKey, "baz")
+      client.setQueryData(queryKey, 'baz')
       await persister.persistQueryByKey(queryKey, client)
 
       expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
@@ -489,28 +468,23 @@ describe('createPersister', () => {
         queryHash,
         queryKey,
         state: {
-          "dataUpdateCount": 1,
-          data: "baz",
-          "status": "success",
+          dataUpdateCount: 1,
+          data: 'baz',
+          status: 'success',
         },
       })
     })
   })
 
-  describe("persisterGc", () => {
-    test("should properly clean storage from busted entries", async () => {
+  describe('persisterGc', () => {
+    test('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
-      const {
-        persister,
-        client,
-        query,
-        queryKey
-      } = setupPersister(['foo'], {
+      const { persister, client, query, queryKey } = setupPersister(['foo'], {
         storage,
       })
       query.setState({
         dataUpdatedAt: 1,
-        data: 'f'
+        data: 'f',
       })
       client.getQueryCache().add(query)
 
@@ -523,20 +497,15 @@ describe('createPersister', () => {
     })
   })
 
-  describe("persisterRestoreAll", () => {
-    test("should properly clean storage from busted entries", async () => {
+  describe('persisterRestoreAll', () => {
+    test('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
-      const {
-        persister,
-        client,
-        query,
-        queryKey
-      } = setupPersister(['foo'], {
+      const { persister, client, query, queryKey } = setupPersister(['foo'], {
         storage,
       })
       query.setState({
         dataUpdatedAt: 1,
-        data: 'f'
+        data: 'f',
       })
       client.getQueryCache().add(query)
 
@@ -548,16 +517,12 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(0)
     })
 
-    test("should properly restore queries from cache", async () => {
+    test('should properly restore queries from cache', async () => {
       const storage = getFreshStorage()
-      const {
-        persister,
-        client,
-        queryKey
-      } = setupPersister(['foo'], {
+      const { persister, client, queryKey } = setupPersister(['foo'], {
         storage,
       })
-      client.setQueryData(queryKey, "foo")
+      client.setQueryData(queryKey, 'foo')
 
       await persister.persistQueryByKey(queryKey, client)
 
@@ -568,7 +533,7 @@ describe('createPersister', () => {
       await persister.persisterRestoreAll(client)
       expect(client.getQueryCache().getAll()).toHaveLength(1)
 
-      expect(client.getQueryData(queryKey)).toEqual("foo")
+      expect(client.getQueryData(queryKey)).toEqual('foo')
     })
   })
 })
