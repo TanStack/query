@@ -120,6 +120,18 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
+  const onlineManager = createMemo(
+    () => useQueryDevtoolsContext().onlineManager,
+  )
+  onMount(() => {
+    const unsubscribe = onlineManager().subscribe((online) => {
+      setOffline(!online)
+    })
+
+    onCleanup(() => {
+      unsubscribe()
+    })
+  })
 
   const pip = usePiPWindow()
 
@@ -922,8 +934,10 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             <button
               onClick={() => {
                 if (selectedView() === 'queries') {
+                  sendDevToolsEvent({ type: 'CLEAR_QUERY_CACHE' })
                   query_cache().clear()
                 } else {
+                  sendDevToolsEvent({ type: 'CLEAR_MUTATION_CACHE' })
                   mutation_cache().clear()
                 }
               }}
@@ -939,13 +953,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             </button>
             <button
               onClick={() => {
-                if (offline()) {
-                  onlineManager().setOnline(true)
-                  setOffline(false)
-                } else {
-                  onlineManager().setOnline(false)
-                  setOffline(true)
-                }
+                onlineManager().setOnline(!onlineManager().isOnline())
               }}
               class={cx(
                 styles().actionsBtn,
@@ -1768,29 +1776,43 @@ const QueryDetails = () => {
   const color = createMemo(() => getQueryStatusColorByLabel(statusLabel()))
 
   const handleRefetch = () => {
+    sendDevToolsEvent({ type: 'REFETCH', queryHash: activeQuery()?.queryHash })
     const promise = activeQuery()?.fetch()
     promise?.catch(() => {})
   }
 
   const triggerError = (errorType?: DevtoolsErrorType) => {
+    const activeQueryVal = activeQuery()
+    if (!activeQueryVal) return
+    sendDevToolsEvent({
+      type: 'TRIGGER_ERROR',
+      queryHash: activeQueryVal.queryHash,
+      metadata: { error: errorType?.name },
+    })
     const error =
-      errorType?.initializer(activeQuery()!) ??
+      errorType?.initializer(activeQueryVal) ??
       new Error('Unknown error from devtools')
 
-    const __previousQueryOptions = activeQuery()!.options
+    const __previousQueryOptions = activeQueryVal.options
 
-    activeQuery()!.setState({
+    activeQueryVal.setState({
       status: 'error',
       error,
       fetchMeta: {
-        ...activeQuery()!.state.fetchMeta,
+        ...activeQueryVal.state.fetchMeta,
         __previousQueryOptions,
       } as any,
     } as QueryState<unknown, Error>)
   }
 
   const restoreQueryAfterLoadingOrError = () => {
-    const activeQueryVal = activeQuery()!
+    const activeQueryVal = activeQuery()
+    if (!activeQueryVal) return
+
+    sendDevToolsEvent({
+      type: 'RESTORE_LOADING',
+      queryHash: activeQueryVal.queryHash,
+    })
     const previousState = activeQueryVal.state
     const previousOptions = activeQueryVal.state.fetchMeta
       ? (activeQueryVal.state.fetchMeta as any).__previousQueryOptions
@@ -1899,7 +1921,13 @@ const QueryDetails = () => {
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-invalidate',
             )}
-            onClick={() => queryClient.invalidateQueries(activeQuery())}
+            onClick={() => {
+              sendDevToolsEvent({
+                type: 'INVALIDATE',
+                queryHash: activeQuery()?.queryHash,
+              })
+              queryClient.invalidateQueries(activeQuery())
+            }}
             disabled={queryStatus() === 'pending'}
           >
             <span
@@ -1917,7 +1945,13 @@ const QueryDetails = () => {
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-reset',
             )}
-            onClick={() => queryClient.resetQueries(activeQuery())}
+            onClick={() => {
+              sendDevToolsEvent({
+                type: 'RESET',
+                queryHash: activeQuery()?.queryHash,
+              })
+              queryClient.resetQueries(activeQuery())
+            }}
             disabled={queryStatus() === 'pending'}
           >
             <span
@@ -1936,6 +1970,10 @@ const QueryDetails = () => {
               'tsqd-query-details-action-remove',
             )}
             onClick={() => {
+              sendDevToolsEvent({
+                type: 'REMOVE',
+                queryHash: activeQuery()?.queryHash,
+              })
               queryClient.removeQueries(activeQuery())
               setSelectedQueryHash(null)
             }}
@@ -1964,6 +2002,10 @@ const QueryDetails = () => {
               } else {
                 const activeQueryVal = activeQuery()
                 if (!activeQueryVal) return
+                sendDevToolsEvent({
+                  type: 'TRIGGER_LOADING',
+                  queryHash: activeQueryVal.queryHash,
+                })
                 const __previousQueryOptions = activeQueryVal.options
                 // Trigger a fetch in order to trigger suspense as well.
                 activeQueryVal.fetch({
@@ -2006,6 +2048,10 @@ const QueryDetails = () => {
                 if (!activeQuery()!.state.error) {
                   triggerError()
                 } else {
+                  sendDevToolsEvent({
+                    type: 'RESTORE_ERROR',
+                    queryHash: activeQuery()?.queryHash,
+                  })
                   queryClient.resetQueries(activeQuery())
                 }
               }}
@@ -2436,6 +2482,37 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   })
 
   return value
+}
+
+type DevToolsActionType =
+  | 'REFETCH'
+  | 'INVALIDATE'
+  | 'RESET'
+  | 'REMOVE'
+  | 'TRIGGER_ERROR'
+  | 'RESTORE_ERROR'
+  | 'TRIGGER_LOADING'
+  | 'RESTORE_LOADING'
+  | 'CLEAR_MUTATION_CACHE'
+  | 'CLEAR_QUERY_CACHE'
+
+const DEV_TOOLS_EVENT = '@tanstack/query-devtools-event'
+
+const sendDevToolsEvent = ({
+  type,
+  queryHash,
+  metadata,
+}: {
+  type: DevToolsActionType
+  queryHash?: string
+  metadata?: Record<string, unknown>
+}) => {
+  const event = new CustomEvent(DEV_TOOLS_EVENT, {
+    detail: { type, queryHash, metadata },
+    bubbles: true,
+    cancelable: true,
+  })
+  window.dispatchEvent(event)
 }
 
 const stylesFactory = (
