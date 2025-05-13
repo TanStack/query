@@ -1075,4 +1075,22 @@ describe('query', () => {
 
     consoleMock.mockRestore()
   })
+
+  test('should call initialData function when it is a function', () => {
+    const key = queryKey()
+    const initialDataFn = vi.fn(() => 'initial data')
+
+    const query = new Query({
+      client: queryClient,
+      queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
+      options: {
+        queryFn: () => 'data',
+        initialData: initialDataFn,
+      },
+    })
+
+    expect(initialDataFn).toHaveBeenCalledTimes(1)
+    expect(query.state.data).toBe('initial data')
+  })
 })
