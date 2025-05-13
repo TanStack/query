@@ -4,6 +4,7 @@ import * as React from 'react'
 import {
   QueriesObserver,
   QueryObserver,
+  noop,
   notifyManager,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
@@ -20,7 +21,6 @@ import {
   shouldSuspend,
   willFetch,
 } from './suspense'
-import { noop } from './utils'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,

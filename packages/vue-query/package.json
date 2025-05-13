@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query",
-  "version": "5.75.5",
+  "version": "5.76.0",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in Vue",
   "author": "Damian Osipiuk",
   "license": "MIT",

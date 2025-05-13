@@ -430,3 +430,15 @@ export function ensureQueryFn<
 
   return options.queryFn
 }
+
+export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
+  throwOnError: boolean | T | undefined,
+  params: Parameters<T>,
+): boolean {
+  // Allow throwOnError function to override throwing behavior on a per-error basis
+  if (typeof throwOnError === 'function') {
+    return throwOnError(...params)
+  }
+
+  return !!throwOnError
+}
