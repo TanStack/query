@@ -152,7 +152,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     if (storage != null) {
       const query = queryClient.getQueryCache().find({ queryKey })
       if (query) {
-        persistQuery(query)
+        await persistQuery(query)
       } else {
         if (process.env.NODE_ENV === 'development') {
           console.warn(
