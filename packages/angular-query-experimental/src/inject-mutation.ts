@@ -85,14 +85,6 @@ export function injectMutation<
   })
 
   /**
-   * Computed signal that gets result from mutation cache based on passed options
-   */
-  const resultFromInitialOptionsSignal = computed(() => {
-    const observer = observerSignal()
-    return observer.getCurrentResult()
-  })
-
-  /**
    * Signal that contains result set by subscriber
    */
   const resultFromSubscriberSignal = signal<MutationObserverResult<
@@ -102,6 +94,37 @@ export function injectMutation<
     TContext
   > | null>(null)
 
+  /**
+   * Computed signal that gets result from mutation cache based on passed options
+   */
+  const resultFromInitialOptionsSignal = computed(() => {
+    const observer = observerSignal()
+
+    untracked(() => {
+      const unsubscribe = ngZone.runOutsideAngular(() =>
+        // observer.trackResult is not used as this optimization is not needed for Angular
+        observer.subscribe(
+          notifyManager.batchCalls((state) => {
+            ngZone.run(() => {
+              if (
+                state.isError &&
+                shouldThrowError(observer.options.throwOnError, [state.error])
+              ) {
+                ngZone.onError.emit(state.error)
+                throw state.error
+              }
+
+              resultFromSubscriberSignal.set(state)
+            })
+          }),
+        ),
+      )
+      destroyRef.onDestroy(unsubscribe)
+    })
+
+    return observer.getCurrentResult()
+  })
+
   effect(
     () => {
       const observer = observerSignal()
@@ -109,37 +132,6 @@ export function injectMutation<
 
       untracked(() => {
         observer.setOptions(observerOptions)
-      })
-    },
-    {
-      injector,
-    },
-  )
-
-  effect(
-    () => {
-      // observer.trackResult is not used as this optimization is not needed for Angular
-      const observer = observerSignal()
-
-      untracked(() => {
-        const unsubscribe = ngZone.runOutsideAngular(() =>
-          observer.subscribe(
-            notifyManager.batchCalls((state) => {
-              ngZone.run(() => {
-                if (
-                  state.isError &&
-                  shouldThrowError(observer.options.throwOnError, [state.error])
-                ) {
-                  ngZone.onError.emit(state.error)
-                  throw state.error
-                }
-
-                resultFromSubscriberSignal.set(state)
-              })
-            }),
-          ),
-        )
-        destroyRef.onDestroy(unsubscribe)
       })
     },
     {
