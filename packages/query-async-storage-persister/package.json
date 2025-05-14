@@ -59,6 +59,7 @@
     "!src/__tests__"
   ],
   "dependencies": {
+    "@tanstack/query-core": "workspace:*",
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
+import { noop } from '@tanstack/query-core'
 import { asyncThrottle } from './asyncThrottle'
-import { noop } from './utils'
 import type {
   AsyncStorage,
   MaybePromise,
