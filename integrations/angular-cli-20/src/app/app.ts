@@ -13,7 +13,7 @@ import { injectQuery } from '@tanstack/angular-query-experimental'
     @if (query.isSuccess()) {
       <div>{{ query.data() }}</div>
     }
-  `
+  `,
 })
 export class App {
   query = injectQuery(() => ({
