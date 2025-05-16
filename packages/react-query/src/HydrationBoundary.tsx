@@ -38,7 +38,7 @@ export const HydrationBoundary = ({
   const optionsRef = React.useRef(options)
   optionsRef.current = options
 
-  // This useMemo is for performance reasons only, everything inside it _must_
+  // This useMemo is for performance reasons only, everything inside it must
   // be safe to run in every render and code here should be read as "in render".
   //
   // This code needs to happen during the render phase, because after initial

@@ -249,14 +249,14 @@ export function hydrate(
       if (
         promise &&
         !existingQueryIsPending &&
-        // Only hydrate promise if no synchronous data was available to hydrate
-        !data &&
-        // Only hydrate if dehydration is newer than any existing data
-        dehydratedAt !== undefined &&
-        dehydratedAt > query.state.dataUpdatedAt
+        // Only hydrate if dehydration is newer than any existing data,
+        // this is always true for new queries
+        (dehydratedAt === undefined || dehydratedAt > query.state.dataUpdatedAt)
       ) {
-        // this doesn't actually fetch - it just creates a retryer
+        // This doesn't actually fetch - it just creates a retryer
         // which will re-use the passed `initialPromise`
+        // Note that we need to call these even when data was synchronously
+        // available, as we still need to set up the retryer
         void query.fetch(undefined, {
           // RSC transformed promises are not thenable
           initialPromise: Promise.resolve(promise).then(deserializeData),
