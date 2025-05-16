@@ -24,13 +24,6 @@ export interface HydrationBoundaryProps {
   queryClient?: QueryClient
 }
 
-const hasProperty = <TKey extends string>(
-  obj: unknown,
-  key: TKey,
-): obj is { [k in TKey]: unknown } => {
-  return typeof obj === 'object' && obj !== null && key in obj
-}
-
 export const HydrationBoundary = ({
   children,
   options = {},
@@ -80,10 +73,11 @@ export const HydrationBoundary = ({
         } else {
           const hydrationIsNewer =
             dehydratedQuery.state.dataUpdatedAt >
-              existingQuery.state.dataUpdatedAt || // RSC special serialized then-able chunks
-            (hasProperty(dehydratedQuery.promise, 'status') &&
-              hasProperty(existingQuery.promise, 'status') &&
-              dehydratedQuery.promise.status !== existingQuery.promise.status)
+              existingQuery.state.dataUpdatedAt ||
+            (dehydratedQuery.promise &&
+              existingQuery.state.status !== 'pending' &&
+              dehydratedQuery.dehydratedAt !== undefined &&
+              dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
 
           const queryAlreadyQueued = hydrationQueue?.find(
             (query) => query.queryHash === dehydratedQuery.queryHash,
@@ -116,6 +110,7 @@ export const HydrationBoundary = ({
   React.useEffect(() => {
     if (hydrationQueue) {
       hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+      // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
       setHydrationQueue(undefined)
     }
   }, [client, hydrationQueue])

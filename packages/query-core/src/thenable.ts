@@ -80,3 +80,30 @@ export function pendingThenable<T>(): PendingThenable<T> {
 
   return thenable
 }
+
+/**
+ * This function takes a Promise-like input and detects whether the data
+ * is synchronously available or not.
+ *
+ * It does not inspect .status, .value or .reason properties of the promise,
+ * as those are not always available, and the .status of React's promises
+ * should not be considered part of the public API.
+ */
+export function tryResolveSync(promise: Promise<unknown> | Thenable<unknown>) {
+  let data: unknown
+
+  promise
+    .then((result) => {
+      data = result
+      return result
+    })
+    // This can be unavailable on certain kinds of thenable's
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    ?.catch(() => {})
+
+  if (data !== undefined) {
+    return { data }
+  }
+
+  return undefined
+}
