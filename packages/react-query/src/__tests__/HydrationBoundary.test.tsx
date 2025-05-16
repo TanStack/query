@@ -330,12 +330,8 @@ describe('React hydration', () => {
       </QueryClientProvider>,
     )
 
-    await Promise.all(
-      Array.from({ length: 1000 }).map(async (_, index) => {
-        await vi.advanceTimersByTimeAsync(index)
-        expect(hydrateSpy).toHaveBeenCalledTimes(0)
-      }),
-    )
+    await vi.runAllTimersAsync()
+    expect(hydrateSpy).toHaveBeenCalledTimes(0)
 
     hydrateSpy.mockRestore()
     queryClient.clear()
@@ -364,4 +360,27 @@ describe('React hydration', () => {
     hydrateSpy.mockRestore()
     queryClient.clear()
   })
+
+  test('should not hydrate queries if state is truthy and non-object', async () => {
+    const queryClient = createQueryClient()
+    const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
+  
+    function Page() {
+      return null
+    }
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state='state'>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.runAllTimersAsync()
+    expect(hydrateSpy).toHaveBeenCalledTimes(0)
+  
+    hydrateSpy.mockRestore()
+    queryClient.clear()
+  })  
 })
