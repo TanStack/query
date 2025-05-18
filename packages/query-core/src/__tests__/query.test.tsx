@@ -1042,9 +1042,10 @@ describe('query', () => {
 
   test('should use queryFn from observer if not provided in options', async () => {
     const key = queryKey()
+    const queryFn = () => Promise.resolve('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: () => Promise.resolve('data'),
+      queryFn: queryFn,
     })
 
     const query = new Query({
@@ -1058,6 +1059,7 @@ describe('query', () => {
     await query.fetch()
     const result = await query.state.data
     expect(result).toBe('data')
+    expect(query.options.queryFn).toBe(queryFn)
   })
 
   test('should log error when queryKey is not an array', async () => {
