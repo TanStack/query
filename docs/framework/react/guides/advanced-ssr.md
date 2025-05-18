@@ -101,7 +101,7 @@ This part is pretty similar to what we did in the SSR guide, we just need to spl
 
 ### Prefetching and de/hydrating data
 
-Let's next look at how to actually prefetch data and dehydrate and hydrate it. This is what it looked like using the **Next.js pages router**:
+Next, let’s look at how to actually prefetch data, then dehydrate and hydrate it. This is what it looked like using the **Next.js Pages Router**:
 
 ```tsx
 // pages/posts.tsx

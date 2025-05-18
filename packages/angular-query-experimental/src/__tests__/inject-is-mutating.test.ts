@@ -1,9 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { TestBed } from '@angular/core/testing'
-import {
-  Injector,
-  provideExperimentalZonelessChangeDetection,
-} from '@angular/core'
+import { Injector, provideZonelessChangeDetection } from '@angular/core'
 import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
@@ -21,7 +18,7 @@ describe('injectIsMutating', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(queryClient),
       ],
     })
