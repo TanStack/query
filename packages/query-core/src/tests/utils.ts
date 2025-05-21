@@ -4,6 +4,8 @@ import { QueryClient } from '@tanstack/query-core'
 import * as utils from '../utils'
 import type { MutationOptions, QueryClientConfig } from '@tanstack/query-core'
 
+export const doNotExecute = (_func: () => void) => true
+
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)
   return new QueryClient({ logger: mockLogger, ...config })
