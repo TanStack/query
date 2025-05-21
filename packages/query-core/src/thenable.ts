@@ -7,6 +7,8 @@
  * @see https://github.com/facebook/react/blob/4f604941569d2e8947ce1460a0b2997e835f37b9/packages/react-debug-tools/src/ReactDebugHooks.js#L224-L227
  */
 
+import { noop } from './utils'
+
 interface Fulfilled<T> {
   status: 'fulfilled'
   value: T
@@ -97,9 +99,9 @@ export function tryResolveSync(promise: Promise<unknown> | Thenable<unknown>) {
       data = result
       return result
     })
-    // This can be unavailable on certain kinds of thenable's
+    // .catch can be unavailable on certain kinds of thenable's
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    ?.catch(() => {})
+    ?.catch(noop)
 
   if (data !== undefined) {
     return { data }
