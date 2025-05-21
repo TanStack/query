@@ -1,5 +1,6 @@
 import { expectTypeOf } from 'expect-type'
 import {
+  QueryCache,
   type UseQueryResult,
   useQueries,
   useQuery,
@@ -256,6 +257,14 @@ describe('queryOptions', () => {
       expectTypeOf(
         await queryClient.fetchQuery(queryOptions({ queryKey, queryFn })),
       ).toEqualTypeOf<{ field: string }>()
+    })
+  })
+  it('should be used with queryCache', () => {
+    doNotExecute(() => {
+      const queryCache = new QueryCache()
+      queryCache.find({ queryKey: [] })
+      queryCache.find(queryOptions({ queryKey, queryFn }))
+      queryCache.find(queryKey)
     })
   })
 })

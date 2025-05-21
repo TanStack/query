@@ -420,6 +420,9 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   refetch: <TPageData>(
     options?: RefetchOptions & RefetchQueryFilters<TPageData>,
   ) => Promise<QueryObserverResult<TData, TError>>
+  /**
+   * @deprecated This method will be removed in the next major version. Use `QueryClient.removeQueries` instead.
+   */
   remove: () => void
   status: QueryStatus
   fetchStatus: FetchStatus

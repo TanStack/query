@@ -2,6 +2,7 @@ import type {
   InitialDataFunction,
   OmitKeyof,
   QueryKey,
+  WithRequired,
 } from '@tanstack/query-core'
 import type { UseQueryOptions } from './types'
 
@@ -51,11 +52,17 @@ export function queryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: OmitKeyof<
-    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-    ProhibitedQueryOptionsKeyInV5
+  options: WithRequired<
+    OmitKeyof<
+      DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+      ProhibitedQueryOptionsKeyInV5
+    >,
+    'queryKey'
   >,
-): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+): WithRequired<
+  DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'queryKey'
+>
 
 export function queryOptions<
   TQueryFnData = unknown,
@@ -63,11 +70,17 @@ export function queryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: OmitKeyof<
-    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-    ProhibitedQueryOptionsKeyInV5
+  options: WithRequired<
+    OmitKeyof<
+      UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+      ProhibitedQueryOptionsKeyInV5
+    >,
+    'queryKey'
   >,
-): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+): WithRequired<
+  UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'queryKey'
+>
 
 export function queryOptions(options: unknown) {
   return options
