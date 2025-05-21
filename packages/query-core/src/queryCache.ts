@@ -4,13 +4,7 @@ import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import type { QueryFilters } from './utils'
 import type { Action, QueryState } from './query'
-import type {
-  NotifyEvent,
-  OmitKeyof,
-  QueryKey,
-  QueryOptions,
-  WithRequired,
-} from './types'
+import type { NotifyEvent, OmitKeyof, QueryKey, QueryOptions } from './types'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
 
@@ -172,7 +166,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
-    filters: WithRequired<QueryFilters, 'queryKey'>,
+    filters: QueryFilters,
   ): Query<TQueryFnData, TError, TData> | undefined
   /**
    * @deprecated This method should be used with only one object argument.
