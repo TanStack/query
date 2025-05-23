@@ -2,7 +2,7 @@ import {
   Component,
   Injector,
   input,
-  provideExperimentalZonelessChangeDetection,
+  provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
@@ -25,7 +25,7 @@ describe('injectMutationState', () => {
     vi.useFakeTimers()
     TestBed.configureTestingModule({
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(queryClient),
       ],
     })

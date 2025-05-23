@@ -11,6 +11,9 @@ export default [
   {
     files: ['**/*.{ts,tsx}'],
     ...pluginReact.configs.recommended,
+    rules: {
+      '@eslint-react/no-context-provider': 'off',
+    },
   },
   {
     plugins: {

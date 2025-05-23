@@ -4,7 +4,7 @@ import {
   computed,
   effect,
   input,
-  provideExperimentalZonelessChangeDetection,
+  provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
@@ -35,7 +35,7 @@ describe('injectQuery', () => {
     queryClient = new QueryClient({ queryCache })
     TestBed.configureTestingModule({
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(queryClient),
       ],
     })
@@ -334,7 +334,7 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('success')
 
     key.set(['key8'])
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(spy).toHaveBeenCalledTimes(2)
     // should call queryFn with context containing the new queryKey
@@ -435,7 +435,7 @@ describe('injectQuery', () => {
 
     keySignal.set('key12')
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(2)
