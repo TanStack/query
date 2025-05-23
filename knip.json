@@ -9,7 +9,6 @@
   "ignoreDependencies": [
     "@types/react",
     "@types/react-dom",
-    "esbuild-plugin-file-path-extensions",
     "react",
     "react-dom"
   ],
