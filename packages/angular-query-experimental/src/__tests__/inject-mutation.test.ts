@@ -58,8 +58,6 @@ describe('injectMutation', () => {
       }))
     })
 
-    TestBed.tick()
-
     mutation.mutate(result)
     vi.advanceTimersByTime(1)
 
@@ -133,9 +131,17 @@ describe('injectMutation', () => {
 
     mutation.mutate('xyz')
 
-    const mutations = mutationCache.find({ mutationKey: ['2'] })
+    mutationKey.set(['3'])
 
-    expect(mutations?.options.mutationKey).toEqual(['2'])
+    mutation.mutate('xyz')
+
+    expect(mutationCache.find({ mutationKey: ['1'] })).toBeUndefined()
+    expect(
+      mutationCache.find({ mutationKey: ['2'] })?.options.mutationKey,
+    ).toEqual(['2'])
+    expect(
+      mutationCache.find({ mutationKey: ['3'] })?.options.mutationKey,
+    ).toEqual(['3'])
   })
 
   test('should reset state after invoking mutation.reset', async () => {

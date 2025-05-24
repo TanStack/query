@@ -4,7 +4,6 @@ import {
   NgZone,
   assertInInjectionContext,
   computed,
-  effect,
   inject,
   signal,
   untracked,
@@ -71,7 +70,15 @@ export function injectMutation<
       null
 
     return computed(() => {
-      return (instance ||= new MutationObserver(queryClient, optionsSignal()))
+      const observerOptions = optionsSignal()
+      return untracked(() => {
+        if (instance) {
+          instance.setOptions(observerOptions)
+        } else {
+          instance = new MutationObserver(queryClient, observerOptions)
+        }
+        return instance
+      })
     })
   })()
 
@@ -85,14 +92,6 @@ export function injectMutation<
   })
 
   /**
-   * Computed signal that gets result from mutation cache based on passed options
-   */
-  const resultFromInitialOptionsSignal = computed(() => {
-    const observer = observerSignal()
-    return observer.getCurrentResult()
-  })
-
-  /**
    * Signal that contains result set by subscriber
    */
   const resultFromSubscriberSignal = signal<MutationObserverResult<
@@ -102,50 +101,36 @@ export function injectMutation<
     TContext
   > | null>(null)
 
-  effect(
-    () => {
-      const observer = observerSignal()
-      const observerOptions = optionsSignal()
+  /**
+   * Computed signal that gets result from mutation cache based on passed options
+   */
+  const resultFromInitialOptionsSignal = computed(() => {
+    const observer = observerSignal()
 
-      untracked(() => {
-        observer.setOptions(observerOptions)
-      })
-    },
-    {
-      injector,
-    },
-  )
+    untracked(() => {
+      const unsubscribe = ngZone.runOutsideAngular(() =>
+        // observer.trackResult is not used as this optimization is not needed for Angular
+        observer.subscribe(
+          notifyManager.batchCalls((state) => {
+            ngZone.run(() => {
+              if (
+                state.isError &&
+                shouldThrowError(observer.options.throwOnError, [state.error])
+              ) {
+                ngZone.onError.emit(state.error)
+                throw state.error
+              }
 
-  effect(
-    () => {
-      // observer.trackResult is not used as this optimization is not needed for Angular
-      const observer = observerSignal()
+              resultFromSubscriberSignal.set(state)
+            })
+          }),
+        ),
+      )
+      destroyRef.onDestroy(unsubscribe)
+    })
 
-      untracked(() => {
-        const unsubscribe = ngZone.runOutsideAngular(() =>
-          observer.subscribe(
-            notifyManager.batchCalls((state) => {
-              ngZone.run(() => {
-                if (
-                  state.isError &&
-                  shouldThrowError(observer.options.throwOnError, [state.error])
-                ) {
-                  ngZone.onError.emit(state.error)
-                  throw state.error
-                }
-
-                resultFromSubscriberSignal.set(state)
-              })
-            }),
-          ),
-        )
-        destroyRef.onDestroy(unsubscribe)
-      })
-    },
-    {
-      injector,
-    },
-  )
+    return observer.getCurrentResult()
+  })
 
   const resultSignal = computed(() => {
     const resultFromSubscriber = resultFromSubscriberSignal()
