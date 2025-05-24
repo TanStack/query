@@ -197,6 +197,110 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
+  test('InfiniteQueryBehavior should apply pageParam', async () => {
+    const key = queryKey()
+
+    const queryFn = vi.fn().mockImplementation(({ pageParam }) => {
+      return pageParam
+    })
+
+    const observer = new InfiniteQueryObserver<number>(queryClient, {
+      queryKey: key,
+      queryFn,
+      initialPageParam: 0,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
+
+    const unsubscribe = observer.subscribe((result) => {
+      observerResult = result
+    })
+
+    // Wait for the first page to be fetched
+    await waitFor(() =>
+      expect(observerResult).toMatchObject({
+        isFetching: false,
+        data: { pages: [0], pageParams: [0] },
+      }),
+    )
+
+    queryFn.mockClear()
+
+    // Fetch the next page using pageParam
+    await observer.fetchNextPage({ pageParam: 1 })
+
+    expect(queryFn).toHaveBeenNthCalledWith(1, {
+      queryKey: key,
+      pageParam: 1,
+      meta: undefined,
+      client: queryClient,
+      direction: 'forward',
+      signal: expect.anything(),
+    })
+
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [0, 1], pageParams: [0, 1] },
+    })
+
+    queryFn.mockClear()
+
+    // Fetch the previous page using pageParam
+    await observer.fetchPreviousPage({ pageParam: -1 })
+
+    expect(queryFn).toHaveBeenNthCalledWith(1, {
+      queryKey: key,
+      pageParam: -1,
+      meta: undefined,
+      client: queryClient,
+      direction: 'backward',
+      signal: expect.anything(),
+    })
+
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [-1, 0, 1], pageParams: [-1, 0, 1] },
+    })
+
+    queryFn.mockClear()
+
+    // Refetch pages: old manual page params should be used
+    await observer.refetch()
+
+    expect(queryFn).toHaveBeenCalledTimes(3)
+
+    expect(queryFn).toHaveBeenNthCalledWith(1, {
+      queryKey: key,
+      pageParam: -1,
+      meta: undefined,
+      client: queryClient,
+      direction: 'forward',
+      signal: expect.anything(),
+    })
+
+    expect(queryFn).toHaveBeenNthCalledWith(2, {
+      queryKey: key,
+      pageParam: 0,
+      meta: undefined,
+      client: queryClient,
+      direction: 'forward',
+      signal: expect.anything(),
+    })
+
+    expect(queryFn).toHaveBeenNthCalledWith(3, {
+      queryKey: key,
+      pageParam: 1,
+      meta: undefined,
+      client: queryClient,
+      direction: 'forward',
+      signal: expect.anything(),
+    })
+
+    unsubscribe()
+  })
+
   test('InfiniteQueryBehavior should support query cancellation', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
