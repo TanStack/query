@@ -64,7 +64,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sherif": "^1.0.0",
-    "ts-node": "^10.9.2",
     "tsup": "^8.4.0",
     "typescript": "5.8.3",
     "typescript50": "npm:typescript@5.0",

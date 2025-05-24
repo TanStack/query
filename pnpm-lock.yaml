@@ -113,9 +113,6 @@ importers:
       sherif:
         specifier: ^1.0.0
         version: 1.0.0
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@types/node@22.15.3)(typescript@5.8.3)
       tsup:
         specifier: ^8.4.0
         version: 8.4.0(@microsoft/api-extractor@7.48.1(@types/node@22.15.3))(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.3)(yaml@2.6.1)
@@ -185,7 +182,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -228,7 +225,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -277,7 +274,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -326,7 +323,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -369,7 +366,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -415,7 +412,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -458,7 +455,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -504,7 +501,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -550,7 +547,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -596,7 +593,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -639,7 +636,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -1234,7 +1231,7 @@ importers:
         version: 6.1.18(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.27.2(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0)
       '@react-navigation/stack':
         specifier: ^6.4.1
-        version: 6.4.1(1f29909f8de70b3aa674884b982ac755)
+        version: 6.4.1(cgoxobftzx7q2rxvco2fw2mfyq)
       '@tanstack/react-query':
         specifier: workspace:*
         version: link:../../../packages/react-query
@@ -2056,7 +2053,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^20.0.0-rc.2
-        version: 20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)
+        version: 20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)
       '@angular/cli':
         specifier: ^20.0.0-rc.2
         version: 20.0.0-rc.2(@types/node@22.15.3)(chokidar@4.0.3)
@@ -2370,7 +2367,7 @@ importers:
         version: link:../query-test-utils
       '@testing-library/angular':
         specifier: ^17.3.7
-        version: 17.3.7(8b5c67acaf4ca5bea63fa46cae94ce99)
+        version: 17.3.7(xmnuavpccaawxaioptrq4egdy4)
       '@testing-library/dom':
         specifier: ^10.4.0
         version: 10.4.0
@@ -16322,7 +16319,7 @@ snapshots:
       '@angular/core': 20.0.0-rc.0(@angular/compiler@20.0.0-rc.0)(rxjs@7.8.2)(zone.js@0.15.0)
       tslib: 2.8.1
 
-  '@angular/build@20.0.0-rc.2(a5eb3de4407cbbb1864d035e77c7af8c)':
+  '@angular/build@20.0.0-rc.2(ivyhkxncosptvdlkakntgk4pai)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.2000.0-rc.2(chokidar@4.0.3)
@@ -18470,6 +18467,7 @@ snapshots:
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
+    optional: true
 
   '@deno/shim-deno-test@0.5.0': {}
 
@@ -19825,6 +19823,7 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+    optional: true
 
   '@js-temporal/polyfill@0.4.4':
     dependencies:
@@ -20670,7 +20669,7 @@ snapshots:
     dependencies:
       nanoid: 3.3.8
 
-  '@react-navigation/stack@6.4.1(1f29909f8de70b3aa674884b982ac755)':
+  '@react-navigation/stack@6.4.1(cgoxobftzx7q2rxvco2fw2mfyq)':
     dependencies:
       '@react-navigation/elements': 1.3.31(@react-navigation/native@6.1.18(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.27.2(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.27.2(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0))(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.27.2(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0)
       '@react-navigation/native': 6.1.18(react-native@0.76.3(@babel/core@7.26.10)(@babel/preset-env@7.27.2(@babel/core@7.26.10))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.0.0))(react@19.0.0)
@@ -21459,7 +21458,7 @@ snapshots:
       - tsx
       - yaml
 
-  '@testing-library/angular@17.3.7(8b5c67acaf4ca5bea63fa46cae94ce99)':
+  '@testing-library/angular@17.3.7(xmnuavpccaawxaioptrq4egdy4)':
     dependencies:
       '@angular/animations': 20.0.0-rc.0(@angular/common@20.0.0-rc.0(@angular/core@20.0.0-rc.0(@angular/compiler@20.0.0-rc.0)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.0-rc.0(@angular/compiler@20.0.0-rc.0)(rxjs@7.8.2)(zone.js@0.15.0))
       '@angular/common': 20.0.0-rc.0(@angular/core@20.0.0-rc.0(@angular/compiler@20.0.0-rc.0)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
@@ -21526,13 +21525,17 @@ snapshots:
       vite: 6.3.5(@types/node@22.15.3)(jiti@2.4.2)(less@4.3.0)(lightningcss@1.29.2)(sass@1.88.0)(terser@5.39.1)(yaml@2.6.1)
       vitest: 3.1.3(@types/debug@4.1.12)(@types/node@22.15.3)(jiti@2.4.2)(jsdom@25.0.1)(less@4.3.0)(lightningcss@1.29.2)(msw@2.6.6(@types/node@22.15.3)(typescript@5.8.3))(sass@1.88.0)(terser@5.39.1)(yaml@2.6.1)
 
-  '@tsconfig/node10@1.0.11': {}
+  '@tsconfig/node10@1.0.11':
+    optional: true
 
-  '@tsconfig/node12@1.0.11': {}
+  '@tsconfig/node12@1.0.11':
+    optional: true
 
-  '@tsconfig/node14@1.0.3': {}
+  '@tsconfig/node14@1.0.3':
+    optional: true
 
-  '@tsconfig/node16@1.0.4': {}
+  '@tsconfig/node16@1.0.4':
+    optional: true
 
   '@tsconfig/svelte@5.0.4': {}
 
@@ -22435,6 +22438,7 @@ snapshots:
   acorn-walk@8.3.4:
     dependencies:
       acorn: 8.14.1
+    optional: true
 
   acorn@6.4.2: {}
 
@@ -22597,7 +22601,8 @@ snapshots:
 
   are-docs-informative@0.0.2: {}
 
-  arg@4.1.3: {}
+  arg@4.1.3:
+    optional: true
 
   arg@5.0.2: {}
 
@@ -23858,7 +23863,8 @@ snapshots:
       safe-buffer: 5.2.1
       sha.js: 2.4.11
 
-  create-require@1.1.1: {}
+  create-require@1.1.1:
+    optional: true
 
   croner@9.0.0: {}
 
@@ -24176,7 +24182,8 @@ snapshots:
 
   diff-sequences@29.6.3: {}
 
-  diff@4.0.2: {}
+  diff@4.0.2:
+    optional: true
 
   diff@5.2.0: {}
 
@@ -27119,7 +27126,8 @@ snapshots:
     dependencies:
       semver: 7.7.1
 
-  make-error@1.3.6: {}
+  make-error@1.3.6:
+    optional: true
 
   make-fetch-happen@13.0.1:
     dependencies:
@@ -31071,6 +31079,7 @@ snapshots:
       typescript: 5.8.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    optional: true
 
   ts-pattern@5.6.0: {}
 
@@ -31546,7 +31555,8 @@ snapshots:
 
   uuid@8.3.2: {}
 
-  v8-compile-cache-lib@3.0.1: {}
+  v8-compile-cache-lib@3.0.1:
+    optional: true
 
   v8flags@4.0.1: {}
 
@@ -32394,7 +32404,8 @@ snapshots:
       y18n: 5.0.8
       yargs-parser: 21.1.1
 
-  yn@3.1.1: {}
+  yn@3.1.1:
+    optional: true
 
   yocto-queue@0.1.0: {}
 
