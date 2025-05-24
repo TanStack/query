@@ -21,9 +21,7 @@ title: BaseMutationNarrowing
 
 ```ts
 isError: SignalFunction<
-  (
-    this,
-  ) => this is CreateMutationResult<
+  (this) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -53,9 +51,7 @@ isError: SignalFunction<
 
 ```ts
 isIdle: SignalFunction<
-  (
-    this,
-  ) => this is CreateMutationResult<
+  (this) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -85,9 +81,7 @@ isIdle: SignalFunction<
 
 ```ts
 isPending: SignalFunction<
-  (
-    this,
-  ) => this is CreateMutationResult<
+  (this) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -117,9 +111,7 @@ isPending: SignalFunction<
 
 ```ts
 isSuccess: SignalFunction<
-  (
-    this,
-  ) => this is CreateMutationResult<
+  (this) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
