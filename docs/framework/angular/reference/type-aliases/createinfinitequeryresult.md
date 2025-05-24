@@ -6,7 +6,11 @@ title: CreateInfiniteQueryResult
 # Type Alias: CreateInfiniteQueryResult\<TData, TError\>
 
 ```ts
-type CreateInfiniteQueryResult<TData, TError> = BaseQueryNarrowing<TData, TError> & MapToSignals<InfiniteQueryObserverResult<TData, TError>>;
+type CreateInfiniteQueryResult<TData, TError> = BaseQueryNarrowing<
+  TData,
+  TError
+> &
+  MapToSignals<InfiniteQueryObserverResult<TData, TError>>
 ```
 
 ## Type Parameters

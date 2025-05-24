@@ -6,7 +6,7 @@ title: DeveloperToolsFeature
 # Type Alias: DeveloperToolsFeature
 
 ```ts
-type DeveloperToolsFeature = QueryFeature<"DeveloperTools">;
+type DeveloperToolsFeature = QueryFeature<'DeveloperTools'>
 ```
 
 A type alias that represents a feature which enables developer tools.

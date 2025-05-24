@@ -6,7 +6,7 @@ title: PersistQueryClientFeature
 # Type Alias: PersistQueryClientFeature
 
 ```ts
-type PersistQueryClientFeature = QueryFeature<"PersistQueryClient">;
+type PersistQueryClientFeature = QueryFeature<'PersistQueryClient'>
 ```
 
 A type alias that represents a feature which enables persistence.

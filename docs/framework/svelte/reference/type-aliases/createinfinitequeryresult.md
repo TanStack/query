@@ -6,7 +6,9 @@ title: CreateInfiniteQueryResult
 # Type Alias: CreateInfiniteQueryResult\<TData, TError\>
 
 ```ts
-type CreateInfiniteQueryResult<TData, TError> = Readable<InfiniteQueryObserverResult<TData, TError>>;
+type CreateInfiniteQueryResult<TData, TError> = Readable<
+  InfiniteQueryObserverResult<TData, TError>
+>
 ```
 
 Result from createInfiniteQuery

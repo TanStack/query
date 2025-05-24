@@ -6,7 +6,8 @@ title: CreateMutateAsyncFunction
 # Type Alias: CreateMutateAsyncFunction\<TData, TError, TVariables, TContext\>
 
 ```ts
-type CreateMutateAsyncFunction<TData, TError, TVariables, TContext> = MutateFunction<TData, TError, TVariables, TContext>;
+type CreateMutateAsyncFunction<TData, TError, TVariables, TContext> =
+  MutateFunction<TData, TError, TVariables, TContext>
 ```
 
 ## Type Parameters

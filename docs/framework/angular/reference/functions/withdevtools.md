@@ -15,11 +15,10 @@ Enables developer tools.
 
 ```ts
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideTanStackQuery(new QueryClient(), withDevtools())
-  ]
+  providers: [provideTanStackQuery(new QueryClient(), withDevtools())],
 }
 ```
+
 By default the devtools will be loaded when Angular runs in development mode and rendered in `<body>`.
 
 If you need more control over when devtools are loaded, you can use the `loadDevtools` option. This is particularly useful if you want to load devtools based on environment configurations. For instance, you might have a test environment running in production mode but still require devtools to be available.
@@ -42,8 +41,8 @@ A set of providers for use with `provideTanStackQuery`.
 
 ## See
 
- - [provideTanStackQuery](../providetanstackquery.md)
- - [DevtoolsOptions](../../interfaces/devtoolsoptions.md)
+- [provideTanStackQuery](../providetanstackquery.md)
+- [DevtoolsOptions](../../interfaces/devtoolsoptions.md)
 
 ## Defined in
 

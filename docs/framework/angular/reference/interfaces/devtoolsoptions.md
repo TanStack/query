@@ -23,7 +23,7 @@ Defaults to `bottom-right`.
 
 [providers.ts:192](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L192)
 
-***
+---
 
 ### client?
 
@@ -37,7 +37,7 @@ Custom instance of QueryClient
 
 [providers.ts:202](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L202)
 
-***
+---
 
 ### errorTypes?
 
@@ -51,7 +51,7 @@ Use this so you can define custom errors that can be shown in the devtools.
 
 [providers.ts:206](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L206)
 
-***
+---
 
 ### initialIsOpen?
 
@@ -65,7 +65,7 @@ Set this true if you want the devtools to default to being open
 
 [providers.ts:186](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L186)
 
-***
+---
 
 ### loadDevtools?
 
@@ -74,6 +74,7 @@ optional loadDevtools: boolean | "auto";
 ```
 
 Whether the developer tools should load.
+
 - `auto`- (Default) Lazily loads devtools when in development mode. Skips loading in production mode.
 - `true`- Always load the devtools, regardless of the environment.
 - `false`- Never load the devtools, regardless of the environment.
@@ -85,18 +86,19 @@ Additionally, you can use a signal in the callback to dynamically load the devto
 a signal created from a RxJS observable that listens for a keyboard shortcut.
 
 **Example**
+
 ```ts
-   withDevtools(() => ({
-     initialIsOpen: true,
-     loadDevtools: inject(ExampleService).loadDevtools()
-   }))
- ```
+withDevtools(() => ({
+  initialIsOpen: true,
+  loadDevtools: inject(ExampleService).loadDevtools(),
+}))
+```
 
 #### Defined in
 
 [providers.ts:236](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L236)
 
-***
+---
 
 ### position?
 
@@ -112,7 +114,7 @@ Defaults to `bottom`.
 
 [providers.ts:198](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L198)
 
-***
+---
 
 ### shadowDOMTarget?
 
@@ -126,7 +128,7 @@ Use this so you can attach the devtool's styles to a specific element in the DOM
 
 [providers.ts:214](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L214)
 
-***
+---
 
 ### styleNonce?
 

@@ -6,7 +6,9 @@ title: CreateMutateFunction
 # Type Alias: CreateMutateFunction()\<TData, TError, TVariables, TContext\>
 
 ```ts
-type CreateMutateFunction<TData, TError, TVariables, TContext> = (...args) => void;
+type CreateMutateFunction<TData, TError, TVariables, TContext> = (
+  ...args
+) => void
 ```
 
 ## Type Parameters

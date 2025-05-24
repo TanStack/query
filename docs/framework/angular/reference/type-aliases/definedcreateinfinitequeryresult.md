@@ -6,7 +6,11 @@ title: DefinedCreateInfiniteQueryResult
 # Type Alias: DefinedCreateInfiniteQueryResult\<TData, TError, TDefinedInfiniteQueryObserver\>
 
 ```ts
-type DefinedCreateInfiniteQueryResult<TData, TError, TDefinedInfiniteQueryObserver> = MapToSignals<TDefinedInfiniteQueryObserver>;
+type DefinedCreateInfiniteQueryResult<
+  TData,
+  TError,
+  TDefinedInfiniteQueryObserver,
+> = MapToSignals<TDefinedInfiniteQueryObserver>
 ```
 
 ## Type Parameters

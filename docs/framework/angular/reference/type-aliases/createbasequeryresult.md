@@ -6,7 +6,11 @@ title: CreateBaseQueryResult
 # Type Alias: CreateBaseQueryResult\<TData, TError, TState\>
 
 ```ts
-type CreateBaseQueryResult<TData, TError, TState> = BaseQueryNarrowing<TData, TError> & MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, "safely">>;
+type CreateBaseQueryResult<TData, TError, TState> = BaseQueryNarrowing<
+  TData,
+  TError
+> &
+  MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 ```
 
 ## Type Parameters

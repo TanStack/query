@@ -6,7 +6,21 @@ title: UndefinedInitialDataInfiniteOptions
 # Type Alias: UndefinedInitialDataInfiniteOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
 
 ```ts
-type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, TPageParam> & object;
+type UndefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+> = CreateInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryFnData,
+  TQueryKey,
+  TPageParam
+> &
+  object
 ```
 
 ## Type declaration
@@ -14,7 +28,7 @@ type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey,
 ### initialData?
 
 ```ts
-optional initialData: 
+optional initialData:
   | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
 | InitialDataFunction<NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>>;
 ```
@@ -27,7 +41,7 @@ optional initialData:
 
 • **TData** = `InfiniteData`\<`TQueryFnData`\>
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 • **TPageParam** = `unknown`
 

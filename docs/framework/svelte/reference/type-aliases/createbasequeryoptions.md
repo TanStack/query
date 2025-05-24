@@ -6,7 +6,13 @@ title: CreateBaseQueryOptions
 # Type Alias: CreateBaseQueryOptions\<TQueryFnData, TError, TData, TQueryData, TQueryKey\>
 
 ```ts
-type CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
+type CreateBaseQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey,
+> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
 ```
 
 Options for createBaseQuery
@@ -21,7 +27,7 @@ Options for createBaseQuery
 
 • **TQueryData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ## Defined in
 

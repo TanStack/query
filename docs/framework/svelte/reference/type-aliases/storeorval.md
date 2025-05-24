@@ -6,7 +6,7 @@ title: StoreOrVal
 # Type Alias: StoreOrVal\<T\>
 
 ```ts
-type StoreOrVal<T> = T | Readable<T>;
+type StoreOrVal<T> = T | Readable<T>
 ```
 
 Allows a type to be either the base object or a store of that object

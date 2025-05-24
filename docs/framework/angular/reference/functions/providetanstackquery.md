@@ -45,6 +45,7 @@ export class AppModule {}
 
 You can also enable optional developer tools by adding `withDevtools`. By
 default the tools will then be loaded when your app is in development mode.
+
 ```ts
 import {
   provideTanStackQuery,
@@ -94,8 +95,8 @@ A set of providers to set up TanStack Query.
 
 ## See
 
- - https://tanstack.com/query/v5/docs/framework/angular/quick-start
- - withDevtools
+- https://tanstack.com/query/v5/docs/framework/angular/quick-start
+- withDevtools
 
 ## Defined in
 

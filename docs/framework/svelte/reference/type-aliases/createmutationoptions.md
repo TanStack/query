@@ -6,7 +6,10 @@ title: CreateMutationOptions
 # Type Alias: CreateMutationOptions\<TData, TError, TVariables, TContext\>
 
 ```ts
-type CreateMutationOptions<TData, TError, TVariables, TContext> = OmitKeyof<MutationObserverOptions<TData, TError, TVariables, TContext>, "_defaulted">;
+type CreateMutationOptions<TData, TError, TVariables, TContext> = OmitKeyof<
+  MutationObserverOptions<TData, TError, TVariables, TContext>,
+  '_defaulted'
+>
 ```
 
 Options for createMutation

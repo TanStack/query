@@ -33,7 +33,7 @@ isError: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBase
 
 [types.ts:76](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L76)
 
-***
+---
 
 ### isPending()
 
@@ -55,7 +55,7 @@ isPending: (this) => this is CreateBaseQueryResult<TData, TError, CreateStatusBa
 
 [types.ts:83](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L83)
 
-***
+---
 
 ### isSuccess()
 

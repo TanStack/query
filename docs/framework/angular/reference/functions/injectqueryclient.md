@@ -31,8 +31,9 @@ Use `inject(QueryClient)` instead.
 If you need to get a `QueryClient` from a custom injector, use `injector.get(QueryClient)`.
 
 **Example**
+
 ```ts
-const queryClient = injectQueryClient();
+const queryClient = injectQueryClient()
 ```
 
 ## Defined in

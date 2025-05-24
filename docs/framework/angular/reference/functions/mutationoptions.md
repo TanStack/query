@@ -6,7 +6,9 @@ title: mutationOptions
 # Function: mutationOptions()
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TContext>(options): CreateMutationOptions<TData, TError, TVariables, TContext>
+function mutationOptions<TData, TError, TVariables, TContext>(
+  options,
+): CreateMutationOptions<TData, TError, TVariables, TContext>
 ```
 
 Allows to share and re-use mutation options in a type-safe way.
@@ -15,22 +17,22 @@ Allows to share and re-use mutation options in a type-safe way.
 
 ```ts
 export class QueriesService {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient)
 
   updatePost(id: number) {
     return mutationOptions({
       mutationFn: (post: Post) => Promise.resolve(post),
-      mutationKey: ["updatePost", id],
+      mutationKey: ['updatePost', id],
       onSuccess: (newPost) => {
         //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost);
+        this.queryClient.setQueryData(['posts', id], newPost)
       },
-    });
+    })
   }
 }
 
 queries = inject(QueriesService)
-idSignal = new Signal(0);
+idSignal = new Signal(0)
 mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
 
 mutation.mutate({ title: 'New Title' })

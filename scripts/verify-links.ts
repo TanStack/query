@@ -26,7 +26,11 @@ function normalizePath(p: string): string {
   return p
 }
 
-function fileExistsForLink(link: string, markdownFile: string, errors: any[]): boolean {
+function fileExistsForLink(
+  link: string,
+  markdownFile: string,
+  errors: any[],
+): boolean {
   // Remove hash if present
   const filePart = link.split('#')[0]
   // If the link is empty after removing hash, it's not a file
@@ -57,10 +61,13 @@ function fileExistsForLink(link: string, markdownFile: string, errors: any[]): b
   const isExample = absPath.includes('/examples/')
 
   let exists = false
-  
+
   if (isExample) {
     // Transform /docs/framework/{framework}/examples/ to /examples/{framework}/
-    absPath = absPath.replace(/\/docs\/framework\/([^/]+)\/examples\//, '/examples/$1/')
+    absPath = absPath.replace(
+      /\/docs\/framework\/([^/]+)\/examples\//,
+      '/examples/$1/',
+    )
     // For examples, we want to check if the directory exists
     exists = existsSync(absPath) && statSync(absPath).isDirectory()
   } else {
@@ -116,9 +123,9 @@ async function findMarkdownLinks() {
 
   if (errors.length > 0) {
     console.log(`\n❌ Found ${errors.length} broken links:`)
-    errors.forEach(err => {
+    errors.forEach((err) => {
       console.log(
-        `${err.link}\n  in:    ${err.markdownFile}\n  path:  ${err.resolvedPath}\n  why:   ${err.reason}\n`
+        `${err.link}\n  in:    ${err.markdownFile}\n  path:  ${err.resolvedPath}\n  why:   ${err.reason}\n`,
       )
     })
     process.exit(1)

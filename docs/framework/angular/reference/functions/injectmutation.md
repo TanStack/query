@@ -6,7 +6,10 @@ title: injectMutation
 # Function: injectMutation()
 
 ```ts
-function injectMutation<TData, TError, TVariables, TContext>(injectMutationFn, options?): CreateMutationResult<TData, TError, TVariables, TContext>
+function injectMutation<TData, TError, TVariables, TContext>(
+  injectMutationFn,
+  options?,
+): CreateMutationResult<TData, TError, TVariables, TContext>
 ```
 
 Injects a mutation: an imperative function that can be invoked which typically performs server side effects.

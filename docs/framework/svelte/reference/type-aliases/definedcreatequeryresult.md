@@ -6,7 +6,10 @@ title: DefinedCreateQueryResult
 # Type Alias: DefinedCreateQueryResult\<TData, TError\>
 
 ```ts
-type DefinedCreateQueryResult<TData, TError> = DefinedCreateBaseQueryResult<TData, TError>;
+type DefinedCreateQueryResult<TData, TError> = DefinedCreateBaseQueryResult<
+  TData,
+  TError
+>
 ```
 
 Options for createQuery with initialData

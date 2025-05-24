@@ -8,7 +8,10 @@ title: createQuery
 ## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedCreateQueryResult<TData, TError>
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+  queryClient?,
+): DefinedCreateQueryResult<TData, TError>
 ```
 
 ### Type Parameters
@@ -19,7 +22,7 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClien
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
@@ -42,7 +45,10 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClien
 ## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+  queryClient?,
+): CreateQueryResult<TData, TError>
 ```
 
 ### Type Parameters
@@ -53,7 +59,7 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClien
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
@@ -76,7 +82,10 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClien
 ## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+  queryClient?,
+): CreateQueryResult<TData, TError>
 ```
 
 ### Type Parameters
@@ -87,7 +96,7 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClien
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 

@@ -6,7 +6,9 @@ title: CreateMutationResult
 # Type Alias: CreateMutationResult\<TData, TError, TVariables, TContext\>
 
 ```ts
-type CreateMutationResult<TData, TError, TVariables, TContext> = Readable<CreateBaseMutationResult<TData, TError, TVariables, TContext>>;
+type CreateMutationResult<TData, TError, TVariables, TContext> = Readable<
+  CreateBaseMutationResult<TData, TError, TVariables, TContext>
+>
 ```
 
 Result from createMutation

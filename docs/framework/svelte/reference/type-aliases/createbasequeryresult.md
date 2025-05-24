@@ -6,7 +6,9 @@ title: CreateBaseQueryResult
 # Type Alias: CreateBaseQueryResult\<TData, TError\>
 
 ```ts
-type CreateBaseQueryResult<TData, TError> = Readable<QueryObserverResult<TData, TError>>;
+type CreateBaseQueryResult<TData, TError> = Readable<
+  QueryObserverResult<TData, TError>
+>
 ```
 
 Result from createBaseQuery

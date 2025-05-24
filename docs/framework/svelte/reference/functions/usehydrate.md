@@ -6,10 +6,7 @@ title: useHydrate
 # Function: useHydrate()
 
 ```ts
-function useHydrate(
-   state?, 
-   options?, 
-   queryClient?): void
+function useHydrate(state?, options?, queryClient?): void
 ```
 
 ## Parameters

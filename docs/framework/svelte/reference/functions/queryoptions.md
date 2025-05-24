@@ -8,7 +8,9 @@ title: queryOptions
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
 ```
 
 ### Type Parameters
@@ -19,7 +21,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): DefinedI
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
@@ -38,7 +40,9 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): DefinedI
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
 ```
 
 ### Type Parameters
@@ -49,7 +53,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Undefine
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 

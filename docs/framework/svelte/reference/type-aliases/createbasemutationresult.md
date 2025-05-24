@@ -6,9 +6,13 @@ title: CreateBaseMutationResult
 # Type Alias: CreateBaseMutationResult\<TData, TError, TVariables, TContext\>
 
 ```ts
-type CreateBaseMutationResult<TData, TError, TVariables, TContext> = Override<MutationObserverResult<TData, TError, TVariables, TContext>, {
-  mutate: CreateMutateFunction<TData, TError, TVariables, TContext>;
- }> & object;
+type CreateBaseMutationResult<TData, TError, TVariables, TContext> = Override<
+  MutationObserverResult<TData, TError, TVariables, TContext>,
+  {
+    mutate: CreateMutateFunction<TData, TError, TVariables, TContext>
+  }
+> &
+  object
 ```
 
 ## Type declaration
@@ -16,7 +20,7 @@ type CreateBaseMutationResult<TData, TError, TVariables, TContext> = Override<Mu
 ### mutateAsync
 
 ```ts
-mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>;
+mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
 ```
 
 ## Type Parameters

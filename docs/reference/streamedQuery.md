@@ -33,4 +33,3 @@ const query = queryOptions({
   - When set to `'reset'`, the query will erase all data and go back into `pending` state.
   - When set to `'append'`, data will be appended to existing data.
   - When set to `'replace'`, data will be written to the cache at the end of the stream.
-

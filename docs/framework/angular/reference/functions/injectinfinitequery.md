@@ -19,7 +19,16 @@ Additional configuration.
 ## Call Signature
 
 ```ts
-function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): DefinedCreateInfiniteQueryResult<TData, TError>
+function injectInfiniteQuery<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+>(
+  injectInfiniteQueryFn,
+  options?,
+): DefinedCreateInfiniteQueryResult<TData, TError>
 ```
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -33,7 +42,7 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 
@@ -74,7 +83,13 @@ Additional configuration.
 ## Call Signature
 
 ```ts
-function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
+function injectInfiniteQuery<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
 ```
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -88,7 +103,7 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 
@@ -129,7 +144,13 @@ Additional configuration.
 ## Call Signature
 
 ```ts
-function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
+function injectInfiniteQuery<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
 ```
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -143,7 +164,7 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 

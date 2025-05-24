@@ -6,7 +6,7 @@ title: CreateQueryResult
 # Type Alias: CreateQueryResult\<TData, TError\>
 
 ```ts
-type CreateQueryResult<TData, TError> = CreateBaseQueryResult<TData, TError>;
+type CreateQueryResult<TData, TError> = CreateBaseQueryResult<TData, TError>
 ```
 
 ## Type Parameters

@@ -6,7 +6,7 @@ title: QueryFeatureKind
 # Type Alias: QueryFeatureKind
 
 ```ts
-type QueryFeatureKind = typeof queryFeatures[number];
+type QueryFeatureKind = (typeof queryFeatures)[number]
 ```
 
 ## Defined in

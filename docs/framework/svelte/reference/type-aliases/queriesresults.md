@@ -6,18 +6,31 @@ title: QueriesResults
 # Type Alias: QueriesResults\<T, TResults, TDepth\>
 
 ```ts
-type QueriesResults<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? QueryObserverResult[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetCreateQueryResult<Head>] : T extends [infer Head, ...(infer Tails)] ? QueriesResults<[...Tails], [...TResults, GetCreateQueryResult<Head>], [...TDepth, 1]> : { [K in keyof T]: GetCreateQueryResult<T[K]> };
+type QueriesResults<T, TResults, TDepth> =
+  TDepth['length'] extends MAXIMUM_DEPTH
+    ? QueryObserverResult[]
+    : T extends []
+      ? []
+      : T extends [infer Head]
+        ? [...TResults, GetCreateQueryResult<Head>]
+        : T extends [infer Head, ...infer Tails]
+          ? QueriesResults<
+              [...Tails],
+              [...TResults, GetCreateQueryResult<Head>],
+              [...TDepth, 1]
+            >
+          : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 ```
 
 QueriesResults reducer recursively maps type param to results
 
 ## Type Parameters
 
-• **T** *extends* `any`[]
+• **T** _extends_ `any`[]
 
-• **TResults** *extends* `any`[] = []
+• **TResults** _extends_ `any`[] = []
 
-• **TDepth** *extends* `ReadonlyArray`\<`number`\> = []
+• **TDepth** _extends_ `ReadonlyArray`\<`number`\> = []
 
 ## Defined in
 

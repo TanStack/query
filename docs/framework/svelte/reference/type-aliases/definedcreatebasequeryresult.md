@@ -6,7 +6,9 @@ title: DefinedCreateBaseQueryResult
 # Type Alias: DefinedCreateBaseQueryResult\<TData, TError\>
 
 ```ts
-type DefinedCreateBaseQueryResult<TData, TError> = Readable<DefinedQueryObserverResult<TData, TError>>;
+type DefinedCreateBaseQueryResult<TData, TError> = Readable<
+  DefinedQueryObserverResult<TData, TError>
+>
 ```
 
 Options for createBaseQuery with initialData

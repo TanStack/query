@@ -6,7 +6,7 @@ title: queryFeatures
 # Variable: queryFeatures
 
 ```ts
-const queryFeatures: readonly ["DeveloperTools", "PersistQueryClient"];
+const queryFeatures: readonly ['DeveloperTools', 'PersistQueryClient']
 ```
 
 ## Defined in

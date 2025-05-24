@@ -6,7 +6,7 @@ title: MutationStateOptions
 # Type Alias: MutationStateOptions\<TResult\>
 
 ```ts
-type MutationStateOptions<TResult> = object;
+type MutationStateOptions<TResult> = object
 ```
 
 Options for useMutationState

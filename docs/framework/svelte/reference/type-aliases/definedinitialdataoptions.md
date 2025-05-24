@@ -6,7 +6,8 @@ title: DefinedInitialDataOptions
 # Type Alias: DefinedInitialDataOptions\<TQueryFnData, TError, TData, TQueryKey\>
 
 ```ts
-type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> =
+  CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object
 ```
 
 ## Type declaration
@@ -14,7 +15,7 @@ type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = CreateQ
 ### initialData
 
 ```ts
-initialData: 
+initialData:
   | NonUndefinedGuard<TQueryFnData>
 | () => NonUndefinedGuard<TQueryFnData>;
 ```
@@ -27,7 +28,7 @@ initialData:
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ## Defined in
 
