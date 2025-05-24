@@ -6,7 +6,7 @@ title: CreateMutateAsyncFunction
 # Type Alias: CreateMutateAsyncFunction\<TData, TError, TVariables, TContext\>
 
 ```ts
-type CreateMutateAsyncFunction<TData, TError, TVariables, TContext>: MutateFunction<TData, TError, TVariables, TContext>;
+type CreateMutateAsyncFunction<TData, TError, TVariables, TContext> = MutateFunction<TData, TError, TVariables, TContext>;
 ```
 
 ## Type Parameters
@@ -21,4 +21,4 @@ type CreateMutateAsyncFunction<TData, TError, TVariables, TContext>: MutateFunct
 
 ## Defined in
 
-[types.ts:188](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L188)
+[types.ts:178](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L178)

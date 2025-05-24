@@ -6,7 +6,7 @@ title: CreateBaseQueryOptions
 # Type Alias: CreateBaseQueryOptions\<TQueryFnData, TError, TData, TQueryData, TQueryKey\>
 
 ```ts
-type CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
+type CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
 ```
 
 Options for createBaseQuery
@@ -21,8 +21,8 @@ Options for createBaseQuery
 
 • **TQueryData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* `QueryKey` = `QueryKey`
 
 ## Defined in
 
-[packages/svelte-query/src/types.ts:23](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/types.ts#L23)
+[packages/svelte-query/src/types.ts:24](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L24)

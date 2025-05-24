@@ -6,7 +6,7 @@ title: MutationStateOptions
 # Type Alias: MutationStateOptions\<TResult\>
 
 ```ts
-type MutationStateOptions<TResult>: object;
+type MutationStateOptions<TResult> = object;
 ```
 
 Options for useMutationState
@@ -31,7 +31,9 @@ optional select: (mutation) => TResult;
 
 #### Parameters
 
-• **mutation**: `Mutation`\<`unknown`, `DefaultError`, `unknown`, `unknown`\>
+##### mutation
+
+`Mutation`\<`unknown`, `DefaultError`, `unknown`, `unknown`\>
 
 #### Returns
 
@@ -39,4 +41,4 @@ optional select: (mutation) => TResult;
 
 ## Defined in
 
-[packages/svelte-query/src/types.ts:140](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/types.ts#L140)
+[packages/svelte-query/src/types.ts:135](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L135)

@@ -6,27 +6,31 @@ title: createQueries
 # Function: createQueries()
 
 ```ts
-function createQueries<T, TCombinedResult>(
-  __namedParameters,
-  queryClient?,
-): Readable<TCombinedResult>
+function createQueries<T, TCombinedResult>(__namedParameters, queryClient?): Readable<TCombinedResult>
 ```
 
 ## Type Parameters
 
-• **T** _extends_ `any`[]
+• **T** *extends* `any`[]
 
-• **TCombinedResult** = `T` _extends_ [] ? [] : `T` _extends_ [`Head`] ? [`GetCreateQueryResult`\<`Head`\>] : `T` _extends_ [`Head`, `...Tails[]`] ? [`...Tails[]`] _extends_ [] ? [] : [`...Tails[]`] _extends_ [`Head`] ? [`GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>] : [`...Tails[]`] _extends_ [`Head`, `...Tails[]`] ? [`...Tails[]`] _extends_ [] ? [] : [`...Tails[]`] _extends_ [`Head`] ? [`GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>] : [`...Tails[]`] _extends_ [`Head`, `...Tails[]`] ? [`...(...)[]`] _extends_ [] ? [] : ... _extends_ ... ? ... : ... : [`...(...)[]`] _extends_ ...[] ? ...[] : ...[] : [`...Tails[]`] _extends_ `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `any`\>[] ? `QueryObserverResult`\<`unknown` _extends_ `TData` ? `TQueryFnData` : `TData`, `unknown` _extends_ `TError` ? `Error` : `TError`\>[] : `QueryObserverResult`[] : `T` _extends_ `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `any`\>[] ? `QueryObserverResult`\<`unknown` _extends_ `TData` ? `TQueryFnData` : `TData`, `unknown` _extends_ `TError` ? `Error` : `TError`\>[] : `QueryObserverResult`[]
+• **TCombinedResult** = `T` *extends* [] ? [] : `T` *extends* [`Head`] ? [`GetCreateQueryResult`\<`Head`\>] : `T` *extends* [`Head`, `...Tails[]`] ? [`...Tails[]`] *extends* [] ? [] : [`...Tails[]`] *extends* [`Head`] ? [`GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>] : [`...Tails[]`] *extends* [`Head`, `...Tails[]`] ? [`...Tails[]`] *extends* [] ? [] : [`...Tails[]`] *extends* [`Head`] ? [`GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>, `GetCreateQueryResult`\<`Head`\>] : [`...Tails[]`] *extends* [`Head`, `...Tails[]`] ? [`...(...)[]`] *extends* [] ? [] : ... *extends* ... ? ... : ... : [`...{ [K in (...)]: (...) }[]`] : [...\{ \[K in string \| number \| symbol\]: GetCreateQueryResult\<Tails\[K\<(...)\>\]\> \}\[\]] : \{ \[K in string \| number \| symbol\]: GetCreateQueryResult\<T\[K\<K\>\]\> \}
 
 ## Parameters
 
-• **\_\_namedParameters**
+### \_\_namedParameters
 
-• **\_\_namedParameters.combine?**
+#### combine
 
-• **\_\_namedParameters.queries?**: [`StoreOrVal`](../type-aliases/storeorval.md)\<[`...(T extends [] ? [] : T extends [Head] ? [GetQueryObserverOptionsForCreateQueries<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetQueryObserverOptionsForCreateQueries<Head>, GetQueryObserverOptionsForCreateQueries<Head>] : [...Tails[]] extends [Head, ...Tails[]] ? [...(...)[]] extends [] ? [] : (...) extends (...) ? (...) : (...) : readonly (...)[] extends [...(...)[]] ? [...(...)[]] : (...) extends (...) ? (...) : (...) : readonly unknown[] extends T ? T : T extends QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[] ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[] : QueryObserverOptionsForCreateQueries<unknown, Error, unknown, QueryKey>[])[]`]\>
+(`result`) => `TCombinedResult`
 
-• **queryClient?**: `QueryClient`
+#### queries
+
+  \| [`StoreOrVal`](../../type-aliases/storeorval.md)\<[`...(T extends [] ? [] : T extends [Head] ? [GetQueryObserverOptionsForCreateQueries<Head>] : T extends [Head, ...Tails[]] ? [...Tails[]] extends [] ? [] : [...Tails[]] extends [Head] ? [GetQueryObserverOptionsForCreateQueries<(...)>, GetQueryObserverOptionsForCreateQueries<(...)>] : [...(...)[]] extends [(...), ...(...)[]] ? (...) extends (...) ? (...) : (...) : (...) extends (...) ? (...) : (...) : readonly unknown[] extends T ? T : T extends QueryObserverOptionsForCreateQueries<(...), (...), (...), (...)>[] ? QueryObserverOptionsForCreateQueries<(...), (...), (...), (...)>[] : QueryObserverOptionsForCreateQueries<(...), (...), (...), (...)>[])[]`]\>
+  \| [`StoreOrVal`](../../type-aliases/storeorval.md)\<[...\{ \[K in string \| number \| symbol\]: GetQueryObserverOptionsForCreateQueries\<T\[K\<K\>\]\> \}\[\]]\>
+
+### queryClient?
+
+`QueryClient`
 
 ## Returns
 
@@ -34,4 +38,4 @@ function createQueries<T, TCombinedResult>(
 
 ## Defined in
 
-[packages/svelte-query/src/createQueries.ts:205](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/createQueries.ts#L205)
+[packages/svelte-query/src/createQueries.ts:189](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQueries.ts#L189)

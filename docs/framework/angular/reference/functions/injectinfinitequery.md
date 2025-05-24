@@ -14,18 +14,12 @@ A function that returns infinite query options.
 
 ## Param
 
-The Angular injector to use.
+Additional configuration.
 
-## injectInfiniteQuery(optionsFn, injector)
+## Call Signature
 
 ```ts
-function injectInfiniteQuery<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam,
->(optionsFn, injector?): CreateInfiniteQueryResult<TData, TError>
+function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): DefinedCreateInfiniteQueryResult<TData, TError>
 ```
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -39,23 +33,27 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 
 ### Parameters
 
-• **optionsFn**
+#### injectInfiniteQueryFn
+
+() => [`DefinedInitialDataInfiniteOptions`](../../type-aliases/definedinitialdatainfiniteoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 A function that returns infinite query options.
 
-• **injector?**: `Injector`
+#### options?
 
-The Angular injector to use.
+[`InjectInfiniteQueryOptions`](../../interfaces/injectinfinitequeryoptions.md)
+
+Additional configuration.
 
 ### Returns
 
-[`CreateInfiniteQueryResult`](../type-aliases/createinfinitequeryresult.md)\<`TData`, `TError`\>
+[`DefinedCreateInfiniteQueryResult`](../../type-aliases/definedcreateinfinitequeryresult.md)\<`TData`, `TError`\>
 
 The infinite query result.
 
@@ -67,22 +65,16 @@ A function that returns infinite query options.
 
 ### Param
 
-The Angular injector to use.
+Additional configuration.
 
 ### Defined in
 
-[inject-infinite-query.ts:30](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-infinite-query.ts#L30)
+[inject-infinite-query.ts:42](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L42)
 
-## injectInfiniteQuery(optionsFn, injector)
+## Call Signature
 
 ```ts
-function injectInfiniteQuery<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam,
->(optionsFn, injector?): DefinedCreateInfiniteQueryResult<TData, TError>
+function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
 ```
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -96,23 +88,27 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 
 ### Parameters
 
-• **optionsFn**
+#### injectInfiniteQueryFn
+
+() => [`UndefinedInitialDataInfiniteOptions`](../../type-aliases/undefinedinitialdatainfiniteoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 A function that returns infinite query options.
 
-• **injector?**: `Injector`
+#### options?
 
-The Angular injector to use.
+[`InjectInfiniteQueryOptions`](../../interfaces/injectinfinitequeryoptions.md)
+
+Additional configuration.
 
 ### Returns
 
-[`DefinedCreateInfiniteQueryResult`](../type-aliases/definedcreateinfinitequeryresult.md)\<`TData`, `TError`\>
+[`CreateInfiniteQueryResult`](../../type-aliases/createinfinitequeryresult.md)\<`TData`, `TError`\>
 
 The infinite query result.
 
@@ -124,22 +120,16 @@ A function that returns infinite query options.
 
 ### Param
 
-The Angular injector to use.
+Additional configuration.
 
 ### Defined in
 
-[inject-infinite-query.ts:57](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-infinite-query.ts#L57)
+[inject-infinite-query.ts:67](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L67)
 
-## injectInfiniteQuery(optionsFn, injector)
+## Call Signature
 
 ```ts
-function injectInfiniteQuery<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam,
->(optionsFn, injector?): CreateInfiniteQueryResult<TData, TError>
+function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
 ```
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -153,23 +143,27 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 
 ### Parameters
 
-• **optionsFn**
+#### injectInfiniteQueryFn
+
+() => [`CreateInfiniteQueryOptions`](../../interfaces/createinfinitequeryoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`, `TPageParam`\>
 
 A function that returns infinite query options.
 
-• **injector?**: `Injector`
+#### options?
 
-The Angular injector to use.
+[`InjectInfiniteQueryOptions`](../../interfaces/injectinfinitequeryoptions.md)
+
+Additional configuration.
 
 ### Returns
 
-[`CreateInfiniteQueryResult`](../type-aliases/createinfinitequeryresult.md)\<`TData`, `TError`\>
+[`CreateInfiniteQueryResult`](../../type-aliases/createinfinitequeryresult.md)\<`TData`, `TError`\>
 
 The infinite query result.
 
@@ -181,8 +175,8 @@ A function that returns infinite query options.
 
 ### Param
 
-The Angular injector to use.
+Additional configuration.
 
 ### Defined in
 
-[inject-infinite-query.ts:84](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-infinite-query.ts#L84)
+[inject-infinite-query.ts:92](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L92)

@@ -19,4 +19,4 @@ title: CreateBaseQueryOptions
 
 • **TQueryData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* `QueryKey` = `QueryKey`

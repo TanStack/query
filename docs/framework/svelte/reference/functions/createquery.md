@@ -5,13 +5,10 @@ title: createQuery
 
 # Function: createQuery()
 
-## createQuery(options, queryClient)
+## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(
-  options,
-  queryClient?,
-): DefinedCreateQueryResult<TData, TError>
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedCreateQueryResult<TData, TError>
 ```
 
 ### Type Parameters
@@ -22,29 +19,30 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
-• **options**: [`StoreOrVal`](../type-aliases/storeorval.md)\<[`DefinedInitialDataOptions`](../type-aliases/definedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+#### options
 
-• **queryClient?**: `QueryClient`
+[`StoreOrVal`](../../type-aliases/storeorval.md)\<[`DefinedInitialDataOptions`](../../type-aliases/definedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+
+#### queryClient?
+
+`QueryClient`
 
 ### Returns
 
-[`DefinedCreateQueryResult`](../type-aliases/definedcreatequeryresult.md)\<`TData`, `TError`\>
+[`DefinedCreateQueryResult`](../../type-aliases/definedcreatequeryresult.md)\<`TData`, `TError`\>
 
 ### Defined in
 
-[packages/svelte-query/src/createQuery.ts:15](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/createQuery.ts#L15)
+[packages/svelte-query/src/createQuery.ts:15](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L15)
 
-## createQuery(options, queryClient)
+## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(
-  options,
-  queryClient?,
-): CreateQueryResult<TData, TError>
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>
 ```
 
 ### Type Parameters
@@ -55,29 +53,30 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
-• **options**: [`StoreOrVal`](../type-aliases/storeorval.md)\<[`UndefinedInitialDataOptions`](../type-aliases/undefinedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+#### options
 
-• **queryClient?**: `QueryClient`
+[`StoreOrVal`](../../type-aliases/storeorval.md)\<[`UndefinedInitialDataOptions`](../../type-aliases/undefinedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+
+#### queryClient?
+
+`QueryClient`
 
 ### Returns
 
-[`CreateQueryResult`](../type-aliases/createqueryresult.md)\<`TData`, `TError`\>
+[`CreateQueryResult`](../../type-aliases/createqueryresult.md)\<`TData`, `TError`\>
 
 ### Defined in
 
-[packages/svelte-query/src/createQuery.ts:27](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/createQuery.ts#L27)
+[packages/svelte-query/src/createQuery.ts:27](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L27)
 
-## createQuery(options, queryClient)
+## Call Signature
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(
-  options,
-  queryClient?,
-): CreateQueryResult<TData, TError>
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>
 ```
 
 ### Type Parameters
@@ -88,18 +87,22 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
-• **options**: [`StoreOrVal`](../type-aliases/storeorval.md)\<[`CreateQueryOptions`](../type-aliases/createqueryoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+#### options
 
-• **queryClient?**: `QueryClient`
+[`StoreOrVal`](../../type-aliases/storeorval.md)\<[`CreateQueryOptions`](../../type-aliases/createqueryoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+
+#### queryClient?
+
+`QueryClient`
 
 ### Returns
 
-[`CreateQueryResult`](../type-aliases/createqueryresult.md)\<`TData`, `TError`\>
+[`CreateQueryResult`](../../type-aliases/createqueryresult.md)\<`TData`, `TError`\>
 
 ### Defined in
 
-[packages/svelte-query/src/createQuery.ts:39](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/createQuery.ts#L39)
+[packages/svelte-query/src/createQuery.ts:39](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createQuery.ts#L39)

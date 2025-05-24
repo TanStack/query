@@ -7,7 +7,7 @@ title: CreateQueryOptions
 
 ## Extends
 
-- `OmitKeyof`\<[`CreateBaseQueryOptions`](createbasequeryoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`\>, `"suspense"`\>
+- `OmitKeyof`\<[`CreateBaseQueryOptions`](../createbasequeryoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`\>, `"suspense"`\>
 
 ## Type Parameters
 
@@ -17,4 +17,4 @@ title: CreateQueryOptions
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* `QueryKey` = `QueryKey`

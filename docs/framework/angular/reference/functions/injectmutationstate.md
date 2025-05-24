@@ -6,10 +6,7 @@ title: injectMutationState
 # Function: injectMutationState()
 
 ```ts
-function injectMutationState<TResult>(
-  mutationStateOptionsFn,
-  options?,
-): Signal<TResult[]>
+function injectMutationState<TResult>(injectMutationStateFn, options?): Signal<TResult[]>
 ```
 
 Injects a signal that tracks the state of all mutations.
@@ -20,11 +17,15 @@ Injects a signal that tracks the state of all mutations.
 
 ## Parameters
 
-• **mutationStateOptionsFn** = `...`
+### injectMutationStateFn
+
+() => `MutationStateOptions`\<`TResult`\>
 
 A function that returns mutation state options.
 
-• **options?**: [`InjectMutationStateOptions`](../interfaces/injectmutationstateoptions.md)
+### options?
+
+[`InjectMutationStateOptions`](../../interfaces/injectmutationstateoptions.md)
 
 The Angular injector to use.
 
@@ -36,4 +37,4 @@ The signal that tracks the state of all mutations.
 
 ## Defined in
 
-[inject-mutation-state.ts:53](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-mutation-state.ts#L53)
+[inject-mutation-state.ts:64](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L64)

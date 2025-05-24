@@ -8,7 +8,6 @@ title: injectQuery
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
-
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -24,7 +23,6 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
-
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -44,25 +42,21 @@ A function that returns query options.
 
 ## Param
 
-The Angular injector to use.
+Additional configuration
 
 ## See
 
 https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 
-## injectQuery(optionsFn, injector)
+## Call Signature
 
 ```ts
-function injectQuery<TQueryFnData, TError, TData, TQueryKey>(
-  optionsFn,
-  injector?,
-): DefinedCreateQueryResult<TData, TError>
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): DefinedCreateQueryResult<TData, TError>
 ```
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
-
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -78,7 +72,6 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
-
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -100,21 +93,25 @@ class ServiceOrComponent {
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
-• **optionsFn**
+#### injectQueryFn
+
+() => [`DefinedInitialDataOptions`](../../type-aliases/definedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function that returns query options.
 
-• **injector?**: `Injector`
+#### options?
 
-The Angular injector to use.
+[`InjectQueryOptions`](../../interfaces/injectqueryoptions.md)
+
+Additional configuration
 
 ### Returns
 
-[`DefinedCreateQueryResult`](../type-aliases/definedcreatequeryresult.md)\<`TData`, `TError`\>
+[`DefinedCreateQueryResult`](../../type-aliases/definedcreatequeryresult.md)\<`TData`, `TError`\>
 
 The query result.
 
@@ -126,7 +123,7 @@ A function that returns query options.
 
 ### Param
 
-The Angular injector to use.
+Additional configuration
 
 ### See
 
@@ -138,21 +135,17 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 
 ### Defined in
 
-[inject-query.ts:53](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-query.ts#L53)
+[inject-query.ts:66](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L66)
 
-## injectQuery(optionsFn, injector)
+## Call Signature
 
 ```ts
-function injectQuery<TQueryFnData, TError, TData, TQueryKey>(
-  optionsFn,
-  injector?,
-): CreateQueryResult<TData, TError>
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): CreateQueryResult<TData, TError>
 ```
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
-
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -168,7 +161,6 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
-
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -190,21 +182,25 @@ class ServiceOrComponent {
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
-• **optionsFn**
+#### injectQueryFn
+
+() => [`UndefinedInitialDataOptions`](../../type-aliases/undefinedinitialdataoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function that returns query options.
 
-• **injector?**: `Injector`
+#### options?
 
-The Angular injector to use.
+[`InjectQueryOptions`](../../interfaces/injectqueryoptions.md)
+
+Additional configuration
 
 ### Returns
 
-[`CreateQueryResult`](../type-aliases/createqueryresult.md)\<`TData`, `TError`\>
+[`CreateQueryResult`](../../type-aliases/createqueryresult.md)\<`TData`, `TError`\>
 
 The query result.
 
@@ -216,7 +212,7 @@ A function that returns query options.
 
 ### Param
 
-The Angular injector to use.
+Additional configuration
 
 ### See
 
@@ -228,21 +224,17 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 
 ### Defined in
 
-[inject-query.ts:102](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-query.ts#L102)
+[inject-query.ts:118](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L118)
 
-## injectQuery(optionsFn, injector)
+## Call Signature
 
 ```ts
-function injectQuery<TQueryFnData, TError, TData, TQueryKey>(
-  optionsFn,
-  injector?,
-): CreateQueryResult<TData, TError>
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): CreateQueryResult<TData, TError>
 ```
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
-
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -258,7 +250,6 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
-
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -280,21 +271,25 @@ class ServiceOrComponent {
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
-• **optionsFn**
+#### injectQueryFn
+
+() => [`CreateQueryOptions`](../../interfaces/createqueryoptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function that returns query options.
 
-• **injector?**: `Injector`
+#### options?
 
-The Angular injector to use.
+[`InjectQueryOptions`](../../interfaces/injectqueryoptions.md)
+
+Additional configuration
 
 ### Returns
 
-[`CreateQueryResult`](../type-aliases/createqueryresult.md)\<`TData`, `TError`\>
+[`CreateQueryResult`](../../type-aliases/createqueryresult.md)\<`TData`, `TError`\>
 
 The query result.
 
@@ -306,7 +301,7 @@ A function that returns query options.
 
 ### Param
 
-The Angular injector to use.
+Additional configuration
 
 ### See
 
@@ -318,4 +313,4 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 
 ### Defined in
 
-[inject-query.ts:151](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-query.ts#L151)
+[inject-query.ts:170](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L170)

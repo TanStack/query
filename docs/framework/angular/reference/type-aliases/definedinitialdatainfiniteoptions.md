@@ -6,7 +6,7 @@ title: DefinedInitialDataInfiniteOptions
 # Type Alias: DefinedInitialDataInfiniteOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
 
 ```ts
-type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>: CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, TPageParam> & object;
+type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, TPageParam> & object;
 ```
 
 ## Type declaration
@@ -14,7 +14,10 @@ type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, T
 ### initialData
 
 ```ts
-initialData: NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>> | () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>;
+initialData: 
+  | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+  | () => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+  | undefined;
 ```
 
 ## Type Parameters
@@ -25,10 +28,10 @@ initialData: NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>> | () => N
 
 • **TData** = `InfiniteData`\<`TQueryFnData`\>
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* `QueryKey` = `QueryKey`
 
 • **TPageParam** = `unknown`
 
 ## Defined in
 
-[infinite-query-options.ts:32](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/infinite-query-options.ts#L32)
+[infinite-query-options.ts:66](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L66)
