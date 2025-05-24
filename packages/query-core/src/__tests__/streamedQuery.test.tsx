@@ -349,4 +349,129 @@ describe('streamedQuery', () => {
 
     unsubscribe()
   })
+
+  test('should support maxChunks', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        queryFn: () => createAsyncNumberGenerator(3),
+        maxChunks: 2,
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0, 1],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [1, 2],
+    })
+
+    unsubscribe()
+  })
+
+  test('maxChunks with append refetch', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        queryFn: () => createAsyncNumberGenerator(3),
+        maxChunks: 2,
+        refetchMode: 'append',
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0, 1],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [1, 2],
+    })
+
+    void observer.refetch()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [1, 2],
+    })
+
+    await vi.advanceTimersByTimeAsync(40)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [2, 0],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0, 1],
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [1, 2],
+    })
+
+    unsubscribe()
+  })
 })
