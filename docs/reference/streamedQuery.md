@@ -32,4 +32,10 @@ const query = queryOptions({
   - Defaults to `'reset'`
   - When set to `'reset'`, the query will erase all data and go back into `pending` state.
   - When set to `'append'`, data will be appended to existing data.
-  - When set to `'replace'`, data will be written to the cache at the end of the stream.
+  - When set to `'replace'`, all data will be written to the cache once the stream ends.
+- `maxChunks?: number`
+  - Optional
+  - The maximum number of chunks to keep in the cache.
+  - Defaults to `undefined`, meaning all chunks will be kept.
+  - If `undefined` or `0`, the number of chunks is unlimited.
+  - If the number of chunks exceeds this number, the oldest chunk will be removed.
