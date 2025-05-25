@@ -76,6 +76,7 @@ export const HydrationBoundary = ({
               existingQuery.state.dataUpdatedAt ||
             (dehydratedQuery.promise &&
               existingQuery.state.status !== 'pending' &&
+              existingQuery.state.fetchStatus !== 'fetching' &&
               dehydratedQuery.dehydratedAt !== undefined &&
               dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
 
@@ -110,7 +111,6 @@ export const HydrationBoundary = ({
   React.useEffect(() => {
     if (hydrationQueue) {
       hydrate(client, { queries: hydrationQueue }, optionsRef.current)
-      // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
       setHydrationQueue(undefined)
     }
   }, [client, hydrationQueue])
