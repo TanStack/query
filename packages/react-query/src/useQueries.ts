@@ -17,8 +17,12 @@ import {
   shouldSuspend,
   willFetch,
 } from './suspense'
-import type { QueryFunction, QueryKey } from '@tanstack/query-core'
-import type { UseQueryOptions, UseQueryResult } from './types'
+import type { OmitKeyof, QueryFunction, QueryKey } from '@tanstack/query-core'
+import type {
+  DefinedUseQueryResult,
+  UseQueryOptions,
+  UseQueryResult,
+} from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -27,7 +31,10 @@ type UseQueryOptionsForUseQueries<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+> = OmitKeyof<
+  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'context'
+>
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -67,29 +74,46 @@ type GetOptions<T> =
     : // Fallback
       UseQueryOptionsForUseQueries
 
-type GetResults<T> =
+// A defined initialData setting should return a DefinedUseQueryResult rather than UseQueryResult
+type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
+  initialData?: infer TInitialData
+}
+  ? unknown extends TInitialData
+    ? UseQueryResult<TData, TError>
+    : TInitialData extends TData
+    ? DefinedUseQueryResult<TData, TError>
+    : TInitialData extends () => infer TInitialDataResult
+    ? unknown extends TInitialDataResult
+      ? UseQueryResult<TData, TError>
+      : TInitialDataResult extends TData
+      ? DefinedUseQueryResult<TData, TError>
+      : UseQueryResult<TData, TError>
+    : UseQueryResult<TData, TError>
+  : UseQueryResult<TData, TError>
+
+type GetUseQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
-    ? UseQueryResult<TData, TError>
+    ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-    ? UseQueryResult<TQueryFnData, TError>
+    ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
     : T extends { data: infer TData; error?: infer TError }
-    ? UseQueryResult<TData, TError>
+    ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
     : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
     T extends [any, infer TError, infer TData]
-    ? UseQueryResult<TData, TError>
+    ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
     : T extends [infer TQueryFnData, infer TError]
-    ? UseQueryResult<TQueryFnData, TError>
+    ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
     : T extends [infer TQueryFnData]
-    ? UseQueryResult<TQueryFnData>
+    ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
     : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<unknown, any>
         select: (data: any) => infer TData
       }
-    ? UseQueryResult<TData>
+    ? GetDefinedOrUndefinedQueryResult<T, TData>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, any> }
-    ? UseQueryResult<TQueryFnData>
+    ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
     : // Fallback
       UseQueryResult
 
@@ -98,16 +122,16 @@ type GetResults<T> =
  */
 export type QueriesOptions<
   T extends any[],
-  Result extends any[] = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends any[] = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? UseQueryOptionsForUseQueries[]
   : T extends []
   ? []
   : T extends [infer Head]
-  ? [...Result, GetOptions<Head>]
+  ? [...TResult, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
-  ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
+  ? QueriesOptions<[...Tail], [...TResult, GetOptions<Head>], [...TDepth, 1]>
   : unknown[] extends T
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
@@ -127,16 +151,20 @@ export type QueriesOptions<
  */
 export type QueriesResults<
   T extends any[],
-  Result extends any[] = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResults extends any[] = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? UseQueryResult[]
   : T extends []
   ? []
   : T extends [infer Head]
-  ? [...Result, GetResults<Head>]
+  ? [...TResults, GetUseQueryResult<Head>]
   : T extends [infer Head, ...infer Tail]
-  ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
+  ? QueriesResults<
+      [...Tail],
+      [...TResults, GetUseQueryResult<Head>],
+      [...TDepth, 1]
+    >
   : T extends UseQueryOptionsForUseQueries<
       infer TQueryFnData,
       infer TError,

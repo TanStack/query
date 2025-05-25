@@ -1,7 +1,17 @@
 'use client'
 import { QueryObserver, parseQueryArgs } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { QueryFunction, QueryKey } from '@tanstack/query-core'
+import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions'
+import type {
+  InitialDataFunction,
+  NonUndefinedGuard,
+  OmitKeyof,
+  QueryFunction,
+  QueryKey,
+} from '@tanstack/query-core'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -9,31 +19,53 @@ import type {
 } from './types'
 
 // HOOK
-
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'initialData'
-  > & { initialData?: () => undefined },
-): UseQueryResult<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'initialData'
-  > & { initialData: TQueryFnData | (() => TQueryFnData) },
+  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): DefinedUseQueryResult<TData, TError>
-
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: OmitKeyof<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'initialData'
+  > & {
+    initialData:
+      | NonUndefinedGuard<TQueryFnData>
+      | (() => NonUndefinedGuard<TQueryFnData>)
+  },
+): DefinedUseQueryResult<TData, TError>
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+): UseQueryResult<TData, TError>
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: OmitKeyof<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'initialData'
+  > & {
+    initialData?:
+      | undefined
+      | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+      | NonUndefinedGuard<TQueryFnData>
+  },
+): UseQueryResult<TData, TError>
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -43,6 +75,7 @@ export function useQuery<
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UseQueryResult<TData, TError>
 
+/** @deprecated */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -50,12 +83,12 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  options?: Omit<
+  options?: OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'initialData'
-  > & { initialData?: () => undefined },
+  >,
 ): UseQueryResult<TData, TError>
-
+/** @deprecated */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -63,12 +96,12 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  options?: Omit<
+  options?: OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'initialData'
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedUseQueryResult<TData, TError>
-
+/** @deprecated */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -76,12 +109,12 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  options?: Omit<
+  options?: OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey'
   >,
 ): UseQueryResult<TData, TError>
-
+/** @deprecated */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -90,12 +123,12 @@ export function useQuery<
 >(
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: Omit<
+  options?: OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
   > & { initialData?: () => undefined },
 ): UseQueryResult<TData, TError>
-
+/** @deprecated */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -104,12 +137,12 @@ export function useQuery<
 >(
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: Omit<
+  options?: OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedUseQueryResult<TData, TError>
-
+/** @deprecated */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -118,12 +151,12 @@ export function useQuery<
 >(
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: Omit<
+  options?: OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn'
   >,
 ): UseQueryResult<TData, TError>
-
+/** @deprecated */
 export function useQuery<
   TQueryFnData,
   TError,

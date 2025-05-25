@@ -8,6 +8,20 @@ import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 import type { Logger } from './logger'
 
+export type NonUndefinedGuard<T> = T extends undefined ? never : T
+
+export type OmitKeyof<
+  TObject,
+  TKey extends TStrictly extends 'safely'
+    ?
+        | keyof TObject
+        | (string & Record<never, never>)
+        | (number & Record<never, never>)
+        | (symbol & Record<never, never>)
+    : keyof TObject,
+  TStrictly extends 'strictly' | 'safely' = 'strictly',
+> = Omit<TObject, TKey>
+
 export type QueryKey = readonly unknown[]
 
 export type QueryFunction<
@@ -256,6 +270,8 @@ export interface QueryObserverOptions<
   /**
    * Set this to `true` to keep the previous `data` when fetching based on a new query key.
    * Defaults to `false`.
+   *
+   * @deprecated keepPreviousData will be removed in the next major version.
    */
   keepPreviousData?: boolean
   /**
@@ -406,6 +422,9 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   refetch: <TPageData>(
     options?: RefetchOptions & RefetchQueryFilters<TPageData>,
   ) => Promise<QueryObserverResult<TData, TError>>
+  /**
+   * @deprecated This method will be removed in the next major version. Use `QueryClient.removeQueries` instead.
+   */
   remove: () => void
   status: QueryStatus
   fetchStatus: FetchStatus
@@ -646,6 +665,7 @@ export interface MutationObserverBaseResult<
   isError: boolean
   isIdle: boolean
   isLoading: boolean
+  isPending: boolean
   isSuccess: boolean
   mutate: MutateFunction<TData, TError, TVariables, TContext>
   reset: () => void
