@@ -372,7 +372,6 @@ describe('React hydration', () => {
     const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
     let hydrationCount = 0
     hydrateSpy.mockImplementation((...args: Parameters<typeof hydrate>) => {
-      console.log('Hydrate spy')
       hydrationCount++
       // Arbitrary number
       if (hydrationCount > 10) {
