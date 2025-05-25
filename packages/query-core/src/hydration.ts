@@ -203,6 +203,7 @@ export function hydrate(
 
       let query = queryCache.get(queryHash)
       const existingQueryIsPending = query?.state.status === 'pending'
+      const existingQueryIsFetching = query?.state.fetchStatus === 'fetching'
 
       // Do not hydrate if an existing query exists with newer data
       if (query) {
@@ -249,6 +250,7 @@ export function hydrate(
       if (
         promise &&
         !existingQueryIsPending &&
+        !existingQueryIsFetching &&
         // Only hydrate if dehydration is newer than any existing data,
         // this is always true for new queries
         (dehydratedAt === undefined || dehydratedAt > query.state.dataUpdatedAt)
