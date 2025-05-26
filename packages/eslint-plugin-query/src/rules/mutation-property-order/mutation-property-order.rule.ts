@@ -1,15 +1,12 @@
 import { createPropertyOrderRule } from '../../utils/create-property-order-rule'
-import { infiniteQueryFunctions, sortRules } from './constants'
-import type {
-  InfiniteQueryFunctions,
-  InfiniteQueryProperties,
-} from './constants'
+import { mutationFunctions, sortRules } from './constants'
+import type { MutationFunctions, MutationProperties } from './constants'
 
-export const name = 'infinite-query-property-order'
+export const name = 'mutation-property-order'
 
 export const rule = createPropertyOrderRule<
-  InfiniteQueryFunctions,
-  InfiniteQueryProperties
+  MutationFunctions,
+  MutationProperties
 >(
   {
     name,
@@ -17,7 +14,7 @@ export const rule = createPropertyOrderRule<
       type: 'problem',
       docs: {
         description:
-          'Ensure correct order of inference sensitive properties for infinite queries',
+          'Ensure correct order of inference-sensitive properties in useMutation()',
         recommended: 'error',
       },
       messages: {
@@ -29,6 +26,6 @@ export const rule = createPropertyOrderRule<
     },
     defaultOptions: [],
   },
-  infiniteQueryFunctions,
+  mutationFunctions,
   sortRules,
 )
