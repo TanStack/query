@@ -4,7 +4,7 @@ import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import type { QueryFilters } from './utils'
 import type { Action, QueryState } from './query'
-import type { NotifyEvent, QueryKey, QueryOptions } from './types'
+import type { NotifyEvent, OmitKeyof, QueryKey, QueryOptions } from './types'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
 
@@ -166,8 +166,21 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
-    arg1: QueryKey,
-    arg2?: QueryFilters,
+    filters: QueryFilters,
+  ): Query<TQueryFnData, TError, TData> | undefined
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+    queryKey: QueryKey,
+    filters?: OmitKeyof<QueryFilters, 'queryKey'>,
+  ): Query<TQueryFnData, TError, TData> | undefined
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+    arg1: QueryKey | QueryFilters,
+    arg2?: OmitKeyof<QueryFilters, 'queryKey'>,
   ): Query<TQueryFnData, TError, TData> | undefined {
     const [filters] = parseFilterArgs(arg1, arg2)
 
@@ -178,10 +191,28 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return this.queries.find((query) => matchQuery(filters, query))
   }
 
-  findAll(queryKey?: QueryKey, filters?: QueryFilters): Query[]
   findAll(filters?: QueryFilters): Query[]
-  findAll(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): Query[]
-  findAll(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): Query[] {
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  findAll(
+    queryKey?: QueryKey,
+    filters?: OmitKeyof<QueryFilters, 'queryKey'>,
+  ): Query[]
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  findAll(
+    arg1?: QueryKey | QueryFilters,
+    arg2?: OmitKeyof<QueryFilters, 'queryKey'>,
+  ): Query[]
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  findAll(
+    arg1?: QueryKey | QueryFilters,
+    arg2?: OmitKeyof<QueryFilters, 'queryKey'>,
+  ): Query[] {
     const [filters] = parseFilterArgs(arg1, arg2)
     return Object.keys(filters).length > 0
       ? this.queries.filter((query) => matchQuery(filters, query))

@@ -14,6 +14,7 @@ import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { defaultLogger } from './logger'
+import type { OmitKeyof } from '@tanstack/query-core'
 import type { CancelOptions, DefaultedQueryObserverOptions } from './types'
 import type { Logger } from './logger'
 import type { QueryState } from './query'
@@ -112,7 +113,16 @@ export class QueryClient {
   }
 
   isFetching(filters?: QueryFilters): number
-  isFetching(queryKey?: QueryKey, filters?: QueryFilters): number
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  isFetching(
+    queryKey?: QueryKey,
+    filters?: OmitKeyof<QueryFilters, 'queryKey'>,
+  ): number
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
     filters.fetchStatus = 'fetching'
@@ -125,7 +135,20 @@ export class QueryClient {
 
   getQueryData<TQueryFnData = unknown>(
     queryKey: QueryKey,
-    filters?: QueryFilters,
+  ): TQueryFnData | undefined
+  /**
+   * @deprecated This method will accept only queryKey in the next major version.
+   */
+  getQueryData<TQueryFnData = unknown>(
+    queryKey: QueryKey,
+    filters: OmitKeyof<QueryFilters, 'queryKey'>,
+  ): TQueryFnData | undefined
+  /**
+   * @deprecated This method will accept only queryKey in the next major version.
+   */
+  getQueryData<TQueryFnData = unknown>(
+    queryKey: QueryKey,
+    filters?: OmitKeyof<QueryFilters, 'queryKey'>,
   ): TQueryFnData | undefined {
     return this.queryCache.find<TQueryFnData>(queryKey, filters)?.state.data
   }
@@ -141,6 +164,9 @@ export class QueryClient {
       'queryKey'
     >,
   ): Promise<TData>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   ensureQueryData<
     TQueryFnData = unknown,
     TError = unknown,
@@ -148,11 +174,14 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
   >(
     queryKey: TQueryKey,
-    options?: Omit<
+    options?: OmitKeyof<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
       'queryKey'
     >,
   ): Promise<TData>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   ensureQueryData<
     TQueryFnData = unknown,
     TError = unknown,
@@ -161,11 +190,14 @@ export class QueryClient {
   >(
     queryKey: TQueryKey,
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: Omit<
+    options?: OmitKeyof<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
       'queryKey' | 'queryFn'
     >,
   ): Promise<TData>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   ensureQueryData<
     TQueryFnData,
     TError,
@@ -192,11 +224,17 @@ export class QueryClient {
   }
 
   getQueriesData<TQueryFnData = unknown>(
-    queryKey: QueryKey,
-  ): [QueryKey, TQueryFnData | undefined][]
-  getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
   ): [QueryKey, TQueryFnData | undefined][]
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  getQueriesData<TQueryFnData = unknown>(
+    queryKey: QueryKey,
+  ): [QueryKey, TQueryFnData | undefined][]
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   getQueriesData<TQueryFnData = unknown>(
     queryKeyOrFilters: QueryKey | QueryFilters,
   ): [QueryKey, TQueryFnData | undefined][] {
@@ -229,17 +267,21 @@ export class QueryClient {
   }
 
   setQueriesData<TQueryFnData>(
-    queryKey: QueryKey,
-    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
-    options?: SetDataOptions,
-  ): [QueryKey, TQueryFnData | undefined][]
-
-  setQueriesData<TQueryFnData>(
     filters: QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
   ): [QueryKey, TQueryFnData | undefined][]
-
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  setQueriesData<TQueryFnData>(
+    queryKey: QueryKey,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
+    options?: SetDataOptions,
+  ): [QueryKey, TQueryFnData | undefined][]
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   setQueriesData<TQueryFnData>(
     queryKeyOrFilters: QueryKey | QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
@@ -257,14 +299,29 @@ export class QueryClient {
 
   getQueryState<TQueryFnData = unknown, TError = undefined>(
     queryKey: QueryKey,
-    filters?: QueryFilters,
+    /**
+     * @deprecated This filters will be removed in the next major version.
+     */
+    filters?: OmitKeyof<QueryFilters, 'queryKey'>,
   ): QueryState<TQueryFnData, TError> | undefined {
     return this.queryCache.find<TQueryFnData, TError>(queryKey, filters)?.state
   }
 
   removeQueries(filters?: QueryFilters): void
-  removeQueries(queryKey?: QueryKey, filters?: QueryFilters): void
-  removeQueries(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): void {
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  removeQueries(
+    queryKey?: QueryKey,
+    filters?: OmitKeyof<QueryFilters, 'queryKey'>,
+  ): void
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
+  removeQueries(
+    arg1?: QueryKey | QueryFilters,
+    arg2?: OmitKeyof<QueryFilters, 'queryKey'>,
+  ): void {
     const [filters] = parseFilterArgs(arg1, arg2)
     const queryCache = this.queryCache
     notifyManager.batch(() => {
@@ -278,14 +335,20 @@ export class QueryClient {
     filters?: ResetQueryFilters<TPageData>,
     options?: ResetOptions,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   resetQueries<TPageData = unknown>(
     queryKey?: QueryKey,
-    filters?: ResetQueryFilters<TPageData>,
+    filters?: OmitKeyof<ResetQueryFilters<TPageData>, 'queryKey'>,
     options?: ResetOptions,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   resetQueries(
     arg1?: QueryKey | ResetQueryFilters,
-    arg2?: ResetQueryFilters | ResetOptions,
+    arg2?: OmitKeyof<ResetQueryFilters, 'queryKey'> | ResetOptions,
     arg3?: ResetOptions,
   ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
@@ -305,14 +368,20 @@ export class QueryClient {
   }
 
   cancelQueries(filters?: QueryFilters, options?: CancelOptions): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   cancelQueries(
     queryKey?: QueryKey,
-    filters?: QueryFilters,
+    filters?: OmitKeyof<QueryFilters, 'queryKey'>,
     options?: CancelOptions,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   cancelQueries(
     arg1?: QueryKey | QueryFilters,
-    arg2?: QueryFilters | CancelOptions,
+    arg2?: OmitKeyof<QueryFilters, 'queryKey'> | CancelOptions,
     arg3?: CancelOptions,
   ): Promise<void> {
     const [filters, cancelOptions = {}] = parseFilterArgs(arg1, arg2, arg3)
@@ -334,14 +403,20 @@ export class QueryClient {
     filters?: InvalidateQueryFilters<TPageData>,
     options?: InvalidateOptions,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   invalidateQueries<TPageData = unknown>(
     queryKey?: QueryKey,
-    filters?: InvalidateQueryFilters<TPageData>,
+    filters?: OmitKeyof<InvalidateQueryFilters<TPageData>, 'queryKey'>,
     options?: InvalidateOptions,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   invalidateQueries(
     arg1?: QueryKey | InvalidateQueryFilters,
-    arg2?: InvalidateQueryFilters | InvalidateOptions,
+    arg2?: OmitKeyof<InvalidateQueryFilters, 'queryKey'> | InvalidateOptions,
     arg3?: InvalidateOptions,
   ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
@@ -366,14 +441,20 @@ export class QueryClient {
     filters?: RefetchQueryFilters<TPageData>,
     options?: RefetchOptions,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   refetchQueries<TPageData = unknown>(
     queryKey?: QueryKey,
-    filters?: RefetchQueryFilters<TPageData>,
+    filters?: OmitKeyof<RefetchQueryFilters<TPageData>, 'queryKey'>,
     options?: RefetchOptions,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   refetchQueries(
     arg1?: QueryKey | RefetchQueryFilters,
-    arg2?: RefetchQueryFilters | RefetchOptions,
+    arg2?: OmitKeyof<RefetchQueryFilters, 'queryKey'> | RefetchOptions,
     arg3?: RefetchOptions,
   ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
@@ -408,6 +489,9 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   fetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -415,8 +499,14 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
   >(
     queryKey: TQueryKey,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: OmitKeyof<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
   ): Promise<TData>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   fetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -425,8 +515,14 @@ export class QueryClient {
   >(
     queryKey: TQueryKey,
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: OmitKeyof<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey' | 'queryFn'
+    >,
   ): Promise<TData>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   fetchQuery<
     TQueryFnData,
     TError,
@@ -436,8 +532,14 @@ export class QueryClient {
     arg1: TQueryKey | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     arg2?:
       | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | OmitKeyof<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+          'queryKey'
+        >,
+    arg3?: OmitKeyof<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey' | 'queryFn'
+    >,
   ): Promise<TData> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
@@ -462,6 +564,9 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -469,8 +574,14 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
   >(
     queryKey: TQueryKey,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: OmitKeyof<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -479,8 +590,14 @@ export class QueryClient {
   >(
     queryKey: TQueryKey,
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: OmitKeyof<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey' | 'queryFn'
+    >,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -490,8 +607,14 @@ export class QueryClient {
     arg1: TQueryKey | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     arg2?:
       | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | OmitKeyof<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+          'queryKey'
+        >,
+    arg3?: OmitKeyof<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey' | 'queryFn'
+    >,
   ): Promise<void> {
     return this.fetchQuery(arg1 as any, arg2 as any, arg3)
       .then(noop)
@@ -506,6 +629,9 @@ export class QueryClient {
   >(
     options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<InfiniteData<TData>>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -513,8 +639,14 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
   >(
     queryKey: TQueryKey,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: OmitKeyof<
+      FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
   ): Promise<InfiniteData<TData>>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -523,8 +655,14 @@ export class QueryClient {
   >(
     queryKey: TQueryKey,
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: OmitKeyof<
+      FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey' | 'queryFn'
+    >,
   ): Promise<InfiniteData<TData>>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   fetchInfiniteQuery<
     TQueryFnData,
     TError,
@@ -536,8 +674,14 @@ export class QueryClient {
       | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     arg2?:
       | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | OmitKeyof<
+          FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+          'queryKey'
+        >,
+    arg3?: OmitKeyof<
+      FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey' | 'queryFn'
+    >,
   ): Promise<InfiniteData<TData>> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
     parsedOptions.behavior = infiniteQueryBehavior<
@@ -556,6 +700,9 @@ export class QueryClient {
   >(
     options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -563,8 +710,14 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
   >(
     queryKey: TQueryKey,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: OmitKeyof<
+      FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -573,8 +726,14 @@ export class QueryClient {
   >(
     queryKey: TQueryKey,
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: OmitKeyof<
+      FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey' | 'queryFn'
+    >,
   ): Promise<void>
+  /**
+   * @deprecated This method should be used with only one object argument.
+   */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError,
@@ -586,8 +745,14 @@ export class QueryClient {
       | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     arg2?:
       | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | OmitKeyof<
+          FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+          'queryKey'
+        >,
+    arg3?: OmitKeyof<
+      FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey' | 'queryFn'
+    >,
   ): Promise<void> {
     return this.fetchInfiniteQuery(arg1 as any, arg2 as any, arg3)
       .then(noop)

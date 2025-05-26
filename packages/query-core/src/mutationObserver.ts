@@ -141,6 +141,7 @@ export class MutationObserver<
       ? this.currentMutation.state
       : getDefaultState<TData, TError, TVariables, TContext>()
 
+    const isLoading = state.status === 'loading'
     const result: MutationObserverBaseResult<
       TData,
       TError,
@@ -148,7 +149,8 @@ export class MutationObserver<
       TContext
     > = {
       ...state,
-      isLoading: state.status === 'loading',
+      isLoading,
+      isPending: isLoading,
       isSuccess: state.status === 'success',
       isError: state.status === 'error',
       isIdle: state.status === 'idle',

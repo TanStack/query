@@ -5,12 +5,22 @@ import type { MaybeRefDeep } from './types'
 
 export class QueryCache extends QC {
   find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
-    arg1: MaybeRefDeep<QueryKey>,
+    filters: MaybeRefDeep<QueryFilters>,
+  ): Query<TQueryFnData, TError, TData> | undefined
+  find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+    queryKey: MaybeRefDeep<QueryKey>,
+    filters?: MaybeRefDeep<QueryFilters>,
+  ): Query<TQueryFnData, TError, TData> | undefined
+  find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+    arg1: MaybeRefDeep<QueryKey> | MaybeRefDeep<QueryFilters>,
     arg2?: MaybeRefDeep<QueryFilters>,
   ): Query<TQueryFnData, TError, TData> | undefined {
-    const arg1Unreffed = cloneDeepUnref(arg1)
+    const arg1Unreffed = cloneDeepUnref(arg1) as QueryKey | QueryFilters
     const arg2Unreffed = cloneDeepUnref(arg2) as QueryFilters
-    return super.find(arg1Unreffed, arg2Unreffed)
+    if (isQueryKey(arg1Unreffed)) {
+      return super.find(arg1Unreffed, arg2Unreffed)
+    }
+    return super.find(arg1Unreffed)
   }
 
   findAll(
