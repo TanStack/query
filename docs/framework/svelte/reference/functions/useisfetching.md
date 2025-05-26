@@ -11,9 +11,13 @@ function useIsFetching(filters?, queryClient?): Readable<number>
 
 ## Parameters
 
-• **filters?**: `QueryFilters`
+### filters?
 
-• **queryClient?**: `QueryClient`
+`QueryFilters`\<readonly `unknown`[]\>
+
+### queryClient?
+
+`QueryClient`
 
 ## Returns
 
@@ -21,4 +25,4 @@ function useIsFetching(filters?, queryClient?): Readable<number>
 
 ## Defined in
 
-[packages/svelte-query/src/useIsFetching.ts:10](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/useIsFetching.ts#L10)
+[packages/svelte-query/src/useIsFetching.ts:7](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useIsFetching.ts#L7)

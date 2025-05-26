@@ -14,8 +14,13 @@ import { setIsServer } from './utils'
 describe('Server Side Rendering', () => {
   setIsServer(true)
 
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
@@ -23,8 +28,6 @@ describe('Server Side Rendering', () => {
   })
 
   it('should not trigger fetch', () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
     const queryFn = vi.fn().mockReturnValue('data')
 
@@ -52,8 +55,6 @@ describe('Server Side Rendering', () => {
   })
 
   it('should add prefetched data to cache', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
     const fetchFn = () => Promise.resolve('data')
     const data = await queryClient.fetchQuery({
@@ -66,8 +67,6 @@ describe('Server Side Rendering', () => {
   })
 
   it('should return existing data from the cache', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
     const queryFn = vi.fn(async () => {
       await vi.advanceTimersByTimeAsync(10)
@@ -102,9 +101,6 @@ describe('Server Side Rendering', () => {
   it('should add initialData to the cache', () => {
     const key = queryKey()
 
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
-
     function Page() {
       const [page, setPage] = React.useState(1)
       const { data } = useQuery({
@@ -134,8 +130,6 @@ describe('Server Side Rendering', () => {
   })
 
   it('useInfiniteQuery should return the correct state', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
     const queryFn = vi.fn(async () => {
       await vi.advanceTimersByTimeAsync(5)

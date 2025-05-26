@@ -33,7 +33,7 @@ bun add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-cli
 
 - Import the `createSyncStoragePersister` function
 - Create a new syncStoragePersister
-- Pass it to the [`persistQueryClient`](./persistQueryClient.md) function
+- Pass it to the [`persistQueryClient`](../persistQueryClient.md) function
 
 ```tsx
 import { persistQueryClient } from '@tanstack/react-query-persist-client'

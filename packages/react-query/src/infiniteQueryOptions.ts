@@ -3,6 +3,7 @@ import type {
   DefaultError,
   InfiniteData,
   InitialDataFunction,
+  NonUndefinedGuard,
   OmitKeyof,
   QueryKey,
   SkipToken,
@@ -60,8 +61,6 @@ export type UnusedSkipTokenInfiniteOptions<
     SkipToken | undefined
   >
 }
-
-type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
