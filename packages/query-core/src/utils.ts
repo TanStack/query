@@ -210,16 +210,21 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
  * Hashes the value into a stable hash.
  */
 export function hashKey(queryKey: QueryKey | MutationKey): string {
-  return JSON.stringify(queryKey, (_, val) =>
-    isPlainObject(val)
-      ? Object.keys(val)
+  return JSON.stringify(queryKey, (_, val) => {
+    const thingToHash =
+      val instanceof Map || val instanceof Set
+        ? Object.fromEntries([...val.entries()])
+        : val;
+
+    return isPlainObject(thingToHash)
+      ? Object.keys(thingToHash)
           .sort()
           .reduce((result, key) => {
-            result[key] = val[key]
-            return result
+            result[key] = thingToHash[key];
+            return result;
           }, {} as any)
-      : val,
-  )
+      : thingToHash;
+  });
 }
 
 /**
