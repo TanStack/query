@@ -98,7 +98,7 @@ export function tryResolveSync(promise: Promise<unknown> | Thenable<unknown>) {
     .then((result) => {
       data = result
       return result
-    })
+    }, noop)
     // .catch can be unavailable on certain kinds of thenable's
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     ?.catch(noop)
