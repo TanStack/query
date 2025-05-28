@@ -4,3 +4,4 @@
 **/coverage
 **/dist
 **/codemods/**/__testfixtures__
+**/.vinxi

@@ -40,5 +40,8 @@ stats.html
 .DS_Store
 .cache
 .idea
+.nx/cache
+.nx/workspace-data
 
 nx-cloud.env
+
