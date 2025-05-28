@@ -70,11 +70,11 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "@angular/common": "^20.0.0-rc.0",
-    "@angular/compiler": "^20.0.0-rc.0",
-    "@angular/core": "^20.0.0-rc.0",
-    "@angular/platform-browser": "^20.0.0-rc.0",
-    "@angular/platform-browser-dynamic": "^20.0.0-rc.0",
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-browser-dynamic": "^20.0.0",
     "@tanstack/query-test-utils": "workspace:*",
     "eslint-plugin-jsdoc": "^50.5.0",
     "npm-run-all2": "^5.0.0"
