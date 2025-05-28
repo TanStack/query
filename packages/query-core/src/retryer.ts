@@ -147,7 +147,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       return
     }
 
-    let promiseOrValue: any
+    let promiseOrValue: MaybePromise<TData>
 
     // we can re-use config.initialPromise on the first call of run()
     const initialPromise =
