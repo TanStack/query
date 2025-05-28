@@ -371,7 +371,10 @@ async function run() {
   changedPackages.forEach((pkg) => {
     const packageDir = path.join(rootDir, 'packages', pkg.packageDir)
 
-    const cmd = `cd ${packageDir} && pnpm publish --tag ${npmTag} --access=public --no-git-checks`
+    const cmd = `cd ${packageDir} && pnpm publish ${
+      // check v4, v5, v6, v7..., and if it's false, then it's a tag for npm (ex. latest, beta, alpha, rc)
+      /^v\d+$/.test(npmTag) ? `` : `--tag ${npmTag}`
+    } --access=public --no-git-checks`
     console.info(`  Publishing ${pkg.name}@${version} to npm...`)
     execSync(cmd, {
       stdio: [process.stdin, process.stdout, process.stderr],
