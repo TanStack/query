@@ -1,3 +1,4 @@
+import { addToEnd } from './utils'
 import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
 
 /**
@@ -9,7 +10,11 @@ import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
  * @param refetchMode - Defines how re-fetches are handled.
  * Defaults to `'reset'`, erases all data and puts the query back into `pending` state.
  * Set to `'append'` to append new data to the existing data.
- * Set to `'replace'` to write the data to the cache at the end of the stream.
+ * Set to `'replace'` to write all data to the cache once the stream ends.
+ * @param maxChunks - The maximum number of chunks to keep in the cache.
+ * Defaults to `undefined`, meaning all chunks will be kept.
+ * If `undefined` or `0`, the number of chunks is unlimited.
+ * If the number of chunks exceeds this number, the oldest chunk will be removed.
  */
 export function streamedQuery<
   TQueryFnData = unknown,
@@ -17,11 +22,13 @@ export function streamedQuery<
 >({
   queryFn,
   refetchMode = 'reset',
+  maxChunks,
 }: {
   queryFn: (
     context: QueryFunctionContext<TQueryKey>,
   ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
   refetchMode?: 'append' | 'reset' | 'replace'
+  maxChunks?: number
 }): QueryFunction<Array<TQueryFnData>, TQueryKey> {
   return async (context) => {
     const query = context.client
@@ -38,7 +45,7 @@ export function streamedQuery<
       })
     }
 
-    const result: Array<TQueryFnData> = []
+    let result: Array<TQueryFnData> = []
     const stream = await queryFn(context)
 
     for await (const chunk of stream) {
@@ -51,11 +58,11 @@ export function streamedQuery<
         context.client.setQueryData<Array<TQueryFnData>>(
           context.queryKey,
           (prev = []) => {
-            return prev.concat([chunk])
+            return addToEnd(prev, chunk, maxChunks)
           },
         )
       }
-      result.push(chunk)
+      result = addToEnd(result, chunk, maxChunks)
     }
 
     // finalize result: replace-refetching needs to write to the cache

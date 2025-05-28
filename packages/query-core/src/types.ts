@@ -9,6 +9,8 @@ import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+export type NonUndefinedGuard<T> = T extends undefined ? never : T
+
 export type DistributiveOmit<
   TObject,
   TKey extends keyof TObject,

@@ -24,13 +24,6 @@ export interface HydrationBoundaryProps {
   queryClient?: QueryClient
 }
 
-const hasProperty = <TKey extends string>(
-  obj: unknown,
-  key: TKey,
-): obj is { [k in TKey]: unknown } => {
-  return typeof obj === 'object' && obj !== null && key in obj
-}
-
 export const HydrationBoundary = ({
   children,
   options = {},
@@ -45,7 +38,7 @@ export const HydrationBoundary = ({
   const optionsRef = React.useRef(options)
   optionsRef.current = options
 
-  // This useMemo is for performance reasons only, everything inside it _must_
+  // This useMemo is for performance reasons only, everything inside it must
   // be safe to run in every render and code here should be read as "in render".
   //
   // This code needs to happen during the render phase, because after initial
@@ -80,10 +73,12 @@ export const HydrationBoundary = ({
         } else {
           const hydrationIsNewer =
             dehydratedQuery.state.dataUpdatedAt >
-              existingQuery.state.dataUpdatedAt || // RSC special serialized then-able chunks
-            (hasProperty(dehydratedQuery.promise, 'status') &&
-              hasProperty(existingQuery.promise, 'status') &&
-              dehydratedQuery.promise.status !== existingQuery.promise.status)
+              existingQuery.state.dataUpdatedAt ||
+            (dehydratedQuery.promise &&
+              existingQuery.state.status !== 'pending' &&
+              existingQuery.state.fetchStatus !== 'fetching' &&
+              dehydratedQuery.dehydratedAt !== undefined &&
+              dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
 
           const queryAlreadyQueued = hydrationQueue?.find(
             (query) => query.queryHash === dehydratedQuery.queryHash,

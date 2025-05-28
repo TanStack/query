@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { sortDataByOrder } from '../rules/infinite-query-property-order/infinite-query-property-order.utils'
+import { sortDataByOrder } from '../utils/sort-data-by-order'
 
 describe('create-route-property-order utils', () => {
   describe('sortDataByOrder', () => {
