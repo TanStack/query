@@ -9,6 +9,7 @@ import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+export type MaybePromise<T> = T | Promise<T>
 export type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type DistributiveOmit<
@@ -1105,18 +1106,18 @@ export interface MutationOptions<
     data: TData,
     variables: TVariables,
     context: TContext,
-  ) => Promise<void> | void
+  ) => MaybePromise<void>
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<void> | void
+  ) => MaybePromise<void>
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<void> | void
+  ) => MaybePromise<void>
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode

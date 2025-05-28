@@ -1,5 +1,6 @@
 import { matchQuery } from '@tanstack/query-core'
 import type {
+  MaybePromise,
   Query,
   QueryClient,
   QueryFilters,
@@ -14,8 +15,6 @@ export interface PersistedQuery {
   queryKey: QueryKey
   state: QueryState
 }
-
-export type MaybePromise<T> = T | Promise<T>
 
 export interface AsyncStorage<TStorageValue = string> {
   getItem: (key: string) => MaybePromise<TStorageValue | undefined | null>

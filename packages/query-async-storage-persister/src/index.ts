@@ -2,7 +2,6 @@ import { asyncThrottle } from './asyncThrottle'
 import { noop } from './utils'
 import type {
   AsyncStorage,
-  MaybePromise,
   PersistedClient,
   Persister,
   Promisable,
@@ -29,12 +28,12 @@ interface CreateAsyncStoragePersisterOptions {
    * How to serialize the data to storage.
    * @default `JSON.stringify`
    */
-  serialize?: (client: PersistedClient) => MaybePromise<string>
+  serialize?: (client: PersistedClient) => Promisable<string>
   /**
    * How to deserialize the data from storage.
    * @default `JSON.parse`
    */
-  deserialize?: (cachedString: string) => MaybePromise<PersistedClient>
+  deserialize?: (cachedString: string) => Promisable<PersistedClient>
 
   retry?: AsyncPersistRetryer
 }

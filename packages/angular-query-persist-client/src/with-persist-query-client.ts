@@ -16,12 +16,12 @@ import {
   persistQueryClientSubscribe,
 } from '@tanstack/query-persist-client-core'
 import type { PersistQueryClientOptions as PersistQueryClientOptionsCore } from '@tanstack/query-persist-client-core'
-import type { PersistQueryClientFeature } from '@tanstack/angular-query-experimental'
+import type { MaybePromise, PersistQueryClientFeature } from '@tanstack/angular-query-experimental'
 
 type PersistQueryClientOptions = {
   persistOptions: Omit<PersistQueryClientOptionsCore, 'queryClient'>
-  onSuccess?: () => Promise<void> | void
-  onError?: () => Promise<void> | void
+  onSuccess?: () => MaybePromise<void>
+  onError?: () => MaybePromise<void>
 }
 
 /**

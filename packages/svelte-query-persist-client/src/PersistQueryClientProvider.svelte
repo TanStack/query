@@ -10,8 +10,8 @@
   import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
 
   export let client: QueryClient
-  export let onSuccess: () => Promise<unknown> | unknown = () => undefined
-  export let onError: () => Promise<unknown> | unknown = () => undefined
+  export let onSuccess: () => MaybePromise<unknown> = () => undefined
+  export let onError: () => MaybePromise<unknown> = () => undefined
   export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
 
   const isRestoring = writable(true)

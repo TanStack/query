@@ -65,7 +65,7 @@ export interface FetchContext<
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > {
-  fetchFn: () => Promise<unknown> | unknown
+  fetchFn: () => MaybePromise<unknown>
   fetchOptions?: FetchOptions
   signal: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
