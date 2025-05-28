@@ -7,7 +7,11 @@
   } from '@tanstack/svelte-query'
   import { writable } from 'svelte/store'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-  import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
+  import type {
+    MaybePromise,
+    OmitKeyof,
+    QueryClient,
+  } from '@tanstack/svelte-query'
 
   export let client: QueryClient
   export let onSuccess: () => MaybePromise<unknown> = () => undefined

@@ -16,6 +16,7 @@ import type {
   DefaultError,
   FetchStatus,
   InitialDataFunction,
+  MaybePromise,
   OmitKeyof,
   QueryFunction,
   QueryFunctionContext,

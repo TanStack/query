@@ -98,7 +98,7 @@ export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
+> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => MaybePromise<T>
 
 export type StaleTime<
   TQueryFnData = unknown,
@@ -125,12 +125,12 @@ export type QueryPersister<
       queryFn: QueryFunction<T, TQueryKey, never>,
       context: QueryFunctionContext<TQueryKey>,
       query: Query,
-    ) => T | Promise<T>
+    ) => MaybePromise<T>
   : (
       queryFn: QueryFunction<T, TQueryKey, TPageParam>,
       context: QueryFunctionContext<TQueryKey>,
       query: Query,
-    ) => T | Promise<T>
+    ) => MaybePromise<T>
 
 export type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
