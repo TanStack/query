@@ -3,7 +3,12 @@ import { Mutation } from './mutation'
 import { matchMutation, noop } from './utils'
 import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
-import type { DefaultError, MaybePromise, MutationOptions, NotifyEvent } from './types'
+import type {
+  DefaultError,
+  MaybePromise,
+  MutationOptions,
+  NotifyEvent,
+} from './types'
 import type { QueryClient } from './queryClient'
 import type { Action, MutationState } from './mutation'
 import type { MutationFilters } from './utils'

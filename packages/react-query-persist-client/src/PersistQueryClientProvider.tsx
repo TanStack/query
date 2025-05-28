@@ -7,7 +7,11 @@ import {
 } from '@tanstack/query-persist-client-core'
 import { IsRestoringProvider, QueryClientProvider } from '@tanstack/react-query'
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-import type { MaybePromise, OmitKeyof, QueryClientProviderProps } from '@tanstack/react-query'
+import type {
+  MaybePromise,
+  OmitKeyof,
+  QueryClientProviderProps,
+} from '@tanstack/react-query'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
