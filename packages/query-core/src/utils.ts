@@ -8,6 +8,7 @@ import type {
   QueryKey,
   QueryOptions,
   StaleTime,
+  StaleTimeFunction,
 } from './types'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
@@ -102,9 +103,11 @@ export function resolveStaleTime<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  staleTime: undefined | StaleTime<TQueryFnData, TError, TData, TQueryKey>,
+  staleTime:
+    | undefined
+    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): number | undefined {
+): StaleTime | undefined {
   return typeof staleTime === 'function' ? staleTime(query) : staleTime
 }
 
