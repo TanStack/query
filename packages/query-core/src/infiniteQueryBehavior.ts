@@ -54,22 +54,24 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.resolve(data)
           }
 
-          const queryFnContext: OmitKeyof<
-            QueryFunctionContext<QueryKey, unknown>,
-            'signal'
-          > = {
-            client: context.client,
-            queryKey: context.queryKey,
-            pageParam: param,
-            direction: previous ? 'backward' : 'forward',
-            meta: context.options.meta,
+          const createQueryFnContext = () => {
+            const queryFnContext: OmitKeyof<
+              QueryFunctionContext<QueryKey, unknown>,
+              'signal'
+            > = {
+              client: context.client,
+              queryKey: context.queryKey,
+              pageParam: param,
+              direction: previous ? 'backward' : 'forward',
+              meta: context.options.meta,
+            }
+            addSignalProperty(queryFnContext)
+            return queryFnContext as QueryFunctionContext<QueryKey, unknown>
           }
 
-          addSignalProperty(queryFnContext)
+          const queryFnContext = createQueryFnContext()
 
-          const page = await queryFn(
-            queryFnContext as QueryFunctionContext<QueryKey, unknown>,
-          )
+          const page = await queryFn(queryFnContext)
 
           const { maxPages } = context.options
           const addTo = previous ? addToStart : addToEnd
