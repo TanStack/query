@@ -182,4 +182,27 @@ useMutation({
 
 [//]: # 'Example5'
 
-You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `
+You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options (eg. `onSuccess`, `onError`, or `onSettled`) to the `mutate` function as its second argument. These will override or supplement the default callbacks defined in the hook, providing more you with more component-level control.
+
+[//]: # 'Example6'
+
+```tsx
+const mutation = useMutation({
+  mutationFn: createUser,
+  onSuccess: () => {
+    console.log('Default success handler');
+  },
+});
+
+mutation.mutate(newUserData, {
+  onSuccess: (data) => {
+    console.log('This runs only for this specific mutation call:', data);
+  },
+  onError: (error) => {
+    console.error('This error handler is specific to this call:', error);
+  },
+});
+```
+
+[//]: # 'Example6'
+
