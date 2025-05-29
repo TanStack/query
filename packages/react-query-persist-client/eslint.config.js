@@ -10,6 +10,9 @@ export default [
   {
     files: ['**/*.{ts,tsx}'],
     ...pluginReact.configs.recommended,
+    rules: {
+      '@eslint-react/no-context-provider': 'off', // We need to be React 18 compatible
+    },
   },
   {
     rules: {
