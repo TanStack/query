@@ -182,4 +182,233 @@ useMutation({
 
 [//]: # 'Example5'
 
-You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `
+You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported options include: `onSuccess`, `onError` and `onSettled`. Please keep in mind that those additional callbacks won't run if your component unmounts _before_ the mutation finishes.
+
+[//]: # 'Example6'
+
+```tsx
+useMutation({
+  mutationFn: addTodo,
+  onSuccess: (data, variables, context) => {
+    // I will fire first
+  },
+  onError: (error, variables, context) => {
+    // I will fire first
+  },
+  onSettled: (data, error, variables, context) => {
+    // I will fire first
+  },
+})
+
+mutate(todo, {
+  onSuccess: (data, variables, context) => {
+    // I will fire second!
+  },
+  onError: (error, variables, context) => {
+    // I will fire second!
+  },
+  onSettled: (data, error, variables, context) => {
+    // I will fire second!
+  },
+})
+```
+
+[//]: # 'Example6'
+
+### Consecutive mutations
+
+There is a slight difference in handling `onSuccess`, `onError` and `onSettled` callbacks when it comes to consecutive mutations. When passed to the `mutate` function, they will be fired up only _once_ and only if the component is still mounted. This is due to the fact that mutation observer is removed and resubscribed every time when the `mutate` function is called. On the contrary, `useMutation` handlers execute for each `mutate` call.
+
+> Be aware that most likely, `mutationFn` passed to `useMutation` is asynchronous. In that case, the order in which mutations are fulfilled may differ from the order of `mutate` function calls.
+
+[//]: # 'Example7'
+
+```tsx
+useMutation({
+  mutationFn: addTodo,
+  onSuccess: (data, variables, context) => {
+    // Will be called 3 times
+  },
+})
+
+const todos = ['Todo 1', 'Todo 2', 'Todo 3']
+todos.forEach((todo) => {
+  mutate(todo, {
+    onSuccess: (data, variables, context) => {
+      // Will execute only once, for the last mutation (Todo 3),
+      // regardless which mutation resolves first
+    },
+  })
+})
+```
+
+[//]: # 'Example7'
+
+## Promises
+
+Use `mutateAsync` instead of `mutate` to get a promise which will resolve on success or throw on an error. This can for example be used to compose side effects.
+
+[//]: # 'Example8'
+
+```tsx
+const mutation = useMutation({ mutationFn: addTodo })
+
+try {
+  const todo = await mutation.mutateAsync(todo)
+  console.log(todo)
+} catch (error) {
+  console.error(error)
+} finally {
+  console.log('done')
+}
+```
+
+[//]: # 'Example8'
+
+## Retry
+
+By default, TanStack Query will not retry a mutation on error, but it is possible with the `retry` option:
+
+[//]: # 'Example9'
+
+```tsx
+const mutation = useMutation({
+  mutationFn: addTodo,
+  retry: 3,
+})
+```
+
+[//]: # 'Example9'
+
+If mutations fail because the device is offline, they will be retried in the same order when the device reconnects.
+
+## Persist mutations
+
+Mutations can be persisted to storage if needed and resumed at a later point. This can be done with the hydration functions:
+
+[//]: # 'Example10'
+
+```tsx
+const queryClient = new QueryClient()
+
+// Define the "addTodo" mutation
+queryClient.setMutationDefaults(['addTodo'], {
+  mutationFn: addTodo,
+  onMutate: async (variables) => {
+    // Cancel current queries for the todos list
+    await queryClient.cancelQueries({ queryKey: ['todos'] })
+
+    // Create optimistic todo
+    const optimisticTodo = { id: uuid(), title: variables.title }
+
+    // Add optimistic todo to todos list
+    queryClient.setQueryData(['todos'], (old) => [...old, optimisticTodo])
+
+    // Return context with the optimistic todo
+    return { optimisticTodo }
+  },
+  onSuccess: (result, variables, context) => {
+    // Replace optimistic todo in the todos list with the result
+    queryClient.setQueryData(['todos'], (old) =>
+      old.map((todo) =>
+        todo.id === context.optimisticTodo.id ? result : todo,
+      ),
+    )
+  },
+  onError: (error, variables, context) => {
+    // Remove optimistic todo from the todos list
+    queryClient.setQueryData(['todos'], (old) =>
+      old.filter((todo) => todo.id !== context.optimisticTodo.id),
+    )
+  },
+  retry: 3,
+})
+
+// Start mutation in some component:
+const mutation = useMutation({ mutationKey: ['addTodo'] })
+mutation.mutate({ title: 'title' })
+
+// If the mutation has been paused because the device is for example offline,
+// Then the paused mutation can be dehydrated when the application quits:
+const state = dehydrate(queryClient)
+
+// The mutation can then be hydrated again when the application is started:
+hydrate(queryClient, state)
+
+// Resume the paused mutations:
+queryClient.resumePausedMutations()
+```
+
+[//]: # 'Example10'
+
+### Persisting Offline mutations
+
+If you persist offline mutations with the [persistQueryClient plugin](../plugins/persistQueryClient.md), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
+
+This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggers the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
+
+[//]: # 'Example11'
+
+```tsx
+const persister = createSyncStoragePersister({
+  storage: window.localStorage,
+})
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+    },
+  },
+})
+
+// we need a default mutation function so that paused mutations can resume after a page reload
+queryClient.setMutationDefaults(['todos'], {
+  mutationFn: ({ id, data }) => {
+    return api.updateTodo(id, data)
+  },
+})
+
+export default function App() {
+  return (
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+      onSuccess={() => {
+        // resume mutations after initial restore from localStorage was successful
+        queryClient.resumePausedMutations()
+      }}
+    >
+      <RestOfTheApp />
+    </PersistQueryClientProvider>
+  )
+}
+```
+
+[//]: # 'Example11'
+
+We also have an extensive [offline example](../examples/offline) that covers both queries and mutations.
+
+## Mutation Scopes
+
+Per default, all mutations run in parallel - even if you invoke `.mutate()` of the same mutation multiple times. Mutations can be given a `scope` with an `id` to avoid that. All mutations with the same `scope.id` will run in serial, which means when they are triggered, they will start in `isPaused: true` state if there is already a mutation for that scope in progress. They will be put into a queue and will automatically resume once their time in the queue has come.
+
+[//]: # 'ExampleScopes'
+
+```tsx
+const mutation = useMutation({
+  mutationFn: addTodo,
+  scope: {
+    id: 'todo',
+  },
+})
+```
+
+[//]: # 'ExampleScopes'
+[//]: # 'Materials'
+
+## Further reading
+
+For more information about mutations, have a look at [#12: Mastering Mutations in React Query](../community/tkdodos-blog.md#12-mastering-mutations-in-react-query) from
+the Community Resources.
+
+[//]: # 'Materials'
