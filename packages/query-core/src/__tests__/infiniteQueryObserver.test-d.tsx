@@ -72,4 +72,47 @@ describe('InfiniteQueryObserver', () => {
       expectTypeOf(result.status).toEqualTypeOf<'success'>()
     }
   })
+
+  it('should not allow pageParam on fetchNextPage / fetchPreviousPage if getNextPageParam is defined', async () => {
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      initialPageParam: 1,
+      getNextPageParam: (page) => Number(page) + 1,
+    })
+
+    expectTypeOf<typeof observer.fetchNextPage>()
+      .parameter(0)
+      .toEqualTypeOf<
+        { cancelRefetch?: boolean; throwOnError?: boolean } | undefined
+      >()
+
+    expectTypeOf<typeof observer.fetchPreviousPage>()
+      .parameter(0)
+      .toEqualTypeOf<
+        { cancelRefetch?: boolean; throwOnError?: boolean } | undefined
+      >()
+  })
+
+  it('should require pageParam on fetchNextPage / fetchPreviousPage if getNextPageParam is missing', async () => {
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      initialPageParam: 1,
+    })
+
+    expectTypeOf<typeof observer.fetchNextPage>()
+      .parameter(0)
+      .toEqualTypeOf<
+        | { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }
+        | undefined
+      >()
+
+    expectTypeOf<typeof observer.fetchPreviousPage>()
+      .parameter(0)
+      .toEqualTypeOf<
+        | { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }
+        | undefined
+      >()
+  })
 })

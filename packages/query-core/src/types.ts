@@ -294,7 +294,7 @@ export interface InfiniteQueryPageParamsOptions<
    * This function can be set to automatically get the next cursor for infinite queries.
    * The result will also be used to determine the value of `hasNextPage`.
    */
-  getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
+  getNextPageParam?: GetNextPageParamFunction<TPageParam, TQueryFnData>
 }
 
 export type ThrowOnError<
