@@ -232,7 +232,7 @@ export class QueryObserver<
       TQueryKey
     >,
   ): QueryObserverResult<TData, TError> {
-    const query = this.#client.getQueryCache().build(this.#client, options)
+    const query = this.#client.getQueryCache().ensure(this.#client, options)
 
     const result = this.createResult(query, options)
 
@@ -306,7 +306,7 @@ export class QueryObserver<
 
     const query = this.#client
       .getQueryCache()
-      .build(this.#client, defaultedOptions)
+      .ensure(this.#client, defaultedOptions)
 
     return query.fetch().then(() => this.createResult(query, defaultedOptions))
   }
@@ -691,7 +691,7 @@ export class QueryObserver<
   }
 
   #updateQuery(): void {
-    const query = this.#client.getQueryCache().build(this.#client, this.options)
+    const query = this.#client.getQueryCache().ensure(this.#client, this.options)
 
     if (query === this.#currentQuery) {
       return

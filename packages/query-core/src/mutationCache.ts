@@ -93,7 +93,17 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     this.#mutationId = 0
   }
 
-  build<TData, TError, TVariables, TContext>(
+  /**
+   * Creates a new mutation instance and adds it to the cache.
+   * Unlike QueryCache.ensure(), this always creates a new mutation since
+   * each mutation execution should be unique.
+   * 
+   * @param client - The QueryClient instance
+   * @param options - Mutation options
+   * @param state - Optional initial state for the new mutation
+   * @returns A new Mutation instance
+   */
+  create<TData, TError, TVariables, TContext>(
     client: QueryClient,
     options: MutationOptions<TData, TError, TVariables, TContext>,
     state?: MutationState<TData, TError, TVariables, TContext>,
