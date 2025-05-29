@@ -3,8 +3,6 @@ import {
   noop,
   replaceData,
   resolveValueOrFunction,
-  resolveEnabled,
-  resolveStaleTime,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -277,7 +275,7 @@ export class Query<
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) =>
-          resolveStaleTime(observer.options.staleTime, this) === 'static',
+          resolveValueOrFunction(observer.options.staleTime, this) === 'static',
       )
     }
 
