@@ -1263,6 +1263,17 @@ const QueryRow: Component<{ query: Query }> = (props) => {
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
+  const isStatic = createSubscribeToQueryCacheBatcher(
+    (queryCache) =>
+      queryCache()
+        .find({
+          queryKey: props.query.queryKey,
+        })
+        ?.isStatic() ?? false,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
+  )
+
   const isStale = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
       queryCache()
@@ -1336,6 +1347,9 @@ const QueryRow: Component<{ query: Query }> = (props) => {
         <code class="tsqd-query-hash">{props.query.queryHash}</code>
         <Show when={isDisabled()}>
           <div class="tsqd-query-disabled-indicator">disabled</div>
+        </Show>
+        <Show when={isStatic()}>
+          <div class="tsqd-query-static-indicator">static</div>
         </Show>
       </button>
     </Show>
@@ -3178,6 +3192,17 @@ const stylesFactory = (
         color: ${t(colors.gray[800], colors.gray[300])};
         background-color: ${t(colors.gray[300], colors.darkGray[600])};
         border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
+        font-size: ${font.size.xs};
+      }
+
+      & .tsqd-query-static-indicator {
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        padding: 0 ${tokens.size[2]};
+        color: ${t(colors.teal[800], colors.teal[300])};
+        background-color: ${t(colors.teal[100], colors.teal[900])};
+        border-bottom: 1px solid ${t(colors.teal[300], colors.teal[700])};
         font-size: ${font.size.xs};
       }
     `,
