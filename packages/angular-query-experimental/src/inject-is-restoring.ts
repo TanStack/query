@@ -2,12 +2,20 @@ import {
   InjectionToken,
   Injector,
   assertInInjectionContext,
-  computed,
   inject,
+  signal,
 } from '@angular/core'
 import type { Provider, Signal } from '@angular/core'
 
-const IS_RESTORING = new InjectionToken<Signal<boolean>>('')
+const IS_RESTORING = new InjectionToken(
+  typeof ngDevMode === 'undefined' || ngDevMode
+    ? 'TANSTACK_QUERY_IS_RESTORING'
+    : '',
+  {
+    // Default value when not provided
+    factory: () => signal(false).asReadonly(),
+  },
+)
 
 /**
  * The `Injector` in which to create the isRestoring signal.
@@ -19,21 +27,15 @@ interface InjectIsRestoringOptions {
 }
 
 /**
- * Injects a signal that tracks whether a restore is currently in progress. {@link injectQuery} and friends also check this internally to avoid race conditions between the restore and mounting queries.
+ * Injects a signal that tracks whether a restore is currently in progress. {@link injectQuery} and friends also check this internally to avoid race conditions between the restore and initializing queries.
  * @param options - Options for injectIsRestoring.
  * @returns signal with boolean that indicates whether a restore is in progress.
  * @public
  */
-export function injectIsRestoring(
-  options?: InjectIsRestoringOptions,
-): Signal<boolean> {
+export function injectIsRestoring(options?: InjectIsRestoringOptions) {
   !options?.injector && assertInInjectionContext(injectIsRestoring)
   const injector = options?.injector ?? inject(Injector)
-  return injector.get(
-    IS_RESTORING,
-    computed(() => false),
-    { optional: true },
-  )
+  return injector.get(IS_RESTORING)
 }
 
 /**

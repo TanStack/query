@@ -1,17 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { QueryObserver, dehydrate, hydrate, isCancelledError } from '..'
 import {
-  createQueryClient,
-  mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
-  setIsServer,
   sleep,
-} from './utils'
+} from '@tanstack/query-test-utils'
+import {
+  Query,
+  QueryClient,
+  QueryObserver,
+  dehydrate,
+  hydrate,
+  isCancelledError,
+} from '..'
+import { hashQueryKeyByOptions } from '../utils'
+import { mockOnlineManagerIsOnline, setIsServer } from './utils'
 import type {
   QueryCache,
-  QueryClient,
   QueryFunctionContext,
+  QueryKey,
   QueryObserverResult,
 } from '..'
 
@@ -21,7 +27,7 @@ describe('query', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
@@ -387,7 +393,7 @@ describe('query', () => {
   })
 
   test('should reset to default state when created from hydration', async () => {
-    const client = createQueryClient()
+    const client = new QueryClient()
     await client.prefetchQuery({
       queryKey: ['string'],
       queryFn: () => Promise.resolve('string'),
@@ -395,7 +401,7 @@ describe('query', () => {
 
     const dehydrated = dehydrate(client)
 
-    const hydrationClient = createQueryClient()
+    const hydrationClient = new QueryClient()
     hydrate(hydrationClient, dehydrated)
 
     expect(hydrationClient.getQueryData(['string'])).toBe('string')
@@ -1003,7 +1009,7 @@ describe('query', () => {
     const key = queryKey()
 
     const queryFn = vi
-      .fn()
+      .fn<() => Promise<string>>()
       .mockImplementation(() => sleep(10).then(() => 'data'))
 
     queryClient.prefetchQuery({
@@ -1019,5 +1025,74 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(10)
     expect(query.state.status).toBe('error')
+  })
+
+  test('should use persister if provided', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => 'data',
+      persister: () => Promise.resolve('persisted data'),
+    })
+
+    const query = queryCache.find({ queryKey: key })!
+    expect(query.state.data).toBe('persisted data')
+  })
+
+  test('should use queryFn from observer if not provided in options', async () => {
+    const key = queryKey()
+    const queryFn = () => Promise.resolve('data')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: queryFn,
+    })
+
+    const query = new Query({
+      client: queryClient,
+      queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
+    })
+
+    query.addObserver(observer)
+
+    await query.fetch()
+    const result = await query.state.data
+    expect(result).toBe('data')
+    expect(query.options.queryFn).toBe(queryFn)
+  })
+
+  test('should log error when queryKey is not an array', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+    const key: unknown = 'string-key'
+
+    await queryClient.prefetchQuery({
+      queryKey: key as QueryKey,
+      queryFn: () => 'data',
+    })
+
+    expect(consoleMock).toHaveBeenCalledWith(
+      "As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']",
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  test('should call initialData function when it is a function', () => {
+    const key = queryKey()
+    const initialDataFn = vi.fn(() => 'initial data')
+
+    const query = new Query({
+      client: queryClient,
+      queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
+      options: {
+        queryFn: () => 'data',
+        initialData: initialDataFn,
+      },
+    })
+
+    expect(initialDataFn).toHaveBeenCalledTimes(1)
+    expect(query.state.data).toBe('initial data')
   })
 })

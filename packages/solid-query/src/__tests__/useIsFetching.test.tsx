@@ -1,14 +1,21 @@
 import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
-import { QueryCache, QueryClientProvider, useIsFetching, useQuery } from '..'
-import { createQueryClient, queryKey, setActTimeout, sleep } from './utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+  useIsFetching,
+  useQuery,
+} from '..'
+import { setActTimeout } from './utils'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
 
     function IsFetching() {
@@ -46,15 +53,21 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
 
-    await rendered.findByText('isFetching: 0')
+    await waitFor(() =>
+      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByRole('button', { name: /setReady/i }))
-    await rendered.findByText('isFetching: 1')
-    await rendered.findByText('isFetching: 0')
+    await waitFor(() =>
+      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
+    )
   })
 
   it('should not update state while rendering', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
 
     const key1 = queryKey()
     const key2 = queryKey()
@@ -121,7 +134,7 @@ describe('useIsFetching', () => {
   })
 
   it('should be able to filter', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -188,7 +201,7 @@ describe('useIsFetching', () => {
   })
 
   it('should show the correct fetching state when mounted after a query', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const key = queryKey()
 
     function Page() {
@@ -215,12 +228,16 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
 
-    await rendered.findByText('isFetching: 1')
-    await rendered.findByText('isFetching: 0')
+    await waitFor(() =>
+      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
+    )
   })
 
   it('should use provided custom queryClient', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const key = queryKey()
 
     function Page() {
@@ -246,6 +263,8 @@ describe('useIsFetching', () => {
 
     const rendered = render(() => <Page></Page>)
 
-    await rendered.findByText('isFetching: 1')
+    await waitFor(() =>
+      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
+    )
   })
 })

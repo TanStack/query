@@ -17,11 +17,11 @@ The top level object returned from `useQuery`, `useInfiniteQuery`, `useMutation`
 
 ## tracked properties
 
-React Query will only trigger a re-render if one of the properties returned from `useQuery` is actually "used". This is done by using [custom getters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#custom_setters_and_getters). This avoids a lot of unnecessary re-renders, e.g. because properties like `isFetching` or `isStale` might change often, but are not used in the component.
+React Query will only trigger a re-render if one of the properties returned from `useQuery` is actually "used". This is done by using [Proxy object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). This avoids a lot of unnecessary re-renders, e.g. because properties like `isFetching` or `isStale` might change often, but are not used in the component.
 
 You can customize this feature by setting `notifyOnChangeProps` manually globally or on a per-query basis. If you want to turn that feature off, you can set `notifyOnChangeProps: 'all'`.
 
-> Note: Custom getters are invoked by accessing a property, either via destructuring or by accessing it directly. If you use object rest destructuring, you will disable this optimization. We have a [lint rule](../../../eslint/no-rest-destructuring.md) to guard against this pitfall.
+> Note: The get trap of a proxy is invoked by accessing a property, either via destructuring or by accessing it directly. If you use object rest destructuring, you will disable this optimization. We have a [lint rule](../../../../eslint/no-rest-destructuring.md) to guard against this pitfall.
 
 ## select
 
@@ -72,5 +72,5 @@ export const useTodoCount = () => {
 
 ## Further Reading
 
-For an in-depth guide about these topics, read [React Query Render Optimizations](../community/tkdodos-blog.md#3-react-query-render-optimizations) from
+For an in-depth guide about these topics, read [React Query Render Optimizations](../../community/tkdodos-blog.md#3-react-query-render-optimizations) from
 the Community Resources.

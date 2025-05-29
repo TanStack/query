@@ -59,6 +59,10 @@ component_management:
       name: '@tanstack/query-sync-storage-persister'
       paths:
         - packages/query-sync-storage-persister/**
+    - component_id: query-test-utils
+      name: '@tanstack/query-test-utils'
+      paths:
+        - packages/query-test-utils/**
     - component_id: react-query
       name: '@tanstack/react-query'
       paths:

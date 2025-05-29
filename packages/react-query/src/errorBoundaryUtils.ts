@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react'
-import { shouldThrowError } from './utils'
+import { shouldThrowError } from '@tanstack/query-core'
 import type {
   DefaultedQueryObserverOptions,
   Query,

@@ -5,19 +5,15 @@ import {
   createRenderStream,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   QueryClientProvider,
   keepPreviousData,
   useInfiniteQuery,
 } from '..'
-import {
-  createQueryClient,
-  queryKey,
-  renderWithClient,
-  setActTimeout,
-  sleep,
-} from './utils'
+import { renderWithClient, setActTimeout } from './utils'
 import type {
   InfiniteData,
   QueryFunctionContext,
@@ -51,7 +47,7 @@ const fetchItems = async (
 
 describe('useInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({
+  const queryClient = new QueryClient({
     queryCache,
     defaultOptions: {
       queries: {
@@ -920,18 +916,30 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('status: success, idle'))
     await waitFor(() =>
-      rendered.getByText('data: {"pages":[10],"pageParams":[10]}'),
+      expect(rendered.getByText('status: success, idle')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(
+        rendered.getByText('data: {"pages":[10],"pageParams":[10]}'),
+      ).toBeInTheDocument(),
     )
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-    await waitFor(() => rendered.getByText('status: success, fetching'))
+    await waitFor(() =>
+      expect(
+        rendered.getByText('status: success, fetching'),
+      ).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    await waitFor(() => rendered.getByText('status: success, idle'))
     await waitFor(() =>
-      rendered.getByText('data: {"pages":[10,11],"pageParams":[10,11]}'),
+      expect(rendered.getByText('status: success, idle')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(
+        rendered.getByText('data: {"pages":[10,11],"pageParams":[10,11]}'),
+      ).toBeInTheDocument(),
     )
   })
 
@@ -1216,13 +1224,17 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() =>
-      rendered.getByText('data: {"pages":[0],"pageParams":[0]}'),
+      expect(
+        rendered.getByText('data: {"pages":[0],"pageParams":[0]}'),
+      ).toBeInTheDocument(),
     )
 
     fireEvent.click(rendered.getByRole('button', { name: /setPages/i }))
 
     await waitFor(() =>
-      rendered.getByText('data: {"pages":[7,8],"pageParams":[7,8]}'),
+      expect(
+        rendered.getByText('data: {"pages":[7,8],"pageParams":[7,8]}'),
+      ).toBeInTheDocument(),
     )
 
     multiplier = 2
@@ -1230,7 +1242,9 @@ describe('useInfiniteQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
     await waitFor(() =>
-      rendered.getByText('data: {"pages":[14,30],"pageParams":[7,15]}'),
+      expect(
+        rendered.getByText('data: {"pages":[14,30],"pageParams":[7,15]}'),
+      ).toBeInTheDocument(),
     )
   })
 
@@ -1807,7 +1821,9 @@ describe('useInfiniteQuery', () => {
 
     const rendered = render(<Page></Page>)
 
-    await waitFor(() => rendered.getByText('data: custom client'))
+    await waitFor(() =>
+      expect(rendered.getByText('data: custom client')).toBeInTheDocument(),
+    )
   })
 
   it('should work with React.use()', async () => {

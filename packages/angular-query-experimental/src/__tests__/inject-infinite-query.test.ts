@@ -1,11 +1,9 @@
 import { TestBed } from '@angular/core/testing'
-import { afterEach } from 'vitest'
-import {
-  Injector,
-  provideExperimentalZonelessChangeDetection,
-} from '@angular/core'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { Injector, provideZonelessChangeDetection } from '@angular/core'
+import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
-import { expectSignals, infiniteFetcher } from './test-utils'
+import { expectSignals } from './test-utils'
 
 const QUERY_DURATION = 1000
 
@@ -19,7 +17,7 @@ describe('injectInfiniteQuery', () => {
     vi.useFakeTimers()
     TestBed.configureTestingModule({
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(queryClient),
       ],
     })
@@ -33,7 +31,8 @@ describe('injectInfiniteQuery', () => {
     const query = TestBed.runInInjectionContext(() => {
       return injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
-        queryFn: infiniteFetcher,
+        queryFn: ({ pageParam }) =>
+          sleep(0).then(() => 'data on page ' + pageParam),
         initialPageParam: 0,
         getNextPageParam: () => 12,
       }))
@@ -72,7 +71,8 @@ describe('injectInfiniteQuery', () => {
       expect(() => {
         injectInfiniteQuery(() => ({
           queryKey: ['injectionContextError'],
-          queryFn: infiniteFetcher,
+          queryFn: ({ pageParam }) =>
+            sleep(0).then(() => 'data on page ' + pageParam),
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }))
@@ -83,7 +83,8 @@ describe('injectInfiniteQuery', () => {
       const query = injectInfiniteQuery(
         () => ({
           queryKey: ['manualInjector'],
-          queryFn: infiniteFetcher,
+          queryFn: ({ pageParam }) =>
+            sleep(0).then(() => 'data on page ' + pageParam),
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }),

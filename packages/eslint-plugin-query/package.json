@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.73.3",
+  "version": "5.78.0",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -40,6 +40,7 @@
   "react-native": "src/index.ts",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "import": {
         "types": "./build/modern/index.d.ts",
         "default": "./build/modern/index.js"

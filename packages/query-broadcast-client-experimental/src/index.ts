@@ -12,7 +12,7 @@ export function broadcastQueryClient({
   queryClient,
   broadcastChannel = 'tanstack-query',
   options,
-}: BroadcastQueryClientOptions) {
+}: BroadcastQueryClientOptions): () => void {
   let transaction = false
   const tx = (cb: () => void) => {
     transaction = true
@@ -27,13 +27,13 @@ export function broadcastQueryClient({
 
   const queryCache = queryClient.getQueryCache()
 
-  queryClient.getQueryCache().subscribe((queryEvent) => {
+  const unsubscribe = queryClient.getQueryCache().subscribe((queryEvent) => {
     if (transaction) {
       return
     }
 
     const {
-      query: { queryHash, queryKey, state },
+      query: { queryHash, queryKey, state, observers },
     } = queryEvent
 
     if (queryEvent.type === 'updated' && queryEvent.action.type === 'success') {
@@ -45,9 +45,17 @@ export function broadcastQueryClient({
       })
     }
 
-    if (queryEvent.type === 'removed') {
+    if (queryEvent.type === 'removed' && observers.length > 0) {
       channel.postMessage({
         type: 'removed',
+        queryHash,
+        queryKey,
+      })
+    }
+
+    if (queryEvent.type === 'added') {
+      channel.postMessage({
+        type: 'added',
         queryHash,
         queryKey,
       })
@@ -62,9 +70,9 @@ export function broadcastQueryClient({
     tx(() => {
       const { type, queryHash, queryKey, state } = action
 
-      if (type === 'updated') {
-        const query = queryCache.get(queryHash)
+      const query = queryCache.get(queryHash)
 
+      if (type === 'updated') {
         if (query) {
           query.setState(state)
           return
@@ -79,12 +87,27 @@ export function broadcastQueryClient({
           state,
         )
       } else if (type === 'removed') {
-        const query = queryCache.get(queryHash)
-
         if (query) {
           queryCache.remove(query)
         }
+      } else if (type === 'added') {
+        if (query) {
+          query.setState(state)
+          return
+        }
+        queryCache.build(
+          queryClient,
+          {
+            queryKey,
+            queryHash,
+          },
+          state,
+        )
       }
     })
+  }
+  return () => {
+    unsubscribe()
+    channel.close()
   }
 }

@@ -268,21 +268,13 @@ export class QueryObserver<
     result: QueryObserverResult<TData, TError>,
     onPropTracked?: (key: keyof QueryObserverResult) => void,
   ): QueryObserverResult<TData, TError> {
-    const trackedResult = {} as QueryObserverResult<TData, TError>
-
-    Object.keys(result).forEach((key) => {
-      Object.defineProperty(trackedResult, key, {
-        configurable: false,
-        enumerable: true,
-        get: () => {
-          this.trackProp(key as keyof QueryObserverResult)
-          onPropTracked?.(key as keyof QueryObserverResult)
-          return result[key as keyof QueryObserverResult]
-        },
-      })
+    return new Proxy(result, {
+      get: (target, key) => {
+        this.trackProp(key as keyof QueryObserverResult)
+        onPropTracked?.(key as keyof QueryObserverResult)
+        return Reflect.get(target, key)
+      },
     })
-
-    return trackedResult
   }
 
   trackProp(key: keyof QueryObserverResult) {

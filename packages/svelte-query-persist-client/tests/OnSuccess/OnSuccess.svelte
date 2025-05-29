@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { sleep } from '../utils.js'
+  import { sleep } from '@tanstack/query-test-utils'
 
   const query = createQuery({
     queryKey: ['test'],

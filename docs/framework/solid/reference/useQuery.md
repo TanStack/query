@@ -191,16 +191,16 @@ function App() {
   - ##### `queryKey: unknown[]`
     - **Required**
     - The query key to use for this query.
-    - The query key will be hashed into a stable hash. See [Query Keys](../../guides/query-keys) for more information.
+    - The query key will be hashed into a stable hash. See [Query Keys](../../guides/query-keys.md) for more information.
     - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
   - ##### `queryFn: (context: QueryFunctionContext) => Promise<TData>`
-    - **Required, but only if no default query function has been defined** See [Default Query Function](../../guides/default-query-function) for more information.
+    - **Required, but only if no default query function has been defined** See [Default Query Function](../../guides/default-query-function.md) for more information.
     - The function that the query will use to request data.
-    - Receives a [QueryFunctionContext](../../guides/query-functions#queryfunctioncontext)
+    - Receives a [QueryFunctionContext](../../guides/query-functions.md#queryfunctioncontext)
     - Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
   - ##### `enabled: boolean`
     - Set this to `false` to disable this query from automatically running.
-    - Can be used for [Dependent Queries](../../guides/dependent-queries).
+    - Can be used for [Dependent Queries](../../guides/dependent-queries.md) for more information.
   - ##### `select: (data: TData) => unknown`
     - Optional
     - This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache.
@@ -229,7 +229,7 @@ function App() {
   - ##### `networkMode: 'online' | 'always' | 'offlineFirst`
     - optional
     - defaults to `'online'`
-    - see [Network Mode](../../guides/network-mode) for more information.
+    - see [Network Mode](../../guides/network-mode.md) for more information.
   - ##### `initialData: TData | () => TData`
     - Optional
     - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
@@ -342,7 +342,7 @@ function App() {
   - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetches.
   - `paused`: The query wanted to fetch, but has been `paused`.
   - `idle`: The query is not fetching.
-  - see [Network Mode](../../guides/network-mode) for more information.
+  - see [Network Mode](../../guides/network-mode.md) for more information.
 - ##### `isFetching: boolean`
   - A derived boolean from the `fetchStatus` variable above, provided for convenience.
 - ##### `isPaused: boolean`

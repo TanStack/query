@@ -3,13 +3,11 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "baseUrl": ".",
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
-    "target": "ES2022",
-    "types": ["vitest/globals"]
+    "target": "ES2022"
   },
   "include": ["src", "*.config.js", "*.config.ts", "package.json"],
   "references": [

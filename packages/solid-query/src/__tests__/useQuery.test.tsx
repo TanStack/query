@@ -11,16 +11,19 @@ import {
 } from 'solid-js'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { reconcile } from 'solid-js/store'
-import { QueryCache, QueryClientProvider, keepPreviousData, useQuery } from '..'
 import {
-  Blink,
-  createQueryClient,
-  mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
-  setActTimeout,
   sleep,
-} from './utils'
+} from '@tanstack/query-test-utils'
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+  keepPreviousData,
+  useQuery,
+} from '..'
+import { Blink, mockOnlineManagerIsOnline, setActTimeout } from './utils'
 import type {
   DefinedUseQueryResult,
   OmitKeyof,
@@ -33,7 +36,7 @@ import type { JSX } from 'solid-js'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -219,9 +222,11 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    rendered.getByText('default')
+    expect(rendered.getByText('default')).toBeInTheDocument()
 
-    await waitFor(() => rendered.getByText('test'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('test')).toBeInTheDocument(),
+    )
   })
 
   it('should return the correct states for a successful query', async () => {
@@ -1889,10 +1894,10 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    rendered.getByText('First Data: init')
-    rendered.getByText('Second Data: init')
-    rendered.getByText('First Status: success')
-    rendered.getByText('Second Status: success')
+    expect(rendered.getByText('First Data: init')).toBeInTheDocument()
+    expect(rendered.getByText('Second Data: init')).toBeInTheDocument()
+    expect(rendered.getByText('First Status: success')).toBeInTheDocument()
+    expect(rendered.getByText('Second Status: success')).toBeInTheDocument()
   })
 
   it('should update query options', () => {
@@ -1973,7 +1978,9 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('new'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('new')).toBeInTheDocument(),
+    )
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/170
@@ -2012,9 +2019,19 @@ describe('useQuery', () => {
 
     // use "act" to wait for state update and prevent console warning
 
-    rendered.getByText('First Status: pending, idle')
-    await waitFor(() => rendered.getByText('Second Status: pending, fetching'))
-    await waitFor(() => rendered.getByText('Second Status: success, idle'))
+    expect(
+      rendered.getByText('First Status: pending, idle'),
+    ).toBeInTheDocument()
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('Second Status: pending, fetching'),
+      ).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('Second Status: success, idle'),
+      ).toBeInTheDocument(),
+    )
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
@@ -2039,7 +2056,7 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    rendered.getByText('status: pending')
+    expect(rendered.getByText('status: pending')).toBeInTheDocument()
   })
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
@@ -2388,8 +2405,12 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('error'))
-    await waitFor(() => rendered.getByText('Error test'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('error')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Error test')).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -2426,7 +2447,9 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('error boundary'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -2463,7 +2486,9 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('error boundary'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -2502,7 +2527,11 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Fallback error: Error test'))
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('Fallback error: Error test'),
+      ).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -2541,10 +2570,16 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
-      rendered.getByText('Outside error boundary: Error test'),
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('Outside error boundary: Error test'),
+      ).toBeInTheDocument(),
     )
-    await waitFor(() => rendered.getByText('Fallback error: Error test'))
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('Fallback error: Error test'),
+      ).toBeInTheDocument(),
+    )
 
     consoleMock.mockRestore()
   })
@@ -2606,8 +2641,12 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('error'))
-    await waitFor(() => rendered.getByText('Local Error'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('error')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Local Error')).toBeInTheDocument(),
+    )
   })
 
   it('should throw error instead of setting status when error should be thrown', async () => {
@@ -2645,8 +2684,12 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('error boundary'))
-    await waitFor(() => rendered.getByText('Remote Error'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Remote Error')).toBeInTheDocument(),
+    )
   })
 
   it('should continue retries when observers unmount and remount while waiting for a retry (#3031)', async () => {
@@ -3186,29 +3229,61 @@ describe('useQuery', () => {
     ))
 
     // The query should display the first error result
-    await waitFor(() => rendered.getByText('failureCount 1'))
-    await waitFor(() => rendered.getByText('failureReason fetching error 1'))
-    await waitFor(() => rendered.getByText('status pending'))
-    await waitFor(() => rendered.getByText('error null'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('failureCount 1')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('failureReason fetching error 1'),
+      ).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('status pending')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('error null')).toBeInTheDocument(),
+    )
 
     // Check if the query really paused
     await sleep(10)
-    await waitFor(() => rendered.getByText('failureCount 1'))
-    await waitFor(() => rendered.getByText('failureReason fetching error 1'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('failureCount 1')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('failureReason fetching error 1'),
+      ).toBeInTheDocument(),
+    )
 
     visibilityMock.mockRestore()
     window.dispatchEvent(new Event('visibilitychange'))
 
     // Wait for the final result
-    await waitFor(() => rendered.getByText('failureCount 4'))
-    await waitFor(() => rendered.getByText('failureReason fetching error 4'))
-    await waitFor(() => rendered.getByText('status error'))
-    await waitFor(() => rendered.getByText('error fetching error 4'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('failureCount 4')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('failureReason fetching error 4'),
+      ).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('status error')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('error fetching error 4')).toBeInTheDocument(),
+    )
 
     // Check if the query really stopped
     await sleep(10)
-    await waitFor(() => rendered.getByText('failureCount 4'))
-    await waitFor(() => rendered.getByText('failureReason fetching error 4'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('failureCount 4')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(
+        rendered.getByText('failureReason fetching error 4'),
+      ).toBeInTheDocument(),
+    )
   })
 
   it('should fetch on mount when a query was already created with setQueryData', async () => {
@@ -3428,10 +3503,18 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('failureCount 2'))
-    await waitFor(() => rendered.getByText('failureReason error'))
-    await waitFor(() => rendered.getByText('failureCount 0'))
-    await waitFor(() => rendered.getByText('failureReason null'))
+    await waitFor(() =>
+      expect(rendered.getByText('failureCount 2')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('failureReason error')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('failureCount 0')).toBeInTheDocument(),
+    )
+    await waitFor(() =>
+      expect(rendered.getByText('failureReason null')).toBeInTheDocument(),
+    )
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/199
@@ -3515,16 +3598,17 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    rendered.getByText('FetchStatus: idle')
-    rendered.getByText('Data: no data')
+    expect(rendered.getByText('FetchStatus: idle')).toBeInTheDocument()
+    expect(rendered.getByText('Data: no data')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('fetch'))
 
-    await waitFor(() => rendered.getByText('FetchStatus: fetching'))
-    await waitFor(() => [
-      rendered.getByText('FetchStatus: idle'),
-      rendered.getByText('Data: data'),
-    ])
+    await vi.waitFor(() =>
+      expect(rendered.getByText('FetchStatus: fetching')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: data')).toBeInTheDocument(),
+    )
   })
 
   // See https://github.com/TanStack/query/issues/7711
@@ -3805,7 +3889,9 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('status: pending, idle'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('status: pending, idle')).toBeInTheDocument(),
+    )
   })
 
   it('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
@@ -3942,9 +4028,15 @@ describe('useQuery', () => {
     ))
 
     // mount
-    await waitFor(() => rendered.getByText('count: 0'))
-    await waitFor(() => rendered.getByText('count: 1'))
-    await waitFor(() => rendered.getByText('count: 2'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('count: 0')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('count: 1')).toBeInTheDocument(),
+    )
+    await vi.waitFor(() =>
+      expect(rendered.getByText('count: 2')).toBeInTheDocument(),
+    )
   })
 
   it('should refetch in an interval depending on function result', async () => {
@@ -4079,7 +4171,7 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText(''))
+    await vi.waitFor(() => expect(rendered.getByText('')).toBeInTheDocument())
   })
 
   it('should accept an object as query key', async () => {
@@ -4097,7 +4189,9 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('[{"a":"a"}]'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('[{"a":"a"}]')).toBeInTheDocument(),
+    )
   })
 
   it('should refetch if any query instance becomes enabled', async () => {
@@ -4391,19 +4485,27 @@ describe('useQuery', () => {
         <Page />
       </QueryClientProvider>
     ))
-    await waitFor(() => rendered.getByText('Data: selected 101')) // 99 + 2
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: selected 101')).toBeInTheDocument(),
+    ) // 99 + 2
 
-    await waitFor(() => rendered.getByText('Data: selected 2')) // 0 + 2
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: selected 2')).toBeInTheDocument(),
+    ) // 0 + 2
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
-    await waitFor(() => rendered.getByText('Data: selected 3')) // 0 + 3
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: selected 3')).toBeInTheDocument(),
+    ) // 0 + 3
 
     fireEvent.click(rendered.getByRole('button', { name: /forceUpdate/i }))
 
-    await waitFor(() => rendered.getByText('forceValue: 2'))
+    await vi.waitFor(() => rendered.getByText('forceValue: 2'))
     // data should still be 3 after an independent re-render
-    await waitFor(() => rendered.getByText('Data: selected 3'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: selected 3')).toBeInTheDocument(),
+    )
   })
 
   it('select should structurally share data', async () => {
@@ -4970,18 +5072,20 @@ describe('useQuery', () => {
     ))
 
     // initial state check
-    rendered.getByText('status: pending')
+    expect(rendered.getByText('status: pending')).toBeInTheDocument()
 
     // render error state component
-    await waitFor(() => rendered.getByText('error'))
+    await waitFor(() => expect(rendered.getByText('error')).toBeInTheDocument())
 
     // change to unmount query
     fireEvent.click(rendered.getByLabelText('change'))
-    await waitFor(() => rendered.getByText('rendered'))
+    await waitFor(() =>
+      expect(rendered.getByText('rendered')).toBeInTheDocument(),
+    )
 
     // change to mount new query
     fireEvent.click(rendered.getByLabelText('change'))
-    await waitFor(() => rendered.getByText('error'))
+    await waitFor(() => expect(rendered.getByText('error')).toBeInTheDocument())
   })
 
   it('should refetch when query key changed when switching between erroneous queries', async () => {
@@ -5030,20 +5134,24 @@ describe('useQuery', () => {
     ))
 
     // initial state check
-    rendered.getByText('status: fetching')
+    expect(rendered.getByText('status: fetching')).toBeInTheDocument()
 
     // render error state component
-    await waitFor(() => rendered.getByText('error'))
+    await waitFor(() => expect(rendered.getByText('error')).toBeInTheDocument())
 
     // change to mount second query
     fireEvent.click(rendered.getByLabelText('change'))
-    await waitFor(() => rendered.getByText('status: fetching'))
-    await waitFor(() => rendered.getByText('error'))
+    await waitFor(() =>
+      expect(rendered.getByText('status: fetching')).toBeInTheDocument(),
+    )
+    await waitFor(() => expect(rendered.getByText('error')).toBeInTheDocument())
 
     // change to mount first query again
     fireEvent.click(rendered.getByLabelText('change'))
-    await waitFor(() => rendered.getByText('status: fetching'))
-    await waitFor(() => rendered.getByText('error'))
+    await waitFor(() =>
+      expect(rendered.getByText('status: fetching')).toBeInTheDocument(),
+    )
+    await waitFor(() => expect(rendered.getByText('error')).toBeInTheDocument())
   })
 
   it('should have no error in pending state when refetching after error occurred', async () => {
@@ -6016,11 +6124,17 @@ describe('useQuery', () => {
     ))
 
     const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
-    await waitFor(() => rendered.getByText('data: 1'))
+    await waitFor(() =>
+      expect(rendered.getByText('data: 1')).toBeInTheDocument(),
+    )
     fireEvent.click(fetchBtn)
-    await waitFor(() => rendered.getByText('data: 2'))
+    await waitFor(() =>
+      expect(rendered.getByText('data: 2')).toBeInTheDocument(),
+    )
     fireEvent.click(fetchBtn)
-    await waitFor(() => rendered.getByText('data: 3'))
+    await waitFor(() =>
+      expect(rendered.getByText('data: 3')).toBeInTheDocument(),
+    )
   })
 
   it('should use provided custom queryClient', async () => {
@@ -6043,6 +6157,8 @@ describe('useQuery', () => {
 
     const rendered = render(() => <Page />)
 
-    await waitFor(() => rendered.getByText('Status: custom client'))
+    await waitFor(() =>
+      expect(rendered.getByText('Status: custom client')).toBeInTheDocument(),
+    )
   })
 })

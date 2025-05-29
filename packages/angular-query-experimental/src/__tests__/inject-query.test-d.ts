@@ -1,6 +1,6 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { describe, expectTypeOf, it, test } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
 import { injectQuery, queryOptions } from '..'
-import { simpleFetcher } from './test-utils'
 import type { Signal } from '@angular/core'
 
 describe('initialData', () => {
@@ -108,11 +108,14 @@ describe('initialData', () => {
   })
 
   describe('structuralSharing', () => {
-    it('should restrict to same types', () => {
+    it('should be able to use structuralSharing with unknown types', () => {
+      // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
       injectQuery(() => ({
         queryKey: ['key'],
         queryFn: () => 5,
-        structuralSharing: (_oldData, newData) => {
+        structuralSharing: (oldData, newData) => {
+          expectTypeOf(oldData).toBeUnknown()
+          expectTypeOf(newData).toBeUnknown()
           return newData
         },
       }))
@@ -124,7 +127,7 @@ describe('Discriminated union return type', () => {
   test('data should be possibly undefined by default', () => {
     const query = injectQuery(() => ({
       queryKey: ['key'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     }))
 
     expectTypeOf(query.data).toEqualTypeOf<Signal<string | undefined>>()
@@ -133,7 +136,7 @@ describe('Discriminated union return type', () => {
   test('data should be defined when query is success', () => {
     const query = injectQuery(() => ({
       queryKey: ['key'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     }))
 
     if (query.isSuccess()) {
@@ -144,7 +147,7 @@ describe('Discriminated union return type', () => {
   test('error should be null when query is success', () => {
     const query = injectQuery(() => ({
       queryKey: ['key'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     }))
 
     if (query.isSuccess()) {
@@ -155,7 +158,7 @@ describe('Discriminated union return type', () => {
   test('data should be undefined when query is pending', () => {
     const query = injectQuery(() => ({
       queryKey: ['key'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     }))
 
     if (query.isPending()) {
@@ -166,7 +169,7 @@ describe('Discriminated union return type', () => {
   test('error should be defined when query is error', () => {
     const query = injectQuery(() => ({
       queryKey: ['key'],
-      queryFn: simpleFetcher,
+      queryFn: () => sleep(0).then(() => 'Some data'),
     }))
 
     if (query.isError()) {

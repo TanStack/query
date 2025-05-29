@@ -1,6 +1,6 @@
 import {
   ElementRef,
-  provideExperimentalZonelessChangeDetection,
+  provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
@@ -8,7 +8,7 @@ import {
   QueryClient,
   provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
-import { beforeEach, describe, expect, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { injectDevtoolsPanel } from '../inject-devtools-panel'
 
 const mockDevtoolsPanelInstance = {
@@ -38,7 +38,7 @@ describe('injectDevtoolsPanel', () => {
     mockElementRef = new ElementRef(document.createElement('div'))
     TestBed.configureTestingModule({
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(queryClient),
         { provide: ElementRef, useValue: signal(mockElementRef) },
       ],
@@ -68,7 +68,7 @@ describe('injectDevtoolsPanel', () => {
       }))
     })
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
   })
@@ -80,7 +80,7 @@ describe('injectDevtoolsPanel', () => {
       }))
     })
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     result.destroy()
 
@@ -96,13 +96,13 @@ describe('injectDevtoolsPanel', () => {
       }))
     })
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(0)
 
     hostElement.set(null as unknown as ElementRef)
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(1)
   })
@@ -117,13 +117,13 @@ describe('injectDevtoolsPanel', () => {
       }))
     })
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(mockDevtoolsPanelInstance.setClient).toHaveBeenCalledTimes(0)
 
     client.set(new QueryClient())
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(mockDevtoolsPanelInstance.setClient).toHaveBeenCalledTimes(1)
   })
@@ -138,13 +138,13 @@ describe('injectDevtoolsPanel', () => {
       }))
     })
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(0)
 
     errorTypes.set([])
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(1)
   })
@@ -162,13 +162,13 @@ describe('injectDevtoolsPanel', () => {
       }))
     })
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(0)
 
     onClose.set(functionB)
 
-    TestBed.flushEffects()
+    TestBed.tick()
 
     expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(1)
   })

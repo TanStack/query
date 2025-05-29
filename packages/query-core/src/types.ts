@@ -9,6 +9,13 @@ import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+export type NonUndefinedGuard<T> = T extends undefined ? never : T
+
+export type DistributiveOmit<
+  TObject,
+  TKey extends keyof TObject,
+> = TObject extends any ? Omit<TObject, TKey> : never
+
 export type OmitKeyof<
   TObject,
   TKey extends TStrictly extends 'safely'
@@ -432,11 +439,6 @@ export interface QueryObserverOptions<
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
   [_ in TKey]: {}
 }
-export type Optional<TTarget, TKey extends keyof TTarget> = Pick<
-  Partial<TTarget>,
-  TKey
-> &
-  OmitKeyof<TTarget, TKey>
 
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,

@@ -2,24 +2,26 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
+  reactive,
   readonly,
   shallowReactive,
   shallowReadonly,
   toRefs,
   watch,
 } from 'vue-demi'
-import { MutationObserver } from '@tanstack/query-core'
-import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
+import { MutationObserver, shouldThrowError } from '@tanstack/query-core'
+import { cloneDeepUnref, updateState } from './utils'
 import { useQueryClient } from './useQueryClient'
 import type { ToRefs } from 'vue-demi'
 import type {
   DefaultError,
+  DistributiveOmit,
   MutateFunction,
   MutateOptions,
   MutationObserverOptions,
   MutationObserverResult,
 } from '@tanstack/query-core'
-import type { DistributiveOmit, MaybeRefDeep } from './types'
+import type { MaybeRefDeep } from './types'
 import type { QueryClient } from './queryClient'
 
 type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
@@ -87,7 +89,9 @@ export function useMutation<
     return client.defaultMutationOptions(cloneDeepUnref(mutationOptions))
   })
   const observer = new MutationObserver(client, options.value)
-  const state = shallowReactive(observer.getCurrentResult())
+  const state = options.value.shallow
+    ? shallowReactive(observer.getCurrentResult())
+    : reactive(observer.getCurrentResult())
 
   const unsubscribe = observer.subscribe((result) => {
     updateState(state, result)
@@ -110,12 +114,9 @@ export function useMutation<
     unsubscribe()
   })
 
-  const readonlyState =
-    process.env.NODE_ENV === 'production'
-      ? state
-      : options.value.shallow
-        ? shallowReadonly(state)
-        : readonly(state)
+  const readonlyState = options.value.shallow
+    ? shallowReadonly(state)
+    : readonly(state)
 
   const resultRefs = toRefs(readonlyState) as ToRefs<
     Readonly<MutationResult<TData, TError, TVariables, TContext>>
