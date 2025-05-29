@@ -97,7 +97,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * Creates a new mutation instance and adds it to the cache.
    * Unlike QueryCache.ensure(), this always creates a new mutation since
    * each mutation execution should be unique.
-   * 
+   *
    * @param client - The QueryClient instance
    * @param options - Mutation options
    * @param state - Optional initial state for the new mutation
