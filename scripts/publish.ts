@@ -372,7 +372,7 @@ async function run() {
     const packageDir = path.join(rootDir, 'packages', pkg.packageDir)
 
     const cmd = `cd ${packageDir} && pnpm publish --tag ${
-      // check v4, v5, v6, v7..., and if it's false, then it's a tag for npm (ex. latest, beta, alpha, rc)
+      // check npmTag is v{number}..., and if it's true, query-v{number}
       /^v\d+$/.test(npmTag) ? `query-${npmTag}` : npmTag
     } --access=public --no-git-checks`
     console.info(`  Publishing ${pkg.name}@${version} to npm...`)
