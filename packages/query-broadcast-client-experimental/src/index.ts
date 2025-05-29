@@ -78,7 +78,7 @@ export function broadcastQueryClient({
           return
         }
 
-        queryCache.build(
+        queryCache.ensure(
           queryClient,
           {
             queryKey,
@@ -95,7 +95,7 @@ export function broadcastQueryClient({
           query.setState(state)
           return
         }
-        queryCache.build(
+        queryCache.ensure(
           queryClient,
           {
             queryKey,

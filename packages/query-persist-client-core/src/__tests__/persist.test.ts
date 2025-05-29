@@ -18,7 +18,7 @@ describe('persistQueryClientSubscribe', () => {
       dehydrateOptions: { shouldDehydrateMutation: () => true },
     })
 
-    queryClient.getMutationCache().build(queryClient, {
+    queryClient.getMutationCache().create(queryClient, {
       mutationFn: (text: string) => Promise.resolve(text),
     })
 

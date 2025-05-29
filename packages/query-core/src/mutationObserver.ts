@@ -118,7 +118,7 @@ export class MutationObserver<
 
     this.#currentMutation = this.#client
       .getMutationCache()
-      .build(this.#client, this.options)
+      .create(this.#client, this.options)
 
     this.#currentMutation.addObserver(this)
 

@@ -17,7 +17,7 @@ export function executeMutation<TVariables>(
 ) {
   return queryClient
     .getMutationCache()
-    .build(queryClient, options)
+    .create(queryClient, options)
     .execute(variables)
 }
 
