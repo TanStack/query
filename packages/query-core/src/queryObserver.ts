@@ -18,7 +18,6 @@ import type { PendingThenable, Thenable } from './thenable'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
-  PlaceholderDataFunction,
   QueryKey,
   QueryObserverBaseResult,
   QueryObserverOptions,
