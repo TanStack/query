@@ -194,19 +194,18 @@ export class QueryClient {
       QueryKey
     >({ queryKey })
 
-    const query = this.#queryCache.get<TInferredQueryFnData>(
-      defaultedOptions.queryHash,
+    const query = this.#queryCache.ensure<TInferredQueryFnData>(
+      this,
+      defaultedOptions,
     )
-    const prevData = query?.state.data
+    const prevData = query.state.data
     const data = functionalUpdate(updater, prevData)
 
     if (data === undefined) {
       return undefined
     }
 
-    return this.#queryCache
-      .ensure(this, defaultedOptions)
-      .setData(data, { ...options, manual: true })
+    return query.setData(data, { ...options, manual: true })
   }
 
   setQueriesData<
