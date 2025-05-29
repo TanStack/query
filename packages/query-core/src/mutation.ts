@@ -3,6 +3,7 @@ import { Removable } from './removable'
 import { createRetryer } from './retryer'
 import type {
   DefaultError,
+  MutationFunctionContext,
   MutationMeta,
   MutationOptions,
   MutationStatus,
@@ -10,10 +11,12 @@ import type {
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import type { Retryer } from './retryer'
+import type { QueryClient } from './queryClient'
 
 // TYPES
 
 interface MutationConfig<TData, TError, TVariables, TContext> {
+  client: QueryClient
   mutationId: number
   mutationCache: MutationCache
   options: MutationOptions<TData, TError, TVariables, TContext>
@@ -88,6 +91,7 @@ export class Mutation<
   options!: MutationOptions<TData, TError, TVariables, TContext>
   readonly mutationId: number
 
+  #client: QueryClient
   #observers: Array<MutationObserver<TData, TError, TVariables, TContext>>
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>
@@ -95,6 +99,7 @@ export class Mutation<
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
     super()
 
+    this.#client = config.client
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
     this.#observers = []
@@ -171,7 +176,13 @@ export class Mutation<
         if (!this.options.mutationFn) {
           return Promise.reject(new Error('No mutationFn found'))
         }
-        return this.options.mutationFn(variables)
+
+        const mutationFnContext: MutationFunctionContext = {
+          client: this.#client,
+          meta: this.options.meta,
+        }
+
+        return this.options.mutationFn(variables, mutationFnContext)
       },
       onFail: (failureCount, error) => {
         this.#dispatch({ type: 'failed', failureCount, error })

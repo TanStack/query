@@ -50,8 +50,36 @@ describe('mutations', () => {
       'vars',
     )
 
+    const args = fn.mock.calls[0]!
+
     expect(fn).toHaveBeenCalledTimes(1)
-    expect(fn).toHaveBeenCalledWith('vars')
+    expect(args[0]).toEqual('vars')
+  })
+
+  test('should provide MutationFunctionContext to mutateFn', async () => {
+    const key = queryKey()
+    const fn = vi.fn()
+    const meta = { hello: 'world' }
+
+    await executeMutation(
+      queryClient,
+      {
+        mutationKey: key,
+        mutationFn: fn,
+        meta: meta,
+      },
+      'vars',
+    )
+
+    const args = fn.mock.calls[0]!
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(args).toBeDefined()
+
+    const vars = args[0]
+    const mutationFnContext = args[1]
+    expect(vars).toEqual('vars')
+    expect(mutationFnContext.client).toEqual(queryClient)
+    expect(mutationFnContext.meta).toEqual(meta)
   })
 
   test('mutation should set correct success states', async () => {
