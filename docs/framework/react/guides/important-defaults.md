@@ -43,7 +43,7 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
 Have a look at the following articles from our Community Resources for further explanations of the defaults:
 
-- [Practical React Query](../community/tkdodos-blog.md#1-practical-react-query)
-- [React Query as a State Manager](../community/tkdodos-blog.md#10-react-query-as-a-state-manager)
+- [Practical React Query](../../community/tkdodos-blog.md#1-practical-react-query)
+- [React Query as a State Manager](../../community/tkdodos-blog.md#10-react-query-as-a-state-manager)
 
 [//]: # 'Materials'

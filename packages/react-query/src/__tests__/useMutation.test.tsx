@@ -14,18 +14,16 @@ import {
 import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
-  let queryCache = new QueryCache()
-  let mutationCache = new MutationCache()
-  let queryClient = new QueryClient({
-    queryCache,
-    mutationCache,
-  })
+  let queryCache: QueryCache
+  let mutationCache: MutationCache
+  let queryClient: QueryClient
 
   beforeEach(() => {
     queryCache = new QueryCache()
     mutationCache = new MutationCache()
     queryClient = new QueryClient({
       queryCache,
+      mutationCache,
     })
     vi.useFakeTimers()
   })

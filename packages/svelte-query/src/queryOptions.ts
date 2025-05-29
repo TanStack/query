@@ -2,6 +2,7 @@ import type {
   DataTag,
   DefaultError,
   InitialDataFunction,
+  NonUndefinedGuard,
   QueryKey,
 } from '@tanstack/query-core'
 import type { CreateQueryOptions } from './types.js'
@@ -14,8 +15,6 @@ export type UndefinedInitialDataOptions<
 > = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
   initialData?: undefined | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
 }
-
-type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,

@@ -1299,6 +1299,80 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('shouldFetchOnWindowFocus should respect refetchOnWindowFocus option', () => {
+    const key = queryKey()
+
+    const observer1 = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      refetchOnWindowFocus: true,
+    })
+    expect(observer1.shouldFetchOnWindowFocus()).toBe(true)
+
+    const observer2 = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      refetchOnWindowFocus: false,
+    })
+    expect(observer2.shouldFetchOnWindowFocus()).toBe(false)
+  })
+
+  test('fetchOptimistic should fetch and return optimistic result', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    const result = await observer.fetchOptimistic({
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    expect(result.status).toBe('success')
+    expect(result.data).toBe('data')
+  })
+
+  test('should track error prop when throwOnError is true', async () => {
+    const key = queryKey()
+    const results: Array<QueryObserverResult> = []
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.reject('error'),
+      retry: false,
+      throwOnError: true,
+    })
+
+    const trackedResult = observer.trackResult(
+      observer.getCurrentResult(),
+      (prop) => {
+        if (prop === 'data' || prop === 'status') {
+          observer.trackProp(prop)
+        }
+      },
+    )
+
+    trackedResult.data
+    trackedResult.status
+
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await vi.waitFor(() => {
+      const lastResult = results[results.length - 1]
+      expect(lastResult?.status).toBe('error')
+    })
+
+    expect(results.length).toBe(1)
+    expect(results[0]).toMatchObject({
+      status: 'error',
+      error: 'error',
+    })
+
+    unsubscribe()
+  })
+
   test('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
     const key = queryKey()
     const queryFn = vi.fn(() => 'data')
@@ -1313,5 +1387,17 @@ describe('queryObserver', () => {
     await vi.advanceTimersByTimeAsync(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
     unsubscribe()
+  })
+
+  test('should set fetchStatus to idle when _optimisticResults is isRestoring', () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      _optimisticResults: 'isRestoring',
+    })
+
+    const result = observer.getCurrentResult()
+    expect(result.fetchStatus).toBe('idle')
   })
 })
