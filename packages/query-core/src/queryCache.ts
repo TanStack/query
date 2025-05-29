@@ -100,7 +100,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   /**
    * Ensures a query exists in the cache, creating it if it doesn't exist.
    * This is the primary method for ensuring a query exists in the cache.
-   * 
+   *
    * @param client - The QueryClient instance
    * @param options - Query options including the queryKey
    * @param state - Optional initial state for newly created queries
@@ -174,7 +174,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   /**
    * Retrieves an existing query from the cache by its hash.
-   * 
+   *
    * @param queryHash - The hash string identifying the query
    * @returns The existing Query instance, or undefined if not found
    */
