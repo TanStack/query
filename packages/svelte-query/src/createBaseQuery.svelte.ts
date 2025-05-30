@@ -57,26 +57,29 @@ export function createBaseQuery<
     createResult(),
   )
 
-  $effect(() => {
-    const unsubscribe = isRestoring.current
-      ? () => undefined
-      : observer.subscribe(() => update(createResult()))
-    observer.updateResult()
-    return unsubscribe
-  })
-
-  $effect.pre(() => {
-    observer.setOptions(resolvedOptions)
-    // The only reason this is necessary is because of `isRestoring`.
-    // Because we don't subscribe while restoring, the following can occur:
-    // - `isRestoring` is true
-    // - `isRestoring` becomes false
-    // - `observer.subscribe` and `observer.updateResult` is called in the above effect,
-    //   but the subsequent `fetch` has already completed
-    // - `result` misses the intermediate restored-but-not-fetched state
-    //
-    // this could technically be its own effect but that doesn't seem necessary
-    update(createResult())
+  // Avoid effect_orphan error when creating a query inside an event handler instead of during component initialization 
+  $effect.root(() => {
+    $effect(() => {
+      const unsubscribe = isRestoring.current
+        ? () => undefined
+        : observer.subscribe(() => update(createResult()))
+      observer.updateResult()
+      return unsubscribe
+    })
+  
+    $effect.pre(() => {
+      observer.setOptions(resolvedOptions)
+      // The only reason this is necessary is because of `isRestoring`.
+      // Because we don't subscribe while restoring, the following can occur:
+      // - `isRestoring` is true
+      // - `isRestoring` becomes false
+      // - `observer.subscribe` and `observer.updateResult` is called in the above effect,
+      //   but the subsequent `fetch` has already completed
+      // - `result` misses the intermediate restored-but-not-fetched state
+      //
+      // this could technically be its own effect but that doesn't seem necessary
+      update(createResult())
+    })
   })
 
   return query
