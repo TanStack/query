@@ -1,5 +1,5 @@
 import { isDev } from 'solid-js/web'
-import { clientOnly } from './devtools'
+import clientOnly from './clientOnly'
 import type SolidQueryDevtoolsComp from './devtools'
 
 export const SolidQueryDevtools: typeof SolidQueryDevtoolsComp = isDev
