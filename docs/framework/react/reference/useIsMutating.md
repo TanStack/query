@@ -15,7 +15,7 @@ const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
 
 **Options**
 
-- `filters?: MutationFilters`: [Mutation Filters](../guides/filters.md#mutation-filters)
+- `filters?: MutationFilters`: [Mutation Filters](../../guides/filters.md#mutation-filters)
 - `queryClient?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 

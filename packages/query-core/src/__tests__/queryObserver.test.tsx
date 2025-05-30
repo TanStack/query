@@ -1178,6 +1178,33 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('should not see queries as stale is staleTime is Static', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(5)
+        return {
+          data: 'data',
+        }
+      },
+      staleTime: 'static',
+    })
+    const result = observer.getCurrentResult()
+    expect(result.isStale).toBe(true) // no data = stale
+
+    const results: Array<QueryObserverResult<unknown>> = []
+    const unsubscribe = observer.subscribe((x) => {
+      if (x.data) {
+        results.push(x)
+      }
+    })
+
+    await vi.waitFor(() => expect(results[0]?.isStale).toBe(false))
+
+    unsubscribe()
+  })
+
   test('should return a promise that resolves when data is present', async () => {
     const results: Array<QueryObserverResult> = []
     const key = queryKey()
@@ -1343,6 +1370,22 @@ describe('queryObserver', () => {
       error: 'error',
     })
 
+    unsubscribe()
+  })
+
+  test('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => 'data')
+    queryClient.setQueryData(key, 'initial')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: 'static',
+      refetchOnMount: 'always',
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryFn).toHaveBeenCalledTimes(0)
     unsubscribe()
   })
 

@@ -4,6 +4,7 @@ import type {
   DefaultError,
   DefinedQueryObserverResult,
   InitialDataFunction,
+  NonUndefinedGuard,
   QueryKey,
   QueryObserverOptions,
 } from '@tanstack/query-core'
@@ -15,8 +16,6 @@ import type {
   MaybeRefOrGetter,
 } from './types'
 import type { QueryClient } from './queryClient'
-
-type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type UseQueryOptions<
   TQueryFnData = unknown,

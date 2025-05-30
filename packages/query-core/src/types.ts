@@ -9,6 +9,8 @@ import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+export type NonUndefinedGuard<T> = T extends undefined ? never : T
+
 export type DistributiveOmit<
   TObject,
   TKey extends keyof TObject,
@@ -97,12 +99,16 @@ export type QueryFunction<
   TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
-export type StaleTime<
+export type StaleTime = number | 'static'
+
+export type StaleTimeFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = number | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
+> =
+  | StaleTime
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => StaleTime)
 
 export type Enabled<
   TQueryFnData = unknown,
@@ -327,7 +333,7 @@ export interface QueryObserverOptions<
    * If set to a function, the function will be executed with the query to compute a `staleTime`.
    * Defaults to `0`.
    */
-  staleTime?: StaleTime<TQueryFnData, TError, TQueryData, TQueryKey>
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
@@ -500,7 +506,7 @@ export interface FetchQueryOptions<
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
    */
-  staleTime?: StaleTime<TQueryFnData, TError, TData, TQueryKey>
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
 }
 
 export interface EnsureQueryDataOptions<

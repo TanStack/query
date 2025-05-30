@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "baseUrl": ".",
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },
