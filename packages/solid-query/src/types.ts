@@ -91,7 +91,6 @@ export interface SolidInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
@@ -99,7 +98,6 @@ export interface SolidInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -132,7 +130,6 @@ export type UseInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >

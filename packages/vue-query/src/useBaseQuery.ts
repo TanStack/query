@@ -51,7 +51,6 @@ type UseQueryOptionsGeneric<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >
