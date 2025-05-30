@@ -20,7 +20,6 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryFnData,
   TQueryKey,
   TPageParam
 > & {
@@ -39,14 +38,7 @@ export type UnusedSkipTokenInfiniteOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = OmitKeyof<
-  UseInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey,
-    TPageParam
-  >,
+  UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
   'queryFn'
 > & {
   queryFn?: Exclude<
@@ -54,7 +46,6 @@ export type UnusedSkipTokenInfiniteOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryFnData,
       TQueryKey,
       TPageParam
     >['queryFn'],
@@ -72,7 +63,6 @@ export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryFnData,
   TQueryKey,
   TPageParam
 > & {

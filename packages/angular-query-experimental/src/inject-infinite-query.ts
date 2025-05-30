@@ -100,7 +100,6 @@ export function injectInfiniteQuery<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >,

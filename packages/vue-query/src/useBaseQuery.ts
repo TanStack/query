@@ -47,14 +47,7 @@ type UseQueryOptionsGeneric<
   TPageParam = unknown,
 > =
   | UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-  | UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey,
-      TPageParam
-    >
+  | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 
 export function useBaseQuery<
   TQueryFnData,

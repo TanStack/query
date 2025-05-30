@@ -27,7 +27,6 @@ export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = MaybeRef<
@@ -36,7 +35,6 @@ export type UseInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >]: Property extends 'enabled'
@@ -45,7 +43,6 @@ export type UseInfiniteQueryOptions<
             TQueryFnData,
             TError,
             TData,
-            TQueryData,
             DeepUnwrapRef<TQueryKey>
           >[Property]
         >
@@ -54,7 +51,6 @@ export type UseInfiniteQueryOptions<
             TQueryFnData,
             TError,
             TData,
-            TQueryData,
             DeepUnwrapRef<TQueryKey>,
             TPageParam
           >[Property]
@@ -115,7 +111,6 @@ export function useInfiniteQuery<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >,

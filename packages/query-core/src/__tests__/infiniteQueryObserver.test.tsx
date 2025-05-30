@@ -220,7 +220,6 @@ describe('InfiniteQueryObserver', () => {
       number,
       Error,
       InfiniteData<number>,
-      number,
       typeof key,
       number
     > = {

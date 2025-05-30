@@ -19,7 +19,6 @@ export type UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   > & {
@@ -39,7 +38,6 @@ export type DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   > & {

@@ -50,7 +50,6 @@ describe('usePrefetchInfiniteQuery', () => {
       T,
       Error,
       InfiniteData<T>,
-      any,
       Array<string>,
       any
     >
