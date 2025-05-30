@@ -116,13 +116,7 @@ export interface UseSuspenseInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
-    UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
+    UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
     'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
   > {
   queryFn?: Exclude<

@@ -126,13 +126,7 @@ export type UseInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = Accessor<
-  SolidInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  >
+  SolidInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 >
 
 export type UseInfiniteQueryResult<
