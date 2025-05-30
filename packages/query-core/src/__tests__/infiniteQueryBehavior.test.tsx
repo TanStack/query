@@ -366,7 +366,6 @@ describe('InfiniteQueryBehavior', () => {
       TestResponse,
       Error,
       InfiniteData<TestResponse>,
-      TestResponse,
       typeof key,
       number
     >(queryClient, {
