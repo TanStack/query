@@ -4,8 +4,8 @@
   "main": "pages/index.tsx",
   "license": "MIT",
   "dependencies": {
-    "@tanstack/react-query": "^4.7.1",
-    "@tanstack/react-query-devtools": "^4.7.1",
+    "@tanstack/react-query": "^4.39.0",
+    "@tanstack/react-query-devtools": "^4.39.0",
     "axios": "^0.21.1",
     "isomorphic-unfetch": "3.0.0",
     "next": "12.2.2",
