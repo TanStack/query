@@ -24,7 +24,7 @@
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples,scripts}/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
-    "cipublish": "ts-node scripts/publish.ts"
+    "cipublish": "node scripts/publish.mjs"
   },
   "nx": {
     "includedScripts": [
