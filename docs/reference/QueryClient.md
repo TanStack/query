@@ -321,6 +321,7 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 
 - If you **do not want active queries to refetch**, and simply be marked as invalid, you can use the `refetchType: 'none'` option.
 - If you **want inactive queries to refetch** as well, use the `refetchType: 'all'` option
+- For refetching, [queryClient.refetchQueries](#queryclientrefetchqueries) is called.
 
 ```tsx
 await queryClient.invalidateQueries(
@@ -389,6 +390,11 @@ await queryClient.refetchQueries({
 **Returns**
 
 This function returns a promise that will resolve when all of the queries are done being refetched. By default, it **will not** throw an error if any of those queries refetches fail, but this can be configured by setting the `throwOnError` option to `true`
+
+**Notes**
+
+- Queries that are "disabled" because they only have disabled Observers will never be refetched.
+- Queries that are "static" because they only have Observers with a Static StaleTime will never be refetched.
 
 ## `queryClient.cancelQueries`
 

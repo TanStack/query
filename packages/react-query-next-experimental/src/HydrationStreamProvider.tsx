@@ -130,6 +130,7 @@ export function createHydrationStreamProvider<TShape>() {
         .join(',')
 
       // Flush stream
+      // eslint-disable-next-line react-hooks/react-compiler
       stream.length = 0
 
       const html: Array<string> = [

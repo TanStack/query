@@ -1,5 +1,3 @@
-/* eslint-disable react-compiler/react-compiler */
-
 'use client'
 import * as React from 'react'
 
@@ -101,6 +99,7 @@ export const HydrationBoundary = ({
         hydrate(client, { queries: newQueries }, optionsRef.current)
       }
       if (existingQueries.length > 0) {
+        // eslint-disable-next-line react-hooks/react-compiler
         setHydrationQueue((prev) =>
           prev ? [...prev, ...existingQueries] : existingQueries,
         )
