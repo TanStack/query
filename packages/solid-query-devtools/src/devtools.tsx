@@ -7,7 +7,6 @@ import type {
   DevtoolsPosition,
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
-import type { JSX } from 'solid-js'
 
 interface DevtoolsOptions {
   /**
@@ -30,10 +29,6 @@ interface DevtoolsOptions {
    * Custom instance of QueryClient
    */
   client?: QueryClient
-  /**
-   * Fallback component to show while the devtools are loading.
-   */
-  fallback?: JSX.Element
   /**
    * Use this so you can define custom errors that can be shown in the devtools.
    */
