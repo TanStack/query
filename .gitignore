@@ -37,8 +37,10 @@ stats.html
 .vscode/settings.json
 
 *.log
+*.tsbuildinfo
 .DS_Store
 .cache
 .idea
-
+.nx/cache
+.nx/workspace-data
 nx-cloud.env
