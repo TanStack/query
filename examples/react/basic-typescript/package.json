@@ -8,16 +8,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.39.0",
-    "@tanstack/react-query-devtools": "^4.39.0",
-    "@tanstack/react-query-persist-client": "^4.39.0",
-    "@tanstack/query-sync-storage-persister": "^4.39.0",
+    "@tanstack/react-query": "^4.39.1",
+    "@tanstack/react-query-devtools": "^4.39.1",
+    "@tanstack/react-query-persist-client": "^4.39.1",
+    "@tanstack/query-sync-storage-persister": "^4.39.1",
     "axios": "^0.26.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^4.13.0",
+    "@tanstack/eslint-plugin-query": "^4.39.1",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
     "@vitejs/plugin-react": "^2.0.0",
