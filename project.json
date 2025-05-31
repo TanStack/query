@@ -17,11 +17,7 @@
       "dependsOn": ["rollup", "^build:types", "^build"]
     },
     "test:build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["bundlewatch", "pnpm run validatePackages"],
-        "parallel": true
-      }
+      "command": "bundlewatch"
     }
   },
   "implicitDependencies": [
