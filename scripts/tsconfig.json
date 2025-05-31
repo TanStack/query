@@ -9,13 +9,5 @@
     "noImplicitAny": true,
     "skipLibCheck": true,
     "checkJs": true
-  },
-  "ts-node": {
-    "transpileOnly": true,
-    "files": true,
-    "compilerOptions": {
-      "sourceMap": true,
-      "inlineSources": true
-    }
   }
 }

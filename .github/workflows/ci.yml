@@ -24,16 +24,16 @@ env:
 
 jobs:
   test-and-publish:
-    if: github.repository == 'TanStack/query'
+    if: github.repository_owner == 'TanStack'
     name: 'Test & Publish'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
         with:
-          fetch-depth: '0'
-      - uses: pnpm/action-setup@v2.4.1
-        with:
-          version: 8
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4.1.0
       - uses: actions/setup-node@v3
         with:
           registry-url: https://registry.npmjs.org/
@@ -43,11 +43,7 @@ jobs:
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run Tests
-        uses: nick-fields/retry@v2.8.3
-        with:
-          command: pnpm run test:ci --base=${{ github.event.before }}
-          timeout_minutes: 10
-          max_attempts: 3
+        run: pnpm run test:ci --base=${{ github.event.before }}
       - name: Publish
         run: |
           git config --global user.name 'Tanner Linsley'
