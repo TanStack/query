@@ -241,7 +241,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   }
 
   async function persisterRestoreAll(queryClient: QueryClient) {
-    persisterRestoreByKey(queryClient, [])
+    return persisterRestoreByKey(queryClient, [])
   }
 
   async function persisterRestoreByKey(
