@@ -114,7 +114,15 @@ For example `Object.entries(localStorage)` for `localStorage` or `entries` from 
 ### `persisterRestoreAll(queryClient: QueryClient): Promise<void>`
 
 This function can be used to restore all queries that are currently stored by persister in one go.  
-For example when your app is starting up in offline mode, or you want data from previous session to be immediately available without intermediate `loading` state.
+For example when your app is starting up in offline mode, or you want all data from previous session to be immediately available without intermediate `loading` state.
+
+For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
+For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
+
+### `persisterRestoreByKey(queryClient: QueryClient, queryKey: QueryKey, exact: boolean = false): Promise<void>`
+
+This function can be used to restore a specific query or multiple queries that partial match the provided queryKey.  
+For example when your app is starting up in offline mode, or you want only specific data from previous session to be immediately available without intermediate `loading` state.
 
 For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
