@@ -1,4 +1,4 @@
-import { matchQuery } from '@tanstack/query-core'
+import { hashKey, matchQuery, partialMatchKey } from '@tanstack/query-core'
 import type {
   Query,
   QueryClient,
@@ -7,7 +7,6 @@ import type {
   QueryKey,
   QueryState,
 } from '@tanstack/query-core'
-import { hashKey, partialMatchKey } from '../../query-core/src/utils'
 
 export interface PersistedQuery {
   buster: string
