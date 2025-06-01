@@ -557,6 +557,23 @@ describe('createPersister', () => {
       expect(client.getQueryData(queryKey)).toEqual('foo')
     })
 
+    test('should not restore queries from cache if there is no match', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      client.clear()
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+
+      await persister.persisterRestoreByKey(client, ['bar'])
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+    })
+
     test('should properly restore queries from cache with partial match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
@@ -576,7 +593,7 @@ describe('createPersister', () => {
       expect(client.getQueryData(queryKey)).toEqual('foo')
     })
 
-    test('should not restore queries from cache with exact match', async () => {
+    test('should not restore queries from cache with exact match if there is no match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
