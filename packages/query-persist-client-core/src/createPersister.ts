@@ -7,6 +7,7 @@ import type {
   QueryKey,
   QueryState,
 } from '@tanstack/query-core'
+import { hashKey, partialMatchKey } from '../../query-core/src/utils'
 
 export interface PersistedQuery {
   buster: string
@@ -241,6 +242,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   }
 
   async function persisterRestoreAll(queryClient: QueryClient) {
+    persisterRestoreByKey(queryClient, [])
+  }
+
+  async function persisterRestoreByKey(
+    queryClient: QueryClient,
+    queryKey: QueryKey,
+    exact: boolean = false,
+  ): Promise<void> {
     if (storage?.entries) {
       const entries = await storage.entries()
       for (const [key, value] of entries) {
@@ -249,15 +258,24 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(key)
-          } else {
-            queryClient.setQueryData(
-              persistedQuery.queryKey,
-              persistedQuery.state.data,
-              {
-                updatedAt: persistedQuery.state.dataUpdatedAt,
-              },
-            )
+            continue
           }
+
+          if (exact) {
+            if (persistedQuery.queryHash !== hashKey(queryKey)) {
+              continue
+            }
+          } else if (!partialMatchKey(persistedQuery.queryKey, queryKey)) {
+            continue
+          }
+
+          queryClient.setQueryData(
+            persistedQuery.queryKey,
+            persistedQuery.state.data,
+            {
+              updatedAt: persistedQuery.state.dataUpdatedAt,
+            },
+          )
         }
       }
     } else if (process.env.NODE_ENV === 'development') {
@@ -274,5 +292,6 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     retrieveQuery,
     persisterGc,
     persisterRestoreAll,
+    persisterRestoreByKey,
   }
 }
