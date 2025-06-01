@@ -607,7 +607,7 @@ describe('createPersister', () => {
       expect(client.getQueryCache().getAll()).toHaveLength(0)
 
       await persister.persisterRestoreByKey(client, queryKey, true)
-      expect(client.getQueryCache().getAll()).toHaveLength(0)
+      expect(client.getQueryCache().getAll()).toHaveLength(1)
     })
   })
 })
