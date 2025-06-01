@@ -111,18 +111,17 @@ This function can be used to sporadically clean up stoage from `expired`, `buste
 For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
 
-### `persisterRestoreAll(queryClient: QueryClient): Promise<void>`
+### `restoreQueries(queryClient: QueryClient, filters): Promise<void>`
 
-This function can be used to restore all queries that are currently stored by persister in one go.  
-For example when your app is starting up in offline mode, or you want all data from previous session to be immediately available without intermediate `loading` state.
+This function can be used to restore queries that are currently stored by persister.  
+For example when your app is starting up in offline mode, or you want all or only specific data from previous session to be immediately available without intermediate `loading` state.
 
-For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
-For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
+The filter object supports the following properties:
 
-### `persisterRestoreByKey(queryClient: QueryClient, queryKey: QueryKey, exact: boolean = false): Promise<void>`
-
-This function can be used to restore a specific query or multiple queries that partial match the provided queryKey.  
-For example when your app is starting up in offline mode, or you want only specific data from previous session to be immediately available without intermediate `loading` state.
+- `queryKey?: QueryKey`
+  - Set this property to define a query key to match on.
+- `exact?: boolean`
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed.
 
 For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.

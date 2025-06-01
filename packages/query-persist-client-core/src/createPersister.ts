@@ -240,15 +240,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
-  async function persisterRestoreAll(queryClient: QueryClient) {
-    return persisterRestoreByKey(queryClient, [])
-  }
-
-  async function persisterRestoreByKey(
+  async function restoreQueries(
     queryClient: QueryClient,
-    queryKey: QueryKey,
-    exact: boolean = false,
+    filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
+    const { exact, queryKey } = filters
+
     if (storage?.entries) {
       const entries = await storage.entries()
       for (const [key, value] of entries) {
@@ -260,12 +257,14 @@ export function experimental_createQueryPersister<TStorageValue = string>({
             continue
           }
 
-          if (exact) {
-            if (persistedQuery.queryHash !== hashKey(queryKey)) {
+          if (queryKey) {
+            if (exact) {
+              if (persistedQuery.queryHash !== hashKey(queryKey)) {
+                continue
+              }
+            } else if (!partialMatchKey(persistedQuery.queryKey, queryKey)) {
               continue
             }
-          } else if (!partialMatchKey(persistedQuery.queryKey, queryKey)) {
-            continue
           }
 
           queryClient.setQueryData(
@@ -290,7 +289,6 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     persistQueryByKey,
     retrieveQuery,
     persisterGc,
-    persisterRestoreAll,
-    persisterRestoreByKey,
+    restoreQueries,
   }
 }
