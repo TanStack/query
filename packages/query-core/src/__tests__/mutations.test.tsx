@@ -80,6 +80,7 @@ describe('mutations', () => {
     expect(vars).toEqual('vars')
     expect(mutationFnContext.client).toEqual(queryClient)
     expect(mutationFnContext.meta).toEqual(meta)
+    expect(mutationFnContext.mutationKey).toEqual(key)
   })
 
   test('mutation should set correct success states', async () => {

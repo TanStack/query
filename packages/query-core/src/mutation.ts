@@ -180,6 +180,7 @@ export class Mutation<
         const mutationFnContext: MutationFunctionContext = {
           client: this.#client,
           meta: this.options.meta,
+          mutationKey: this.options.mutationKey,
         }
 
         return this.options.mutationFn(variables, mutationFnContext)
