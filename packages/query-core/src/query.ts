@@ -18,7 +18,6 @@ import type {
   FetchStatus,
   InitialDataFunction,
   OmitKeyof,
-  QueryFunction,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
@@ -431,48 +430,59 @@ export class Query<
       const queryFn = ensureQueryFn(this.options, fetchOptions)
 
       // Create query function context
-      const queryFnContext: OmitKeyof<
-        QueryFunctionContext<TQueryKey>,
-        'signal'
-      > = {
-        client: this.#client,
-        queryKey: this.queryKey,
-        meta: this.meta,
+      const createQueryFnContext = (): QueryFunctionContext<TQueryKey> => {
+        const queryFnContext: OmitKeyof<
+          QueryFunctionContext<TQueryKey>,
+          'signal'
+        > = {
+          client: this.#client,
+          queryKey: this.queryKey,
+          meta: this.meta,
+        }
+        addSignalProperty(queryFnContext)
+        return queryFnContext as QueryFunctionContext<TQueryKey>
       }
 
-      addSignalProperty(queryFnContext)
+      const queryFnContext = createQueryFnContext()
 
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(
-          queryFn as QueryFunction<any>,
-          queryFnContext as QueryFunctionContext<TQueryKey>,
+          queryFn,
+          queryFnContext,
           this as unknown as Query,
         )
       }
 
-      return queryFn(queryFnContext as QueryFunctionContext<TQueryKey>)
+      return queryFn(queryFnContext)
     }
 
     // Trigger behavior hook
-    const context: OmitKeyof<
-      FetchContext<TQueryFnData, TError, TData, TQueryKey>,
-      'signal'
-    > = {
-      fetchOptions,
-      options: this.options,
-      queryKey: this.queryKey,
-      client: this.#client,
-      state: this.state,
-      fetchFn,
+    const createFetchContext = (): FetchContext<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey
+    > => {
+      const context: OmitKeyof<
+        FetchContext<TQueryFnData, TError, TData, TQueryKey>,
+        'signal'
+      > = {
+        fetchOptions,
+        options: this.options,
+        queryKey: this.queryKey,
+        client: this.#client,
+        state: this.state,
+        fetchFn,
+      }
+
+      addSignalProperty(context)
+      return context as FetchContext<TQueryFnData, TError, TData, TQueryKey>
     }
 
-    addSignalProperty(context)
+    const context = createFetchContext()
 
-    this.options.behavior?.onFetch(
-      context as FetchContext<TQueryFnData, TError, TData, TQueryKey>,
-      this as unknown as Query,
-    )
+    this.options.behavior?.onFetch(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state

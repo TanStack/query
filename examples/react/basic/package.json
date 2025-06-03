@@ -9,10 +9,10 @@
     "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.79.0",
-    "@tanstack/react-query": "^5.79.0",
-    "@tanstack/react-query-devtools": "^5.79.0",
-    "@tanstack/react-query-persist-client": "^5.79.0",
+    "@tanstack/query-sync-storage-persister": "^5.80.2",
+    "@tanstack/react-query": "^5.80.2",
+    "@tanstack/react-query-devtools": "^5.80.2",
+    "@tanstack/react-query-persist-client": "^5.80.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

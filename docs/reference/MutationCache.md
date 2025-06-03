@@ -30,13 +30,16 @@ Its available methods are:
 
 - `onError?: (error: unknown, variables: unknown, context: unknown, mutation: Mutation) => void | Promise<void> | Promise<Array<void>>`
   - Optional
-  - This function will fire if any mutation encounters an error.
+  - This function will be called if some mutation encounters an error.
+  - If you return a Promise from it, it will be awaited
 - `onSuccess?: (data: unknown, variables: unknown, context: unknown, mutation: Mutation) => void | Promise<void> | Promise<Array<void>>`
   - Optional
-  - This function will fire when any mutation is successful.
+  - This function will be called if some mutation is successful.
+  - If you return a Promise from it, it will be awaited
 - `onSettled?: (data: unknown | undefined, error: unknown | null, variables: unknown, context: unknown, mutation: Mutation) => void | Promise<void> | Promise<Array<void>>`
   - Optional
-  - This function will fire when any mutation is settled (either successfully resolved or rejected).
+  - This function will be called if some mutation is settled (either successful or errored).
+  - If you return a Promise from it, it will be awaited
 - `onMutate?: (variables: unknown, mutation: Mutation) => void | Promise<void> | Promise<Array<void>>`
   - Optional
   - This function will be called before some mutation executes.
