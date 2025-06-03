@@ -23,7 +23,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
   pnpm install
   ```
 
-  - We use [pnpm](https://pnpm.io/) v9 for package management (run in case of pnpm-related issues).
+  - We use [pnpm](https://pnpm.io/) v10 for package management (run in case of pnpm-related issues).
 
     ```bash
     corepack enable && corepack prepare
@@ -57,7 +57,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
 The documentations for all the TanStack projects are hosted on [tanstack.com](https://tanstack.com), which is a TanStack Start application (https://github.com/TanStack/tanstack.com). You need to run this app locally to preview your changes in the `TanStack/query` docs.
 
 > [!NOTE]
-> The website fetches the doc pages from GitHub in production, and searches for them at `../query/docs` in development. Your local clone of `TanStack/query` needs to be in the same directory as the local clone of `TansStack/tanstack.com`.
+> The website fetches the doc pages from GitHub in production, and searches for them at `../query/docs` in development. Your local clone of `TanStack/query` needs to be in the same directory as the local clone of `TanStack/tanstack.com`.
 
 You can follow these steps to set up the docs for local development:
 
