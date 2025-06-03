@@ -11,39 +11,41 @@ export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
 
 export type Expect<T extends true> = T
 
+describe('onSuccess', () => {
+  it('should be typed correctly', () => {
+    doNotExecute(() => {
+      expectTypeOf(
+        useQuery({
+          queryKey: ['posts'],
+          queryFn: async () => ({ id: 1 }),
+          onSuccess: (data) =>
+            expectTypeOf(data).toEqualTypeOf<{ id: number }>(),
+        }),
+      ).toEqualTypeOf<UseQueryResult<{ id: number }, unknown>>()
+      expectTypeOf(
+        useQuery({
+          queryKey: ['posts'],
+          queryFn: async () => ({ id: 1 }),
+          initialData: { id: 1 },
+          onSuccess: (data) =>
+            expectTypeOf(data).toEqualTypeOf<{ id: number }>(),
+        }),
+      ).toEqualTypeOf<DefinedUseQueryResult<{ id: number }, unknown>>()
+      expectTypeOf(
+        useQuery({
+          queryKey: ['posts'],
+          queryFn: async () => ({ id: 1 }),
+          initialData: { id: 1 },
+          select: (data) => data.id,
+          onSuccess: (data) => expectTypeOf(data).toEqualTypeOf<number>(),
+        }),
+      ).toEqualTypeOf<DefinedUseQueryResult<number, unknown>>()
+    })
+  })
+})
+
 describe('initialData', () => {
   describe('Config object overload', () => {
-    it('onSuccess should be typed correctly', () => {
-      doNotExecute(() => {
-        expectTypeOf(
-          useQuery({
-            queryKey: ['posts'],
-            queryFn: async () => ({ id: 1 }),
-            onSuccess: (data) =>
-              expectTypeOf(data).toEqualTypeOf<{ id: number }>(),
-          }),
-        ).toEqualTypeOf<UseQueryResult<{ id: number }, unknown>>()
-        expectTypeOf(
-          useQuery({
-            queryKey: ['posts'],
-            queryFn: async () => ({ id: 1 }),
-            initialData: { id: 1 },
-            onSuccess: (data) =>
-              expectTypeOf(data).toEqualTypeOf<{ id: number }>(),
-          }),
-        ).toEqualTypeOf<DefinedUseQueryResult<{ id: number }, unknown>>()
-        expectTypeOf(
-          useQuery({
-            queryKey: ['posts'],
-            queryFn: async () => ({ id: 1 }),
-            initialData: { id: 1 },
-            select: (data) => data.id,
-            onSuccess: (data) => expectTypeOf(data).toEqualTypeOf<number>(),
-          }),
-        ).toEqualTypeOf<DefinedUseQueryResult<number, unknown>>()
-      })
-    })
-
     it('TData should always be defined when initialData is provided as an object', () => {
       doNotExecute(() => {
         const { data } = useQuery({
