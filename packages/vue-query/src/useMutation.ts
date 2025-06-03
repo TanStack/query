@@ -18,6 +18,7 @@ import {
 import { useQueryClient } from './useQueryClient'
 import type { ToRefs } from 'vue-demi'
 import type {
+  DistributiveOmit,
   MutateFunction,
   MutateOptions,
   MutationFunction,
@@ -25,12 +26,7 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
 } from '@tanstack/query-core'
-import type {
-  DistributiveOmit,
-  MaybeRef,
-  MaybeRefDeep,
-  WithQueryClientKey,
-} from './types'
+import type { MaybeRef, MaybeRefDeep, WithQueryClientKey } from './types'
 
 type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
   MutationObserverResult<TData, TError, TVariables, TContext>,

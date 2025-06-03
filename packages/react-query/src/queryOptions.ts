@@ -22,7 +22,7 @@ type ProhibitedQueryOptionsKeyInV5 = keyof Pick<
   'useErrorBoundary' | 'suspense' | 'getNextPageParam' | 'getPreviousPageParam'
 >
 
-export type UndefinedInitialDataOptions<
+type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
@@ -34,7 +34,7 @@ export type UndefinedInitialDataOptions<
     | NonUndefinedGuard<TQueryFnData>
 }
 
-export type DefinedInitialDataOptions<
+type DefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,

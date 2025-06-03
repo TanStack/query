@@ -2,14 +2,11 @@ import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
   DefinedQueryObserverResult,
+  DistributiveOmit,
   OmitKeyof,
   QueryKey,
 } from '@tanstack/query-core'
 import type { UseQueryOptions } from './types'
-
-type DistributiveOmit<TObject, TKey extends keyof TObject> = TObject extends any
-  ? Omit<TObject, TKey>
-  : never
 
 export type UseSuspenseQueryResult<
   TData = unknown,
@@ -52,6 +49,9 @@ export function useSuspenseQuery<
       suspense: true,
       placeholderData: undefined,
       networkMode: 'always',
+      onSuccess: undefined,
+      onError: undefined,
+      onSettled: undefined,
     },
     QueryObserver,
   ) as UseSuspenseQueryResult<TData, TError>
