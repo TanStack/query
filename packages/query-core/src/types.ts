@@ -10,6 +10,11 @@ import type { Logger } from './logger'
 
 export type NonUndefinedGuard<T> = T extends undefined ? never : T
 
+export type DistributiveOmit<
+  TObject,
+  TKey extends keyof TObject,
+> = TObject extends any ? Omit<TObject, TKey> : never
+
 export type OmitKeyof<
   TObject,
   TKey extends TStrictly extends 'safely'

@@ -2,10 +2,6 @@
 import { QueryObserver, parseQueryArgs } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
-  DefinedInitialDataOptions,
-  UndefinedInitialDataOptions,
-} from './queryOptions'
-import type {
   InitialDataFunction,
   NonUndefinedGuard,
   OmitKeyof,
@@ -25,14 +21,6 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): DefinedUseQueryResult<TData, TError>
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
   options: OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'initialData'
@@ -42,14 +30,6 @@ export function useQuery<
       | (() => NonUndefinedGuard<TQueryFnData>)
   },
 ): DefinedUseQueryResult<TData, TError>
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UseQueryResult<TData, TError>
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
