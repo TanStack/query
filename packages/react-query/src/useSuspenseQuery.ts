@@ -49,9 +49,6 @@ export function useSuspenseQuery<
       suspense: true,
       placeholderData: undefined,
       networkMode: 'always',
-      onSuccess: undefined,
-      onError: undefined,
-      onSettled: undefined,
     },
     QueryObserver,
   ) as UseSuspenseQueryResult<TData, TError>
