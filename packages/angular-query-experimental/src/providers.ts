@@ -2,10 +2,12 @@ import {
   DestroyRef,
   ENVIRONMENT_INITIALIZER,
   InjectionToken,
+  Injector,
   PLATFORM_ID,
   computed,
   effect,
   inject,
+  runInInjectionContext,
 } from '@angular/core'
 import { QueryClient, noop, onlineManager } from '@tanstack/query-core'
 import { isPlatformBrowser } from '@angular/common'
@@ -270,14 +272,19 @@ export function withDevtools(
         // Do not use provideEnvironmentInitializer while Angular < v19 is supported
         provide: ENVIRONMENT_INITIALIZER,
         multi: true,
-        useFactory: () => {
+        deps: [Injector],
+        useFactory: (injector: Injector) => {
           if (!isPlatformBrowser(inject(PLATFORM_ID))) return noop
           const injectedClient = inject(QueryClient, {
             optional: true,
           })
           const destroyRef = inject(DestroyRef)
 
-          const options = computed(() => withDevtoolsFn?.() ?? {})
+          const options = computed(() => {
+            return runInInjectionContext(injector, () => {
+              return withDevtoolsFn?.() ?? {}
+            })
+          })
 
           let devtools: TanstackQueryDevtools | null = null
           let el: HTMLElement | null = null
