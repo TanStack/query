@@ -3,6 +3,7 @@ import {
   noop,
   replaceData,
   resolveEnabled,
+  resolveStaleTime,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -24,6 +25,7 @@ import type {
   QueryOptions,
   QueryStatus,
   SetDataOptions,
+  StaleTime,
 } from './types'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
@@ -270,26 +272,44 @@ export class Query<
     )
   }
 
-  isStale(): boolean {
-    if (this.state.isInvalidated) {
-      return true
+  isStatic(): boolean {
+    if (this.getObserversCount() > 0) {
+      return this.observers.some(
+        (observer) =>
+          resolveStaleTime(observer.options.staleTime, this) === 'static',
+      )
     }
 
+    return false
+  }
+
+  isStale(): boolean {
+    // check observers first, their `isStale` has the source of truth
+    // calculated with `isStaleByTime` and it takes `enabled` into account
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) => observer.getCurrentResult().isStale,
       )
     }
 
-    return this.state.data === undefined
+    return this.state.data === undefined || this.state.isInvalidated
   }
 
-  isStaleByTime(staleTime = 0): boolean {
-    return (
-      this.state.isInvalidated ||
-      this.state.data === undefined ||
-      !timeUntilStale(this.state.dataUpdatedAt, staleTime)
-    )
+  isStaleByTime(staleTime: StaleTime = 0): boolean {
+    // no data is always stale
+    if (this.state.data === undefined) {
+      return true
+    }
+    // static is never stale
+    if (staleTime === 'static') {
+      return false
+    }
+    // if the query is invalidated, it is stale
+    if (this.state.isInvalidated) {
+      return true
+    }
+
+    return !timeUntilStale(this.state.dataUpdatedAt, staleTime)
   }
 
   onFocus(): void {
