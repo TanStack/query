@@ -1102,11 +1102,7 @@ export interface MutationOptions<
   onMutate?: (
     variables: TVariables,
   ) => Promise<TContext | undefined> | TContext | undefined
-  onSuccess?: (
-    data: TData,
-    variables: TVariables,
-    context: TContext,
-  ) => void
+  onSuccess?: (data: TData, variables: TVariables, context: TContext) => void
   onError?: (
     error: TError,
     variables: TVariables,
