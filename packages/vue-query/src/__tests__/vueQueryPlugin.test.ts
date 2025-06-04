@@ -269,11 +269,11 @@ describe('VueQueryPlugin', () => {
         ],
       })
 
-      expect(customClient.isRestoring.value).toBeTruthy()
+      expect(customClient.isRestoring?.value).toBeTruthy()
 
       await sleep(0)
 
-      expect(customClient.isRestoring.value).toBeFalsy()
+      expect(customClient.isRestoring?.value).toBeFalsy()
     })
 
     test('should delay useQuery subscription and not call fetcher if data is not stale', async () => {
@@ -311,14 +311,14 @@ describe('VueQueryPlugin', () => {
         customClient,
       )
 
-      expect(customClient.isRestoring.value).toBeTruthy()
+      expect(customClient.isRestoring?.value).toBeTruthy()
       expect(query.isFetching.value).toBeFalsy()
       expect(query.data.value).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
 
       await sleep(0)
 
-      expect(customClient.isRestoring.value).toBeFalsy()
+      expect(customClient.isRestoring?.value).toBeFalsy()
       expect(query.data.value).toStrictEqual({ foo: 'bar' })
       expect(fnSpy).toHaveBeenCalledTimes(0)
     })
@@ -373,7 +373,7 @@ describe('VueQueryPlugin', () => {
         customClient,
       )
 
-      expect(customClient.isRestoring.value).toBeTruthy()
+      expect(customClient.isRestoring?.value).toBeTruthy()
 
       expect(query.isFetching.value).toBeFalsy()
       expect(query.data.value).toStrictEqual(undefined)
@@ -384,7 +384,7 @@ describe('VueQueryPlugin', () => {
 
       await sleep(0)
 
-      expect(customClient.isRestoring.value).toBeFalsy()
+      expect(customClient.isRestoring?.value).toBeFalsy()
       expect(query.data.value).toStrictEqual({ foo1: 'bar1' })
       expect(queries.value[0].data).toStrictEqual({ foo2: 'bar2' })
       expect(fnSpy).toHaveBeenCalledTimes(0)

@@ -44,7 +44,7 @@ export class QueryClient extends QC {
     super(vueQueryConfig)
   }
 
-  isRestoring: Ref<boolean> = ref(false)
+  isRestoring?: Ref<boolean> = ref(false)
 
   isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
     return super.isFetching(cloneDeepUnref(filters))
