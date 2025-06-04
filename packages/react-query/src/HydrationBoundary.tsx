@@ -56,6 +56,10 @@ export const HydrationBoundary = ({
         }
 
         const queryCache = client.getQueryCache()
+        // State is supplied from the outside and we might as well fail
+        // gracefully if it has the wrong shape, so while we type `queries`
+        // as required, we still provide a fallback.
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         const queries = (state as DehydratedState).queries || []
 
         const newQueries: DehydratedState['queries'] = []
