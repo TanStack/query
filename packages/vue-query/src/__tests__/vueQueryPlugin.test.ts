@@ -32,8 +32,8 @@ function getAppMock(withUnmountHook = false): TestApp {
     unmount: vi.fn(),
     onUnmount: withUnmountHook
       ? vi.fn((u: UnmountCallback) => {
-        mock._unmount = u
-      })
+          mock._unmount = u
+        })
       : undefined,
     mixin: (m: ComponentOptions) => {
       mock._mixin = m
