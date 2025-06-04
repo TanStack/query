@@ -182,4 +182,38 @@ useMutation({
 
 [//]: # 'Example5'
 
-You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `
+You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `mutate` function:
+
+```tsx
+const mutation = useMutation({
+  mutationFn: addTodo,
+  onSuccess: async () => {
+    console.log("I'm first!")
+  },
+  onSettled: async () => {
+    console.log("I'm second!")
+  },
+})
+
+// Call the mutate function with callbacks
+mutation.mutate(newTodo, {
+  onSuccess: (data, variables, context) => {
+    // Component-specific callback!
+    console.log('Todo added successfully:', data)
+  },
+  onError: (error, variables, context) => {
+    // Component-specific error handling
+    console.error('Failed to add todo:', error)
+  },
+  onSettled: (data, error, variables, context) => {
+    // Always runs regardless of success or failure
+    console.log('Mutation attempt completed')
+  }
+})
+```
+
+When providing callback functions to both useMutation and mutate:
+
+- Both callbacks will be executed
+- The mutate callbacks will be executed first
+- If either returns a promise, it will be awaited before the next callback executes
