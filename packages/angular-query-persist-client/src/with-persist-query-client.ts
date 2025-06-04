@@ -20,8 +20,8 @@ import type { PersistQueryClientFeature } from '@tanstack/angular-query-experime
 
 type PersistQueryClientOptions = {
   persistOptions: Omit<PersistQueryClientOptionsCore, 'queryClient'>
-  onSuccess?: () => void
-  onError?: () => void
+  onSuccess?: () => void | Promise<void> | Promise<Array<void>>
+  onError?: () => void | Promise<void> | Promise<Array<void>>
 }
 
 /**

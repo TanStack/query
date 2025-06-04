@@ -1102,18 +1102,22 @@ export interface MutationOptions<
   onMutate?: (
     variables: TVariables,
   ) => Promise<TContext | undefined> | TContext | undefined
-  onSuccess?: (data: TData, variables: TVariables, context: TContext) => void
+  onSuccess?: (
+    data: TData,
+    variables: TVariables,
+    context: TContext,
+  ) => void | Promise<void> | Promise<Array<void>>
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined,
-  ) => void
+  ) => void | Promise<void> | Promise<Array<void>>
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined,
-  ) => void
+  ) => void | Promise<void> | Promise<Array<void>>
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode

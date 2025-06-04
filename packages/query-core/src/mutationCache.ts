@@ -16,24 +16,24 @@ interface MutationCacheConfig {
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => void
+  ) => void | Promise<void> | Promise<Array<void>>
   onSuccess?: (
     data: unknown,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => void
+  ) => void | Promise<void> | Promise<Array<void>>
   onMutate?: (
     variables: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => void
+  ) => void | Promise<void> | Promise<Array<void>>
   onSettled?: (
     data: unknown | undefined,
     error: DefaultError | null,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => void
+  ) => void | Promise<void> | Promise<Array<void>>
 }
 
 interface NotifyEventMutationAdded extends NotifyEvent {
