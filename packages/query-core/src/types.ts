@@ -1102,22 +1102,33 @@ export interface MutationOptions<
   onMutate?: (
     variables: TVariables,
   ) => Promise<TContext | undefined> | TContext | undefined
-  onSuccess?: (
-    data: TData,
-    variables: TVariables,
-    context: TContext,
-  ) => void | Promise<void> | Promise<Array<void>>
-  onError?: (
-    error: TError,
-    variables: TVariables,
-    context: TContext | undefined,
-  ) => void | Promise<void> | Promise<Array<void>>
-  onSettled?: (
-    data: TData | undefined,
-    error: TError | null,
-    variables: TVariables,
-    context: TContext | undefined,
-  ) => void | Promise<void> | Promise<Array<void>>
+  onSuccess?:
+    | ((data: TData, variables: TVariables, context: TContext) => void)
+    | ((data: TData, variables: TVariables, context: TContext) => Promise<void>)
+  onError?:
+    | ((
+        error: TError,
+        variables: TVariables,
+        context: TContext | undefined,
+      ) => void)
+    | ((
+        error: TError,
+        variables: TVariables,
+        context: TContext | undefined,
+      ) => Promise<void>)
+  onSettled?:
+    | ((
+        data: TData | undefined,
+        error: TError | null,
+        variables: TVariables,
+        context: TContext | undefined,
+      ) => void)
+    | ((
+        data: TData | undefined,
+        error: TError | null,
+        variables: TVariables,
+        context: TContext | undefined,
+      ) => Promise<void>)
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode

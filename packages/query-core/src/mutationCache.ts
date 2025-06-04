@@ -11,29 +11,56 @@ import type { MutationFilters } from './utils'
 // TYPES
 
 interface MutationCacheConfig {
-  onError?: (
-    error: DefaultError,
-    variables: unknown,
-    context: unknown,
-    mutation: Mutation<unknown, unknown, unknown>,
-  ) => void | Promise<void> | Promise<Array<void>>
-  onSuccess?: (
-    data: unknown,
-    variables: unknown,
-    context: unknown,
-    mutation: Mutation<unknown, unknown, unknown>,
-  ) => void | Promise<void> | Promise<Array<void>>
-  onMutate?: (
-    variables: unknown,
-    mutation: Mutation<unknown, unknown, unknown>,
-  ) => void | Promise<void> | Promise<Array<void>>
-  onSettled?: (
-    data: unknown | undefined,
-    error: DefaultError | null,
-    variables: unknown,
-    context: unknown,
-    mutation: Mutation<unknown, unknown, unknown>,
-  ) => void | Promise<void> | Promise<Array<void>>
+  onError?:
+    | ((
+        error: DefaultError,
+        variables: unknown,
+        context: unknown,
+        mutation: Mutation<unknown, unknown, unknown>,
+      ) => void)
+    | ((
+        error: DefaultError,
+        variables: unknown,
+        context: unknown,
+        mutation: Mutation<unknown, unknown, unknown>,
+      ) => Promise<void>)
+  onSuccess?:
+    | ((
+        data: unknown,
+        variables: unknown,
+        context: unknown,
+        mutation: Mutation<unknown, unknown, unknown>,
+      ) => void)
+    | ((
+        data: unknown,
+        variables: unknown,
+        context: unknown,
+        mutation: Mutation<unknown, unknown, unknown>,
+      ) => Promise<void>)
+  onMutate?:
+    | ((
+        variables: unknown,
+        mutation: Mutation<unknown, unknown, unknown>,
+      ) => void)
+    | ((
+        variables: unknown,
+        mutation: Mutation<unknown, unknown, unknown>,
+      ) => Promise<void>)
+  onSettled?:
+    | ((
+        data: unknown | undefined,
+        error: DefaultError | null,
+        variables: unknown,
+        context: unknown,
+        mutation: Mutation<unknown, unknown, unknown>,
+      ) => void)
+    | ((
+        data: unknown | undefined,
+        error: DefaultError | null,
+        variables: unknown,
+        context: unknown,
+        mutation: Mutation<unknown, unknown, unknown>,
+      ) => Promise<void>)
 }
 
 interface NotifyEventMutationAdded extends NotifyEvent {
