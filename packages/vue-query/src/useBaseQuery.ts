@@ -29,11 +29,11 @@ export type UseBaseQueryReturnType<
   TResult = QueryObserverResult<TData, TError>,
 > = {
   [K in keyof TResult]: K extends
-    | 'fetchNextPage'
-    | 'fetchPreviousPage'
-    | 'refetch'
-    ? TResult[K]
-    : Ref<Readonly<TResult>[K]>
+  | 'fetchNextPage'
+  | 'fetchPreviousPage'
+  | 'refetch'
+  ? TResult[K]
+  : Ref<Readonly<TResult>[K]>
 } & {
   suspense: () => Promise<TResult>
 }
@@ -93,7 +93,7 @@ export function useBaseQuery<
       TQueryKey
     > = client.defaultQueryOptions(clonedOptions)
 
-    defaulted._optimisticResults = client.isRestoring.value
+    defaulted._optimisticResults = client.isRestoring?.value
       ? 'isRestoring'
       : 'optimistic'
 
@@ -110,18 +110,20 @@ export function useBaseQuery<
     // noop
   }
 
-  watch(
-    client.isRestoring,
-    (isRestoring) => {
-      if (!isRestoring) {
-        unsubscribe()
-        unsubscribe = observer.subscribe((result) => {
-          updateState(state, result)
-        })
-      }
-    },
-    { immediate: true },
-  )
+  if (client.isRestoring) {
+    watch(
+      client.isRestoring,
+      (isRestoring) => {
+        if (!isRestoring) {
+          unsubscribe()
+          unsubscribe = observer.subscribe((result) => {
+            updateState(state, result)
+          })
+        }
+      },
+      { immediate: true },
+    )
+  }
 
   const updater = () => {
     observer.setOptions(defaultedOptions.value)
