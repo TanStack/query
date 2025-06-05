@@ -12,8 +12,8 @@
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.3",
     "@solidjs/start": "^1.1.3",
-    "@tanstack/solid-query": "^5.80.2",
-    "@tanstack/solid-query-devtools": "^5.80.2",
+    "@tanstack/solid-query": "^5.80.6",
+    "@tanstack/solid-query-devtools": "^5.80.6",
     "solid-js": "^1.9.5",
     "vinxi": "^0.5.3"
   },
