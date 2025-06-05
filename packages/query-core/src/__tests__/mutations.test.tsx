@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { MutationObserver } from '../mutationObserver'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { QueryClient } from '..'
+import { MutationObserver } from '../mutationObserver'
 import { executeMutation } from './utils'
 import type { MutationState } from '../mutation'
 
@@ -725,8 +725,8 @@ describe('mutations', () => {
         'track-analytics',
         'invalidate-queries',
         'onSettled-start',
-        'cleanup-1',
         'cleanup-2-failed',
+        'cleanup-1',
       ])
     })
 
@@ -734,7 +734,7 @@ describe('mutations', () => {
       const key = queryKey()
       const results: Array<string> = []
 
-      const mutationResult = await executeMutation(
+      const mutationPromise = executeMutation(
         queryClient,
         {
           mutationKey: key,
@@ -765,8 +765,11 @@ describe('mutations', () => {
 
       await vi.runAllTimersAsync()
 
+      const mutationResult = await mutationPromise
+
       // Verify mutation returns its own result, not callback returns
       expect(mutationResult).toBe('actual-result')
+      console.log(results)
       expect(results).toEqual([
         'sync-onMutate',
         'async-onSuccess',
@@ -778,41 +781,41 @@ describe('mutations', () => {
       const key = queryKey()
       const results: Array<string> = []
 
-      try {
-        await executeMutation(
-          queryClient,
-          {
-            mutationKey: key,
-            mutationFn: () => Promise.reject(new Error('mutation-error')),
-            onMutate: () => {
-              results.push('onMutate')
-              return { backup: 'error-data' }
-            },
-            onSuccess: () => {
-              results.push('onSuccess-should-not-run')
-            },
-            onError: async () => {
-              results.push('onError-async')
-              await sleep(1)
-              // Test Promise.all() in error callback
-              return Promise.all([
-                sleep(1).then(() => results.push('error-cleanup-1')),
-                sleep(2).then(() => results.push('error-cleanup-2')),
-              ])
-            },
-            onSettled: (_data, _error, _variables, context) => {
-              results.push(`settled-error-${context?.backup}`)
-              return Promise.allSettled([
-                Promise.resolve('settled-cleanup'),
-                Promise.reject('settled-error'),
-              ])
-            },
+      const newMutationError = new Error('mutation-error')
+      let mutationError: Error | undefined
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.reject(newMutationError),
+          onMutate: () => {
+            results.push('onMutate')
+            return { backup: 'error-data' }
           },
-          'vars',
-        )
-      } catch {
-        // Expected error
-      }
+          onSuccess: () => {
+            results.push('onSuccess-should-not-run')
+          },
+          onError: async () => {
+            results.push('onError-async')
+            await sleep(1)
+            // Test Promise.all() in error callback
+            return Promise.all([
+              sleep(1).then(() => results.push('error-cleanup-1')),
+              sleep(2).then(() => results.push('error-cleanup-2')),
+            ])
+          },
+          onSettled: (_data, _error, _variables, context) => {
+            results.push(`settled-error-${context?.backup}`)
+            return Promise.allSettled([
+              Promise.resolve('settled-cleanup'),
+              Promise.reject('settled-error'),
+            ])
+          },
+        },
+        'vars',
+      ).catch((error) => {
+        mutationError = error
+      })
 
       await vi.runAllTimersAsync()
 
@@ -823,6 +826,8 @@ describe('mutations', () => {
         'error-cleanup-2',
         'settled-error-error-data',
       ])
+
+      expect(mutationError).toEqual(newMutationError)
     })
   })
 })
