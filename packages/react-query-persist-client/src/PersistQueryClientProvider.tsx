@@ -11,8 +11,8 @@ import type { OmitKeyof, QueryClientProviderProps } from '@tanstack/react-query'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-  onSuccess?: () => Promise<void> | void
-  onError?: () => Promise<void> | void
+  onSuccess?: () => Promise<unknown> | unknown
+  onError?: () => Promise<unknown> | unknown
 }
 
 export const PersistQueryClientProvider = ({
