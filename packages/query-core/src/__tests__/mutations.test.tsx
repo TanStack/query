@@ -624,19 +624,19 @@ describe('mutations', () => {
         {
           mutationKey: key,
           mutationFn: () => Promise.resolve('success'),
-          onMutate: (variables) => {
+          onMutate: () => {
             results.push('onMutate-sync')
             return { backup: 'data' } // onMutate can return context
           },
-          onSuccess: (data, variables, context) => {
+          onSuccess: () => {
             results.push('onSuccess-implicit-void')
             // Implicit void return
           },
-          onError: (error, variables, context) => {
+          onError: () => {
             results.push('onError-explicit-void')
             return // Explicit void return
           },
-          onSettled: (data, error, variables, context) => {
+          onSettled: () => {
             results.push('onSettled-return-value')
             return 'ignored-value' // Non-void return (should be ignored)
           },
@@ -660,18 +660,18 @@ describe('mutations', () => {
         {
           mutationKey: key,
           mutationFn: () => Promise.resolve('success'),
-          onMutate: async (variables) => {
+          onMutate: async () => {
             results.push('onMutate-async')
             await sleep(1)
             return { backup: 'async-data' }
           },
-          onSuccess: async (data, variables, context) => {
+          onSuccess: async () => {
             results.push('onSuccess-async-start')
             await sleep(2)
             results.push('onSuccess-async-end')
             // Implicit void return from async
           },
-          onSettled: (data, error, variables, context) => {
+          onSettled: () => {
             results.push('onSettled-promise')
             return Promise.resolve('also-ignored') // Promise<string> (should be ignored)
           },
@@ -698,14 +698,14 @@ describe('mutations', () => {
         {
           mutationKey: key,
           mutationFn: () => Promise.resolve('success'),
-          onSuccess: (data, variables, context) => {
+          onSuccess: () => {
             results.push('onSuccess-start')
             return Promise.all([
               sleep(2).then(() => results.push('invalidate-queries')),
               sleep(1).then(() => results.push('track-analytics')),
             ])
           },
-          onSettled: (data, error, variables, context) => {
+          onSettled: () => {
             results.push('onSettled-start')
             return Promise.allSettled([
               sleep(1).then(() => results.push('cleanup-1')),
@@ -739,20 +739,20 @@ describe('mutations', () => {
         {
           mutationKey: key,
           mutationFn: () => Promise.resolve('actual-result'),
-          onMutate: (variables) => {
+          onMutate: () => {
             results.push('sync-onMutate')
             return { rollback: 'data' }
           },
-          onSuccess: async (data, variables, context) => {
+          onSuccess: async () => {
             results.push('async-onSuccess')
             await sleep(1)
             return 'success-return-ignored'
           },
-          onError: (error, variables, context) => {
+          onError: () => {
             results.push('sync-onError')
             return Promise.resolve('error-return-ignored')
           },
-          onSettled: (data, error, variables, context) => {
+          onSettled: (_data, _error, _variables, context) => {
             results.push(`settled-context-${context?.rollback}`)
             return Promise.all([
               Promise.resolve('cleanup-1'),
@@ -784,14 +784,14 @@ describe('mutations', () => {
           {
             mutationKey: key,
             mutationFn: () => Promise.reject(new Error('mutation-error')),
-            onMutate: (variables) => {
+            onMutate: () => {
               results.push('onMutate')
               return { backup: 'error-data' }
             },
-            onSuccess: (data, variables, context) => {
+            onSuccess: () => {
               results.push('onSuccess-should-not-run')
             },
-            onError: async (error, variables, context) => {
+            onError: async () => {
               results.push('onError-async')
               await sleep(1)
               // Test Promise.all() in error callback
@@ -800,7 +800,7 @@ describe('mutations', () => {
                 sleep(2).then(() => results.push('error-cleanup-2')),
               ])
             },
-            onSettled: (data, error, variables, context) => {
+            onSettled: (_data, _error, _variables, context) => {
               results.push(`settled-error-${context?.backup}`)
               return Promise.allSettled([
                 Promise.resolve('settled-cleanup'),
