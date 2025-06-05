@@ -274,7 +274,7 @@ export function useQueries<
       }
 
       const defaulted = client.defaultQueryOptions(clonedOptions)
-      defaulted._optimisticResults = client.isRestoring.value
+      defaulted._optimisticResults = client.isRestoring?.value
         ? 'isRestoring'
         : 'optimistic'
 
@@ -317,20 +317,22 @@ export function useQueries<
     // noop
   }
 
-  watch(
-    client.isRestoring,
-    (isRestoring) => {
-      if (!isRestoring) {
-        unsubscribe()
-        unsubscribe = observer.subscribe(() => {
-          state.value = getOptimisticResult()
-        })
+  if (client.isRestoring) {
+    watch(
+      client.isRestoring,
+      (isRestoring) => {
+        if (!isRestoring) {
+          unsubscribe()
+          unsubscribe = observer.subscribe(() => {
+            state.value = getOptimisticResult()
+          })
 
-        state.value = getOptimisticResult()
-      }
-    },
-    { immediate: true },
-  )
+          state.value = getOptimisticResult()
+        }
+      },
+      { immediate: true },
+    )
+  }
 
   watch(defaultedQueries, (queriesValue) => {
     observer.setQueries(

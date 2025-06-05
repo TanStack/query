@@ -459,14 +459,13 @@ export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
-      InfiniteData<TQueryData, TPageParam>,
+      InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey,
       TPageParam
     >,
@@ -476,7 +475,6 @@ export type DefaultedInfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = WithRequired<
@@ -484,7 +482,6 @@ export type DefaultedInfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryData,
     TQueryKey,
     TPageParam
   >,
@@ -1109,18 +1106,18 @@ export interface MutationOptions<
     data: TData,
     variables: TVariables,
     context: TContext,
-  ) => Promise<unknown> | unknown
+  ) => Promise<void> | void
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | unknown
+  ) => Promise<void> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | unknown
+  ) => Promise<void> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode

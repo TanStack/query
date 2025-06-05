@@ -133,9 +133,8 @@ export class QueryClient {
   >(queryKey: TTaggedQueryKey): TInferredQueryFnData | undefined {
     const options = this.defaultQueryOptions({ queryKey })
 
-    return this.#queryCache.get(options.queryHash)?.state.data as
-      | TInferredQueryFnData
-      | undefined
+    return this.#queryCache.get<TInferredQueryFnData>(options.queryHash)?.state
+      .data
   }
 
   ensureQueryData<

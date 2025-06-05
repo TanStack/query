@@ -497,7 +497,7 @@ describe('createPersister', () => {
     })
   })
 
-  describe('persisterRestoreAll', () => {
+  describe('restoreQueries', () => {
     test('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
       const { persister, client, query, queryKey } = setupPersister(['foo'], {
@@ -513,11 +513,11 @@ describe('createPersister', () => {
 
       expect(await storage.entries()).toHaveLength(1)
 
-      await persister.persisterRestoreAll(client)
+      await persister.restoreQueries(client)
       expect(await storage.entries()).toHaveLength(0)
     })
 
-    test('should properly restore queries from cache', async () => {
+    test('should properly restore queries from cache without filters', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo'], {
         storage,
@@ -530,10 +530,102 @@ describe('createPersister', () => {
       client.clear()
       expect(client.getQueryCache().getAll()).toHaveLength(0)
 
-      await persister.persisterRestoreAll(client)
+      await persister.restoreQueries(client)
       expect(client.getQueryCache().getAll()).toHaveLength(1)
 
       expect(client.getQueryData(queryKey)).toEqual('foo')
+    })
+
+    test('should properly restore queries from cache', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      client.clear()
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+
+      await persister.restoreQueries(client, { queryKey })
+      expect(client.getQueryCache().getAll()).toHaveLength(1)
+
+      expect(client.getQueryData(queryKey)).toEqual('foo')
+    })
+
+    test('should not restore queries from cache if there is no match', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      client.clear()
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+
+      await persister.restoreQueries(client, { queryKey: ['bar'] })
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+    })
+
+    test('should properly restore queries from cache with partial match', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      client.clear()
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+
+      await persister.restoreQueries(client, { queryKey: ['foo'] })
+      expect(client.getQueryCache().getAll()).toHaveLength(1)
+
+      expect(client.getQueryData(queryKey)).toEqual('foo')
+    })
+
+    test('should not restore queries from cache with exact match if there is no match', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      client.clear()
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+
+      await persister.restoreQueries(client, { queryKey: ['foo'], exact: true })
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+    })
+
+    test('should restore queries from cache with exact match', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      client.clear()
+      expect(client.getQueryCache().getAll()).toHaveLength(0)
+
+      await persister.restoreQueries(client, {
+        queryKey: queryKey,
+        exact: true,
+      })
+      expect(client.getQueryCache().getAll()).toHaveLength(1)
     })
   })
 })

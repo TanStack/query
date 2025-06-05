@@ -509,7 +509,7 @@ Note that the queries are no longer fetched on the client, instead their data wa
 
 We simply can not know before we have fetched the feed if we also need to fetch graph data, they are dependent queries. Because this happens on the server where latency is generally both lower and more stable, this often isn't such a big deal.
 
-Amazing, we've mostly flattened our waterfalls! There's a catch though. Let's call this page the `/feed` page, and let's pretend we also have another page like `/posts`. If we type in `www.example.com/feed` directly in the url bar and hit enter, we get all these great server rendering benefits, BUT, if we instead type in `www.example.com/posts` and then **click a link** to `/feed`, we're back to to this:
+Amazing, we've mostly flattened our waterfalls! There's a catch though. Let's call this page the `/feed` page, and let's pretend we also have another page like `/posts`. If we type in `www.example.com/feed` directly in the url bar and hit enter, we get all these great server rendering benefits, BUT, if we instead type in `www.example.com/posts` and then **click a link** to `/feed`, we're back to this:
 
 ```
 1. |> JS for <Feed>
