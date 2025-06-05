@@ -613,4 +613,216 @@ describe('mutations', () => {
       'finish-B2',
     ])
   })
+
+  describe('callback return types', () => {
+    test('should handle all sync callback patterns', async () => {
+      const key = queryKey()
+      const results: Array<string> = []
+
+      await executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve('success'),
+          onMutate: (variables) => {
+            results.push('onMutate-sync')
+            return { backup: 'data' } // onMutate can return context
+          },
+          onSuccess: (data, variables, context) => {
+            results.push('onSuccess-implicit-void')
+            // Implicit void return
+          },
+          onError: (error, variables, context) => {
+            results.push('onError-explicit-void')
+            return // Explicit void return
+          },
+          onSettled: (data, error, variables, context) => {
+            results.push('onSettled-return-value')
+            return 'ignored-value' // Non-void return (should be ignored)
+          },
+        },
+        'vars',
+      )
+
+      expect(results).toEqual([
+        'onMutate-sync',
+        'onSuccess-implicit-void',
+        'onSettled-return-value',
+      ])
+    })
+
+    test('should handle all async callback patterns', async () => {
+      const key = queryKey()
+      const results: Array<string> = []
+
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve('success'),
+          onMutate: async (variables) => {
+            results.push('onMutate-async')
+            await sleep(1)
+            return { backup: 'async-data' }
+          },
+          onSuccess: async (data, variables, context) => {
+            results.push('onSuccess-async-start')
+            await sleep(2)
+            results.push('onSuccess-async-end')
+            // Implicit void return from async
+          },
+          onSettled: (data, error, variables, context) => {
+            results.push('onSettled-promise')
+            return Promise.resolve('also-ignored') // Promise<string> (should be ignored)
+          },
+        },
+        'vars',
+      )
+
+      await vi.runAllTimersAsync()
+
+      expect(results).toEqual([
+        'onMutate-async',
+        'onSuccess-async-start',
+        'onSuccess-async-end',
+        'onSettled-promise',
+      ])
+    })
+
+    test('should handle Promise.all() and Promise.allSettled() patterns', async () => {
+      const key = queryKey()
+      const results: Array<string> = []
+
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve('success'),
+          onSuccess: (data, variables, context) => {
+            results.push('onSuccess-start')
+            return Promise.all([
+              sleep(2).then(() => results.push('invalidate-queries')),
+              sleep(1).then(() => results.push('track-analytics')),
+            ])
+          },
+          onSettled: (data, error, variables, context) => {
+            results.push('onSettled-start')
+            return Promise.allSettled([
+              sleep(1).then(() => results.push('cleanup-1')),
+              Promise.reject('error').catch(() =>
+                results.push('cleanup-2-failed'),
+              ),
+            ])
+          },
+        },
+        'vars',
+      )
+
+      await vi.runAllTimersAsync()
+
+      expect(results).toEqual([
+        'onSuccess-start',
+        'track-analytics',
+        'invalidate-queries',
+        'onSettled-start',
+        'cleanup-1',
+        'cleanup-2-failed',
+      ])
+    })
+
+    test('should handle mixed sync/async patterns and return value isolation', async () => {
+      const key = queryKey()
+      const results: Array<string> = []
+
+      const mutationResult = await executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve('actual-result'),
+          onMutate: (variables) => {
+            results.push('sync-onMutate')
+            return { rollback: 'data' }
+          },
+          onSuccess: async (data, variables, context) => {
+            results.push('async-onSuccess')
+            await sleep(1)
+            return 'success-return-ignored'
+          },
+          onError: (error, variables, context) => {
+            results.push('sync-onError')
+            return Promise.resolve('error-return-ignored')
+          },
+          onSettled: (data, error, variables, context) => {
+            results.push(`settled-context-${context?.rollback}`)
+            return Promise.all([
+              Promise.resolve('cleanup-1'),
+              Promise.resolve('cleanup-2'),
+            ])
+          },
+        },
+        'vars',
+      )
+
+      await vi.runAllTimersAsync()
+
+      // Verify mutation returns its own result, not callback returns
+      expect(mutationResult).toBe('actual-result')
+      expect(results).toEqual([
+        'sync-onMutate',
+        'async-onSuccess',
+        'settled-context-data',
+      ])
+    })
+
+    test('should handle error cases with all callback patterns', async () => {
+      const key = queryKey()
+      const results: Array<string> = []
+
+      try {
+        await executeMutation(
+          queryClient,
+          {
+            mutationKey: key,
+            mutationFn: () => Promise.reject(new Error('mutation-error')),
+            onMutate: (variables) => {
+              results.push('onMutate')
+              return { backup: 'error-data' }
+            },
+            onSuccess: (data, variables, context) => {
+              results.push('onSuccess-should-not-run')
+            },
+            onError: async (error, variables, context) => {
+              results.push('onError-async')
+              await sleep(1)
+              // Test Promise.all() in error callback
+              return Promise.all([
+                sleep(1).then(() => results.push('error-cleanup-1')),
+                sleep(2).then(() => results.push('error-cleanup-2')),
+              ])
+            },
+            onSettled: (data, error, variables, context) => {
+              results.push(`settled-error-${context?.backup}`)
+              return Promise.allSettled([
+                Promise.resolve('settled-cleanup'),
+                Promise.reject('settled-error'),
+              ])
+            },
+          },
+          'vars',
+        )
+      } catch {
+        // Expected error
+      }
+
+      await vi.runAllTimersAsync()
+
+      expect(results).toEqual([
+        'onMutate',
+        'onError-async',
+        'error-cleanup-1',
+        'error-cleanup-2',
+        'settled-error-error-data',
+      ])
+    })
+  })
 })
