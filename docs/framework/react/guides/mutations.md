@@ -343,7 +343,7 @@ queryClient.resumePausedMutations()
 
 ### Persisting Offline mutations
 
-If you persist offline mutations with the [persistQueryClient plugin](../plugins/persistQueryClient.md), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
+If you persist offline mutations with the [persistQueryClient plugin](../../plugins/persistQueryClient), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
 
 This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggers the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
 
@@ -386,7 +386,7 @@ export default function App() {
 
 [//]: # 'Example11'
 
-We also have an extensive [offline example](../examples/offline) that covers both queries and mutations.
+We also have an extensive [offline example](../../examples/offline) that covers both queries and mutations.
 
 ## Mutation Scopes
 
@@ -408,7 +408,7 @@ const mutation = useMutation({
 
 ## Further reading
 
-For more information about mutations, have a look at [#12: Mastering Mutations in React Query](../community/tkdodos-blog.md#12-mastering-mutations-in-react-query) from
+For more information about mutations, have a look at [#12: Mastering Mutations in React Query](../../community/tkdodos-blog.md#12-mastering-mutations-in-react-query) from
 the Community Resources.
 
 [//]: # 'Materials'
