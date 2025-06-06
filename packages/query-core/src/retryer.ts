@@ -2,12 +2,17 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { pendingThenable } from './thenable'
 import { isServer, sleep } from './utils'
-import type { CancelOptions, DefaultError, NetworkMode } from './types'
+import type {
+  CancelOptions,
+  DefaultError,
+  MaybePromise,
+  NetworkMode,
+} from './types'
 
 // TYPES
 
 interface RetryerConfig<TData = unknown, TError = DefaultError> {
-  fn: () => TData | Promise<TData>
+  fn: () => MaybePromise<TData>
   initialPromise?: Promise<TData>
   abort?: () => void
   onError?: (error: TError) => void
@@ -142,7 +147,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       return
     }
 
-    let promiseOrValue: any
+    let promiseOrValue: MaybePromise<TData>
 
     // we can re-use config.initialPromise on the first call of run()
     const initialPromise =
