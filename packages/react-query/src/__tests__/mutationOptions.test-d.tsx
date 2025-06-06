@@ -109,7 +109,7 @@ describe('mutationOptions', () => {
     const mutation = useMutation({
       ...mutationOptions({
         mutationKey: ['key'],
-        mutationFn: () => Promise.resolve({ field: 'test' }),
+        mutationFn: () => Promise.resolve<{ field: string }>({ field: 'test' }),
       }),
       onSuccess: (data) =>
         expectTypeOf(data).toEqualTypeOf<{ field: string }>(),
