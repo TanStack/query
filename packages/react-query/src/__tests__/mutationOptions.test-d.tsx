@@ -17,6 +17,16 @@ describe('mutationOptions', () => {
     })
   })
 
+  it('should not allow usage without mutationKey', () => {
+    // @ts-expect-error this is a good error, because mutationKey is required
+    mutationOptions({
+      mutationFn: () => Promise.resolve(5),
+      onSuccess: (data) => {
+        expectTypeOf(data).toEqualTypeOf<number>()
+      },
+    })
+  })
+
   it('should infer types for callbacks', () => {
     mutationOptions({
       mutationFn: () => Promise.resolve(5),
@@ -32,6 +42,7 @@ describe('mutationOptions', () => {
       mutationFn: () => {
         throw new Error('fail')
       },
+      mutationKey: ['key'],
       onError: (error) => {
         expectTypeOf(error).toEqualTypeOf<DefaultError>()
       },
@@ -51,6 +62,7 @@ describe('mutationOptions', () => {
   it('should infer context type correctly', () => {
     mutationOptions<number, DefaultError, void, { name: string }>({
       mutationFn: () => Promise.resolve(5),
+      mutationKey: ['key'],
       onMutate: () => {
         return { name: 'context' }
       },
@@ -72,6 +84,7 @@ describe('mutationOptions', () => {
   it('should allow mutationKey to be omitted', () => {
     return mutationOptions({
       mutationFn: () => Promise.resolve(123),
+      mutationKey: ['key'],
       onSuccess: (data) => {
         expectTypeOf(data).toEqualTypeOf<number>()
       },
@@ -81,6 +94,7 @@ describe('mutationOptions', () => {
   it('should infer all types when not explicitly provided', () => {
     const mutation = mutationOptions({
       mutationFn: (id: string) => Promise.resolve(id.length),
+      mutationKey: ['key'],
       onSuccess: (data) => {
         expectTypeOf(data).toEqualTypeOf<number>()
       },

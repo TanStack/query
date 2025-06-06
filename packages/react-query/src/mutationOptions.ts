@@ -1,4 +1,4 @@
-import type { DefaultError } from '@tanstack/query-core'
+import type { DefaultError, WithRequired } from '@tanstack/query-core'
 import type { UseMutationOptions } from './types'
 
 export function mutationOptions<
@@ -7,7 +7,13 @@ export function mutationOptions<
   TVariables = void,
   TContext = unknown,
 >(
-  options: UseMutationOptions<TData, TError, TVariables, TContext>,
-): UseMutationOptions<TData, TError, TVariables, TContext> {
+  options: WithRequired<
+    UseMutationOptions<TData, TError, TVariables, TContext>,
+    'mutationKey'
+  >,
+): WithRequired<
+  UseMutationOptions<TData, TError, TVariables, TContext>,
+  'mutationKey'
+> {
   return options
 }
