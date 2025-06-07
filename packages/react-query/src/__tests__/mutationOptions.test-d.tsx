@@ -1,14 +1,14 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useMutation } from 'src/useMutation'
-import { useIsMutating, useMutationState } from 'src/useMutationState'
 import { QueryClient } from '@tanstack/query-core'
+import { useIsMutating, useMutationState } from '..'
 import { mutationOptions } from '../mutationOptions'
 import type {
   DefaultError,
   MutationState,
   WithRequired,
 } from '@tanstack/query-core'
-import type { UseMutationOptions, UseMutationResult } from 'src/types'
+import type { UseMutationOptions, UseMutationResult } from '../types'
 
 describe('mutationOptions', () => {
   it('should not allow excess properties', () => {
