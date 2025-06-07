@@ -3,7 +3,11 @@ import { useMutation } from 'src/useMutation'
 import { useIsMutating, useMutationState } from 'src/useMutationState'
 import { QueryClient } from '@tanstack/query-core'
 import { mutationOptions } from '../mutationOptions'
-import type { DefaultError, MutationState } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  MutationState,
+  WithRequired,
+} from '@tanstack/query-core'
 import type { UseMutationOptions, UseMutationResult } from 'src/types'
 
 describe('mutationOptions', () => {
@@ -102,19 +106,24 @@ describe('mutationOptions', () => {
       },
     })
 
-    expectTypeOf(mutation).toMatchTypeOf<
-      UseMutationOptions<number, DefaultError, string>
+    expectTypeOf(mutation).toEqualTypeOf<
+      WithRequired<
+        UseMutationOptions<number, DefaultError, string>,
+        'mutationKey'
+      >
     >()
   })
 
   it('should infer types when used with useMutation', () => {
-    const mutation = useMutation({
-      ...mutationOptions({
-        mutationKey: ['key'],
-        mutationFn: () => Promise.resolve('data'),
-      }),
-      onSuccess: (data) => expectTypeOf(data).toEqualTypeOf<string>(),
+    const mutationOpts = mutationOptions({
+      mutationKey: ['key'],
+      mutationFn: () => Promise.resolve('data'),
+      onSuccess: (data) => {
+        expectTypeOf(data).toEqualTypeOf<string>()
+      },
     })
+
+    const mutation = useMutation(mutationOpts)
     expectTypeOf(mutation).toEqualTypeOf<
       UseMutationResult<string, DefaultError, void, unknown>
     >()
