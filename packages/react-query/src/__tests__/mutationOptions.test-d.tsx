@@ -1,8 +1,10 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useMutation } from 'src/useMutation'
+import { useIsMutating, useMutationState } from 'src/useMutationState'
+import { QueryClient } from '@tanstack/query-core'
 import { mutationOptions } from '../mutationOptions'
+import type { DefaultError, MutationState } from '@tanstack/query-core'
 import type { UseMutationOptions, UseMutationResult } from 'src/types'
-import type { DefaultError } from '@tanstack/query-core'
 
 describe('mutationOptions', () => {
   it('should not allow excess properties', () => {
@@ -116,6 +118,39 @@ describe('mutationOptions', () => {
     })
     expectTypeOf(mutation).toMatchTypeOf<
       UseMutationResult<{ field: string }, DefaultError, void, unknown>
+    >()
+  })
+
+  it('should infer types when used with useIsMutating', () => {
+    const mutationOpts = mutationOptions({
+      mutationKey: ['key'],
+      mutationFn: () => Promise.resolve(5),
+    })
+
+    const isMutating = useIsMutating(mutationOpts)
+    expectTypeOf(isMutating).toEqualTypeOf<number>()
+  })
+
+  it('should infer types when used with queryClient.isMutating', () => {
+    const queryClient = new QueryClient()
+    const mutationOpts = mutationOptions({
+      mutationKey: ['key'],
+      mutationFn: () => Promise.resolve(5),
+    })
+
+    const isMutating = queryClient.isMutating(mutationOpts)
+    expectTypeOf(isMutating).toEqualTypeOf<number>()
+  })
+
+  it('should infer types when used with useMutationState', () => {
+    const mutationOpts = mutationOptions({
+      mutationKey: ['key'],
+      mutationFn: () => Promise.resolve(5),
+    })
+
+    const mutationState = useMutationState({ filters: mutationOpts })
+    expectTypeOf(mutationState).toEqualTypeOf<
+      Array<MutationState<unknown, Error, unknown, unknown>>
     >()
   })
 })
