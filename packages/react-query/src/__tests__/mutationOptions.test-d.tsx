@@ -111,13 +111,12 @@ describe('mutationOptions', () => {
     const mutation = useMutation({
       ...mutationOptions({
         mutationKey: ['key'],
-        mutationFn: () => Promise.resolve<{ field: string }>({ field: 'test' }),
+        mutationFn: () => Promise.resolve('data'),
       }),
-      onSuccess: (data) =>
-        expectTypeOf(data).toEqualTypeOf<{ field: string }>(),
+      onSuccess: (data) => expectTypeOf(data).toEqualTypeOf<string>(),
     })
-    expectTypeOf(mutation).toMatchTypeOf<
-      UseMutationResult<{ field: string }, DefaultError, void, unknown>
+    expectTypeOf(mutation).toEqualTypeOf<
+      UseMutationResult<string, DefaultError, void, unknown>
     >()
   })
 
