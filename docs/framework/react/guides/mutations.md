@@ -407,6 +407,7 @@ const mutation = useMutation({
 [//]: # 'Materials'
 
 ## Further reading
+
 For more information about mutations, have a look at [#12: Mastering Mutations in React Query](../../community/tkdodos-blog.md#12-mastering-mutations-in-react-query) from
 the Community Resources.
 
