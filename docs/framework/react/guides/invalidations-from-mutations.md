@@ -42,4 +42,8 @@ const mutation = useMutation({
 
 [//]: # 'Example2'
 
+Returning a Promise on `onSuccess` makes sure the data is updated before the mutation is entirely complete (i.e., isPending is true until onSuccess is fulfilled)
+
+[//]: # 'Example2'
+
 You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](../mutations.md)
