@@ -34,7 +34,7 @@ const mutation = useMutation({
     // If you're invalidating multiple queries
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['todos'] }),
-      queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      queryClient.invalidateQueries({ queryKey: ['reminders'] }),
     ])
   },
 })
