@@ -21,24 +21,24 @@ interface MutationCacheConfig {
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => MaybePromise<void>
+  ) => MaybePromise<unknown>
   onSuccess?: (
     data: unknown,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => MaybePromise<void>
+  ) => MaybePromise<unknown>
   onMutate?: (
     variables: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => MaybePromise<void>
+  ) => MaybePromise<unknown>
   onSettled?: (
     data: unknown | undefined,
     error: DefaultError | null,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => MaybePromise<void>
+  ) => MaybePromise<unknown>
 }
 
 interface NotifyEventMutationAdded extends NotifyEvent {
