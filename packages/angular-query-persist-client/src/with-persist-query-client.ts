@@ -23,8 +23,8 @@ import type {
 
 type PersistQueryClientOptions = {
   persistOptions: Omit<PersistQueryClientOptionsCore, 'queryClient'>
-  onSuccess?: () => MaybePromise<void>
-  onError?: () => MaybePromise<void>
+  onSuccess?: () => MaybePromise<unknown>
+  onError?: () => MaybePromise<unknown>
 }
 
 /**

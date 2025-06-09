@@ -15,8 +15,8 @@ import type {
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-  onSuccess?: () => MaybePromise<void>
-  onError?: () => MaybePromise<void>
+  onSuccess?: () => MaybePromise<unknown>
+  onError?: () => MaybePromise<unknown>
 }
 
 export const PersistQueryClientProvider = ({

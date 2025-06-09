@@ -68,15 +68,15 @@ mutate(variables, {
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
   - Useful to perform optimistic updates to a resource in hopes that the mutation succeeds
   - The value returned from this function will be passed to both the `onError` and `onSettled` functions in the event of a mutation failure and can be useful for rolling back optimistic updates.
-- `onSuccess: (data: TData, variables: TVariables, context: TContext) => MaybePromise<void>`
+- `onSuccess: (data: TData, variables: TVariables, context: TContext) => MaybePromise<unknown>`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onError: (err: TError, variables: TVariables, context?: TContext) => MaybePromise<void>`
+- `onError: (err: TError, variables: TVariables, context?: TContext) => MaybePromise<unknown>`
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onSettled: (data: TData, error: TError, variables: TVariables, context?: TContext) => MaybePromise<void>`
+- `onSettled: (data: TData, error: TError, variables: TVariables, context?: TContext) => MaybePromise<unknown>`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - If a promise is returned, it will be awaited and resolved before proceeding

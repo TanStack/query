@@ -28,19 +28,19 @@ Its available methods are:
 
 **Options**
 
-- `onError?: (error: unknown, variables: unknown, context: unknown, mutation: Mutation) => MaybePromise<void>`
+- `onError?: (error: unknown, variables: unknown, context: unknown, mutation: Mutation) => MaybePromise<unknown>`
   - Optional
   - This function will be called if some mutation encounters an error.
   - If you return a Promise from it, it will be awaited
-- `onSuccess?: (data: unknown, variables: unknown, context: unknown, mutation: Mutation) => MaybePromise<void>`
+- `onSuccess?: (data: unknown, variables: unknown, context: unknown, mutation: Mutation) => MaybePromise<unknown>`
   - Optional
   - This function will be called if some mutation is successful.
   - If you return a Promise from it, it will be awaited
-- `onSettled?: (data: unknown | undefined, error: unknown | null, variables: unknown, context: unknown, mutation: Mutation) => MaybePromise<void>`
+- `onSettled?: (data: unknown | undefined, error: unknown | null, variables: unknown, context: unknown, mutation: Mutation) => MaybePromise<unknown>`
   - Optional
   - This function will be called if some mutation is settled (either successful or errored).
   - If you return a Promise from it, it will be awaited
-- `onMutate?: (variables: unknown, mutation: Mutation) => MaybePromise<void>`
+- `onMutate?: (variables: unknown, mutation: Mutation) => MaybePromise<unknown>`
   - Optional
   - This function will be called before some mutation executes.
   - If you return a Promise from it, it will be awaited
