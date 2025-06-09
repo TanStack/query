@@ -16,6 +16,8 @@ export interface PersistedQuery {
   state: QueryState
 }
 
+export type { MaybePromise }
+
 export interface AsyncStorage<TStorageValue = string> {
   getItem: (key: string) => MaybePromise<TStorageValue | undefined | null>
   setItem: (key: string, value: TStorageValue) => MaybePromise<unknown>
