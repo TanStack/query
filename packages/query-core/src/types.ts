@@ -100,12 +100,16 @@ export type QueryFunction<
   TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => MaybePromise<T>
 
-export type StaleTime<
+export type StaleTime = number | 'static'
+
+export type StaleTimeFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = number | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
+> =
+  | StaleTime
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => StaleTime)
 
 export type Enabled<
   TQueryFnData = unknown,
@@ -330,7 +334,7 @@ export interface QueryObserverOptions<
    * If set to a function, the function will be executed with the query to compute a `staleTime`.
    * Defaults to `0`.
    */
-  staleTime?: StaleTime<TQueryFnData, TError, TQueryData, TQueryKey>
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
@@ -456,14 +460,13 @@ export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
-      InfiniteData<TQueryData, TPageParam>,
+      InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey,
       TPageParam
     >,
@@ -473,7 +476,6 @@ export type DefaultedInfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = WithRequired<
@@ -481,7 +483,6 @@ export type DefaultedInfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryData,
     TQueryKey,
     TPageParam
   >,
@@ -503,7 +504,7 @@ export interface FetchQueryOptions<
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
    */
-  staleTime?: StaleTime<TQueryFnData, TError, TData, TQueryKey>
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
 }
 
 export interface EnsureQueryDataOptions<

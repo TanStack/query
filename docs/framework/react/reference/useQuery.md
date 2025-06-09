@@ -90,12 +90,13 @@ const {
   - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
-- `staleTime: number | ((query: Query) => number)`
+- `staleTime: number | 'static' ((query: Query) => number | 'static')`
   - Optional
   - Defaults to `0`
   - The time in milliseconds after which data is considered stale. This value only applies to the hook it is defined on.
-  - If set to `Infinity`, the data will never be considered stale
+  - If set to `Infinity`, the data will not be considered stale unless manually invalidated
   - If set to a function, the function will be executed with the query to compute a `staleTime`.
+  - If set to `'static'`, the data will never be considered stale
 - `gcTime: number | Infinity`
   - Defaults to `5 * 60 * 1000` (5 minutes) or `Infinity` during SSR
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used.
@@ -116,21 +117,21 @@ const {
   - Defaults to `true`
   - If set to `true`, the query will refetch on mount if the data is stale.
   - If set to `false`, the query will not refetch on mount.
-  - If set to `"always"`, the query will always refetch on mount.
+  - If set to `"always"`, the query will always refetch on mount (except when `staleTime: 'static'` is used).
   - If set to a function, the function will be executed with the query to compute the value
 - `refetchOnWindowFocus: boolean | "always" | ((query: Query) => boolean | "always")`
   - Optional
   - Defaults to `true`
   - If set to `true`, the query will refetch on window focus if the data is stale.
   - If set to `false`, the query will not refetch on window focus.
-  - If set to `"always"`, the query will always refetch on window focus.
+  - If set to `"always"`, the query will always refetch on window focus (except when `staleTime: 'static'` is used).
   - If set to a function, the function will be executed with the query to compute the value
 - `refetchOnReconnect: boolean | "always" | ((query: Query) => boolean | "always")`
   - Optional
   - Defaults to `true`
   - If set to `true`, the query will refetch on reconnect if the data is stale.
   - If set to `false`, the query will not refetch on reconnect.
-  - If set to `"always"`, the query will always refetch on reconnect.
+  - If set to `"always"`, the query will always refetch on reconnect (except when `staleTime: 'static'` is used).
   - If set to a function, the function will be executed with the query to compute the value
 - `notifyOnChangeProps: string[] | "all" | (() => string[] | "all" | undefined)`
   - Optional

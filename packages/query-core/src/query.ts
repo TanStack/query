@@ -3,6 +3,7 @@ import {
   noop,
   replaceData,
   resolveEnabled,
+  resolveStaleTime,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -18,13 +19,13 @@ import type {
   InitialDataFunction,
   MaybePromise,
   OmitKeyof,
-  QueryFunction,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
   QueryOptions,
   QueryStatus,
   SetDataOptions,
+  StaleTime,
 } from './types'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
@@ -271,26 +272,44 @@ export class Query<
     )
   }
 
-  isStale(): boolean {
-    if (this.state.isInvalidated) {
-      return true
+  isStatic(): boolean {
+    if (this.getObserversCount() > 0) {
+      return this.observers.some(
+        (observer) =>
+          resolveStaleTime(observer.options.staleTime, this) === 'static',
+      )
     }
 
+    return false
+  }
+
+  isStale(): boolean {
+    // check observers first, their `isStale` has the source of truth
+    // calculated with `isStaleByTime` and it takes `enabled` into account
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) => observer.getCurrentResult().isStale,
       )
     }
 
-    return this.state.data === undefined
+    return this.state.data === undefined || this.state.isInvalidated
   }
 
-  isStaleByTime(staleTime = 0): boolean {
-    return (
-      this.state.isInvalidated ||
-      this.state.data === undefined ||
-      !timeUntilStale(this.state.dataUpdatedAt, staleTime)
-    )
+  isStaleByTime(staleTime: StaleTime = 0): boolean {
+    // no data is always stale
+    if (this.state.data === undefined) {
+      return true
+    }
+    // static is never stale
+    if (staleTime === 'static') {
+      return false
+    }
+    // if the query is invalidated, it is stale
+    if (this.state.isInvalidated) {
+      return true
+    }
+
+    return !timeUntilStale(this.state.dataUpdatedAt, staleTime)
   }
 
   onFocus(): void {
@@ -412,48 +431,59 @@ export class Query<
       const queryFn = ensureQueryFn(this.options, fetchOptions)
 
       // Create query function context
-      const queryFnContext: OmitKeyof<
-        QueryFunctionContext<TQueryKey>,
-        'signal'
-      > = {
-        client: this.#client,
-        queryKey: this.queryKey,
-        meta: this.meta,
+      const createQueryFnContext = (): QueryFunctionContext<TQueryKey> => {
+        const queryFnContext: OmitKeyof<
+          QueryFunctionContext<TQueryKey>,
+          'signal'
+        > = {
+          client: this.#client,
+          queryKey: this.queryKey,
+          meta: this.meta,
+        }
+        addSignalProperty(queryFnContext)
+        return queryFnContext as QueryFunctionContext<TQueryKey>
       }
 
-      addSignalProperty(queryFnContext)
+      const queryFnContext = createQueryFnContext()
 
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(
-          queryFn as QueryFunction<any>,
-          queryFnContext as QueryFunctionContext<TQueryKey>,
+          queryFn,
+          queryFnContext,
           this as unknown as Query,
         )
       }
 
-      return queryFn(queryFnContext as QueryFunctionContext<TQueryKey>)
+      return queryFn(queryFnContext)
     }
 
     // Trigger behavior hook
-    const context: OmitKeyof<
-      FetchContext<TQueryFnData, TError, TData, TQueryKey>,
-      'signal'
-    > = {
-      fetchOptions,
-      options: this.options,
-      queryKey: this.queryKey,
-      client: this.#client,
-      state: this.state,
-      fetchFn,
+    const createFetchContext = (): FetchContext<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey
+    > => {
+      const context: OmitKeyof<
+        FetchContext<TQueryFnData, TError, TData, TQueryKey>,
+        'signal'
+      > = {
+        fetchOptions,
+        options: this.options,
+        queryKey: this.queryKey,
+        client: this.#client,
+        state: this.state,
+        fetchFn,
+      }
+
+      addSignalProperty(context)
+      return context as FetchContext<TQueryFnData, TError, TData, TQueryKey>
     }
 
-    addSignalProperty(context)
+    const context = createFetchContext()
 
-    this.options.behavior?.onFetch(
-      context as FetchContext<TQueryFnData, TError, TData, TQueryKey>,
-      this as unknown as Query,
-    )
+    this.options.behavior?.onFetch(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state
