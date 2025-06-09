@@ -1,5 +1,7 @@
+import { expectTypeOf } from 'expect-type'
 import { useQuery } from '../useQuery'
 import { doNotExecute } from './utils'
+import type { DefinedUseQueryResult, UseQueryResult } from '../types'
 
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   T,
@@ -8,6 +10,39 @@ export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   : false
 
 export type Expect<T extends true> = T
+
+describe('onSuccess', () => {
+  it('should be typed correctly', () => {
+    doNotExecute(() => {
+      expectTypeOf(
+        useQuery({
+          queryKey: ['posts'],
+          queryFn: async () => ({ id: 1 }),
+          onSuccess: (data) =>
+            expectTypeOf(data).toEqualTypeOf<{ id: number }>(),
+        }),
+      ).toEqualTypeOf<UseQueryResult<{ id: number }, unknown>>()
+      expectTypeOf(
+        useQuery({
+          queryKey: ['posts'],
+          queryFn: async () => ({ id: 1 }),
+          initialData: { id: 1 },
+          onSuccess: (data) =>
+            expectTypeOf(data).toEqualTypeOf<{ id: number }>(),
+        }),
+      ).toEqualTypeOf<DefinedUseQueryResult<{ id: number }, unknown>>()
+      expectTypeOf(
+        useQuery({
+          queryKey: ['posts'],
+          queryFn: async () => ({ id: 1 }),
+          initialData: { id: 1 },
+          select: (data) => data.id,
+          onSuccess: (data) => expectTypeOf(data).toEqualTypeOf<number>(),
+        }),
+      ).toEqualTypeOf<DefinedUseQueryResult<number, unknown>>()
+    })
+  })
+})
 
 describe('initialData', () => {
   describe('Config object overload', () => {
