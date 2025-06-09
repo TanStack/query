@@ -1,5 +1,10 @@
 import { addToEnd } from './utils'
-import type { MaybePromise, QueryFunction, QueryFunctionContext, QueryKey } from './types'
+import type {
+  MaybePromise,
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+} from './types'
 
 /**
  * This is a helper function to create a query function that streams data from an AsyncIterable.

@@ -1100,9 +1100,7 @@ export interface MutationOptions<
 > {
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
-  onMutate?: (
-    variables: TVariables,
-  ) => MaybePromise<TContext | undefined>
+  onMutate?: (variables: TVariables) => MaybePromise<TContext | undefined>
   onSuccess?: (
     data: TData,
     variables: TVariables,
