@@ -14,6 +14,28 @@ export function mutationOptions<
 ): WithRequired<
   UseMutationOptions<TData, TError, TVariables, TContext>,
   'mutationKey'
-> {
+>
+export function mutationOptions<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TContext = unknown,
+>(
+  options: Omit<
+    UseMutationOptions<TData, TError, TVariables, TContext>,
+    'mutationKey'
+  >,
+): Omit<
+  UseMutationOptions<TData, TError, TVariables, TContext>,
+  'mutationKey'
+> & { mutationKey?: undefined }
+export function mutationOptions<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TContext = unknown,
+>(
+  options: UseMutationOptions<TData, TError, TVariables, TContext>,
+): UseMutationOptions<TData, TError, TVariables, TContext> {
   return options
 }
