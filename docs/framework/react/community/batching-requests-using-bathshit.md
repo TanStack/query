@@ -21,11 +21,11 @@ The problem is that orchestrating a single fetch for all rendered user details c
 First lets setup a batcher using [@yornaath/batshit](https://www.npmjs.com/package/@yornaath/batshit)
 
 ```ts
-import { Batcher, windowScheduler, keyResolver } from "@yornaath/batshit"
+import { create, windowScheduler, keyResolver } from "@yornaath/batshit"
 
 type User = { id: number, name: string }
 
-const users = Batcher<User, number>({
+const users = create<User[], number>({
   // The fetcher resolves the list of queries(here just a list of user ids as number) to one single api call.
   fetcher: async (ids: number[]) => {
     return api.users.where({
