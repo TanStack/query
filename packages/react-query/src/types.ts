@@ -3,11 +3,13 @@
 import type * as React from 'react'
 import type {
   DefinedQueryObserverResult,
+  DistributiveOmit,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  OmitKeyof,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -43,6 +45,25 @@ export interface UseQueryOptions<
     TQueryKey
   > {}
 
+export type UseSuspenseQueryOptions<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = OmitKeyof<
+  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  | 'enabled'
+  | 'useErrorBoundary'
+  | 'suspense'
+  | 'placeholderData'
+  | 'networkMode'
+  | 'onSuccess'
+  | 'onError'
+  | 'onSettled'
+  | 'getPreviousPageParam'
+  | 'getNextPageParam'
+>
+
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
@@ -67,6 +88,14 @@ export type UseQueryResult<
   TData = unknown,
   TError = unknown,
 > = UseBaseQueryResult<TData, TError>
+
+export type UseSuspenseQueryResult<
+  TData = unknown,
+  TError = unknown,
+> = DistributiveOmit<
+  DefinedQueryObserverResult<TData, TError>,
+  'isPlaceholderData'
+>
 
 export type DefinedUseBaseQueryResult<
   TData = unknown,
