@@ -669,6 +669,9 @@ export interface MutationObserverBaseResult<
 > extends MutationState<TData, TError, TVariables, TContext> {
   isError: boolean
   isIdle: boolean
+  /**
+   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
+   */
   isLoading: boolean
   isPending: boolean
   isSuccess: boolean
@@ -686,7 +689,11 @@ export interface MutationObserverIdleResult<
   error: null
   isError: false
   isIdle: true
+  /**
+   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
+   */
   isLoading: false
+  isPending: false
   isSuccess: false
   status: 'idle'
 }
@@ -701,7 +708,11 @@ export interface MutationObserverLoadingResult<
   error: null
   isError: false
   isIdle: false
+  /**
+   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
+   */
   isLoading: true
+  isPending: true
   isSuccess: false
   status: 'loading'
 }
@@ -716,7 +727,11 @@ export interface MutationObserverErrorResult<
   error: TError
   isError: true
   isIdle: false
+  /**
+   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
+   */
   isLoading: false
+  isPending: false
   isSuccess: false
   status: 'error'
 }
@@ -731,7 +746,11 @@ export interface MutationObserverSuccessResult<
   error: null
   isError: false
   isIdle: false
+  /**
+   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
+   */
   isLoading: false
+  isPending: false
   isSuccess: true
   status: 'success'
 }

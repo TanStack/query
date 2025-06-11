@@ -1,9 +1,5 @@
 import { expectTypeOf } from 'expect-type'
-import {
-  type UseSuspenseQueryResult,
-  useSuspenseQuery,
-} from '../useSuspenseQuery'
-import { queryOptions } from '..'
+import { type UseSuspenseQueryResult, queryOptions, useSuspenseQuery } from '..'
 import { doNotExecute } from './utils'
 
 const queryKey = ['key'] as const

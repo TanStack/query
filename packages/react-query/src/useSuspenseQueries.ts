@@ -1,10 +1,10 @@
 import { useQueries } from './useQueries'
-import type { UseQueryOptions } from './types'
-import type { NetworkMode, QueryFunction } from '@tanstack/query-core'
 import type {
+  UseQueryOptions,
   UseSuspenseQueryOptions,
   UseSuspenseQueryResult,
-} from './useSuspenseQuery'
+} from './types'
+import type { NetworkMode, QueryFunction } from '@tanstack/query-core'
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20

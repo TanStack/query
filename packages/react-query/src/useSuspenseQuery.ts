@@ -1,39 +1,7 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type {
-  DefinedQueryObserverResult,
-  DistributiveOmit,
-  OmitKeyof,
-  QueryKey,
-} from '@tanstack/query-core'
-import type { UseQueryOptions } from './types'
-
-export type UseSuspenseQueryResult<
-  TData = unknown,
-  TError = unknown,
-> = DistributiveOmit<
-  DefinedQueryObserverResult<TData, TError>,
-  'isPlaceholderData'
->
-
-export type UseSuspenseQueryOptions<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> = OmitKeyof<
-  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  | 'enabled'
-  | 'useErrorBoundary'
-  | 'suspense'
-  | 'placeholderData'
-  | 'networkMode'
-  | 'onSuccess'
-  | 'onError'
-  | 'onSettled'
-  | 'getPreviousPageParam'
-  | 'getNextPageParam'
->
+import type { QueryKey } from '@tanstack/query-core'
+import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
 
 export function useSuspenseQuery<
   TQueryFnData = unknown,
@@ -49,6 +17,9 @@ export function useSuspenseQuery<
       suspense: true,
       placeholderData: undefined,
       networkMode: 'always',
+      onSuccess: undefined,
+      onError: undefined,
+      onSettled: undefined,
     },
     QueryObserver,
   ) as UseSuspenseQueryResult<TData, TError>

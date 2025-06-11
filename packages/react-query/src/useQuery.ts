@@ -136,7 +136,6 @@ export function useQuery<
     'queryKey' | 'queryFn'
   >,
 ): UseQueryResult<TData, TError>
-/** @deprecated */
 export function useQuery<
   TQueryFnData,
   TError,
