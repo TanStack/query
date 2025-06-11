@@ -29,7 +29,7 @@
     "prettier:write": "pnpm run prettier --write",
     "docs:generate": "node scripts/generateDocs.js",
     "cipublish": "node scripts/publish.js",
-    "verify-links": "pnpm run tsx scripts/verify-links.ts"
+    "verify-links": "pnpm tsx scripts/verify-links.ts"
   },
   "nx": {
     "includedScripts": [
