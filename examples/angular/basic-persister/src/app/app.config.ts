@@ -2,10 +2,10 @@ import { provideHttpClient, withFetch } from '@angular/common/http'
 import {
   QueryClient,
   provideTanStackQuery,
-  withDevtools,
 } from '@tanstack/angular-query-experimental'
 import { withPersistQueryClient } from '@tanstack/angular-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
 import type { ApplicationConfig } from '@angular/core'
 
 const localStoragePersister = createSyncStoragePersister({

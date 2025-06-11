@@ -1,12 +1,12 @@
 ---
-id: DeveloperToolsFeature
-title: DeveloperToolsFeature
+id: DevtoolsFeature
+title: DevtoolsFeature
 ---
 
-# Type Alias: DeveloperToolsFeature
+# Type Alias: DevtoolsFeature
 
 ```ts
-type DeveloperToolsFeature = QueryFeature<'DeveloperTools'>
+type DevtoolsFeature = QueryFeature<'DeveloperTools'>
 ```
 
 A type alias that represents a feature which enables developer tools.

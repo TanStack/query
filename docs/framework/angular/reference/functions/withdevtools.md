@@ -6,7 +6,7 @@ title: withDevtools
 # Function: withDevtools()
 
 ```ts
-function withDevtools(withDevtoolsFn?): DeveloperToolsFeature
+function withDevtools(withDevtoolsFn?): DevtoolsFeature
 ```
 
 Enables developer tools.
@@ -35,7 +35,7 @@ A function that returns `DevtoolsOptions`.
 
 ## Returns
 
-[`DeveloperToolsFeature`](../../type-aliases/developertoolsfeature.md)
+[`DevtoolsFeature`](../../type-aliases/developertoolsfeature.md)
 
 A set of providers for use with `provideTanStackQuery`.
 

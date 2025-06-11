@@ -1,5 +1,3 @@
-'package: angular-query-devtools-experimental':
-  - 'packages/angular-query-devtools-experimental/**/*'
 'package: angular-query-experimental':
   - 'packages/angular-query-experimental/**/*'
 'package: eslint-plugin-query':

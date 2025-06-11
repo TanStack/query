@@ -4,12 +4,10 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import {
-  QueryClient,
-  provideTanStackQuery,
-} from '@tanstack/angular-query-experimental'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { injectDevtoolsPanel } from '../inject-devtools-panel'
+import { QueryClient } from '@tanstack/query-core'
+import { provideTanStackQuery } from '../providers'
+import { injectDevtoolsPanel } from '../devtools-panel'
 
 const mockDevtoolsPanelInstance = {
   mount: vi.fn(),
