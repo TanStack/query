@@ -7,6 +7,7 @@ To maintain compatibility with these applications,
 exports should strictly export types from the same path as the subpath so that TypeScript can resolve the types.
 
 ### ✅ Compatible
+
 ```json
 {
   "./devtools/production": {
@@ -17,6 +18,7 @@ exports should strictly export types from the same path as the subpath so that T
 ```
 
 ### ❌ Not compatible: types are exported from the build directory, which is not part of the export path
+
 ```json
 {
   "./devtools/production": {
