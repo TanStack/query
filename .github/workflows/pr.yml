@@ -57,7 +57,7 @@ jobs:
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
-        run: pnpx pkg-pr-new publish --pnpm --compact './packages/*' --template './examples/*/*'
+        run: pnpx pkg-pr-new publish --pnpm --compact './packages/!(angular-query-experimental)' './packages/angular-query-experimental/build' --template './examples/*/*'
       - name: Determine commit SHA
         id: determine-sha
         run: |
