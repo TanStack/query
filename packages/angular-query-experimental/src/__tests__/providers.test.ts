@@ -3,22 +3,21 @@ import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import {
   ENVIRONMENT_INITIALIZER,
+  EnvironmentInjector,
+  PLATFORM_ID,
+  createEnvironmentInjector,
+  isDevMode,
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
-import { isDevMode } from '../util/is-dev-mode/is-dev-mode'
-import { provideTanStackQuery, withDevtools } from '../providers'
-import type { DevtoolsOptions } from '../providers'
-import type { Mock } from 'vitest'
+import { provideTanStackQuery } from '../providers'
+import { withDevtools } from '../devtools'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
 } from '@tanstack/query-devtools'
-
-vi.mock('../util/is-dev-mode/is-dev-mode', () => ({
-  isDevMode: vi.fn(),
-}))
+import type { DevtoolsOptions } from '../devtools'
 
 const mockDevtoolsInstance = {
   mount: vi.fn(),
@@ -36,12 +35,20 @@ vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: mockTanstackQueryDevtools,
 }))
 
-describe('withDevtools feature', () => {
-  let isDevModeMock: Mock
+vi.mock('@angular/core', async () => {
+  const actual = await vi.importActual('@angular/core')
+  return {
+    ...actual,
+    isDevMode: vi.fn(),
+  }
+})
 
+const mockIsDevMode = vi.mocked(isDevMode)
+
+describe('withDevtools feature', () => {
   beforeEach(() => {
+    vi.clearAllMocks()
     vi.useFakeTimers()
-    isDevModeMock = isDevMode as Mock
   })
 
   afterEach(() => {
@@ -50,61 +57,59 @@ describe('withDevtools feature', () => {
 
   test.each([
     {
-      description:
-        'should provide developer tools in development mode by default',
-      isDevModeValue: true,
+      description: 'should load developer tools in development mode',
+      isDevMode: true,
       expectedCalled: true,
     },
     {
-      description:
-        'should not provide developer tools in production mode by default',
-      isDevModeValue: false,
+      description: 'should not load developer tools in production mode',
+      isDevMode: false,
       expectedCalled: false,
     },
     {
-      description: `should provide developer tools in development mode when 'loadDeveloperTools' is set to 'auto'`,
-      isDevModeValue: true,
+      description: `should load developer tools in development mode when 'loadDevtools' is set to 'auto'`,
+      isDevMode: true,
       loadDevtools: 'auto',
       expectedCalled: true,
     },
     {
-      description: `should not provide developer tools in production mode when 'loadDeveloperTools' is set to 'auto'`,
-      isDevModeValue: false,
+      description: `should not load developer tools in production mode when 'loadDevtools' is set to 'auto'`,
+      isDevMode: false,
       loadDevtools: 'auto',
       expectedCalled: false,
     },
     {
       description:
-        "should provide developer tools in development mode when 'loadDevtools' is set to true",
-      isDevModeValue: true,
+        "should load developer tools in development mode when 'loadDevtools' is set to true",
+      isDevMode: true,
       loadDevtools: true,
       expectedCalled: true,
     },
     {
       description:
-        "should provide developer tools in production mode when 'loadDevtools' is set to true",
-      isDevModeValue: false,
+        "should load developer tools in production mode when 'loadDevtools' is set to true",
+      isDevMode: false,
       loadDevtools: true,
       expectedCalled: true,
     },
     {
       description:
-        "should not provide developer tools in development mode when 'loadDevtools' is set to false",
-      isDevModeValue: true,
+        "should not load developer tools in development mode when 'loadDevtools' is set to false",
+      isDevMode: true,
       loadDevtools: false,
       expectedCalled: false,
     },
     {
       description:
-        "should not provide developer tools in production mode when 'loadDevtools' is set to false",
-      isDevModeValue: false,
+        "should not load developer tools in production mode when 'loadDevtools' is set to false",
+      isDevMode: false,
       loadDevtools: false,
       expectedCalled: false,
     },
   ])(
     '$description',
-    async ({ isDevModeValue, loadDevtools, expectedCalled }) => {
-      isDevModeMock.mockReturnValue(isDevModeValue)
+    async ({ isDevMode: isDevModeValue, loadDevtools, expectedCalled }) => {
+      mockIsDevMode.mockReturnValue(isDevModeValue)
 
       const providers = [
         provideZonelessChangeDetection(),
@@ -127,6 +132,10 @@ describe('withDevtools feature', () => {
 
       TestBed.inject(ENVIRONMENT_INITIALIZER)
       await vi.runAllTimersAsync()
+      TestBed.tick()
+      await vi.dynamicImportSettled()
+      TestBed.tick()
+      await vi.dynamicImportSettled()
 
       if (expectedCalled) {
         expect(mockTanstackQueryDevtools).toHaveBeenCalled()
@@ -135,6 +144,85 @@ describe('withDevtools feature', () => {
       }
     },
   )
+
+  it('should not continue loading devtools after injector is destroyed', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    // Destroys injector
+    TestBed.resetTestingModule()
+    await vi.runAllTimersAsync()
+
+    expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+  })
+
+  it('should not create devtools again when already provided', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
+
+    const injector = TestBed.inject(EnvironmentInjector)
+
+    createEnvironmentInjector(
+      [
+        withDevtools(() => ({
+          loadDevtools: true,
+        })).ɵproviders,
+      ],
+      injector,
+    )
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not load devtools if platform is not browser', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: PLATFORM_ID,
+          useValue: 'server',
+        },
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.runAllTimersAsync()
+
+    expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+  })
 
   it('should update error types', async () => {
     const errorTypes = signal([] as Array<DevtoolsErrorType>)

@@ -37,23 +37,39 @@
     "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js --build",
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
-    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js  --build",
-    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js  --build",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
     "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
+    "test:build": "publint --strict --pack=false ./build && attw --pack ./build",
     "build": "pnpm build:tsup",
     "build:tsup": "tsup --tsconfig tsconfig.prod.json"
   },
   "type": "module",
-  "types": "build/index.d.ts",
-  "module": "build/index.mjs",
   "exports": {
     ".": {
-      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./build/index.d.ts",
+      "@tanstack/custom-condition": "./src/index.ts",
       "default": "./build/index.mjs"
+    },
+    "./devtools": {
+      "types": "./build/devtools/index.d.ts",
+      "development": "./build/devtools/index.mjs",
+      "default": "./build/devtools/stub.mjs"
+    },
+    "./devtools/production": {
+      "types": "./build/devtools/production/index.d.ts",
+      "default": "./build/devtools/index.mjs"
+    },
+    "./devtools-panel": {
+      "types": "./build/devtools-panel/index.d.ts",
+      "development": "./build/devtools-panel/index.mjs",
+      "default": "./build/devtools-panel/stub.mjs"
+    },
+    "./devtools-panel/production": {
+      "types": "./build/devtools-panel/production/index.d.ts",
+      "default": "./build/devtools-panel/index.mjs"
     },
     "./package.json": {
       "default": "./package.json"
@@ -61,9 +77,10 @@
   },
   "sideEffects": false,
   "files": [
-    "build",
-    "src",
-    "!src/__tests__"
+    "devtools",
+    "devtools-panel",
+    "index.*",
+    "*.d.ts"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
@@ -82,5 +99,34 @@
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
     "@angular/core": ">=16.0.0"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./index.d.ts",
+        "default": "./index.mjs"
+      },
+      "./devtools": {
+        "types": "./devtools/index.d.ts",
+        "development": "./devtools/index.mjs",
+        "default": "./devtools/stub.mjs"
+      },
+      "./devtools/production": {
+        "types": "./devtools/production/index.d.ts",
+        "default": "./devtools/index.mjs"
+      },
+      "./devtools-panel": {
+        "types": "./devtools-panel/index.d.ts",
+        "development": "./devtools-panel/index.mjs",
+        "default": "./devtools-panel/stub.mjs"
+      },
+      "./devtools-panel/production": {
+        "types": "./devtools-panel/production/index.d.ts",
+        "default": "./devtools-panel/index.mjs"
+      },
+      "./package.json": {
+        "default": "./package.json"
+      }
+    }
   }
 }

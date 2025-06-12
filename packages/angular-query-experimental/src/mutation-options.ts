@@ -33,7 +33,6 @@ import type {
  * ```
  * @param options - The mutation options.
  * @returns Mutation options.
- * @public
  */
 export function mutationOptions<
   TData = unknown,
@@ -46,9 +45,6 @@ export function mutationOptions<
   return options
 }
 
-/**
- * @public
- */
 export interface CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,

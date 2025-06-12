@@ -35,7 +35,7 @@ title: '@tanstack/angular-query-experimental'
 - [DefinedCreateQueryResult](../type-aliases/definedcreatequeryresult.md)
 - [DefinedInitialDataInfiniteOptions](../type-aliases/definedinitialdatainfiniteoptions.md)
 - [DefinedInitialDataOptions](../type-aliases/definedinitialdataoptions.md)
-- [DeveloperToolsFeature](../type-aliases/developertoolsfeature.md)
+- [DevtoolsFeature](../type-aliases/developertoolsfeature.md)
 - [PersistQueryClientFeature](../type-aliases/persistqueryclientfeature.md)
 - [QueriesOptions](../type-aliases/queriesoptions.md)
 - [QueriesResults](../type-aliases/queriesresults.md)
