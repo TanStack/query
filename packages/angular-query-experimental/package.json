@@ -101,7 +101,7 @@
     "@angular/core": ">=16.0.0"
   },
   "publishConfig": {
-    "exports":{
+    "exports": {
       ".": {
         "types": "./index.d.ts",
         "default": "./index.mjs"
