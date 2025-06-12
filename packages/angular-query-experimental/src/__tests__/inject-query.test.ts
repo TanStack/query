@@ -520,7 +520,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-fake',
       template: `{{ query.data() }}`,
-      standalone: true,
     })
     class FakeComponent {
       name = input.required<string>()
