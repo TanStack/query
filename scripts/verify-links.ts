@@ -1,13 +1,8 @@
+import { existsSync, readFileSync, statSync } from 'node:fs'
+import path, { resolve } from 'node:path'
 import fg from 'fast-glob'
-import { readFileSync, existsSync, statSync } from 'node:fs'
-// @ts-ignore
+// @ts-ignore Could not find a declaration file for module 'markdown-link-extractor'.
 import markdownLinkExtractor from 'markdown-link-extractor'
-import path, { join, dirname, resolve } from 'node:path'
-
-interface MarkdownLink {
-  href: string
-  text: string
-}
 
 function isRelativeLink(link: string) {
   return (
@@ -29,7 +24,7 @@ function normalizePath(p: string): string {
 function fileExistsForLink(
   link: string,
   markdownFile: string,
-  errors: any[],
+  errors: Array<any>,
 ): boolean {
   // Remove hash if present
   const filePart = link.split('#')[0]
@@ -97,12 +92,12 @@ async function findMarkdownLinks() {
 
   console.log(`Found ${markdownFiles.length} markdown files\n`)
 
-  const errors: any[] = []
+  const errors: Array<any> = []
 
   // Process each file
   for (const file of markdownFiles) {
     const content = readFileSync(file, 'utf-8')
-    const links: any[] = markdownLinkExtractor(content)
+    const links: Array<any> = markdownLinkExtractor(content)
 
     const filteredLinks = links.filter((link: any) => {
       if (typeof link === 'string') {
@@ -114,7 +109,7 @@ async function findMarkdownLinks() {
     })
 
     if (filteredLinks.length > 0) {
-      filteredLinks.forEach((link: any) => {
+      filteredLinks.forEach((link) => {
         const href = typeof link === 'string' ? link : link.href
         fileExistsForLink(href, file, errors)
       })

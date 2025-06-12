@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "ignore": [
     ".pnpmfile.cjs",
-    "scripts/*.js",
+    "scripts/*.{j,t}s",
     "**/root.*.config.*",
     "**/ts-fixture/file.ts"
   ],
@@ -10,7 +10,8 @@
     "@types/react",
     "@types/react-dom",
     "react",
-    "react-dom"
+    "react-dom",
+    "markdown-link-extractor"
   ],
   "ignoreWorkspaces": ["examples/**", "integrations/**"],
   "workspaces": {

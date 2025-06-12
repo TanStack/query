@@ -29,7 +29,7 @@
     "prettier:write": "pnpm run prettier --write",
     "docs:generate": "node scripts/generateDocs.js",
     "cipublish": "node scripts/publish.js",
-    "verify-links": "node scripts/verify-links.ts"
+    "verify-links": "pnpm tsx scripts/verify-links.ts"
   },
   "nx": {
     "includedScripts": [
@@ -65,6 +65,7 @@
     "react-dom": "^19.0.0",
     "sherif": "^1.0.0",
     "tsup": "^8.4.0",
+    "tsx": "^4.20.1",
     "typescript": "5.8.3",
     "typescript50": "npm:typescript@5.0",
     "typescript51": "npm:typescript@5.1",
