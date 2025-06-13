@@ -32,15 +32,7 @@ export type UseQueryOptions<
       TQueryData,
       TQueryKey
     >]: Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          QueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            DeepUnwrapRef<TQueryKey>
-          >[Property]
-        >
+      ? MaybeRefOrGetter<boolean | undefined>
       : MaybeRefDeep<
           QueryObserverOptions<
             TQueryFnData,
