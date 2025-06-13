@@ -7,6 +7,12 @@ There are lots of community projects that build on top of Vue Query and use it t
 
 > Please note that these projects are entirely community maintained. If you have questions about these projects, please reach out to the project maintainers.
 
+## DevTools Chrome Extension
+
+A Chrome browser extension that provides devtools for TanStack Query, allowing you to inspect and debug queries, mutations, and cache state directly in Chrome DevTools.
+
+Link: https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai
+
 ## Query Key factory
 
 A library for creating typesafe standardized query keys, useful for cache management in `@tanstack/query`
