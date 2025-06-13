@@ -7,6 +7,8 @@ Wave your hands in the air and shout hooray because Solid Query comes with dedic
 
 When you begin your Solid Query journey, you'll want these devtools by your side. They help visualize all of the inner workings of Solid Query and will likely save you hours of debugging if you find yourself in a pinch!
 
+> For Google Chrome users: A third-party Chrome extension is available for debugging TanStack Query directly in Chrome DevTools. This provides the same functionality as the framework-specific devtools packages. Check it out here: [TanStack Query DevTools](https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai)
+
 ## Install and Import the Devtools
 
 The devtools are a separate package that you need to install:

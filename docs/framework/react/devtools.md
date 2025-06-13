@@ -7,6 +7,8 @@ Wave your hands in the air and shout hooray because React Query comes with dedic
 
 When you begin your React Query journey, you'll want these devtools by your side. They help visualize all the inner workings of React Query and will likely save you hours of debugging if you find yourself in a pinch!
 
+> For Google Chrome users: A third-party Chrome extension is available for debugging TanStack Query directly in Chrome DevTools. This provides the same functionality as the framework-specific devtools packages. Check it out here: [TanStack Query DevTools](https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai)
+
 > For React Native users: A third-party native macOS app is available for debugging React Query in ANY js-based application. Monitor queries across devices in real-time. Check it out here: [rn-better-dev-tools](https://github.com/LovesWorking/rn-better-dev-tools)
 
 > Note that since version 5, the dev tools support observing mutations as well.

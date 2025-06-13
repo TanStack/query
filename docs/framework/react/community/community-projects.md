@@ -31,6 +31,12 @@ A family of libraries for building building browser and gRPC-compatible HTTP API
 
 Link: https://connectrpc.com/docs
 
+## DevTools Chrome Extension
+
+A Chrome browser extension that provides devtools for TanStack Query, allowing you to inspect and debug queries, mutations, and cache state directly in Chrome DevTools.
+
+Link: https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai
+
 ## GraphQL Code Generator
 
 Generate React Query hooks from your GraphQL schema
