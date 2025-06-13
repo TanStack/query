@@ -24,7 +24,7 @@ import type {
 } from '@tanstack/query-core'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
-import type { DeepUnwrapRef, MaybeRefDeep } from './types'
+import type { DeepUnwrapRef, MaybeRefDeep, ShallowOption } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -238,7 +238,7 @@ export function useQueries<
   {
     queries,
     ...options
-  }: {
+  }: ShallowOption & {
     queries:
       | MaybeRefDeep<UseQueriesOptionsArg<T>>
       | MaybeRefDeep<
@@ -247,7 +247,6 @@ export function useQueries<
           ]
         >
     combine?: (result: UseQueriesResults<T>) => TCombinedResult
-    shallow?: boolean
   },
   queryClient?: QueryClient,
 ): Readonly<Ref<TCombinedResult>> {
