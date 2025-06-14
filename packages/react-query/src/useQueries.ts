@@ -96,7 +96,7 @@ type GetUseQueryOptionsForUseQueries<T> =
 
 // A defined initialData setting should return a DefinedUseQueryResult rather than UseQueryResult
 type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
-  initialData?: infer TInitialData
+  initialData: infer TInitialData
 }
   ? unknown extends TInitialData
     ? UseQueryResult<TData, TError>
