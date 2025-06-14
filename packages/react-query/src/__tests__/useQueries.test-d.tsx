@@ -41,23 +41,93 @@ describe('UseQueries config object overload', () => {
     expectTypeOf(query3Data).toEqualTypeOf<string | undefined>()
   })
 
-  it('TData should be defined when passed through queryOptions', () => {
-    const options = queryOptions({
-      queryKey: ['key'],
-      queryFn: () => {
-        return {
+  describe("TData should be correctly inferred when using queryOptions", () => {
+    it('TData should be defined when passed through queryOptions', () => {
+      const options = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => {
+          return {
+            wow: true,
+          }
+        },
+        initialData: {
           wow: true,
-        }
-      },
-      initialData: {
-        wow: true,
-      },
+        },
+      })
+      const queryResults = useQueries({ queries: [options] })
+
+      const data = queryResults[0].data
+
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
     })
-    const queryResults = useQueries({ queries: [options] })
 
-    const data = queryResults[0].data
+    it("TData should be undefined when initialData is not provided", () => {
+      const options = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => {
+          return {
+            wow: true,
+          }
+        },
+      })
 
-    expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+      const queryResults = useQueries({ queries: [options] })
+
+      const data = queryResults[0].data
+
+      expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+    })
+
+    it('TData should be undefined when initialData is not provided, and TQueryFnData extends a base javascript object', () => {
+      // Create a union of objects, which each have a single key (and corresponding value type) from CallableFunction,
+      // this better mimics the behaviour of returning an object which has a single key that matches any of the known keys
+      // that exist on an CallableFunction in javascript (i.e { name: string })
+      type Data = { 
+        [K in keyof CallableFunction]: {
+          [key in K]: CallableFunction[key]
+        } 
+      }[keyof CallableFunction]; 
+      
+      // Object with individual key from CallableFunction
+      const queryOptions1 = queryOptions({
+        queryKey: ['key1'],
+        queryFn: async (): Promise<Data> => {
+          return {
+            name: "example"
+          }
+        }
+      })
+
+      // Object with an actual CallableFunction
+      const queryOptions2 = queryOptions({
+        queryKey: ['key2'],
+        queryFn: async (): Promise<CallableFunction> => {
+          return () => void 0
+        }
+      })
+
+      // Object with matching key from CallableFunction, but different value type
+      const queryOptions3 = queryOptions({
+        queryKey: ['key3'],
+        queryFn: async (): Promise<{ name: number }> => {
+          return {
+            name: 42
+          }
+        }
+      })
+
+      const queryResults1 = useQueries({ queries: [queryOptions1] })
+      const queryResults2 = useQueries({ queries: [queryOptions2] })
+      const queryResults3 = useQueries({ queries: [queryOptions3] })
+
+      const data1 = queryResults1[0].data
+      const data2 = queryResults2[0].data
+      const data3 = queryResults3[0].data
+
+      expectTypeOf(data1).toEqualTypeOf<Data | undefined>()
+      expectTypeOf(data2).toEqualTypeOf<CallableFunction | undefined>()
+      expectTypeOf(data3).toEqualTypeOf<{ name: number } | undefined>()
+    })
   })
 
   it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
