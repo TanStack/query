@@ -60,7 +60,6 @@ export interface InjectQueryOptions {
  * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
  * @returns The query result.
- * @public
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */
 export function injectQuery<
@@ -112,7 +111,6 @@ export function injectQuery<
  * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
  * @returns The query result.
- * @public
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */
 export function injectQuery<
@@ -164,7 +162,6 @@ export function injectQuery<
  * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
  * @returns The query result.
- * @public
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */
 export function injectQuery<
@@ -216,7 +213,6 @@ export function injectQuery<
  * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
  * @returns The query result.
- * @public
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */
 export function injectQuery(

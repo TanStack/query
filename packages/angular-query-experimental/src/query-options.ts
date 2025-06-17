@@ -72,7 +72,6 @@ export type DefinedInitialDataOptions<
  * ```
  * @param options - The query options to tag with the type from `queryFn`.
  * @returns The tagged query options.
- * @public
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -105,7 +104,6 @@ export function queryOptions<
  * ```
  * @param options - The query options to tag with the type from `queryFn`.
  * @returns The tagged query options.
- * @public
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -138,7 +136,6 @@ export function queryOptions<
  * ```
  * @param options - The query options to tag with the type from `queryFn`.
  * @returns The tagged query options.
- * @public
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -171,7 +168,6 @@ export function queryOptions<
  * ```
  * @param options - The query options to tag with the type from `queryFn`.
  * @returns The tagged query options.
- * @public
  */
 export function queryOptions(options: unknown) {
   return options

@@ -76,8 +76,6 @@ export const tanstackViteConfig = (options: Options) => {
           declarationMap: false,
         },
         beforeWriteFile: (filePath, content) => {
-          // content =
-          //   options.beforeWriteDeclarationFile?.(filePath, content) || content
           return {
             filePath,
             content: ensureImportFileExtension({ content, extension: 'js' }),
@@ -114,7 +112,13 @@ export default mergeConfig(
   config,
   tanstackViteConfig({
     cjs: false,
-    entry: ['./src/index.ts'],
+    entry: [
+      './src/index.ts',
+      './src/devtools-panel/index.ts',
+      './src/devtools-panel/stub.ts',
+      './src/devtools/index.ts',
+      './src/devtools/stub.ts',
+    ],
     exclude: ['src/__tests__'],
     srcDir: './src',
     tsconfigPath: 'tsconfig.prod.json',

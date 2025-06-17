@@ -6,7 +6,7 @@ title: QueryFeatures
 # Type Alias: QueryFeatures
 
 ```ts
-type QueryFeatures = DeveloperToolsFeature | PersistQueryClientFeature
+type QueryFeatures = DevtoolsFeature | PersistQueryClientFeature
 ```
 
 A type alias that represents all Query features available for use with `provideTanStackQuery`.
