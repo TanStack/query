@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.80.7",
+  "version": "5.80.8",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "tanstack"
   ],
   "scripts": {
-    "clean": "premove ./build ./coverage ./dist-ts",
+    "clean": "premove ./build ./coverage ./dist-ts ./**.d.ts",
     "compile": "tsc --build",
     "test:eslint": "eslint ./src",
     "test:types": "npm-run-all --serial test:types:*",
@@ -42,16 +42,19 @@
     "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict --pack=false ./build && attw --pack ./build",
-    "build": "pnpm build:tsup",
-    "build:tsup": "tsup --tsconfig tsconfig.prod.json"
+    "test:build": "pnpm pack && publint *.tgz --strict && attw *.tgz; premove *.tgz",
+    "build": "vite build",
+    "prepack": "node scripts/prepack.js",
+    "postpack": "node scripts/postpack.js"
   },
   "type": "module",
+  "types": "dist/types/index.d.ts",
+  "module": "dist/index.mjs",
   "exports": {
     ".": {
-      "types": "./build/index.d.ts",
+      "types": "./dist/types/index.d.ts",
       "@tanstack/custom-condition": "./src/index.ts",
-      "default": "./build/index.mjs"
+      "default": "./dist/index.mjs"
     },
     "./devtools": {
       "types": "./build/devtools/index.d.ts",
@@ -77,10 +80,9 @@
   },
   "sideEffects": false,
   "files": [
-    "devtools",
-    "devtools-panel",
-    "index.*",
-    "*.d.ts"
+    "**/*.d.ts",
+    "dist",
+    "!dist/types/**"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
@@ -94,39 +96,46 @@
     "@angular/platform-browser-dynamic": "^20.0.0",
     "@tanstack/query-test-utils": "workspace:*",
     "eslint-plugin-jsdoc": "^50.5.0",
-    "npm-run-all2": "^5.0.0"
+    "npm-run-all2": "^5.0.0",
+    "vite-plugin-dts": "4.2.3",
+    "vite-plugin-externalize-deps": "^0.9.0",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
     "@angular/core": ">=16.0.0"
   },
   "publishConfig": {
+    "types": "index.d.ts",
     "exports": {
       ".": {
         "types": "./index.d.ts",
-        "default": "./index.mjs"
-      },
-      "./devtools": {
-        "types": "./devtools/index.d.ts",
-        "development": "./devtools/index.mjs",
-        "default": "./devtools/stub.mjs"
-      },
-      "./devtools/production": {
-        "types": "./devtools/production/index.d.ts",
-        "default": "./devtools/index.mjs"
-      },
-      "./devtools-panel": {
-        "types": "./devtools-panel/index.d.ts",
-        "development": "./devtools-panel/index.mjs",
-        "default": "./devtools-panel/stub.mjs"
-      },
-      "./devtools-panel/production": {
-        "types": "./devtools-panel/production/index.d.ts",
-        "default": "./devtools-panel/index.mjs"
+        "default": "./dist/index.mjs"
       },
       "./package.json": {
         "default": "./package.json"
       }
+    },
+    "./devtools": {
+      "types": "./devtools/index.d.ts",
+      "development": "./devtools/index.mjs",
+      "default": "./devtools/stub.mjs"
+    },
+    "./devtools/production": {
+      "types": "./devtools/production/index.d.ts",
+      "default": "./devtools/index.mjs"
+    },
+    "./devtools-panel": {
+      "types": "./devtools-panel/index.d.ts",
+      "development": "./devtools-panel/index.mjs",
+      "default": "./devtools-panel/stub.mjs"
+    },
+    "./devtools-panel/production": {
+      "types": "./devtools-panel/production/index.d.ts",
+      "default": "./devtools-panel/index.mjs"
+    },
+    "./package.json": {
+      "default": "./package.json"
     }
   }
 }
