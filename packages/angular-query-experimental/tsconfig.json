@@ -3,8 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
     "target": "ES2022"
