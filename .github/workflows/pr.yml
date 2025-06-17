@@ -57,10 +57,7 @@ jobs:
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
-        shell: bash
-        run: |
-          dirs=($(find ./packages -mindepth 1 -maxdepth 1 -type d ! -name 'angular-query-experimental') './packages/angular-query-experimental/build')
-          pnpx pkg-pr-new publish --pnpm --compact "${dirs[@]}" --template './examples/*/*'
+        run: pnpx pkg-pr-new publish --pnpm --compact './packages/*' --template './examples/*/*'
       - name: Determine commit SHA
         id: determine-sha
         run: |

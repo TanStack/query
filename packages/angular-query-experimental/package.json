@@ -27,7 +27,7 @@
     "tanstack"
   ],
   "scripts": {
-    "clean": "premove ./build ./coverage ./dist-ts ./**.d.ts",
+    "clean": "premove ./dist ./coverage ./dist-ts ./**.d.ts",
     "compile": "tsc --build",
     "test:eslint": "eslint ./src",
     "test:types": "npm-run-all --serial test:types:*",
@@ -57,22 +57,22 @@
       "default": "./dist/index.mjs"
     },
     "./devtools": {
-      "types": "./build/devtools/index.d.ts",
-      "development": "./build/devtools/index.mjs",
-      "default": "./build/devtools/stub.mjs"
+      "types": "./dist/devtools/index.d.ts",
+      "development": "./dist/devtools/index.mjs",
+      "default": "./dist/devtools/stub.mjs"
     },
     "./devtools/production": {
-      "types": "./build/devtools/production/index.d.ts",
-      "default": "./build/devtools/index.mjs"
+      "types": "./dist/devtools/production/index.d.ts",
+      "default": "./dist/devtools/index.mjs"
     },
     "./devtools-panel": {
-      "types": "./build/devtools-panel/index.d.ts",
-      "development": "./build/devtools-panel/index.mjs",
-      "default": "./build/devtools-panel/stub.mjs"
+      "types": "./dist/devtools-panel/index.d.ts",
+      "development": "./dist/devtools-panel/index.mjs",
+      "default": "./dist/devtools-panel/stub.mjs"
     },
     "./devtools-panel/production": {
-      "types": "./build/devtools-panel/production/index.d.ts",
-      "default": "./build/devtools-panel/index.mjs"
+      "types": "./dist/devtools-panel/production/index.d.ts",
+      "default": "./dist/devtools-panel/index.mjs"
     },
     "./package.json": {
       "default": "./package.json"
