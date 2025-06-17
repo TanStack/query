@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-persist-client-core",
-  "version": "4.39.2",
+  "version": "4.40.0",
   "description": "Set of utilities for interacting with persisters, which can save your queryClient for later use",
   "author": "tannerlinsley",
   "license": "MIT",
