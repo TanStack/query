@@ -112,30 +112,27 @@
         "types": "./index.d.ts",
         "default": "./dist/index.mjs"
       },
+      "./devtools": {
+        "types": "./devtools/index.d.ts",
+        "development": "./dist/devtools/index.mjs",
+        "default": "./dist/devtools/stub.mjs"
+      },
+      "./devtools/production": {
+        "types": "./devtools/production/index.d.ts",
+        "default": "./dist/devtools/index.mjs"
+      },
+      "./devtools-panel": {
+        "types": "./devtools-panel/index.d.ts",
+        "development": "./dist/devtools-panel/index.mjs",
+        "default": "./dist/devtools-panel/stub.mjs"
+      },
+      "./devtools-panel/production": {
+        "types": "./devtools-panel/production/index.d.ts",
+        "default": "./dist/devtools-panel/index.mjs"
+      },
       "./package.json": {
         "default": "./package.json"
       }
-    },
-    "./devtools": {
-      "types": "./devtools/index.d.ts",
-      "development": "./devtools/index.mjs",
-      "default": "./devtools/stub.mjs"
-    },
-    "./devtools/production": {
-      "types": "./devtools/production/index.d.ts",
-      "default": "./devtools/index.mjs"
-    },
-    "./devtools-panel": {
-      "types": "./devtools-panel/index.d.ts",
-      "development": "./devtools-panel/index.mjs",
-      "default": "./devtools-panel/stub.mjs"
-    },
-    "./devtools-panel/production": {
-      "types": "./devtools-panel/production/index.d.ts",
-      "default": "./devtools-panel/index.mjs"
-    },
-    "./package.json": {
-      "default": "./package.json"
     }
   }
 }
