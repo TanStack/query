@@ -42,7 +42,7 @@
     "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
+    "test:build": "pnpm pack && publint *.tgz --strict && attw *.tgz; premove *.tgz",
     "build": "vite build",
     "prepack": "node scripts/prepack.js",
     "postpack": "node scripts/postpack.js"
@@ -52,8 +52,8 @@
   "module": "dist/index.mjs",
   "exports": {
     ".": {
-      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./dist/types/index.d.ts",
+      "@tanstack/custom-condition": "./src/index.ts",
       "default": "./dist/index.mjs"
     },
     "./package.json": {

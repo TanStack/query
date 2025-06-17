@@ -33,8 +33,7 @@ to exactly match the subpath export as in the example above.
     },
 ```
 
-It's important to support `"moduleResolution": "node"` as many Angular applications are configured this way.
-Also, NX adds it to the out of box `tsconfig`
+It's important to support `"moduleResolution": "node"` as many Angular applications are still configured this way.
 
 In the `postpack` lifecycle script these links are removed to keep a clean development environment
  */

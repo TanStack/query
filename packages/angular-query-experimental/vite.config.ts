@@ -5,6 +5,27 @@ import dts from 'vite-plugin-dts'
 import packageJson from './package.json'
 import type { Options } from '@tanstack/config/vite'
 
+function ensureImportFileExtension({
+  content,
+  extension,
+}: {
+  content: string
+  extension: string
+}) {
+  // replace e.g. `import { foo } from './foo'` with `import { foo } from './foo.js'`
+  content = content.replace(
+    /(im|ex)port\s[\w{}/*\s,]+from\s['"](?:\.\.?\/)+?[^.'"]+(?=['"];?)/gm,
+    `$&.${extension}`,
+  )
+
+  // replace e.g. `import('./foo')` with `import('./foo.js')`
+  content = content.replace(
+    /import\(['"](?:\.\.?\/)+?[^.'"]+(?=['"];?)/gm,
+    `$&.${extension}`,
+  )
+  return content
+}
+
 const config = defineConfig({
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
@@ -31,8 +52,6 @@ const config = defineConfig({
 })
 
 // copy from @tanstack/config/vite with changes:
-// - dts removed ensureImportFileExtension
-// - dts removed dts beforeWriteFile
 // - dts outDir: dist/types
 // - build - lib - fileName: [name.mjs]
 // - rollup - output - preserveModulesRoot: src
@@ -55,6 +74,14 @@ export const tanstackViteConfig = (options: Options) => {
         compilerOptions: {
           module: 99, // ESNext
           declarationMap: false,
+        },
+        beforeWriteFile: (filePath, content) => {
+          // content =
+          //   options.beforeWriteDeclarationFile?.(filePath, content) || content
+          return {
+            filePath,
+            content: ensureImportFileExtension({ content, extension: 'js' }),
+          }
         },
         afterDiagnostic: (diagnostics) => {
           if (diagnostics.length > 0) {
