@@ -1,16 +1,17 @@
 import { expectTypeOf } from 'expect-type'
 import {
+  type DefinedUseQueryResult,
   QueryCache,
   type UseQueryResult,
+  type UseSuspenseQueryResult,
+  queryOptions,
   useQueries,
   useQuery,
   useQueryClient,
-} from '@tanstack/react-query'
-import { queryOptions } from '..'
-import { useSuspenseQueries, useSuspenseQuery } from '..'
-import { type UseSuspenseQueryResult } from '../useSuspenseQuery'
+  useSuspenseQueries,
+  useSuspenseQuery,
+} from '..'
 import { doNotExecute } from './utils'
-import type { DefinedUseQueryResult } from '@tanstack/react-query'
 
 const queryKey = ['key'] as const
 const queryFn = () => Promise.resolve({ field: 'success' })
