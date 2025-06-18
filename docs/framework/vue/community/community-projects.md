@@ -20,6 +20,12 @@ Zova provides the Model mechanism based on Vue Query in the MVC architecture, en
 Link: https://github.com/cabloy/zova
 Docs: https://zova.js.org/guide/techniques/model/introduction.html
 
+## Normy
+
+Automatic normalization and data updates for data fetching libraries
+
+Link: https://github.com/klis87/normy
+
 ## Query Rewind
 
 Time travel and visualize state during development
