@@ -116,9 +116,6 @@ importers:
       tsup:
         specifier: ^8.4.0
         version: 8.4.0(@microsoft/api-extractor@7.48.1(@types/node@22.15.3))(jiti@2.4.2)(postcss@8.5.3)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.6.1)
-      tsx:
-        specifier: ^4.20.1
-        version: 4.20.1
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -31629,6 +31626,7 @@ snapshots:
       get-tsconfig: 4.8.1
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   tty-browserify@0.0.0: {}
 
