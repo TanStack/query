@@ -12,7 +12,6 @@ export function infiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >,
@@ -20,7 +19,6 @@ export function infiniteQueryOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryFnData,
   TQueryKey,
   TPageParam
 > {

@@ -15,6 +15,7 @@ export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
 export {
   hashKey,
+  partialMatchKey,
   replaceEqualDeep,
   isServer,
   matchQuery,

@@ -9,13 +9,20 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
 > To change this behavior, you can configure your queries both globally and per-query using the `staleTime` option. Specifying a longer `staleTime` means queries will not refetch their data as often
 
+- A Query that has a `staleTime` set is considered **fresh** until that `staleTime` has elapsed.
+
+  - set `staleTime` to e.g. `2 * 60 * 1000` to make sure data is read from the cache, without triggering any kinds of refetches, for 2 minutes, or until the Query is [invalidated manually](../query-invalidation.md).
+  - set `staleTime` to `Infinity` to never trigger a refetch until the Query is [invalidated manually](../query-invalidation.md).
+  - set `staleTime` to `'static'` to **never** trigger a refetch, even if the Query is [invalidated manually](../query-invalidation.md).
+
 - Stale queries are refetched automatically in the background when:
   - New instances of the query mount
   - The window is refocused
   - The network is reconnected
-  - The query is optionally configured with a refetch interval
 
-> To change this functionality, you can use options like `refetchOnMount`, `refetchOnWindowFocus`, `refetchOnReconnect` and `refetchInterval`.
+> Setting `staleTime` is the recommended way to avoid excessive refetches, but you can also customize the points in time for refetches by setting options like `refetchOnMount`, `refetchOnWindowFocus` and `refetchOnReconnect`.
+
+- Queries can optionally be configured with a `refetchInterval` to trigger refetches periodically, which is independent of the `staleTime` setting.
 
 - Query results that have no more active instances of `useQuery`, `useInfiniteQuery` or query observers are labeled as "inactive" and remain in the cache in case they are used again at a later time.
 - By default, "inactive" queries are garbage collected after **5 minutes**.

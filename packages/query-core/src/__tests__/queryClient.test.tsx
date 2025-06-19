@@ -661,6 +661,35 @@ describe('queryClient', () => {
       expect(second).toBe(first)
     })
 
+    test('should read from cache with static staleTime even if invalidated', async () => {
+      const key = queryKey()
+
+      const fetchFn = vi.fn(() => Promise.resolve({ data: 'data' }))
+      const first = await queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: fetchFn,
+        staleTime: 'static',
+      })
+
+      expect(first.data).toBe('data')
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+
+      await queryClient.invalidateQueries({
+        queryKey: key,
+        refetchType: 'none',
+      })
+
+      const second = await queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: fetchFn,
+        staleTime: 'static',
+      })
+
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+
+      expect(second).toBe(first)
+    })
+
     test('should be able to fetch when garbage collection time is set to 0 and then be removed', async () => {
       const key1 = queryKey()
       const promise = queryClient.fetchQuery({
@@ -1323,6 +1352,25 @@ describe('queryClient', () => {
       expect(queryFn1).toHaveBeenCalledTimes(2)
       onlineMock.mockRestore()
     })
+
+    test('should not refetch static queries', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => 'data1')
+      await queryClient.fetchQuery({ queryKey: key, queryFn: queryFn })
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 'static',
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+      await queryClient.refetchQueries()
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      unsubscribe()
+    })
   })
 
   describe('invalidateQueries', () => {
@@ -1536,6 +1584,25 @@ describe('queryClient', () => {
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(0)
       expect(fetchCount).toBe(1)
+    })
+
+    test('should not refetch static queries after invalidation', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => 'data1')
+      await queryClient.fetchQuery({ queryKey: key, queryFn: queryFn })
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 'static',
+      })
+      const unsubscribe = observer.subscribe(() => undefined)
+      await queryClient.invalidateQueries()
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      unsubscribe()
     })
   })
 
