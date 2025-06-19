@@ -80,7 +80,7 @@ const usersMessages = useQueries({
           queryFn: () => getMessagesByUsers(id),
         }
       })
-    : [], // if users is undefined, an empty array will be returned
+    : [], // if userIds is undefined, an empty array will be returned
 })
 ```
 
