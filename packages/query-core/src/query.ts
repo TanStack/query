@@ -604,8 +604,6 @@ export class Query<
             fetchMeta: action.meta ?? null,
           }
         case 'success':
-          // If fetching ends successfully, we don't need revertState as a fallback anymore.
-          this.#revertState = undefined
           return {
             ...state,
             data: action.data,
