@@ -5,6 +5,7 @@ import {
   sleep,
 } from '@tanstack/query-test-utils'
 import {
+  CancelledError,
   Query,
   QueryClient,
   QueryObserver,
@@ -414,7 +415,18 @@ describe('query', () => {
       throw new Error()
     })
 
-    queryClient.fetchQuery({ queryKey: key, queryFn, retry: 3, retryDelay: 10 })
+    let error
+
+    queryClient
+      .fetchQuery({
+        queryKey: key,
+        queryFn,
+        retry: 3,
+        retryDelay: 10,
+      })
+      .catch((e) => {
+        error = e
+      })
 
     // Ensure the query is pending
     const query = queryCache.find({ queryKey: key })!
@@ -429,6 +441,12 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1) // have been called,
     expect(query.state.error).toBe(null) // not have an error, and
     expect(query.state.fetchStatus).toBe('idle') // not be loading any longer
+    expect(query.state.data).toBe(undefined) // have no data
+
+    // the call to fetchQuery must reject
+    // because it was reset and not reverted
+    // so it would resolve with undefined otherwise
+    expect(error).toBeInstanceOf(CancelledError)
   })
 
   test('should reset to default state when created from hydration', async () => {
@@ -939,7 +957,7 @@ describe('query', () => {
     unsubscribe()
   })
 
-  test('should always revert to idle state (#5958)', async () => {
+  test('should always revert to idle state (#5968)', async () => {
     let mockedData = [1]
 
     const key = queryKey()

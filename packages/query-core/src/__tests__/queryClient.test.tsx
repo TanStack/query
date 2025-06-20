@@ -1050,7 +1050,7 @@ describe('queryClient', () => {
         queryKey: key1,
         queryFn: () => 'data',
       })
-      queryClient.fetchQuery({
+      queryClient.prefetchQuery({
         queryKey: key1,
         queryFn: () => sleep(1000).then(() => 'data2'),
       })

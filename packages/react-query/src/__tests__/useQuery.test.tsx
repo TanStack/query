@@ -2992,7 +2992,7 @@ describe('useQuery', () => {
         },
 
         retry: 2,
-        retryDelay: 100,
+        retryDelay: 200,
       })
 
       return (
@@ -3036,7 +3036,8 @@ describe('useQuery', () => {
       expect(rendered.getByText('error: some error')).toBeInTheDocument(),
     )
 
-    expect(count).toBe(4)
+    // 1 original fetch + 2 retries
+    expect(count).toBe(3)
   })
 
   it('should restart when observers unmount and remount while waiting for a retry when query was cancelled in between (#3031)', async () => {
