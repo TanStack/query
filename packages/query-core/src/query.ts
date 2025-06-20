@@ -495,7 +495,10 @@ export class Query<
       this.#dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
     }
 
-    const onError = (error: TError | { silent?: boolean }) => {
+    const onError = (
+      error: TError | { silent?: boolean },
+    ): TData | undefined => {
+      let result: TData | undefined
       // Optimistically update state if needed
       if (!(isCancelledError(error) && error.silent)) {
         this.#dispatch({
@@ -515,10 +518,14 @@ export class Query<
           error as any,
           this as Query<any, any, any, any>,
         )
+      } else if (error.revert) {
+        // ensure error gets transformed to TData if possible after revert
+        result = this.state.data
       }
 
       // Schedule query gc after fetching
       this.scheduleGc()
+      return result
     }
 
     // Try to fetch the data

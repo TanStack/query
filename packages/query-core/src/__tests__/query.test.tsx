@@ -198,6 +198,45 @@ describe('query', () => {
     }
   })
 
+  test('should not throw a CancelledError when fetchQuery is in progress and the last observer unsubscribes when AbortSignal is consumed', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(100)
+        return 'data'
+      },
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: async ({ signal }) => {
+        await sleep(100)
+        return 'data2' + String(signal)
+      },
+    })
+
+    // Ensure the fetch is in progress
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Unsubscribe while fetch is in progress
+    unsubscribe()
+    // await queryClient.cancelQueries()
+
+    await vi.advanceTimersByTimeAsync(90)
+
+    // Fetch should complete successfully without throwing a CancelledError
+    await expect(promise).resolves.toBe('data')
+
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
+  })
+
   test('should provide context to queryFn', () => {
     const key = queryKey()
 

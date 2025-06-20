@@ -10,7 +10,7 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   fn: () => TData | Promise<TData>
   initialPromise?: Promise<TData>
   abort?: () => void
-  onError?: (error: TError) => void
+  onError?: (error: TError) => TData | undefined
   onSuccess?: (data: TData) => void
   onFail?: (failureCount: number, error: TError) => void
   onPause?: () => void
@@ -113,9 +113,11 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const reject = (value: any) => {
     if (!isResolved) {
       isResolved = true
-      config.onError?.(value)
+      const maybeResolved = config.onError?.(value)
       continueFn?.()
-      thenable.reject(value)
+      maybeResolved === undefined
+        ? thenable.reject(value)
+        : thenable.resolve(maybeResolved)
     }
   }
 
