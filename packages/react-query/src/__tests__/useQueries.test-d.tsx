@@ -41,7 +41,7 @@ describe('UseQueries config object overload', () => {
     expectTypeOf(query3Data).toEqualTypeOf<string | undefined>()
   })
 
-  describe("TData should be correctly inferred when using queryOptions", () => {
+  describe('TData should be correctly inferred when using queryOptions', () => {
     it('TData should be defined when passed through queryOptions', () => {
       const options = queryOptions({
         queryKey: ['key'],
@@ -61,7 +61,7 @@ describe('UseQueries config object overload', () => {
       expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
     })
 
-    it("TData should be undefined when initialData is not provided", () => {
+    it('TData should be undefined when initialData is not provided', () => {
       const options = queryOptions({
         queryKey: ['key'],
         queryFn: () => {
@@ -82,20 +82,20 @@ describe('UseQueries config object overload', () => {
       // Create a union of objects, which each have a single key (and corresponding value type) from CallableFunction,
       // this better mimics the behaviour of returning an object which has a single key that matches any of the known keys
       // that exist on an CallableFunction in javascript (i.e { name: string })
-      type Data = { 
+      type Data = {
         [K in keyof CallableFunction]: {
           [key in K]: CallableFunction[key]
-        } 
-      }[keyof CallableFunction]; 
-      
+        }
+      }[keyof CallableFunction]
+
       // Object with individual key from CallableFunction
       const queryOptions1 = queryOptions({
         queryKey: ['key1'],
         queryFn: async (): Promise<Data> => {
           return {
-            name: "example"
+            name: 'example',
           }
-        }
+        },
       })
 
       // Object with an actual CallableFunction
@@ -103,7 +103,7 @@ describe('UseQueries config object overload', () => {
         queryKey: ['key2'],
         queryFn: async (): Promise<CallableFunction> => {
           return () => void 0
-        }
+        },
       })
 
       // Object with matching key from CallableFunction, but different value type
@@ -111,9 +111,9 @@ describe('UseQueries config object overload', () => {
         queryKey: ['key3'],
         queryFn: async (): Promise<{ name: number }> => {
           return {
-            name: 42
+            name: 42,
           }
-        }
+        },
       })
 
       const queryResults1 = useQueries({ queries: [queryOptions1] })
