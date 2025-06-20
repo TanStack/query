@@ -91,7 +91,7 @@ describe('UseQueries config object overload', () => {
       // Object with individual key from CallableFunction
       const queryOptions1 = queryOptions({
         queryKey: ['key1'],
-        queryFn: async (): Promise<Data> => {
+        queryFn: (): Promise<Data> => {
           return {
             name: 'example',
           }
@@ -101,7 +101,7 @@ describe('UseQueries config object overload', () => {
       // Object with an actual CallableFunction
       const queryOptions2 = queryOptions({
         queryKey: ['key2'],
-        queryFn: async (): Promise<CallableFunction> => {
+        queryFn: (): Promise<CallableFunction> => {
           return () => void 0
         },
       })
@@ -109,7 +109,7 @@ describe('UseQueries config object overload', () => {
       // Object with matching key from CallableFunction, but different value type
       const queryOptions3 = queryOptions({
         queryKey: ['key3'],
-        queryFn: async (): Promise<{ name: number }> => {
+        queryFn: (): Promise<{ name: number }> => {
           return {
             name: 42,
           }
