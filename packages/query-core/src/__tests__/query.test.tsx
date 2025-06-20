@@ -991,18 +991,30 @@ describe('query', () => {
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(50) // let it resolve
 
+    expect(observer.getCurrentResult().data).toBe('1')
+    expect(observer.getCurrentResult().fetchStatus).toBe('idle')
+
     mockedData = [1, 2] // update "server" state in the background
 
-    queryClient.invalidateQueries({ queryKey: key })
-    queryClient.invalidateQueries({ queryKey: key })
+    void queryClient.invalidateQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(5)
+    void queryClient.invalidateQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(5)
     unsubscribe() // unsubscribe to simulate unmount
+    await vi.advanceTimersByTimeAsync(5)
+
+    // reverted to previous data and idle fetchStatus
+    expect(queryCache.find({ queryKey: key })?.state).toMatchObject({
+      status: 'success',
+      data: '1',
+      fetchStatus: 'idle',
+    })
 
     // set up a new observer to simulate a mount of new component
     const newObserver = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
     })
-
     const spy = vi.fn()
     newObserver.subscribe(({ data }) => spy(data))
     await vi.advanceTimersByTimeAsync(60) // let it resolve
