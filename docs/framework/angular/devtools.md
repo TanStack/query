@@ -3,6 +3,8 @@ id: devtools
 title: Devtools
 ---
 
+> For Google Chrome users: A third-party Chrome extension is available for debugging TanStack Query directly in Chrome DevTools. This provides the same functionality as the framework-specific devtools packages. Check it out here: [TanStack Query DevTools](https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai)
+
 ## Enable devtools
 
 The devtools help you debug and inspect your queries and mutations. You can enable the devtools by adding `withDevtools` to `provideTanStackQuery`.
