@@ -43,8 +43,8 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "pnpm pack && publint ./dist/*.tgz --strict && attw ./dist/*.tgz; premove ./dist/*.tgz",
-    "build": "vite build && pnpm run prepack",
-    "prepack": "node ./scripts/prepack.js"
+    "build": "vite build && pnpm run prepare-package",
+    "prepare-package": "node ./scripts/prepare-package.js"
   },
   "type": "module",
   "types": "dist/index.d.ts",
@@ -60,7 +60,8 @@
   "sideEffects": false,
   "files": [
     "**/*.d.ts",
-    "**/*.mjs.*"
+    "**/*.mjs",
+    "**/*.mjs.map"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
@@ -84,6 +85,15 @@
   },
   "publishConfig": {
     "directory": "dist",
-    "linkDirectory": false
+    "linkDirectory": false,
+    "types": "index.d.ts",
+    "module": "index.mjs",
+    "exports": {
+      ".": {
+        "types": "./index.d.ts",
+        "default": "./index.mjs"
+      },
+      "./package.json": "./package.json"
+    }
   }
 }
