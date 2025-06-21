@@ -12,4 +12,4 @@ mutationOptions({
 
 **Options**
 
-You can generally pass everything to `mutationOptions` that you can also pass to [`useMutation`](./useMutation.md).
+You can generally pass everything to `mutationOptions` that you can also pass to [`useMutation`](../useMutation.md).
