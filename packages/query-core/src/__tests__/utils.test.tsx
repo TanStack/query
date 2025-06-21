@@ -423,6 +423,7 @@ describe('core/utils', () => {
       const filters = { mutationKey: ['key1'] }
       const queryClient = new QueryClient()
       const mutation = new Mutation({
+        client: queryClient,
         mutationId: 1,
         mutationCache: queryClient.getMutationCache(),
         options: {},
