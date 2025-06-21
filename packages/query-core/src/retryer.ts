@@ -63,10 +63,6 @@ export class CancelledError extends Error {
   }
 }
 
-export function isCancelledError(value: any): value is CancelledError {
-  return value instanceof CancelledError
-}
-
 export function createRetryer<TData = unknown, TError = DefaultError>(
   config: RetryerConfig<TData, TError>,
 ): Retryer<TData> {

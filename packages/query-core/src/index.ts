@@ -26,7 +26,6 @@ export {
   shouldThrowError,
 } from './utils'
 export type { MutationFilters, QueryFilters, Updater, SkipToken } from './utils'
-export { isCancelledError } from './retryer'
 export {
   dehydrate,
   hydrate,

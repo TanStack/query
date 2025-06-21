@@ -11,7 +11,6 @@ import {
   QueryObserver,
   dehydrate,
   hydrate,
-  isCancelledError,
 } from '..'
 import { hashQueryKeyByOptions } from '../utils'
 import { mockOnlineManagerIsOnline, setIsServer } from './utils'
@@ -191,8 +190,7 @@ describe('query', () => {
       await promise
       expect.unreachable()
     } catch {
-      expect(isCancelledError(result)).toBe(true)
-      expect(result instanceof Error).toBe(true)
+      expect(result).toBeInstanceOf(CancelledError)
     } finally {
       // Reset visibilityState to original value
       visibilityMock.mockRestore()
@@ -370,7 +368,7 @@ describe('query', () => {
     expect(signal.aborted).toBe(true)
     expect(onAbort).toHaveBeenCalledTimes(1)
     expect(abortListener).toHaveBeenCalledTimes(1)
-    expect(isCancelledError(error)).toBe(true)
+    expect(error).toBeInstanceOf(CancelledError)
   })
 
   test('should not continue if explicitly cancelled', async () => {
@@ -402,7 +400,7 @@ describe('query', () => {
     await vi.advanceTimersByTimeAsync(100)
 
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(isCancelledError(error)).toBe(true)
+    expect(error).toBeInstanceOf(CancelledError)
   })
 
   test('should not error if reset while pending', async () => {
@@ -483,7 +481,7 @@ describe('query', () => {
     await vi.advanceTimersByTimeAsync(100)
 
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(isCancelledError(query.state.error)).toBe(true)
+    expect(query.state.error).toBeInstanceOf(CancelledError)
     const result = query.fetch()
     await vi.advanceTimersByTimeAsync(50)
     await expect(result).resolves.toBe('data')
@@ -516,7 +514,7 @@ describe('query', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(query.state.error).toBe(error)
-    expect(isCancelledError(query.state.error)).toBe(false)
+    expect(query.state.error).not.toBeInstanceOf(CancelledError)
   })
 
   test('the previous query status should be kept when refetching', async () => {
@@ -1019,6 +1017,39 @@ describe('query', () => {
     newObserver.subscribe(({ data }) => spy(data))
     await vi.advanceTimersByTimeAsync(60) // let it resolve
     expect(spy).toHaveBeenCalledWith('1 - 2')
+  })
+
+  test('should not reject a promise when silently cancelled in the background', async () => {
+    const key = queryKey()
+
+    let x = 0
+
+    queryClient.setQueryData(key, 'initial')
+    const queryFn = vi.fn().mockImplementation(async () => {
+      await sleep(100)
+      return 'data' + x
+    })
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    x = 1
+
+    // cancel ongoing re-fetches
+    void queryClient.refetchQueries({ queryKey: key }, { cancelRefetch: true })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    // The promise should not reject
+    await vi.waitFor(() => expect(promise).resolves.toBe('data1'))
+
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should have an error log when queryFn data is not serializable', async () => {

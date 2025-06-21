@@ -8,7 +8,7 @@ import {
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
-import { canFetch, createRetryer, isCancelledError } from './retryer'
+import { CancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
@@ -540,35 +540,36 @@ export class Query<
       )
       return data
     } catch (error) {
-      if (isCancelledError(error) && error.revert) {
-        this.setState({
-          ...revertState,
-          fetchStatus: 'idle' as const,
-        })
-        // transform error into reverted state data
-        return this.state.data!
-      } else {
-        // Optimistically update state if needed
-        if (!(isCancelledError(error) && error.silent)) {
-          this.#dispatch({
-            type: 'error',
-            error: error as TError,
+      if (error instanceof CancelledError) {
+        if (error.silent) {
+          // silent cancellation implies a new fetch is going to be started,
+          // so we hatch onto that promise
+          return this.#retryer.promise
+        } else if (error.revert) {
+          this.setState({
+            ...revertState,
+            fetchStatus: 'idle' as const,
           })
-        }
-
-        if (!isCancelledError(error)) {
-          // Notify cache callback
-          this.#cache.config.onError?.(
-            error as any,
-            this as Query<any, any, any, any>,
-          )
-          this.#cache.config.onSettled?.(
-            this.state.data,
-            error as any,
-            this as Query<any, any, any, any>,
-          )
+          // transform error into reverted state data
+          return this.state.data!
         }
       }
+      this.#dispatch({
+        type: 'error',
+        error: error as TError,
+      })
+
+      // Notify cache callback
+      this.#cache.config.onError?.(
+        error as any,
+        this as Query<any, any, any, any>,
+      )
+      this.#cache.config.onSettled?.(
+        this.state.data,
+        error as any,
+        this as Query<any, any, any, any>,
+      )
+
       throw error // rethrow the error for further handling
     } finally {
       // Schedule query gc after fetching
