@@ -246,7 +246,7 @@ Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation o
 ```ts
 function groupMutationOptions() {
   return mutationOptions({
-    mutationKey: ['groups'], // mutationKey is required
+    mutationKey: ['addGroup'], // mutationKey is required
     mutationFn: addGroup,
   })
 }
