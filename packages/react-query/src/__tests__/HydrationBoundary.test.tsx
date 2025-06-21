@@ -10,6 +10,7 @@ import {
   dehydrate,
   useQuery,
 } from '..'
+import type { hydrate } from '@tanstack/query-core'
 
 describe('React hydration', () => {
   let stringifiedState: string
@@ -363,5 +364,88 @@ describe('React hydration', () => {
 
     hydrateSpy.mockRestore()
     queryClient.clear()
+  })
+
+  // https://github.com/TanStack/query/issues/8677
+  test('should not infinite loop when hydrating promises that resolve to errors', async () => {
+    const originalHydrate = coreModule.hydrate
+    const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
+    let hydrationCount = 0
+    hydrateSpy.mockImplementation((...args: Parameters<typeof hydrate>) => {
+      hydrationCount++
+      // Arbitrary number
+      if (hydrationCount > 10) {
+        // This is a rough way to detect it. Calling hydrate multiple times with
+        // the same data is usually fine, but in this case it indicates the
+        // logic in HydrationBoundary is not working as expected.
+        throw new Error('Too many hydrations detected')
+      }
+      return originalHydrate(...args)
+    })
+
+    // For the bug to trigger, there needs to already be a query in the cache,
+    // with a dataUpdatedAt earlier than the dehydratedAt of the next query
+    const clientQueryClient = new QueryClient()
+    await clientQueryClient.prefetchQuery({
+      queryKey: ['promise'],
+      queryFn: () => 'existing',
+    })
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    const prefetchQueryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+    prefetchQueryClient.prefetchQuery({
+      queryKey: ['promise'],
+      queryFn: async () => {
+        await sleep(10)
+        throw new Error('Query failed')
+      },
+    })
+
+    const dehydratedState = dehydrate(prefetchQueryClient)
+
+    function ignore() {
+      // Ignore redacted unhandled rejection
+    }
+    process.addListener('unhandledRejection', ignore)
+
+    // Mimic what React/our synchronous thenable does for already rejected promises
+    // @ts-expect-error
+    dehydratedState.queries[0].promise.status = 'failure'
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['promise'],
+        queryFn: () => sleep(10).then(() => ['new']),
+      })
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={clientQueryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+    await vi.advanceTimersByTimeAsync(1)
+    expect(rendered.getByText('existing')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('new')).toBeInTheDocument()
+
+    process.removeListener('unhandledRejection', ignore)
+    hydrateSpy.mockRestore()
+    prefetchQueryClient.clear()
+    clientQueryClient.clear()
   })
 })

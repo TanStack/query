@@ -1,8 +1,8 @@
 import { derived, get, readable } from 'svelte/store'
-import { notifyManager } from '@tanstack/query-core'
+import { noop, notifyManager } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import { isSvelteStore, noop } from './utils.js'
+import { isSvelteStore } from './utils.js'
 import type {
   QueryClient,
   QueryKey,

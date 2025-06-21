@@ -15,9 +15,13 @@ function useMutationState<TResult>(options, queryClient?): Readable<TResult[]>
 
 ## Parameters
 
-• **options**: [`MutationStateOptions`](../type-aliases/mutationstateoptions.md)\<`TResult`\> = `{}`
+### options
 
-• **queryClient?**: `QueryClient`
+[`MutationStateOptions`](../../type-aliases/mutationstateoptions.md)\<`TResult`\> = `{}`
+
+### queryClient?
+
+`QueryClient`
 
 ## Returns
 
@@ -25,4 +29,4 @@ function useMutationState<TResult>(options, queryClient?): Readable<TResult[]>
 
 ## Defined in
 
-[packages/svelte-query/src/useMutationState.ts:24](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/useMutationState.ts#L24)
+[packages/svelte-query/src/useMutationState.ts:24](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useMutationState.ts#L24)
