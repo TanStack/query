@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.80.10",
+  "version": "5.81.2",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "tanstack"
   ],
   "scripts": {
-    "clean": "premove ./dist ./coverage ./dist-ts",
+    "clean": "premove ./build ./dist ./coverage ./dist-ts",
     "compile": "tsc --build",
     "test:eslint": "eslint ./src",
     "test:types": "npm-run-all --serial test:types:*",
@@ -42,25 +42,26 @@
     "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "pnpm pack && publint ./dist/*.tgz --strict && attw ./dist/*.tgz; premove ./dist/*.tgz",
-    "build": "vite build && pnpm run prepack",
-    "prepack": "node ./scripts/prepack.js"
+    "test:build": "publint --strict && attw --pack",
+    "build": "pnpm build:tsup",
+    "build:tsup": "tsup --tsconfig tsconfig.prod.json"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
-  "module": "dist/index.mjs",
+  "types": "build/index.d.ts",
+  "module": "build/index.mjs",
   "exports": {
     ".": {
       "@tanstack/custom-condition": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.mjs"
+      "types": "./build/index.d.ts",
+      "default": "./build/index.mjs"
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "**/*.d.ts",
-    "**/*.mjs.*"
+    "build",
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
@@ -81,9 +82,5 @@
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
     "@angular/core": ">=16.0.0"
-  },
-  "publishConfig": {
-    "directory": "dist",
-    "linkDirectory": false
   }
 }
