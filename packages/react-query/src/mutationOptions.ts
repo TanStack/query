@@ -25,10 +25,7 @@ export function mutationOptions<
     UseMutationOptions<TData, TError, TVariables, TContext>,
     'mutationKey'
   >,
-): Omit<
-  UseMutationOptions<TData, TError, TVariables, TContext>,
-  'mutationKey'
->
+): Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'mutationKey'>
 export function mutationOptions<
   TData = unknown,
   TError = DefaultError,

@@ -109,10 +109,7 @@ describe('mutationOptions', () => {
         },
       }),
     ).toEqualTypeOf<
-      Omit<
-        UseMutationOptions<number, DefaultError, string>,
-        'mutationKey'
-      >
+      Omit<UseMutationOptions<number, DefaultError, string>, 'mutationKey'>
     >()
   })
 
