@@ -52,7 +52,7 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/svelte-query": "workspace:*",
     "@testing-library/svelte": "^5.2.6",
-    "eslint-plugin-svelte": "^2.46.0",
+    "eslint-plugin-svelte": "^3.9.3",
     "svelte": "^5.26.1",
     "svelte-check": "^4.1.5"
   },
