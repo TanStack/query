@@ -1,6 +1,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+// Currently unused as life-cycle scripts do not run on CI
+
 console.log('Running prepack script')
 
 /**
