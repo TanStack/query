@@ -87,16 +87,29 @@ describe('mutationOptions', () => {
   })
 
   it('should infer all types when not explicitly provided', () => {
-    const mutation = mutationOptions({
-      mutationFn: (id: string) => Promise.resolve(id.length),
-      mutationKey: ['key'],
-      onSuccess: (data) => {
-        expectTypeOf(data).toEqualTypeOf<number>()
-      },
-    })
-
-    expectTypeOf(mutation).toEqualTypeOf<
+    expectTypeOf(
+      mutationOptions({
+        mutationFn: (id: string) => Promise.resolve(id.length),
+        mutationKey: ['key'],
+        onSuccess: (data) => {
+          expectTypeOf(data).toEqualTypeOf<number>()
+        },
+      }),
+    ).toEqualTypeOf<
       WithRequired<
+        UseMutationOptions<number, DefaultError, string>,
+        'mutationKey'
+      >
+    >()
+    expectTypeOf(
+      mutationOptions({
+        mutationFn: (id: string) => Promise.resolve(id.length),
+        onSuccess: (data) => {
+          expectTypeOf(data).toEqualTypeOf<number>()
+        },
+      }),
+    ).toEqualTypeOf<
+      Omit<
         UseMutationOptions<number, DefaultError, string>,
         'mutationKey'
       >
@@ -104,50 +117,72 @@ describe('mutationOptions', () => {
   })
 
   it('should infer types when used with useMutation', () => {
-    const mutationOpts = mutationOptions({
-      mutationKey: ['key'],
-      mutationFn: () => Promise.resolve('data'),
-      onSuccess: (data) => {
-        expectTypeOf(data).toEqualTypeOf<string>()
-      },
-    })
-
-    const mutation = useMutation(mutationOpts)
+    const mutation = useMutation(
+      mutationOptions({
+        mutationKey: ['key'],
+        mutationFn: () => Promise.resolve('data'),
+        onSuccess: (data) => {
+          expectTypeOf(data).toEqualTypeOf<string>()
+        },
+      }),
+    )
     expectTypeOf(mutation).toEqualTypeOf<
       UseMutationResult<string, DefaultError, void, unknown>
     >()
   })
 
   it('should infer types when used with useIsMutating', () => {
-    const mutationOpts = mutationOptions({
-      mutationKey: ['key'],
-      mutationFn: () => Promise.resolve(5),
-    })
-
-    const isMutating = useIsMutating(mutationOpts)
+    const isMutating = useIsMutating(
+      mutationOptions({
+        mutationKey: ['key'],
+        mutationFn: () => Promise.resolve(5),
+      }),
+    )
     expectTypeOf(isMutating).toEqualTypeOf<number>()
+
+    useIsMutating(
+      // @ts-expect-error filters should have mutationKey
+      mutationOptions({
+        mutationFn: () => Promise.resolve(5),
+      }),
+    )
   })
 
   it('should infer types when used with queryClient.isMutating', () => {
     const queryClient = new QueryClient()
-    const mutationOpts = mutationOptions({
-      mutationKey: ['key'],
-      mutationFn: () => Promise.resolve(5),
-    })
 
-    const isMutating = queryClient.isMutating(mutationOpts)
+    const isMutating = queryClient.isMutating(
+      mutationOptions({
+        mutationKey: ['key'],
+        mutationFn: () => Promise.resolve(5),
+      }),
+    )
     expectTypeOf(isMutating).toEqualTypeOf<number>()
+
+    queryClient.isMutating(
+      // @ts-expect-error filters should have mutationKey
+      mutationOptions({
+        mutationFn: () => Promise.resolve(5),
+      }),
+    )
   })
 
   it('should infer types when used with useMutationState', () => {
-    const mutationOpts = mutationOptions({
-      mutationKey: ['key'],
-      mutationFn: () => Promise.resolve(5),
+    const mutationState = useMutationState({
+      filters: mutationOptions({
+        mutationKey: ['key'],
+        mutationFn: () => Promise.resolve(5),
+      }),
     })
-
-    const mutationState = useMutationState({ filters: mutationOpts })
     expectTypeOf(mutationState).toEqualTypeOf<
       Array<MutationState<unknown, Error, unknown, unknown>>
     >()
+
+    useMutationState({
+      // @ts-expect-error filters should have mutationKey
+      filters: mutationOptions({
+        mutationFn: () => Promise.resolve(5),
+      }),
+    })
   })
 })

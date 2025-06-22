@@ -28,7 +28,7 @@ export function mutationOptions<
 ): Omit<
   UseMutationOptions<TData, TError, TVariables, TContext>,
   'mutationKey'
-> & { mutationKey?: undefined }
+>
 export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
