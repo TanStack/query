@@ -377,6 +377,7 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void> {
+    if (options.queryFn === skipToken) return Promise.resolve()
     return this.fetchQuery(options).then(noop).catch(noop)
   }
 

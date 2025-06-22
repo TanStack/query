@@ -969,6 +969,17 @@ describe('queryClient', () => {
       await vi.advanceTimersByTimeAsync(15)
       expect(queryCache.find({ queryKey: key })).not.toBeDefined()
     })
+
+    test('should not call fetch if queryFn is skipToken', async () => {
+      const key = queryKey()
+
+      const fetchQuery = vi.spyOn(queryClient, 'fetchQuery');
+      await queryClient.prefetchQuery({
+        queryKey: key,
+        queryFn: skipToken,
+      })
+      expect(fetchQuery).not.toBeCalled()
+    })
   })
 
   describe('removeQueries', () => {
