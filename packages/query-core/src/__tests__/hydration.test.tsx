@@ -1406,7 +1406,6 @@ describe('dehydration and rehydration', () => {
     serverQueryClient.clear()
   })
 
-  // https://github.com/TanStack/query/issues/6802
   test('should serialize and deserialize query keys', async () => {
     const createQueryClient = () =>
       new QueryClient({
@@ -1444,14 +1443,10 @@ describe('dehydration and rehydration', () => {
     hydrate(frontendClient, dehydrated)
 
     const clientEntry = getFirstEntry(frontendClient)
-    
-    
 
     expect(clientEntry).toMatchObject(serverEntry)
 
-    
     expect(clientEntry.queryKey).toEqual(serverEntry.queryKey)
     expect(clientEntry.queryHash).toEqual(serverEntry.queryHash)
-    
   })
 })

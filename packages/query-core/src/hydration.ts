@@ -86,7 +86,7 @@ function dehydrateQuery(
         data: serializeData(query.state.data),
       }),
     },
-    queryKey: query.queryKey,
+    queryKey: serializeData(query.queryKey),
     queryHash: query.queryHash,
     ...(query.state.status === 'pending' && {
       promise: query.promise?.then(serializeData).catch((error) => {
@@ -196,10 +196,13 @@ export function hydrate(
   })
 
   queries.forEach(
-    ({ queryKey, state, queryHash, meta, promise, dehydratedAt }) => {
+    (nextQuery) => {
+      const { state, queryHash, meta, promise, dehydratedAt } = nextQuery
+      
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
       const data = rawData === undefined ? rawData : deserializeData(rawData)
+      const newQueryKey = deserializeData(nextQuery.queryKey)
 
       let query = queryCache.get(queryHash)
       const existingQueryIsPending = query?.state.status === 'pending'
@@ -232,7 +235,7 @@ export function hydrate(
           {
             ...client.getDefaultOptions().hydrate?.queries,
             ...options?.defaultOptions?.queries,
-            queryKey,
+            queryKey: newQueryKey,
             queryHash,
             meta,
           },

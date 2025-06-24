@@ -2452,6 +2452,9 @@ importers:
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
+      superjson:
+        specifier: ^2.2.1
+        version: 2.2.1
 
   packages/query-devtools:
     devDependencies:
@@ -7831,6 +7834,7 @@ packages:
 
   '@vercel/edge@1.2.1':
     resolution: {integrity: sha512-1++yncEyIAi68D3UEOlytYb1IUcIulMWdoSzX2h9LuSeeyR7JtaIgR8DcTQ6+DmYOQn+5MCh6LY+UmK6QBByNA==}
+    deprecated: This package is deprecated. You should to use `@vercel/functions` instead.
 
   '@vercel/nft@0.29.2':
     resolution: {integrity: sha512-A/Si4mrTkQqJ6EXJKv5EYCDQ3NL6nJXxG8VGXePsaiQigsomHYQC9xSpX8qGk7AEZk4b1ssbYIqJ0ISQQ7bfcA==}
