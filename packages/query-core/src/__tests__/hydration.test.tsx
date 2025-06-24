@@ -973,7 +973,7 @@ describe('dehydration and rehydration', () => {
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
-          serializeData: (data) => data.toISOString(),
+          serializeData: superjson.serialize,
         },
       },
     })
@@ -988,7 +988,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({
       defaultOptions: {
         hydrate: {
-          deserializeData: (data) => new Date(data),
+          deserializeData: superjson.deserialize,
         },
       },
     })
@@ -1009,7 +1009,7 @@ describe('dehydration and rehydration', () => {
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
-          serializeData: (data) => data.toISOString(),
+          serializeData: superjson.serialize,
         },
       },
     })
@@ -1024,7 +1024,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({
       defaultOptions: {
         hydrate: {
-          deserializeData: (data) => new Date(data),
+          deserializeData: superjson.deserialize,
         },
       },
     })
@@ -1044,7 +1044,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({
       defaultOptions: {
         hydrate: {
-          deserializeData: (data) => new Date(data),
+          deserializeData: superjson.deserialize,
         },
       },
     })
@@ -1062,7 +1062,7 @@ describe('dehydration and rehydration', () => {
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
-          serializeData: (data) => data.toISOString(),
+          serializeData: superjson.serialize,
         },
       },
     })
@@ -1223,10 +1223,10 @@ describe('dehydration and rehydration', () => {
       expect(clientQueryClient.getQueryData(query.queryKey)).toBe(0),
     )
 
-    expect(serializeDataMock).toHaveBeenCalledTimes(1)
+    expect(serializeDataMock).toHaveBeenCalledTimes(2) // once for data, once for queryKey
     expect(serializeDataMock).toHaveBeenCalledWith(0)
 
-    expect(deserializeDataMock).toHaveBeenCalledTimes(1)
+    expect(deserializeDataMock).toHaveBeenCalledTimes(2) // once for data, once for queryKey
     expect(deserializeDataMock).toHaveBeenCalledWith(0)
 
     // --- server ---
@@ -1245,10 +1245,10 @@ describe('dehydration and rehydration', () => {
       expect(clientQueryClient.getQueryData(query.queryKey)).toBe(1),
     )
 
-    expect(serializeDataMock).toHaveBeenCalledTimes(2)
+    expect(serializeDataMock).toHaveBeenCalledTimes(4) // twice for data, twice for queryKey
     expect(serializeDataMock).toHaveBeenCalledWith(1)
 
-    expect(deserializeDataMock).toHaveBeenCalledTimes(2)
+    expect(deserializeDataMock).toHaveBeenCalledTimes(4) // twice for data, twice for queryKey
     expect(deserializeDataMock).toHaveBeenCalledWith(1)
 
     clientQueryClient.clear()
