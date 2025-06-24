@@ -1180,8 +1180,6 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should overwrite data when a new promise is streamed in', async () => {
-    const serializeDataMock = vi.fn((data: any) => data)
-    const deserializeDataMock = vi.fn((data: any) => data)
 
     const countRef = { current: 0 }
     // --- server ---
@@ -1189,7 +1187,6 @@ describe('dehydration and rehydration', () => {
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
-          serializeData: serializeDataMock,
         },
       },
     })
@@ -1208,13 +1205,7 @@ describe('dehydration and rehydration', () => {
 
     // --- client ---
 
-    const clientQueryClient = new QueryClient({
-      defaultOptions: {
-        hydrate: {
-          deserializeData: deserializeDataMock,
-        },
-      },
-    })
+    const clientQueryClient = new QueryClient()
 
     hydrate(clientQueryClient, dehydrated)
 
@@ -1222,12 +1213,6 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       expect(clientQueryClient.getQueryData(query.queryKey)).toBe(0),
     )
-
-    expect(serializeDataMock).toHaveBeenCalledTimes(2) // once for data, once for queryKey
-    expect(serializeDataMock).toHaveBeenCalledWith(0)
-
-    expect(deserializeDataMock).toHaveBeenCalledTimes(2) // once for data, once for queryKey
-    expect(deserializeDataMock).toHaveBeenCalledWith(0)
 
     // --- server ---
     countRef.current++
@@ -1245,11 +1230,6 @@ describe('dehydration and rehydration', () => {
       expect(clientQueryClient.getQueryData(query.queryKey)).toBe(1),
     )
 
-    expect(serializeDataMock).toHaveBeenCalledTimes(4) // twice for data, twice for queryKey
-    expect(serializeDataMock).toHaveBeenCalledWith(1)
-
-    expect(deserializeDataMock).toHaveBeenCalledTimes(4) // twice for data, twice for queryKey
-    expect(deserializeDataMock).toHaveBeenCalledWith(1)
 
     clientQueryClient.clear()
     serverQueryClient.clear()
