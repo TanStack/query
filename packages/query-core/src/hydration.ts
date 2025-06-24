@@ -235,7 +235,7 @@ export function hydrate(
           {
             ...client.getDefaultOptions().hydrate?.queries,
             ...options?.defaultOptions?.queries,
-            queryKey: queryKey,
+            queryKey,
             queryHash,
             meta,
           },
