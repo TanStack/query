@@ -1180,7 +1180,6 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should overwrite data when a new promise is streamed in', async () => {
-
     const countRef = { current: 0 }
     // --- server ---
     const serverQueryClient = new QueryClient({
@@ -1229,7 +1228,6 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       expect(clientQueryClient.getQueryData(query.queryKey)).toBe(1),
     )
-
 
     clientQueryClient.clear()
     serverQueryClient.clear()
