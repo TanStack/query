@@ -195,78 +195,73 @@ export function hydrate(
     )
   })
 
-  queries.forEach(
-    (nextQuery) => {
-      const { state, queryHash, meta, promise, dehydratedAt } = nextQuery
-      
-      const syncData = promise ? tryResolveSync(promise) : undefined
-      const rawData = state.data === undefined ? syncData?.data : state.data
-      const data = rawData === undefined ? rawData : deserializeData(rawData)
-      const queryKey = deserializeData(nextQuery.queryKey)
+  queries.forEach((nextQuery) => {
+    const { state, queryHash, meta, promise, dehydratedAt } = nextQuery
 
-      let query = queryCache.get(queryHash)
-      const existingQueryIsPending = query?.state.status === 'pending'
-      const existingQueryIsFetching = query?.state.fetchStatus === 'fetching'
+    const syncData = promise ? tryResolveSync(promise) : undefined
+    const rawData = state.data === undefined ? syncData?.data : state.data
+    const data = rawData === undefined ? rawData : deserializeData(rawData)
+    const queryKey = deserializeData(nextQuery.queryKey)
 
-      // Do not hydrate if an existing query exists with newer data
-      if (query) {
-        const hasNewerSyncData =
-          syncData &&
-          // We only need this undefined check to handle older dehydration
-          // payloads that might not have dehydratedAt
-          dehydratedAt !== undefined &&
-          dehydratedAt > query.state.dataUpdatedAt
-        if (
-          state.dataUpdatedAt > query.state.dataUpdatedAt ||
-          hasNewerSyncData
-        ) {
-          // omit fetchStatus from dehydrated state
-          // so that query stays in its current fetchStatus
-          const { fetchStatus: _ignored, ...serializedState } = state
-          query.setState({
-            ...serializedState,
-            data,
-          })
-        }
-      } else {
-        // Restore query
-        query = queryCache.build(
-          client,
-          {
-            ...client.getDefaultOptions().hydrate?.queries,
-            ...options?.defaultOptions?.queries,
-            queryKey,
-            queryHash,
-            meta,
-          },
-          // Reset fetch status to idle to avoid
-          // query being stuck in fetching state upon hydration
-          {
-            ...state,
-            data,
-            fetchStatus: 'idle',
-            status: data !== undefined ? 'success' : state.status,
-          },
-        )
-      }
+    let query = queryCache.get(queryHash)
+    const existingQueryIsPending = query?.state.status === 'pending'
+    const existingQueryIsFetching = query?.state.fetchStatus === 'fetching'
 
-      if (
-        promise &&
-        !existingQueryIsPending &&
-        !existingQueryIsFetching &&
-        // Only hydrate if dehydration is newer than any existing data,
-        // this is always true for new queries
-        (dehydratedAt === undefined || dehydratedAt > query.state.dataUpdatedAt)
-      ) {
-        // This doesn't actually fetch - it just creates a retryer
-        // which will re-use the passed `initialPromise`
-        // Note that we need to call these even when data was synchronously
-        // available, as we still need to set up the retryer
-        void query.fetch(undefined, {
-          // RSC transformed promises are not thenable
-          initialPromise: Promise.resolve(promise).then(deserializeData),
+    // Do not hydrate if an existing query exists with newer data
+    if (query) {
+      const hasNewerSyncData =
+        syncData &&
+        // We only need this undefined check to handle older dehydration
+        // payloads that might not have dehydratedAt
+        dehydratedAt !== undefined &&
+        dehydratedAt > query.state.dataUpdatedAt
+      if (state.dataUpdatedAt > query.state.dataUpdatedAt || hasNewerSyncData) {
+        // omit fetchStatus from dehydrated state
+        // so that query stays in its current fetchStatus
+        const { fetchStatus: _ignored, ...serializedState } = state
+        query.setState({
+          ...serializedState,
+          data,
         })
       }
-    },
-  )
+    } else {
+      // Restore query
+      query = queryCache.build(
+        client,
+        {
+          ...client.getDefaultOptions().hydrate?.queries,
+          ...options?.defaultOptions?.queries,
+          queryKey,
+          queryHash,
+          meta,
+        },
+        // Reset fetch status to idle to avoid
+        // query being stuck in fetching state upon hydration
+        {
+          ...state,
+          data,
+          fetchStatus: 'idle',
+          status: data !== undefined ? 'success' : state.status,
+        },
+      )
+    }
+
+    if (
+      promise &&
+      !existingQueryIsPending &&
+      !existingQueryIsFetching &&
+      // Only hydrate if dehydration is newer than any existing data,
+      // this is always true for new queries
+      (dehydratedAt === undefined || dehydratedAt > query.state.dataUpdatedAt)
+    ) {
+      // This doesn't actually fetch - it just creates a retryer
+      // which will re-use the passed `initialPromise`
+      // Note that we need to call these even when data was synchronously
+      // available, as we still need to set up the retryer
+      void query.fetch(undefined, {
+        // RSC transformed promises are not thenable
+        initialPromise: Promise.resolve(promise).then(deserializeData),
+      })
+    }
+  })
 }
