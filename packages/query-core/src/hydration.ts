@@ -202,7 +202,7 @@ export function hydrate(
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
       const data = rawData === undefined ? rawData : deserializeData(rawData)
-      const newQueryKey = deserializeData(nextQuery.queryKey)
+      const queryKey = deserializeData(nextQuery.queryKey)
 
       let query = queryCache.get(queryHash)
       const existingQueryIsPending = query?.state.status === 'pending'
@@ -235,7 +235,7 @@ export function hydrate(
           {
             ...client.getDefaultOptions().hydrate?.queries,
             ...options?.defaultOptions?.queries,
-            queryKey: newQueryKey,
+            queryKey: queryKey,
             queryHash,
             meta,
           },
