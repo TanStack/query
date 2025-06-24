@@ -1,12 +1,12 @@
+import assert from 'node:assert'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
+import superjson from 'superjson'
 import { QueryClient } from '../queryClient'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
-import superjson from 'superjson'
-import assert from 'assert'
 
 describe('dehydration and rehydration', () => {
   beforeEach(() => {
@@ -1406,7 +1406,7 @@ describe('dehydration and rehydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should serialize and deserialize query keys', async () => {
+  test('should serialize and deserialize query keys', () => {
     const createQueryClient = () =>
       new QueryClient({
         defaultOptions: {
