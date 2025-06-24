@@ -1444,9 +1444,9 @@ describe('dehydration and rehydration', () => {
 
     const clientEntry = getFirstEntry(frontendClient)
 
-    expect(clientEntry).toMatchObject(serverEntry)
-
     expect(clientEntry.queryKey).toEqual(serverEntry.queryKey)
     expect(clientEntry.queryHash).toEqual(serverEntry.queryHash)
+
+    expect(clientEntry).toMatchObject(serverEntry)
   })
 })
