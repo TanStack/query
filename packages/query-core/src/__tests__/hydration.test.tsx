@@ -5,6 +5,8 @@ import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
+import superjson from 'superjson'
+import assert from 'assert'
 
 describe('dehydration and rehydration', () => {
   beforeEach(() => {
@@ -40,6 +42,7 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['null'],
+
         queryFn: () => sleep(0).then(() => null),
       }),
     )
@@ -1401,5 +1404,54 @@ describe('dehydration and rehydration', () => {
 
     clientQueryClient.clear()
     serverQueryClient.clear()
+  })
+
+  // https://github.com/TanStack/query/issues/6802
+  test('should serialize and deserialize query keys', async () => {
+    const createQueryClient = () =>
+      new QueryClient({
+        defaultOptions: {
+          dehydrate: {
+            serializeData: superjson.serialize,
+          },
+          hydrate: {
+            deserializeData: superjson.deserialize,
+          },
+        },
+      })
+
+    const getFirstEntry = (client: QueryClient) => {
+      const [entry] = client.getQueryCache().getAll()
+      assert(entry, 'cache should not be empty')
+      return entry
+    }
+
+    const serverClient = createQueryClient()
+
+    const date = new Date('2024-01-01T00:00:00.000Z')
+
+    serverClient.setQueryData(['date', date], {
+      date,
+    })
+
+    const serverEntry = getFirstEntry(serverClient)
+
+    // use JSON.parse(JSON.stringify()) to mock a http roundtrip
+    const dehydrated = JSON.parse(JSON.stringify(dehydrate(serverClient)))
+
+    const frontendClient = createQueryClient()
+
+    hydrate(frontendClient, dehydrated)
+
+    const clientEntry = getFirstEntry(frontendClient)
+    
+    
+
+    expect(clientEntry).toMatchObject(serverEntry)
+
+    
+    expect(clientEntry.queryKey).toEqual(serverEntry.queryKey)
+    expect(clientEntry.queryHash).toEqual(serverEntry.queryHash)
+    
   })
 })
