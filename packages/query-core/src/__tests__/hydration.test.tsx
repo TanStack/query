@@ -1,11 +1,11 @@
 import assert from 'node:assert'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import superjson from 'superjson'
-import { QueryClient } from '../queryClient'
-import { QueryCache } from '../queryCache'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
+import { QueryCache } from '../queryCache'
+import { QueryClient } from '../queryClient'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
 
 describe('dehydration and rehydration', () => {
@@ -1405,10 +1405,11 @@ describe('dehydration and rehydration', () => {
 
     const serverClient = createQueryClient()
 
-    const date = new Date('2024-01-01T00:00:00.000Z')
+    // Make a query key that isn't plain javascript object
+    const queryKey = ['date', new Date('2024-01-01T00:00:00.000Z')] as const
 
-    serverClient.setQueryData(['date', date], {
-      date,
+    serverClient.setQueryData(queryKey, {
+      foo: 'bar',
     })
 
     const serverEntry = getFirstEntry(serverClient)
@@ -1422,6 +1423,7 @@ describe('dehydration and rehydration', () => {
 
     const clientEntry = getFirstEntry(frontendClient)
 
+    expect(clientEntry.queryKey).toEqual(queryKey)
     expect(clientEntry.queryKey).toEqual(serverEntry.queryKey)
     expect(clientEntry.queryHash).toEqual(serverEntry.queryHash)
 
