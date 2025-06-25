@@ -13,14 +13,14 @@
           <a
             routerLink="post/{{ post.id }}"
             [style]="
-                queryClient.getQueryData(['post', post.id])
-                  ? {
-                      fontWeight: 'bold',
-                      color: 'green',
-                    }
-                  : {}
-              "
-          >{{ post.title }}</a
+              queryClient.getQueryData(['post', post.id])
+                ? {
+                    fontWeight: 'bold',
+                    color: 'green',
+                  }
+                : {}
+            "
+            >{{ post.title }}</a
           >
         </p>
       }
