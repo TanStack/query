@@ -171,7 +171,7 @@ export class Mutation<
         if (!this.options.mutationFn) {
           return Promise.reject(new Error('No mutationFn found'))
         }
-        return this.options.mutationFn(variables)
+        return this.options.mutationFn(variables, this.options.meta)
       },
       onFail: (failureCount, error) => {
         this.#dispatch({ type: 'failed', failureCount, error })

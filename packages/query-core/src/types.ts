@@ -1089,6 +1089,7 @@ export type MutationMeta = Register extends {
 
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables,
+  meta?: MutationMeta
 ) => Promise<TData>
 
 export interface MutationOptions<

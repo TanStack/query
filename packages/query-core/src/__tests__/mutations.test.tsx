@@ -51,7 +51,7 @@ describe('mutations', () => {
     )
 
     expect(fn).toHaveBeenCalledTimes(1)
-    expect(fn).toHaveBeenCalledWith('vars')
+    expect(fn).toHaveBeenCalledWith('vars', undefined)
   })
 
   test('mutation should set correct success states', async () => {
@@ -421,6 +421,21 @@ describe('mutations', () => {
     await vi.waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1))
 
     expect(onSuccess).toHaveBeenCalledWith(2)
+  })
+
+  test('mutationFn should have access to mutation meta', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: (_: void, meta) => {
+        return Promise.resolve(meta?.test)
+      },
+      meta: {
+        test: 'update',
+      },
+    })
+
+    await mutation.mutate()
+
+    expect(mutation.getCurrentResult().data).toEqual('update')
   })
 
   describe('scoped mutations', () => {
