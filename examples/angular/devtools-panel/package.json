@@ -14,7 +14,7 @@
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@angular/router": "^20.0.0",
-    "@tanstack/angular-query-devtools-experimental": "^5.81.2",
+    "@tanstack/angular-query-devtools-experimental": "^5.81.3",
     "@tanstack/angular-query-experimental": "^5.81.2",
     "rxjs": "^7.8.2",
     "tslib": "^2.8.1",
