@@ -7,7 +7,8 @@
   } @else if (postQuery.isError()) {
     Error: {{ postQuery.error().message }}
   }
-  @if (postQuery.data(); as post) {
+  @if (postQuery.isSuccess()) {
+    @let post = postQuery.data();
     <h1>{{ post.title }}</h1>
     <div>
       <p>{{ post.body }}</p>
