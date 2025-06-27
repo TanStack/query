@@ -250,9 +250,9 @@ importers:
       '@tanstack/angular-query-persist-client':
         specifier: ^5.62.7
         version: link:../../../packages/angular-query-persist-client
-      '@tanstack/query-sync-storage-persister':
+      '@tanstack/query-async-storage-persister':
         specifier: workspace:*
-        version: link:../../../packages/query-sync-storage-persister
+        version: link:../../../packages/query-async-storage-persister
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -681,9 +681,9 @@ importers:
 
   examples/react/basic:
     dependencies:
-      '@tanstack/query-sync-storage-persister':
+      '@tanstack/query-async-storage-persister':
         specifier: workspace:*
-        version: link:../../../packages/query-sync-storage-persister
+        version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-query':
         specifier: workspace:*
         version: link:../../../packages/react-query
@@ -830,9 +830,9 @@ importers:
 
   examples/react/eslint-legacy:
     dependencies:
-      '@tanstack/query-sync-storage-persister':
+      '@tanstack/query-async-storage-persister':
         specifier: workspace:*
-        version: link:../../../packages/query-sync-storage-persister
+        version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-query':
         specifier: workspace:*
         version: link:../../../packages/react-query
@@ -1013,9 +1013,9 @@ importers:
 
   examples/react/offline:
     dependencies:
-      '@tanstack/query-sync-storage-persister':
+      '@tanstack/query-async-storage-persister':
         specifier: workspace:*
-        version: link:../../../packages/query-sync-storage-persister
+        version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
         version: 3.7.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1664,9 +1664,9 @@ importers:
 
   examples/svelte/basic:
     dependencies:
-      '@tanstack/query-sync-storage-persister':
+      '@tanstack/query-async-storage-persister':
         specifier: workspace:*
-        version: link:../../../packages/query-sync-storage-persister
+        version: link:../../../packages/query-async-storage-persister
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../../../packages/svelte-query

@@ -3,6 +3,11 @@ id: createSyncStoragePersister
 title: createSyncStoragePersister
 ---
 
+## Deprecated
+
+This plugin is deprecated and will be removed in the next major version.
+You can simply use ['@tanstack/query-async-storage-persister'](../createAsyncStoragePersister.md) instead.
+
 ## Installation
 
 This utility comes as a separate package and is available under the `'@tanstack/query-sync-storage-persister'` import.
