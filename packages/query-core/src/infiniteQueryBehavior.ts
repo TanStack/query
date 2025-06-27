@@ -14,7 +14,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
   return {
     onFetch: (context, query) => {
       const options = context.options as InfiniteQueryPageParamsOptions<TData>
-      const direction = context.fetchOptions?.meta?.fetchMore?.direction
+      const fetchMore = context.fetchOptions?.meta?.fetchMore
       const oldPages = context.state.data?.pages || []
       const oldPageParams = context.state.data?.pageParams || []
       let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
@@ -83,14 +83,17 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
         }
 
         // fetch next / previous page?
-        if (direction && oldPages.length) {
-          const previous = direction === 'backward'
+        if (fetchMore && oldPages.length) {
+          const previous = fetchMore.direction === 'backward'
           const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
           const oldData = {
             pages: oldPages,
             pageParams: oldPageParams,
           }
-          const param = pageParamFn(options, oldData)
+          const param =
+            fetchMore.pageParam === undefined
+              ? pageParamFn(options, oldData)
+              : fetchMore.pageParam
 
           result = await fetchPage(oldData, param, previous)
         } else {
@@ -99,8 +102,8 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           // Fetch all pages
           do {
             const param =
-              currentPage === 0
-                ? (oldPageParams[0] ?? options.initialPageParam)
+              currentPage === 0 || !options.getNextPageParam
+                ? (oldPageParams[currentPage] ?? options.initialPageParam)
                 : getNextPageParam(options, result)
             if (currentPage > 0 && param == null) {
               break
@@ -138,7 +141,7 @@ function getNextPageParam(
 ): unknown | undefined {
   const lastIndex = pages.length - 1
   return pages.length > 0
-    ? options.getNextPageParam(
+    ? options.getNextPageParam?.(
         pages[lastIndex],
         pages,
         pageParams[lastIndex],
