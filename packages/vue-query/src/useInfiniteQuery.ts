@@ -20,6 +20,7 @@ import type {
   MaybeRef,
   MaybeRefDeep,
   MaybeRefOrGetter,
+  ShallowOption,
 } from './types'
 import type { QueryClient } from './queryClient'
 
@@ -55,9 +56,7 @@ export type UseInfiniteQueryOptions<
             TPageParam
           >[Property]
         >
-  } & {
-    shallow?: boolean
-  }
+  } & ShallowOption
 >
 
 export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
@@ -122,7 +121,6 @@ export function useInfiniteQuery(
   queryClient?: QueryClient,
 ) {
   return useBaseQuery(
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     options,
     queryClient,

@@ -248,7 +248,7 @@ Persisted Client entries have the following interface:
 export interface PersistedClient {
   timestamp: number
   buster: string
-  cacheState: any
+  clientState: DehydratedState
 }
 ```
 
