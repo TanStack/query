@@ -293,7 +293,7 @@ export class QueryObserver<
     })
   }
 
-  fetchOptimistic(
+  async fetchOptimistic(
     options: QueryObserverOptions<
       TQueryFnData,
       TError,
@@ -308,19 +308,19 @@ export class QueryObserver<
       .getQueryCache()
       .build(this.#client, defaultedOptions)
 
-    return query.fetch().then(() => this.createResult(query, defaultedOptions))
+    await query.fetch()
+    return this.createResult(query, defaultedOptions)
   }
 
-  protected fetch(
+  protected async fetch(
     fetchOptions: ObserverFetchOptions,
   ): Promise<QueryObserverResult<TData, TError>> {
-    return this.#executeFetch({
+    await this.#executeFetch({
       ...fetchOptions,
       cancelRefetch: fetchOptions.cancelRefetch ?? true,
-    }).then(() => {
-      this.updateResult()
-      return this.#currentResult
     })
+    this.updateResult()
+    return this.#currentResult
   }
 
   #executeFetch(
