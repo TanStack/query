@@ -1023,7 +1023,7 @@ describe('queryClient', () => {
         queryKey: key3,
         queryFn: () => sleep(1000).then(() => 'data3'),
       })
-      await vi.advanceTimersByTime(10)
+      await vi.advanceTimersByTimeAsync(10)
       await queryClient.cancelQueries()
       const state1 = queryClient.getQueryState(key1)
       const state2 = queryClient.getQueryState(key2)
@@ -1556,7 +1556,7 @@ describe('queryClient', () => {
       observer.subscribe(() => undefined)
 
       queryClient.refetchQueries()
-      await vi.advanceTimersByTime(10)
+      await vi.advanceTimersByTimeAsync(10)
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(1)
       expect(fetchCount).toBe(2)
@@ -1580,7 +1580,7 @@ describe('queryClient', () => {
       observer.subscribe(() => undefined)
 
       queryClient.refetchQueries(undefined, { cancelRefetch: false })
-      await vi.advanceTimersByTime(10)
+      await vi.advanceTimersByTimeAsync(10)
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(0)
       expect(fetchCount).toBe(1)
