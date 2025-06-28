@@ -697,7 +697,7 @@ describe('queryClient', () => {
         queryFn: () => sleep(10).then(() => 1),
         gcTime: 0,
       })
-      vi.advanceTimersByTimeAsync(10)
+      await vi.advanceTimersByTimeAsync(10)
       await expect(promise).resolves.toEqual(1)
       await vi.waitFor(() =>
         expect(queryClient.getQueryData(key1)).toEqual(undefined),
