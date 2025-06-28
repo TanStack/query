@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.75.7",
+  "version": "5.81.5",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -75,7 +75,6 @@
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",
-    "eslint-plugin-react-compiler": "19.0.0-beta-df7b47d-20241124",
     "npm-run-all2": "^5.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

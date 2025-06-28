@@ -30,7 +30,7 @@ type PersistQueryClientOptions = {
  * **Example**
  *
  * ```ts
- * const localStoragePersister = createSyncStoragePersister({
+ * const localStoragePersister = createAsyncStoragePersister({
  *  storage: window.localStorage,
  * })
  *

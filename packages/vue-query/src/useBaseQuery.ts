@@ -47,14 +47,7 @@ type UseQueryOptionsGeneric<
   TPageParam = unknown,
 > =
   | UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-  | UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey,
-      TPageParam
-    >
+  | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 
 export function useBaseQuery<
   TQueryFnData,
@@ -100,7 +93,7 @@ export function useBaseQuery<
       TQueryKey
     > = client.defaultQueryOptions(clonedOptions)
 
-    defaulted._optimisticResults = client.isRestoring.value
+    defaulted._optimisticResults = client.isRestoring?.value
       ? 'isRestoring'
       : 'optimistic'
 
@@ -117,18 +110,20 @@ export function useBaseQuery<
     // noop
   }
 
-  watch(
-    client.isRestoring,
-    (isRestoring) => {
-      if (!isRestoring) {
-        unsubscribe()
-        unsubscribe = observer.subscribe((result) => {
-          updateState(state, result)
-        })
-      }
-    },
-    { immediate: true },
-  )
+  if (client.isRestoring) {
+    watch(
+      client.isRestoring,
+      (isRestoring) => {
+        if (!isRestoring) {
+          unsubscribe()
+          unsubscribe = observer.subscribe((result) => {
+            updateState(state, result)
+          })
+        }
+      },
+      { immediate: true },
+    )
+  }
 
   const updater = () => {
     observer.setOptions(defaultedOptions.value)

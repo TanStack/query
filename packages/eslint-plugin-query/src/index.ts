@@ -31,6 +31,7 @@ Object.assign(plugin.configs, {
       '@tanstack/query/no-unstable-deps': 'error',
       '@tanstack/query/infinite-query-property-order': 'error',
       '@tanstack/query/no-void-query-fn': 'error',
+      '@tanstack/query/mutation-property-order': 'error',
     },
   },
   'flat/recommended': [
@@ -46,6 +47,7 @@ Object.assign(plugin.configs, {
         '@tanstack/query/no-unstable-deps': 'error',
         '@tanstack/query/infinite-query-property-order': 'error',
         '@tanstack/query/no-void-query-fn': 'error',
+        '@tanstack/query/mutation-property-order': 'error',
       },
     },
   ],

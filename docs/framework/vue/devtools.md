@@ -7,6 +7,8 @@ Wave your hands in the air and shout hooray because Vue Query comes with dedicat
 
 When you begin your Vue Query journey, you'll want these devtools by your side. They help visualize all of the inner workings of Vue Query and will likely save you hours of debugging if you find yourself in a pinch!
 
+> For Google Chrome users: A third-party Chrome extension is available for debugging TanStack Query directly in Chrome DevTools. This provides the same functionality as the framework-specific devtools packages. Check it out here: [TanStack Query DevTools](https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai)
+
 ## Component based Devtools (Vue 3)
 
 You can directly integrate the devtools component into your page using a dedicated package.

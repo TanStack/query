@@ -50,16 +50,16 @@ Still on **React Query v4**? No problem! Check out the v4 docs here: https://tan
 <a href="https://www.speakeasy.com/product/react-query?utm_source=tanstack&utm_campaign=tanstack">
   <picture>
     <source
-      srcset="https://tanstack.com/_build/assets/speakeasy-dark-BjP-Hd9M.svg"
+      srcset="https://tanstack.com/assets/speakeasy-dark-BjP-Hd9M.svg"
       media="(prefers-color-scheme: dark)"
     />
     <source
-      srcset="https://tanstack.com/_build/assets/speakeasy-light-UpY7QmwQ.svg"
+      srcset="https://tanstack.com/assets/speakeasy-light-UpY7QmwQ.svg"
       media="(prefers-color-scheme: light)"
     />
     <!-- fallback -->
     <img
-      src="https://tanstack.com/_build/assets/speakeasy-light-UpY7QmwQ.svg"
+      src="https://tanstack.com/assets/speakeasy-light-UpY7QmwQ.svg"
       alt="Speakeasy Logo"
     />
   </picture>

@@ -4,6 +4,7 @@ import type {
   DefaultError,
   DefinedQueryObserverResult,
   InitialDataFunction,
+  NonUndefinedGuard,
   QueryKey,
   QueryObserverOptions,
 } from '@tanstack/query-core'
@@ -13,10 +14,9 @@ import type {
   MaybeRef,
   MaybeRefDeep,
   MaybeRefOrGetter,
+  ShallowOption,
 } from './types'
 import type { QueryClient } from './queryClient'
-
-type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type UseQueryOptions<
   TQueryFnData = unknown,
@@ -51,12 +51,7 @@ export type UseQueryOptions<
             DeepUnwrapRef<TQueryKey>
           >[Property]
         >
-  } & {
-    /**
-     * Return data in a shallow ref object (it is `false` by default). It can be set to `true` to return data in a shallow ref object, which can improve performance if your data does not need to be deeply reactive.
-     */
-    shallow?: boolean
-  }
+  } & ShallowOption
 >
 
 export type UndefinedInitialQueryOptions<
