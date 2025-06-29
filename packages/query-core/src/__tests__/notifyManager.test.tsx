@@ -39,7 +39,7 @@ describe('notifyManager', () => {
     })
     notifyManagerTest.batch(callbackBatchLevel1Spy)
 
-    await vi.advanceTimersByTimeAsync(20)
+    await vi.advanceTimersByTimeAsync(0)
     expect(callbackBatchLevel1Spy).toHaveBeenCalledTimes(1)
     expect(callbackBatchLevel2Spy).toHaveBeenCalledTimes(1)
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
@@ -57,9 +57,7 @@ describe('notifyManager', () => {
 
     expect(customCallback).toHaveBeenCalledOnce()
 
-    // wait until the microtask has run
-    await new Promise<void>((res) => queueMicrotask(res))
-
+    await vi.advanceTimersByTimeAsync(0)
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
 
