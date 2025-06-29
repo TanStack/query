@@ -533,7 +533,7 @@ describe('mutations', () => {
     ])
   })
 
-  test('each scope should run should run in parallel, serial within scope', async () => {
+  test('each scope should run in parallel, serial within scope', async () => {
     const results: Array<string> = []
 
     executeMutation(
