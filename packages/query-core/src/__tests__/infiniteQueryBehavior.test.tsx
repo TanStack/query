@@ -19,7 +19,7 @@ describe('InfiniteQueryBehavior', () => {
     vi.useRealTimers()
   })
 
-  test('InfiniteQueryBehavior should throw an error if the queryFn is not defined', async () => {
+  test('should throw an error if the queryFn is not defined', async () => {
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -48,7 +48,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should apply the maxPages option to limit the number of pages', async () => {
+  test('should apply the maxPages option to limit the number of pages', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
@@ -197,7 +197,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should support query cancellation', async () => {
+  test('should support query cancellation', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
@@ -250,7 +250,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should not refetch pages if the query is cancelled', async () => {
+  test('should not refetch pages if the query is cancelled', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
@@ -334,7 +334,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should not enter an infinite loop when a page errors while retry is on #8046', async () => {
+  test('should not enter an infinite loop when a page errors while retry is on #8046', async () => {
     let errorCount = 0
     const key = queryKey()
 
@@ -436,7 +436,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should not fetch next page when getNextPageParam returns null', async () => {
+  test('should not fetch next page when getNextPageParam returns null', async () => {
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -471,7 +471,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('InfiniteQueryBehavior should use persister when provided', async () => {
+  test('should use persister when provided', async () => {
     const key = queryKey()
 
     const persisterSpy = vi.fn().mockImplementation(async (fn) => {
