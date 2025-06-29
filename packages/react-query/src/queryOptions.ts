@@ -27,12 +27,15 @@ export type UndefinedInitialDataOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = UseQueryOptionsOmitted<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData?:
-    | undefined
-    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-    | NonUndefinedGuard<TQueryFnData>
-}
+> = WithRequired<
+  UseQueryOptionsOmitted<TQueryFnData, TError, TData, TQueryKey> & {
+    initialData?:
+      | undefined
+      | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+      | NonUndefinedGuard<TQueryFnData>
+  },
+  'queryKey'
+>
 
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
