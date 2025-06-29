@@ -1,5 +1,3 @@
-// @ts-check
-
 import { defineConfig } from 'tsup'
 import { legacyConfig, modernConfig } from './root.tsup.config.js'
 

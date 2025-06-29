@@ -1,5 +1,3 @@
-// @ts-check
-
 import { defineConfig } from 'tsup'
 import { generateTsupOptions, parsePresetOptions } from 'tsup-preset-solid'
 
