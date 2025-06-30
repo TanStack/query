@@ -25,6 +25,7 @@ export const ensurePreventErrorBoundaryRetry = <
     TQueryKey
   >,
   errorResetBoundary: QueryErrorResetBoundaryValue,
+  query?: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
 ) => {
   if (
     options.suspense ||
@@ -34,8 +35,12 @@ export const ensurePreventErrorBoundaryRetry = <
     if (!errorResetBoundary.isReset()) {
       options.retryOnMount = false
     }
-  } else if (options.throwOnError) {
-    if (!errorResetBoundary.isReset() && typeof options.throwOnError !== 'function') {
+  } else if (options.throwOnError && !errorResetBoundary.isReset()) {
+    if (typeof options.throwOnError === 'function') {
+      if (query?.state.error && shouldThrowError(options.throwOnError, [query.state.error, query])) {
+        options.retryOnMount = false
+      }
+    } else {
       options.retryOnMount = false
     }
   }
