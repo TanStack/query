@@ -2421,6 +2421,10 @@ importers:
         version: 5.0.2
 
   packages/query-devtools:
+    dependencies:
+      solid-js:
+        specifier: ^1.9.5
+        version: 1.9.5
     devDependencies:
       '@kobalte/core':
         specifier: ^0.13.4
@@ -2449,9 +2453,6 @@ importers:
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
-      solid-js:
-        specifier: ^1.9.5
-        version: 1.9.5
       solid-transition-group:
         specifier: ^0.2.3
         version: 0.2.3(solid-js@1.9.5)
