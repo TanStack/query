@@ -28,11 +28,14 @@ export const ensurePreventErrorBoundaryRetry = <
 ) => {
   if (
     options.suspense ||
-    options.throwOnError ||
     options.experimental_prefetchInRender
   ) {
     // Prevent retrying failed query if the error boundary has not been reset yet
     if (!errorResetBoundary.isReset()) {
+      options.retryOnMount = false
+    }
+  } else if (options.throwOnError) {
+    if (!errorResetBoundary.isReset() && typeof options.throwOnError !== 'function') {
       options.retryOnMount = false
     }
   }
