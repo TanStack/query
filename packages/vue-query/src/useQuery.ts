@@ -3,6 +3,7 @@ import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
+  Enabled,
   InitialDataFunction,
   NonUndefinedGuard,
   QueryKey,
@@ -33,15 +34,14 @@ export type UseQueryOptions<
       TQueryData,
       TQueryKey
     >]: Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          QueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            DeepUnwrapRef<TQueryKey>
-          >[Property]
-        >
+      ?
+          | MaybeRefOrGetter<boolean | undefined>
+          | (() => Enabled<
+              TQueryFnData,
+              TError,
+              TQueryData,
+              DeepUnwrapRef<TQueryKey>
+            >)
       : MaybeRefDeep<
           QueryObserverOptions<
             TQueryFnData,
