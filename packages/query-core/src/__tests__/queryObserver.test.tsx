@@ -109,7 +109,8 @@ describe('queryObserver', () => {
         fetchStatus: 'idle',
         data: undefined,
       })
-      await vi.waitFor(() => expect(count).toBe(0))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(0)
 
       unsubscribe()
     })
@@ -128,7 +129,8 @@ describe('queryObserver', () => {
         data: undefined,
       })
 
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
       expect(observer.getCurrentResult()).toMatchObject({
         status: 'success',
         fetchStatus: 'idle',
@@ -157,8 +159,8 @@ describe('queryObserver', () => {
         fetchStatus: 'fetching',
         data: undefined,
       })
-
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
 
       unsubscribe()
     })
@@ -194,7 +196,8 @@ describe('queryObserver', () => {
         fetchStatus: 'fetching',
         data: undefined,
       })
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
 
       unsubscribe()
     })
@@ -208,12 +211,14 @@ describe('queryObserver', () => {
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'inactive' })
 
       // should not refetch since it was active and we only refetch inactive
-      await vi.waitFor(() => expect(count).toBe(0))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(0)
 
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
 
       // should refetch since it was active and we refetch active
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
 
       // Toggle enabled
       enabled = false
@@ -221,7 +226,8 @@ describe('queryObserver', () => {
       // should not refetch since it is not active and we only refetch active
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
 
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
 
       unsubscribe()
     })
@@ -251,7 +257,8 @@ describe('queryObserver', () => {
       data: undefined,
     })
 
-    await vi.waitFor(() => expect(count).toBe(1))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(count).toBe(1)
 
     // re-subscribe after data comes in
     unsubscribe = observer.subscribe(vi.fn())
@@ -1172,8 +1179,10 @@ describe('queryObserver', () => {
       }
     })
 
-    await vi.waitFor(() => expect(results[0]?.isStale).toBe(false))
-    await vi.waitFor(() => expect(results[1]?.isStale).toBe(true))
+    await vi.advanceTimersByTimeAsync(25)
+    expect(results[0]?.isStale).toBe(false)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(results[1]?.isStale).toBe(true)
 
     unsubscribe()
   })
@@ -1200,7 +1209,8 @@ describe('queryObserver', () => {
       }
     })
 
-    await vi.waitFor(() => expect(results[0]?.isStale).toBe(false))
+    await vi.advanceTimersByTimeAsync(5)
+    expect(results[0]?.isStale).toBe(false)
 
     unsubscribe()
   })
@@ -1224,9 +1234,8 @@ describe('queryObserver', () => {
       results.push(observer.getCurrentResult())
     })
 
-    await vi.waitFor(() => {
-      expect(results.at(-1)?.data).toBe('data')
-    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(results.at(-1)?.data).toBe('data')
 
     const numberOfUniquePromises = new Set(
       results.map((result) => result.promise),
@@ -1257,9 +1266,8 @@ describe('queryObserver', () => {
       results.push(observer.getCurrentResult())
     })
 
-    await vi.waitFor(() => {
-      expect(results.at(-1)?.status).toBe('error')
-    })
+    await vi.advanceTimersByTimeAsync(5)
+    expect(results.at(-1)?.status).toBe('error')
 
     expect(
       results.every((result) => result.promise === results[0]!.promise),
@@ -1269,10 +1277,9 @@ describe('queryObserver', () => {
       // fail again
       const lengthBefore = results.length
       observer.refetch()
-      await vi.waitFor(() => {
-        expect(results.length).toBeGreaterThan(lengthBefore)
-        expect(results.at(-1)?.status).toBe('error')
-      })
+      await vi.advanceTimersByTimeAsync(5)
+      expect(results.length).toBeGreaterThan(lengthBefore)
+      expect(results.at(-1)?.status).toBe('error')
 
       const numberOfUniquePromises = new Set(
         results.map((result) => result.promise),
@@ -1285,9 +1292,8 @@ describe('queryObserver', () => {
       succeeds = true
       observer.refetch()
 
-      await vi.waitFor(() => {
-        results.at(-1)?.status === 'success'
-      })
+      await vi.advanceTimersByTimeAsync(5)
+      results.at(-1)?.status === 'success'
 
       const numberOfUniquePromises = new Set(
         results.map((result) => result.promise),
@@ -1359,10 +1365,9 @@ describe('queryObserver', () => {
       results.push(result)
     })
 
-    await vi.waitFor(() => {
-      const lastResult = results[results.length - 1]
-      expect(lastResult?.status).toBe('error')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    const lastResult = results[results.length - 1]
+    expect(lastResult?.status).toBe('error')
 
     expect(results.length).toBe(1)
     expect(results[0]).toMatchObject({
