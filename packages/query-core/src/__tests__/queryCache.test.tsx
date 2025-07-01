@@ -58,7 +58,8 @@ describe('queryCache', () => {
 
       const unsubScribeObserver = observer.subscribe(vi.fn())
 
-      await vi.waitFor(() => expect(events.length).toBe(8))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(events.length).toBe(8)
 
       expect(events).toEqual([
         'added', // 1. Query added -> loading
