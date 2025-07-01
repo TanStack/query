@@ -254,13 +254,11 @@ describe('queriesObserver', () => {
     const unsubscribe2 = observer.subscribe(subscription2Handler)
 
     unsubscribe1()
-
-    await vi.waitFor(() => {
-      // 1 call: pending
-      expect(subscription1Handler).toBeCalledTimes(1)
-      // 1 call: success
-      expect(subscription2Handler).toBeCalledTimes(1)
-    })
+    await vi.advanceTimersByTimeAsync(20)
+    // 1 call: pending
+    expect(subscription1Handler).toBeCalledTimes(1)
+    // 1 call: success
+    expect(subscription2Handler).toBeCalledTimes(1)
 
     // Clean-up
     unsubscribe2()
