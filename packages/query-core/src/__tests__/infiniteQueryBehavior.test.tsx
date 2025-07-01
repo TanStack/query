@@ -37,12 +37,11 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
 
-    await vi.waitFor(() => {
-      const query = queryCache.find({ queryKey: key })!
-      return expect(observerResult).toMatchObject({
-        isError: true,
-        error: new Error(`Missing queryFn: '${query.queryHash}'`),
-      })
+    await vi.advanceTimersByTimeAsync(0)
+    const query = queryCache.find({ queryKey: key })!
+    expect(observerResult).toMatchObject({
+      isError: true,
+      error: new Error(`Missing queryFn: '${query.queryHash}'`),
     })
 
     unsubscribe()
@@ -75,12 +74,11 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Wait for the first page to be fetched
-    await vi.waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        data: { pages: [1], pageParams: [1] },
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1], pageParams: [1] },
+    })
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
@@ -227,14 +225,13 @@ describe('InfiniteQueryBehavior', () => {
     query.cancel()
 
     // Wait for the first page to be cancelled
-    await vi.waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        isError: true,
-        error: new CancelledError(),
-        data: undefined,
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      isError: true,
+      error: new CancelledError(),
+      data: undefined,
+    })
 
     expect(queryFnSpy).toHaveBeenCalledTimes(1)
 
@@ -276,12 +273,11 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Wait for the first page to be fetched
-    await vi.waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        data: { pages: [1], pageParams: [1] },
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1], pageParams: [1] },
+    })
 
     queryFnSpy.mockClear()
 
@@ -426,12 +422,11 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
 
-    await vi.waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        data: { pages: ['data'], pageParams: [null] },
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: ['data'], pageParams: [null] },
+    })
 
     unsubscribe()
   })
@@ -454,12 +449,11 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
 
-    await vi.waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        data: { pages: [1], pageParams: [1] },
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1], pageParams: [1] },
+    })
 
     await observer.fetchNextPage()
 
@@ -488,9 +482,8 @@ describe('InfiniteQueryBehavior', () => {
 
     const unsubscribe = observer.subscribe(() => {})
 
-    await vi.waitFor(() => {
-      expect(persisterSpy).toHaveBeenCalledTimes(1)
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(persisterSpy).toHaveBeenCalledTimes(1)
 
     unsubscribe()
   })
