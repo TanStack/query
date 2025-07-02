@@ -3,7 +3,7 @@
 import pluginReact from '@eslint-react/eslint-plugin'
 import * as reactHooks from 'eslint-plugin-react-hooks'
 
-// @ts-ignore out of range
+// @ts-ignore out of scope
 import rootConfig from '../../eslint.config.js'
 
 export default [
