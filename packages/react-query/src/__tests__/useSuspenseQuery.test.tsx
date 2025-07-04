@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -20,6 +20,14 @@ import type {
 } from '..'
 
 describe('useSuspenseQuery', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
 
@@ -61,10 +69,10 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('data: 1'))
+    await vi.waitFor(() => rendered.getByText('data: 1'))
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await waitFor(() => rendered.getByText('data: 2'))
+    await vi.waitFor(() => rendered.getByText('data: 2'))
 
     expect(renders).toBe(6)
     expect(states.length).toBe(2)
@@ -104,7 +112,7 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('data: 1'))
+    await vi.waitFor(() => rendered.getByText('data: 1'))
 
     expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({
@@ -113,7 +121,7 @@ describe('useSuspenseQuery', () => {
     })
 
     fireEvent.click(rendered.getByText('next'))
-    await waitFor(() => rendered.getByText('data: 2'))
+    await vi.waitFor(() => rendered.getByText('data: 2'))
 
     expect(states.length).toBe(2)
     expect(states[1]).toMatchObject({
@@ -144,7 +152,7 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('rendered'))
+    await vi.waitFor(() => rendered.getByText('rendered'))
 
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
@@ -184,7 +192,7 @@ describe('useSuspenseQuery', () => {
     expect(queryCache.find({ queryKey: key })).toBeFalsy()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
-    await waitFor(() => rendered.getByText('rendered'))
+    await vi.waitFor(() => rendered.getByText('rendered'))
 
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(1)
 
@@ -249,15 +257,15 @@ describe('useSuspenseQuery', () => {
       </QueryErrorResetBoundary>,
     )
 
-    await waitFor(() => rendered.getByText('Loading...'))
+    await vi.waitFor(() => rendered.getByText('Loading...'))
 
-    await waitFor(() => rendered.getByText('error boundary'))
+    await vi.waitFor(() => rendered.getByText('error boundary'))
 
-    await waitFor(() => rendered.getByText('retry'))
+    await vi.waitFor(() => rendered.getByText('retry'))
 
     fireEvent.click(rendered.getByText('retry'))
 
-    await waitFor(() => rendered.getByText('rendered'))
+    await vi.waitFor(() => rendered.getByText('rendered'))
 
     expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
@@ -317,21 +325,25 @@ describe('useSuspenseQuery', () => {
       </QueryErrorResetBoundary>,
     )
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
-    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
+    await vi.waitFor(() =>
+      expect(rendered.getByText('retry')).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
-    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
+    await vi.waitFor(() =>
+      expect(rendered.getByText('retry')).toBeInTheDocument(),
+    )
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered')).toBeInTheDocument(),
     )
     consoleMock.mockRestore()
@@ -368,8 +380,8 @@ describe('useSuspenseQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('data: 1'))
+    await vi.waitFor(() => rendered.getByText('Loading...'))
+    await vi.waitFor(() => rendered.getByText('data: 1'))
 
     expect(
       typeof queryClient.getQueryCache().find({ queryKey: key })?.observers[0]
@@ -414,17 +426,17 @@ describe('useSuspenseQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText(`data: ${key1}`)).toBeInTheDocument(),
     )
     fireEvent.click(rendered.getByText('switch'))
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText(`data: ${key2}`)).toBeInTheDocument(),
     )
   })
@@ -480,21 +492,25 @@ describe('useSuspenseQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
-    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
+    await vi.waitFor(() =>
+      expect(rendered.getByText('retry')).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
-    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
+    await vi.waitFor(() =>
+      expect(rendered.getByText('retry')).toBeInTheDocument(),
+    )
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered')).toBeInTheDocument(),
     )
     consoleMock.mockRestore()
@@ -536,10 +552,10 @@ describe('useSuspenseQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
     consoleMock.mockRestore()
@@ -583,10 +599,10 @@ describe('useSuspenseQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
     consoleMock.mockRestore()
@@ -647,16 +663,16 @@ describe('useSuspenseQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     // render suspense fallback (Loading...)
-    await waitFor(() => rendered.getByText('Loading...'))
+    await vi.waitFor(() => rendered.getByText('Loading...'))
     // resolve promise -> render Page (rendered)
-    await waitFor(() => rendered.getByText('rendered'))
+    await vi.waitFor(() => rendered.getByText('rendered'))
 
     // change query key
     succeed = false
     // reset query -> and throw error
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
-    await waitFor(() => rendered.getByText('error boundary'))
+    await vi.waitFor(() => rendered.getByText('error boundary'))
     expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
@@ -718,16 +734,16 @@ describe('useSuspenseQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     // render suspense fallback (Loading...)
-    await waitFor(() => rendered.getByText('Loading...'))
+    await vi.waitFor(() => rendered.getByText('Loading...'))
     // resolve promise -> render Page (rendered)
-    await waitFor(() => rendered.getByText('rendered'))
+    await vi.waitFor(() => rendered.getByText('rendered'))
 
     // change promise result to error
     succeed = false
     // change query key
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
-    await waitFor(() => rendered.getByText('error boundary'))
+    await vi.waitFor(() => rendered.getByText('error boundary'))
     expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
@@ -769,7 +785,7 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(state).toMatchObject({
         data: 1,
         status: 'success',
@@ -777,7 +793,9 @@ describe('useSuspenseQuery', () => {
     )
 
     expect(renders).toBe(3)
-    await waitFor(() => expect(rendered.queryByText('rendered')).not.toBeNull())
+    await vi.waitFor(() =>
+      expect(rendered.queryByText('rendered')).not.toBeNull(),
+    )
   })
 
   it('should not throw background errors to the error boundary', async () => {
@@ -828,11 +846,11 @@ describe('useSuspenseQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     // render suspense fallback (Loading...)
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
     // resolve promise -> render Page (rendered)
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered data success')).toBeInTheDocument(),
     )
 
@@ -841,7 +859,7 @@ describe('useSuspenseQuery', () => {
     // refetch
     fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
     // we are now in error state but still have data to show
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered data error')).toBeInTheDocument(),
     )
 
@@ -889,18 +907,18 @@ describe('useSuspenseQuery', () => {
         <Page />
       </React.Suspense>,
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('loading')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('data: 1')).toBeInTheDocument(),
     )
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('loading')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('data: 2')).toBeInTheDocument(),
     )
   })
@@ -961,9 +979,9 @@ describe('useSuspenseQuery', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('count: 1'))
-    await waitFor(() => rendered.getByText('count: 2'))
-    await waitFor(() => rendered.getByText('count: 3'))
+    await vi.waitFor(() => rendered.getByText('count: 1'))
+    await vi.waitFor(() => rendered.getByText('count: 2'))
+    await vi.waitFor(() => rendered.getByText('count: 3'))
 
     expect(count).toBeGreaterThanOrEqual(3)
   })
