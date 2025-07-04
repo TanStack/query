@@ -3,8 +3,8 @@
   "private": true,
   "main": "src/index.jsx",
   "dependencies": {
-    "@tanstack/react-query": "^4.40.0",
-    "@tanstack/react-query-devtools": "^4.40.0",
+    "@tanstack/react-query": "^4.40.1",
+    "@tanstack/react-query-devtools": "^4.40.1",
     "axios": "^0.21.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
