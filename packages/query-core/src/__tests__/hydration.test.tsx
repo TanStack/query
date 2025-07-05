@@ -1,9 +1,11 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import assert from 'node:assert'
 import { sleep } from '@tanstack/query-test-utils'
-import { QueryClient } from '../queryClient'
-import { QueryCache } from '../queryCache'
+import superjson from 'superjson'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
+import { QueryCache } from '../queryCache'
+import { QueryClient } from '../queryClient'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
 
 describe('dehydration and rehydration', () => {
@@ -40,6 +42,7 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['null'],
+
         queryFn: () => sleep(0).then(() => null),
       }),
     )
@@ -970,7 +973,7 @@ describe('dehydration and rehydration', () => {
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
-          serializeData: (data) => data.toISOString(),
+          serializeData: superjson.serialize,
         },
       },
     })
@@ -985,7 +988,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({
       defaultOptions: {
         hydrate: {
-          deserializeData: (data) => new Date(data),
+          deserializeData: superjson.deserialize,
         },
       },
     })
@@ -1006,7 +1009,7 @@ describe('dehydration and rehydration', () => {
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
-          serializeData: (data) => data.toISOString(),
+          serializeData: superjson.serialize,
         },
       },
     })
@@ -1021,7 +1024,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({
       defaultOptions: {
         hydrate: {
-          deserializeData: (data) => new Date(data),
+          deserializeData: superjson.deserialize,
         },
       },
     })
@@ -1041,7 +1044,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({
       defaultOptions: {
         hydrate: {
-          deserializeData: (data) => new Date(data),
+          deserializeData: superjson.deserialize,
         },
       },
     })
@@ -1059,7 +1062,7 @@ describe('dehydration and rehydration', () => {
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
-          serializeData: (data) => data.toISOString(),
+          serializeData: superjson.serialize,
         },
       },
     })
@@ -1177,16 +1180,12 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should overwrite data when a new promise is streamed in', async () => {
-    const serializeDataMock = vi.fn((data: any) => data)
-    const deserializeDataMock = vi.fn((data: any) => data)
-
     const countRef = { current: 0 }
     // --- server ---
     const serverQueryClient = new QueryClient({
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
-          serializeData: serializeDataMock,
         },
       },
     })
@@ -1205,13 +1204,7 @@ describe('dehydration and rehydration', () => {
 
     // --- client ---
 
-    const clientQueryClient = new QueryClient({
-      defaultOptions: {
-        hydrate: {
-          deserializeData: deserializeDataMock,
-        },
-      },
-    })
+    const clientQueryClient = new QueryClient()
 
     hydrate(clientQueryClient, dehydrated)
 
@@ -1219,12 +1212,6 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       expect(clientQueryClient.getQueryData(query.queryKey)).toBe(0),
     )
-
-    expect(serializeDataMock).toHaveBeenCalledTimes(1)
-    expect(serializeDataMock).toHaveBeenCalledWith(0)
-
-    expect(deserializeDataMock).toHaveBeenCalledTimes(1)
-    expect(deserializeDataMock).toHaveBeenCalledWith(0)
 
     // --- server ---
     countRef.current++
@@ -1241,12 +1228,6 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       expect(clientQueryClient.getQueryData(query.queryKey)).toBe(1),
     )
-
-    expect(serializeDataMock).toHaveBeenCalledTimes(2)
-    expect(serializeDataMock).toHaveBeenCalledWith(1)
-
-    expect(deserializeDataMock).toHaveBeenCalledTimes(2)
-    expect(deserializeDataMock).toHaveBeenCalledWith(1)
 
     clientQueryClient.clear()
     serverQueryClient.clear()
@@ -1401,5 +1382,51 @@ describe('dehydration and rehydration', () => {
 
     clientQueryClient.clear()
     serverQueryClient.clear()
+  })
+
+  test('should serialize and deserialize query keys', () => {
+    const createQueryClient = () =>
+      new QueryClient({
+        defaultOptions: {
+          dehydrate: {
+            serializeData: superjson.serialize,
+          },
+          hydrate: {
+            deserializeData: superjson.deserialize,
+          },
+        },
+      })
+
+    const getFirstEntry = (client: QueryClient) => {
+      const [entry] = client.getQueryCache().getAll()
+      assert(entry, 'cache should not be empty')
+      return entry
+    }
+
+    const serverClient = createQueryClient()
+
+    // Make a query key that isn't plain javascript object
+    const queryKey = ['date', new Date('2024-01-01T00:00:00.000Z')] as const
+
+    serverClient.setQueryData(queryKey, {
+      foo: 'bar',
+    })
+
+    const serverEntry = getFirstEntry(serverClient)
+
+    // use JSON.parse(JSON.stringify()) to mock a http roundtrip
+    const dehydrated = JSON.parse(JSON.stringify(dehydrate(serverClient)))
+
+    const frontendClient = createQueryClient()
+
+    hydrate(frontendClient, dehydrated)
+
+    const clientEntry = getFirstEntry(frontendClient)
+
+    expect(clientEntry.queryKey).toEqual(queryKey)
+    expect(clientEntry.queryKey).toEqual(serverEntry.queryKey)
+    expect(clientEntry.queryHash).toEqual(serverEntry.queryHash)
+
+    expect(clientEntry).toMatchObject(serverEntry)
   })
 })
