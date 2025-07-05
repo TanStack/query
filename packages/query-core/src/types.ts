@@ -1087,8 +1087,15 @@ export type MutationMeta = Register extends {
     : Record<string, unknown>
   : Record<string, unknown>
 
+export type MutationFunctionContext = {
+  client: QueryClient
+  meta: MutationMeta | undefined
+  mutationKey?: MutationKey
+}
+
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables,
+  mutationFnContext: MutationFunctionContext,
 ) => Promise<TData>
 
 export interface MutationOptions<
