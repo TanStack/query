@@ -43,7 +43,8 @@ describe('QueryClientProvider', () => {
       </QueryClientProvider>,
     )
 
-    await vi.waitFor(() => rendered.getByText('test'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('test')
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
@@ -94,8 +95,9 @@ describe('QueryClientProvider', () => {
       </>,
     )
 
-    await vi.waitFor(() => rendered.getByText('test1'))
-    await vi.waitFor(() => rendered.getByText('test2'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('test1')
+    rendered.getByText('test2')
 
     expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
     expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
@@ -135,7 +137,8 @@ describe('QueryClientProvider', () => {
       </QueryClientProvider>,
     )
 
-    await vi.waitFor(() => rendered.getByText('test'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('test')
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
