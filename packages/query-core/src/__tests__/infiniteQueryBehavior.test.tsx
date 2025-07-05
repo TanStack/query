@@ -315,7 +315,9 @@ describe('InfiniteQueryBehavior', () => {
 
     // Cancel the query
     const query = observer.getCurrentQuery()
-    query.cancel()
+    await query.cancel()
+
+    vi.advanceTimersByTime(10)
 
     expect(observerResult).toMatchObject({
       isFetching: false,
