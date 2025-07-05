@@ -68,7 +68,8 @@ describe('fine grained persister', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
 
-    await vi.waitFor(() => rendered.getByText('Works from persister'))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('Works from persister')
     expect(spy).not.toHaveBeenCalled()
   })
 
@@ -123,8 +124,10 @@ describe('fine grained persister', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
 
-    await vi.waitFor(() => rendered.getByText('Works from persister'))
-    await vi.waitFor(() => rendered.getByText('Works from queryFn'))
+    await vi.advanceTimersByTimeAsync(5)
+    rendered.getByText('Works from persister')
+    await vi.advanceTimersByTimeAsync(1)
+    rendered.getByText('Works from queryFn')
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
@@ -162,7 +165,8 @@ describe('fine grained persister', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
 
-    await vi.waitFor(() => rendered.getByText('Works from queryFn'))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('Works from queryFn')
     expect(spy).toHaveBeenCalledTimes(1)
 
     const storedItem = await storage.getItem(`${PERSISTER_KEY_PREFIX}-${hash}`)
