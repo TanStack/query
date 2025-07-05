@@ -2,12 +2,13 @@ import {
   afterAll,
   afterEach,
   beforeAll,
+  beforeEach,
   describe,
   expect,
   it,
   vi,
 } from 'vitest'
-import { act, fireEvent, render, waitFor } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -178,20 +179,23 @@ describe('useSuspenseQueries', () => {
       </React.Suspense>,
     )
 
-    await act(() => vi.advanceTimersByTimeAsync(10))
-
     rendered.getByText('loading...')
-
     expect(spy).not.toHaveBeenCalled()
-
     await act(() => vi.advanceTimersByTimeAsync(30))
     rendered.getByText('data')
-
     expect(spy).toHaveBeenCalled()
   })
 })
 
 describe('useSuspenseQueries 2', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should suspend all queries in parallel', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -237,9 +241,9 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('loading'))
-    await waitFor(() => rendered.getByText('data: 1,2'))
-
+    rendered.getByText('loading')
+    await act(() => vi.advanceTimersByTimeAsync(21))
+    rendered.getByText('data: 1,2')
     expect(results).toEqual(['1', '2', 'loading'])
   })
 
@@ -291,9 +295,11 @@ describe('useSuspenseQueries 2', () => {
         <Page />
       </React.Suspense>,
     )
-    await waitFor(() => rendered.getByText('loading'))
+
+    rendered.getByText('loading')
     expect(refs.length).toBe(2)
-    await waitFor(() => rendered.getByText('data: 1,2'))
+    await act(() => vi.advanceTimersByTimeAsync(21))
+    rendered.getByText('data: 1,2')
     expect(refs[0]).toBe(refs[1])
   })
 
@@ -328,27 +334,23 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() =>
-      expect(rendered.getByText('loading')).toBeInTheDocument(),
-    )
-    await waitFor(() => rendered.getByText('Data 0'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(0))
+    rendered.getByText('Data 0')
 
     // go offline
     document.dispatchEvent(new CustomEvent('offline'))
 
     fireEvent.click(rendered.getByText('fetch'))
-    await waitFor(() =>
-      expect(rendered.getByText('Data 0')).toBeInTheDocument(),
-    )
+    expect(rendered.getByText('Data 0')).toBeInTheDocument()
 
     // go back online
     document.dispatchEvent(new CustomEvent('online'))
-    fireEvent.click(rendered.getByText('fetch'))
 
+    fireEvent.click(rendered.getByText('fetch'))
+    await act(() => vi.advanceTimersByTimeAsync(0))
     // query should resume
-    await waitFor(() =>
-      expect(rendered.getByText('Data 1')).toBeInTheDocument(),
-    )
+    expect(rendered.getByText('Data 1')).toBeInTheDocument()
   })
 
   it('should throw error when queryKey changes and new query fails', async () => {
@@ -391,18 +393,15 @@ describe('useSuspenseQueries 2', () => {
       </ErrorBoundary>,
     )
 
-    await waitFor(() => rendered.getByText('Loading...'))
-
-    await waitFor(() => rendered.getByText('rendered: data'))
-
+    rendered.getByText('Loading...')
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    rendered.getByText('rendered: data')
     fireEvent.click(rendered.getByText('trigger fail'))
-
-    await waitFor(() => rendered.getByText('error boundary'))
-
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    rendered.getByText('error boundary')
     expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
-
     consoleMock.mockRestore()
   })
 
@@ -438,19 +437,13 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() =>
-      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
-    )
-
-    await waitFor(() => expect(rendered.getByText('data0')).toBeInTheDocument())
-
+    expect(rendered.getByText('Loading...')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data0')).toBeInTheDocument()
     fireEvent.click(rendered.getByText('inc'))
-
-    await waitFor(() =>
-      expect(rendered.getByText('Pending...')).toBeInTheDocument(),
-    )
-
-    await waitFor(() => expect(rendered.getByText('data1')).toBeInTheDocument())
+    expect(rendered.getByText('Pending...')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data1')).toBeInTheDocument()
   })
 
   it('should not request old data inside transitions (issue #6486)', async () => {
@@ -497,16 +490,12 @@ describe('useSuspenseQueries 2', () => {
       <App />,
     )
 
-    await waitFor(() => rendered.getByText('Loading...'))
-
-    await waitFor(() => rendered.getByText('data0'))
-
+    rendered.getByText('Loading...')
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    rendered.getByText('data0')
     fireEvent.click(rendered.getByText('inc'))
-
-    await waitFor(() => rendered.getByText('data1'))
-
-    await sleep(20)
-
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    rendered.getByText('data1')
     expect(queryFnCount).toBe(2)
   })
 
@@ -549,19 +538,13 @@ describe('useSuspenseQueries 2', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() =>
-      expect(rendered.getByText('Loading...')).toBeInTheDocument(),
-    )
-
-    await waitFor(() => expect(rendered.getByText('data0')).toBeInTheDocument())
-
+    expect(rendered.getByText('Loading...')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data0')).toBeInTheDocument()
     fireEvent.click(rendered.getByText('inc'))
-
-    await waitFor(() =>
-      expect(rendered.getByText('Pending...')).toBeInTheDocument(),
-    )
-
-    await waitFor(() => expect(rendered.getByText('data1')).toBeInTheDocument())
+    expect(rendered.getByText('Pending...')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(11))
+    expect(rendered.getByText('data1')).toBeInTheDocument()
   })
 
   it('should show error boundary even with gcTime:0 (#7853)', async () => {
@@ -601,7 +584,8 @@ describe('useSuspenseQueries 2', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('There was an error!'))
+    await act(() => vi.advanceTimersByTimeAsync(0))
+    rendered.getByText('There was an error!')
     expect(count).toBe(1)
     consoleMock.mockRestore()
   })
@@ -656,24 +640,16 @@ describe('useSuspenseQueries 2', () => {
       const rendered = renderWithClient(queryClient, <App />)
 
       await act(() => vi.advanceTimersByTimeAsync(200))
-
       rendered.getByText('loading')
-
       // unmount while still fetching
       fireEvent.click(rendered.getByText('hide'))
-
       await act(() => vi.advanceTimersByTimeAsync(800))
-
       rendered.getByText('page2')
-
       // wait for query to be resolved
       await act(() => vi.advanceTimersByTimeAsync(2000))
-
       expect(queryClient.getQueryData(key)).toBe('data')
-
       // wait for gc
       await act(() => vi.advanceTimersByTimeAsync(1000))
-
       expect(queryClient.getQueryData(key)).toBe(undefined)
     })
   })
@@ -746,7 +722,6 @@ describe('useSuspenseQueries 2', () => {
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'skipToken is not allowed for useSuspenseQueries',
     )
-
     consoleErrorSpy.mockRestore()
     process.env.NODE_ENV = envCopy
   })
@@ -781,7 +756,6 @@ describe('useSuspenseQueries 2', () => {
     )
 
     expect(consoleErrorSpy).not.toHaveBeenCalled()
-
     consoleErrorSpy.mockRestore()
     process.env.NODE_ENV = envCopy
   })
