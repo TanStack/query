@@ -759,7 +759,6 @@ describe('query', () => {
       queryFn,
     })
     await vi.advanceTimersByTimeAsync(10)
-
     ;(expect(updates).toEqual([
       'updated', // type: 'fetch'
       'updated', // type: 'success'
