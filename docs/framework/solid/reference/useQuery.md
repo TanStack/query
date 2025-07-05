@@ -187,7 +187,6 @@ function App() {
 ## `useQuery` Parameters
 
 - ### Query Options - `Accessor<QueryOptions>`
-
   - ##### `queryKey: unknown[]`
     - **Required**
     - The query key to use for this query.
