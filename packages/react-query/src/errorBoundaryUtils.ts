@@ -25,14 +25,22 @@ export const ensurePreventErrorBoundaryRetry = <
     TQueryKey
   >,
   errorResetBoundary: QueryErrorResetBoundaryValue,
+  query?: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
 ) => {
   if (
     options.suspense ||
-    options.throwOnError ||
     options.experimental_prefetchInRender
   ) {
     // Prevent retrying failed query if the error boundary has not been reset yet
     if (!errorResetBoundary.isReset()) {
+      options.retryOnMount = false
+    }
+  } else if (options.throwOnError && !errorResetBoundary.isReset()) {
+    if (typeof options.throwOnError === 'function') {
+      if (query?.state.error && shouldThrowError(options.throwOnError, [query.state.error, query])) {
+        options.retryOnMount = false
+      }
+    } else {
       options.retryOnMount = false
     }
   }
