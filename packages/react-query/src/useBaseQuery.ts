@@ -53,6 +53,14 @@ export function useBaseQuery<
   const errorResetBoundary = useQueryErrorResetBoundary()
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
+  const query = client
+    .getQueryCache()
+    .get<
+      TQueryFnData,
+      TError,
+      TQueryData,
+      TQueryKey
+    >(defaultedOptions.queryHash)
 
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
     defaultedOptions,
@@ -72,8 +80,7 @@ export function useBaseQuery<
     : 'optimistic'
 
   ensureSuspenseTimers(defaultedOptions)
-  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
-
+  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
   useClearResetErrorBoundary(errorResetBoundary)
 
   // this needs to be invoked before creating the Observer because that can create a cache entry
