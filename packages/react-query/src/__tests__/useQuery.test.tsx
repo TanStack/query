@@ -6833,4 +6833,130 @@ describe('useQuery', () => {
     expect(fetchCount).toBe(initialFetchCount + 1)
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
+
+  it('should not retry on mount when throwOnError function returns true', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+    const queryFn = vi.fn().mockImplementation(() => {
+      fetchCount++
+      console.log(`Fetching... (attempt ${fetchCount})`)
+      return Promise.reject(new Error('Simulated 500 error'))
+    })
+
+    function Component() {
+      const { status, error } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: () => true,
+        retryOnMount: true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return (
+        <div>
+          <div data-testid="status">{status}</div>
+          {error && <div data-testid="error">{error.message}</div>}
+        </div>
+      )
+    }
+
+    const { unmount, getByTestId } = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div data-testid="status">error</div>
+            <div data-testid="error">{error?.message}</div>
+          </div>
+        )}
+      >
+        <Component />
+      </ErrorBoundary>,
+    )
+
+    await vi.waitFor(() =>
+      expect(getByTestId('status')).toHaveTextContent('error'),
+    )
+    expect(getByTestId('error')).toHaveTextContent('Simulated 500 error')
+    expect(fetchCount).toBe(1)
+
+    unmount()
+
+    const initialFetchCount = fetchCount
+
+    renderWithClient(queryClient, 
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div data-testid="status">error</div>
+            <div data-testid="error">{error?.message}</div>
+          </div>
+        )}
+      >
+        <Component />
+      </ErrorBoundary>
+    )
+
+    await vi.waitFor(() =>
+      expect(getByTestId('status')).toHaveTextContent('error'),
+    )
+
+    // Should not retry because throwOnError returns true
+    expect(fetchCount).toBe(initialFetchCount)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should handle throwOnError function based on actual error state', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+    const queryFn = vi.fn().mockImplementation(() => {
+      fetchCount++
+      console.log(`Fetching... (attempt ${fetchCount})`)
+      return Promise.reject(new Error('Simulated 500 error'))
+    })
+
+    function Component() {
+      const { status, error } = useQuery({
+        queryKey: key,
+        queryFn,
+        throwOnError: (error) => error.message.includes('404'),
+        retryOnMount: true,
+        staleTime: Infinity,
+        retry: false,
+      })
+
+      return (
+        <div>
+          <div data-testid="status">{status}</div>
+          {error && <div data-testid="error">{error.message}</div>}
+        </div>
+      )
+    }
+
+    const { unmount, getByTestId } = renderWithClient(
+      queryClient,
+      <Component />,
+    )
+
+    await vi.waitFor(() =>
+      expect(getByTestId('status')).toHaveTextContent('error'),
+    )
+    expect(getByTestId('error')).toHaveTextContent('Simulated 500 error')
+    expect(fetchCount).toBe(1)
+
+    unmount()
+
+    const initialFetchCount = fetchCount
+
+    renderWithClient(queryClient, <Component />)
+
+    await vi.waitFor(() =>
+      expect(getByTestId('status')).toHaveTextContent('error'),
+    )
+
+    // Should retry because throwOnError returns false (500 error doesn't include '404')
+    expect(fetchCount).toBe(initialFetchCount + 1)
+    expect(queryFn).toHaveBeenCalledTimes(2)
+  })
 })
