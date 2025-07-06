@@ -6884,7 +6884,8 @@ describe('useQuery', () => {
 
     const initialFetchCount = fetchCount
 
-    renderWithClient(queryClient, 
+    renderWithClient(
+      queryClient,
       <ErrorBoundary
         fallbackRender={({ error }) => (
           <div>
@@ -6894,7 +6895,7 @@ describe('useQuery', () => {
         )}
       >
         <Component />
-      </ErrorBoundary>
+      </ErrorBoundary>,
     )
 
     await vi.waitFor(() =>
