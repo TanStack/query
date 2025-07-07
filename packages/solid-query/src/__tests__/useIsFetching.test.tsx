@@ -200,10 +200,10 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
 
-    await vi.waitFor(() => rendered.findByText('isFetching: 0'))
+    await vi.waitFor(() => rendered.getByText('isFetching: 0'))
     fireEvent.click(rendered.getByRole('button', { name: /setStarted/i }))
-    await vi.waitFor(() => rendered.findByText('isFetching: 1'))
-    await vi.waitFor(() => rendered.findByText('isFetching: 0'))
+    await vi.waitFor(() => rendered.getByText('isFetching: 1'))
+    await vi.waitFor(() => rendered.getByText('isFetching: 0'))
     // at no point should we have isFetching: 2
     expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
   })
