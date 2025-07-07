@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest'
-import { fireEvent, render, waitFor } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { fireEvent, render } from '@testing-library/svelte'
 import { derived, get, writable } from 'svelte/store'
 import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
@@ -11,6 +11,14 @@ import type { Writable } from 'svelte/store'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createQuery', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('Return the correct states for a successful query', async () => {
     const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
@@ -30,7 +38,7 @@ describe('createQuery', () => {
       },
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
 
@@ -111,7 +119,9 @@ describe('createQuery', () => {
       },
     })
 
-    await waitFor(() => rendered.getByText('Status: error'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Status: error')).toBeInTheDocument(),
+    )
 
     const states = get(statesStore)
 
@@ -218,7 +228,7 @@ describe('createQuery', () => {
       },
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
   })
@@ -244,7 +254,7 @@ describe('createQuery', () => {
       },
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
   })
@@ -272,21 +282,21 @@ describe('createQuery', () => {
       },
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
       expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
     })
 
     writableStore.set(2)
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.queryByText('Data: 1')).not.toBeInTheDocument()
       expect(rendered.queryByText('Data: 2')).toBeInTheDocument()
     })
 
     writableStore.set(1)
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
       expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
     })
@@ -302,11 +312,15 @@ describe('createQuery', () => {
       },
     })
 
-    await waitFor(() => rendered.getByText('Data: 0'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: 0')).toBeInTheDocument(),
+    )
 
     fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
 
-    await waitFor(() => rendered.getByText('Data: 1'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: 1')).toBeInTheDocument(),
+    )
 
     const states = get(statesStore)
 
@@ -354,13 +368,15 @@ describe('createQuery', () => {
       },
     })
 
-    await waitFor(() => rendered.getByText('Data: 0'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: 0')).toBeInTheDocument(),
+    )
 
     fireEvent.click(rendered.getByRole('button', { name: /Increment/i }))
 
-    await waitFor(() => {
-      rendered.getByText('Count: 1')
-      rendered.getByText('Data: undefined')
+    await vi.waitFor(() => {
+      expect(rendered.getByText('Count: 1')).toBeInTheDocument()
+      expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
     })
 
     const states = get(statesStore)
@@ -398,13 +414,17 @@ describe('createQuery', () => {
       },
     })
 
-    await waitFor(() => rendered.getByText('Data: 1'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: 1')).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByRole('button', { name: /Remove/i }))
 
-    await sleep(5)
+    await vi.advanceTimersByTimeAsync(5)
 
     fireEvent.click(rendered.getByRole('button', { name: /Refetch/i }))
-    await waitFor(() => rendered.getByText('Data: 2'))
+    await vi.waitFor(() =>
+      expect(rendered.getByText('Data: 2')).toBeInTheDocument(),
+    )
 
     const states = get(statesStore)
 
