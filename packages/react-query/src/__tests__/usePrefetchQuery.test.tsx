@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import React from 'react'
 import { act, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { queryKey } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -18,7 +18,7 @@ const generateQueryFn = (data: string) =>
   vi
     .fn<(...args: Array<any>) => Promise<string>>()
     .mockImplementation(async () => {
-      await vi.advanceTimersByTimeAsync(10)
+      await sleep(10)
 
       return data
     })
@@ -93,7 +93,8 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    await queryClient.fetchQuery(queryOpts)
+    queryClient.fetchQuery(queryOpts)
+    await vi.advanceTimersByTimeAsync(10)
     queryOpts.queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
 
@@ -113,7 +114,7 @@ describe('usePrefetchQuery', () => {
     }
 
     queryFn.mockImplementationOnce(async () => {
-      await vi.advanceTimersByTimeAsync(10)
+      await sleep(10)
 
       throw new Error('Oops! Server error!')
     })
@@ -130,7 +131,8 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    await queryClient.prefetchQuery(queryOpts)
+    queryClient.prefetchQuery(queryOpts)
+    await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
 
@@ -181,7 +183,7 @@ describe('usePrefetchQuery', () => {
     }
 
     queryFn.mockImplementationOnce(async () => {
-      await vi.advanceTimersByTimeAsync(10)
+      await sleep(10)
 
       throw new Error('Oops! Server error!')
     })
@@ -207,7 +209,8 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    await queryClient.prefetchQuery(queryOpts)
+    queryClient.prefetchQuery(queryOpts)
+    await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
 
     const rendered = renderWithClient(queryClient, <App />)
