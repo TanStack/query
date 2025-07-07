@@ -79,7 +79,6 @@ describe('mutationOptions', () => {
   it('should allow mutationKey to be omitted', () => {
     return mutationOptions({
       mutationFn: () => Promise.resolve(123),
-      mutationKey: ['key'],
       onSuccess: (data) => {
         expectTypeOf(data).toEqualTypeOf<number>()
       },
@@ -126,6 +125,16 @@ describe('mutationOptions', () => {
     expectTypeOf(mutation).toEqualTypeOf<
       UseMutationResult<string, DefaultError, void, unknown>
     >()
+
+    useMutation(
+      // @ts-check should allow when used with useMutation without mutationKey
+      mutationOptions({
+        mutationFn: () => Promise.resolve('data'),
+        onSuccess: (data) => {
+          expectTypeOf(data).toEqualTypeOf<string>()
+        },
+      }),
+    )
   })
 
   it('should infer types when used with useIsMutating', () => {
