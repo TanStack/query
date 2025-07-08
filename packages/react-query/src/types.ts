@@ -43,7 +43,15 @@ export interface UseQueryOptions<
     TData,
     TQueryFnData,
     TQueryKey
-  > {}
+  > {
+  /**
+   * If set to `true`, the query will suspend when `status === 'loading'`
+   * and throw errors when `status === 'error'`.
+   * Defaults to `false`.
+   * @deprecated This option will be removed in the next major version.
+   */
+  suspense?: boolean
+}
 
 export type UseSuspenseQueryOptions<
   TQueryFnData = unknown,
