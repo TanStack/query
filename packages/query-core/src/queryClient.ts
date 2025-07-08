@@ -185,6 +185,7 @@ export class QueryClient {
     >,
     options?: SetDataOptions,
   ): NoInfer<TInferredQueryFnData> | undefined {
+    // Improve performance by directly using the queryHash instead of using find()
     const defaultedOptions = this.defaultQueryOptions<
       any,
       any,
@@ -193,6 +194,7 @@ export class QueryClient {
       QueryKey
     >({ queryKey })
 
+    // Direct O(1) hash map lookup instead of O(n) find()
     const query = this.#queryCache.get<TInferredQueryFnData>(
       defaultedOptions.queryHash,
     )

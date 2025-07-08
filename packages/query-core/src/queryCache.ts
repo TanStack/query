@@ -90,7 +90,7 @@ export interface QueryStore {
 // CLASS
 
 export class QueryCache extends Subscribable<QueryCacheListener> {
-  #queries: QueryStore
+  #queries: Map<string, Query>
 
   constructor(public config: QueryCacheConfig = {}) {
     super()
