@@ -250,10 +250,27 @@ export function partialMatchKey(a: any, b: any): boolean {
  * If not, it will replace any deeply equal children of `b` with those of `a`.
  * This can be used for structural sharing between JSON values for example.
  */
+// WeakMap for memoization to avoid processing the same objects multiple times
+const replaceCache = new WeakMap<object, WeakMap<object, any>>();
+
 export function replaceEqualDeep<T>(a: unknown, b: T): T
 export function replaceEqualDeep(a: any, b: any): any {
+  // Early return for primitive equality (optimization for most common case)
   if (a === b) {
     return a
+  }
+  
+  // Early return for non-objects to avoid unnecessary processing
+  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') {
+    return b
+  }
+
+  // Use memoization for already processed object pairs
+  if (replaceCache.has(a)) {
+    const cachedResult = replaceCache.get(a)?.get(b);
+    if (cachedResult !== undefined) {
+      return cachedResult;
+    }
   }
 
   const array = isPlainArray(a) && isPlainArray(b)
@@ -263,31 +280,102 @@ export function replaceEqualDeep(a: any, b: any): any {
     const aSize = aItems.length
     const bItems = array ? b : Object.keys(b)
     const bSize = bItems.length
-    const copy: any = array ? [] : {}
-    const aItemsSet = new Set(aItems)
+    
+    // Size mismatch means we need a new reference, but we should preserve original object references
+    // inside the array where possible
+    if (aSize !== bSize) {
+      // Create a new array or object
+      const copy: any = array ? new Array(bSize) : { ...b }
+      
+      // For arrays with different sizes, we need to carefully handle each element
+      if (array) {
+        // For arrays, copy references from original where possible
+        const minLength = Math.min(aSize, bSize);
+        
+        // Copy common elements, preserving original references
+        for (let i = 0; i < minLength; i++) {
+          // Use deep comparison for each element
+          copy[i] = replaceEqualDeep(a[i], b[i])
+        }
+        
+        // For supersets (b is larger), copy remaining elements directly
+        if (bSize > aSize) {
+          for (let i = aSize; i < bSize; i++) {
+            copy[i] = b[i]
+          }
+        }
+      }
+      
+      // Cache and return the result
+      if (typeof a === 'object' && a !== null && typeof b === 'object' && b !== null) {
+        if (!replaceCache.has(a)) {
+          replaceCache.set(a, new WeakMap());
+        }
+        replaceCache.get(a)?.set(b, copy);
+      }
+      
+      return copy
+    }
+    
+    // Create a new copy for structural sharing
+    const copy: any = array ? new Array(bSize) : {}
+    
+    // For objects, use Set for O(1) lookups
+    const aItemsSet = array ? null : new Set(aItems)
 
     let equalItems = 0
-
-    for (let i = 0; i < bSize; i++) {
-      const key = array ? i : bItems[i]
-      if (
-        ((!array && aItemsSet.has(key)) || array) &&
-        a[key] === undefined &&
-        b[key] === undefined
-      ) {
-        copy[key] = undefined
-        equalItems++
-      } else {
-        copy[key] = replaceEqualDeep(a[key], b[key])
-        if (copy[key] === a[key] && a[key] !== undefined) {
+    
+    // Process in chunks for large arrays to improve performance
+    const chunkSize = 1000
+    const processChunk = (start: number, end: number): void => {
+      for (let i = start; i < end && i < bSize; i++) {
+        const key = array ? i : bItems[i]
+        if (
+          ((!array && aItemsSet?.has(key)) || array) &&
+          a[key] === undefined &&
+          b[key] === undefined
+        ) {
+          copy[key] = undefined
           equalItems++
+        } else {
+          // When elements are deep equal but not the same reference,
+          // we need to keep the original reference
+          const result = replaceEqualDeep(a[key], b[key])
+          copy[key] = result
+          
+          // Check if we maintained reference equality
+          if (result === a[key] && a[key] !== undefined) {
+            equalItems++
+          }
         }
       }
     }
-
-    return aSize === bSize && equalItems === aSize ? a : copy
+    
+    // For large arrays, process in chunks to avoid call stack issues
+    if (array && bSize > chunkSize) {
+      for (let i = 0; i < bSize; i += chunkSize) {
+        processChunk(i, i + chunkSize);
+      }
+    } else {
+      processChunk(0, bSize);
+    }
+    
+    // Use the previous reference only when everything is exactly equal
+    // This is critical for reference equality tests
+    const result = aSize === bSize && equalItems === aSize ? a : copy
+    
+    // Store in cache for future lookups
+    if (typeof a === 'object' && a !== null && typeof b === 'object' && b !== null) {
+      if (!replaceCache.has(a)) {
+        replaceCache.set(a, new WeakMap());
+      }
+      replaceCache.get(a)?.set(b, result);
+    }
+    
+    return result
   }
 
+  // For any other objects that aren't plain objects or arrays
   return b
 }
 
