@@ -127,7 +127,7 @@ describe('mutationOptions', () => {
     >()
 
     useMutation(
-      // @ts-check should allow when used with useMutation without mutationKey
+      // should allow when used with useMutation without mutationKey
       mutationOptions({
         mutationFn: () => Promise.resolve('data'),
         onSuccess: (data) => {
