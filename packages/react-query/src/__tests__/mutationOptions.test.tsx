@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import { fireEvent } from '@testing-library/react'
@@ -8,6 +8,14 @@ import { renderWithClient } from './utils'
 import type { MutationState } from '@tanstack/query-core'
 
 describe('mutationOptions', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should return the object received as a parameter without any modification.', () => {
     const object = {
       mutationKey: ['key'],
@@ -54,12 +62,12 @@ describe('mutationOptions', () => {
     const rendered = renderWithClient(queryClient, <Page />)
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await vi.waitFor(() => expect(isMutatingArray[0]).toEqual(0))
-    await vi.waitFor(() => expect(isMutatingArray[1]).toEqual(1))
-    await vi.waitFor(() => expect(isMutatingArray[2]).toEqual(0))
-    await vi.waitFor(() =>
-      expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0),
-    )
+    expect(isMutatingArray[0]).toEqual(0)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isMutatingArray[1]).toEqual(1)
+    await vi.advanceTimersByTimeAsync(51)
+    expect(isMutatingArray[2]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating', async () => {
@@ -86,12 +94,12 @@ describe('mutationOptions', () => {
     const rendered = renderWithClient(queryClient, <Mutation />)
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await vi.waitFor(() => expect(isMutatingArray[0]).toEqual(0))
-    await vi.waitFor(() => expect(isMutatingArray[1]).toEqual(1))
-    await vi.waitFor(() => expect(isMutatingArray[2]).toEqual(0))
-    await vi.waitFor(() =>
-      expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0),
-    )
+    expect(isMutatingArray[0]).toEqual(0)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isMutatingArray[1]).toEqual(1)
+    await vi.advanceTimersByTimeAsync(501)
+    expect(isMutatingArray[2]).toEqual(0)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
   })
 
   it('should return the number of fetching mutations when used with useMutationState', async () => {
@@ -122,7 +130,8 @@ describe('mutationOptions', () => {
     const rendered = renderWithClient(queryClient, <Mutation />)
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await vi.waitFor(() => expect(mutationStateArray.length).toEqual(1))
-    await vi.waitFor(() => expect(mutationStateArray[0]?.data).toEqual('data'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(mutationStateArray.length).toEqual(1)
+    expect(mutationStateArray[0]?.data).toEqual('data')
   })
 })
