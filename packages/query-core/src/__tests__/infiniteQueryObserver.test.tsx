@@ -20,7 +20,7 @@ describe('InfiniteQueryObserver', () => {
     vi.useRealTimers()
   })
 
-  test('InfiniteQueryObserver should be able to fetch an infinite query with selector', async () => {
+  test('should be able to fetch an infinite query with selector', async () => {
     const key = queryKey()
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -43,7 +43,7 @@ describe('InfiniteQueryObserver', () => {
     })
   })
 
-  test('InfiniteQueryObserver should pass the meta option to the queryFn', async () => {
+  test('should pass the meta option to the queryFn', async () => {
     const meta = {
       it: 'works',
     }
@@ -73,7 +73,7 @@ describe('InfiniteQueryObserver', () => {
     expect(queryFn).toBeCalledWith(expect.objectContaining({ meta }))
   })
 
-  test('getNextPagParam and getPreviousPageParam should receive current pageParams', async () => {
+  test('should make getNextPageParam and getPreviousPageParam receive current pageParams', async () => {
     const key = queryKey()
     let single: Array<string> = []
     let all: Array<string> = []
@@ -207,7 +207,7 @@ describe('InfiniteQueryObserver', () => {
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
 
-  test('getOptimisticResult should set infinite query behavior and return initial state', () => {
+  test('should set infinite query behavior via getOptimisticResult and return the initial state', () => {
     const key = queryKey()
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
@@ -220,7 +220,6 @@ describe('InfiniteQueryObserver', () => {
       number,
       Error,
       InfiniteData<number>,
-      number,
       typeof key,
       number
     > = {

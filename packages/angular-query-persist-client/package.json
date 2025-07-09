@@ -62,7 +62,6 @@
     "@angular/compiler": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
-    "@angular/platform-browser-dynamic": "^20.0.0",
     "@tanstack/angular-query-experimental": "workspace:*",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "^17.3.7",
@@ -73,6 +72,6 @@
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
     "@angular/core": ">=16.0.0",
-    "@tanstack/angular-query-experimental": "workspace:*"
+    "@tanstack/angular-query-experimental": "workspace:^"
   }
 }

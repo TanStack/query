@@ -10,7 +10,8 @@ import type {
 import type { QueryClient } from './queryClient'
 
 function difference<T>(array1: Array<T>, array2: Array<T>): Array<T> {
-  return array1.filter((x) => !array2.includes(x))
+  const excludeSet = new Set(array2)
+  return array1.filter((x) => !excludeSet.has(x))
 }
 
 function replaceAt<T>(array: Array<T>, index: number, value: T): Array<T> {

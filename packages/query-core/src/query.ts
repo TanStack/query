@@ -64,7 +64,7 @@ export interface FetchContext<
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > {
-  fetchFn: () => Promise<unknown> | unknown
+  fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
   signal: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
@@ -603,6 +603,8 @@ export class Query<
             fetchMeta: action.meta ?? null,
           }
         case 'success':
+          // If fetching ends successfully, we don't need revertState as a fallback anymore.
+          this.#revertState = undefined
           return {
             ...state,
             data: action.data,

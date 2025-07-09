@@ -184,7 +184,7 @@ For this use-case, you can use the `PersistQueryClientProvider`. It will make su
 
 ```tsx
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -194,7 +194,7 @@ const queryClient = new QueryClient({
   },
 })
 
-const persister = createSyncStoragePersister({
+const persister = createAsyncStoragePersister({
   storage: window.localStorage,
 })
 
@@ -214,12 +214,12 @@ ReactDOM.createRoot(rootElement).render(
 
 - `persistOptions: PersistQueryClientOptions`
   - all [options](#options) you can pass to [persistQueryClient](#persistqueryclient) minus the QueryClient itself
-- `onSuccess?: () => Promise<void> | void`
+- `onSuccess?: () => Promise<unknown> | unknown`
   - optional
   - will be called when the initial restore is finished
   - can be used to [resumePausedMutations](../../../../reference/QueryClient.md#queryclientresumepausedmutations)
   - if a Promise is returned, it will be awaited; restoring is seen as ongoing until then
-- `onError?: () => Promise<void> | void`
+- `onError?: () => Promise<unknown> | unknown`
   - optional
   - will be called when an error is thrown during restoration
   - if a Promise is returned, it will be awaited
@@ -248,7 +248,7 @@ Persisted Client entries have the following interface:
 export interface PersistedClient {
   timestamp: number
   buster: string
-  cacheState: any
+  clientState: DehydratedState
 }
 ```
 

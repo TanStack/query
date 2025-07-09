@@ -20,8 +20,8 @@ import type { PersistQueryClientFeature } from '@tanstack/angular-query-experime
 
 type PersistQueryClientOptions = {
   persistOptions: Omit<PersistQueryClientOptionsCore, 'queryClient'>
-  onSuccess?: () => Promise<void> | void
-  onError?: () => Promise<void> | void
+  onSuccess?: () => Promise<unknown> | unknown
+  onError?: () => Promise<unknown> | unknown
 }
 
 /**
@@ -30,7 +30,7 @@ type PersistQueryClientOptions = {
  * **Example**
  *
  * ```ts
- * const localStoragePersister = createSyncStoragePersister({
+ * const localStoragePersister = createAsyncStoragePersister({
  *  storage: window.localStorage,
  * })
  *
