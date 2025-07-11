@@ -820,6 +820,10 @@
               "to": "framework/react/reference/infiniteQueryOptions"
             },
             {
+              "label": "mutationOptions",
+              "to": "framework/react/reference/mutationOptions"
+            },
+            {
               "label": "usePrefetchQuery",
               "to": "framework/react/reference/usePrefetchQuery"
             },
