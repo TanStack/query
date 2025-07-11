@@ -1,6 +1,5 @@
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { isVue2, isVue3, ref } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'
@@ -44,6 +43,14 @@ function getAppMock(withUnmountHook = false): TestApp {
 }
 
 describe('VueQueryPlugin', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   describe('devtools', () => {
     test('should NOT setup devtools', () => {
       const setupDevtoolsMock = setupDevtools as Mock
@@ -271,7 +278,7 @@ describe('VueQueryPlugin', () => {
 
       expect(customClient.isRestoring?.value).toBeTruthy()
 
-      await sleep(0)
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(customClient.isRestoring?.value).toBeFalsy()
     })
@@ -316,7 +323,7 @@ describe('VueQueryPlugin', () => {
       expect(query.data.value).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
 
-      await sleep(0)
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(customClient.isRestoring?.value).toBeFalsy()
       expect(query.data.value).toStrictEqual({ foo: 'bar' })
@@ -382,7 +389,7 @@ describe('VueQueryPlugin', () => {
       expect(queries.value[0].data).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
 
-      await sleep(0)
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(customClient.isRestoring?.value).toBeFalsy()
       expect(query.data.value).toStrictEqual({ foo1: 'bar1' })
