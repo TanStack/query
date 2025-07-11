@@ -1,8 +1,16 @@
-import { describe, expect, test, vi } from 'vitest'
-import { fireEvent, render, waitFor } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { fireEvent, render } from '@testing-library/svelte'
 import BaseExample from './BaseExample.svelte'
 
 describe('useMutationState', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('Run few mutation functions and check from useMutationState', async () => {
     const successMutationFn = vi.fn()
 
@@ -26,14 +34,14 @@ describe('useMutationState', () => {
 
     fireEvent.click(rendered.getByTestId('success'))
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(successMutationFn).toHaveBeenCalledTimes(1)
       expect(rendered.getByTestId('result').innerHTML).toEqual('["success"]')
     })
 
     fireEvent.click(rendered.getByTestId('error'))
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(errorMutationFn).toHaveBeenCalledTimes(1)
       expect(rendered.getByTestId('result').innerHTML).toEqual(
         '["success","error"]',
@@ -67,14 +75,14 @@ describe('useMutationState', () => {
 
     fireEvent.click(rendered.getByTestId('success'))
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(successMutationFn).toHaveBeenCalledTimes(1)
       expect(rendered.getByTestId('result').innerHTML).toEqual('[]')
     })
 
     fireEvent.click(rendered.getByTestId('error'))
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(errorMutationFn).toHaveBeenCalledTimes(1)
       expect(rendered.getByTestId('result').innerHTML).toEqual('["error"]')
     })
@@ -106,14 +114,14 @@ describe('useMutationState', () => {
 
     fireEvent.click(rendered.getByTestId('success'))
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(successMutationFn).toHaveBeenCalledTimes(1)
       expect(rendered.getByTestId('result').innerHTML).toEqual('["success"]')
     })
 
     fireEvent.click(rendered.getByTestId('error'))
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(errorMutationFn).toHaveBeenCalledTimes(1)
       expect(rendered.getByTestId('result').innerHTML).toEqual('["success"]')
     })
