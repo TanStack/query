@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { fireEvent, render, waitFor } from '@solidjs/testing-library'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
@@ -12,6 +12,14 @@ import {
 import { setActTimeout } from './utils'
 
 describe('useIsFetching', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
     const queryCache = new QueryCache()
@@ -53,16 +61,12 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
-      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
-    )
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
     fireEvent.click(rendered.getByRole('button', { name: /setReady/i }))
-    await waitFor(() =>
-      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
-    )
-    await waitFor(() =>
-      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(50)
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
   })
 
   it('should not update state while rendering', async () => {
@@ -130,7 +134,8 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
     // unlike react, Updating renderSecond wont cause a rerender for FirstQuery
-    await waitFor(() => expect(isFetchingArray).toEqual([0, 1, 2, 1, 0]))
+    await vi.advanceTimersByTimeAsync(300)
+    expect(isFetchingArray).toEqual([0, 1, 2, 1, 0])
   })
 
   it('should be able to filter', async () => {
@@ -192,10 +197,12 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
 
-    await rendered.findByText('isFetching: 0')
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
     fireEvent.click(rendered.getByRole('button', { name: /setStarted/i }))
-    await rendered.findByText('isFetching: 1')
-    await rendered.findByText('isFetching: 0')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(20)
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
     // at no point should we have isFetching: 2
     expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
   })
@@ -228,12 +235,10 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
-      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
-    )
-    await waitFor(() =>
-      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
   })
 
   it('should use provided custom queryClient', async () => {
@@ -263,8 +268,7 @@ describe('useIsFetching', () => {
 
     const rendered = render(() => <Page></Page>)
 
-    await waitFor(() =>
-      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
   })
 })
