@@ -58,17 +58,12 @@ describe("useQuery's in Suspense mode with transitions", () => {
       </QueryClientProvider>
     ))
 
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Show')).toBeInTheDocument(),
-    )
+    expect(rendered.getByText('Show')).toBeInTheDocument()
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Message')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Message')).toBeInTheDocument()
     // verify that the button also updated. See https://github.com/solidjs/solid/issues/1249
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Hide')).toBeInTheDocument(),
-    )
+    expect(rendered.getByText('Hide')).toBeInTheDocument()
   })
 })
