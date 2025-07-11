@@ -4,6 +4,18 @@ import { defineConfig } from 'tsup'
 import { legacyConfig, modernConfig } from '../../scripts/getTsupConfig.js'
 
 export default defineConfig([
-  modernConfig({ entry: ['src/*.ts'] }),
-  legacyConfig({ entry: ['src/*.ts'] }),
+  {
+    ...modernConfig({ entry: ['src/*.ts'] }),
+    external: ['typescript'],
+    footer: ({ format }) => {
+      if (format === 'cjs') {
+        // workaround for CJS default export
+        // @see https://github.com/evanw/esbuild/issues/1182#issuecomment-1011414271
+        return { js: `module.exports = module.exports.default` }
+      }
+
+      return
+    },
+  },
+  { ...legacyConfig({ entry: ['src/*.ts'] }), external: ['typescript'] },
 ])
