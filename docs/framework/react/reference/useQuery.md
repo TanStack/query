@@ -26,6 +26,7 @@ const {
   isRefetching,
   isStale,
   isSuccess,
+  isEnabled,
   promise,
   refetch,
   status,
@@ -234,6 +235,8 @@ const {
 - `isInitialLoading: boolean`
   - **deprecated**
   - An alias for `isLoading`, will be removed in the next major version.
+- `isEnabled: boolean`
+  - Is `true` if this query observer is enabled, `false` otherwise.
 - `failureCount: number`
   - The failure count for the query.
   - Incremented every time the query fails.

@@ -1405,4 +1405,27 @@ describe('queryObserver', () => {
     const result = observer.getCurrentResult()
     expect(result.fetchStatus).toBe('idle')
   })
+
+  test('should return isEnabled depending on enabled being resolved', () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      enabled: () => false,
+    })
+
+    const result = observer.getCurrentResult()
+    expect(result.isEnabled).toBe(false)
+  })
+
+  test('should return isEnabled as true per default', () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    const result = observer.getCurrentResult()
+    expect(result.isEnabled).toBe(true)
+  })
 })
