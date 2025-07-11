@@ -1,7 +1,9 @@
 // @ts-check
 
 import vitest from '@vitest/eslint-plugin'
-import rootConfig from './root.eslint.config.js'
+
+// @ts-ignore out of scope
+import rootConfig from '../../eslint.config.js'
 
 export default [
   ...rootConfig,
