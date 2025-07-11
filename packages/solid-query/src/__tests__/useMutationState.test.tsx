@@ -68,11 +68,11 @@ describe('useMutationState', () => {
       </QueryClientProvider>
     ))
 
-    await vi.waitFor(() => rendered.getByText('data: null'))
+    expect(rendered.getByText('data: null')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-
-    await vi.waitFor(() => rendered.getByText('data: data1'))
+    await vi.advanceTimersByTimeAsync(150)
+    expect(rendered.getByText('data: data1')).toBeInTheDocument()
 
     expect(variables).toEqual([[], [1], []])
   })
