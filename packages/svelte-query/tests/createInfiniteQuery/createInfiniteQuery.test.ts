@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest'
-import { render, waitFor } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { render } from '@testing-library/svelte'
 import { get, writable } from 'svelte/store'
 import BaseExample from './BaseExample.svelte'
 import SelectExample from './SelectExample.svelte'
@@ -7,6 +7,14 @@ import type { Writable } from 'svelte/store'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('Return the correct states for a successful query', async () => {
     const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
@@ -16,7 +24,7 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
 
@@ -106,7 +114,7 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.queryByText('count: 1')).toBeInTheDocument()
     })
 

@@ -1,5 +1,13 @@
-import { describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { fireEvent, render, waitFor } from '@solidjs/testing-library'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  it,
+  vi,
+} from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -19,6 +27,14 @@ import type {
 } from '..'
 
 describe('useQueries', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
 
@@ -67,7 +83,7 @@ describe('useQueries', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('data1: 1, data2: 2'))
+    await vi.waitFor(() => rendered.getByText('data1: 1, data2: 2'))
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
@@ -715,7 +731,7 @@ describe('useQueries', () => {
     // Should not display the console error
     // "Warning: Can't perform a React state update on an unmounted component"
 
-    await sleep(20)
+    await vi.advanceTimersByTimeAsync(20)
     QueriesObserverSpy.mockRestore()
   })
 })

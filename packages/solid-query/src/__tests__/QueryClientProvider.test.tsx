@@ -1,10 +1,18 @@
-import { describe, expect, it, vi } from 'vitest'
-import { render, waitFor } from '@solidjs/testing-library'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { render } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '..'
 
 describe('QueryClientProvider', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('sets a specific cache for all queries to use', async () => {
     const key = queryKey()
 
@@ -33,9 +41,8 @@ describe('QueryClientProvider', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => {
-      return rendered.getByText('test')
-    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('test')).toBeInTheDocument()
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
@@ -92,8 +99,9 @@ describe('QueryClientProvider', () => {
       </>
     ))
 
-    await waitFor(() => rendered.getByText('test1'))
-    await waitFor(() => rendered.getByText('test2'))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('test1')).toBeInTheDocument()
+    expect(rendered.getByText('test2')).toBeInTheDocument()
 
     expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
     expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
@@ -136,7 +144,8 @@ describe('QueryClientProvider', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('test'))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('test')).toBeInTheDocument()
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
