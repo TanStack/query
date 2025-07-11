@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import {
   createRenderStream,
@@ -46,6 +46,14 @@ const fetchItems = async (
 }
 
 describe('useInfiniteQuery', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({
     queryCache,
@@ -73,7 +81,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(states.length).toBe(2)
     expect(states[0]).toEqual({
@@ -151,7 +159,7 @@ describe('useInfiniteQuery', () => {
 
   it('should not throw when fetchNextPage returns an error', async () => {
     const key = queryKey()
-    let noThrow: boolean
+    let noThrow = false
 
     function Page() {
       const start = 1
@@ -186,7 +194,8 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(noThrow).toBe(true))
+    await vi.advanceTimersByTimeAsync(31)
+    expect(noThrow).toBe(true)
   })
 
   it('should keep the previous data when placeholderData is set', async () => {
@@ -222,15 +231,16 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: 0-desc'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 0-desc')
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
-
-    await waitFor(() => rendered.getByText('data: 0-desc,1-desc'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 0-desc,1-desc')
     fireEvent.click(rendered.getByRole('button', { name: /order/i }))
-
-    await waitFor(() => rendered.getByText('data: 0-asc'))
-    await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(6))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 0-asc')
+    rendered.getByText('isFetching: false')
+    expect(states.length).toBe(6)
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -299,9 +309,8 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => {
-      rendered.getByText('count: 1')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('count: 1')
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -348,9 +357,8 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => {
-      rendered.getByText('count: 1')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('count: 1')
 
     expect(states.length).toBe(2)
     expect(selectCalled).toBe(1)
@@ -397,12 +405,14 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: 0'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 0')
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    await waitFor(() => rendered.getByText('data: 1,0'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 1,0')
 
-    await waitFor(() => expect(states.length).toBe(4))
+    expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
       data: undefined,
       isSuccess: false,
@@ -453,17 +463,15 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => {
-      rendered.getByText('data: 10')
-    })
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 10')
 
     fireEvent.click(
       rendered.getByRole('button', { name: /fetch previous page/i }),
     )
 
-    await waitFor(() => {
-      rendered.getByText('data: 9,10')
-    })
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 9,10')
 
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
@@ -538,18 +546,23 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: 10'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 10')
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    await waitFor(() => rendered.getByText('data: 10,11'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 10,11')
     fireEvent.click(
       rendered.getByRole('button', { name: /fetchPreviousPage/i }),
     )
-    await waitFor(() => rendered.getByText('data: 9,10,11'))
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 9,10,11')
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(8))
+    rendered.getByText('isFetching: false')
+    await vi.advanceTimersByTimeAsync(31)
+    expect(states.length).toBe(8)
 
     // Initial fetch
     expect(states[0]).toMatchObject({
@@ -656,11 +669,13 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: 10'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 10')
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(4))
+    rendered.getByText('isFetching: false')
+    await vi.advanceTimersByTimeAsync(31)
+    expect(states.length).toBe(4)
 
     // Initial fetch
     expect(states[0]).toMatchObject({
@@ -743,11 +758,13 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: 10'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 10')
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(4))
+    rendered.getByText('isFetching: false')
+    await vi.advanceTimersByTimeAsync(31)
+    expect(states.length).toBe(4)
 
     // Initial fetch
     expect(states[0]).toMatchObject({
@@ -832,13 +849,15 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: 10'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('data: 10')
     fireEvent.click(
       rendered.getByRole('button', { name: /fetchPreviousPage/i }),
     )
 
-    await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(4))
+    rendered.getByText('isFetching: false')
+    await vi.advanceTimersByTimeAsync(31)
+    expect(states.length).toBe(4)
 
     // Initial fetch
     expect(states[0]).toMatchObject({
@@ -916,31 +935,23 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() =>
-      expect(rendered.getByText('status: success, idle')).toBeInTheDocument(),
-    )
-    await waitFor(() =>
-      expect(
-        rendered.getByText('data: {"pages":[10],"pageParams":[10]}'),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(51)
+    expect(rendered.getByText('status: success, idle')).toBeInTheDocument()
+    expect(
+      rendered.getByText('data: {"pages":[10],"pageParams":[10]}'),
+    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-    await waitFor(() =>
-      expect(
-        rendered.getByText('status: success, fetching'),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('status: success, fetching')).toBeInTheDocument()
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    await waitFor(() =>
-      expect(rendered.getByText('status: success, idle')).toBeInTheDocument(),
-    )
-    await waitFor(() =>
-      expect(
-        rendered.getByText('data: {"pages":[10,11],"pageParams":[10,11]}'),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(51)
+    expect(rendered.getByText('status: success, idle')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(51)
+    expect(
+      rendered.getByText('data: {"pages":[10,11],"pageParams":[10,11]}'),
+    ).toBeInTheDocument()
   })
 
   it('should silently cancel an ongoing fetchNextPage request when another fetchNextPage is invoked', async () => {
@@ -983,7 +994,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(300)
+    await vi.advanceTimersByTimeAsync(300)
 
     const expectedCallCount = 3
     expect(fetchPage).toBeCalledTimes(expectedCallCount)
@@ -1059,7 +1070,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(300)
+    await vi.advanceTimersByTimeAsync(300)
 
     const expectedCallCount = 2
     expect(fetchPage).toBeCalledTimes(expectedCallCount)
@@ -1117,7 +1128,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1174,7 +1185,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(300)
+    await vi.advanceTimersByTimeAsync(300)
 
     expect(fetches).toBe(2)
     expect(queryClient.getQueryState(key)).toMatchObject({
@@ -1223,32 +1234,31 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() =>
-      expect(
-        rendered.getByText('data: {"pages":[0],"pageParams":[0]}'),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(11)
+    expect(
+      rendered.getByText('data: {"pages":[0],"pageParams":[0]}'),
+    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /setPages/i }))
 
-    await waitFor(() =>
-      expect(
-        rendered.getByText('data: {"pages":[7,8],"pageParams":[7,8]}'),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(11)
+    expect(
+      rendered.getByText('data: {"pages":[7,8],"pageParams":[7,8]}'),
+    ).toBeInTheDocument()
 
     multiplier = 2
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await waitFor(() =>
-      expect(
-        rendered.getByText('data: {"pages":[14,30],"pageParams":[7,15]}'),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText('data: {"pages":[14,30],"pageParams":[7,15]}'),
+    ).toBeInTheDocument()
   })
 
   it('should only refetch the first page when initialData is provided', async () => {
+    vi.useRealTimers()
+
     const key = queryKey()
 
     const renderStream =
@@ -1345,7 +1355,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1384,7 +1394,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1423,7 +1433,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1465,7 +1475,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1576,31 +1586,38 @@ describe('useInfiniteQuery', () => {
 
     rendered.getByText('Loading...')
 
-    await waitFor(() => rendered.getByText('Item: 2'))
-    await waitFor(() => rendered.getByText('Page 0: 0'))
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('Item: 2')
+    rendered.getByText('Page 0: 0')
 
     fireEvent.click(rendered.getByText('Load More'))
 
-    await waitFor(() => rendered.getByText('Loading more...'))
-    await waitFor(() => rendered.getByText('Item: 5'))
-    await waitFor(() => rendered.getByText('Page 0: 0'))
-    await waitFor(() => rendered.getByText('Page 1: 1'))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('Loading more...')
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('Item: 5')
+    rendered.getByText('Page 0: 0')
+    rendered.getByText('Page 1: 1')
 
     fireEvent.click(rendered.getByText('Load More'))
 
-    await waitFor(() => rendered.getByText('Loading more...'))
-    await waitFor(() => rendered.getByText('Item: 8'))
-    await waitFor(() => rendered.getByText('Page 0: 0'))
-    await waitFor(() => rendered.getByText('Page 1: 1'))
-    await waitFor(() => rendered.getByText('Page 2: 2'))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('Loading more...')
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('Item: 8')
+    rendered.getByText('Page 0: 0')
+    rendered.getByText('Page 1: 1')
+    rendered.getByText('Page 2: 2')
 
     fireEvent.click(rendered.getByText('Refetch'))
 
-    await waitFor(() => rendered.getByText('Background Updating...'))
-    await waitFor(() => rendered.getByText('Item: 8'))
-    await waitFor(() => rendered.getByText('Page 0: 3'))
-    await waitFor(() => rendered.getByText('Page 1: 4'))
-    await waitFor(() => rendered.getByText('Page 2: 5'))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('Background Updating...')
+    await vi.advanceTimersByTimeAsync(31)
+    rendered.getByText('Item: 8')
+    rendered.getByText('Page 0: 3')
+    rendered.getByText('Page 1: 4')
+    rendered.getByText('Page 2: 5')
 
     // ensure that Item: 4 is rendered before removing it
     expect(rendered.queryAllByText('Item: 4')).toHaveLength(1)
@@ -1608,12 +1625,14 @@ describe('useInfiniteQuery', () => {
     // remove Item: 4
     fireEvent.click(rendered.getByText('Remove item'))
 
-    await waitFor(() => rendered.getByText('Background Updating...'))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('Background Updating...')
     // ensure that an additional item is rendered (it means that cursors were properly rebuilt)
-    await waitFor(() => rendered.getByText('Item: 9'))
-    await waitFor(() => rendered.getByText('Page 0: 6'))
-    await waitFor(() => rendered.getByText('Page 1: 7'))
-    await waitFor(() => rendered.getByText('Page 2: 8'))
+    await vi.advanceTimersByTimeAsync(31)
+    rendered.getByText('Item: 9')
+    rendered.getByText('Page 0: 6')
+    rendered.getByText('Page 1: 7')
+    rendered.getByText('Page 2: 8')
 
     // ensure that Item: 4 is no longer rendered
     expect(rendered.queryAllByText('Item: 4')).toHaveLength(0)
@@ -1701,46 +1720,43 @@ describe('useInfiniteQuery', () => {
 
     rendered.getByText('Loading...')
 
-    await waitFor(() => {
-      rendered.getByText('Item: 9')
-      rendered.getByText('Page 0: 0')
-    })
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('Item: 9')
+    rendered.getByText('Page 0: 0')
 
     fireEvent.click(rendered.getByText('Load More'))
 
-    await waitFor(() => rendered.getByText('Loading more...'))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('Loading more...')
 
-    await waitFor(() => {
-      rendered.getByText('Item: 19')
-      rendered.getByText('Page 0: 0')
-      rendered.getByText('Page 1: 1')
-    })
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('Item: 19')
+    rendered.getByText('Page 0: 0')
+    rendered.getByText('Page 1: 1')
 
     fireEvent.click(rendered.getByText('Load More'))
 
-    await waitFor(() => rendered.getByText('Loading more...'))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('Loading more...')
 
-    await waitFor(() => {
-      rendered.getByText('Item: 29')
-      rendered.getByText('Page 0: 0')
-      rendered.getByText('Page 1: 1')
-      rendered.getByText('Page 2: 2')
-    })
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.getByText('Item: 29')
+    rendered.getByText('Page 0: 0')
+    rendered.getByText('Page 1: 1')
+    rendered.getByText('Page 2: 2')
 
     rendered.getByText('Nothing more to load')
 
     fireEvent.click(rendered.getByText('Remove Last Page'))
 
-    await sleep(10)
-
     fireEvent.click(rendered.getByText('Refetch'))
 
-    await waitFor(() => rendered.getByText('Background Updating...'))
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('Background Updating...')
 
-    await waitFor(() => {
-      rendered.getByText('Page 0: 3')
-      rendered.getByText('Page 1: 4')
-    })
+    await vi.advanceTimersByTimeAsync(21)
+    rendered.getByText('Page 0: 3')
+    rendered.getByText('Page 1: 4')
 
     expect(rendered.queryByText('Item: 29')).toBeNull()
     expect(rendered.queryByText('Page 2: 5')).toBeNull()
@@ -1748,7 +1764,7 @@ describe('useInfiniteQuery', () => {
     rendered.getByText('Nothing more to load')
   })
 
-  it('should cancel the query function when there are no more subscriptions', async () => {
+  it('should cancel the query function when there are no more subscriptions', () => {
     const key = queryKey()
     let cancelFn: Mock = vi.fn()
 
@@ -1790,11 +1806,11 @@ describe('useInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('visible'))
+    rendered.getByText('visible')
 
     fireEvent.click(rendered.getByRole('button', { name: 'hide' }))
 
-    await waitFor(() => rendered.getByText('hidden'))
+    rendered.getByText('hidden')
 
     expect(cancelFn).toHaveBeenCalled()
   })
@@ -1821,12 +1837,13 @@ describe('useInfiniteQuery', () => {
 
     const rendered = render(<Page></Page>)
 
-    await waitFor(() =>
-      expect(rendered.getByText('data: custom client')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
 
   it('should work with React.use()', async () => {
+    vi.useRealTimers()
+
     const key = queryKey()
 
     const renderStream = createRenderStream({ snapshotDOM: true })

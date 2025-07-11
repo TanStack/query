@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, waitFor } from '@solidjs/testing-library'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
@@ -12,6 +12,14 @@ import {
 import { setActTimeout } from './utils'
 
 describe('useIsMutating', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
@@ -64,7 +72,9 @@ describe('useIsMutating', () => {
         <Page />
       </QueryClientProvider>
     ))
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 2, 1, 0]))
+
+    await vi.advanceTimersByTimeAsync(150)
+    expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
   })
 
   it('should filter correctly by mutationKey', async () => {
@@ -108,8 +118,10 @@ describe('useIsMutating', () => {
         <Page />
       </QueryClientProvider>
     ))
+
     // Unlike React, IsMutating Wont re-render twice with mutation2
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
+    await vi.advanceTimersByTimeAsync(100)
+    expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
   it('should filter correctly by predicate', async () => {
@@ -158,7 +170,8 @@ describe('useIsMutating', () => {
     ))
 
     // Again, No unnecessary re-renders like React
-    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
+    await vi.advanceTimersByTimeAsync(100)
+    expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
   it('should use provided custom queryClient', async () => {
@@ -188,9 +201,8 @@ describe('useIsMutating', () => {
 
     const rendered = render(() => <Page></Page>)
 
-    await waitFor(() =>
-      expect(rendered.getByText('mutating: 1')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
   })
 
   // eslint-disable-next-line vitest/expect-expect
@@ -251,7 +263,7 @@ describe('useIsMutating', () => {
     // Should not display the console error
     // "Warning: Can't perform a React state update on an unmounted component"
 
-    await sleep(20)
+    await vi.advanceTimersByTimeAsync(20)
     MutationCacheSpy.mockRestore()
   })
 })

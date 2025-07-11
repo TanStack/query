@@ -1,11 +1,19 @@
-import { describe, expect, test } from 'vitest'
-import { render, waitFor } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import BaseExample from './BaseExample.svelte'
 import CombineExample from './CombineExample.svelte'
 
 describe('createQueries', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('Render and wait for success', async () => {
     const rendered = render(BaseExample, {
       props: {
@@ -31,12 +39,12 @@ describe('createQueries', () => {
       },
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.getByText('Status 1: pending')).toBeInTheDocument()
       expect(rendered.getByText('Status 2: pending')).toBeInTheDocument()
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.getByText('Status 1: success')).toBeInTheDocument()
       expect(rendered.getByText('Status 2: success')).toBeInTheDocument()
     })
@@ -49,11 +57,11 @@ describe('createQueries', () => {
       },
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.getByText('isPending: true')).toBeInTheDocument()
     })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.getByText('Data: 1,2,3')).toBeInTheDocument()
     })
   })
