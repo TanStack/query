@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { fireEvent, render, waitFor } from '@solidjs/testing-library'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
 import { createEffect } from 'solid-js'
 import { sleep } from '@tanstack/query-test-utils'
 import {
@@ -10,6 +10,14 @@ import {
 } from '..'
 
 describe('useMutationState', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should return variables after calling mutate', async () => {
     const queryClient = new QueryClient()
     const variables: Array<Array<unknown>> = []
@@ -60,11 +68,11 @@ describe('useMutationState', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('data: null'))
+    await vi.waitFor(() => rendered.getByText('data: null'))
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await waitFor(() => rendered.getByText('data: data1'))
+    await vi.waitFor(() => rendered.getByText('data: data1'))
 
     expect(variables).toEqual([[], [1], []])
   })
