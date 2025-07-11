@@ -83,7 +83,8 @@ describe('useQueries', () => {
       </QueryClientProvider>
     ))
 
-    await vi.waitFor(() => rendered.getByText('data1: 1, data2: 2'))
+    await vi.advanceTimersByTimeAsync(100)
+    expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
