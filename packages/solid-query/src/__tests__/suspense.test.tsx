@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, waitFor } from '@solidjs/testing-library'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
 import {
   ErrorBoundary,
   Show,
@@ -19,6 +19,14 @@ import {
 import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
 
@@ -67,10 +75,10 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('data: 1'))
+    await vi.waitFor(() => rendered.getByText('data: 1'))
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await waitFor(() => rendered.getByText('data: 2'))
+    await vi.waitFor(() => rendered.getByText('data: 2'))
 
     expect(renders).toBe(4)
     expect(states.length).toBe(4)
@@ -115,7 +123,7 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('data: 1'))
+    await vi.waitFor(() => rendered.getByText('data: 1'))
 
     // eslint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
@@ -127,7 +135,7 @@ describe("useQuery's in Suspense mode", () => {
     })
 
     fireEvent.click(rendered.getByText('next'))
-    await waitFor(() => rendered.getByText('data: 2'))
+    await vi.waitFor(() => rendered.getByText('data: 2'))
 
     // eslint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 2 and in solid it is 4
@@ -161,7 +169,7 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('rendered'))
+    await vi.waitFor(() => rendered.getByText('rendered'))
 
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
@@ -205,7 +213,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(queryCache.find({ queryKey: key })).toBeFalsy()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
-    await waitFor(() => rendered.getByText('rendered'))
+    await vi.waitFor(() => rendered.getByText('rendered'))
 
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(1)
 
@@ -268,19 +276,21 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
 
-    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
+    await vi.waitFor(() =>
+      expect(rendered.getByText('retry')).toBeInTheDocument(),
+    )
 
     fireEvent.click(rendered.getByText('retry'))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered')).toBeInTheDocument(),
     )
   })
@@ -336,21 +346,25 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
-    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
+    await vi.waitFor(() =>
+      expect(rendered.getByText('retry')).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
-    await waitFor(() => expect(rendered.getByText('retry')).toBeInTheDocument())
+    await vi.waitFor(() =>
+      expect(rendered.getByText('retry')).toBeInTheDocument(),
+    )
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered')).toBeInTheDocument(),
     )
   })
@@ -402,26 +416,30 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('data: 1')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('fetching: false')).toBeInTheDocument(),
     )
-    await waitFor(() => expect(rendered.getByText('hide')).toBeInTheDocument())
+    await vi.waitFor(() =>
+      expect(rendered.getByText('hide')).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByText('hide'))
-    await waitFor(() => expect(rendered.getByText('show')).toBeInTheDocument())
+    await vi.waitFor(() =>
+      expect(rendered.getByText('show')).toBeInTheDocument(),
+    )
     fireEvent.click(rendered.getByText('show'))
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('fetching: true')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('data: 2')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('fetching: false')).toBeInTheDocument(),
     )
   })
@@ -467,17 +485,17 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText(`data: ${key1}`)).toBeInTheDocument(),
     )
     fireEvent.click(rendered.getByText('switch'))
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText(`data: ${key2}`)).toBeInTheDocument(),
     )
   })
@@ -530,10 +548,10 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
 
@@ -584,10 +602,10 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered')).toBeInTheDocument(),
     )
   })
@@ -640,10 +658,10 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
 
@@ -696,10 +714,10 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered')).toBeInTheDocument(),
     )
   })
@@ -739,10 +757,10 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     expect(queryFn).toHaveBeenCalledTimes(0)
-    await sleep(5)
+    await vi.advanceTimersByTimeAsync(5)
     fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(rendered.getByRole('heading').textContent).toBe('23')
     })
 
@@ -806,11 +824,11 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     // render suspense fallback (Loading...)
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
     // resolve promise -> render Page (rendered)
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered')).toBeInTheDocument(),
     )
 
@@ -819,7 +837,7 @@ describe("useQuery's in Suspense mode", () => {
     // reset query -> and throw error
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
 
@@ -876,11 +894,11 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     // render suspense fallback (Loading...)
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
     // resolve promise -> render Page (rendered)
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered')).toBeInTheDocument(),
     )
 
@@ -889,7 +907,7 @@ describe("useQuery's in Suspense mode", () => {
     // change query key
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
 
@@ -948,7 +966,7 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     // render empty data with 'rendered' when enabled is false
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('rendered')).toBeInTheDocument(),
     )
 
@@ -956,12 +974,12 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByLabelText('fail'))
 
     // render pending fallback
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('Loading...')).toBeInTheDocument(),
     )
 
     // render error boundary fallback (error boundary)
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(rendered.getByText('error boundary')).toBeInTheDocument(),
     )
 
@@ -1007,7 +1025,7 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() =>
+    await vi.waitFor(() =>
       expect(state).toMatchObject({
         data: 1,
         status: 'success',
