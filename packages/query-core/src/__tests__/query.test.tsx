@@ -759,12 +759,11 @@ describe('query', () => {
       queryFn,
     })
     await vi.advanceTimersByTimeAsync(10)
-
-    expect(updates).toEqual([
+    ;(expect(updates).toEqual([
       'updated', // type: 'fetch'
       'updated', // type: 'success'
     ]),
-      unsubscribe()
+      unsubscribe())
   })
 
   test('fetch should throw an error if the queryFn is not defined', async () => {
