@@ -14,15 +14,12 @@ describe('useIsFetching', () => {
   test('should update as queries start and stop fetching', async () => {
     const rendered = render(BaseExample)
 
-    await vi.waitFor(() =>
-      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
-    )
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /setReady/i }))
-    await vi.waitFor(() =>
-      expect(rendered.getByText('isFetching: 1')).toBeInTheDocument(),
-    )
-    await vi.waitFor(() =>
-      expect(rendered.getByText('isFetching: 0')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
   })
 })
