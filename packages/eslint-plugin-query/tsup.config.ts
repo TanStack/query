@@ -16,6 +16,11 @@ export default defineConfig([
 
       return
     },
+    esbuildPlugins: undefined,
   },
-  { ...legacyConfig({ entry: ['src/*.ts'] }), external: ['typescript'] },
+  {
+    ...legacyConfig({ entry: ['src/*.ts'] }),
+    external: ['typescript'],
+    esbuildPlugins: undefined,
+  },
 ])
