@@ -24,9 +24,8 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await vi.waitFor(() => {
-      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.queryByText('Status: success')).toBeInTheDocument()
 
     const states = get(statesStore)
 
@@ -116,9 +115,8 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await vi.waitFor(() => {
-      expect(rendered.queryByText('count: 1')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.queryByText('count: 1')).toBeInTheDocument()
 
     const states = get(statesStore)
 
