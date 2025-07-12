@@ -39,15 +39,13 @@ describe('createQueries', () => {
       },
     })
 
-    await vi.waitFor(() => {
-      expect(rendered.getByText('Status 1: pending')).toBeInTheDocument()
-      expect(rendered.getByText('Status 2: pending')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('Status 1: pending')).toBeInTheDocument()
+    expect(rendered.getByText('Status 2: pending')).toBeInTheDocument()
 
-    await vi.waitFor(() => {
-      expect(rendered.getByText('Status 1: success')).toBeInTheDocument()
-      expect(rendered.getByText('Status 2: success')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Status 1: success')).toBeInTheDocument()
+    expect(rendered.getByText('Status 2: success')).toBeInTheDocument()
   })
 
   test('Combine queries', async () => {
@@ -57,12 +55,10 @@ describe('createQueries', () => {
       },
     })
 
-    await vi.waitFor(() => {
-      expect(rendered.getByText('isPending: true')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('isPending: true')).toBeInTheDocument()
 
-    await vi.waitFor(() => {
-      expect(rendered.getByText('Data: 1,2,3')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Data: 1,2,3')).toBeInTheDocument()
   })
 })
