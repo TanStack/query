@@ -1,7 +1,10 @@
 // @ts-check
 
 import pluginSvelte from 'eslint-plugin-svelte'
-import rootConfig from './root.eslint.config.js'
+
+// @ts-ignore out of scope
+import rootConfig from '../../eslint.config.js'
+
 import svelteConfig from './svelte.config.js'
 
 export default [

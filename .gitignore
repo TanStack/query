@@ -49,3 +49,8 @@ temp
 
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+eslint.config.d.ts
+eslint.config.d.ts.map
+scripts/getTsupConfig.d.ts
+scripts/getTsupConfig.d.ts.map
