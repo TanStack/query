@@ -85,7 +85,7 @@ export class QueryObserver<
 
     this.bindMethods()
     this.setOptions(options)
-    
+
     if (!this.options.experimental_prefetchInRender) {
       this.#currentThenable.reject(
         new Error('experimental_prefetchInRender feature flag is not enabled'),
