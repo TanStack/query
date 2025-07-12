@@ -13,7 +13,6 @@ describe('useMutationState', () => {
 
   test('Run few mutation functions and check from useMutationState', async () => {
     const successMutationFn = vi.fn()
-
     const errorMutationFn = vi.fn().mockImplementation(() => {
       throw 'error'
     })
@@ -33,20 +32,16 @@ describe('useMutationState', () => {
     })
 
     fireEvent.click(rendered.getByTestId('success'))
-
-    await vi.waitFor(() => {
-      expect(successMutationFn).toHaveBeenCalledTimes(1)
-      expect(rendered.getByTestId('result').innerHTML).toEqual('["success"]')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(successMutationFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByTestId('result').innerHTML).toEqual('["success"]')
 
     fireEvent.click(rendered.getByTestId('error'))
-
-    await vi.waitFor(() => {
-      expect(errorMutationFn).toHaveBeenCalledTimes(1)
-      expect(rendered.getByTestId('result').innerHTML).toEqual(
-        '["success","error"]',
-      )
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(errorMutationFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByTestId('result').innerHTML).toEqual(
+      '["success","error"]',
+    )
   })
 
   test('Can select specific type of mutation ( i.e: error only )', async () => {
@@ -74,18 +69,14 @@ describe('useMutationState', () => {
     })
 
     fireEvent.click(rendered.getByTestId('success'))
-
-    await vi.waitFor(() => {
-      expect(successMutationFn).toHaveBeenCalledTimes(1)
-      expect(rendered.getByTestId('result').innerHTML).toEqual('[]')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(successMutationFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByTestId('result').innerHTML).toEqual('[]')
 
     fireEvent.click(rendered.getByTestId('error'))
-
-    await vi.waitFor(() => {
-      expect(errorMutationFn).toHaveBeenCalledTimes(1)
-      expect(rendered.getByTestId('result').innerHTML).toEqual('["error"]')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(errorMutationFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByTestId('result').innerHTML).toEqual('["error"]')
   })
 
   test('Can select specific mutation using mutation key', async () => {
@@ -113,17 +104,13 @@ describe('useMutationState', () => {
     })
 
     fireEvent.click(rendered.getByTestId('success'))
-
-    await vi.waitFor(() => {
-      expect(successMutationFn).toHaveBeenCalledTimes(1)
-      expect(rendered.getByTestId('result').innerHTML).toEqual('["success"]')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(successMutationFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByTestId('result').innerHTML).toEqual('["success"]')
 
     fireEvent.click(rendered.getByTestId('error'))
-
-    await vi.waitFor(() => {
-      expect(errorMutationFn).toHaveBeenCalledTimes(1)
-      expect(rendered.getByTestId('result').innerHTML).toEqual('["success"]')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(errorMutationFn).toHaveBeenCalledTimes(1)
+    expect(rendered.getByTestId('result').innerHTML).toEqual('["success"]')
   })
 })
