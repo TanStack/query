@@ -38,9 +38,8 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.waitFor(() => {
-      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.queryByText('Status: success')).toBeInTheDocument()
 
     const states = get(statesStore)
 
@@ -106,7 +105,7 @@ describe('createQuery', () => {
 
     const options = {
       queryKey: ['test'],
-      queryFn: async () => Promise.reject(new Error('Rejected')),
+      queryFn: () => Promise.reject(new Error('Rejected')),
       retry: 1,
       retryDelay: 1,
     }
@@ -119,9 +118,8 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Status: error')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(2)
+    expect(rendered.getByText('Status: error')).toBeInTheDocument()
 
     const states = get(statesStore)
 
@@ -228,9 +226,8 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.waitFor(() => {
-      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.queryByText('Status: success')).toBeInTheDocument()
   })
 
   test('Accept a derived store for options', async () => {
@@ -254,9 +251,8 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.waitFor(() => {
-      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.queryByText('Status: success')).toBeInTheDocument()
   })
 
   test('Ensure reactivity when queryClient defaults are set', async () => {
@@ -282,24 +278,21 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.waitFor(() => {
-      expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
-      expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
+    expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
 
     writableStore.set(2)
 
-    await vi.waitFor(() => {
-      expect(rendered.queryByText('Data: 1')).not.toBeInTheDocument()
-      expect(rendered.queryByText('Data: 2')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.queryByText('Data: 1')).not.toBeInTheDocument()
+    expect(rendered.queryByText('Data: 2')).toBeInTheDocument()
 
     writableStore.set(1)
 
-    await vi.waitFor(() => {
-      expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
-      expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
+    expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
   })
 
   test('Keep previous data when placeholderData is set', async () => {
@@ -312,15 +305,12 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Data: 0')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Data: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
-
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Data: 1')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Data: 1')).toBeInTheDocument()
 
     const states = get(statesStore)
 
@@ -368,20 +358,17 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Data: 0')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Data: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Increment/i }))
-
-    await vi.waitFor(() => {
-      expect(rendered.getByText('Count: 1')).toBeInTheDocument()
-      expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('Count: 1')).toBeInTheDocument()
+    expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
 
     const states = get(statesStore)
 
-    expect(states).toHaveLength(3)
+    expect(states).toHaveLength(4)
 
     // Fetch query
     expect(states[0]).toMatchObject({
@@ -397,8 +384,15 @@ describe('createQuery', () => {
       isSuccess: true,
     })
 
-    // Switch to disabled query
+    // Switch to query disable
     expect(states[2]).toMatchObject({
+      data: undefined,
+      isFetching: false,
+      isSuccess: false,
+    })
+
+    // Fetched disabled query
+    expect(states[3]).toMatchObject({
       data: undefined,
       isFetching: false,
       isSuccess: false,
@@ -414,17 +408,13 @@ describe('createQuery', () => {
       },
     })
 
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Data: 1')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Data: 1')).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /Remove/i }))
-
-    await vi.advanceTimersByTimeAsync(5)
-
     fireEvent.click(rendered.getByRole('button', { name: /Refetch/i }))
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Data: 2')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Data: 2')).toBeInTheDocument()
 
     const states = get(statesStore)
 
