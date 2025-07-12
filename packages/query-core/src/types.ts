@@ -260,11 +260,13 @@ export interface QueryOptions<
   /**
    * Set this to `false` to disable structural sharing between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
+   *
+   * When used with `select`, this function operates on the selected data type.
    * Defaults to `true`.
    */
   structuralSharing?:
     | boolean
-    | ((oldData: unknown | undefined, newData: unknown) => unknown)
+    | ((oldData: TData | undefined, newData: TData) => TData)
   _defaulted?: boolean
   /**
    * Additional payload to be stored on each query.

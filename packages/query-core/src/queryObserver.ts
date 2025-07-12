@@ -525,7 +525,11 @@ export class QueryObserver<
         try {
           this.#selectFn = options.select
           data = options.select(data as any)
+
+          // Apply structural sharing on selected data
+          // Directly use replaceData which correctly applies structuralSharing
           data = replaceData(prevResult?.data, data, options)
+
           this.#selectResult = data
           this.#selectError = null
         } catch (selectError) {
