@@ -21,9 +21,8 @@ describe('QueryClientProvider', () => {
       },
     })
 
-    await vi.waitFor(() =>
-      expect(rendered.getByText('Data: test')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Data: test')).toBeInTheDocument()
 
     expect(queryCache.find({ queryKey: ['hello'] })).toBeDefined()
   })
