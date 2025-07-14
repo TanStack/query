@@ -18,13 +18,12 @@ describe('queryCache', () => {
   })
 
   describe('subscribe', () => {
-    test('should pass the correct query', async () => {
+    test('should pass the correct query', () => {
       const key = queryKey()
       const subscriber = vi.fn()
       const unsubscribe = queryCache.subscribe(subscriber)
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find({ queryKey: key })
-      await vi.advanceTimersByTimeAsync(0)
       expect(subscriber).toHaveBeenCalledWith({ query, type: 'added' })
       unsubscribe()
     })
@@ -88,8 +87,8 @@ describe('queryCache', () => {
         queryKey: key,
         queryFn: () => sleep(100).then(() => 'data'),
       })
-      const query = queryCache.find({ queryKey: key })
       await vi.advanceTimersByTimeAsync(100)
+      const query = queryCache.find({ queryKey: key })
       expect(callback).toHaveBeenCalledWith({ query, type: 'added' })
     })
 
@@ -130,13 +129,11 @@ describe('queryCache', () => {
         queryKey: ['key1'],
         queryFn: () => sleep(100).then(() => 'data1'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       expect(testCache.findAll().length).toBe(1)
       testClient.prefetchQuery({
         queryKey: ['key2'],
         queryFn: () => sleep(100).then(() => 'data2'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       expect(testCache.findAll().length).toBe(2)
       testClient.prefetchQuery({
         queryKey: ['key3'],
@@ -183,17 +180,14 @@ describe('queryCache', () => {
         queryKey: key1,
         queryFn: () => sleep(100).then(() => 'data1'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       queryClient.prefetchQuery({
         queryKey: key2,
         queryFn: () => sleep(100).then(() => 'data2'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       queryClient.prefetchQuery({
         queryKey: [{ a: 'a', b: 'b' }],
         queryFn: () => sleep(100).then(() => 'data3'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       queryClient.prefetchQuery({
         queryKey: ['posts', 1],
         queryFn: () => sleep(100).then(() => 'data4'),
