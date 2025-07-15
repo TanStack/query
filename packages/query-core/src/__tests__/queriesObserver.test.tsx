@@ -30,8 +30,11 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-    await vi.advanceTimersByTimeAsync(1)
+
+    await vi.advanceTimersByTimeAsync(0)
+
     unsubscribe()
+
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
@@ -49,10 +52,11 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await vi.advanceTimersByTimeAsync(1)
+
+    await vi.advanceTimersByTimeAsync(0)
     queryClient.setQueryData(key2, 3)
-    await vi.advanceTimersByTimeAsync(1)
     unsubscribe()
+
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -94,10 +98,12 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await vi.advanceTimersByTimeAsync(1)
+
+    await vi.advanceTimersByTimeAsync(0)
     observer.setQueries([{ queryKey: key2, queryFn: queryFn2 }])
-    await vi.advanceTimersByTimeAsync(1)
+
     const queryCache = queryClient.getQueryCache()
+
     expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeDefined()
     unsubscribe()
@@ -141,13 +147,15 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await vi.advanceTimersByTimeAsync(1)
+
+    await vi.advanceTimersByTimeAsync(0)
     observer.setQueries([
       { queryKey: key2, queryFn: queryFn2 },
       { queryKey: key1, queryFn: queryFn1 },
     ])
-    await vi.advanceTimersByTimeAsync(1)
+
     unsubscribe()
+
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -189,13 +197,15 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await vi.advanceTimersByTimeAsync(1)
+
+    await vi.advanceTimersByTimeAsync(0)
     observer.setQueries([
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    await vi.advanceTimersByTimeAsync(1)
+
     unsubscribe()
+
     expect(results.length).toBe(5)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -219,7 +229,7 @@ describe('queriesObserver', () => {
     ])
   })
 
-  test('should trigger all fetches when subscribed', async () => {
+  test('should trigger all fetches when subscribed', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const queryFn1 = vi.fn().mockReturnValue(1)
@@ -228,9 +238,11 @@ describe('queriesObserver', () => {
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
+
     const unsubscribe = observer.subscribe(() => undefined)
-    await vi.advanceTimersByTimeAsync(1)
+
     unsubscribe()
+
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(1)
   })
@@ -254,7 +266,9 @@ describe('queriesObserver', () => {
     const unsubscribe2 = observer.subscribe(subscription2Handler)
 
     unsubscribe1()
+
     await vi.advanceTimersByTimeAsync(20)
+
     // 1 call: pending
     expect(subscription1Handler).toBeCalledTimes(1)
     // 1 call: success
@@ -277,6 +291,7 @@ describe('queriesObserver', () => {
     ])
 
     const results: Array<Array<QueryObserverResult>> = []
+
     results.push(
       observer.getOptimisticResult(
         [
@@ -292,7 +307,8 @@ describe('queriesObserver', () => {
       results.push(result)
     })
 
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
+
     unsubscribe()
 
     expect(results.length).toBe(6)
