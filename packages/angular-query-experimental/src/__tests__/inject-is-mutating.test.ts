@@ -28,24 +28,26 @@ describe('injectIsMutating', () => {
     vi.useRealTimers()
   })
 
-  test('should properly return isMutating state', () => {
-    TestBed.runInInjectionContext(() => {
-      const isMutating = injectIsMutating()
-      const mutation = injectMutation(() => ({
+  test('should properly return isMutating state', async () => {
+    const [mutation, isMutating] = TestBed.runInInjectionContext(() => [
+      injectMutation(() => ({
         mutationKey: ['isMutating1'],
-        mutationFn: (params: { par1: string }) => sleep(0).then(() => params),
-      }))
+        mutationFn: (params: { par1: string }) => sleep(10).then(() => params),
+      })),
+      injectIsMutating(),
+    ])
 
-      expect(isMutating()).toBe(0)
+    expect(isMutating()).toBe(0)
 
-      mutation.mutate({
-        par1: 'par1',
-      })
-
-      vi.advanceTimersByTime(1)
-
-      expect(isMutating()).toBe(1)
+    mutation.mutate({
+      par1: 'par1',
     })
+
+    expect(isMutating()).toBe(0)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isMutating()).toBe(1)
+    await vi.advanceTimersByTimeAsync(11)
+    expect(isMutating()).toBe(0)
   })
 
   describe('injection context', () => {
