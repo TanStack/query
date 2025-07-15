@@ -126,11 +126,12 @@ describe('injectMutationState', () => {
         return [
           injectMutation(() => ({
             mutationKey: mutationKey1,
-            mutationFn: () => Promise.resolve('myValue'),
+            mutationFn: () => sleep(10).then(() => Promise.resolve('myValue')),
           })),
           injectMutation(() => ({
             mutationKey: mutationKey1,
-            mutationFn: () => Promise.reject('myValue2'),
+            mutationFn: () =>
+              sleep(10).then(() => Promise.reject(new Error('myValue2'))),
           })),
         ]
       })
@@ -160,7 +161,7 @@ describe('injectMutationState', () => {
       const fixture = TestBed.createComponent(FakeComponent)
       const { debugElement } = fixture
       setFixtureSignalInputs(fixture, { name: fakeName })
-      vi.advanceTimersByTime(0.1)
+      await vi.advanceTimersByTimeAsync(0)
 
       let spans = debugElement
         .queryAll(By.css('span'))
@@ -168,7 +169,7 @@ describe('injectMutationState', () => {
 
       expect(spans).toEqual(['pending', 'pending'])
 
-      await vi.runAllTimersAsync()
+      await vi.advanceTimersByTimeAsync(11)
       fixture.detectChanges()
 
       spans = debugElement
