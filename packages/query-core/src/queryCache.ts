@@ -168,16 +168,12 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
     filters: QueryFilters,
   ): Query<TQueryFnData, TError, TData> | undefined
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
     queryKey: QueryKey,
     filters?: OmitKeyof<QueryFilters, 'queryKey'>,
   ): Query<TQueryFnData, TError, TData> | undefined
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
     arg1: QueryKey | QueryFilters,
     arg2?: OmitKeyof<QueryFilters, 'queryKey'>,
@@ -192,23 +188,17 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   findAll(filters?: QueryFilters): Query[]
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   findAll(
     queryKey?: QueryKey,
     filters?: OmitKeyof<QueryFilters, 'queryKey'>,
   ): Query[]
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   findAll(
     arg1?: QueryKey | QueryFilters,
     arg2?: OmitKeyof<QueryFilters, 'queryKey'>,
   ): Query[]
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   findAll(
     arg1?: QueryKey | QueryFilters,
     arg2?: OmitKeyof<QueryFilters, 'queryKey'>,

@@ -24,6 +24,7 @@ export function useInfiniteQuery<
     TQueryKey
   >,
 ): UseInfiniteQueryResult<TData, TError>
+/** @deprecated This function overload will be removed in the next major version. */
 export function useInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -42,6 +43,7 @@ export function useInfiniteQuery<
     'queryKey'
   >,
 ): UseInfiniteQueryResult<TData, TError>
+/** @deprecated This function overload will be removed in the next major version. */
 export function useInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
