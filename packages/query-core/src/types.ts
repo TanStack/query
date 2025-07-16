@@ -95,9 +95,7 @@ export interface QueryOptions<
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
   cacheTime?: number
-  /**
-   * @deprecated This callback will be removed in the next major version. You can achieve the same functionality by passing a function to `structuralSharing` instead.
-   */
+  /** @deprecated This callback will be removed in the next major version. You can achieve the same functionality by passing a function to `structuralSharing` instead. */
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
   queryHash?: string
@@ -427,9 +425,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   refetch: <TPageData>(
     options?: RefetchOptions & RefetchQueryFilters<TPageData>,
   ) => Promise<QueryObserverResult<TData, TError>>
-  /**
-   * @deprecated This method will be removed in the next major version. Use `QueryClient.removeQueries` instead.
-   */
+  /** @deprecated This method will be removed in the next major version. Use `QueryClient.removeQueries` instead. */
   remove: () => void
   status: QueryStatus
   fetchStatus: FetchStatus
@@ -669,9 +665,7 @@ export interface MutationObserverBaseResult<
 > extends MutationState<TData, TError, TVariables, TContext> {
   isError: boolean
   isIdle: boolean
-  /**
-   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
-   */
+  /** @deprecated This property will be removed in the next major version. Use `isPending` instead. */
   isLoading: boolean
   isPending: boolean
   isSuccess: boolean
@@ -689,9 +683,7 @@ export interface MutationObserverIdleResult<
   error: null
   isError: false
   isIdle: true
-  /**
-   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
-   */
+  /** @deprecated This property will be removed in the next major version. Use `isPending` instead. */
   isLoading: false
   isPending: false
   isSuccess: false
@@ -708,9 +700,7 @@ export interface MutationObserverLoadingResult<
   error: null
   isError: false
   isIdle: false
-  /**
-   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
-   */
+  /** @deprecated This property will be removed in the next major version. Use `isPending` instead. */
   isLoading: true
   isPending: true
   isSuccess: false
@@ -727,9 +717,7 @@ export interface MutationObserverErrorResult<
   error: TError
   isError: true
   isIdle: false
-  /**
-   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
-   */
+  /** @deprecated This property will be removed in the next major version. Use `isPending` instead. */
   isLoading: false
   isPending: false
   isSuccess: false
@@ -746,9 +734,7 @@ export interface MutationObserverSuccessResult<
   error: null
   isError: false
   isIdle: false
-  /**
-   * @deprecated This property will be removed in the next major version. Use `isPending` instead.
-   */
+  /** @deprecated This property will be removed in the next major version. Use `isPending` instead. */
   isLoading: false
   isPending: false
   isSuccess: true

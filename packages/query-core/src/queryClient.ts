@@ -113,16 +113,12 @@ export class QueryClient {
   }
 
   isFetching(filters?: QueryFilters): number
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   isFetching(
     queryKey?: QueryKey,
     filters?: OmitKeyof<QueryFilters, 'queryKey'>,
   ): number
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
     filters.fetchStatus = 'fetching'
@@ -136,16 +132,12 @@ export class QueryClient {
   getQueryData<TQueryFnData = unknown>(
     queryKey: QueryKey,
   ): TQueryFnData | undefined
-  /**
-   * @deprecated This method will accept only queryKey in the next major version.
-   */
+  /** @deprecated This method will accept only queryKey in the next major version. */
   getQueryData<TQueryFnData = unknown>(
     queryKey: QueryKey,
     filters: OmitKeyof<QueryFilters, 'queryKey'>,
   ): TQueryFnData | undefined
-  /**
-   * @deprecated This method will accept only queryKey in the next major version.
-   */
+  /** @deprecated This method will accept only queryKey in the next major version. */
   getQueryData<TQueryFnData = unknown>(
     queryKey: QueryKey,
     filters?: OmitKeyof<QueryFilters, 'queryKey'>,
@@ -164,9 +156,7 @@ export class QueryClient {
       'queryKey'
     >,
   ): Promise<TData>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   ensureQueryData<
     TQueryFnData = unknown,
     TError = unknown,
@@ -179,9 +169,7 @@ export class QueryClient {
       'queryKey'
     >,
   ): Promise<TData>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   ensureQueryData<
     TQueryFnData = unknown,
     TError = unknown,
@@ -195,9 +183,7 @@ export class QueryClient {
       'queryKey' | 'queryFn'
     >,
   ): Promise<TData>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   ensureQueryData<
     TQueryFnData,
     TError,
@@ -226,15 +212,11 @@ export class QueryClient {
   getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
   ): [QueryKey, TQueryFnData | undefined][]
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   getQueriesData<TQueryFnData = unknown>(
     queryKey: QueryKey,
   ): [QueryKey, TQueryFnData | undefined][]
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   getQueriesData<TQueryFnData = unknown>(
     queryKeyOrFilters: QueryKey | QueryFilters,
   ): [QueryKey, TQueryFnData | undefined][] {
@@ -271,17 +253,13 @@ export class QueryClient {
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
   ): [QueryKey, TQueryFnData | undefined][]
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   setQueriesData<TQueryFnData>(
     queryKey: QueryKey,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
   ): [QueryKey, TQueryFnData | undefined][]
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   setQueriesData<TQueryFnData>(
     queryKeyOrFilters: QueryKey | QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
@@ -299,25 +277,19 @@ export class QueryClient {
 
   getQueryState<TQueryFnData = unknown, TError = undefined>(
     queryKey: QueryKey,
-    /**
-     * @deprecated This filters will be removed in the next major version.
-     */
+    /** @deprecated This filters will be removed in the next major version. */
     filters?: OmitKeyof<QueryFilters, 'queryKey'>,
   ): QueryState<TQueryFnData, TError> | undefined {
     return this.queryCache.find<TQueryFnData, TError>(queryKey, filters)?.state
   }
 
   removeQueries(filters?: QueryFilters): void
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   removeQueries(
     queryKey?: QueryKey,
     filters?: OmitKeyof<QueryFilters, 'queryKey'>,
   ): void
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   removeQueries(
     arg1?: QueryKey | QueryFilters,
     arg2?: OmitKeyof<QueryFilters, 'queryKey'>,
@@ -335,17 +307,13 @@ export class QueryClient {
     filters?: ResetQueryFilters<TPageData>,
     options?: ResetOptions,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   resetQueries<TPageData = unknown>(
     queryKey?: QueryKey,
     filters?: OmitKeyof<ResetQueryFilters<TPageData>, 'queryKey'>,
     options?: ResetOptions,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   resetQueries(
     arg1?: QueryKey | ResetQueryFilters,
     arg2?: OmitKeyof<ResetQueryFilters, 'queryKey'> | ResetOptions,
@@ -368,17 +336,13 @@ export class QueryClient {
   }
 
   cancelQueries(filters?: QueryFilters, options?: CancelOptions): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   cancelQueries(
     queryKey?: QueryKey,
     filters?: OmitKeyof<QueryFilters, 'queryKey'>,
     options?: CancelOptions,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   cancelQueries(
     arg1?: QueryKey | QueryFilters,
     arg2?: OmitKeyof<QueryFilters, 'queryKey'> | CancelOptions,
@@ -403,17 +367,13 @@ export class QueryClient {
     filters?: InvalidateQueryFilters<TPageData>,
     options?: InvalidateOptions,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   invalidateQueries<TPageData = unknown>(
     queryKey?: QueryKey,
     filters?: OmitKeyof<InvalidateQueryFilters<TPageData>, 'queryKey'>,
     options?: InvalidateOptions,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   invalidateQueries(
     arg1?: QueryKey | InvalidateQueryFilters,
     arg2?: OmitKeyof<InvalidateQueryFilters, 'queryKey'> | InvalidateOptions,
@@ -441,17 +401,13 @@ export class QueryClient {
     filters?: RefetchQueryFilters<TPageData>,
     options?: RefetchOptions,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   refetchQueries<TPageData = unknown>(
     queryKey?: QueryKey,
     filters?: OmitKeyof<RefetchQueryFilters<TPageData>, 'queryKey'>,
     options?: RefetchOptions,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   refetchQueries(
     arg1?: QueryKey | RefetchQueryFilters,
     arg2?: OmitKeyof<RefetchQueryFilters, 'queryKey'> | RefetchOptions,
@@ -489,9 +445,7 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   fetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -504,9 +458,7 @@ export class QueryClient {
       'queryKey'
     >,
   ): Promise<TData>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   fetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -520,9 +472,7 @@ export class QueryClient {
       'queryKey' | 'queryFn'
     >,
   ): Promise<TData>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   fetchQuery<
     TQueryFnData,
     TError,
@@ -564,9 +514,7 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -579,9 +527,7 @@ export class QueryClient {
       'queryKey'
     >,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -595,9 +541,7 @@ export class QueryClient {
       'queryKey' | 'queryFn'
     >,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -629,9 +573,7 @@ export class QueryClient {
   >(
     options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<InfiniteData<TData>>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -644,9 +586,7 @@ export class QueryClient {
       'queryKey'
     >,
   ): Promise<InfiniteData<TData>>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -660,9 +600,7 @@ export class QueryClient {
       'queryKey' | 'queryFn'
     >,
   ): Promise<InfiniteData<TData>>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   fetchInfiniteQuery<
     TQueryFnData,
     TError,
@@ -700,9 +638,7 @@ export class QueryClient {
   >(
     options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -715,9 +651,7 @@ export class QueryClient {
       'queryKey'
     >,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
@@ -731,9 +665,7 @@ export class QueryClient {
       'queryKey' | 'queryFn'
     >,
   ): Promise<void>
-  /**
-   * @deprecated This method should be used with only one object argument.
-   */
+  /** @deprecated This method should be used with only one object argument. */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError,
