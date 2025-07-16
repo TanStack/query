@@ -1,6 +1,10 @@
 import { useInfiniteQuery } from './useInfiniteQuery'
-import type { WithRequired } from './../../query-core/src/types'
-import type { InfiniteData, OmitKeyof, QueryKey } from '@tanstack/query-core'
+import type {
+  InfiniteData,
+  OmitKeyof,
+  QueryKey,
+  WithRequired,
+} from '@tanstack/query-core'
 import type { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
 
 export interface UseSuspenseInfiniteQueryResult<

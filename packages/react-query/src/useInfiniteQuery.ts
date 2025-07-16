@@ -25,7 +25,7 @@ export function useInfiniteQuery<
   >,
 ): UseInfiniteQueryResult<TData, TError>
 /**
- * @deprecated  This function overload will be removed in the next major version.
+ * @deprecated This function overload will be removed in the next major version.
  */
 export function useInfiniteQuery<
   TQueryFnData = unknown,
@@ -46,7 +46,7 @@ export function useInfiniteQuery<
   >,
 ): UseInfiniteQueryResult<TData, TError>
 /**
- * @deprecated  This function overload will be removed in the next major version.
+ * @deprecated This function overload will be removed in the next major version.
  */
 export function useInfiniteQuery<
   TQueryFnData = unknown,
