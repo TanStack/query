@@ -126,7 +126,7 @@ describe('injectMutationState', () => {
         return [
           injectMutation(() => ({
             mutationKey: mutationKey1,
-            mutationFn: () => sleep(10).then(() => Promise.resolve('myValue')),
+            mutationFn: () => sleep(10).then(() => 'myValue'),
           })),
           injectMutation(() => ({
             mutationKey: mutationKey1,
