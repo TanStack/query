@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { queryKey } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
   QueryClient,
@@ -56,11 +56,18 @@ describe('Server Side Rendering', () => {
 
   it('should add prefetched data to cache', async () => {
     const key = queryKey()
-    const fetchFn = () => Promise.resolve('data')
-    const data = await queryClient.fetchQuery({
+
+    const promise = queryClient.fetchQuery({
       queryKey: key,
-      queryFn: fetchFn,
+      queryFn: async () => {
+        await sleep(10)
+        return 'data'
+      },
     })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const data = await promise
+
     expect(data).toBe('data')
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
     queryCache.clear()
@@ -69,7 +76,7 @@ describe('Server Side Rendering', () => {
   it('should return existing data from the cache', async () => {
     const key = queryKey()
     const queryFn = vi.fn(async () => {
-      await vi.advanceTimersByTimeAsync(10)
+      await sleep(10)
       return 'data'
     })
 
@@ -85,7 +92,8 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>
@@ -132,7 +140,7 @@ describe('Server Side Rendering', () => {
   it('useInfiniteQuery should return the correct state', async () => {
     const key = queryKey()
     const queryFn = vi.fn(async () => {
-      await vi.advanceTimersByTimeAsync(5)
+      await sleep(5)
       return 'page 1'
     })
 
@@ -148,11 +156,12 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    await queryClient.prefetchInfiniteQuery({
+    queryClient.prefetchInfiniteQuery({
       queryKey: key,
       queryFn,
       initialPageParam: 0,
     })
+    await vi.advanceTimersByTimeAsync(5)
 
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>
