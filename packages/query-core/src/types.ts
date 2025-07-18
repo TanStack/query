@@ -1079,8 +1079,9 @@ export type MutationKey = Register extends {
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
-export type MutationScope = {
-  id: string
+export type MutationScope<TVariables = unknown> = {
+  id?: string
+  function?: (variables: TVariables) => string
 }
 
 export type MutationMeta = Register extends {
@@ -1128,7 +1129,7 @@ export interface MutationOptions<
   gcTime?: number
   _defaulted?: boolean
   meta?: MutationMeta
-  scope?: MutationScope
+  scope?: MutationScope<TVariables>
 }
 
 export interface MutationObserverOptions<

@@ -116,9 +116,12 @@ export class MutationObserver<
 
     this.#currentMutation?.removeObserver(this)
 
+    const state = getDefaultState<TData, TError, TVariables, TContext>()
+    state.variables = variables;
+
     this.#currentMutation = this.#client
       .getMutationCache()
-      .build(this.#client, this.options)
+      .build(this.#client, this.options, state)
 
     this.#currentMutation.addObserver(this)
 

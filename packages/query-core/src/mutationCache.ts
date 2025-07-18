@@ -230,5 +230,8 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 }
 
 function scopeFor(mutation: Mutation<any, any, any, any>) {
-  return mutation.options.scope?.id
+  if (mutation.options.scope?.id) {
+    return mutation.options.scope.id
+  }
+  return mutation.options.scope?.function?.(mutation.state.variables);
 }
