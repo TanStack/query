@@ -224,6 +224,8 @@ describe('useIsFetching', () => {
     const key = queryKey()
 
     function Page() {
+      const isFetching = useIsFetching({}, queryClient)
+
       useQuery(
         {
           queryKey: key,
@@ -234,8 +236,6 @@ describe('useIsFetching', () => {
         },
         queryClient,
       )
-
-      const isFetching = useIsFetching({}, queryClient)
 
       return (
         <div>
