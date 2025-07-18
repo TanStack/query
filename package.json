@@ -3,7 +3,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git"
+    "url": "https://github.com/jbojcic1/query.git"
   },
   "packageManager": "pnpm@10.7.0",
   "type": "module",
