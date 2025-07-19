@@ -763,8 +763,8 @@ describe('query', () => {
     expect(updates).toEqual([
       'updated', // type: 'fetch'
       'updated', // type: 'success'
-    ]),
-      unsubscribe()
+    ])
+    unsubscribe()
   })
 
   test('fetch should throw an error if the queryFn is not defined', async () => {
