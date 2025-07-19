@@ -71,7 +71,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam }) => Number(pageParam),
+        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 0,
       })
@@ -81,7 +81,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(11)
 
     expect(states.length).toBe(2)
     expect(states[0]).toEqual({
