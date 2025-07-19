@@ -1233,14 +1233,11 @@ describe('useQueries', () => {
       const { isLoading } = useQueries({
         queries: ids.map((id) => ({
           queryKey: [key, id],
-          queryFn: async () => {
-            if (id === 2) {
-              await sleep(10)
-              return Promise.reject(new Error('FAILURE'))
-            }
-            await sleep(10)
-            return Promise.resolve({ id, title: `Post ${id}` })
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (id === 2) throw new Error('FAILURE')
+              return { id, title: `Post ${id}` }
+            }),
           retry: false,
         })),
         combine: (results) => {
