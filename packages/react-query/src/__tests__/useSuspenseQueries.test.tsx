@@ -311,7 +311,7 @@ describe('useSuspenseQueries 2', () => {
 
       const { data } = useSuspenseQuery({
         queryKey: [id],
-        queryFn: () => Promise.resolve(`Data ${id}`),
+        queryFn: () => sleep(10).then(() => `Data ${id}`),
       })
 
       // defensive guard here
@@ -335,7 +335,7 @@ describe('useSuspenseQueries 2', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(0))
+    await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('Data 0')).toBeInTheDocument()
 
     // go offline
@@ -348,7 +348,7 @@ describe('useSuspenseQueries 2', () => {
     document.dispatchEvent(new CustomEvent('online'))
 
     fireEvent.click(rendered.getByText('fetch'))
-    await act(() => vi.advanceTimersByTimeAsync(0))
+    await act(() => vi.advanceTimersByTimeAsync(10))
     // query should resume
     expect(rendered.getByText('Data 1')).toBeInTheDocument()
   })
@@ -363,15 +363,11 @@ describe('useSuspenseQueries 2', () => {
       const [fail, setFail] = React.useState(false)
       const { data } = useSuspenseQuery({
         queryKey: [key, fail],
-        queryFn: async () => {
-          await sleep(10)
-
-          if (fail) {
-            throw new Error('Suspense Error Bingo')
-          } else {
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (fail) throw new Error('Suspense Error Bingo')
             return 'data'
-          }
-        },
+          }),
         retry: 0,
       })
 
@@ -413,10 +409,7 @@ describe('useSuspenseQueries 2', () => {
       const [isPending, startTransition] = React.useTransition()
       const { data } = useSuspenseQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return 'data' + count
-        },
+        queryFn: async () => sleep(10).then(() => 'data' + count),
       })
 
       return (
@@ -514,10 +507,7 @@ describe('useSuspenseQueries 2', () => {
       const [isPending, startTransition] = React.useTransition()
       const { data } = useSuspenseQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return 'data' + count
-        },
+        queryFn: async () => sleep(10).then(() => 'data' + count),
       })
 
       return (
@@ -557,8 +547,9 @@ describe('useSuspenseQueries 2', () => {
     function Page() {
       useSuspenseQuery({
         queryKey: key,
-        queryFn: () => {
+        queryFn: async () => {
           count++
+          await sleep(10)
           return Promise.reject(new Error('Query failed'))
         },
         gcTime: 0,
@@ -584,7 +575,7 @@ describe('useSuspenseQueries 2', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await act(() => vi.advanceTimersByTimeAsync(0))
+    await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('There was an error!')).toBeInTheDocument()
     expect(count).toBe(1)
     consoleMock.mockRestore()
@@ -613,10 +604,7 @@ describe('useSuspenseQueries 2', () => {
       function Component() {
         const { data } = useSuspenseQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(3000)
-            return 'data'
-          },
+          queryFn: async () => sleep(3000).then(() => 'data'),
           gcTime: 1000,
         })
 
