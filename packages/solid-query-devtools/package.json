@@ -66,7 +66,7 @@
   "devDependencies": {
     "@tanstack/solid-query": "workspace:*",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "^1.9.5",
+    "solid-js": "^1.9.7",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.11.6"
   },
