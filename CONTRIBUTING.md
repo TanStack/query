@@ -14,6 +14,8 @@ If you are here to suggest a feature, first create an issue if it does not alrea
 
 ## Development
 
+_TanStack/query uses **symlink-based** configuration files. For smooth development in a local environment, we recommend developing in an environment that supports symlinks(ex: Linux, macOS, Windows Subsystem for Linux / WSL)._
+
 If you have been assigned to fix an issue or develop a new feature, please follow these steps to get started:
 
 - Fork this repository.

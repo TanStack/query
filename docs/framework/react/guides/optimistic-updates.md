@@ -60,7 +60,7 @@ If the mutation errors, the item will also disappear. But we could continue to s
 
 ### If the mutation and the query don't live in the same component
 
-This approach works very well if the mutation and the query live in the same component, However, you also get access to all mutations in other components via the dedicated `useMutationState` hook. It is best combined with a `mutationKey`:
+This approach works very well if the mutation and the query live in the same component. However, you also get access to all mutations in other components via the dedicated `useMutationState` hook. It is best combined with a `mutationKey`:
 
 [//]: # 'ExampleUI4'
 

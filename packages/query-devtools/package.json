@@ -73,9 +73,9 @@
     "clsx": "^2.1.1",
     "goober": "^2.1.16",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "^1.9.5",
+    "solid-js": "^1.9.7",
     "solid-transition-group": "^0.2.3",
-    "superjson": "^2.2.1",
+    "superjson": "^2.2.2",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.11.6"
   }
