@@ -53,7 +53,11 @@ function Todos() {
 
   return (
     <div>
-      <ul>{query.data?.map((todo) => <li key={todo.id}>{todo.title}</li>)}</ul>
+      <ul>
+        {query.data?.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
 
       <button
         onClick={() => {
