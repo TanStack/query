@@ -71,7 +71,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 0,
       })
@@ -120,7 +120,6 @@ describe('useInfiniteQuery', () => {
       fetchStatus: 'fetching',
       promise: expect.any(Promise),
     })
-
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
@@ -169,10 +168,8 @@ describe('useInfiniteQuery', () => {
         queryKey: key,
         queryFn: ({ pageParam }) =>
           sleep(10).then(() => {
-            if (pageParam === 2) {
-              throw new Error('error')
-            }
-            return Number(pageParam)
+            if (pageParam === 2) throw new Error('error')
+            return pageParam
           }),
         retry: 1,
         retryDelay: 10,
@@ -210,10 +207,8 @@ describe('useInfiniteQuery', () => {
 
       const state = useInfiniteQuery({
         queryKey: [key, order],
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return `${pageParam}-${order}`
-        },
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => `${pageParam}-${order}`),
         getNextPageParam: () => 1,
         initialPageParam: 0,
         placeholderData: keepPreviousData,
@@ -236,15 +231,17 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 0-desc')).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 0-desc,1-desc')).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /order/i }))
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 0-asc')).toBeInTheDocument()
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
-    expect(states.length).toBe(6)
 
+    expect(states.length).toBe(6)
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,
@@ -382,10 +379,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return Number(pageParam)
-        },
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         select: (data) => ({
           pages: [...data.pages].reverse(),
           pageParams: [...data.pageParams].reverse(),
@@ -410,8 +404,8 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 0')).toBeInTheDocument()
-    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 1,0')).toBeInTheDocument()
 
@@ -442,10 +436,7 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return Number(pageParam)
-        },
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         initialPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
         getPreviousPageParam: (firstPage) => firstPage - 1,
@@ -472,7 +463,6 @@ describe('useInfiniteQuery', () => {
     fireEvent.click(
       rendered.getByRole('button', { name: /fetch previous page/i }),
     )
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 9,10')).toBeInTheDocument()
 
@@ -522,10 +512,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return Number(pageParam)
-        },
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         initialPageParam: 10,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
@@ -561,12 +548,12 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 9,10,11')).toBeInTheDocument()
-    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(31)
     expect(states.length).toBe(8)
-
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -637,14 +624,11 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          if (isRefetch) {
-            throw new Error()
-          } else {
-            return Number(pageParam)
-          }
-        },
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => {
+            if (isRefetch) throw new Error()
+            return pageParam
+          }),
         initialPageParam: 10,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
@@ -674,12 +658,12 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 10')).toBeInTheDocument()
-    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(11)
     expect(states.length).toBe(4)
-
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -733,14 +717,11 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          if (pageParam !== 10) {
-            throw new Error()
-          } else {
-            return Number(pageParam)
-          }
-        },
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => {
+            if (pageParam !== 10) throw new Error()
+            return pageParam
+          }),
         initialPageParam: 10,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
@@ -763,12 +744,12 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 10')).toBeInTheDocument()
-    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(11)
     expect(states.length).toBe(4)
-
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -822,14 +803,11 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          if (pageParam !== 10) {
-            throw new Error()
-          } else {
-            return Number(pageParam)
-          }
-        },
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => {
+            if (pageParam !== 10) throw new Error()
+            return pageParam
+          }),
         initialPageParam: 10,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
@@ -854,14 +832,14 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: 10')).toBeInTheDocument()
+
     fireEvent.click(
       rendered.getByRole('button', { name: /fetchPreviousPage/i }),
     )
-
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(11)
     expect(states.length).toBe(4)
-
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -916,10 +894,7 @@ describe('useInfiniteQuery', () => {
       const { data, fetchNextPage, refetch, status, fetchStatus } =
         useInfiniteQuery({
           queryKey: key,
-          queryFn: async ({ pageParam }) => {
-            await sleep(50)
-            return Number(pageParam)
-          },
+          queryFn: ({ pageParam }) => sleep(50).then(() => pageParam),
           initialPageParam: start,
           getNextPageParam: (lastPage) => lastPage + 1,
         })
@@ -947,8 +922,8 @@ describe('useInfiniteQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('status: success, fetching')).toBeInTheDocument()
-    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
     await vi.advanceTimersByTimeAsync(51)
     expect(rendered.getByText('status: success, idle')).toBeInTheDocument()
     expect(
@@ -971,7 +946,7 @@ describe('useInfiniteQuery', () => {
       signal.onabort = onAbort
       signal.addEventListener('abort', abortListener)
       await sleep(50)
-      return Number(pageParam)
+      return pageParam
     })
 
     function Page() {
@@ -1045,9 +1020,8 @@ describe('useInfiniteQuery', () => {
       abortListeners.push(abortListener)
       signal.onabort = onAbort
       signal.addEventListener('abort', abortListener)
-
       await sleep(50)
-      return Number(pageParam)
+      return pageParam
     })
 
     function Page() {
@@ -1106,10 +1080,7 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(50)
-          return Number(pageParam)
-        },
+        queryFn: ({ pageParam }) => sleep(50).then(() => pageParam),
         initialPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
         notifyOnChangeProps: 'all',
@@ -1158,11 +1129,11 @@ describe('useInfiniteQuery', () => {
     function List() {
       useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam, signal: _ }) => {
-          fetches++
-          await sleep(50)
-          return Number(pageParam) * 10
-        },
+        queryFn: ({ pageParam }) =>
+          sleep(50).then(() => {
+            fetches++
+            return pageParam * 10
+          }),
         initialData,
         initialPageParam: 0,
         getNextPageParam: (_, allPages) => {
@@ -1207,10 +1178,8 @@ describe('useInfiniteQuery', () => {
 
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return Number(multiplier * pageParam)
-        },
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => multiplier * pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: firstPage,
       })
@@ -1242,7 +1211,6 @@ describe('useInfiniteQuery', () => {
     ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /setPages/i }))
-
     await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('data: {"pages":[7,8],"pageParams":[7,8]}'),
@@ -1251,7 +1219,6 @@ describe('useInfiniteQuery', () => {
     multiplier = 2
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-
     await vi.advanceTimersByTimeAsync(21)
     expect(
       rendered.getByText('data: {"pages":[14,30],"pageParams":[7,15]}'),
@@ -1269,10 +1236,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam }): Promise<number> => {
-          await sleep(10)
-          return pageParam
-        },
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         initialData: { pages: [1], pageParams: [1] },
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 0,
@@ -1345,7 +1309,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: () => undefined,
         initialPageParam: 1,
       })
@@ -1461,7 +1425,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam }) => sleep(10).then(() => Number(pageParam)),
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : undefined),
         select: (data) => ({
           pages: data.pages.map((x) => x.toString()),
@@ -1504,14 +1468,12 @@ describe('useInfiniteQuery', () => {
     const items = genItems(15)
     const limit = 3
 
-    const fetchItemsWithLimit = async (cursor = 0, ts: number) => {
-      await sleep(10)
-      return {
+    const fetchItemsWithLimit = (cursor = 0, ts: number) =>
+      sleep(10).then(() => ({
         nextId: cursor + limit,
         items: items.slice(cursor, cursor + limit),
         ts,
-      }
-    }
+      }))
 
     function Page() {
       const fetchCountRef = React.useRef(0)
@@ -1587,13 +1549,11 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(rendered.getByText('Loading...')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Item: 2')).toBeInTheDocument()
     expect(rendered.getByText('Page 0: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('Load More'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Loading more...')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(11)
@@ -1602,7 +1562,6 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('Page 1: 1')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('Load More'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Loading more...')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(11)
@@ -1612,7 +1571,6 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('Page 2: 2')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('Refetch'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Background Updating...')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(31)
@@ -1620,13 +1578,11 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('Page 0: 3')).toBeInTheDocument()
     expect(rendered.getByText('Page 1: 4')).toBeInTheDocument()
     expect(rendered.getByText('Page 2: 5')).toBeInTheDocument()
-
     // ensure that Item: 4 is rendered before removing it
     expect(rendered.queryAllByText('Item: 4')).toHaveLength(1)
 
     // remove Item: 4
     fireEvent.click(rendered.getByText('Remove item'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Background Updating...')).toBeInTheDocument()
     // ensure that an additional item is rendered (it means that cursors were properly rebuilt)
@@ -1635,7 +1591,6 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('Page 0: 6')).toBeInTheDocument()
     expect(rendered.getByText('Page 1: 7')).toBeInTheDocument()
     expect(rendered.getByText('Page 2: 8')).toBeInTheDocument()
-
     // ensure that Item: 4 is no longer rendered
     expect(rendered.queryAllByText('Item: 4')).toHaveLength(0)
   })
@@ -1721,48 +1676,37 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(rendered.getByText('Loading...')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Item: 9')).toBeInTheDocument()
     expect(rendered.getByText('Page 0: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('Load More'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Loading more...')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Item: 19')).toBeInTheDocument()
     expect(rendered.getByText('Page 0: 0')).toBeInTheDocument()
     expect(rendered.getByText('Page 1: 1')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('Load More'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Loading more...')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Item: 29')).toBeInTheDocument()
     expect(rendered.getByText('Page 0: 0')).toBeInTheDocument()
     expect(rendered.getByText('Page 1: 1')).toBeInTheDocument()
     expect(rendered.getByText('Page 2: 2')).toBeInTheDocument()
-
     expect(rendered.getByText('Nothing more to load')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('Remove Last Page'))
-
     fireEvent.click(rendered.getByText('Refetch'))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Background Updating...')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(21)
+    expect(rendered.queryByText('Item: 29')).not.toBeInTheDocument()
     expect(rendered.getByText('Page 0: 3')).toBeInTheDocument()
     expect(rendered.getByText('Page 1: 4')).toBeInTheDocument()
-
-    expect(rendered.queryByText('Item: 29')).toBeNull()
-    expect(rendered.queryByText('Page 2: 5')).toBeNull()
-
+    expect(rendered.queryByText('Page 2: 5')).not.toBeInTheDocument()
     expect(rendered.getByText('Nothing more to load')).toBeInTheDocument()
   })
 
@@ -1811,7 +1755,6 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('visible')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: 'hide' }))
-
     expect(rendered.getByText('hidden')).toBeInTheDocument()
 
     expect(cancelFn).toHaveBeenCalled()
@@ -1852,6 +1795,7 @@ describe('useInfiniteQuery', () => {
       useTrackRenders()
       return <>loading...</>
     }
+
     function MyComponent() {
       useTrackRenders()
       const fetchCountRef = React.useRef(0)
@@ -1879,6 +1823,7 @@ describe('useInfiniteQuery', () => {
         </>
       )
     }
+
     function Page() {
       useTrackRenders()
       return (
