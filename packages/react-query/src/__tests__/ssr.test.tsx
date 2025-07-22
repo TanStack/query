@@ -29,7 +29,7 @@ describe('Server Side Rendering', () => {
 
   it('should not trigger fetch', () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -51,6 +51,7 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status pending')
     expect(queryFn).toHaveBeenCalledTimes(0)
+
     queryCache.clear()
   })
 
@@ -59,10 +60,7 @@ describe('Server Side Rendering', () => {
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return 'data'
-      },
+      queryFn: () => sleep(10).then(() => 'data'),
     })
     await vi.advanceTimersByTimeAsync(10)
 
@@ -70,15 +68,13 @@ describe('Server Side Rendering', () => {
 
     expect(data).toBe('data')
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
+
     queryCache.clear()
   })
 
   it('should return existing data from the cache', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(async () => {
-      await sleep(10)
-      return 'data'
-    })
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -103,6 +99,7 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status success')
     expect(queryFn).toHaveBeenCalledTimes(1)
+
     queryCache.clear()
   })
 
@@ -113,7 +110,7 @@ describe('Server Side Rendering', () => {
       const [page, setPage] = React.useState(1)
       const { data } = useQuery({
         queryKey: [key, page],
-        queryFn: () => Promise.resolve(page),
+        queryFn: () => sleep(10).then(() => page),
         initialData: 1,
       })
 
@@ -134,15 +131,13 @@ describe('Server Side Rendering', () => {
     const keys = queryCache.getAll().map((query) => query.queryKey)
 
     expect(keys).toEqual([[key, 1]])
+
     queryCache.clear()
   })
 
   it('useInfiniteQuery should return the correct state', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(async () => {
-      await sleep(5)
-      return 'page 1'
-    })
+    const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
 
     function Page() {
       const query = useInfiniteQuery({
@@ -165,7 +160,7 @@ describe('Server Side Rendering', () => {
       queryFn,
       initialPageParam: 0,
     })
-    await vi.advanceTimersByTimeAsync(5)
+    await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>
@@ -175,6 +170,7 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('page 1')
     expect(queryFn).toHaveBeenCalledTimes(1)
+
     queryCache.clear()
   })
 })
