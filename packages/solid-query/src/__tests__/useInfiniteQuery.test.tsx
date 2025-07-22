@@ -37,20 +37,18 @@ interface Result {
 
 const pageSize = 10
 
-const fetchItems = async (
+const fetchItems = (
   page: number,
   ts: number,
   noNext?: boolean,
   noPrev?: boolean,
-): Promise<Result> => {
-  await sleep(10)
-  return {
+): Promise<Result> =>
+  sleep(10).then(() => ({
     items: [...new Array(10)].fill(null).map((_, d) => page * pageSize + d),
     nextId: noNext ? undefined : page + 1,
     prevId: noPrev ? undefined : page - 1,
     ts,
-  }
-}
+  }))
 
 describe('useInfiniteQuery', () => {
   beforeEach(() => {
@@ -71,13 +69,15 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: ({ pageParam }) => Number(pageParam),
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 0,
       }))
+
       createRenderEffect(() => {
         states.push({ ...state })
       })
+
       return null
     }
 
@@ -87,7 +87,7 @@ describe('useInfiniteQuery', () => {
       </QueryClientProvider>
     ))
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toEqual({
@@ -126,7 +126,6 @@ describe('useInfiniteQuery', () => {
       fetchStatus: 'fetching',
       promise: expect.any(Promise),
     })
-
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
@@ -173,13 +172,11 @@ describe('useInfiniteQuery', () => {
       const start = 1
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: ({ pageParam }) => {
-          if (pageParam === 2) {
-            throw new Error('error')
-          }
-          return Number(pageParam)
-        },
-
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => {
+            if (pageParam === 2) throw new Error('error')
+            return pageParam
+          }),
         retry: 1,
         retryDelay: 10,
         initialPageParam: start,
@@ -206,7 +203,7 @@ describe('useInfiniteQuery', () => {
       </QueryClientProvider>
     ))
 
-    await vi.advanceTimersByTimeAsync(30)
+    await vi.advanceTimersByTimeAsync(50)
 
     expect(noThrow).toBe(true)
   })
@@ -221,11 +218,8 @@ describe('useInfiniteQuery', () => {
 
       const state = useInfiniteQuery(() => ({
         queryKey: [key, order()],
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return `${pageParam}-${order()}`
-        },
-
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => `${pageParam}-${order()}`),
         getNextPageParam: () => 1,
         initialPageParam: 0,
         placeholderData: keepPreviousData,
@@ -320,7 +314,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: () => ({ count: 1 }),
+        queryFn: () => sleep(10).then(() => ({ count: 1 })),
         select: (data) => ({
           pages: data.pages.map((x) => `count: ${x.count}`),
           pageParams: data.pageParams,
@@ -328,9 +322,11 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: () => undefined,
         initialPageParam: 0,
       }))
+
       createRenderEffect(() => {
         states.push({ ...state })
       })
+
       return null
     }
 
@@ -340,7 +336,7 @@ describe('useInfiniteQuery', () => {
       </QueryClientProvider>
     ))
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -363,8 +359,8 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: () => ({ count: 1 }),
-        select: (data: InfiniteData<{ count: number }>) => {
+        queryFn: () => sleep(10).then(() => ({ count: 1 })),
+        select: (data) => {
           selectCalled++
           return {
             pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
@@ -374,9 +370,11 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: () => undefined,
         initialPageParam: 0,
       }))
+
       createRenderEffect(() => {
         states.push({ ...state })
       })
+
       return null
     }
 
@@ -386,7 +384,7 @@ describe('useInfiniteQuery', () => {
       </QueryClientProvider>
     ))
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(states.length).toBe(2)
     expect(selectCalled).toBe(1)
@@ -408,11 +406,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return Number(pageParam)
-        },
-
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         select: (data) => ({
           pages: [...data.pages].reverse(),
           pageParams: [...data.pageParams].reverse(),
@@ -486,10 +480,7 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return Number(pageParam)
-        },
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         initialPageParam: start,
@@ -573,11 +564,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return Number(pageParam)
-        },
-
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 10,
@@ -703,14 +690,11 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          if (isRefetch) {
-            throw new Error()
-          } else {
-            return Number(pageParam)
-          }
-        },
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => {
+            if (isRefetch) throw new Error()
+            return pageParam
+          }),
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 10,
@@ -815,14 +799,11 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          if (pageParam !== 10) {
-            throw new Error()
-          } else {
-            return Number(pageParam)
-          }
-        },
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => {
+            if (pageParam !== 10) throw new Error()
+            return pageParam
+          }),
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 10,
@@ -920,14 +901,11 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          if (pageParam !== 10) {
-            throw new Error()
-          } else {
-            return Number(pageParam)
-          }
-        },
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => {
+            if (pageParam !== 10) throw new Error()
+            return pageParam
+          }),
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 10,
@@ -1030,11 +1008,7 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(50)
-          return Number(pageParam)
-        },
-
+        queryFn: ({ pageParam }) => sleep(50).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: start,
         notifyOnChangeProps: 'all',
@@ -1125,7 +1099,7 @@ describe('useInfiniteQuery', () => {
       signal.addEventListener('abort', abortListener)
 
       await sleep(50)
-      return Number(pageParam)
+      return pageParam
     })
 
     function Page() {
@@ -1206,7 +1180,7 @@ describe('useInfiniteQuery', () => {
       signal.addEventListener('abort', abortListener)
 
       await sleep(50)
-      return Number(pageParam)
+      return pageParam
     })
 
     function Page() {
@@ -1270,11 +1244,7 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(50)
-          return Number(pageParam)
-        },
-
+        queryFn: ({ pageParam }) => sleep(50).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: start,
         notifyOnChangeProps: 'all',
@@ -1328,12 +1298,11 @@ describe('useInfiniteQuery', () => {
     function List() {
       useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam, signal: _ }) => {
-          fetches++
-          await sleep(50)
-          return Number(pageParam) * 10
-        },
-
+        queryFn: ({ pageParam }) =>
+          sleep(50).then(() => {
+            fetches++
+            return pageParam * 10
+          }),
         initialData,
         getNextPageParam: (_, allPages) => {
           return allPages.length === 4 ? undefined : allPages.length
@@ -1382,11 +1351,7 @@ describe('useInfiniteQuery', () => {
 
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(10)
-          return Number(pageParam)
-        },
-
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
         notifyOnChangeProps: 'all',
         initialPageParam: firstPage(),
@@ -1475,11 +1440,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }): Promise<number> => {
-          await sleep(10)
-          return pageParam
-        },
-
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         initialData: { pages: [1], pageParams: [1] },
         getNextPageParam: (lastPage) => lastPage + 1,
         initialPageParam: 0,
@@ -1552,7 +1513,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: ({ pageParam }) => Number(pageParam),
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         initialPageParam: 1,
         getNextPageParam: () => undefined,
       }))
@@ -1570,7 +1531,7 @@ describe('useInfiniteQuery', () => {
       </QueryClientProvider>
     ))
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1596,7 +1557,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: ({ pageParam }): number => pageParam,
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         initialPageParam: 10,
         initialData: { pages: [10], pageParams: [10] },
         getNextPageParam: (lastPage) => (lastPage === 10 ? 11 : undefined),
@@ -1615,7 +1576,7 @@ describe('useInfiniteQuery', () => {
       </QueryClientProvider>
     ))
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1641,7 +1602,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: ({ pageParam }): number => pageParam,
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         initialPageParam: 10,
         initialData: { pages: [10], pageParams: [10] },
         getNextPageParam: () => undefined,
@@ -1660,7 +1621,7 @@ describe('useInfiniteQuery', () => {
       </QueryClientProvider>
     ))
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1686,7 +1647,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: ({ pageParam }) => Number(pageParam),
+        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : undefined),
         select: (data) => ({
@@ -1708,7 +1669,7 @@ describe('useInfiniteQuery', () => {
       </QueryClientProvider>
     ))
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1735,14 +1696,12 @@ describe('useInfiniteQuery', () => {
     const items = genItems(15)
     const limit = 3
 
-    const fetchItemsWithLimit = async (cursor = 0, ts: number) => {
-      await sleep(10)
-      return {
+    const fetchItemsWithLimit = (cursor = 0, ts: number) =>
+      sleep(10).then(() => ({
         nextId: cursor + limit,
         items: items.slice(cursor, cursor + limit),
         ts,
-      }
-    }
+      }))
 
     function Page() {
       let fetchCountRef = 0
@@ -1880,6 +1839,7 @@ describe('useInfiniteQuery', () => {
       let fetchCountRef = 0
       const [isRemovedLastPage, setIsRemovedLastPage] =
         createSignal<boolean>(false)
+
       const state = useInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) =>
@@ -2033,15 +1993,12 @@ describe('useInfiniteQuery', () => {
 
   it('should use provided custom queryClient', async () => {
     const key = queryKey()
-    const queryFn = () => {
-      return Promise.resolve('custom client')
-    }
 
     function Page() {
       const state = useInfiniteQuery(
         () => ({
           queryKey: key,
-          queryFn,
+          queryFn: () => sleep(10).then(() => 'custom client'),
           getNextPageParam: () => undefined,
           initialPageParam: 0,
         }),
@@ -2056,17 +2013,18 @@ describe('useInfiniteQuery', () => {
 
     const rendered = render(() => <Page />)
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Status: custom client')).toBeInTheDocument()
   })
 
   it('should work with infiniteQueryOptions', async () => {
     const key = queryKey()
+
     const options = infiniteQueryOptions({
-      getNextPageParam: () => undefined,
       queryKey: key,
+      queryFn: () => sleep(10).then(() => 220),
+      getNextPageParam: () => undefined,
       initialPageParam: 0,
-      queryFn: () => Promise.resolve(220),
     })
 
     function Page() {
@@ -2083,7 +2041,7 @@ describe('useInfiniteQuery', () => {
 
     const rendered = render(() => <Page />)
 
-    await vi.advanceTimersByTimeAsync(220)
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Status: 220')).toBeInTheDocument()
   })
 })
