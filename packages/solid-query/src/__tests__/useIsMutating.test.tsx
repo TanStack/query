@@ -26,26 +26,22 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating()
+
       createRenderEffect(() => {
         isMutatingArray.push(isMutating())
       })
+
       return null
     }
 
     function Mutations() {
       const { mutate: mutate1 } = useMutation(() => ({
         mutationKey: ['mutation1'],
-        mutationFn: async () => {
-          await sleep(150)
-          return 'data'
-        },
+        mutationFn: () => sleep(150).then(() => 'data'),
       }))
       const { mutate: mutate2 } = useMutation(() => ({
         mutationKey: ['mutation2'],
-        mutationFn: async () => {
-          await sleep(50)
-          return 'data'
-        },
+        mutationFn: () => sleep(50).then(() => 'data'),
       }))
 
       createEffect(() => {
@@ -74,6 +70,7 @@ describe('useIsMutating', () => {
     ))
 
     await vi.advanceTimersByTimeAsync(150)
+
     expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
   })
 
@@ -83,26 +80,22 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({ mutationKey: ['mutation1'] }))
+
       createRenderEffect(() => {
         isMutatingArray.push(isMutating())
       })
+
       return null
     }
 
     function Page() {
       const { mutate: mutate1 } = useMutation(() => ({
         mutationKey: ['mutation1'],
-        mutationFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        mutationFn: () => sleep(100).then(() => 'data'),
       }))
       const { mutate: mutate2 } = useMutation(() => ({
         mutationKey: ['mutation2'],
-        mutationFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
       createEffect(() => {
@@ -121,6 +114,7 @@ describe('useIsMutating', () => {
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
     await vi.advanceTimersByTimeAsync(100)
+
     expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
@@ -133,26 +127,22 @@ describe('useIsMutating', () => {
         predicate: (mutation) =>
           mutation.options.mutationKey?.[0] === 'mutation1',
       }))
+
       createRenderEffect(() => {
         isMutatingArray.push(isMutating())
       })
+
       return null
     }
 
     function Page() {
       const { mutate: mutate1 } = useMutation(() => ({
         mutationKey: ['mutation1'],
-        mutationFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        mutationFn: () => sleep(100).then(() => 'data'),
       }))
       const { mutate: mutate2 } = useMutation(() => ({
         mutationKey: ['mutation2'],
-        mutationFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
       createEffect(() => {
@@ -171,6 +161,7 @@ describe('useIsMutating', () => {
 
     // Again, No unnecessary re-renders like React
     await vi.advanceTimersByTimeAsync(100)
+
     expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
@@ -182,16 +173,17 @@ describe('useIsMutating', () => {
       const { mutate } = useMutation(
         () => ({
           mutationKey: ['mutation1'],
-          mutationFn: async () => {
-            await sleep(10)
-            return 'data'
-          },
+          mutationFn: () => sleep(20).then(() => 'data'),
         }),
         () => queryClient,
       )
+
       createEffect(() => {
-        mutate()
+        setActTimeout(() => {
+          mutate()
+        }, 10)
       })
+
       return (
         <div>
           <div>mutating: {isMutating()}</div>
@@ -201,8 +193,11 @@ describe('useIsMutating', () => {
 
     const rendered = render(() => <Page></Page>)
 
-    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(20)
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
   // eslint-disable-next-line vitest/expect-expect
@@ -231,12 +226,10 @@ describe('useIsMutating', () => {
 
     function Page() {
       const [mounted, setMounted] = createSignal(true)
+
       const { mutate: mutate1 } = useMutation(() => ({
         mutationKey: ['mutation1'],
-        mutationFn: async () => {
-          await sleep(10)
-          return 'data'
-        },
+        mutationFn: () => sleep(10).then(() => 'data'),
       }))
 
       createEffect(() => {
@@ -258,6 +251,7 @@ describe('useIsMutating', () => {
         <Page />
       </QueryClientProvider>
     ))
+
     fireEvent.click(rendered.getByText('unmount'))
 
     // Should not display the console error
