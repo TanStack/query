@@ -15,9 +15,6 @@
   ],
   "ignoreWorkspaces": ["examples/**", "integrations/**"],
   "workspaces": {
-    "packages/angular-query-experimental": {
-      "ignore": ["**/production/index.ts"]
-    },
     "packages/query-codemods": {
       "entry": ["src/v4/**/*.cjs", "src/v5/**/*.cjs"],
       "ignore": ["**/__testfixtures__/**"]
@@ -27,6 +24,13 @@
       "ignoreDependencies": ["vue2", "vue2.7"]
     },
     "packages/angular-query-experimental": {
+      "entry": [
+        "src/index.ts",
+        "src/devtools/index.ts",
+        "src/devtools/production/index.ts",
+        "src/devtools-panel/index.ts",
+        "src/devtools-panel/production/index.ts"
+      ],
       "ignore": ["scripts/prepack.js", "scripts/prepare-package.js"]
     }
   }
