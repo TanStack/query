@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.80.8",
+  "version": "5.83.0",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "tanstack"
   ],
   "scripts": {
-    "clean": "premove ./dist ./coverage ./dist-ts ./**.d.ts",
+    "clean": "premove ./build ./dist ./coverage ./dist-ts",
     "compile": "tsc --build",
     "test:eslint": "eslint ./src",
     "test:types": "npm-run-all --serial test:types:*",
@@ -56,6 +56,7 @@
       "@tanstack/custom-condition": "./src/index.ts",
       "default": "./dist/index.mjs"
     },
+    "./package.json": "./package.json",
     "./devtools": {
       "types": "./dist/types/devtools/index.d.ts",
       "development": "./dist/devtools/index.mjs",
@@ -74,9 +75,7 @@
       "types": "./dist/types/devtools-panel/production/index.d.ts",
       "default": "./dist/devtools-panel/index.mjs"
     },
-    "./package.json": {
-      "default": "./package.json"
-    }
+    "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
@@ -93,7 +92,6 @@
     "@angular/compiler": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
-    "@angular/platform-browser-dynamic": "^20.0.0",
     "@tanstack/query-test-utils": "workspace:*",
     "eslint-plugin-jsdoc": "^50.5.0",
     "npm-run-all2": "^5.0.0",
@@ -130,9 +128,7 @@
         "types": "./devtools-panel/production/index.d.ts",
         "default": "./dist/devtools-panel/index.mjs"
       },
-      "./package.json": {
-        "default": "./package.json"
-      }
+      "./package.json": "./package.json"
     }
   }
 }

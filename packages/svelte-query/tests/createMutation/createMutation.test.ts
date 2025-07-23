@@ -1,31 +1,33 @@
-import { describe, expect, test, vi } from 'vitest'
-import { fireEvent, render, waitFor } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { fireEvent, render } from '@testing-library/svelte'
 import { sleep } from '@tanstack/query-test-utils'
 import ResetExample from './ResetExample.svelte'
 import OnSuccessExample from './OnSuccessExample.svelte'
 import FailureExample from './FailureExample.svelte'
 
 describe('createMutation', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('Able to reset `error`', async () => {
     const rendered = render(ResetExample)
 
-    await waitFor(() => {
-      expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
-    })
+    expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-
-    await waitFor(() => {
-      expect(
-        rendered.queryByText('Error: Expected mock error'),
-      ).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.queryByText('Error: Expected mock error'),
+    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Reset/i }))
-
-    await waitFor(() => {
-      expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
   })
 
   test('Able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
@@ -39,29 +41,21 @@ describe('createMutation', () => {
       },
     })
 
-    await waitFor(() => {
-      expect(rendered.queryByText('Count: 0')).toBeInTheDocument()
-    })
+    expect(rendered.queryByText('Count: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
 
-    await waitFor(() => {
-      expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
-    })
-
-    await waitFor(() => {
-      expect(onSuccessMock).toHaveBeenCalledTimes(3)
-    })
+    expect(onSuccessMock).toHaveBeenCalledTimes(3)
 
     expect(onSuccessMock).toHaveBeenCalledWith(1)
     expect(onSuccessMock).toHaveBeenCalledWith(2)
     expect(onSuccessMock).toHaveBeenCalledWith(3)
 
-    await waitFor(() => {
-      expect(onSettledMock).toHaveBeenCalledTimes(3)
-    })
+    expect(onSettledMock).toHaveBeenCalledTimes(3)
 
     expect(onSettledMock).toHaveBeenCalledWith(1)
     expect(onSettledMock).toHaveBeenCalledWith(2)
@@ -88,21 +82,24 @@ describe('createMutation', () => {
       },
     })
 
-    await waitFor(() => rendered.queryByText('Data: undefined'))
+    expect(rendered.queryByText('Data: undefined')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    await waitFor(() => rendered.getByText('Data: undefined'))
-    await waitFor(() => rendered.getByText('Status: error'))
-    await waitFor(() => rendered.getByText('Failure Count: 1'))
-    await waitFor(() =>
+    expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('Status: error')).toBeInTheDocument()
+    expect(rendered.getByText('Failure Count: 1')).toBeInTheDocument()
+    expect(
       rendered.getByText('Failure Reason: Expected mock error'),
-    )
+    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    await waitFor(() => rendered.getByText('Status: pending'))
-    await waitFor(() => rendered.getByText('Status: success'))
-    await waitFor(() => rendered.getByText('Data: 2'))
-    await waitFor(() => rendered.getByText('Failure Count: 0'))
-    await waitFor(() => rendered.getByText('Failure Reason: null'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('Status: pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Status: success')).toBeInTheDocument()
+    expect(rendered.getByText('Data: 2')).toBeInTheDocument()
+    expect(rendered.getByText('Failure Count: 0')).toBeInTheDocument()
+    expect(rendered.getByText('Failure Reason: null')).toBeInTheDocument()
   })
 })

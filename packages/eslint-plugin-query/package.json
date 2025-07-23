@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.78.0",
+  "version": "5.81.2",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -59,11 +59,11 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^8.18.1"
+    "@typescript-eslint/utils": "^8.37.0"
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^8.18.1",
-    "@typescript-eslint/rule-tester": "^8.18.1",
+    "@typescript-eslint/parser": "^8.37.0",
+    "@typescript-eslint/rule-tester": "^8.37.0",
     "combinate": "^1.1.11",
     "eslint": "^9.15.0",
     "npm-run-all2": "^5.0.0"

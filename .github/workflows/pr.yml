@@ -35,6 +35,8 @@ jobs:
           main-branch-name: main
       - name: Run Checks
         run: pnpm run test:pr --parallel=3
+      - name: Verify Links
+        run: pnpm run verify-links
       - name: Stop Nx Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
@@ -63,7 +65,7 @@ jobs:
         run: |
           echo "COMMIT_SHA=${{ github.event.pull_request.head.sha || github.sha }}" >> $GITHUB_ENV
       - name: Preview Bundle Size
-        uses: marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728
+        uses: marocchino/sticky-pull-request-comment@28d58c4b5a5eae3bbe45348c3990dcbc2ffcdc69
         with:
           message: |
             Sizes for commit ${{ env.COMMIT_SHA }}:

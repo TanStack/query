@@ -1,68 +1,94 @@
-import { link, mkdir } from 'fs/promises'
-import { dirname, relative } from 'path'
-import fg from 'fast-glob'
+import fs from 'node:fs'
+import path from 'node:path'
 
-const constants = {
-  DIST_TYPES_DIRECTORY: 'dist/types',
-  OUTPUT_DIRECTORY: '.',
-  DIST_TYPE_FILES_GLOB: 'dist/types/**/*.d.ts',
-}
+// Currently unused as life-cycle scripts do not run on CI
 
-/*
-`prepack` lifecycle script which links type declaration files from the dist folder to the package root.
-allows using types in package exports as such:
+console.log('Running prepack script')
 
-`"types": "./index.d.ts"`
-
-and subpath exports
-
-```json
-    "./some-subpath": {
-      "types": "./some-subpath/index.d.ts", // ✅ works with `"modeResolution": "node"`
-      "default": "./build/some-subpath/index.mjs"
-    },
-```
-
-When TypeScript is configured with `moduleResolution: node`, type declaration file directory structures are expected
-to exactly match the subpath export as in the example above.
-
-```json
-    "./some-subpath": {
-      "types": "./build/dist/some-subpath/index.d.ts", // ❌ does not work with `"moduleResolution": "node"`
-      "default": "./build/some-subpath/index.mjs"
-    },
-```
-
-It's important to support `"moduleResolution": "node"` as many Angular applications are still configured this way.
-
-In the `postpack` lifecycle script these links are removed to keep a clean development environment
+/**
+ * Files to copy to the dist directory
+ * @type {string[]}
  */
-async function prepack() {
-  console.log('Running prepack script to prepare types for publishing')
+const FILES_TO_COPY = ['README.md']
 
-  const typeFiles = await fg([constants.DIST_TYPE_FILES_GLOB])
-  if (typeFiles.length === 0) return
+/**
+ * Fields to remove from the package.json copy
+ * @type {string[]}
+ */
+const FIELDS_TO_REMOVE = [
+  'devDependencies',
+  'files',
+  'publishConfig',
+  'scripts',
+]
 
-  const destDirs = [
-    ...new Set(
-      typeFiles
-        .map((file) => {
-          const dest = relative(constants.DIST_TYPES_DIRECTORY, file)
-          return dirname(dest)
-        })
-        .filter((dir) => dir !== constants.OUTPUT_DIRECTORY),
-    ),
-  ]
-
-  await Promise.all(destDirs.map((dir) => mkdir(dir, { recursive: true })))
-  await Promise.all(
-    typeFiles.map((file) => {
-      const dest = relative(constants.DIST_TYPES_DIRECTORY, file)
-      return link(file, dest)
-    }),
-  )
-
-  console.log(`Linked ${typeFiles.length} type files`)
+/**
+ * Replaces 'dist/' or './dist/' prefix from a file path with './'
+ * @param {string} filePath - The file path to process
+ * @returns {string} The path without dist prefix
+ */
+function removeDist(filePath) {
+  return filePath.replace(/^(\.\/)?dist\//, './')
 }
 
-prepack().catch(console.error)
+/**
+ * Recursively processes exports object to remove dist prefixes
+ * @param {Record<string, any>} exports - The exports object to process
+ * @returns {Record<string, any>} The processed exports object
+ */
+function processExports(exports) {
+  return Object.fromEntries(
+    Object.entries(exports).map(([key, value]) => [
+      key,
+      typeof value === 'string'
+        ? removeDist(value)
+        : typeof value === 'object' && value !== null
+          ? processExports(value)
+          : value,
+    ]),
+  )
+}
+
+console.log('Copying modified package.json')
+
+/** @type {Record<string, any>} */
+const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+
+const distPackageJson = { ...packageJson }
+
+if (distPackageJson.types) {
+  distPackageJson.types = removeDist(distPackageJson.types)
+}
+
+if (distPackageJson.module) {
+  distPackageJson.module = removeDist(distPackageJson.module)
+}
+
+if (distPackageJson.exports) {
+  distPackageJson.exports = processExports(distPackageJson.exports)
+}
+
+for (const field of FIELDS_TO_REMOVE) {
+  delete distPackageJson[field]
+}
+
+if (!fs.existsSync('dist')) {
+  fs.mkdirSync('dist', { recursive: true })
+}
+
+fs.writeFileSync(
+  path.join('dist', 'package.json'),
+  JSON.stringify(distPackageJson, null, 2),
+)
+
+console.log('Copying other files')
+for (const fileName of FILES_TO_COPY) {
+  if (fs.existsSync(fileName)) {
+    fs.copyFileSync(fileName, path.join('dist', fileName))
+    console.log(`${fileName}`)
+  } else {
+    console.log(`${fileName} not found, skipping`)
+  }
+}
+
+console.log('prepack complete')

@@ -4,11 +4,11 @@ import {
   provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 import { withPersistQueryClient } from '@tanstack/angular-query-persist-client'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import type { ApplicationConfig } from '@angular/core'
 
-const localStoragePersister = createSyncStoragePersister({
+const localStoragePersister = createAsyncStoragePersister({
   storage: window.localStorage,
 })
 

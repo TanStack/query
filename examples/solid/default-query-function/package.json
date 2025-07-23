@@ -8,9 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.80.7",
-    "@tanstack/solid-query-devtools": "^5.80.7",
-    "solid-js": "^1.9.5"
+    "@tanstack/solid-query": "^5.83.0",
+    "@tanstack/solid-query-devtools": "^5.83.0",
+    "solid-js": "^1.9.7"
   },
   "devDependencies": {
     "typescript": "5.8.3",

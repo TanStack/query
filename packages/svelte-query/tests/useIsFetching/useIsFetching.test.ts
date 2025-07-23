@@ -1,14 +1,25 @@
-import { describe, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import BaseExample from './BaseExample.svelte'
 
 describe('useIsFetching', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('should update as queries start and stop fetching', async () => {
     const rendered = render(BaseExample)
 
-    await rendered.findByText('isFetching: 0')
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
+
     fireEvent.click(rendered.getByRole('button', { name: /setReady/i }))
-    await rendered.findByText('isFetching: 1')
-    await rendered.findByText('isFetching: 0')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
   })
 })

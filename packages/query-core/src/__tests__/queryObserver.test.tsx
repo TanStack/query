@@ -109,7 +109,8 @@ describe('queryObserver', () => {
         fetchStatus: 'idle',
         data: undefined,
       })
-      await vi.waitFor(() => expect(count).toBe(0))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(0)
 
       unsubscribe()
     })
@@ -128,7 +129,8 @@ describe('queryObserver', () => {
         data: undefined,
       })
 
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
       expect(observer.getCurrentResult()).toMatchObject({
         status: 'success',
         fetchStatus: 'idle',
@@ -157,8 +159,8 @@ describe('queryObserver', () => {
         fetchStatus: 'fetching',
         data: undefined,
       })
-
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
 
       unsubscribe()
     })
@@ -194,7 +196,8 @@ describe('queryObserver', () => {
         fetchStatus: 'fetching',
         data: undefined,
       })
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
 
       unsubscribe()
     })
@@ -208,12 +211,14 @@ describe('queryObserver', () => {
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'inactive' })
 
       // should not refetch since it was active and we only refetch inactive
-      await vi.waitFor(() => expect(count).toBe(0))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(0)
 
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
 
       // should refetch since it was active and we refetch active
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
 
       // Toggle enabled
       enabled = false
@@ -221,7 +226,8 @@ describe('queryObserver', () => {
       // should not refetch since it is not active and we only refetch active
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
 
-      await vi.waitFor(() => expect(count).toBe(1))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(count).toBe(1)
 
       unsubscribe()
     })
@@ -251,7 +257,8 @@ describe('queryObserver', () => {
       data: undefined,
     })
 
-    await vi.waitFor(() => expect(count).toBe(1))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(count).toBe(1)
 
     // re-subscribe after data comes in
     unsubscribe = observer.subscribe(vi.fn())
@@ -275,9 +282,9 @@ describe('queryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     observer.setOptions({ queryKey: key2, queryFn: () => 2 })
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(results.length).toBe(4)
     expect(results[0]).toMatchObject({ data: undefined, status: 'pending' })
@@ -300,7 +307,7 @@ describe('queryObserver', () => {
       >()
       observerResult = result
     })
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(observerResult).toMatchObject({ data: { myCount: 1 } })
   })
@@ -330,7 +337,7 @@ describe('queryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(observerResult).toMatchObject({ data: { myCount: 1 } })
   })
@@ -374,13 +381,12 @@ describe('queryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     observer.setOptions({
       queryKey: key,
       queryFn,
       select: select2,
     })
-    await vi.advanceTimersByTimeAsync(1)
     await observer.refetch()
     unsubscribe()
     expect(count).toBe(2)
@@ -429,13 +435,12 @@ describe('queryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     observer.setOptions({
       queryKey: key,
       queryFn,
       select,
     })
-    await vi.advanceTimersByTimeAsync(1)
     await observer.refetch()
     unsubscribe()
     expect(count).toBe(1)
@@ -497,7 +502,7 @@ describe('queryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(10)
     observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
     unsubscribe()
@@ -547,7 +552,7 @@ describe('queryObserver', () => {
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(10)
     observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
     unsubscribe()
@@ -603,7 +608,7 @@ describe('queryObserver', () => {
       enabled: false,
     })
     const unsubscribe = observer.subscribe(() => undefined)
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
@@ -619,7 +624,7 @@ describe('queryObserver', () => {
       enabled: () => false,
     })
     const unsubscribe = observer.subscribe(() => undefined)
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
@@ -630,7 +635,7 @@ describe('queryObserver', () => {
       .fn<(...args: Array<unknown>) => string>()
       .mockReturnValue('data')
     new QueryObserver(queryClient, { queryKey: key, queryFn })
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
@@ -646,6 +651,7 @@ describe('queryObserver', () => {
     })
     const unsubscribe = observer.subscribe(callback)
     await queryClient.fetchQuery({ queryKey: key, queryFn })
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(callback).toHaveBeenCalledTimes(2)
@@ -666,7 +672,7 @@ describe('queryObserver', () => {
     })
     observer.setOptions({ queryKey: key, enabled: false, staleTime: 10 })
     await queryClient.fetchQuery({ queryKey: key, queryFn })
-    await vi.advanceTimersByTimeAsync(20)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(results.length).toBe(2)
@@ -692,7 +698,7 @@ describe('queryObserver', () => {
       results2.push(x)
     })
     await queryClient.fetchQuery({ queryKey: key, queryFn })
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe1()
     unsubscribe2()
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -717,9 +723,9 @@ describe('queryObserver', () => {
       retryDelay: 50,
     })
     const unsubscribe = observer.subscribe(() => undefined)
-    await vi.advanceTimersByTimeAsync(70)
+    await vi.advanceTimersByTimeAsync(50)
     unsubscribe()
-    await vi.advanceTimersByTimeAsync(200)
+    await vi.advanceTimersByTimeAsync(50)
     expect(count).toBe(2)
   })
 
@@ -739,7 +745,7 @@ describe('queryObserver', () => {
     })
     const unsubscribe = observer.subscribe(() => undefined)
     expect(count).toBe(1)
-    await vi.advanceTimersByTimeAsync(15)
+    await vi.advanceTimersByTimeAsync(10)
     expect(count).toBe(2)
     unsubscribe()
     await vi.advanceTimersByTimeAsync(10)
@@ -766,7 +772,7 @@ describe('queryObserver', () => {
       results.push(x)
     })
 
-    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
 
     expect(results.length).toBe(2)
@@ -874,7 +880,7 @@ describe('queryObserver', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
 
-    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(0)
     expect(observer.getCurrentResult().data).toBe(data)
 
     observer.setOptions({
@@ -951,7 +957,7 @@ describe('queryObserver', () => {
       results.push(result)
     })
 
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
 
     observer.setOptions({
       queryKey: key2,
@@ -963,7 +969,7 @@ describe('queryObserver', () => {
       select: (data) => data.value,
     })
 
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(results.length).toBe(4)
     expect(keys.length).toBe(3)
@@ -1018,7 +1024,7 @@ describe('queryObserver', () => {
       results.push(result)
     })
 
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
 
     observer.setOptions({
       queryKey: key2,
@@ -1030,7 +1036,7 @@ describe('queryObserver', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
 
     expect(results.length).toBe(4)
@@ -1081,7 +1087,7 @@ describe('queryObserver', () => {
       results.push(result)
     })
 
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
 
     observer.setOptions({
       queryKey: key2,
@@ -1090,7 +1096,7 @@ describe('queryObserver', () => {
       select: stableSelect,
     })
 
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
 
     expect(results.length).toBe(4)
@@ -1172,8 +1178,10 @@ describe('queryObserver', () => {
       }
     })
 
-    await vi.waitFor(() => expect(results[0]?.isStale).toBe(false))
-    await vi.waitFor(() => expect(results[1]?.isStale).toBe(true))
+    await vi.advanceTimersByTimeAsync(25)
+    expect(results[0]?.isStale).toBe(false)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(results[1]?.isStale).toBe(true)
 
     unsubscribe()
   })
@@ -1200,7 +1208,8 @@ describe('queryObserver', () => {
       }
     })
 
-    await vi.waitFor(() => expect(results[0]?.isStale).toBe(false))
+    await vi.advanceTimersByTimeAsync(5)
+    expect(results[0]?.isStale).toBe(false)
 
     unsubscribe()
   })
@@ -1224,9 +1233,8 @@ describe('queryObserver', () => {
       results.push(observer.getCurrentResult())
     })
 
-    await vi.waitFor(() => {
-      expect(results.at(-1)?.data).toBe('data')
-    })
+    await vi.advanceTimersByTimeAsync(8)
+    expect(results.at(-1)?.data).toBe('data')
 
     const numberOfUniquePromises = new Set(
       results.map((result) => result.promise),
@@ -1257,9 +1265,8 @@ describe('queryObserver', () => {
       results.push(observer.getCurrentResult())
     })
 
-    await vi.waitFor(() => {
-      expect(results.at(-1)?.status).toBe('error')
-    })
+    await vi.advanceTimersByTimeAsync(4)
+    expect(results.at(-1)?.status).toBe('error')
 
     expect(
       results.every((result) => result.promise === results[0]!.promise),
@@ -1269,10 +1276,9 @@ describe('queryObserver', () => {
       // fail again
       const lengthBefore = results.length
       observer.refetch()
-      await vi.waitFor(() => {
-        expect(results.length).toBeGreaterThan(lengthBefore)
-        expect(results.at(-1)?.status).toBe('error')
-      })
+      await vi.advanceTimersByTimeAsync(4)
+      expect(results.length).toBeGreaterThan(lengthBefore)
+      expect(results.at(-1)?.status).toBe('error')
 
       const numberOfUniquePromises = new Set(
         results.map((result) => result.promise),
@@ -1285,9 +1291,8 @@ describe('queryObserver', () => {
       succeeds = true
       observer.refetch()
 
-      await vi.waitFor(() => {
-        results.at(-1)?.status === 'success'
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      results.at(-1)?.status === 'success'
 
       const numberOfUniquePromises = new Set(
         results.map((result) => result.promise),
@@ -1359,10 +1364,9 @@ describe('queryObserver', () => {
       results.push(result)
     })
 
-    await vi.waitFor(() => {
-      const lastResult = results[results.length - 1]
-      expect(lastResult?.status).toBe('error')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    const lastResult = results[results.length - 1]
+    expect(lastResult?.status).toBe('error')
 
     expect(results.length).toBe(1)
     expect(results[0]).toMatchObject({
@@ -1384,7 +1388,7 @@ describe('queryObserver', () => {
       refetchOnMount: 'always',
     })
     const unsubscribe = observer.subscribe(() => undefined)
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(0)
     unsubscribe()
   })
@@ -1399,5 +1403,28 @@ describe('queryObserver', () => {
 
     const result = observer.getCurrentResult()
     expect(result.fetchStatus).toBe('idle')
+  })
+
+  test('should return isEnabled depending on enabled being resolved', () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      enabled: () => false,
+    })
+
+    const result = observer.getCurrentResult()
+    expect(result.isEnabled).toBe(false)
+  })
+
+  test('should return isEnabled as true per default', () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    const result = observer.getCurrentResult()
+    expect(result.isEnabled).toBe(true)
   })
 })

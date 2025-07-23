@@ -310,9 +310,8 @@ describe('mutationCache', () => {
         1,
       )
       expect(testCache.getAll()).toHaveLength(1)
-      await vi.waitFor(() => {
-        expect(testCache.getAll()).toHaveLength(0)
-      })
+      await vi.advanceTimersByTimeAsync(10)
+      expect(testCache.getAll()).toHaveLength(0)
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
@@ -376,9 +375,8 @@ describe('mutationCache', () => {
       const unsubscribe = observer.subscribe(() => undefined)
       observer.mutate(1)
       unsubscribe()
-      await vi.waitFor(() => {
-        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
   })

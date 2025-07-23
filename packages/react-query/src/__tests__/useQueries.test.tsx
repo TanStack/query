@@ -1,5 +1,13 @@
-import { describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  it,
+  vi,
+} from 'vitest'
+import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -21,6 +29,14 @@ import type {
 import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
 
@@ -62,7 +78,8 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data1: 1, data2: 2'))
+    await vi.advanceTimersByTimeAsync(201)
+    expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
@@ -100,7 +117,8 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: 1'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     expect(results.length).toBe(2)
     expect(results[0]).toMatchObject([{ data: undefined }])
@@ -108,7 +126,8 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await waitFor(() => rendered.getByText('data: 2'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
     // only one render for data update, no render for isFetching transition
     expect(results.length).toBe(3)
@@ -842,12 +861,9 @@ describe('useQueries', () => {
       </ErrorBoundary>,
     )
 
-    await waitFor(() =>
-      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
-    )
-    await waitFor(() =>
-      expect(rendered.getByText('single query error')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('single query error')).toBeInTheDocument()
     consoleMock.mockRestore()
   })
 
@@ -913,12 +929,9 @@ describe('useQueries', () => {
       </ErrorBoundary>,
     )
 
-    await waitFor(() =>
-      expect(rendered.getByText('error boundary')).toBeInTheDocument(),
-    )
-    await waitFor(() =>
-      expect(rendered.getByText('single query error')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('single query error')).toBeInTheDocument()
     consoleMock.mockRestore()
   })
 
@@ -946,9 +959,8 @@ describe('useQueries', () => {
 
     const rendered = render(<Page></Page>)
 
-    await waitFor(() =>
-      expect(rendered.getByText('data: custom client')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
 
   it('should combine queries', async () => {
@@ -989,11 +1001,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() =>
-      expect(
-        rendered.getByText('data: true first result,second result'),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(
+      rendered.getByText('data: true first result,second result'),
+    ).toBeInTheDocument()
   })
 
   it('should not return new instances when called without queries', async () => {
@@ -1035,19 +1046,21 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: {"empty":"object"}'))
-    await waitFor(() => rendered.getByText('count: 0'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: {"empty":"object"}')).toBeInTheDocument()
+    expect(rendered.getByText('count: 0')).toBeInTheDocument()
 
     expect(resultChanged).toBe(1)
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
-    await waitFor(() => rendered.getByText('count: 1'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
     // there should be no further effect calls because the returned object is structurally shared
     expect(resultChanged).toBe(1)
   })
 
-  it('should not have infinite render loops with empty queries (#6645)', async () => {
+  it('should not have infinite render loops with empty queries (#6645)', () => {
     let renderCount = 0
 
     function Page() {
@@ -1063,8 +1076,6 @@ describe('useQueries', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-
-    await sleep(10)
 
     expect(renderCount).toBe(1)
   })
@@ -1102,13 +1113,13 @@ describe('useQueries', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() =>
-      expect(
-        rendered.getByText(
-          'data: {"data":{"query1":"query1","query2":"query2"}}',
-        ),
-      ).toBeInTheDocument(),
-    )
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText(
+        'data: {"data":{"query1":"query1","query2":"query2"}}',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should track property access through combine function', async () => {
@@ -1163,11 +1174,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() =>
-      expect(
-        rendered.getByText('data: true first result 0,second result 0'),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(51)
+    expect(
+      rendered.getByText('data: true first result 0,second result 0'),
+    ).toBeInTheDocument()
 
     expect(results.length).toBe(3)
 
@@ -1193,9 +1203,10 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(51)
+    expect(
       rendered.getByText('data: true first result 1,second result 1'),
-    )
+    ).toBeInTheDocument()
 
     const length = results.length
 
@@ -1209,7 +1220,7 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await sleep(100)
+    await vi.advanceTimersByTimeAsync(100)
     // no further re-render because data didn't change
     expect(results.length).toBe(length)
   })
@@ -1222,21 +1233,11 @@ describe('useQueries', () => {
       const { isLoading } = useQueries({
         queries: ids.map((id) => ({
           queryKey: [key, id],
-          queryFn: () => {
-            return new Promise<{
-              id: number
-              title: string
-            }>((resolve, reject) => {
-              if (id === 2) {
-                setTimeout(() => {
-                  reject(new Error('FAILURE'))
-                }, 10)
-              }
-              setTimeout(() => {
-                resolve({ id, title: `Post ${id}` })
-              }, 10)
-            })
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (id === 2) throw new Error('FAILURE')
+              return { id, title: `Post ${id}` }
+            }),
           retry: false,
         })),
         combine: (results) => {
@@ -1259,15 +1260,10 @@ describe('useQueries', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() =>
-      expect(
-        rendered.getByText('Loading Status: Loading...'),
-      ).toBeInTheDocument(),
-    )
+    expect(rendered.getByText('Loading Status: Loading...')).toBeInTheDocument()
 
-    await waitFor(() =>
-      expect(rendered.getByText('Loading Status: Loaded')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('Loading Status: Loaded')).toBeInTheDocument()
   })
 
   it('should not have stale closures with combine (#6648)', async () => {
@@ -1305,13 +1301,13 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() => rendered.getByText('data: 0 result'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: 0 result')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
-    await waitFor(() =>
-      expect(rendered.getByText('data: 1 result')).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: 1 result')).toBeInTheDocument()
   })
 
   it('should optimize combine if it is a stable reference', async () => {
@@ -1367,14 +1363,17 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
       rendered.getByText('data: true first result:0,second result:0'),
-    )
+    ).toBeInTheDocument()
 
     // both pending, one pending, both resolved
     expect(spy).toHaveBeenCalledTimes(3)
 
-    await client.refetchQueries()
+    client.refetchQueries()
+
+    await vi.advanceTimersByTimeAsync(21)
     // no increase because result hasn't changed
     expect(spy).toHaveBeenCalledTimes(3)
 
@@ -1385,11 +1384,12 @@ describe('useQueries', () => {
 
     value = 1
 
-    await client.refetchQueries()
+    client.refetchQueries()
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
       rendered.getByText('data: true first result:1,second result:1'),
-    )
+    ).toBeInTheDocument()
 
     // two value changes = two re-renders
     expect(spy).toHaveBeenCalledTimes(5)
@@ -1451,9 +1451,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() =>
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
       rendered.getByText('data: 0 first result,second result'),
-    )
+    ).toBeInTheDocument()
 
     // both pending, one pending, both resolved
     expect(spy).toHaveBeenCalledTimes(3)
@@ -1510,11 +1511,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() => rendered.getByText('data: foo'))
+    await vi.advanceTimersByTimeAsync(21)
+    expect(rendered.getByText('data: foo')).toBeInTheDocument()
 
-    await waitFor(() =>
-      expect(queryFns).toEqual(['first result', 'second result']),
-    )
+    expect(queryFns).toEqual(['first result', 'second result'])
 
     expect(renders).toBe(1)
   })
@@ -1574,8 +1574,10 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() => rendered.getByText('data: pending'))
-    await waitFor(() => rendered.getByText('data: foo'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(21)
+    expect(rendered.getByText('data: foo')).toBeInTheDocument()
 
     // one with pending, one with foo
     expect(renders).toBe(2)
@@ -1640,23 +1642,20 @@ describe('useQueries', () => {
 
     const rendered = render(<Page />)
 
-    await waitFor(() =>
-      expect(rendered.getByText('data: pending')).toBeInTheDocument(),
-    )
-    await waitFor(() =>
-      expect(
-        rendered.getByText('data: first result, second result, third result'),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: pending')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText('data: first result, second result, third result'),
+    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /update/i }))
 
-    await waitFor(() =>
-      expect(
-        rendered.getByText(
-          'data: first result updated, second result, third result',
-        ),
-      ).toBeInTheDocument(),
-    )
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText(
+        'data: first result updated, second result, third result',
+      ),
+    ).toBeInTheDocument()
   })
 })
