@@ -1,4 +1,4 @@
-import { createSubscriber } from 'svelte/reactivity'
+import { SvelteSet, createSubscriber } from 'svelte/reactivity'
 
 type VoidFn = () => void
 type Subscriber = (update: VoidFn) => void | VoidFn
@@ -30,7 +30,7 @@ export function createRawRef<T extends {} | Array<unknown>>(
   init: T,
 ): [T, (newValue: T) => void] {
   const refObj = (Array.isArray(init) ? [] : {}) as T
-  const hiddenKeys = new Set<PropertyKey>()
+  const hiddenKeys = new SvelteSet<PropertyKey>()
   const out = new Proxy(refObj, {
     set(target, prop, value, receiver) {
       hiddenKeys.delete(prop)

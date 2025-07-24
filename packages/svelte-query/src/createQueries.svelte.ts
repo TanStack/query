@@ -1,5 +1,4 @@
 import { QueriesObserver } from '@tanstack/query-core'
-import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { createRawRef } from './containers.svelte.js'
 import { useQueryClient } from './useQueryClient.js'
@@ -216,10 +215,13 @@ export function createQueries<
     }),
   )
 
-  const observer = new QueriesObserver<TCombinedResult>(
-    client,
-    untrack(() => resolvedQueryOptions),
-    untrack(() => combine as QueriesObserverOptions<TCombinedResult>),
+  // can't do same as createMutation, as QueriesObserver has no `setOptions` method
+  const observer = $derived(
+    new QueriesObserver<TCombinedResult>(
+      client,
+      resolvedQueryOptions,
+      combine as QueriesObserverOptions<TCombinedResult>,
+    ),
   )
 
   function createResult() {
