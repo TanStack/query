@@ -220,14 +220,12 @@ describe('createQuery', () => {
     await withEffectRoot(async () => {
       const { promise, resolve } = promiseWithResolvers<string>()
 
-      const query = $derived(
-        createQuery<string, Error>(
-          () => ({
-            queryKey: key,
-            queryFn: () => promise,
-          }),
-          () => queryClient,
-        ),
+      const query = createQuery<string, Error>(
+        () => ({
+          queryKey: key,
+          queryFn: () => promise,
+        }),
+        () => queryClient,
       )
 
       expect(query).toEqual(
@@ -1885,6 +1883,33 @@ describe('createQuery', () => {
 
       await vi.waitFor(() => expect(query.status).toBe('error'))
       expect(query.error?.message).toBe('Local Error')
+    }),
+  )
+
+  it(
+    'should support changing provided query client',
+    withEffectRoot(async () => {
+      const queryClient1 = new QueryClient()
+      const queryClient2 = new QueryClient()
+
+      let queryClient = $state(queryClient1)
+
+      const key = ['test']
+
+      createQuery(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve('prefetched'),
+        }),
+        () => queryClient,
+      )
+
+      expect(queryClient1.getQueryCache().find({ queryKey: key })).toBeDefined()
+
+      queryClient = queryClient2
+      flushSync()
+
+      expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
     }),
   )
 })

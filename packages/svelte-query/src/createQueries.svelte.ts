@@ -216,12 +216,10 @@ export function createQueries<
     }),
   )
 
-  const observer = $derived(
-    new QueriesObserver<TCombinedResult>(
-      client,
-      untrack(() => resolvedQueryOptions),
-      untrack(() => combine as QueriesObserverOptions<TCombinedResult>),
-    ),
+  const observer = new QueriesObserver<TCombinedResult>(
+    client,
+    untrack(() => resolvedQueryOptions),
+    untrack(() => combine as QueriesObserverOptions<TCombinedResult>),
   )
 
   function createResult() {

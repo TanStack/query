@@ -2,7 +2,7 @@ import { describe, test } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import BaseExample from './BaseExample.svelte'
 
-describe('useIsFetching', () => {
+describe('useIsMutating', () => {
   test('should update as queries start and stop fetching', async () => {
     const rendered = render(BaseExample)
 

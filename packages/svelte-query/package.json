@@ -58,7 +58,7 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/svelte": "^5.2.6",
     "eslint-plugin-svelte": "^2.46.0",
-    "svelte": "^5.26.1",
+    "svelte": "^5.36.16",
     "svelte-check": "^4.1.5"
   },
   "peerDependencies": {
