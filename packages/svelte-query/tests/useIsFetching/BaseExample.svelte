@@ -1,24 +1,11 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
-  import { createQuery, useIsFetching } from '../../src/index.js'
-  import { sleep } from '@tanstack/query-test-utils'
-
-  const queryClient = new QueryClient()
-  let ready = $state(false)
-
-  const isFetching = useIsFetching(undefined, queryClient)
-
-  const query = createQuery(
-    () => ({
-      queryKey: ['test'],
-      queryFn: () => sleep(10).then(() => 'test'),
-      enabled: ready,
-    }),
-    () => queryClient,
-  )
+  import ProviderWrapper from '../ProviderWrapper.svelte'
+  import FetchStatus from './FetchStatus.svelte'
+  import Query from './Query.svelte'
 </script>
 
-<button onclick={() => (ready = true)}>setReady</button>
+<ProviderWrapper>
+  <FetchStatus />
 
-<div>isFetching: {isFetching.current}</div>
-<div>Data: {query.data ?? 'undefined'}</div>
+  <Query />
+</ProviderWrapper>
