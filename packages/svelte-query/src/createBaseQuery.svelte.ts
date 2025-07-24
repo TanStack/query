@@ -39,11 +39,15 @@ export function createBaseQuery<
   })
 
   /** Creates the observer */
-  const observer = $derived(
-    new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
-      client,
-      untrack(() => resolvedOptions),
-    ),
+  const observer = new Observer<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >(
+    client,
+    untrack(() => resolvedOptions),
   )
 
   function createResult() {

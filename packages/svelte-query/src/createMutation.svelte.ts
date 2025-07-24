@@ -26,16 +26,15 @@ export function createMutation<
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   const client = useQueryClient(queryClient?.())
 
-  const observer = $derived(
-    new MutationObserver<TData, TError, TVariables, TContext>(
-      client,
-      options(),
-    ),
+  const observer = new MutationObserver<TData, TError, TVariables, TContext>(
+    client,
+    options(),
   )
 
-  const mutate = $state<
-    CreateMutateFunction<TData, TError, TVariables, TContext>
-  >((variables, mutateOptions) => {
+  const mutate = <CreateMutateFunction<TData, TError, TVariables, TContext>>((
+    variables,
+    mutateOptions,
+  ) => {
     observer.mutate(variables, mutateOptions).catch(noop)
   })
 
@@ -43,7 +42,7 @@ export function createMutation<
     observer.setOptions(options())
   })
 
-  const result = $state(observer.getCurrentResult())
+  const result = observer.getCurrentResult()
 
   const unsubscribe = observer.subscribe((val) => {
     notifyManager.batchCalls(() => {
