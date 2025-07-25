@@ -28,9 +28,5 @@
   {JSON.stringify(statuses)}
 </div>
 
-<button data-testid="success" on:click={() => $successMutation.mutate()}>
-  Click
-</button>
-<button data-testid="error" on:click={() => $errorMutation.mutate()}>
-  Click
-</button>
+<button on:click={() => $successMutation.mutate()}>success</button>
+<button on:click={() => $errorMutation.mutate()}>error</button>
