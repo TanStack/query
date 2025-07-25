@@ -5,6 +5,7 @@ import { createInfiniteQuery, infiniteQueryOptions } from '../../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('queryOptions', () => {
+  // eslint-disable-next-line vitest/expect-expect
   test('Should not allow excess properties', () => {
     infiniteQueryOptions({
       queryKey: ['key'],
