@@ -20,14 +20,12 @@ describe('createMutation', () => {
     expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    await vi.advanceTimersByTimeAsync(0)
-    expect(
-      rendered.queryByText('Error: Expected mock error'),
-    ).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('Error: Expected mock error')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /Reset/i }))
-    await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
   })
 
   test('Able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
@@ -46,7 +44,7 @@ describe('createMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(11)
     expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
 
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
@@ -67,14 +65,11 @@ describe('createMutation', () => {
 
     const mutationFn = vi.fn<(value: Value) => Promise<Value>>()
 
-    mutationFn.mockImplementationOnce(() => {
-      return Promise.reject(`Expected mock error`)
-    })
+    mutationFn.mockImplementationOnce(() =>
+      sleep(20).then(() => Promise.reject(`Expected mock error`)),
+    )
 
-    mutationFn.mockImplementation(async (value) => {
-      await sleep(5)
-      return Promise.resolve(value)
-    })
+    mutationFn.mockImplementation((value) => sleep(10).then(() => value))
 
     const rendered = render(FailureExample, {
       props: {
@@ -86,7 +81,7 @@ describe('createMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     expect(rendered.getByText('Data: undefined')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('Status: error')).toBeInTheDocument()
     expect(rendered.getByText('Failure Count: 1')).toBeInTheDocument()
     expect(
@@ -96,7 +91,7 @@ describe('createMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Status: pending')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(6)
+    await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Status: success')).toBeInTheDocument()
     expect(rendered.getByText('Data: 2')).toBeInTheDocument()
     expect(rendered.getByText('Failure Count: 0')).toBeInTheDocument()
