@@ -3,6 +3,7 @@
   import { createInfiniteQuery } from '../../src/index.js'
   import type { QueryObserverResult } from '@tanstack/query-core'
   import type { Writable } from 'svelte/store'
+  import { sleep } from '@tanstack/query-test-utils'
 
   export let states: Writable<Array<QueryObserverResult>>
 
@@ -11,7 +12,7 @@
   const query = createInfiniteQuery(
     {
       queryKey: ['test'],
-      queryFn: ({ pageParam }) => Number(pageParam),
+      queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
       getNextPageParam: (lastPage) => lastPage + 1,
       initialPageParam: 0,
     },
