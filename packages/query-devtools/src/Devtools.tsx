@@ -659,16 +659,27 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 
   const queries = createMemo(
     on(
-      () => [queryCount(), props.localStore.filter, sort(), sortOrder()],
+      () => [
+        queryCount(),
+        props.localStore.filter,
+        sort(),
+        sortOrder(),
+        props.localStore.hideDisabled,
+      ],
       () => {
         const curr = query_cache().getAll()
 
-        const filtered = props.localStore.filter
+        let filtered = props.localStore.filter
           ? curr.filter(
               (item) =>
                 rankItem(item.queryHash, props.localStore.filter || '').passed,
             )
           : [...curr]
+
+        // Filter out disabled queries if hideDisabled is enabled
+        if (props.localStore.hideDisabled === 'true') {
+          filtered = filtered.filter((item) => !item.isDisabled())
+        }
 
         const sorted = sortFn()
           ? filtered.sort((a, b) => sortFn()!(a, b) * sortOrder())
@@ -1182,6 +1193,70 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                         >
                           <span>System</span>
                           <Monitor />
+                        </DropdownMenu.Item>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
+                  <DropdownMenu.Sub overlap gutter={8} shift={-4}>
+                    <DropdownMenu.SubTrigger
+                      class={cx(
+                        styles().settingsSubTrigger,
+                        'tsqd-settings-menu-sub-trigger',
+                        'tsqd-settings-menu-sub-trigger-disabled-queries',
+                      )}
+                    >
+                      <span>Disabled Queries</span>
+                      <ChevronDown />
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal
+                      ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                      mount={
+                        pip().pipWindow
+                          ? pip().pipWindow!.document.body
+                          : document.body
+                      }
+                    >
+                      <DropdownMenu.SubContent
+                        class={cx(
+                          styles().settingsMenu,
+                          'tsqd-settings-submenu',
+                        )}
+                      >
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            props.setLocalStore('hideDisabled', 'false')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles().settingsSubButton,
+                            props.localStore.hideDisabled !== 'true' &&
+                              styles().themeSelectedButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-show',
+                          )}
+                        >
+                          <span>Show</span>
+                          <Show when={props.localStore.hideDisabled !== 'true'}>
+                            <CheckCircle />
+                          </Show>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            props.setLocalStore('hideDisabled', 'true')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles().settingsSubButton,
+                            props.localStore.hideDisabled === 'true' &&
+                              styles().themeSelectedButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-hide',
+                          )}
+                        >
+                          <span>Hide</span>
+                          <Show when={props.localStore.hideDisabled === 'true'}>
+                            <CheckCircle />
+                          </Show>
                         </DropdownMenu.Item>
                       </DropdownMenu.SubContent>
                     </DropdownMenu.Portal>

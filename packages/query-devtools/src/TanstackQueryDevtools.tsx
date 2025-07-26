@@ -31,6 +31,7 @@ class TanstackQueryDevtools {
   #position: Signal<DevtoolsPosition | undefined>
   #initialIsOpen: Signal<boolean | undefined>
   #errorTypes: Signal<Array<DevtoolsErrorType> | undefined>
+  #hideDisabled: Signal<boolean | undefined>
   #Component: DevtoolsComponentType | undefined
   #dispose?: () => void
 
@@ -46,6 +47,7 @@ class TanstackQueryDevtools {
       errorTypes,
       styleNonce,
       shadowDOMTarget,
+      hideDisabled,
     } = config
     this.#client = createSignal(client)
     this.#queryFlavor = queryFlavor
@@ -57,6 +59,7 @@ class TanstackQueryDevtools {
     this.#position = createSignal(position)
     this.#initialIsOpen = createSignal(initialIsOpen)
     this.#errorTypes = createSignal(errorTypes)
+    this.#hideDisabled = createSignal(hideDisabled)
   }
 
   setButtonPosition(position: DevtoolsButtonPosition) {
@@ -88,6 +91,7 @@ class TanstackQueryDevtools {
       const [pos] = this.#position
       const [isOpen] = this.#initialIsOpen
       const [errors] = this.#errorTypes
+      const [hideDisabled] = this.#hideDisabled
       const [queryClient] = this.#client
       let Devtools: DevtoolsComponentType
 
@@ -120,6 +124,9 @@ class TanstackQueryDevtools {
             },
             get errorTypes() {
               return errors()
+            },
+            get hideDisabled() {
+              return hideDisabled()
             },
           }}
         />
