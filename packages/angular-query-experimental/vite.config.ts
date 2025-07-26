@@ -52,6 +52,7 @@ const config = defineConfig({
 })
 
 // copy from @tanstack/config/vite with changes:
+// - dts outDir: dist/types
 // - build - lib - fileName: [name.mjs]
 // - rollup - output - preserveModulesRoot: src
 export const tanstackViteConfig = (options: Options) => {
@@ -65,7 +66,7 @@ export const tanstackViteConfig = (options: Options) => {
         projects: options.tsconfigPath ? [options.tsconfigPath] : undefined,
       }),
       dts({
-        outDir,
+        outDir: `dist/types`,
         entryRoot: options.srcDir,
         include: options.srcDir,
         exclude: options.exclude,
@@ -111,9 +112,15 @@ export default mergeConfig(
   config,
   tanstackViteConfig({
     cjs: false,
-    entry: ['./src/index.ts'],
-    exclude: ['./src/__tests__'],
+    entry: [
+      './src/index.ts',
+      './src/devtools-panel/index.ts',
+      './src/devtools-panel/stub.ts',
+      './src/devtools/index.ts',
+      './src/devtools/stub.ts',
+    ],
+    exclude: ['src/__tests__'],
     srcDir: './src',
-    tsconfigPath: './tsconfig.prod.json',
+    tsconfigPath: 'tsconfig.prod.json',
   }),
 )

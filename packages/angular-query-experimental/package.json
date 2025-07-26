@@ -42,26 +42,45 @@
     "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
-    "build": "pnpm build:tsup",
-    "build:tsup": "tsup --tsconfig tsconfig.prod.json"
+    "test:build": "pnpm pack && publint *.tgz --strict && attw *.tgz; premove *.tgz",
+    "build": "vite build",
+    "prepack": "node scripts/prepack.js"
   },
   "type": "module",
-  "types": "build/index.d.ts",
-  "module": "build/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "module": "dist/index.mjs",
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "@tanstack/custom-condition": "./src/index.ts",
-      "types": "./build/index.d.ts",
-      "default": "./build/index.mjs"
+      "default": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json",
+    "./devtools": {
+      "types": "./dist/types/devtools/index.d.ts",
+      "development": "./dist/devtools/index.mjs",
+      "default": "./dist/devtools/stub.mjs"
+    },
+    "./devtools/production": {
+      "types": "./dist/types/devtools/production/index.d.ts",
+      "default": "./dist/devtools/index.mjs"
+    },
+    "./devtools-panel": {
+      "types": "./dist/types/devtools-panel/index.d.ts",
+      "development": "./dist/devtools-panel/index.mjs",
+      "default": "./dist/devtools-panel/stub.mjs"
+    },
+    "./devtools-panel/production": {
+      "types": "./dist/types/devtools-panel/production/index.d.ts",
+      "default": "./dist/devtools-panel/index.mjs"
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "build",
-    "src",
-    "!src/__tests__"
+    "**/*.d.ts",
+    "dist",
+    "!dist/types/**"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
@@ -82,5 +101,33 @@
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
     "@angular/core": ">=16.0.0"
+  },
+  "publishConfig": {
+    "types": "index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "./devtools": {
+        "types": "./devtools/index.d.ts",
+        "development": "./dist/devtools/index.mjs",
+        "default": "./dist/devtools/stub.mjs"
+      },
+      "./devtools/production": {
+        "types": "./devtools/production/index.d.ts",
+        "default": "./dist/devtools/index.mjs"
+      },
+      "./devtools-panel": {
+        "types": "./devtools-panel/index.d.ts",
+        "development": "./dist/devtools-panel/index.mjs",
+        "default": "./dist/devtools-panel/stub.mjs"
+      },
+      "./devtools-panel/production": {
+        "types": "./devtools-panel/production/index.d.ts",
+        "default": "./dist/devtools-panel/index.mjs"
+      },
+      "./package.json": "./package.json"
+    }
   }
 }

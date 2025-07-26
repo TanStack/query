@@ -24,6 +24,13 @@
       "ignoreDependencies": ["vue2", "vue2.7"]
     },
     "packages/angular-query-experimental": {
+      "entry": [
+        "src/index.ts",
+        "src/devtools/index.ts",
+        "src/devtools/production/index.ts",
+        "src/devtools-panel/index.ts",
+        "src/devtools-panel/production/index.ts"
+      ],
       "ignore": ["scripts/prepack.js", "scripts/prepare-package.js"]
     }
   }
