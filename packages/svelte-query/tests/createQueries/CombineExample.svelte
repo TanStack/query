@@ -11,10 +11,7 @@
     {
       queries: ids.map((id) => ({
         queryKey: [id],
-        queryFn: async () => {
-          await sleep(5)
-          return id
-        },
+        queryFn: () => sleep(10).then(() => id),
       })),
       combine: (results) => {
         return {
