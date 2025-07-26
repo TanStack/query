@@ -21,17 +21,11 @@ describe('createQueries', () => {
           queries: [
             {
               queryKey: ['key-1'],
-              queryFn: async () => {
-                await sleep(5)
-                return 'Success 1'
-              },
+              queryFn: () => sleep(10).then(() => 'Success 1'),
             },
             {
               queryKey: ['key-2'],
-              queryFn: async () => {
-                await sleep(5)
-                return 'Success 2'
-              },
+              queryFn: () => sleep(10).then(() => 'Success 2'),
             },
           ],
         },
@@ -39,11 +33,10 @@ describe('createQueries', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('Status 1: pending')).toBeInTheDocument()
     expect(rendered.getByText('Status 2: pending')).toBeInTheDocument()
 
-    await vi.advanceTimersByTimeAsync(6)
+    await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Status 1: success')).toBeInTheDocument()
     expect(rendered.getByText('Status 2: success')).toBeInTheDocument()
   })
@@ -55,10 +48,9 @@ describe('createQueries', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isPending: true')).toBeInTheDocument()
 
-    await vi.advanceTimersByTimeAsync(6)
+    await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('Data: 1,2,3')).toBeInTheDocument()
   })
 })
