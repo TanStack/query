@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@10.7.0",
+  "packageManager": "pnpm@10.13.1",
   "type": "module",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
@@ -28,7 +28,6 @@
     "prettier": "prettier --experimental-cli --ignore-unknown '**/*'",
     "prettier:write": "pnpm run prettier --write",
     "docs:generate": "node scripts/generateDocs.ts",
-    "cipublish": "node scripts/publish.ts",
     "verify-links": "node scripts/verify-links.ts"
   },
   "nx": {
@@ -52,7 +51,6 @@
     "esbuild-plugin-file-path-extensions": "^2.1.4",
     "eslint": "^9.15.0",
     "eslint-plugin-react-hooks": "^6.0.0-rc.1",
-    "fast-glob": "^3.3.3",
     "jsdom": "^25.0.1",
     "knip": "^5.50.2",
     "markdown-link-extractor": "^4.0.2",
@@ -64,6 +62,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sherif": "^1.6.1",
+    "tinyglobby": "^0.2.14",
     "tsup": "^8.4.0",
     "typescript": "5.8.3",
     "typescript50": "npm:typescript@5.0",
