@@ -86,8 +86,8 @@ async function run() {
   // Convert the pairs into valid yaml
   const yamlStr = await generateLabelerYaml(pairs)
 
-  // Write to '.github/labeler.yml'
-  const configPath = path.resolve('.github/labeler.yml')
+  // Write to 'labeler-config.yml'
+  const configPath = path.resolve('labeler-config.yml')
   fs.writeFileSync(configPath, yamlStr, {
     encoding: 'utf-8',
   })
