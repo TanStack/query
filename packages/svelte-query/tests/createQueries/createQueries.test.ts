@@ -41,6 +41,34 @@ describe('createQueries', () => {
     expect(rendered.getByText('Status 2: success')).toBeInTheDocument()
   })
 
+  test('Render and wait for success when queries resolve at different times', async () => {
+    const rendered = render(BaseExample, {
+      props: {
+        options: {
+          queries: [
+            {
+              queryKey: ['key-1'],
+              queryFn: () => sleep(10).then(() => 'Success 1'),
+            },
+            {
+              queryKey: ['key-2'],
+              queryFn: () => sleep(20).then(() => 'Success 2'),
+            },
+          ],
+        },
+        queryClient: new QueryClient(),
+      },
+    })
+
+    expect(rendered.getByText('Status 1: pending')).toBeInTheDocument()
+    expect(rendered.getByText('Status 2: pending')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('Status 1: success')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Status 2: success')).toBeInTheDocument()
+  })
+
   test('Combine queries', async () => {
     const rendered = render(CombineExample, {
       props: {
