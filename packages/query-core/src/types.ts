@@ -9,6 +9,7 @@ import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+export type MaybePromise<T> = T | Promise<T>
 export type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type DistributiveOmit<
@@ -97,7 +98,7 @@ export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
+> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => MaybePromise<T>
 
 export type StaleTime = number | 'static'
 
@@ -128,12 +129,12 @@ export type QueryPersister<
       queryFn: QueryFunction<T, TQueryKey, never>,
       context: QueryFunctionContext<TQueryKey>,
       query: Query,
-    ) => T | Promise<T>
+    ) => MaybePromise<T>
   : (
       queryFn: QueryFunction<T, TQueryKey, TPageParam>,
       context: QueryFunctionContext<TQueryKey>,
       query: Query,
-    ) => T | Promise<T>
+    ) => MaybePromise<T>
 
 export type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
@@ -1103,25 +1104,23 @@ export interface MutationOptions<
 > {
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
-  onMutate?: (
-    variables: TVariables,
-  ) => Promise<TContext | undefined> | TContext | undefined
+  onMutate?: (variables: TVariables) => MaybePromise<TContext | undefined>
   onSuccess?: (
     data: TData,
     variables: TVariables,
     context: TContext,
-  ) => Promise<unknown> | unknown
+  ) => MaybePromise<unknown>
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | unknown
+  ) => MaybePromise<unknown>
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | unknown
+  ) => MaybePromise<unknown>
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
