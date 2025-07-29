@@ -1,5 +1,13 @@
+import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useInfiniteQuery } from './useInfiniteQuery'
-import type { OmitKeyof, QueryKey, WithRequired } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
+import type {
+  InfiniteQueryObserverSuccessResult,
+  OmitKeyof,
+  QueryKey,
+  QueryObserver,
+  WithRequired,
+} from '@tanstack/query-core'
 import type {
   UseInfiniteQueryOptions,
   UseSuspenseInfiniteQueryResult,
@@ -42,11 +50,14 @@ export function useSuspenseInfiniteQuery<
     TQueryKey
   >,
 ): UseSuspenseInfiniteQueryResult<TData, TError> {
-  return useInfiniteQuery({
-    ...options,
-    enabled: true,
-    suspense: true,
-    useErrorBoundary: true,
-    networkMode: 'always',
-  }) as UseSuspenseInfiniteQueryResult<TData, TError>
+  return useBaseQuery(
+    {
+      ...options,
+      enabled: true,
+      suspense: true,
+      useErrorBoundary: true,
+      networkMode: 'always',
+    },
+    InfiniteQueryObserver as typeof QueryObserver,
+  ) as InfiniteQueryObserverSuccessResult<TData, TError>
 }
