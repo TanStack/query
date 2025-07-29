@@ -59,7 +59,10 @@ export function queryOptions<
     'queryKey'
   >,
 ): WithRequired<
-  DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  OmitKeyof<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+    ProhibitedQueryOptionsKeyInV5
+  >,
   'queryKey'
 >
 
@@ -77,7 +80,10 @@ export function queryOptions<
     'queryKey'
   >,
 ): WithRequired<
-  UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  OmitKeyof<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+    ProhibitedQueryOptionsKeyInV5
+  >,
   'queryKey'
 >
 
