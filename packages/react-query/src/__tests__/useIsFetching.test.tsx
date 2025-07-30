@@ -30,10 +30,7 @@ describe('useIsFetching', () => {
 
       useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(50)
-          return 'test'
-        },
+        queryFn: () => sleep(50).then(() => 'test'),
         enabled: ready,
       })
 
@@ -54,10 +51,8 @@ describe('useIsFetching', () => {
     expect(getByText('isFetching: 0')).toBeInTheDocument()
 
     fireEvent.click(getByRole('button', { name: /setReady/i }))
-
     await vi.advanceTimersByTimeAsync(0)
     expect(getByText('isFetching: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(51)
     expect(getByText('isFetching: 0')).toBeInTheDocument()
   })
@@ -80,10 +75,7 @@ describe('useIsFetching', () => {
     function FirstQuery() {
       useQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        queryFn: () => sleep(100).then(() => 'data'),
       })
       return null
     }
@@ -91,10 +83,7 @@ describe('useIsFetching', () => {
     function SecondQuery() {
       useQuery({
         queryKey: key2,
-        queryFn: async () => {
-          await sleep(100)
-          return 'data'
-        },
+        queryFn: () => sleep(100).then(() => 'data'),
       })
       return null
     }
@@ -133,10 +122,7 @@ describe('useIsFetching', () => {
     function One() {
       useQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
       })
       return null
     }
@@ -144,10 +130,7 @@ describe('useIsFetching', () => {
     function Two() {
       useQuery({
         queryKey: key2,
-        queryFn: async () => {
-          await sleep(20)
-          return 'test'
-        },
+        queryFn: () => sleep(20).then(() => 'test'),
       })
       return null
     }
@@ -174,15 +157,13 @@ describe('useIsFetching', () => {
 
     const { getByText, getByRole } = renderWithClient(queryClient, <Page />)
 
-    getByText('isFetching: 0')
+    expect(getByText('isFetching: 0')).toBeInTheDocument()
 
     fireEvent.click(getByRole('button', { name: /setStarted/i }))
-
     await vi.advanceTimersByTimeAsync(0)
-    getByText('isFetching: 1')
-
+    expect(getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(11)
-    getByText('isFetching: 0')
+    expect(getByText('isFetching: 0')).toBeInTheDocument()
 
     // at no point should we have isFetching: 2
     expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
@@ -195,10 +176,7 @@ describe('useIsFetching', () => {
     function Page() {
       useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
       })
 
       const isFetching = useIsFetching()
@@ -214,7 +192,6 @@ describe('useIsFetching', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
-
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
   })
@@ -227,10 +204,7 @@ describe('useIsFetching', () => {
       useQuery(
         {
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            return 'test'
-          },
+          queryFn: () => sleep(10).then(() => 'test'),
         },
         queryClient,
       )
