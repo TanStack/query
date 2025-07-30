@@ -320,13 +320,14 @@ describe('mutationObserver', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     expect(onSuccess).toHaveBeenCalledTimes(1)
-    expect(onSuccess).toHaveBeenCalledWith('SUCCESS', 'success', undefined)
+    expect(onSuccess).toHaveBeenCalledWith('SUCCESS', 'success', undefined, queryClient)
     expect(onSettled).toHaveBeenCalledTimes(1)
     expect(onSettled).toHaveBeenCalledWith(
       'SUCCESS',
       null,
       'success',
       undefined,
+      queryClient,
     )
 
     unsubscribe()
@@ -354,9 +355,9 @@ describe('mutationObserver', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     expect(onError).toHaveBeenCalledTimes(1)
-    expect(onError).toHaveBeenCalledWith(error, 'error', undefined)
+    expect(onError).toHaveBeenCalledWith(error, 'error', undefined, queryClient)
     expect(onSettled).toHaveBeenCalledTimes(1)
-    expect(onSettled).toHaveBeenCalledWith(undefined, error, 'error', undefined)
+    expect(onSettled).toHaveBeenCalledWith(undefined, error, 'error', undefined, queryClient)
 
     unsubscribe()
   })
