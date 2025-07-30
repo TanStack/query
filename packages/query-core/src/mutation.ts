@@ -10,12 +10,14 @@ import type {
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import type { Retryer } from './retryer'
+import type { QueryClient } from './queryClient'
 
 // TYPES
 
 interface MutationConfig<TData, TError, TVariables, TContext> {
   mutationId: number
   mutationCache: MutationCache
+  client: QueryClient
   options: MutationOptions<TData, TError, TVariables, TContext>
   state?: MutationState<TData, TError, TVariables, TContext>
 }
@@ -88,6 +90,7 @@ export class Mutation<
   options!: MutationOptions<TData, TError, TVariables, TContext>
   readonly mutationId: number
 
+  #client : QueryClient
   #observers: Array<MutationObserver<TData, TError, TVariables, TContext>>
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>
@@ -97,6 +100,7 @@ export class Mutation<
 
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
+    this.#client = config.client
     this.#observers = []
     this.state = config.state || getDefaultState()
 
@@ -171,7 +175,7 @@ export class Mutation<
         if (!this.options.mutationFn) {
           return Promise.reject(new Error('No mutationFn found'))
         }
-        return this.options.mutationFn(variables)
+        return this.options.mutationFn(variables, this.#client)
       },
       onFail: (failureCount, error) => {
         this.#dispatch({ type: 'failed', failureCount, error })
@@ -200,7 +204,7 @@ export class Mutation<
           variables,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
-        const context = await this.options.onMutate?.(variables)
+        const context = await this.options.onMutate?.(variables, this.#client)
         if (context !== this.state.context) {
           this.#dispatch({
             type: 'pending',
@@ -220,7 +224,12 @@ export class Mutation<
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSuccess?.(data, variables, this.state.context!)
+      await this.options.onSuccess?.(
+        data,
+        variables,
+        this.state.context!,
+        this.#client,
+      )
 
       // Notify cache callback
       await this.#mutationCache.config.onSettled?.(
@@ -231,7 +240,13 @@ export class Mutation<
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSettled?.(data, null, variables, this.state.context)
+      await this.options.onSettled?.(
+        data,
+        null,
+        variables,
+        this.state.context,
+        this.#client,
+      )
 
       this.#dispatch({ type: 'success', data })
       return data
@@ -249,6 +264,7 @@ export class Mutation<
           error as TError,
           variables,
           this.state.context,
+          this.#client,
         )
 
         // Notify cache callback
@@ -265,6 +281,7 @@ export class Mutation<
           error as TError,
           variables,
           this.state.context,
+          this.#client,
         )
         throw error
       } finally {
