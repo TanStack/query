@@ -1236,7 +1236,11 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           )}
                         >
                           <span>Show</span>
-                          <Show when={props.localStore.hideDisabledQueries !== 'true'}>
+                          <Show
+                            when={
+                              props.localStore.hideDisabledQueries !== 'true'
+                            }
+                          >
                             <CheckCircle />
                           </Show>
                         </DropdownMenu.Item>
@@ -1254,7 +1258,11 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           )}
                         >
                           <span>Hide</span>
-                          <Show when={props.localStore.hideDisabledQueries === 'true'}>
+                          <Show
+                            when={
+                              props.localStore.hideDisabledQueries === 'true'
+                            }
+                          >
                             <CheckCircle />
                           </Show>
                         </DropdownMenu.Item>
