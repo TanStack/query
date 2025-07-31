@@ -38,7 +38,7 @@ export interface DevtoolsPanelOptions {
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
-  hideDisabled?: boolean
+  hideDisabledQueries?: boolean
 }
 
 export function ReactQueryDevtoolsPanel(
@@ -46,7 +46,7 @@ export function ReactQueryDevtoolsPanel(
 ): React.ReactElement | null {
   const queryClient = useQueryClient(props.client)
   const ref = React.useRef<HTMLDivElement>(null)
-  const { errorTypes, styleNonce, shadowDOMTarget, hideDisabled } = props
+  const { errorTypes, styleNonce, shadowDOMTarget, hideDisabledQueries } = props
   const [devtools] = React.useState(
     new TanstackQueryDevtoolsPanel({
       client: queryClient,
@@ -60,7 +60,7 @@ export function ReactQueryDevtoolsPanel(
       styleNonce,
       shadowDOMTarget,
       onClose: props.onClose,
-      hideDisabled,
+      hideDisabledQueries,
     }),
   )
 

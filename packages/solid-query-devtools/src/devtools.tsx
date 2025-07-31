@@ -44,7 +44,7 @@ interface DevtoolsOptions {
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
-  hideDisabled?: boolean
+  hideDisabledQueries?: boolean
 }
 
 export default function SolidQueryDevtools(props: DevtoolsOptions) {
@@ -62,7 +62,7 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     errorTypes: props.errorTypes,
     styleNonce: props.styleNonce,
     shadowDOMTarget: props.shadowDOMTarget,
-    hideDisabled: props.hideDisabled,
+    hideDisabledQueries: props.hideDisabledQueries,
   })
 
   createEffect(() => {

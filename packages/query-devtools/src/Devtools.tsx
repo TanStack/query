@@ -664,7 +664,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
         props.localStore.filter,
         sort(),
         sortOrder(),
-        props.localStore.hideDisabled,
+        props.localStore.hideDisabledQueries,
       ],
       () => {
         const curr = query_cache().getAll()
@@ -676,8 +676,8 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             )
           : [...curr]
 
-        // Filter out disabled queries if hideDisabled is enabled
-        if (props.localStore.hideDisabled === 'true') {
+        // Filter out disabled queries if hideDisabledQueries is enabled
+        if (props.localStore.hideDisabledQueries === 'true') {
           filtered = filtered.filter((item) => !item.isDisabled())
         }
 
@@ -1224,37 +1224,37 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       >
                         <DropdownMenu.Item
                           onSelect={() => {
-                            props.setLocalStore('hideDisabled', 'false')
+                            props.setLocalStore('hideDisabledQueries', 'false')
                           }}
                           as="button"
                           class={cx(
                             styles().settingsSubButton,
-                            props.localStore.hideDisabled !== 'true' &&
+                            props.localStore.hideDisabledQueries !== 'true' &&
                               styles().themeSelectedButton,
                             'tsqd-settings-menu-position-btn',
                             'tsqd-settings-menu-position-btn-show',
                           )}
                         >
                           <span>Show</span>
-                          <Show when={props.localStore.hideDisabled !== 'true'}>
+                          <Show when={props.localStore.hideDisabledQueries !== 'true'}>
                             <CheckCircle />
                           </Show>
                         </DropdownMenu.Item>
                         <DropdownMenu.Item
                           onSelect={() => {
-                            props.setLocalStore('hideDisabled', 'true')
+                            props.setLocalStore('hideDisabledQueries', 'true')
                           }}
                           as="button"
                           class={cx(
                             styles().settingsSubButton,
-                            props.localStore.hideDisabled === 'true' &&
+                            props.localStore.hideDisabledQueries === 'true' &&
                               styles().themeSelectedButton,
                             'tsqd-settings-menu-position-btn',
                             'tsqd-settings-menu-position-btn-hide',
                           )}
                         >
                           <span>Hide</span>
-                          <Show when={props.localStore.hideDisabled === 'true'}>
+                          <Show when={props.localStore.hideDisabledQueries === 'true'}>
                             <CheckCircle />
                           </Show>
                         </DropdownMenu.Item>

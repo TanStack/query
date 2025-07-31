@@ -214,7 +214,7 @@ export interface DevtoolsOptions {
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
-  hideDisabled?: boolean
+  hideDisabledQueries?: boolean
 
   /**
    * Whether the developer tools should load.

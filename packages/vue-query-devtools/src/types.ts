@@ -41,5 +41,5 @@ export interface DevtoolsOptions {
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */
-  hideDisabled?: boolean
+  hideDisabledQueries?: boolean
 }

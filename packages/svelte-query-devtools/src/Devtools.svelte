@@ -17,7 +17,7 @@
   export let errorTypes: Array<DevtoolsErrorType> = []
   export let styleNonce: string | undefined = undefined
   export let shadowDOMTarget: ShadowRoot | undefined = undefined
-  export let hideDisabled: boolean = false
+  export let hideDisabledQueries: boolean = false
 
   let ref: HTMLDivElement
   let devtools: TanstackQueryDevtools | undefined
@@ -38,7 +38,7 @@
           errorTypes,
           styleNonce,
           shadowDOMTarget,
-          hideDisabled,
+          hideDisabledQueries,
         })
 
         devtools.mount(ref)
