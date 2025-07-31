@@ -43,23 +43,23 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
-    "build": "pnpm build:tsup",
-    "build:tsup": "tsup --tsconfig tsconfig.prod.json"
+    "build": "vite build",
+    "prepack": "node scripts/prepack.js"
   },
   "type": "module",
-  "types": "build/index.d.ts",
-  "module": "build/index.mjs",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.mjs",
   "exports": {
     ".": {
       "@tanstack/custom-condition": "./src/index.ts",
-      "types": "./build/index.d.ts",
-      "default": "./build/index.mjs"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "build",
+    "dist",
     "src",
     "!src/__tests__"
   ],
