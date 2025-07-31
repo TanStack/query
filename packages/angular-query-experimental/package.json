@@ -42,7 +42,7 @@
     "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
+    "test:build": "pnpm pack && publint ./dist/*.tgz --strict && attw ./dist/*.tgz; premove ./dist/*.tgz",
     "build": "vite build",
     "prepack": "node scripts/prepack.js"
   },
