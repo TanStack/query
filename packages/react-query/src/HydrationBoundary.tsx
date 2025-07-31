@@ -11,7 +11,7 @@ import type {
 } from '@tanstack/query-core'
 
 export interface HydrationBoundaryProps {
-  state: DehydratedState | null | undefined;
+  state: DehydratedState | null | undefined
   options?: OmitKeyof<HydrateOptions, 'defaultOptions'> & {
     defaultOptions?: OmitKeyof<
       Exclude<HydrateOptions['defaultOptions'], undefined>,
