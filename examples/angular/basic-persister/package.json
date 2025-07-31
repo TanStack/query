@@ -13,7 +13,7 @@
     "@angular/compiler": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
-    "@tanstack/angular-query-experimental": "^5.83.1",
+    "@tanstack/angular-query-experimental": "^5.84.0",
     "@tanstack/angular-query-persist-client": "^5.62.7",
     "@tanstack/query-async-storage-persister": "^5.83.1",
     "rxjs": "^7.8.2",

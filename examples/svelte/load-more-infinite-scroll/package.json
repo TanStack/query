@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@tanstack/svelte-query": "^5.83.1",
-    "@tanstack/svelte-query-devtools": "^5.83.1"
+    "@tanstack/svelte-query-devtools": "^5.84.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.0.1",
