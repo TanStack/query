@@ -38,7 +38,7 @@ const data = useMutationState({
 })
 ```
 
-**Example 3: Access the latest mutation data via the `mutationKey`**
+**Example 3: Access the latest mutation data via the `mutationKey`**.
 Each invocation of `mutate` adds a new entry to the mutation cache for `gcTime` milliseconds.
 
 To access the latest invocation, you can check for the last item that `useMutationState` returns.
