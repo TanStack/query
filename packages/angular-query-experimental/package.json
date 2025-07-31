@@ -27,7 +27,7 @@
     "tanstack"
   ],
   "scripts": {
-    "clean": "premove ./build ./dist ./coverage ./dist-ts",
+    "clean": "premove ./dist ./coverage ./dist-ts",
     "compile": "tsc --build",
     "test:eslint": "eslint ./src",
     "test:types": "npm-run-all --serial test:types:*",
@@ -59,9 +59,9 @@
   },
   "sideEffects": false,
   "files": [
-    "dist",
-    "src",
-    "!src/__tests__"
+    "**/*.d.ts",
+    "**/*.mjs",
+    "**/*.mjs.map"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
@@ -82,5 +82,9 @@
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
     "@angular/core": ">=16.0.0"
+  },
+  "publishConfig": {
+    "directory": "dist",
+    "linkDirectory": false
   }
 }
