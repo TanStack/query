@@ -155,7 +155,7 @@ export function queryFeature<TFeatureKind extends QueryFeatureKind>(
  * The type is used to describe the return value of the `withDevtools` function.
  * @see {@link withDevtools}
  */
-export type DevtoolsFeature = QueryFeature<'Devtools'>
+export type DeveloperToolsFeature = QueryFeature<'Devtools'>
 
 /**
  * A type alias that represents a feature which enables persistence.
@@ -170,4 +170,4 @@ export type PersistQueryClientFeature = QueryFeature<'PersistQueryClient'>
  * documentation on how to use those functions.
  * @see {@link provideTanStackQuery}
  */
-export type QueryFeatures = DevtoolsFeature | PersistQueryClientFeature
+export type QueryFeatures = DeveloperToolsFeature | PersistQueryClientFeature
