@@ -52,7 +52,6 @@ const config = defineConfig({
 })
 
 // copy from @tanstack/config/vite with changes:
-// - dts outDir: dist/types
 // - build - lib - fileName: [name.mjs]
 // - rollup - output - preserveModulesRoot: src
 export const tanstackViteConfig = (options: Options) => {
@@ -66,7 +65,7 @@ export const tanstackViteConfig = (options: Options) => {
         projects: options.tsconfigPath ? [options.tsconfigPath] : undefined,
       }),
       dts({
-        outDir: `dist/types`,
+        outDir,
         entryRoot: options.srcDir,
         include: options.srcDir,
         exclude: options.exclude,
