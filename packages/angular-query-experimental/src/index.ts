@@ -49,16 +49,13 @@ export { injectQueryClient } from './inject-query-client'
 
 export type {
   DeveloperToolsFeature,
-  DevtoolsOptions,
   PersistQueryClientFeature,
   QueryFeature,
-  QueryFeatureKind,
   QueryFeatures,
 } from './providers'
 export {
+  provideAngularQuery,
   provideQueryClient,
   provideTanStackQuery,
   queryFeature,
-  queryFeatures,
-  withDevtools,
 } from './providers'

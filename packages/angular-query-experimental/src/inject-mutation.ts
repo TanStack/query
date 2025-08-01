@@ -37,7 +37,6 @@ export interface InjectMutationOptions {
  * @param injectMutationFn - A function that returns mutation options.
  * @param options - Additional configuration
  * @returns The mutation.
- * @public
  */
 export function injectMutation<
   TData = unknown,

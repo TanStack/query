@@ -4,7 +4,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core'
-import { injectDevtoolsPanel } from '@tanstack/angular-query-devtools-experimental'
+import { injectDevtoolsPanel } from '@tanstack/angular-query-experimental/devtools-panel'
 import { ExampleQueryComponent } from './example-query.component'
 import type { ElementRef } from '@angular/core'
 

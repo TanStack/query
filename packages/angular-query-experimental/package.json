@@ -55,7 +55,25 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.mjs"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./devtools": {
+      "types": "./dist/devtools/index.d.ts",
+      "development": "./dist/devtools/index.mjs",
+      "default": "./dist/devtools/stub.mjs"
+    },
+    "./devtools/production": {
+      "types": "./dist/devtools/production/index.d.ts",
+      "default": "./dist/devtools/index.mjs"
+    },
+    "./devtools-panel": {
+      "types": "./dist/devtools-panel/index.d.ts",
+      "development": "./dist/devtools-panel/index.mjs",
+      "default": "./dist/devtools-panel/stub.mjs"
+    },
+    "./devtools-panel/production": {
+      "types": "./dist/devtools-panel/production/index.d.ts",
+      "default": "./dist/devtools-panel/index.mjs"
+    }
   },
   "sideEffects": false,
   "files": [
