@@ -10,8 +10,6 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   fn: () => TData | Promise<TData>
   initialPromise?: Promise<TData>
   abort?: () => void
-  onError?: (error: TError) => void
-  onSuccess?: (data: TData) => void
   onFail?: (failureCount: number, error: TError) => void
   onPause?: () => void
   onContinue?: () => void
@@ -65,10 +63,6 @@ export class CancelledError extends Error {
   }
 }
 
-export function isCancelledError(value: any): value is CancelledError {
-  return value instanceof CancelledError
-}
-
 export function createRetryer<TData = unknown, TError = DefaultError>(
   config: RetryerConfig<TData, TError>,
 ): Retryer<TData> {
@@ -104,7 +98,6 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const resolve = (value: any) => {
     if (!isResolved) {
       isResolved = true
-      config.onSuccess?.(value)
       continueFn?.()
       thenable.resolve(value)
     }
@@ -113,7 +106,6 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const reject = (value: any) => {
     if (!isResolved) {
       isResolved = true
-      config.onError?.(value)
       continueFn?.()
       thenable.reject(value)
     }
