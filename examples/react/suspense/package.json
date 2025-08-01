@@ -8,8 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.83.0",
-    "@tanstack/react-query-devtools": "^5.83.0",
+    "@tanstack/react-query": "^5.84.1",
+    "@tanstack/react-query-devtools": "^5.84.1",
     "font-awesome": "^4.7.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -19,7 +19,7 @@ describe('useIsFetching', () => {
     fireEvent.click(rendered.getByRole('button', { name: /setReady/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(6)
+    await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
   })
 })
