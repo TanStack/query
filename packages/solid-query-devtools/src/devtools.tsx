@@ -41,6 +41,10 @@ interface DevtoolsOptions {
    * Use this so you can attach the devtool's styles to specific element in the DOM.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Set this to true to hide disabled queries from the devtools panel.
+   */
+  hideDisabledQueries?: boolean
 }
 
 export default function SolidQueryDevtools(props: DevtoolsOptions) {
@@ -58,6 +62,7 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     errorTypes: props.errorTypes,
     styleNonce: props.styleNonce,
     shadowDOMTarget: props.shadowDOMTarget,
+    hideDisabledQueries: props.hideDisabledQueries,
   })
 
   createEffect(() => {
