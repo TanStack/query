@@ -30,8 +30,7 @@
         "src/devtools/production/index.ts",
         "src/devtools-panel/index.ts",
         "src/devtools-panel/production/index.ts"
-      ],
-      "ignore": ["scripts/prepack.js", "scripts/prepare-package.js"]
+      ]
     }
   }
 }

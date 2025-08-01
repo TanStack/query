@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.83.0",
+  "version": "5.84.1",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "tanstack"
   ],
   "scripts": {
-    "clean": "premove ./build ./dist ./coverage ./dist-ts",
+    "clean": "premove ./dist ./coverage ./dist-ts",
     "compile": "tsc --build",
     "test:eslint": "eslint ./src",
     "test:types": "npm-run-all --serial test:types:*",
@@ -42,17 +42,17 @@
     "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "pnpm pack && publint *.tgz --strict && attw *.tgz; premove *.tgz",
+    "test:build": "pnpm pack && publint ./dist/*.tgz --strict && attw ./dist/*.tgz; premove ./dist/*.tgz",
     "build": "vite build",
     "prepack": "node scripts/prepack.js"
   },
   "type": "module",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/index.d.ts",
   "module": "dist/index.mjs",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
       "@tanstack/custom-condition": "./src/index.ts",
+      "types": "./dist/index.d.ts",
       "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json",
@@ -73,14 +73,13 @@
     "./devtools-panel/production": {
       "types": "./dist/types/devtools-panel/production/index.d.ts",
       "default": "./dist/devtools-panel/index.mjs"
-    },
-    "./package.json": "./package.json"
+    }
   },
   "sideEffects": false,
   "files": [
     "**/*.d.ts",
-    "dist",
-    "!dist/types/**"
+    "**/*.mjs",
+    "**/*.mjs.map"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
@@ -103,31 +102,7 @@
     "@angular/core": ">=16.0.0"
   },
   "publishConfig": {
-    "types": "index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./index.d.ts",
-        "default": "./dist/index.mjs"
-      },
-      "./devtools": {
-        "types": "./devtools/index.d.ts",
-        "development": "./dist/devtools/index.mjs",
-        "default": "./dist/devtools/stub.mjs"
-      },
-      "./devtools/production": {
-        "types": "./devtools/production/index.d.ts",
-        "default": "./dist/devtools/index.mjs"
-      },
-      "./devtools-panel": {
-        "types": "./devtools-panel/index.d.ts",
-        "development": "./dist/devtools-panel/index.mjs",
-        "default": "./dist/devtools-panel/stub.mjs"
-      },
-      "./devtools-panel/production": {
-        "types": "./devtools-panel/production/index.d.ts",
-        "default": "./dist/devtools-panel/index.mjs"
-      },
-      "./package.json": "./package.json"
-    }
+    "directory": "dist",
+    "linkDirectory": false
   }
 }
