@@ -33,9 +33,11 @@ const query = queryOptions({
   - When set to `'reset'`, the query will erase all data and go back into `pending` state.
   - When set to `'append'`, data will be appended to existing data.
   - When set to `'replace'`, all data will be written to the cache once the stream ends.
-- `maxChunks?: number`
+- `reducer?: (accumulator: TData, chunk: TQueryFnData) => TData`
   - Optional
-  - The maximum number of chunks to keep in the cache.
-  - Defaults to `undefined`, meaning all chunks will be kept.
-  - If `undefined` or `0`, the number of chunks is unlimited.
-  - If the number of chunks exceeds this number, the oldest chunk will be removed.
+  - A function to reduce the streamed chunks into the final data.
+  - Defaults to a function that appends chunks to the end of the array.
+- `placeholderData?: TData = TQueryFnData`
+  - Optional
+  - Defines the initial data to be used while the first chunk is being fetched.
+  - Defaults to an empty array.
