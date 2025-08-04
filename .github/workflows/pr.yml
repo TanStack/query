@@ -23,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Start Nx Agents
-        run: npx nx-cloud start-ci-run"
+        run: npx nx-cloud start-ci-run
       - name: Setup Tools
         uses: tanstack/config/.github/setup@main
       - name: Get base and head commits for `nx affected`
