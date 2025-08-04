@@ -34,7 +34,7 @@ To use `withDevtools` in production builds, import using the `production` sub-pa
 import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production'
 ```
 
-To control when devtools are loaded, you can use the `loadDevtools` option. This is particularly useful if you want to load devtools based on environment configurations or user interaction. For instance, you might have a test environment running in production mode but still require devtools to be available.
+To control when devtools are loaded, you can use the `loadDevtools` option.
 
 When not setting the option or setting it to 'auto', the devtools will be loaded automatically when Angular runs in development mode.
 
@@ -52,15 +52,16 @@ provideTanStackQuery(
 
 When setting the option to true, the devtools will be loaded in both development and production mode.
 
-This is particularly useful if you want to load devtools based on environment configurations. E.g. you could set this to true either when `isDevMode()` is true or when the application is running on your production build staging environment.
+This is useful if you want to load devtools based on [Angular environment configurations](https://angular.dev/tools/cli/environments). E.g. you could set this to true when the application is running on your production build staging environment.
 
 ```ts
+import { environment } from './environments/environment'
 // Make sure to use the production sub-path to load devtools in production builds
 import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production'
 
 provideTanStackQuery(
   new QueryClient(),
-  withDevtools(() => ({ loadDevtools: true })),
+  withDevtools(() => ({ loadDevtools: environment.loadDevtools })),
 )
 ```
 
@@ -110,6 +111,7 @@ This is similar to `deps` in Angular's [`useFactory`](https://angular.dev/guide/
 
 ```ts
 // ...
+// 👇 Note we import from the production sub-path to enable devtools lazy loading in production builds
 import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production'
 
 export const appConfig: ApplicationConfig = {
@@ -156,3 +158,5 @@ Of these options `loadDevtools`, `client`, `position`, `errorTypes`, `buttonPosi
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `hideDisabledQueries?: boolean`
+  - Set this to true to hide disabled queries from the devtools panel.

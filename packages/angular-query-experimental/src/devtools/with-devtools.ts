@@ -147,7 +147,7 @@ export const withDevtools: WithDevtools = (
 
               // Create devtools
               import('@tanstack/query-devtools').then((queryDevtools) => {
-                // As this code runs async, injector can be destroyed in the meantime
+                // As this code runs async, the injector could have been destroyed
                 if (injectorIsDestroyed) return
 
                 devtools = new queryDevtools.TanstackQueryDevtools({
