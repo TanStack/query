@@ -98,6 +98,12 @@ A 2KB min, typesafe fetch wrapper that uses static TypeScript type inference and
 
 Link: https://openapi-ts.dev/openapi-react-query/
 
+## oRPC
+
+Easy to build APIs that are end-to-end type-safe and adhere to OpenAPI standards.
+
+Link: https://github.com/unnoq/orpc
+
 ## Orval
 
 Generate TypeScript client from OpenAPI specifications
