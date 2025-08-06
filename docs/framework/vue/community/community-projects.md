@@ -17,7 +17,7 @@ Link: https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchl
 
 The OpenAPI to TypeScript codegen. Generate clients, SDKs, validators, and more.
 
-Link: https://github.com/hey-api/openapi-ts
+Link: https://heyapi.dev/openapi-ts/plugins/tanstack-query
 
 ## Query Key factory
 
