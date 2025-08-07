@@ -23,6 +23,9 @@ When a query is invalidated with `invalidateQueries`, two things happen:
 - It is marked as stale. This stale state overrides any `staleTime` configurations being used in `useQuery` or related hooks
 - If the query is currently being rendered via `useQuery` or related hooks, it will also be refetched in the background
 
+> **Important:** By default, `invalidateQueries` will immediately refetch *only active queries*—those currently used by mounted components. Inactive queries (cached but not in use) are marked as stale but will not be refetched until they become active again (e.g., when a component utilizing the query mounts). This means that calling `invalidateQueries` without additional options does *not* guarantee all matching queries are refetched immediately.
+
+
 ## Query Matching with `invalidateQueries`
 
 When using APIs like `invalidateQueries` and `removeQueries` (and others that support partial query matching), you can match multiple queries by their prefix, or get really specific and match an exact query. For information on the types of filters you can use, please see [Query Filters](../filters.md#query-filters).
@@ -41,12 +44,12 @@ queryClient.invalidateQueries({ queryKey: ['todos'] })
 
 // Both queries below will be invalidated
 const todoListQuery = useQuery({
-  queryKey: ['todos'],
-  queryFn: fetchTodoList,
+queryKey: ['todos'],
+queryFn: fetchTodoList,
 })
 const todoListQuery = useQuery({
-  queryKey: ['todos', { page: 1 }],
-  queryFn: fetchTodoList,
+queryKey: ['todos', { page: 1 }],
+queryFn: fetchTodoList,
 })
 ```
 
@@ -119,8 +122,8 @@ const todoListQuery = useQuery({
 
 // The query below will be invalidated
 const todoListQuery = useQuery({
-  queryKey: ['todos', { version: 10 }],
-  queryFn: fetchTodoList,
+queryKey: ['todos', { version: 10 }],
+queryFn: fetchTodoList,
 })
 
 // However, the following query below will NOT be invalidated
@@ -131,3 +134,20 @@ const todoListQuery = useQuery({
 ```
 
 [//]: # 'Example5'
+
+By default, `invalidateQueries` only refetches active queries. If you want to refetch **all matching queries**, including those currently inactive in the cache, you need to explicitly set the `refetchType` (or `type`) option to `'all'`:
+
+[//]: # 'Example6'
+
+```tsx
+queryClient.invalidateQueries({
+  queryKey: ['todos'],
+  refetchType: 'all' // or type: 'all'
+});
+```
+
+[//]: # 'Example6'
+
+This forces every matching query—active or inactive—to be refetched immediately.
+
+> 🧠 **Note:** The default behavior (`refetchType: 'active'`) helps avoid unnecessary network requests. But if you're triggering an invalidation after a mutation that affects *all clients or views*, make sure to use `refetchType: 'all'` to keep all query caches up to date.
