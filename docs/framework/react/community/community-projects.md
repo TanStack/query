@@ -102,7 +102,7 @@ Link: https://openapi-ts.dev/openapi-react-query/
 
 Easy to build APIs that are end-to-end type-safe and adhere to OpenAPI standards.
 
-Link: https://github.com/unnoq/orpc
+Link: https://orpc.unnoq.com/docs/integrations/tanstack-query
 
 ## Orval
 
