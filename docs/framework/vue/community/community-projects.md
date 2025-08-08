@@ -17,7 +17,7 @@ Link: https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchl
 
 Easy to build APIs that are end-to-end type-safe and adhere to OpenAPI standards.
 
-Link: https://github.com/unnoq/orpc
+Link: https://orpc.unnoq.com/docs/integrations/tanstack-query
 
 ## Query Key factory
 
