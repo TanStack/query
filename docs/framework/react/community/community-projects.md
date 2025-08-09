@@ -43,6 +43,12 @@ Generate React Query hooks from your GraphQL schema
 
 Link: https://the-guild.dev/graphql/codegen
 
+## Hey API
+
+The OpenAPI to TypeScript codegen. Generate clients, SDKs, validators, and more.
+
+Link: https://heyapi.dev/openapi-ts/plugins/tanstack-query
+
 ## Http-wizard
 
 End-to-end type-safe Fastify API with typeScript magic ✨
