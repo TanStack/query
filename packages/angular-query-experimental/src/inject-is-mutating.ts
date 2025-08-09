@@ -26,7 +26,6 @@ export interface InjectIsMutatingOptions {
  * @param filters - The filters to apply to the query.
  * @param options - Additional configuration
  * @returns signal with number of fetching mutations.
- * @public
  */
 export function injectIsMutating(
   filters?: MutationFilters,

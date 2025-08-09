@@ -2,9 +2,9 @@ import { provideHttpClient, withFetch } from '@angular/common/http'
 import {
   QueryClient,
   provideTanStackQuery,
-  withDevtools,
 } from '@tanstack/angular-query-experimental'
 import { withPersistQueryClient } from '@tanstack/angular-query-persist-client'
+import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import type { ApplicationConfig } from '@angular/core'
 
