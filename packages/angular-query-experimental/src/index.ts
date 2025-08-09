@@ -12,7 +12,7 @@ export type {
 } from './query-options'
 export { queryOptions } from './query-options'
 
-export type { CreateMutationOptions } from './mutation-options'
+export type { CreateMutationOptions } from './types'
 export { mutationOptions } from './mutation-options'
 
 export type {
