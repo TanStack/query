@@ -20,9 +20,9 @@
     "@tanstack/eslint-plugin-query": "^5.83.1",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^4.7.0",
     "typescript": "5.8.3",
-    "vite": "^6.2.4"
+    "vite": "^6.3.5"
   },
   "nx": {
     "targets": {
