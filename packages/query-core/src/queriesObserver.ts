@@ -208,7 +208,8 @@ export class QueriesObserver<
       if (
         !this.#combinedResult ||
         this.#result !== this.#lastResult ||
-        combine !== this.#lastCombine
+        combine !== this.#lastCombine ||
+        this.#result.length !== input.length
       ) {
         this.#lastCombine = combine
         this.#lastResult = this.#result
