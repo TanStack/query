@@ -43,6 +43,12 @@ Generate React Query hooks from your GraphQL schema
 
 Link: https://the-guild.dev/graphql/codegen
 
+## Hey API
+
+The OpenAPI to TypeScript codegen. Generate clients, SDKs, validators, and more.
+
+Link: https://heyapi.dev/openapi-ts/plugins/tanstack-query
+
 ## Http-wizard
 
 End-to-end type-safe Fastify API with typeScript magic ✨
@@ -97,6 +103,12 @@ Link: https://github.com/astahmer/openapi-zod-client
 A 2KB min, typesafe fetch wrapper that uses static TypeScript type inference and no runtime checks.
 
 Link: https://openapi-ts.dev/openapi-react-query/
+
+## oRPC
+
+Easy to build APIs that are end-to-end type-safe and adhere to OpenAPI standards.
+
+Link: https://orpc.unnoq.com/docs/integrations/tanstack-query
 
 ## Orval
 

@@ -13,6 +13,18 @@ A Chrome browser extension that provides devtools for TanStack Query, allowing y
 
 Link: https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai
 
+## oRPC
+
+Easy to build APIs that are end-to-end type-safe and adhere to OpenAPI standards.
+
+Link: https://orpc.unnoq.com/docs/integrations/tanstack-query
+
+## Hey API
+
+The OpenAPI to TypeScript codegen. Generate clients, SDKs, validators, and more.
+
+Link: https://heyapi.dev/openapi-ts/plugins/tanstack-query
+
 ## Query Key factory
 
 A library for creating typesafe standardized query keys, useful for cache management in `@tanstack/query`
