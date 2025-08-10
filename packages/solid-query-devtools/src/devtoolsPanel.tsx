@@ -1,9 +1,8 @@
-
 import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
-import { createEffect, createMemo, onCleanup, onMount, } from "solid-js"
+import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
 
 export interface DevtoolsPanelOptions {
   /**
@@ -41,9 +40,7 @@ export interface DevtoolsPanelOptions {
   hideDisabledQueries?: boolean
 }
 
-export default function SolidQueryDevtoolsPanel(
-  props: DevtoolsPanelOptions,
-) {
+export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   const queryClient = useQueryClient()
   const client = createMemo(() => props.client || queryClient)
   let ref!: HTMLDivElement
@@ -66,7 +63,7 @@ export default function SolidQueryDevtoolsPanel(
     devtools.setClient(client())
   })
   createEffect(() => {
-    devtools.setOnClose(props.onClose ?? (() => { }))
+    devtools.setOnClose(props.onClose ?? (() => {}))
   })
 
   createEffect(() => {
