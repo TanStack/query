@@ -2,8 +2,7 @@ import * as React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDOMTestUtils from 'react-dom/test-utils'
 import ReactDOMServer from 'react-dom/server'
-// eslint-disable-next-line import/no-unresolved -- types only for module augmentation
-import type {} from 'react-dom/next'
+import ReactDOMClient from 'react-dom/client'
 
 import {
   QueryCache,
@@ -14,9 +13,20 @@ import {
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
 
+const isReact19 = () => (process.env.REACTJS_VERSION || '19') === '19'
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
+  if (isReact19()) {
+    let root: any
+    React.act(() => {
+      root = ReactDOMClient.hydrateRoot(container, element)
+    })
+    return () => {
+      root.unmount()
+    }
+  }
+
   if (isReact18()) {
     let root: any
     ReactDOMTestUtils.act(() => {
@@ -28,8 +38,10 @@ const ReactHydrate = (element: React.ReactElement, container: Element) => {
     }
   }
 
+  // @ts-expect-error
   ReactDOM.hydrate(element, container)
   return () => {
+    // @ts-expect-error
     ReactDOM.unmountComponentAtNode(container)
   }
 }
@@ -43,7 +55,7 @@ function PrintStateComponent({ componentName, result }: any): any {
   return `${componentName} - status:${result.status} fetching:${result.isFetching} data:${result.data}`
 }
 
-describe('Server side rendering with de/rehydration', () => {
+describe.only('Server side rendering with de/rehydration', () => {
   let previousIsReactActEnvironment: unknown
   beforeAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
@@ -54,6 +66,7 @@ describe('Server side rendering with de/rehydration', () => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
     globalThis.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
   })
+
   it('should not mismatch on success', async () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)

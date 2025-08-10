@@ -50,13 +50,15 @@
     "build:types": "tsc --build && cp build/lib/index.d.ts build/lib/index.prod.d.ts"
   },
   "devDependencies": {
-    "@types/react": "^18.0.14",
-    "@types/react-dom": "^18.0.5",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
     "@types/use-sync-external-store": "^0.0.3",
-    "react": "^18.2.0",
+    "react": "^19.1.1",
     "react-17": "npm:react@^17.0.2",
-    "react-dom": "^18.2.0",
+    "react-18": "npm:react@^18.2.0",
+    "react-dom": "^19.1.1",
     "react-dom-17": "npm:react-dom@^17.0.2",
+    "react-dom-18": "npm:react-dom@^18.2.0",
     "react-error-boundary": "^3.1.4",
     "@tanstack/react-query": "workspace:*"
   },
