@@ -254,8 +254,7 @@ export class Query<
 
   isActive(): boolean {
     return this.observers.some(
-      (observer) =>
-        resolveOption(observer.options.enabled, this) !== false,
+      (observer) => resolveOption(observer.options.enabled, this) !== false,
     )
   }
 

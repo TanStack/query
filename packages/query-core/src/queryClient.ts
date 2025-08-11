@@ -155,9 +155,7 @@ export class QueryClient {
 
     if (
       options.revalidateIfStale &&
-      query.isStaleByTime(
-        resolveOption(defaultedOptions.staleTime, query),
-      )
+      query.isStaleByTime(resolveOption(defaultedOptions.staleTime, query))
     ) {
       void this.prefetchQuery(defaultedOptions)
     }

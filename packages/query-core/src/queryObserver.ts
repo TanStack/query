@@ -155,10 +155,8 @@ export class QueryObserver<
       this.options.enabled !== undefined &&
       typeof this.options.enabled !== 'boolean' &&
       typeof this.options.enabled !== 'function' &&
-      typeof resolveOption(
-        this.options.enabled,
-        this.#currentQuery,
-      ) !== 'boolean'
+      typeof resolveOption(this.options.enabled, this.#currentQuery) !==
+        'boolean'
     ) {
       throw new Error(
         'Expected enabled to be a boolean or a callback that returns a boolean',
@@ -344,10 +342,7 @@ export class QueryObserver<
 
   #updateStaleTimeout(): void {
     this.#clearStaleTimeout()
-    const staleTime = resolveOption(
-      this.options.staleTime,
-      this.#currentQuery,
-    )
+    const staleTime = resolveOption(this.options.staleTime, this.#currentQuery)
 
     if (isServer || this.#currentResult.isStale || !isValidTimeout(staleTime)) {
       return
@@ -368,10 +363,7 @@ export class QueryObserver<
 
   #computeRefetchInterval() {
     return (
-      resolveOption(
-        this.options.refetchInterval,
-        this.#currentQuery,
-      ) ?? false
+      resolveOption(this.options.refetchInterval, this.#currentQuery) ?? false
     )
   }
 
@@ -382,8 +374,7 @@ export class QueryObserver<
 
     if (
       isServer ||
-      resolveOption(this.options.enabled, this.#currentQuery) ===
-        false ||
+      resolveOption(this.options.enabled, this.#currentQuery) === false ||
       !isValidTimeout(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
     ) {
@@ -658,8 +649,7 @@ export class QueryObserver<
       }
 
       const { notifyOnChangeProps } = this.options
-      const notifyOnChangePropsValue =
-        resolveOption(notifyOnChangeProps)
+      const notifyOnChangePropsValue = resolveOption(notifyOnChangeProps)
 
       if (
         notifyOnChangePropsValue === 'all' ||
