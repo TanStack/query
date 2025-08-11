@@ -34,19 +34,19 @@ import type { Retryer } from './retryer'
 interface QueryConfig<
   TQueryFnData,
   TError,
-  TData,
+  TQueryData,
   TQueryKey extends QueryKey = QueryKey,
 > {
   client: QueryClient
   queryKey: TQueryKey
   queryHash: string
-  options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  state?: QueryState<TData, TError>
+  options?: QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
+  defaultOptions?: QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
+  state?: QueryState<TQueryData, TError>
 }
 
-export interface QueryState<TData = unknown, TError = DefaultError> {
-  data: TData | undefined
+export interface QueryState<TQueryData = unknown, TError = DefaultError> {
+  data: TQueryData | undefined
   dataUpdateCount: number
   dataUpdatedAt: number
   error: TError | null
@@ -63,26 +63,26 @@ export interface QueryState<TData = unknown, TError = DefaultError> {
 export interface FetchContext<
   TQueryFnData,
   TError,
-  TData,
+  TQueryData,
   TQueryKey extends QueryKey = QueryKey,
 > {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
   signal: AbortSignal
-  options: QueryOptions<TQueryFnData, TError, TData, any>
+  options: QueryOptions<TQueryFnData, TError, TQueryData, any>
   client: QueryClient
   queryKey: TQueryKey
-  state: QueryState<TData, TError>
+  state: QueryState<TQueryData, TError>
 }
 
 export interface QueryBehavior<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > {
   onFetch: (
-    context: FetchContext<TQueryFnData, TError, TData, TQueryKey>,
+    context: FetchContext<TQueryFnData, TError, TQueryData, TQueryKey>,
     query: Query,
   ) => void
 }
@@ -93,10 +93,10 @@ export interface FetchMeta {
   fetchMore?: { direction: FetchDirection }
 }
 
-export interface FetchOptions<TData = unknown> {
+export interface FetchOptions<TQueryData = unknown> {
   cancelRefetch?: boolean
   meta?: FetchMeta
-  initialPromise?: Promise<TData>
+  initialPromise?: Promise<TQueryData>
 }
 
 interface FailedAction<TError> {
@@ -110,8 +110,8 @@ interface FetchAction {
   meta?: FetchMeta
 }
 
-interface SuccessAction<TData> {
-  data: TData | undefined
+interface SuccessAction<TQueryData> {
+  data: TQueryData | undefined
   type: 'success'
   dataUpdatedAt?: number
   manual?: boolean
@@ -134,21 +134,21 @@ interface ContinueAction {
   type: 'continue'
 }
 
-interface SetStateAction<TData, TError> {
+interface SetStateAction<TQueryData, TError> {
   type: 'setState'
-  state: Partial<QueryState<TData, TError>>
+  state: Partial<QueryState<TQueryData, TError>>
   setStateOptions?: SetStateOptions
 }
 
-export type Action<TData, TError> =
+export type Action<TQueryData, TError> =
   | ContinueAction
   | ErrorAction<TError>
   | FailedAction<TError>
   | FetchAction
   | InvalidateAction
   | PauseAction
-  | SetStateAction<TData, TError>
-  | SuccessAction<TData>
+  | SetStateAction<TQueryData, TError>
+  | SuccessAction<TQueryData>
 
 export interface SetStateOptions {
   meta?: any
@@ -159,24 +159,24 @@ export interface SetStateOptions {
 export class Query<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Removable {
   queryKey: TQueryKey
   queryHash: string
-  options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  state: QueryState<TData, TError>
+  options!: QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
+  state: QueryState<TQueryData, TError>
 
-  #initialState: QueryState<TData, TError>
-  #revertState?: QueryState<TData, TError>
+  #initialState: QueryState<TQueryData, TError>
+  #revertState?: QueryState<TQueryData, TError>
   #cache: QueryCache
   #client: QueryClient
-  #retryer?: Retryer<TData>
+  #retryer?: Retryer<TQueryData>
   observers: Array<QueryObserver<any, any, any, any, any>>
-  #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  #defaultOptions?: QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
   #abortSignalConsumed: boolean
 
-  constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
+  constructor(config: QueryConfig<TQueryFnData, TError, TQueryData, TQueryKey>) {
     super()
 
     this.#abortSignalConsumed = false
@@ -195,12 +195,12 @@ export class Query<
     return this.options.meta
   }
 
-  get promise(): Promise<TData> | undefined {
+  get promise(): Promise<TQueryData> | undefined {
     return this.#retryer?.promise
   }
 
   setOptions(
-    options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
 
@@ -214,9 +214,9 @@ export class Query<
   }
 
   setData(
-    newData: TData,
+    newData: TQueryData,
     options?: SetDataOptions & { manual: boolean },
-  ): TData {
+  ): TQueryData {
     const data = replaceData(this.state.data, newData, this.options)
 
     // Set data and mark it as cached
@@ -231,7 +231,7 @@ export class Query<
   }
 
   setState(
-    state: Partial<QueryState<TData, TError>>,
+    state: Partial<QueryState<TQueryData, TError>>,
     setStateOptions?: SetStateOptions,
   ): void {
     this.#dispatch({ type: 'setState', state, setStateOptions })
@@ -373,9 +373,9 @@ export class Query<
   }
 
   fetch(
-    options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
-  ): Promise<TData> {
+  ): Promise<TQueryData> {
     if (this.state.fetchStatus !== 'idle') {
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetch
@@ -461,11 +461,11 @@ export class Query<
     const createFetchContext = (): FetchContext<
       TQueryFnData,
       TError,
-      TData,
+      TQueryData,
       TQueryKey
     > => {
       const context: OmitKeyof<
-        FetchContext<TQueryFnData, TError, TData, TQueryKey>,
+        FetchContext<TQueryFnData, TError, TQueryData, TQueryKey>,
         'signal'
       > = {
         fetchOptions,
@@ -477,7 +477,7 @@ export class Query<
       }
 
       addSignalProperty(context)
-      return context as FetchContext<TQueryFnData, TError, TData, TQueryKey>
+      return context as FetchContext<TQueryFnData, TError, TQueryData, TQueryKey>
     }
 
     const context = createFetchContext()
@@ -524,9 +524,9 @@ export class Query<
     // Try to fetch the data
     this.#retryer = createRetryer({
       initialPromise: fetchOptions?.initialPromise as
-        | Promise<TData>
+        | Promise<TQueryData>
         | undefined,
-      fn: context.fetchFn as () => Promise<TData>,
+      fn: context.fetchFn as () => Promise<TQueryData>,
       abort: abortController.abort.bind(abortController),
       onSuccess: (data) => {
         if (data === undefined) {
@@ -576,10 +576,10 @@ export class Query<
     return this.#retryer.start()
   }
 
-  #dispatch(action: Action<TData, TError>): void {
+  #dispatch(action: Action<TQueryData, TError>): void {
     const reducer = (
-      state: QueryState<TData, TError>,
-    ): QueryState<TData, TError> => {
+      state: QueryState<TQueryData, TError>,
+    ): QueryState<TQueryData, TError> => {
       switch (action.type) {
         case 'failed':
           return {
@@ -665,11 +665,11 @@ export class Query<
 export function fetchState<
   TQueryFnData,
   TError,
-  TData,
+  TQueryData,
   TQueryKey extends QueryKey,
 >(
-  data: TData | undefined,
-  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  data: TQueryData | undefined,
+  options: QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
 ) {
   return {
     fetchFailureCount: 0,
@@ -686,14 +686,14 @@ export function fetchState<
 function getDefaultState<
   TQueryFnData,
   TError,
-  TData,
+  TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): QueryState<TData, TError> {
+  options: QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
+): QueryState<TQueryData, TError> {
   const data =
     typeof options.initialData === 'function'
-      ? (options.initialData as InitialDataFunction<TData>)()
+      ? (options.initialData as InitialDataFunction<TQueryData>)()
       : options.initialData
 
   const hasData = data !== undefined

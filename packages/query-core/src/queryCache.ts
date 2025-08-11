@@ -100,20 +100,20 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   build<
     TQueryFnData = unknown,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
     client: QueryClient,
     options: WithRequired<
-      QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
       'queryKey'
     >,
-    state?: QueryState<TData, TError>,
-  ): Query<TQueryFnData, TError, TData, TQueryKey> {
+    state?: QueryState<TQueryData, TError>,
+  ): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
     const queryKey = options.queryKey
     const queryHash =
       options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
-    let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
+    let query = this.get<TQueryFnData, TError, TQueryData, TQueryKey>(queryHash)
 
     if (!query) {
       query = new Query({
@@ -166,13 +166,13 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   get<
     TQueryFnData = unknown,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
     queryHash: string,
-  ): Query<TQueryFnData, TError, TData, TQueryKey> | undefined {
+  ): Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined {
     return this.#queries.get(queryHash) as
-      | Query<TQueryFnData, TError, TData, TQueryKey>
+      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
       | undefined
   }
 
@@ -180,14 +180,14 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return [...this.#queries.values()]
   }
 
-  find<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData>(
+  find<TQueryFnData = unknown, TError = DefaultError, TQueryData = TQueryFnData>(
     filters: WithRequired<QueryFilters, 'queryKey'>,
-  ): Query<TQueryFnData, TError, TData> | undefined {
+  ): Query<TQueryFnData, TError, TQueryData> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
     return this.getAll().find((query) =>
       matchQuery(defaultedFilters, query),
-    ) as Query<TQueryFnData, TError, TData> | undefined
+    ) as Query<TQueryFnData, TError, TQueryData> | undefined
   }
 
   findAll(filters: QueryFilters<any> = {}): Array<Query> {

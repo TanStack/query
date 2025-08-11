@@ -6,12 +6,12 @@ import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 // TYPES
 
-interface RetryerConfig<TData = unknown, TError = DefaultError> {
-  fn: () => TData | Promise<TData>
-  initialPromise?: Promise<TData>
+interface RetryerConfig<TQueryData = unknown, TError = DefaultError> {
+  fn: () => TQueryData | Promise<TQueryData>
+  initialPromise?: Promise<TQueryData>
   abort?: () => void
   onError?: (error: TError) => void
-  onSuccess?: (data: TData) => void
+  onSuccess?: (data: TQueryData) => void
   onFail?: (failureCount: number, error: TError) => void
   onPause?: () => void
   onContinue?: () => void
@@ -21,14 +21,14 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   canRun: () => boolean
 }
 
-export interface Retryer<TData = unknown> {
-  promise: Promise<TData>
+export interface Retryer<TQueryData = unknown> {
+  promise: Promise<TQueryData>
   cancel: (cancelOptions?: CancelOptions) => void
   continue: () => Promise<unknown>
   cancelRetry: () => void
   continueRetry: () => void
   canStart: () => boolean
-  start: () => Promise<TData>
+  start: () => Promise<TQueryData>
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -69,15 +69,15 @@ export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError
 }
 
-export function createRetryer<TData = unknown, TError = DefaultError>(
-  config: RetryerConfig<TData, TError>,
-): Retryer<TData> {
+export function createRetryer<TQueryData = unknown, TError = DefaultError>(
+  config: RetryerConfig<TQueryData, TError>,
+): Retryer<TQueryData> {
   let isRetryCancelled = false
   let failureCount = 0
   let isResolved = false
   let continueFn: ((value?: unknown) => void) | undefined
 
-  const thenable = pendingThenable<TData>()
+  const thenable = pendingThenable<TQueryData>()
 
   const cancel = (cancelOptions?: CancelOptions): void => {
     if (!isResolved) {

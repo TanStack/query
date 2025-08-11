@@ -11,7 +11,7 @@ import {
   skipToken,
 } from '..'
 import { mockOnlineManagerIsOnline } from './utils'
-import type { QueryCache, QueryFunction, QueryObserverOptions } from '..'
+import type { QueryCache, QueryFunction, QueryObserverOptions, InfiniteData } from '..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -806,7 +806,7 @@ describe('queryClient', () => {
         queryClient.fetchInfiniteQuery<
           StrictData,
           any,
-          StrictData,
+          InfiniteData<StrictData, number>,
           StrictQueryKey,
           number
         >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
@@ -844,7 +844,7 @@ describe('queryClient', () => {
       await queryClient.prefetchInfiniteQuery<
         StrictData,
         any,
-        StrictData,
+        InfiniteData<StrictData, number>,
         StrictQueryKey,
         number
       >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 })

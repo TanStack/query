@@ -104,20 +104,20 @@ export type StaleTime = number | 'static'
 export type StaleTimeFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > =
   | StaleTime
-  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => StaleTime)
+  | ((query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => StaleTime)
 
 export type Enabled<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > =
   | boolean
-  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean)
+  | ((query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => boolean)
 
 export type QueryPersister<
   T = unknown,
@@ -225,7 +225,7 @@ export type NotifyOnChangeProps =
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > {
@@ -254,9 +254,9 @@ export interface QueryOptions<
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
-  initialData?: TData | InitialDataFunction<TData>
+  initialData?: TQueryData | InitialDataFunction<TQueryData>
   initialDataUpdatedAt?: number | (() => number | undefined)
-  behavior?: QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
+  behavior?: QueryBehavior<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * Set this to `false` to disable structural sharing between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
@@ -491,11 +491,11 @@ export type DefaultedInfiniteQueryObserverOptions<
 export interface FetchQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends WithRequired<
-    QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
+    QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey, TPageParam>,
     'queryKey'
   > {
   initialPageParam?: never
@@ -503,19 +503,19 @@ export interface FetchQueryOptions<
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
    */
-  staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
 }
 
 export interface EnsureQueryDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends FetchQueryOptions<
     TQueryFnData,
     TError,
-    TData,
+    TQueryData,
     TQueryKey,
     TPageParam
   > {
@@ -525,13 +525,13 @@ export interface EnsureQueryDataOptions<
 export type EnsureInfiniteQueryDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = FetchInfiniteQueryOptions<
   TQueryFnData,
   TError,
-  TData,
+  TQueryData,
   TQueryKey,
   TPageParam
 > & {

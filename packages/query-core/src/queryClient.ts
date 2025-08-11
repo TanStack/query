@@ -140,11 +140,11 @@ export class QueryClient {
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-  ): Promise<TData> {
+    options: EnsureQueryDataOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
+  ): Promise<TQueryData> {
     const defaultedOptions = this.defaultQueryOptions(options)
     const query = this.#queryCache.build(this, defaultedOptions)
     const cachedData = query.state.data
@@ -164,11 +164,11 @@ export class QueryClient {
   }
 
   getQueriesData<
-    TQueryFnData = unknown,
+    TQueryData = unknown,
     TQueryFilters extends QueryFilters<any> = QueryFilters,
-  >(filters: TQueryFilters): Array<[QueryKey, TQueryFnData | undefined]> {
+  >(filters: TQueryFilters): Array<[QueryKey, TQueryData | undefined]> {
     return this.#queryCache.findAll(filters).map(({ queryKey, state }) => {
-      const data = state.data as TQueryFnData | undefined
+      const data = state.data as TQueryData | undefined
       return [queryKey, data]
     })
   }
@@ -341,18 +341,18 @@ export class QueryClient {
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
     options: FetchQueryOptions<
       TQueryFnData,
       TError,
-      TData,
+      TQueryData,
       TQueryKey,
       TPageParam
     >,
-  ): Promise<TData> {
+  ): Promise<TQueryData> {
     const defaultedOptions = this.defaultQueryOptions(options)
 
     // https://github.com/tannerlinsley/react-query/issues/652
@@ -366,16 +366,16 @@ export class QueryClient {
       resolveStaleTime(defaultedOptions.staleTime, query),
     )
       ? query.fetch(defaultedOptions)
-      : Promise.resolve(query.state.data as TData)
+      : Promise.resolve(query.state.data!)
   }
 
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: FetchQueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
   ): Promise<void> {
     return this.fetchQuery(options).then(noop).catch(noop)
   }
@@ -383,22 +383,22 @@ export class QueryClient {
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
     options: FetchInfiniteQueryOptions<
       TQueryFnData,
       TError,
-      TData,
+      TQueryData,
       TQueryKey,
       TPageParam
     >,
-  ): Promise<InfiniteData<TData, TPageParam>> {
+  ): Promise<InfiniteData<TQueryFnData, TPageParam>> {
     options.behavior = infiniteQueryBehavior<
       TQueryFnData,
       TError,
-      TData,
+      TQueryData,
       TPageParam
     >(options.pages)
     return this.fetchQuery(options as any)
@@ -407,14 +407,14 @@ export class QueryClient {
   prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
     options: FetchInfiniteQueryOptions<
       TQueryFnData,
       TError,
-      TData,
+      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -425,22 +425,22 @@ export class QueryClient {
   ensureInfiniteQueryData<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
     options: EnsureInfiniteQueryDataOptions<
       TQueryFnData,
       TError,
-      TData,
+      TQueryData,
       TQueryKey,
       TPageParam
     >,
-  ): Promise<InfiniteData<TData, TPageParam>> {
+  ): Promise<InfiniteData<TQueryFnData, TPageParam>> {
     options.behavior = infiniteQueryBehavior<
       TQueryFnData,
       TError,
-      TData,
+      TQueryData,
       TPageParam
     >(options.pages)
 

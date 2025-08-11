@@ -100,13 +100,13 @@ export function timeUntilStale(updatedAt: number, staleTime?: number): number {
 export function resolveStaleTime<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
   staleTime:
     | undefined
-    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
-  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+    | StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
 ): StaleTime | undefined {
   return typeof staleTime === 'function' ? staleTime(query) : staleTime
 }
@@ -114,11 +114,11 @@ export function resolveStaleTime<
 export function resolveEnabled<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  enabled: undefined | Enabled<TQueryFnData, TError, TData, TQueryKey>,
-  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+  enabled: undefined | Enabled<TQueryFnData, TError, TQueryData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
 ): boolean | undefined {
   return typeof enabled === 'function' ? enabled(query) : enabled
 }
