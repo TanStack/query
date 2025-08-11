@@ -165,6 +165,7 @@ export function resolveOption<T, TArgs extends Array<any>>(
   return isFunctionVariant(value) ? value(...args) : value
 }
 
+
 export function functionalUpdate<TInput, TOutput>(
   updater: Updater<TInput, TOutput>,
   input: TInput,
