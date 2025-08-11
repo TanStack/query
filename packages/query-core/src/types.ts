@@ -711,6 +711,10 @@ export interface QueryObserverBaseResult<
    */
   isSuccess: boolean
   /**
+   * `true` if this observer is enabled, `false` otherwise.
+   */
+  isEnabled: boolean
+  /**
    * A function to manually refetch the query.
    */
   refetch: (

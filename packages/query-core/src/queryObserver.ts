@@ -574,6 +574,7 @@ export class QueryObserver<
       isStale: isStale(query, options),
       refetch: this.refetch,
       promise: this.#currentThenable,
+      isEnabled: resolveEnabled(options.enabled, query) !== false,
     }
 
     const nextResult = result as QueryObserverResult<TData, TError>

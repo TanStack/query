@@ -1,4 +1,4 @@
-import { describe, expect, it, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { onScopeDispose, reactive } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
@@ -9,12 +9,20 @@ import type { MockedFunction } from 'vitest'
 vi.mock('../useQueryClient')
 
 describe('useIsMutating', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('should properly return isMutating state', async () => {
     const mutation = useMutation({
-      mutationFn: (params: string) => sleep(0).then(() => params),
+      mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const mutation2 = useMutation({
-      mutationFn: (params: string) => sleep(0).then(() => params),
+      mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const isMutating = useIsMutating()
 
@@ -23,11 +31,11 @@ describe('useIsMutating', () => {
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(isMutating.value).toStrictEqual(2)
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(isMutating.value).toStrictEqual(0)
   })
@@ -51,11 +59,11 @@ describe('useIsMutating', () => {
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(isMutating.value).toStrictEqual(0)
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(isMutating.value).toStrictEqual(0)
 
@@ -66,7 +74,7 @@ describe('useIsMutating', () => {
     const filter = reactive({ mutationKey: ['foo'] })
     const { mutate } = useMutation({
       mutationKey: ['isMutating'],
-      mutationFn: (params: string) => sleep(0).then(() => params),
+      mutationFn: (params: string) => sleep(10).then(() => params),
     })
     mutate('foo')
 
@@ -76,7 +84,7 @@ describe('useIsMutating', () => {
 
     filter.mutationKey = ['isMutating']
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(isMutating.value).toStrictEqual(1)
   })

@@ -14,7 +14,7 @@
     "@angular/core": "^20.0.0",
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
-    "@tanstack/angular-query-experimental": "^5.81.5",
+    "@tanstack/angular-query-experimental": "^5.84.0",
     "rxjs": "^7.8.2",
     "tslib": "^2.8.1",
     "zone.js": "0.15.0"

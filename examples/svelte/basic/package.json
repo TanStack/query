@@ -8,17 +8,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-async-storage-persister": "^5.81.5",
-    "@tanstack/svelte-query": "^5.81.5",
-    "@tanstack/svelte-query-devtools": "^5.81.5",
-    "@tanstack/svelte-query-persist-client": "^5.81.5"
+    "@tanstack/query-async-storage-persister": "^5.83.1",
+    "@tanstack/svelte-query": "^5.83.1",
+    "@tanstack/svelte-query-devtools": "^5.84.0",
+    "@tanstack/svelte-query-persist-client": "^5.83.1"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^6.0.0",
-    "@sveltejs/kit": "^2.20.5",
-    "@sveltejs/vite-plugin-svelte": "^5.0.3",
-    "svelte": "^5.26.1",
-    "svelte-check": "^4.1.5",
+    "@sveltejs/adapter-auto": "^6.0.1",
+    "@sveltejs/kit": "^2.25.1",
+    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "svelte": "^5.36.8",
+    "svelte-check": "^4.3.0",
     "typescript": "5.8.3",
     "vite": "^6.2.4"
   }
