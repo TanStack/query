@@ -4,7 +4,7 @@ import {
   hashQueryKeyByOptions,
   noop,
   partialMatchKey,
-  resolveValueOrFunction,
+  resolveOption,
   skipToken,
 } from './utils'
 import { QueryCache } from './queryCache'
@@ -156,7 +156,7 @@ export class QueryClient {
     if (
       options.revalidateIfStale &&
       query.isStaleByTime(
-        resolveValueOrFunction(defaultedOptions.staleTime, query),
+        resolveOption(defaultedOptions.staleTime, query),
       )
     ) {
       void this.prefetchQuery(defaultedOptions)

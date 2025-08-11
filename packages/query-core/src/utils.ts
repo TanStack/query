@@ -131,20 +131,20 @@ function isFunctionVariant<T, TArgs extends Array<any> = []>(
  * ```ts
  * // Zero-argument function resolution (like initialData)
  * const initialData: string | (() => string) = 'hello'
- * const resolved = resolveValueOrFunction(initialData) // 'hello'
+ * const resolved = resolveOption(initialData) // 'hello'
  *
  * const initialDataFn: string | (() => string) = () => 'world'
- * const resolved2 = resolveValueOrFunction(initialDataFn) // 'world'
+ * const resolved2 = resolveOption(initialDataFn) // 'world'
  * ```
  *
  * @example
  * ```ts
  * // Function with arguments (like staleTime, retryDelay)
  * const staleTime: number | ((query: Query) => number) = (query) => query.state.dataUpdatedAt + 5000
- * const resolved = resolveValueOrFunction(staleTime, query) // number
+ * const resolved = resolveOption(staleTime, query) // number
  *
  * const retryDelay: number | ((failureCount: number, error: Error) => number) = 1000
- * const resolved2 = resolveValueOrFunction(retryDelay, 3, new Error()) // 1000
+ * const resolved2 = resolveOption(retryDelay, 3, new Error()) // 1000
  * ```
  *
  * @example
@@ -155,10 +155,10 @@ function isFunctionVariant<T, TArgs extends Array<any> = []>(
  * //   : retryDelay
  *
  * // With:
- * const delay = resolveValueOrFunction(retryDelay, failureCount, error)
+ * const delay = resolveOption(retryDelay, failureCount, error)
  * ```
  */
-export function resolveValueOrFunction<T, TArgs extends Array<any>>(
+export function resolveOption<T, TArgs extends Array<any>>(
   value: T | ((...args: TArgs) => T),
   ...args: TArgs
 ): T {

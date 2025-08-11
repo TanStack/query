@@ -2,7 +2,7 @@ import {
   ensureQueryFn,
   noop,
   replaceData,
-  resolveValueOrFunction,
+  resolveOption,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -255,7 +255,7 @@ export class Query<
   isActive(): boolean {
     return this.observers.some(
       (observer) =>
-        resolveValueOrFunction(observer.options.enabled, this) !== false,
+        resolveOption(observer.options.enabled, this) !== false,
     )
   }
 
@@ -274,7 +274,7 @@ export class Query<
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) =>
-          resolveValueOrFunction(observer.options.staleTime, this) === 'static',
+          resolveOption(observer.options.staleTime, this) === 'static',
       )
     }
 
@@ -690,12 +690,12 @@ function getDefaultState<
 >(
   options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): QueryState<TData, TError> {
-  const data = resolveValueOrFunction(options.initialData)
+  const data = resolveOption(options.initialData)
 
   const hasData = data !== undefined
 
   const initialDataUpdatedAt = hasData
-    ? resolveValueOrFunction(options.initialDataUpdatedAt)
+    ? resolveOption(options.initialDataUpdatedAt)
     : 0
 
   return {
