@@ -32,9 +32,13 @@ export function streamedQuery<
 >({
   queryFn,
   refetchMode = 'reset',
-  reducer = (items, chunk) => addToEnd((items ?? []) as Array<TQueryFnData>, chunk) as TData,
+  reducer = (items, chunk) =>
+    addToEnd((items ?? []) as Array<TQueryFnData>, chunk) as TData,
   placeholderData = [] as TData,
-}: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<TData, TQueryKey> {
+}: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<
+  TData,
+  TQueryKey
+> {
   return async (context) => {
     const query = context.client
       .getQueryCache()
@@ -49,7 +53,7 @@ export function streamedQuery<
       })
     }
 
-    let result = placeholderData;
+    let result = placeholderData
 
     const stream = await queryFn(context)
 
@@ -57,12 +61,11 @@ export function streamedQuery<
       if (context.signal.aborted) {
         break
       }
-      
+
       // don't append to the cache directly when replace-refetching
-      if (!isRefetch || refetchMode !== 'replace') { 
-        context.client.setQueryData<TData>(
-          context.queryKey,
-          (prev) => reducer(prev ?? placeholderData, chunk)
+      if (!isRefetch || refetchMode !== 'replace') {
+        context.client.setQueryData<TData>(context.queryKey, (prev) =>
+          reducer(prev ?? placeholderData, chunk),
         )
       }
       result = reducer(result, chunk)

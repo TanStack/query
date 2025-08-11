@@ -35,7 +35,7 @@ describe('streamedQuery', () => {
       queryKey: key,
       queryFn: streamedQuery({
         queryFn: () => createAsyncNumberGenerator(3),
-      })
+      }),
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
@@ -358,10 +358,10 @@ describe('streamedQuery', () => {
       queryFn: streamedQuery<number, Record<number, boolean>>({
         queryFn: () => createAsyncNumberGenerator(2),
         reducer: (acc, chunk) => ({
-            ...acc,
-            [chunk]: true
-          }),
-      })
+          ...acc,
+          [chunk]: true,
+        }),
+      }),
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
@@ -378,8 +378,8 @@ describe('streamedQuery', () => {
       status: 'success',
       fetchStatus: 'idle',
       data: {
-        0: true, 
-        1: true
+        0: true,
+        1: true,
       },
     })
 
@@ -394,14 +394,13 @@ describe('streamedQuery', () => {
         queryFn: () => createAsyncNumberGenerator(2),
         reducer: (acc, chunk) => ({
           ...acc,
-          [chunk]: true
+          [chunk]: true,
         }),
         placeholderData: {
-        10: true,
-        11: true,
-      }
+          10: true,
+          11: true,
+        },
       }),
-     
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
@@ -427,5 +426,4 @@ describe('streamedQuery', () => {
 
     unsubscribe()
   })
-
 })
