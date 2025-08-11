@@ -363,7 +363,7 @@ export class QueryClient {
     const query = this.#queryCache.build(this, defaultedOptions)
 
     return query.isStaleByTime(
-      resolveValueOrFunction(defaultedOptions.staleTime, query),
+      resolveOption(defaultedOptions.staleTime, query),
     )
       ? query.fetch(defaultedOptions)
       : Promise.resolve(query.state.data as TData)
