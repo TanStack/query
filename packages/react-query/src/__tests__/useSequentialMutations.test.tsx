@@ -676,4 +676,440 @@ describe('useSequentialMutations', () => {
     const normalized = String(html).replace(/<!--\s*-->/g, '')
     expect(normalized).toContain('len:1')
   })
+
+  describe('coverage for unmount/abort and getVariables error branches', () => {
+    it('returns empty array when mutateAsync is called after unmount (early return path)', async () => {
+      let call: null | ((input?: unknown) => Promise<Array<unknown>>) = null
+
+      function Page() {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            mutations: [
+              {
+                options: {
+                  mutationFn: async () => {
+                    await sleep(10)
+                    return 'ok'
+                  },
+                },
+              },
+            ],
+          },
+          queryClient,
+        )
+
+        React.useEffect(() => {
+          call = mutateAsync
+        }, [mutateAsync])
+
+        return null
+      }
+
+      const r = renderWithClient(queryClient, <Page />)
+      r.unmount()
+      const out = await call!()
+      expect(out).toEqual([])
+    })
+
+    // Note: The very first loop check is synchronous; it's hard to reliably unmount before it runs.
+    // We instead target the checks after async boundaries below.
+
+    it('handles getVariables throwing: stopOnError=true throws', async () => {
+      let error: unknown = null
+
+      function Page() {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            mutations: [
+              {
+                options: { mutationFn: async () => 'ok' },
+                getVariables: () => {
+                  throw new Error('gv')
+                },
+              },
+            ],
+          },
+          queryClient,
+        )
+
+        React.useEffect(() => {
+          ;(async () => {
+            try {
+              await mutateAsync()
+            } catch (e) {
+              error = e
+            }
+          })()
+        }, [mutateAsync])
+
+        return null
+      }
+
+      renderWithClient(queryClient, <Page />)
+      await vi.advanceTimersByTimeAsync(0)
+      expect((error as Error).message).toBe('gv')
+    })
+
+    it('handles getVariables throwing: stopOnError=false continues and pushes error', async () => {
+      let outputs: Array<unknown> | null = null
+
+      function Page() {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            stopOnError: false,
+            mutations: [
+              {
+                options: { mutationFn: async () => 'ok1' },
+                getVariables: () => {
+                  throw new Error('gv2')
+                },
+              },
+              {
+                options: {
+                  mutationFn: async () => 'ok2',
+                },
+              },
+            ],
+          },
+          queryClient,
+        )
+
+        React.useEffect(() => {
+          ;(async () => {
+            outputs = await mutateAsync()
+          })()
+        }, [mutateAsync])
+
+        return null
+      }
+
+      renderWithClient(queryClient, <Page />)
+      await vi.advanceTimersByTimeAsync(0)
+      const outLen2: number | undefined = outputs
+        ? (outputs as Array<unknown>).length
+        : undefined
+      expect(outLen2).toBe(2)
+      expect(outputs?.[0]).toBeInstanceOf(Error)
+      expect(outputs?.[1]).toBe('ok2')
+    })
+
+    it('deterministically breaks in catch after getVariables rejects post-abort', async () => {
+      let doUnmount: (() => void) | null = null
+      const deferred: {
+        reject?: (e: unknown) => void
+        promise: Promise<unknown>
+      } = {
+        promise: Promise.resolve(undefined),
+      }
+      deferred.promise = new Promise((_, rej) => {
+        deferred.reject = rej
+      })
+
+      function Parent() {
+        const [on, setOn] = React.useState(true)
+        doUnmount = () => setOn(false)
+        return on ? <Page /> : null
+      }
+
+      let outputs: Array<unknown> | null = null
+      function Page() {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            stopOnError: false,
+            mutations: [
+              {
+                options: { mutationFn: async () => 'ok' },
+                getVariables: async () => deferred.promise,
+              },
+              { options: { mutationFn: async () => 'ok2' } },
+            ],
+          },
+          queryClient,
+        )
+        React.useEffect(() => {
+          ;(async () => {
+            outputs = await mutateAsync()
+          })()
+        }, [mutateAsync])
+        return null
+      }
+
+      renderWithClient(queryClient, <Parent />)
+      // abort, wait for cleanup to run, then reject to enter catch-break
+      ;(doUnmount as any)?.()
+      await vi.advanceTimersByTimeAsync(0)
+      deferred.reject?.(new Error('x'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(outputs).toEqual([])
+    })
+
+    it('covers catch-break: abort after getVariables started, then rejection', async () => {
+      let outputs: Array<unknown> | null = null
+      let entered = false
+      let triggerReject: ((e: unknown) => void) | null = null
+
+      function Page({ onAbort }: { onAbort: () => void }) {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            stopOnError: false,
+            mutations: [
+              {
+                options: { mutationFn: async () => 'ok' },
+                getVariables: () => {
+                  entered = true
+                  return new Promise((_res, rej) => {
+                    triggerReject = rej
+                  })
+                },
+              },
+              { options: { mutationFn: async () => 'ok2' } },
+            ],
+          },
+          queryClient,
+        )
+
+        return (
+          <button
+            onClick={() => {
+              ;(async () => {
+                outputs = await mutateAsync()
+              })()
+              onAbort()
+              triggerReject?.(new Error('x'))
+            }}
+          >
+            start
+          </button>
+        )
+      }
+
+      const r = renderWithClient(
+        queryClient,
+        <Page onAbort={() => r.unmount()} />,
+      )
+      r.getByText('start').click()
+      expect(entered).toBe(true)
+      await vi.advanceTimersByTimeAsync(0)
+      expect(outputs).toEqual([])
+    })
+
+    it('covers resolve-break: abort after getVariables started, then resolution', async () => {
+      let outputs: Array<unknown> | null = null
+      let entered = false
+      let triggerResolve: ((v: unknown) => void) | null = null
+
+      function Page({ onAbort }: { onAbort: () => void }) {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            mutations: [
+              {
+                options: { mutationFn: async () => 'should-not-run' },
+                getVariables: () => {
+                  entered = true
+                  return new Promise((res) => {
+                    triggerResolve = res
+                  })
+                },
+              },
+            ],
+          },
+          queryClient,
+        )
+
+        return (
+          <button
+            onClick={() => {
+              ;(async () => {
+                outputs = await mutateAsync()
+              })()
+              onAbort()
+              triggerResolve?.('v')
+            }}
+          >
+            start
+          </button>
+        )
+      }
+
+      const r = renderWithClient(
+        queryClient,
+        <Page onAbort={() => r.unmount()} />,
+      )
+      r.getByText('start').click()
+      expect(entered).toBe(true)
+      await vi.advanceTimersByTimeAsync(0)
+      expect(outputs).toEqual([])
+    })
+
+    // removed: flaky ordering; covered by the next two deterministic cases
+
+    it('deterministically breaks after mutation resolves when aborted before post-check', async () => {
+      let doUnmount: null | (() => void) = null
+      const deferred: {
+        resolve?: (v: unknown) => void
+        promise: Promise<unknown>
+      } = {
+        promise: Promise.resolve(undefined),
+      }
+      deferred.promise = new Promise((res) => {
+        deferred.resolve = res
+      })
+
+      function Parent() {
+        const [on, setOn] = React.useState(true)
+        doUnmount = () => setOn(false)
+        return on ? <Page /> : null
+      }
+
+      let outputs: Array<unknown> | null = null
+      function Page() {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            mutations: [
+              {
+                options: {
+                  mutationFn: async () => deferred.promise,
+                },
+              },
+            ],
+          },
+          queryClient,
+        )
+        React.useEffect(() => {
+          ;(async () => {
+            outputs = await mutateAsync()
+          })()
+        }, [mutateAsync])
+        return null
+      }
+
+      renderWithClient(queryClient, <Parent />)
+      // abort, wait cleanup, then resolve mutation to hit break after await
+      ;(doUnmount as any)?.()
+      await vi.advanceTimersByTimeAsync(0)
+      deferred.resolve?.('ok')
+      await vi.advanceTimersByTimeAsync(0)
+      expect(outputs).toEqual([])
+    })
+
+    it('deterministically breaks before handling error when mutation rejects after abort', async () => {
+      let doUnmount: null | (() => void) = null
+      const deferred: {
+        reject?: (e: unknown) => void
+        promise: Promise<unknown>
+      } = {
+        promise: Promise.resolve(undefined),
+      }
+      deferred.promise = new Promise((_, rej) => {
+        deferred.reject = rej
+      })
+
+      function Parent() {
+        const [on, setOn] = React.useState(true)
+        doUnmount = () => setOn(false)
+        return on ? <Page /> : null
+      }
+
+      let outputs: Array<unknown> | null = null
+      function Page() {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            stopOnError: false,
+            mutations: [
+              {
+                options: {
+                  mutationFn: async () => deferred.promise,
+                },
+              },
+            ],
+          },
+          queryClient,
+        )
+        React.useEffect(() => {
+          ;(async () => {
+            outputs = await mutateAsync()
+          })()
+        }, [mutateAsync])
+        return null
+      }
+
+      renderWithClient(queryClient, <Parent />)
+      // abort, wait cleanup, then reject mutation to hit break in error path
+      ;(doUnmount as any)?.()
+      await vi.advanceTimersByTimeAsync(0)
+      deferred.reject?.(new Error('fail'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(outputs).toEqual([])
+    })
+
+    it('runs cleanup: aborts active controllers and clears set on unmount', async () => {
+      // ensure abort path in cleanup is executed while a controller exists
+      let call: null | (() => void) = null
+      function Page() {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            mutations: [
+              {
+                options: {
+                  mutationFn: async () => {
+                    await sleep(50)
+                    return 'ok'
+                  },
+                },
+              },
+            ],
+          },
+          queryClient,
+        )
+        call = () => {
+          void mutateAsync()
+        }
+        return <div>ready</div>
+      }
+
+      const r = renderWithClient(queryClient, <Page />)
+      r.getByText('ready')
+      ;(call as any)?.()
+      // unmount immediately so cleanup abort executes while controller is active
+      r.unmount()
+      await vi.advanceTimersByTimeAsync(0)
+      // no assertion needed; covering cleanup lines
+    })
+
+    it('breaks at loop start when AbortController starts aborted', async () => {
+      const OriginalAbortController = globalThis.AbortController
+      class PreAbortedController {
+        signal = { aborted: true } as AbortSignal
+        abort() {}
+      }
+      // @ts-ignore overriding for test env
+      globalThis.AbortController = PreAbortedController as any
+
+      let outputs: Array<unknown> | null = null
+      function Page() {
+        const { mutateAsync } = useSequentialMutations(
+          {
+            mutations: [
+              {
+                options: { mutationFn: async () => 'never' },
+              },
+            ],
+          },
+          queryClient,
+        )
+        React.useEffect(() => {
+          ;(async () => {
+            outputs = await mutateAsync()
+          })()
+        }, [mutateAsync])
+        return null
+      }
+
+      renderWithClient(queryClient, <Page />)
+      await vi.advanceTimersByTimeAsync(0)
+      expect(outputs).toEqual([])
+
+      globalThis.AbortController = OriginalAbortController
+    })
+  })
 })

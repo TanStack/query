@@ -49,14 +49,13 @@ export function useSequentialMutations(
     Array<MutationObserver<any, any, any, any>>
   >([])
 
-  // Initialize and manage observers lifecycle
-  React.useEffect(() => {
+  // Ensure observers array length matches mutations length synchronously during render
+  {
     const currentObservers = observersRef.current
     const targetLength = mutations.length
 
-    // If we need more observers than we currently have, create them
-    if (currentObservers.length < targetLength) {
-      const newObservers = [...currentObservers]
+    if (currentObservers.length !== targetLength) {
+      const newObservers = currentObservers.slice(0, targetLength)
       for (let i = currentObservers.length; i < targetLength; i++) {
         newObservers[i] = new MutationObserver<any, any, any, any>(
           client,
@@ -65,13 +64,7 @@ export function useSequentialMutations(
       }
       observersRef.current = newObservers
     }
-    // If we have more observers than needed, trim the array
-    else if (currentObservers.length > targetLength) {
-      observersRef.current = currentObservers.slice(0, targetLength)
-      // Note: Unused observers will be garbage collected automatically
-      // as they will lose all references and auto-unsubscribe from mutations
-    }
-  }, [mutations.length, client])
+  }
 
   // Keep options in sync with latest configs
   React.useEffect(() => {
@@ -96,6 +89,17 @@ export function useSequentialMutations(
   // Keep a cached snapshot to satisfy useSyncExternalStore contract
   // Use MutationObserverResult type for raw observer results
   const snapshotRef = React.useRef<Array<any>>([])
+
+  // Initialize snapshot synchronously so first render has correct results length
+  {
+    const initialSnapshot = observersRef.current.map((o) =>
+      o.getCurrentResult(),
+    )
+    // Only replace if it differs to avoid unnecessary identity changes
+    if (snapshotRef.current.length !== initialSnapshot.length) {
+      snapshotRef.current = initialSnapshot
+    }
+  }
 
   const observerResults = React.useSyncExternalStore(
     React.useCallback(
@@ -139,7 +143,7 @@ export function useSequentialMutations(
       [observerCount],
     ),
     () => snapshotRef.current,
-    () => snapshotRef.current,
+    () => observersRef.current.map((o) => o.getCurrentResult()),
   )
 
   const results: Array<UseMutationResult<any, any, any, any>> = React.useMemo(
