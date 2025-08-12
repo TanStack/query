@@ -3,7 +3,12 @@ import { Mutation } from './mutation'
 import { matchMutation, noop } from './utils'
 import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
-import type { DefaultError, MutationOptions, NotifyEvent } from './types'
+import type {
+  DefaultError,
+  MaybePromise,
+  MutationOptions,
+  NotifyEvent,
+} from './types'
 import type { QueryClient } from './queryClient'
 import type { Action, MutationState } from './mutation'
 import type { MutationFilters } from './utils'
@@ -16,24 +21,24 @@ interface MutationCacheConfig {
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => Promise<unknown> | unknown
+  ) => MaybePromise<unknown>
   onSuccess?: (
     data: unknown,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => Promise<unknown> | unknown
+  ) => MaybePromise<unknown>
   onMutate?: (
     variables: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => Promise<unknown> | unknown
+  ) => MaybePromise<unknown>
   onSettled?: (
     data: unknown | undefined,
     error: DefaultError | null,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => Promise<unknown> | unknown
+  ) => MaybePromise<unknown>
 }
 
 interface NotifyEventMutationAdded extends NotifyEvent {

@@ -1,5 +1,10 @@
 import { addToEnd } from './utils'
-import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
+import type {
+  MaybePromise,
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+} from './types'
 
 /**
  * This is a helper function to create a query function that streams data from an AsyncIterable.
@@ -26,7 +31,7 @@ export function streamedQuery<
 }: {
   queryFn: (
     context: QueryFunctionContext<TQueryKey>,
-  ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
+  ) => MaybePromise<AsyncIterable<TQueryFnData>>
   refetchMode?: 'append' | 'reset' | 'replace'
   maxChunks?: number
 }): QueryFunction<Array<TQueryFnData>, TQueryKey> {

@@ -17,6 +17,7 @@ import type {
   DefaultError,
   FetchStatus,
   InitialDataFunction,
+  MaybePromise,
   OmitKeyof,
   QueryFunctionContext,
   QueryKey,
@@ -66,7 +67,7 @@ export interface FetchContext<
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > {
-  fetchFn: () => unknown | Promise<unknown>
+  fetchFn: () => MaybePromise<unknown>
   fetchOptions?: FetchOptions
   signal: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
