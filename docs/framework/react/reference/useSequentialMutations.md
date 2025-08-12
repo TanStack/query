@@ -3,15 +3,17 @@ id: useSequentialMutations
 title: useSequentialMutations
 ---
 
-The `useSequentialMutations` hook can be used to run a variable number of mutations in series, passing each step’s result to the next step.
+The `useSequentialMutations` hook can be used to run a variable number of mutations in series, passing each step’s result to the next step. It supports generics to type each step precisely and allows passing per-step mutate options at call time.
 
 ### Signature
 
 ```ts
-useSequentialMutations(
-  options: UseSequentialMutationsOptions,
+useSequentialMutations<
+  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>
+>(
+  options: UseSequentialMutationsOptions<TSteps>,
   queryClient?: QueryClient,
-): UseSequentialMutationsResult
+): UseSequentialMutationsResult<TSteps>
 ```
 
 ### Usage
@@ -38,33 +40,65 @@ The `useSequentialMutations` hook accepts an options object with a **mutations**
   - `true` (default): throw on first error and stop the sequence. `false`: include the error in outputs and continue to the next step.
 
 ```ts
-interface SequentialMutationConfig {
-  options: UseMutationOptions<any, any, any, any>
+interface SequentialMutationConfig<
+  TData = unknown,
+  TError = unknown,
+  TVariables = unknown,
+  TContext = unknown,
+> {
+  options: UseMutationOptions<TData, TError, TVariables, TContext>
   getVariables?: (ctx: {
     index: number
     input: unknown
     prevData: unknown
     allData: Array<unknown>
-  }) => unknown | Promise<unknown>
+  }) => TVariables | Promise<TVariables>
 }
 
-interface UseSequentialMutationsOptions {
-  mutations: ReadonlyArray<SequentialMutationConfig>
+interface UseSequentialMutationsOptions<
+  TSteps extends ReadonlyArray<
+    SequentialMutationConfig<any, any, any, any>
+  > = ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
+> {
+  mutations: TSteps
   stopOnError?: boolean
 }
 ```
 
 **Returns**
 
-The `useSequentialMutations` hook returns an array with all the mutation results. The order returned is the same as the input order.
+The `useSequentialMutations` hook returns an array with all the mutation results. The order returned is the same as the input order. Types are inferred per-step from the provided `SequentialMutationConfig` entries.
 
 ```ts
-interface UseSequentialMutationsResult {
-  results: Array<UseMutationResult<any, any, any, any>>
-  mutate: (input?: unknown) => void
-  mutateAsync: (input?: unknown) => Promise<Array<unknown>>
+interface UseSequentialMutationsResult<
+  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>
+> {
+  results: {
+    [K in keyof TSteps]: TSteps[K] extends SequentialMutationConfig<
+      infer TData,
+      infer TError,
+      infer TVariables,
+      infer TContext
+    >
+      ? UseMutationResult<TData, TError, TVariables, TContext>
+      : never
+  }
+  mutate: (
+    input?: unknown,
+    stepOptions?:
+      | Array<MutateOptions<any, any, any, any> | undefined>
+      | ((index: number) => MutateOptions<any, any, any, any> | undefined),
+  ) => void
+  mutateAsync: (
+    input?: unknown,
+    stepOptions?:
+      | Array<MutateOptions<any, any, any, any> | undefined>
+      | ((index: number) => MutateOptions<any, any, any, any> | undefined),
+  ) => Promise<Array<unknown>>
 }
 ```
+
+> Mutate options passed at call-time use the same shape as [`mutationOptions`](./mutationOptions.md) / `useMutation`’s `mutate` options.
 
 ### Deriving variables per step
 
@@ -91,6 +125,48 @@ const { mutateAsync } = useSequentialMutations({
 const outputs = await mutateAsync('X')
 // ['s1:in:X', 's2:s1:in:X->s2', 's3:s2:s1:in:X->s2->s3']
 ```
+
+### Call-time per-step mutate options
+
+You can provide per-step mutate options at call time, either as an array (by index) or via a function mapper.
+
+```tsx
+// by index (array)
+const { mutateAsync } = useSequentialMutations({
+  mutations: [
+    {
+      options: { mutationFn: async (name: string) => `u:${name}` },
+      getVariables: ({ input }) => String(input),
+    },
+    { options: { mutationFn: async () => Promise.reject(new Error('boom')) } },
+  ],
+  stopOnError: false,
+})
+
+const out = await mutateAsync('A', [
+  { onSuccess: (data, variables) => console.log('step0 ok', data, variables) },
+  { onError: (err) => console.log('step1 err', err) },
+])
+```
+
+```tsx
+// via function mapper
+const { mutateAsync } = useSequentialMutations({
+  mutations: [
+    {
+      options: { mutationFn: async (v: string) => `a:${v}` },
+      getVariables: ({ input }) => String(input),
+    },
+    { options: { mutationFn: async (v: string) => `b:${v}` } },
+  ],
+})
+
+await mutateAsync('X', (index) => ({
+  onSuccess: (data) => console.log(`ok${index}:${data}`),
+}))
+```
+
+> If `getVariables` is omitted for a step, the previous step’s result is passed as variables to the next step by default.
 
 ### Error policy
 
