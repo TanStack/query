@@ -44,14 +44,29 @@ export function useSequentialMutations(
     Array<MutationObserver<any, any, any, any>>
   >([])
 
-  // Initialize observers once and when count increases
-  if (observersRef.current.length !== mutations.length) {
-    observersRef.current = mutations.map(
-      (m, idx) =>
-        observersRef.current[idx] ??
-        new MutationObserver<any, any, any, any>(client, m.options as any),
-    )
-  }
+  // Initialize and manage observers lifecycle
+  React.useEffect(() => {
+    const currentObservers = observersRef.current
+    const targetLength = mutations.length
+
+    // If we need more observers than we currently have, create them
+    if (currentObservers.length < targetLength) {
+      const newObservers = [...currentObservers]
+      for (let i = currentObservers.length; i < targetLength; i++) {
+        newObservers[i] = new MutationObserver<any, any, any, any>(
+          client,
+          mutations[i]!.options as any,
+        )
+      }
+      observersRef.current = newObservers
+    }
+    // If we have more observers than needed, trim the array
+    else if (currentObservers.length > targetLength) {
+      observersRef.current = currentObservers.slice(0, targetLength)
+      // Note: Unused observers will be garbage collected automatically
+      // as they will lose all references and auto-unsubscribe from mutations
+    }
+  }, [mutations.length, client])
 
   // Keep options in sync with latest configs
   React.useEffect(() => {
