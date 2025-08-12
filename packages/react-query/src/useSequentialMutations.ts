@@ -194,7 +194,12 @@ export function useSequentialMutations(
       const outputs: Array<unknown> = []
       let prevData: unknown = undefined
 
-      for (let i = 0; i < observersRef.current.length; i++) {
+      // Safety: iterate only up to the minimum length of observers and mutations
+      const stepsLength = Math.min(
+        observersRef.current.length,
+        currentMutations.length,
+      )
+      for (let i = 0; i < stepsLength; i++) {
         // Check if operation was aborted or component unmounted
         if (abortController.signal.aborted || !isMountedRef.current) {
           break
