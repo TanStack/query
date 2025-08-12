@@ -75,21 +75,32 @@ export function useSequentialMutations(
     observersRef.current.map((o) => o.getCurrentResult()),
   )
 
+  const observerCount = observersRef.current.length
+
   const observerResults = React.useSyncExternalStore(
-    React.useCallback((onStoreChange) => {
-      const unsubscribers = observersRef.current.map((observer) => {
+    React.useCallback(
+      (onStoreChange) => {
         const batched = notifyManager.batchCalls(onStoreChange)
-        return observer.subscribe(() => {
-          snapshotRef.current = observersRef.current.map((o) =>
-            o.getCurrentResult(),
-          )
-          batched()
-        })
-      })
-      return () => {
-        unsubscribers.forEach((u) => u())
-      }
-    }, []),
+        // initialize snapshot for new subscription cycle (e.g., when mutations length changes)
+        snapshotRef.current = observersRef.current.map((o) =>
+          o.getCurrentResult(),
+        )
+        const unsubscribers = observersRef.current.map((observer) =>
+          observer.subscribe(() => {
+            snapshotRef.current = observersRef.current.map((o) =>
+              o.getCurrentResult(),
+            )
+            batched()
+          }),
+        )
+        // trigger one update so that consumers pick up the new snapshot once
+        batched()
+        return () => {
+          unsubscribers.forEach((u) => u())
+        }
+      },
+      [observerCount],
+    ),
     () => snapshotRef.current,
     () => snapshotRef.current,
   )
