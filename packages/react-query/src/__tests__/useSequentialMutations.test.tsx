@@ -575,7 +575,6 @@ describe('useSequentialMutations', () => {
     // increase to 3 steps
     r.getByText('inc').click()
     await vi.advanceTimersByTimeAsync(0)
-    await vi.advanceTimersByTimeAsync(0)
     expect(r.getByText(/len:\s*3/)).toBeInTheDocument()
     r.getByText('call2a').click()
     await vi.advanceTimersByTimeAsync(0)
@@ -1111,5 +1110,97 @@ describe('useSequentialMutations', () => {
 
       globalThis.AbortController = OriginalAbortController
     })
+  })
+
+  it('supports call-time per-step mutateOptions via index map', async () => {
+    const onSuccess0 = vi.fn()
+    const onError1 = vi.fn()
+
+    let outputs: Array<unknown> | null = null
+
+    function Page() {
+      const { mutateAsync } = useSequentialMutations(
+        {
+          mutations: [
+            {
+              options: {
+                mutationFn: async (name: string) => {
+                  await sleep(1)
+                  return `u:${name}`
+                },
+              },
+              getVariables: ({ input }) => String(input),
+            },
+            {
+              options: {
+                mutationFn: async () => {
+                  await sleep(1)
+                  throw new Error('boom')
+                },
+              },
+            },
+          ],
+          stopOnError: false,
+        },
+        queryClient,
+      )
+
+      React.useEffect(() => {
+        ;(async () => {
+          outputs = await mutateAsync('A', [
+            { onSuccess: onSuccess0 },
+            { onError: onError1 },
+          ])
+        })()
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(3)
+
+    expect(onSuccess0).toHaveBeenCalledTimes(1)
+    // context is undefined in these tests because no onMutate returns a context
+    expect(onSuccess0).toHaveBeenCalledWith('u:A', 'A', undefined)
+    expect(onError1).toHaveBeenCalledTimes(1)
+    expect(onError1.mock.calls[0]![0]).toBeInstanceOf(Error)
+    expect(outputs).not.toBeNull()
+    expect(Array.isArray(outputs)).toBe(true)
+  })
+
+  it('supports call-time per-step mutateOptions via function mapper', async () => {
+    const seen: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useSequentialMutations(
+        {
+          mutations: [
+            {
+              options: { mutationFn: async (v: string) => `a:${v}` },
+              getVariables: ({ input }) => String(input),
+            },
+            { options: { mutationFn: async (v: string) => `b:${v}` } },
+          ],
+        },
+        queryClient,
+      )
+
+      React.useEffect(() => {
+        ;(async () => {
+          await mutateAsync('X', (i) => ({
+            onSuccess: (data) => {
+              seen.push(`ok${i}:${String(data)}`)
+            },
+          }))
+        })()
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(seen).toEqual(['ok0:a:X', 'ok1:b:a:X'])
   })
 })
