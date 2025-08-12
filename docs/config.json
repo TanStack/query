@@ -824,6 +824,10 @@
               "to": "framework/react/reference/mutationOptions"
             },
             {
+              "label": "useSequentialMutations",
+              "to": "framework/react/reference/useSequentialMutations"
+            },
+            {
               "label": "usePrefetchQuery",
               "to": "framework/react/reference/usePrefetchQuery"
             },
