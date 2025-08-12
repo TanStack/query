@@ -41,7 +41,7 @@ export interface UseSequentialMutationsOptions<
   stopOnError?: boolean
 }
 
-type ResultsForSteps<
+type StepResults<
   TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
 > = {
   [K in keyof TSteps]: TSteps[K] extends SequentialMutationConfig<
@@ -59,38 +59,20 @@ export interface UseSequentialMutationsResult<
     SequentialMutationConfig<any, any, any, any>
   > = ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
 > {
-  results: ResultsForSteps<TSteps>
+  results: StepResults<TSteps>
   mutate: (
     input?: unknown,
     stepOptions?:
-      | PartialStepMutateOptions<TSteps>
-      | StepMutateOptionsFn<TSteps>,
+      | Array<MutateOptions<any, any, any, any> | undefined>
+      | ((index: number) => MutateOptions<any, any, any, any> | undefined),
   ) => void
   mutateAsync: (
     input?: unknown,
     stepOptions?:
-      | PartialStepMutateOptions<TSteps>
-      | StepMutateOptionsFn<TSteps>,
+      | Array<MutateOptions<any, any, any, any> | undefined>
+      | ((index: number) => MutateOptions<any, any, any, any> | undefined),
   ) => Promise<Array<unknown>>
 }
-
-type StepMutateOptionsForConfig<Cfg> =
-  Cfg extends SequentialMutationConfig<
-    infer TData,
-    infer TError,
-    infer TVariables,
-    infer TContext
-  >
-    ? MutateOptions<TData, TError, TVariables, TContext>
-    : never
-
-type PartialStepMutateOptions<
-  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
-> = Partial<{ [K in keyof TSteps]: StepMutateOptionsForConfig<TSteps[K]> }>
-
-type StepMutateOptionsFn<
-  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
-> = (index: number) => StepMutateOptionsForConfig<TSteps[number]> | undefined
 
 export function useSequentialMutations<
   TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
@@ -213,7 +195,7 @@ export function useSequentialMutations<
         mutateAsync: observersRef.current[idx]!.mutate,
       })),
     [observerResults],
-  ) as unknown as ResultsForSteps<TSteps>
+  ) as unknown as StepResults<TSteps>
 
   // Track mount state for cleanup during async operations
   const isMountedRef = React.useRef(true)
@@ -238,8 +220,8 @@ export function useSequentialMutations<
     async (
       input?: unknown,
       stepOptions?:
-        | PartialStepMutateOptions<TSteps>
-        | StepMutateOptionsFn<TSteps>,
+        | Array<MutateOptions<any, any, any, any> | undefined>
+        | ((index: number) => MutateOptions<any, any, any, any> | undefined),
     ) => {
       // Early return if component is already unmounted
       if (!isMountedRef.current) {
@@ -302,11 +284,17 @@ export function useSequentialMutations<
           const resolveStepOptions = () => {
             if (!stepOptions) return undefined
             if (typeof stepOptions === 'function') {
-              return (stepOptions as StepMutateOptionsFn<TSteps>)(i)
+              return (
+                stepOptions as (
+                  index: number,
+                ) => MutateOptions<any, any, any, any> | undefined
+              )(i)
             }
-            return (stepOptions as PartialStepMutateOptions<TSteps>)[
-              i as keyof PartialStepMutateOptions<TSteps>
-            ] as unknown
+            return Array.isArray(stepOptions)
+              ? (stepOptions[i] as
+                  | MutateOptions<any, any, any, any>
+                  | undefined)
+              : undefined
           }
 
           try {
@@ -348,8 +336,8 @@ export function useSequentialMutations<
     (
       input?: unknown,
       stepOptions?:
-        | PartialStepMutateOptions<TSteps>
-        | StepMutateOptionsFn<TSteps>,
+        | Array<MutateOptions<any, any, any, any> | undefined>
+        | ((index: number) => MutateOptions<any, any, any, any> | undefined),
     ) => {
       void mutateAsync(input, stepOptions).catch(noop)
     },

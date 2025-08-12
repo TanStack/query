@@ -1203,4 +1203,35 @@ describe('useSequentialMutations', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(seen).toEqual(['ok0:a:X', 'ok1:b:a:X'])
   })
+
+  it('covers non-array, non-function stepOptions (Array.isArray false branch)', async () => {
+    let outputs: Array<unknown> | null = null
+
+    function Page() {
+      const { mutateAsync } = useSequentialMutations(
+        {
+          mutations: [
+            {
+              options: { mutationFn: async (v: string) => `ok:${v}` },
+              getVariables: ({ input }) => String(input),
+            },
+          ],
+        },
+        queryClient,
+      )
+
+      React.useEffect(() => {
+        ;(async () => {
+          // Pass an object to hit the Array.isArray(stepOptions) === false branch
+          outputs = await mutateAsync('Z', { foo: 'bar' } as any)
+        })()
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(outputs).toEqual(['ok:Z'])
+  })
 })
