@@ -155,30 +155,106 @@ export function useSequentialMutations(
     [observerResults],
   )
 
-  const mutateAsync = React.useCallback(async (input?: unknown) => {
-    const { mutations: currentMutations, stopOnError: currentStopOnError } =
-      latestConfigRef.current
-    const outputs: Array<unknown> = []
-    let prevData: unknown = undefined
-    for (let i = 0; i < observersRef.current.length; i++) {
-      const step = currentMutations[i]!
-      const getVariables = step.getVariables
-      const variables = getVariables
-        ? await getVariables({ index: i, input, prevData, allData: outputs })
-        : prevData
-      try {
-        const data = await observersRef.current[i]!.mutate(variables as any)
-        outputs.push(data)
-        prevData = data
-      } catch (error) {
-        if (currentStopOnError) {
-          throw error
-        }
-        outputs.push(error)
-        prevData = undefined
-      }
+  // Track mount state for cleanup during async operations
+  const isMountedRef = React.useRef(true)
+
+  // Track active abort controllers for cleanup
+  const activeControllersRef = React.useRef<Set<AbortController>>(new Set())
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+      // Abort all active operations on unmount
+      activeControllersRef.current.forEach((controller) => {
+        controller.abort()
+      })
+      activeControllersRef.current.clear()
     }
-    return outputs
+  }, [])
+
+  const mutateAsync = React.useCallback(async (input?: unknown) => {
+    // Early return if component is already unmounted
+    if (!isMountedRef.current) {
+      return []
+    }
+
+    // Create abort controller for this operation
+    const abortController = new AbortController()
+    activeControllersRef.current.add(abortController)
+
+    try {
+      const { mutations: currentMutations, stopOnError: currentStopOnError } =
+        latestConfigRef.current
+      const outputs: Array<unknown> = []
+      let prevData: unknown = undefined
+
+      for (let i = 0; i < observersRef.current.length; i++) {
+        // Check if operation was aborted or component unmounted
+        if (abortController.signal.aborted || !isMountedRef.current) {
+          break
+        }
+
+        const step = currentMutations[i]!
+        const getVariables = step.getVariables
+
+        let variables: unknown
+        try {
+          variables = getVariables
+            ? await getVariables({
+                index: i,
+                input,
+                prevData,
+                allData: outputs,
+              })
+            : prevData
+        } catch (error) {
+          // Check abort/unmount state after async getVariables
+          if (abortController.signal.aborted || !isMountedRef.current) {
+            break
+          }
+          if (currentStopOnError) {
+            throw error
+          }
+          outputs.push(error)
+          prevData = undefined
+          continue
+        }
+
+        // Check abort/unmount state again after getVariables
+        if (abortController.signal.aborted || !isMountedRef.current) {
+          break
+        }
+
+        try {
+          const data = await observersRef.current[i]!.mutate(variables as any)
+
+          // Check abort/unmount state after mutation completes
+          if (abortController.signal.aborted || !isMountedRef.current) {
+            break
+          }
+
+          outputs.push(data)
+          prevData = data
+        } catch (error) {
+          // Check abort/unmount state before handling error
+          if (abortController.signal.aborted || !isMountedRef.current) {
+            break
+          }
+
+          if (currentStopOnError) {
+            throw error
+          }
+          outputs.push(error)
+          prevData = undefined
+        }
+      }
+      return outputs
+    } finally {
+      // Clean up this controller
+      activeControllersRef.current.delete(abortController)
+    }
   }, [])
 
   const mutate = React.useCallback(
