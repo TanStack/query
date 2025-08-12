@@ -14,3 +14,5 @@ export const SolidQueryDevtoolsPanel: typeof SolidQueryDevtoolsCompPanel = isDev
   : function () {
       return null
     }
+
+export type { DevtoolsPanelOptions } from './devtoolsPanel'

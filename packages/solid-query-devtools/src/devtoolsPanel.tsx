@@ -1,8 +1,8 @@
+import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
 import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
-import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
 
 export interface DevtoolsPanelOptions {
   /**
