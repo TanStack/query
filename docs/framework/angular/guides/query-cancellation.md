@@ -60,7 +60,7 @@ query = injectQuery(() => ({
 
 [//]: # 'Example3'
 
-```tsx
+```ts
 import axios from 'axios'
 
 const query = injectQuery(() => ({

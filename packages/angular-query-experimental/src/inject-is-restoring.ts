@@ -7,30 +7,27 @@ import {
 } from '@angular/core'
 import type { Provider, Signal } from '@angular/core'
 
-const IS_RESTORING = new InjectionToken(
-  typeof ngDevMode === 'undefined' || ngDevMode
-    ? 'TANSTACK_QUERY_IS_RESTORING'
-    : '',
-  {
-    // Default value when not provided
-    factory: () => signal(false).asReadonly(),
-  },
-)
-
 /**
- * The `Injector` in which to create the isRestoring signal.
- *
- * If this is not provided, the current injection context will be used instead (via `inject`).
+ * Internal token used to track isRestoring state, accessible in public API through `injectIsRestoring` and set via `provideIsRestoring`
  */
+const IS_RESTORING = new InjectionToken('', {
+  // Default value when not provided
+  factory: () => signal(false).asReadonly(),
+})
+
 interface InjectIsRestoringOptions {
+  /**
+   * The `Injector` to use to get the isRestoring signal.
+   *
+   * If this is not provided, the current injection context will be used instead (via `inject`).
+   */
   injector?: Injector
 }
 
 /**
  * Injects a signal that tracks whether a restore is currently in progress. {@link injectQuery} and friends also check this internally to avoid race conditions between the restore and initializing queries.
  * @param options - Options for injectIsRestoring.
- * @returns signal with boolean that indicates whether a restore is in progress.
- * @public
+ * @returns readonly signal with boolean that indicates whether a restore is in progress.
  */
 export function injectIsRestoring(options?: InjectIsRestoringOptions) {
   !options?.injector && assertInInjectionContext(injectIsRestoring)
@@ -42,7 +39,6 @@ export function injectIsRestoring(options?: InjectIsRestoringOptions) {
  * Used by TanStack Query Angular persist client plugin to provide the signal that tracks the restore state
  * @param isRestoring - a readonly signal that returns a boolean
  * @returns Provider for the `isRestoring` signal
- * @public
  */
 export function provideIsRestoring(isRestoring: Signal<boolean>): Provider {
   return {
