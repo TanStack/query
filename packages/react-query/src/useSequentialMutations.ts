@@ -1,6 +1,11 @@
 'use client'
 import * as React from 'react'
-import { MutationObserver, noop, notifyManager } from '@tanstack/query-core'
+import {
+  MutationObserver,
+  noop,
+  notifyManager,
+  replaceEqualDeep,
+} from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { UseMutationOptions, UseMutationResult } from './types'
 import type { QueryClient } from '@tanstack/query-core'
@@ -85,35 +90,52 @@ export function useSequentialMutations(
     latestConfigRef.current = { mutations, stopOnError }
   }, [mutations, stopOnError])
 
-  // Keep a cached snapshot to satisfy useSyncExternalStore contract
-  const snapshotRef = React.useRef(
-    observersRef.current.map((o) => o.getCurrentResult()),
-  )
-
+  // Track observer count for stable dependency
   const observerCount = observersRef.current.length
+
+  // Keep a cached snapshot to satisfy useSyncExternalStore contract
+  // Use MutationObserverResult type for raw observer results
+  const snapshotRef = React.useRef<Array<any>>([])
 
   const observerResults = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
         const batched = notifyManager.batchCalls(onStoreChange)
-        // initialize snapshot for new subscription cycle (e.g., when mutations length changes)
-        snapshotRef.current = observersRef.current.map((o) =>
-          o.getCurrentResult(),
-        )
-        const unsubscribers = observersRef.current.map((observer) =>
-          observer.subscribe(() => {
-            snapshotRef.current = observersRef.current.map((o) =>
-              o.getCurrentResult(),
-            )
+
+        // Initialize snapshot with current results
+        const getCurrentSnapshot = () =>
+          observersRef.current.map((o) => o.getCurrentResult())
+
+        // Optimized update function that only triggers if results actually changed
+        const updateSnapshot = () => {
+          const newSnapshot = getCurrentSnapshot()
+          const nextSnapshot = replaceEqualDeep(
+            snapshotRef.current,
+            newSnapshot,
+          )
+
+          if (nextSnapshot !== snapshotRef.current) {
+            snapshotRef.current = nextSnapshot
             batched()
-          }),
+          }
+        }
+
+        // Set initial snapshot
+        snapshotRef.current = getCurrentSnapshot()
+
+        // Subscribe to all observers
+        const unsubscribers = observersRef.current.map((observer) =>
+          observer.subscribe(updateSnapshot),
         )
-        // trigger one update so that consumers pick up the new snapshot once
+
+        // Trigger initial update for new subscription cycle
         batched()
+
         return () => {
-          unsubscribers.forEach((u) => u())
+          unsubscribers.forEach((unsubscribe) => unsubscribe())
         }
       },
+      // Only recreate subscription when observer count changes
       [observerCount],
     ),
     () => snapshotRef.current,
