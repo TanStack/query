@@ -8,7 +8,7 @@ import {
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { UseMutationOptions, UseMutationResult } from './types'
-import type { QueryClient } from '@tanstack/query-core'
+import type { QueryClient, MutateOptions } from '@tanstack/query-core'
 
 type GetVariablesContext = {
   index: number
@@ -60,9 +60,37 @@ export interface UseSequentialMutationsResult<
   > = ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
 > {
   results: ResultsForSteps<TSteps>
-  mutate: (input?: unknown) => void
-  mutateAsync: (input?: unknown) => Promise<Array<unknown>>
+  mutate: (
+    input?: unknown,
+    stepOptions?:
+      | PartialStepMutateOptions<TSteps>
+      | StepMutateOptionsFn<TSteps>,
+  ) => void
+  mutateAsync: (
+    input?: unknown,
+    stepOptions?:
+      | PartialStepMutateOptions<TSteps>
+      | StepMutateOptionsFn<TSteps>,
+  ) => Promise<Array<unknown>>
 }
+
+type StepMutateOptionsForConfig<Cfg> =
+  Cfg extends SequentialMutationConfig<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TContext
+  >
+    ? MutateOptions<TData, TError, TVariables, TContext>
+    : never
+
+type PartialStepMutateOptions<
+  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
+> = Partial<{ [K in keyof TSteps]: StepMutateOptionsForConfig<TSteps[K]> }>
+
+type StepMutateOptionsFn<
+  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
+> = (index: number) => StepMutateOptionsForConfig<TSteps[number]> | undefined
 
 export function useSequentialMutations<
   TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
@@ -206,97 +234,124 @@ export function useSequentialMutations<
     }
   }, [])
 
-  const mutateAsync = React.useCallback(async (input?: unknown) => {
-    // Early return if component is already unmounted
-    if (!isMountedRef.current) {
-      return []
-    }
-
-    // Create abort controller for this operation
-    const abortController = new AbortController()
-    activeControllersRef.current.add(abortController)
-
-    try {
-      const { mutations: currentMutations, stopOnError: currentStopOnError } =
-        latestConfigRef.current
-      const outputs: Array<unknown> = []
-      let prevData: unknown = undefined
-
-      // Safety: iterate only up to the minimum length of observers and mutations
-      const stepsLength = Math.min(
-        observersRef.current.length,
-        currentMutations.length,
-      )
-      for (let i = 0; i < stepsLength; i++) {
-        // Check if operation was aborted or component unmounted
-        if (abortController.signal.aborted || !isMountedRef.current) {
-          break
-        }
-
-        const step = currentMutations[i]!
-        const getVariables = step.getVariables
-
-        let variables: unknown
-        try {
-          variables = getVariables
-            ? await getVariables({
-                index: i,
-                input,
-                prevData,
-                allData: outputs,
-              })
-            : prevData
-        } catch (error) {
-          // Check abort/unmount state after async getVariables
-          if (abortController.signal.aborted || !isMountedRef.current) {
-            break
-          }
-          if (currentStopOnError) {
-            throw error
-          }
-          outputs.push(error)
-          prevData = undefined
-          continue
-        }
-
-        // Check abort/unmount state again after getVariables
-        if (abortController.signal.aborted || !isMountedRef.current) {
-          break
-        }
-
-        try {
-          const data = await observersRef.current[i]!.mutate(variables as any)
-
-          // Check abort/unmount state after mutation completes
-          if (abortController.signal.aborted || !isMountedRef.current) {
-            break
-          }
-
-          outputs.push(data)
-          prevData = data
-        } catch (error) {
-          // Check abort/unmount state before handling error
-          if (abortController.signal.aborted || !isMountedRef.current) {
-            break
-          }
-
-          if (currentStopOnError) {
-            throw error
-          }
-          outputs.push(error)
-          prevData = undefined
-        }
+  const mutateAsync = React.useCallback(
+    async (
+      input?: unknown,
+      stepOptions?:
+        | PartialStepMutateOptions<TSteps>
+        | StepMutateOptionsFn<TSteps>,
+    ) => {
+      // Early return if component is already unmounted
+      if (!isMountedRef.current) {
+        return []
       }
-      return outputs
-    } finally {
-      // Clean up this controller
-      activeControllersRef.current.delete(abortController)
-    }
-  }, [])
+
+      // Create abort controller for this operation
+      const abortController = new AbortController()
+      activeControllersRef.current.add(abortController)
+
+      try {
+        const { mutations: currentMutations, stopOnError: currentStopOnError } =
+          latestConfigRef.current
+        const outputs: Array<unknown> = []
+        let prevData: unknown = undefined
+
+        // Safety: iterate only up to the minimum length of observers and mutations
+        const stepsLength = Math.min(
+          observersRef.current.length,
+          currentMutations.length,
+        )
+        for (let i = 0; i < stepsLength; i++) {
+          // Check if operation was aborted or component unmounted
+          if (abortController.signal.aborted || !isMountedRef.current) {
+            break
+          }
+
+          const step = currentMutations[i]!
+          const getVariables = step.getVariables
+
+          let variables: unknown
+          try {
+            variables = getVariables
+              ? await getVariables({
+                  index: i,
+                  input,
+                  prevData,
+                  allData: outputs,
+                })
+              : prevData
+          } catch (error) {
+            // Check abort/unmount state after async getVariables
+            if (abortController.signal.aborted || !isMountedRef.current) {
+              break
+            }
+            if (currentStopOnError) {
+              throw error
+            }
+            outputs.push(error)
+            prevData = undefined
+            continue
+          }
+
+          // Check abort/unmount state again after getVariables
+          if (abortController.signal.aborted || !isMountedRef.current) {
+            break
+          }
+
+          // Resolve call-time mutate options for this step
+          const resolveStepOptions = () => {
+            if (!stepOptions) return undefined
+            if (typeof stepOptions === 'function') {
+              return (stepOptions as StepMutateOptionsFn<TSteps>)(i)
+            }
+            return (stepOptions as PartialStepMutateOptions<TSteps>)[
+              i as keyof PartialStepMutateOptions<TSteps>
+            ] as unknown
+          }
+
+          try {
+            const data = await observersRef.current[i]!.mutate(
+              variables as any,
+              resolveStepOptions() as any,
+            )
+
+            // Check abort/unmount state after mutation completes
+            if (abortController.signal.aborted || !isMountedRef.current) {
+              break
+            }
+
+            outputs.push(data)
+            prevData = data
+          } catch (error) {
+            // Check abort/unmount state before handling error
+            if (abortController.signal.aborted || !isMountedRef.current) {
+              break
+            }
+
+            if (currentStopOnError) {
+              throw error
+            }
+            outputs.push(error)
+            prevData = undefined
+          }
+        }
+        return outputs
+      } finally {
+        // Clean up this controller
+        activeControllersRef.current.delete(abortController)
+      }
+    },
+    [],
+  )
 
   const mutate = React.useCallback(
-    (input?: unknown) => {
-      void mutateAsync(input).catch(noop)
+    (
+      input?: unknown,
+      stepOptions?:
+        | PartialStepMutateOptions<TSteps>
+        | StepMutateOptionsFn<TSteps>,
+    ) => {
+      void mutateAsync(input, stepOptions).catch(noop)
     },
     [mutateAsync],
   )
