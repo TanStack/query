@@ -374,9 +374,6 @@ await queryClient.refetchQueries({
   type: 'active',
   exact: true,
 })
-
-// refetch only stale active queries:
-await queryClient.refetchQueries({ stale: true, type: 'active' })
 ```
 
 **Options**

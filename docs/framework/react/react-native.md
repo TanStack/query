@@ -74,13 +74,15 @@ useEffect(() => {
 ## Refresh on Screen focus
 
 In some situations, you may want to refetch the query when a React Native Screen is focused again.
-This custom hook will call the provided `refetch` function when the screen is focused again.
+This custom hook will refetch **all active stale queries** when the screen is focused again.
 
 ```tsx
 import React from 'react'
 import { useFocusEffect } from '@react-navigation/native'
+import { useQueryClient } from '@tanstack/react-query'
 
-export function useRefreshOnFocus<T>(refetch: () => Promise<T>) {
+export function useRefreshOnFocus() {
+  const queryClient = useQueryClient()
   const firstTimeRef = React.useRef(true)
 
   useFocusEffect(
@@ -90,13 +92,14 @@ export function useRefreshOnFocus<T>(refetch: () => Promise<T>) {
         return
       }
 
-      refetch()
-    }, [refetch]),
+      // refetch all stale active queries
+      queryClient.refetchQueries({ stale: true, type: 'active' })
+    }, [queryClient]),
   )
 }
 ```
 
-In the above code, `refetch` is skipped the first time because `useFocusEffect` calls our callback on mount in addition to screen focus.
+In the above code, The first focus (when the screen is initially mounted) is skipped because `useFocusEffect` calls our callback on mount in addition to screen focus.
 
 ## Disable queries on out of focus screens
 
