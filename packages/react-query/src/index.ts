@@ -51,6 +51,7 @@ export {
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating, useMutationState } from './useMutationState'
 export { useMutation } from './useMutation'
+export { useSequentialMutations } from './useSequentialMutations'
 export { mutationOptions } from './mutationOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'
