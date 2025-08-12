@@ -10,38 +10,66 @@ import { useQueryClient } from './QueryClientProvider'
 import type { UseMutationOptions, UseMutationResult } from './types'
 import type { QueryClient } from '@tanstack/query-core'
 
-type GetVariablesFn = (ctx: {
+type GetVariablesContext = {
   index: number
   input: unknown
   prevData: unknown
   allData: Array<unknown>
-}) => unknown | Promise<unknown>
+}
 
-export interface SequentialMutationConfig {
-  options: UseMutationOptions<any, any, any, any>
+export interface SequentialMutationConfig<
+  TData = unknown,
+  TError = unknown,
+  TVariables = unknown,
+  TContext = unknown,
+> {
+  options: UseMutationOptions<TData, TError, TVariables, TContext>
   /**
    * Generate variables for each step dynamically.
    * If omitted, the previous step's result (prevData) is passed as the next mutation's variables.
    */
-  getVariables?: GetVariablesFn
+  getVariables?: (ctx: GetVariablesContext) => TVariables | Promise<TVariables>
 }
 
-export interface UseSequentialMutationsOptions {
-  mutations: ReadonlyArray<SequentialMutationConfig>
+export interface UseSequentialMutationsOptions<
+  TSteps extends ReadonlyArray<
+    SequentialMutationConfig<any, any, any, any>
+  > = ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
+> {
+  mutations: TSteps
   /** Whether to stop the sequence on the first error. Default: true */
   stopOnError?: boolean
 }
 
-export interface UseSequentialMutationsResult {
-  results: Array<UseMutationResult<any, any, any, any>>
+type ResultsForSteps<
+  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
+> = {
+  [K in keyof TSteps]: TSteps[K] extends SequentialMutationConfig<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TContext
+  >
+    ? UseMutationResult<TData, TError, TVariables, TContext>
+    : never
+}
+
+export interface UseSequentialMutationsResult<
+  TSteps extends ReadonlyArray<
+    SequentialMutationConfig<any, any, any, any>
+  > = ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
+> {
+  results: ResultsForSteps<TSteps>
   mutate: (input?: unknown) => void
   mutateAsync: (input?: unknown) => Promise<Array<unknown>>
 }
 
-export function useSequentialMutations(
-  { mutations, stopOnError = true }: UseSequentialMutationsOptions,
+export function useSequentialMutations<
+  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
+>(
+  { mutations, stopOnError = true }: UseSequentialMutationsOptions<TSteps>,
   queryClient?: QueryClient,
-): UseSequentialMutationsResult {
+): UseSequentialMutationsResult<TSteps> {
   const client = useQueryClient(queryClient)
 
   // Create observers for each step and keep them updated
@@ -75,7 +103,7 @@ export function useSequentialMutations(
 
   // Keep latest config in a ref to avoid unstable callbacks from array identity changes
   const latestConfigRef = React.useRef<{
-    mutations: ReadonlyArray<SequentialMutationConfig>
+    mutations: TSteps
     stopOnError: boolean
   }>({ mutations, stopOnError })
 
@@ -146,7 +174,7 @@ export function useSequentialMutations(
     () => observersRef.current.map((o) => o.getCurrentResult()),
   )
 
-  const results: Array<UseMutationResult<any, any, any, any>> = React.useMemo(
+  const results = React.useMemo(
     () =>
       observerResults.map((r, idx) => ({
         ...r,
@@ -157,7 +185,7 @@ export function useSequentialMutations(
         mutateAsync: observersRef.current[idx]!.mutate,
       })),
     [observerResults],
-  )
+  ) as unknown as ResultsForSteps<TSteps>
 
   // Track mount state for cleanup during async operations
   const isMountedRef = React.useRef(true)
