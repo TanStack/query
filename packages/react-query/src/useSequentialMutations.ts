@@ -10,13 +10,6 @@ import { useQueryClient } from './QueryClientProvider'
 import type { UseMutationOptions, UseMutationResult } from './types'
 import type { QueryClient, MutateOptions } from '@tanstack/query-core'
 
-type GetVariablesContext = {
-  index: number
-  input: unknown
-  prevData: unknown
-  allData: Array<unknown>
-}
-
 export interface SequentialMutationConfig<
   TData = unknown,
   TError = unknown,
@@ -24,11 +17,6 @@ export interface SequentialMutationConfig<
   TContext = unknown,
 > {
   options: UseMutationOptions<TData, TError, TVariables, TContext>
-  /**
-   * Generate variables for each step dynamically.
-   * If omitted, the previous step's result (prevData) is passed as the next mutation's variables.
-   */
-  getVariables?: (ctx: GetVariablesContext) => TVariables | Promise<TVariables>
 }
 
 export interface UseSequentialMutationsOptions<
@@ -54,6 +42,25 @@ type StepResults<
     : never
 }
 
+// Derive an array of step data types from the provided steps
+type StepDataArray<
+  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
+> = {
+  [K in keyof TSteps]: TSteps[K] extends SequentialMutationConfig<
+    infer TData,
+    any,
+    any,
+    any
+  >
+    ? TData
+    : never
+}
+
+// Output array type for mutateAsync: each entry is either the step's data or an Error (when stopOnError=false)
+type StepOutput<
+  TSteps extends ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
+> = Array<StepDataArray<TSteps>[number] | Error>
+
 export interface UseSequentialMutationsResult<
   TSteps extends ReadonlyArray<
     SequentialMutationConfig<any, any, any, any>
@@ -71,7 +78,7 @@ export interface UseSequentialMutationsResult<
     stepOptions?:
       | Array<MutateOptions<any, any, any, any> | undefined>
       | ((index: number) => MutateOptions<any, any, any, any> | undefined),
-  ) => Promise<Array<unknown>>
+  ) => Promise<StepOutput<TSteps>>
 }
 
 export function useSequentialMutations<
@@ -82,26 +89,23 @@ export function useSequentialMutations<
 ): UseSequentialMutationsResult<TSteps> {
   const client = useQueryClient(queryClient)
 
-  // Create observers for each step and keep them updated
   const observersRef = React.useRef<
     Array<MutationObserver<any, any, any, any>>
   >([])
 
   // Ensure observers array length matches mutations length synchronously during render
-  {
-    const currentObservers = observersRef.current
-    const targetLength = mutations.length
+  const currentObservers = observersRef.current
+  const targetLength = mutations.length
 
-    if (currentObservers.length !== targetLength) {
-      const newObservers = currentObservers.slice(0, targetLength)
-      for (let i = currentObservers.length; i < targetLength; i++) {
-        newObservers[i] = new MutationObserver<any, any, any, any>(
-          client,
-          mutations[i]!.options as any,
-        )
-      }
-      observersRef.current = newObservers
+  if (currentObservers.length !== targetLength) {
+    const newObservers = currentObservers.slice(0, targetLength)
+    for (let i = currentObservers.length; i < targetLength; i++) {
+      newObservers[i] = new MutationObserver<any, any, any, any>(
+        client,
+        mutations[i]!.options as any,
+      )
     }
+    observersRef.current = newObservers
   }
 
   // Keep options in sync with latest configs
@@ -129,14 +133,10 @@ export function useSequentialMutations<
   const snapshotRef = React.useRef<Array<any>>([])
 
   // Initialize snapshot synchronously so first render has correct results length
-  {
-    const initialSnapshot = observersRef.current.map((o) =>
-      o.getCurrentResult(),
-    )
-    // Only replace if it differs to avoid unnecessary identity changes
-    if (snapshotRef.current.length !== initialSnapshot.length) {
-      snapshotRef.current = initialSnapshot
-    }
+  const initialSnapshot = observersRef.current.map((o) => o.getCurrentResult())
+  // Only replace if it differs to avoid unnecessary identity changes
+  if (snapshotRef.current.length !== initialSnapshot.length) {
+    snapshotRef.current = initialSnapshot
   }
 
   const observerResults = React.useSyncExternalStore(
@@ -188,10 +188,11 @@ export function useSequentialMutations<
     () =>
       observerResults.map((r, idx) => ({
         ...r,
-        mutate: (variables: any, mutateOptions?: any) =>
-          observersRef.current[idx]!.mutate(variables, mutateOptions).catch(
-            noop,
-          ),
+        mutate: (variables: unknown, mutateOptions?: unknown) =>
+          observersRef.current[idx]!.mutate(
+            variables as any,
+            mutateOptions as any,
+          ).catch(noop),
         mutateAsync: observersRef.current[idx]!.mutate,
       })),
     [observerResults],
@@ -218,14 +219,14 @@ export function useSequentialMutations<
 
   const mutateAsync = React.useCallback(
     async (
-      input?: unknown,
+      _input?: unknown,
       stepOptions?:
         | Array<MutateOptions<any, any, any, any> | undefined>
         | ((index: number) => MutateOptions<any, any, any, any> | undefined),
     ) => {
       // Early return if component is already unmounted
       if (!isMountedRef.current) {
-        return []
+        return [] as StepOutput<TSteps>
       }
 
       // Create abort controller for this operation
@@ -235,7 +236,7 @@ export function useSequentialMutations<
       try {
         const { mutations: currentMutations, stopOnError: currentStopOnError } =
           latestConfigRef.current
-        const outputs: Array<unknown> = []
+        const outputs = [] as unknown as StepOutput<TSteps>
         let prevData: unknown = undefined
 
         // Safety: iterate only up to the minimum length of observers and mutations
@@ -249,31 +250,9 @@ export function useSequentialMutations<
             break
           }
 
-          const step = currentMutations[i]!
-          const getVariables = step.getVariables
-
-          let variables: unknown
-          try {
-            variables = getVariables
-              ? await getVariables({
-                  index: i,
-                  input,
-                  prevData,
-                  allData: outputs,
-                })
-              : prevData
-          } catch (error) {
-            // Check abort/unmount state after async getVariables
-            if (abortController.signal.aborted || !isMountedRef.current) {
-              break
-            }
-            if (currentStopOnError) {
-              throw error
-            }
-            outputs.push(error)
-            prevData = undefined
-            continue
-          }
+          // keep current step reference for readability (no-op)
+          currentMutations[i]!
+          const variables = prevData
 
           // Check abort/unmount state again after getVariables
           if (abortController.signal.aborted || !isMountedRef.current) {
@@ -298,10 +277,10 @@ export function useSequentialMutations<
           }
 
           try {
-            const data = await observersRef.current[i]!.mutate(
+            const data = (await observersRef.current[i]!.mutate(
               variables as any,
               resolveStepOptions() as any,
-            )
+            )) as StepDataArray<TSteps>[number]
 
             // Check abort/unmount state after mutation completes
             if (abortController.signal.aborted || !isMountedRef.current) {
@@ -319,7 +298,7 @@ export function useSequentialMutations<
             if (currentStopOnError) {
               throw error
             }
-            outputs.push(error)
+            outputs.push(error as Error)
             prevData = undefined
           }
         }
