@@ -93,7 +93,7 @@ export function useRefreshOnFocus() {
       }
 
       // refetch all stale active queries
-      queryClient.refetchQueries({ stale: true, type: 'active' })
+      queryClient.refetchQueries({ queryKey:['posts'], stale: true, type: 'active' })
     }, [queryClient]),
   )
 }
