@@ -239,13 +239,9 @@ export function useSequentialMutations<
           }
 
           currentMutations[i]!
-          const variables = prevData
+          const variables = i === 0 ? _input : prevData
 
           setCurrentIndex(i)
-
-          if (abortController.signal.aborted || !isMountedRef.current) {
-            break
-          }
 
           const resolveStepOptions = () => {
             if (!stepOptions) return undefined

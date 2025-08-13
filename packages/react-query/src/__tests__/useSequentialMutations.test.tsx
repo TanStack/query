@@ -85,7 +85,7 @@ describe('useSequentialMutations', () => {
     expect(calls).toEqual(['m1:undefined', 'm2:a', 'm3:b'])
   })
 
-  it('supports getVariables to derive variables from input/previous results', async () => {
+  it('derives variables from input/previous results by default', async () => {
     const seen: Array<{ i: number; v: unknown }> = []
     let outputs: Array<unknown> | null = null
 
@@ -100,7 +100,6 @@ describe('useSequentialMutations', () => {
                   return `s1:${String(v)}`
                 },
               },
-              getVariables: ({ input }) => `in:${String(input)}`,
             },
             {
               options: {
@@ -110,7 +109,6 @@ describe('useSequentialMutations', () => {
                   return `s2:${String(v)}`
                 },
               },
-              getVariables: ({ prevData }) => `${String(prevData)}->s2`,
             },
             {
               options: {
@@ -120,7 +118,6 @@ describe('useSequentialMutations', () => {
                   return `s3:${String(v)}`
                 },
               },
-              getVariables: ({ allData }) => `${String(allData.at(-1))}->s3`,
             },
           ],
         },
@@ -140,12 +137,8 @@ describe('useSequentialMutations', () => {
 
     await vi.advanceTimersByTimeAsync(16)
 
-    expect(seen.map((s) => s.v)).toEqual(['s1:in:X->s2', 's2:s1:in:X->s2->s3'])
-    expect(outputs).toEqual([
-      's1:in:X',
-      's2:s1:in:X->s2',
-      's3:s2:s1:in:X->s2->s3',
-    ])
+    expect(seen.map((s) => s.v)).toEqual(['s1:X', 's2:s1:X'])
+    expect(outputs).toEqual(['s1:X', 's2:s1:X', 's3:s2:s1:X'])
   })
 
   it('stops on first error when stopOnError=true (default)', async () => {
@@ -221,7 +214,6 @@ describe('useSequentialMutations', () => {
                   return 'ok2'
                 },
               },
-              getVariables: ({ input }) => `from:${String(input)}`,
             },
           ],
         },
@@ -240,7 +232,8 @@ describe('useSequentialMutations', () => {
     renderWithClient(queryClient, <Page />)
     await vi.advanceTimersByTimeAsync(6)
 
-    expect(calls).toEqual(['m2:from:carry'])
+    // After error, prevData resets to undefined, so next step receives undefined
+    expect(calls).toEqual(['m2:undefined'])
     const outLen: number | undefined = outputs
       ? (outputs as Array<unknown>).length
       : undefined
@@ -269,7 +262,6 @@ describe('useSequentialMutations', () => {
                   calls.push(`m1:onSettled:${d}|${String(e)}|${v}`)
                 },
               },
-              getVariables: () => 'x',
             },
             {
               options: {
@@ -300,12 +292,12 @@ describe('useSequentialMutations', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     expect(calls).toEqual([
-      'm1:onMutate:x',
-      'm1:onSuccess:x-done|x',
-      'm1:onSettled:x-done|null|x',
-      'm2:onMutate:x-done',
-      'm2:onError:e2|x-done',
-      'm2:onSettled:e2|x-done',
+      'm1:onMutate:undefined',
+      'm1:onSuccess:undefined-done|undefined',
+      'm1:onSettled:undefined-done|null|undefined',
+      'm2:onMutate:undefined-done',
+      'm2:onError:e2|undefined-done',
+      'm2:onSettled:e2|undefined-done',
     ])
   })
 
@@ -415,7 +407,7 @@ describe('useSequentialMutations', () => {
       const { mutateAsync } = useSequentialMutations(
         {
           mutations: [
-            { options: { mutationKey: key } as any, getVariables: () => 'ab' },
+            { options: { mutationKey: key } as any },
             { options: { mutationKey: key } as any },
           ],
         },
@@ -423,7 +415,7 @@ describe('useSequentialMutations', () => {
       )
       React.useEffect(() => {
         ;(async () => {
-          out = await mutateAsync()
+          out = await mutateAsync('ab')
         })()
       }, [mutateAsync])
       return null
@@ -676,6 +668,38 @@ describe('useSequentialMutations', () => {
     expect(normalized).toContain('len:1')
   })
 
+  it('per-step mutate swallows rejection via catch(noop) and updates error state', async () => {
+    function Page() {
+      const { results } = useSequentialMutations(
+        {
+          mutations: [
+            {
+              options: {
+                mutationFn: async () => {
+                  throw new Error('boom')
+                },
+              },
+            },
+          ],
+        },
+        queryClient,
+      )
+      React.useEffect(() => {
+        results[0]?.mutate('x')
+      }, [results])
+      return (
+        <div>
+          <span>status:{results[0]?.status}</span>
+          <span>isError:{String(results[0]?.isError)}</span>
+        </div>
+      )
+    }
+
+    const r = renderWithClient(queryClient, <Page />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(r.getByText('isError:true')).toBeInTheDocument()
+  })
+
   describe('coverage for unmount/abort and getVariables error branches', () => {
     it('returns empty array when mutateAsync is called after unmount (early return path)', async () => {
       let call: null | ((input?: unknown) => Promise<Array<unknown>>) = null
@@ -713,17 +737,18 @@ describe('useSequentialMutations', () => {
     // Note: The very first loop check is synchronous; it's hard to reliably unmount before it runs.
     // We instead target the checks after async boundaries below.
 
-    it('handles getVariables throwing: stopOnError=true throws', async () => {
+    it('handles mutation throwing before any progress: stopOnError=true throws and exposes error', async () => {
       let error: unknown = null
 
       function Page() {
-        const { mutateAsync } = useSequentialMutations(
+        const { mutateAsync, error: hookError } = useSequentialMutations(
           {
             mutations: [
               {
-                options: { mutationFn: async () => 'ok' },
-                getVariables: () => {
-                  throw new Error('gv')
+                options: {
+                  mutationFn: async () => {
+                    throw new Error('gv')
+                  },
                 },
               },
             ],
@@ -741,15 +766,16 @@ describe('useSequentialMutations', () => {
           })()
         }, [mutateAsync])
 
-        return null
+        return <div>err:{String((hookError as any)?.message ?? '')}</div>
       }
 
-      renderWithClient(queryClient, <Page />)
+      const r = renderWithClient(queryClient, <Page />)
       await vi.advanceTimersByTimeAsync(0)
       expect((error as Error).message).toBe('gv')
+      expect(r.getByText('err:gv')).toBeInTheDocument()
     })
 
-    it('handles getVariables throwing: stopOnError=false continues and pushes error', async () => {
+    it('handles mutation throwing: stopOnError=false continues and pushes error', async () => {
       let outputs: Array<unknown> | null = null
 
       function Page() {
@@ -758,9 +784,10 @@ describe('useSequentialMutations', () => {
             stopOnError: false,
             mutations: [
               {
-                options: { mutationFn: async () => 'ok1' },
-                getVariables: () => {
-                  throw new Error('gv2')
+                options: {
+                  mutationFn: async () => {
+                    throw new Error('gv2')
+                  },
                 },
               },
               {
@@ -792,153 +819,11 @@ describe('useSequentialMutations', () => {
       expect(outputs?.[1]).toBe('ok2')
     })
 
-    it('deterministically breaks in catch after getVariables rejects post-abort', async () => {
-      let doUnmount: (() => void) | null = null
-      const deferred: {
-        reject?: (e: unknown) => void
-        promise: Promise<unknown>
-      } = {
-        promise: Promise.resolve(undefined),
-      }
-      deferred.promise = new Promise((_, rej) => {
-        deferred.reject = rej
-      })
+    // Removed getVariables-based catch-break tests; covered by mutation resolve/reject abort tests below
 
-      function Parent() {
-        const [on, setOn] = React.useState(true)
-        doUnmount = () => setOn(false)
-        return on ? <Page /> : null
-      }
+    // Removed (redundant with mutation reject after abort)
 
-      let outputs: Array<unknown> | null = null
-      function Page() {
-        const { mutateAsync } = useSequentialMutations(
-          {
-            stopOnError: false,
-            mutations: [
-              {
-                options: { mutationFn: async () => 'ok' },
-                getVariables: async () => deferred.promise,
-              },
-              { options: { mutationFn: async () => 'ok2' } },
-            ],
-          },
-          queryClient,
-        )
-        React.useEffect(() => {
-          ;(async () => {
-            outputs = await mutateAsync()
-          })()
-        }, [mutateAsync])
-        return null
-      }
-
-      renderWithClient(queryClient, <Parent />)
-      // abort, wait for cleanup to run, then reject to enter catch-break
-      ;(doUnmount as any)?.()
-      await vi.advanceTimersByTimeAsync(0)
-      deferred.reject?.(new Error('x'))
-      await vi.advanceTimersByTimeAsync(0)
-      expect(outputs).toEqual([])
-    })
-
-    it('covers catch-break: abort after getVariables started, then rejection', async () => {
-      let outputs: Array<unknown> | null = null
-      let entered = false
-      let triggerReject: ((e: unknown) => void) | null = null
-
-      function Page({ onAbort }: { onAbort: () => void }) {
-        const { mutateAsync } = useSequentialMutations(
-          {
-            stopOnError: false,
-            mutations: [
-              {
-                options: { mutationFn: async () => 'ok' },
-                getVariables: () => {
-                  entered = true
-                  return new Promise((_res, rej) => {
-                    triggerReject = rej
-                  })
-                },
-              },
-              { options: { mutationFn: async () => 'ok2' } },
-            ],
-          },
-          queryClient,
-        )
-
-        return (
-          <button
-            onClick={() => {
-              ;(async () => {
-                outputs = await mutateAsync()
-              })()
-              onAbort()
-              triggerReject?.(new Error('x'))
-            }}
-          >
-            start
-          </button>
-        )
-      }
-
-      const r = renderWithClient(
-        queryClient,
-        <Page onAbort={() => r.unmount()} />,
-      )
-      r.getByText('start').click()
-      expect(entered).toBe(true)
-      await vi.advanceTimersByTimeAsync(0)
-      expect(outputs).toEqual([])
-    })
-
-    it('covers resolve-break: abort after getVariables started, then resolution', async () => {
-      let outputs: Array<unknown> | null = null
-      let entered = false
-      let triggerResolve: ((v: unknown) => void) | null = null
-
-      function Page({ onAbort }: { onAbort: () => void }) {
-        const { mutateAsync } = useSequentialMutations(
-          {
-            mutations: [
-              {
-                options: { mutationFn: async () => 'should-not-run' },
-                getVariables: () => {
-                  entered = true
-                  return new Promise((res) => {
-                    triggerResolve = res
-                  })
-                },
-              },
-            ],
-          },
-          queryClient,
-        )
-
-        return (
-          <button
-            onClick={() => {
-              ;(async () => {
-                outputs = await mutateAsync()
-              })()
-              onAbort()
-              triggerResolve?.('v')
-            }}
-          >
-            start
-          </button>
-        )
-      }
-
-      const r = renderWithClient(
-        queryClient,
-        <Page onAbort={() => r.unmount()} />,
-      )
-      r.getByText('start').click()
-      expect(entered).toBe(true)
-      await vi.advanceTimersByTimeAsync(0)
-      expect(outputs).toEqual([])
-    })
+    // Removed (redundant with mutation resolve after abort)
 
     // removed: flaky ordering; covered by the next two deterministic cases
 
@@ -1129,7 +1014,6 @@ describe('useSequentialMutations', () => {
                   return `u:${name}`
                 },
               },
-              getVariables: ({ input }) => String(input),
             },
             {
               options: {
@@ -1176,10 +1060,7 @@ describe('useSequentialMutations', () => {
       const { mutateAsync } = useSequentialMutations(
         {
           mutations: [
-            {
-              options: { mutationFn: async (v: string) => `a:${v}` },
-              getVariables: ({ input }) => String(input),
-            },
+            { options: { mutationFn: async (v: string) => `a:${v}` } },
             { options: { mutationFn: async (v: string) => `b:${v}` } },
           ],
         },
@@ -1211,10 +1092,7 @@ describe('useSequentialMutations', () => {
       const { mutateAsync } = useSequentialMutations(
         {
           mutations: [
-            {
-              options: { mutationFn: async (v: string) => `ok:${v}` },
-              getVariables: ({ input }) => String(input),
-            },
+            { options: { mutationFn: async (v: string) => `ok:${v}` } },
           ],
         },
         queryClient,
