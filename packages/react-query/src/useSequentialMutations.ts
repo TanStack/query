@@ -67,6 +67,10 @@ export interface UseSequentialMutationsResult<
   > = ReadonlyArray<SequentialMutationConfig<any, any, any, any>>,
 > {
   results: StepResults<TSteps>
+  currentIndex: number
+  isLoading: boolean
+  error: unknown | null
+  reset: () => void
   mutate: (
     input?: unknown,
     stepOptions?:
@@ -88,6 +92,10 @@ export function useSequentialMutations<
   queryClient?: QueryClient,
 ): UseSequentialMutationsResult<TSteps> {
   const client = useQueryClient(queryClient)
+
+  const [currentIndex, setCurrentIndex] = React.useState<number>(-1)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [error, setError] = React.useState<unknown | null>(null)
 
   const observersRef = React.useRef<
     Array<MutationObserver<any, any, any, any>>
@@ -234,6 +242,8 @@ export function useSequentialMutations<
       activeControllersRef.current.add(abortController)
 
       try {
+        setError(null)
+        setIsLoading(true)
         const { mutations: currentMutations, stopOnError: currentStopOnError } =
           latestConfigRef.current
         const outputs = [] as unknown as StepOutput<TSteps>
@@ -253,6 +263,8 @@ export function useSequentialMutations<
           // keep current step reference for readability (no-op)
           currentMutations[i]!
           const variables = prevData
+
+          setCurrentIndex(i)
 
           // Check abort/unmount state again after getVariables
           if (abortController.signal.aborted || !isMountedRef.current) {
@@ -289,16 +301,19 @@ export function useSequentialMutations<
 
             outputs.push(data)
             prevData = data
-          } catch (error) {
+          } catch (err) {
             // Check abort/unmount state before handling error
             if (abortController.signal.aborted || !isMountedRef.current) {
               break
             }
 
             if (currentStopOnError) {
-              throw error
+              setError(err)
+              setIsLoading(false)
+              setCurrentIndex(-1)
+              throw err
             }
-            outputs.push(error as Error)
+            outputs.push(err as Error)
             prevData = undefined
           }
         }
@@ -306,6 +321,8 @@ export function useSequentialMutations<
       } finally {
         // Clean up this controller
         activeControllersRef.current.delete(abortController)
+        setIsLoading(false)
+        setCurrentIndex(-1)
       }
     },
     [],
@@ -323,5 +340,13 @@ export function useSequentialMutations<
     [mutateAsync],
   )
 
-  return { results, mutate, mutateAsync }
+  const reset = React.useCallback(() => {
+    activeControllersRef.current.forEach((controller) => controller.abort())
+    activeControllersRef.current.clear()
+    setCurrentIndex(-1)
+    setIsLoading(false)
+    setError(null)
+  }, [])
+
+  return { results, currentIndex, isLoading, error, reset, mutate, mutateAsync }
 }
