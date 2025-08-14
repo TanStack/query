@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest'
-import { render, waitFor } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { render } from '@testing-library/svelte'
 import { get, writable } from 'svelte/store'
 import BaseExample from './BaseExample.svelte'
 import SelectExample from './SelectExample.svelte'
@@ -7,6 +7,14 @@ import type { Writable } from 'svelte/store'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('Return the correct states for a successful query', async () => {
     const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
@@ -16,14 +24,12 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await waitFor(() => {
-      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('Status: success')).toBeInTheDocument()
 
     const states = get(statesStore)
 
     expect(states).toHaveLength(2)
-
     expect(states[0]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
@@ -54,12 +60,12 @@ describe('createInfiniteQuery', () => {
       isRefetching: false,
       isStale: true,
       isSuccess: false,
+      isEnabled: true,
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
       promise: expect.any(Promise),
     })
-
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
@@ -90,6 +96,7 @@ describe('createInfiniteQuery', () => {
       isRefetching: false,
       isStale: true,
       isSuccess: true,
+      isEnabled: true,
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
@@ -106,19 +113,16 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await waitFor(() => {
-      expect(rendered.queryByText('count: 1')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
 
     const states = get(statesStore)
 
     expect(states).toHaveLength(2)
-
     expect(states[0]).toMatchObject({
       data: undefined,
       isSuccess: false,
     })
-
     expect(states[1]).toMatchObject({
       data: { pages: ['count: 1'] },
       isSuccess: true,

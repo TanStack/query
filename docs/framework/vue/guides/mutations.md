@@ -81,7 +81,7 @@ const vueQueryOptions: VueQueryPluginOptions = {
   clientPersister: (queryClient) => {
     return persistQueryClient({
       queryClient,
-      persister: createSyncStoragePersister({ storage: localStorage }),
+      persister: createAsyncStoragePersister({ storage: localStorage }),
     })
   },
   clientPersisterOnSuccess: (queryClient) => {

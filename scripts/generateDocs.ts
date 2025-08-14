@@ -1,42 +1,45 @@
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { generateReferenceDocs } from '@tanstack/config/typedoc'
+import { glob } from 'tinyglobby'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
-/** @type {import('@tanstack/config/typedoc').Package[]} */
-const packages = [
-  {
-    name: 'angular-query-experimental',
-    entryPoints: [
-      resolve(__dirname, '../packages/angular-query-experimental/src/index.ts'),
-    ],
-    tsconfig: resolve(
-      __dirname,
-      '../packages/angular-query-experimental/tsconfig.json',
-    ),
-    outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
-    exclude: ['./packages/query-core/**/*'],
-  },
-  {
-    name: 'svelte-query',
-    entryPoints: [resolve(__dirname, '../packages/svelte-query/src/index.ts')],
-    tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.json'),
-    outputDir: resolve(__dirname, '../docs/framework/svelte/reference'),
-    exclude: ['./packages/query-core/**/*'],
-  },
-]
-
-await generateReferenceDocs({ packages })
-
-import fg from 'fast-glob'
-import { readFileSync, writeFileSync } from 'node:fs'
+await generateReferenceDocs({
+  packages: [
+    {
+      name: 'angular-query-experimental',
+      entryPoints: [
+        resolve(
+          __dirname,
+          '../packages/angular-query-experimental/src/index.ts',
+        ),
+      ],
+      tsconfig: resolve(
+        __dirname,
+        '../packages/angular-query-experimental/tsconfig.json',
+      ),
+      outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
+      exclude: ['./packages/query-core/**/*'],
+    },
+    {
+      name: 'svelte-query',
+      entryPoints: [
+        resolve(__dirname, '../packages/svelte-query/src/index.ts'),
+      ],
+      tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.json'),
+      outputDir: resolve(__dirname, '../docs/framework/svelte/reference'),
+      exclude: ['./packages/query-core/**/*'],
+    },
+  ],
+})
 
 // Define the pattern to match all generated markdown files
 const markdownFilesPattern = 'docs/framework/{angular,svelte}/reference/**/*.md'
 
 // Find all markdown files matching the pattern
-const markdownFiles = await fg(markdownFilesPattern)
+const markdownFiles = await glob(markdownFilesPattern)
 
 console.log(`Found ${markdownFiles.length} markdown files to process\n`)
 

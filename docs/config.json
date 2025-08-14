@@ -459,7 +459,7 @@
             },
             {
               "label": "Does this replace state managers?",
-              "to": "framework/angular/guides/does-this-replace-client-state"
+              "to": "framework/solid/guides/does-this-replace-client-state"
             }
           ]
         },
@@ -818,6 +818,10 @@
             {
               "label": "infiniteQueryOptions",
               "to": "framework/react/reference/infiniteQueryOptions"
+            },
+            {
+              "label": "mutationOptions",
+              "to": "framework/react/reference/mutationOptions"
             },
             {
               "label": "usePrefetchQuery",

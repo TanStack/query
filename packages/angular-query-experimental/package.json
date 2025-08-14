@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.80.10",
+  "version": "5.85.0",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -43,8 +43,8 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "pnpm pack && publint ./dist/*.tgz --strict && attw ./dist/*.tgz; premove ./dist/*.tgz",
-    "build": "vite build && pnpm run prepack",
-    "prepack": "node ./scripts/prepack.js"
+    "build": "vite build",
+    "prepack": "node scripts/prepack.js"
   },
   "type": "module",
   "types": "dist/index.d.ts",
@@ -60,7 +60,8 @@
   "sideEffects": false,
   "files": [
     "**/*.d.ts",
-    "**/*.mjs.*"
+    "**/*.mjs",
+    "**/*.mjs.map"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
