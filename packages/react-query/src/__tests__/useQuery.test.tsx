@@ -3431,7 +3431,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/160
-  it('should continue retry after focus regain', async () => {
+  it('should continue retry in background even when page is not focused', async () => {
     const key = queryKey()
 
     // make page unfocused
@@ -3462,29 +3462,8 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    // The query should display the first error result
-    await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.getByText('failureCount 1')).toBeInTheDocument()
-    expect(
-      rendered.getByText('failureReason fetching error 1'),
-    ).toBeInTheDocument()
-    expect(rendered.getByText('status pending')).toBeInTheDocument()
-    expect(rendered.getByText('error null')).toBeInTheDocument()
-
-    // Check if the query really paused
-    await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.getByText('failureCount 1')).toBeInTheDocument()
-    expect(
-      rendered.getByText('failureReason fetching error 1'),
-    ).toBeInTheDocument()
-
-    act(() => {
-      // reset visibilityState to original value
-      visibilityMock.mockRestore()
-      window.dispatchEvent(new Event('visibilitychange'))
-    })
-
-    // Wait for the final result
+    // With the new behavior, retries continue in background
+    // Wait for all retries to complete
     await vi.advanceTimersByTimeAsync(4)
     expect(rendered.getByText('failureCount 4')).toBeInTheDocument()
     expect(
@@ -3493,12 +3472,10 @@ describe('useQuery', () => {
     expect(rendered.getByText('status error')).toBeInTheDocument()
     expect(rendered.getByText('error fetching error 4')).toBeInTheDocument()
 
-    // Check if the query really stopped
-    await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('failureCount 4')).toBeInTheDocument()
-    expect(
-      rendered.getByText('failureReason fetching error 4'),
-    ).toBeInTheDocument()
+    // Verify all retries were attempted
+    expect(count).toBe(4)
+
+    visibilityMock.mockRestore()
   })
 
   it('should fetch on mount when a query was already created with setQueryData', async () => {

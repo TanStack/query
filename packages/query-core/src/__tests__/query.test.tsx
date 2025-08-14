@@ -58,7 +58,7 @@ describe('query', () => {
     expect(query.gcTime).toBe(200)
   })
 
-  it('should continue retry after focus regain and resolve all promises', async () => {
+  it('should continue retry and resolve even with focus state changes', async () => {
     const key = queryKey()
 
     // make page unfocused
@@ -86,23 +86,16 @@ describe('query', () => {
       result = data
     })
 
-    // Check if we do not have a result
+    // Check if we do not have a result initially
     expect(result).toBeUndefined()
 
-    // Check if the query is really paused
-    await vi.advanceTimersByTimeAsync(50)
-    expect(result).toBeUndefined()
-
-    // Reset visibilityState to original value
-    visibilityMock.mockRestore()
-    window.dispatchEvent(new Event('visibilitychange'))
-
-    // There should not be a result yet
-    expect(result).toBeUndefined()
-
-    // By now we should have a value
-    await vi.advanceTimersByTimeAsync(50)
+    // With new behavior, retries continue in background
+    // Wait for retries to complete
+    await vi.advanceTimersByTimeAsync(10)
     expect(result).toBe('data3')
+    expect(count).toBe(3)
+
+    visibilityMock.mockRestore()
   })
 
   it('should continue retry after reconnect and resolve all promises', async () => {
@@ -153,11 +146,39 @@ describe('query', () => {
     onlineMock.mockRestore()
   })
 
-  it('should throw a CancelledError when a paused query is cancelled', async () => {
+  it('should continue retry in background when page is not focused', async () => {
     const key = queryKey()
-
     // make page unfocused
     const visibilityMock = mockVisibilityState('hidden')
+    let count = 0
+    let result
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: () => {
+        count++
+        if (count === 3) {
+          return `data${count}`
+        }
+        throw new Error(`error${count}`)
+      },
+      retry: 3,
+      retryDelay: 1,
+    })
+    promise.then((data) => {
+      result = data
+    })
+    // Check if we do not have a result initially
+    expect(result).toBeUndefined()
+    // Unlike the old behavior, retry should continue in background
+    // Wait for retries to complete
+    await vi.advanceTimersByTimeAsync(10)
+    expect(result).toBe('data3')
+    expect(count).toBe(3)
+    visibilityMock.mockRestore()
+  })
+
+  it('should throw a CancelledError when a retrying query is cancelled', async () => {
+    const key = queryKey()
 
     let count = 0
     let result: unknown
@@ -169,7 +190,7 @@ describe('query', () => {
         throw new Error(`error${count}`)
       },
       retry: 3,
-      retryDelay: 1,
+      retryDelay: 100, // Longer delay to allow cancellation
     })
 
     promise.catch((data) => {
@@ -178,11 +199,11 @@ describe('query', () => {
 
     const query = queryCache.find({ queryKey: key })!
 
-    // Check if the query is really paused
-    await vi.advanceTimersByTimeAsync(50)
+    // Wait briefly for first failure and start of retry
+    await vi.advanceTimersByTimeAsync(1)
     expect(result).toBeUndefined()
 
-    // Cancel query
+    // Cancel query during retry
     query.cancel()
 
     // Check if the error is set to the cancelled error
@@ -190,10 +211,8 @@ describe('query', () => {
       await promise
       expect.unreachable()
     } catch {
-      expect(result).toBeInstanceOf(CancelledError)
-    } finally {
-      // Reset visibilityState to original value
-      visibilityMock.mockRestore()
+      expect(result instanceof CancelledError).toBe(true)
+      expect(result instanceof Error).toBe(true)
     }
   })
 
@@ -234,6 +253,43 @@ describe('query', () => {
     await expect(promise).resolves.toBe('data')
 
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
+  })
+
+  it('should continue refetchInterval with retries in background when tab is inactive', async () => {
+    const key = queryKey()
+    const visibilityMock = mockVisibilityState('hidden')
+
+    let totalRequests = 0
+
+    const queryObserver = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        totalRequests++
+        // Always fail to simulate network offline
+        throw new Error(`Network error ${totalRequests}`)
+      },
+      refetchInterval: 60000,
+      refetchIntervalInBackground: true,
+      retry: 3,
+      retryDelay: 1,
+    })
+
+    queryObserver.subscribe(() => {})
+
+    // First interval: t=0 to t=60s (initial query + retries)
+    await vi.advanceTimersByTimeAsync(60000)
+    expect(totalRequests).toBe(4)
+
+    // Second interval: t=60s to t=120s (refetch + retries)
+    await vi.advanceTimersByTimeAsync(60000)
+    expect(totalRequests).toBe(8)
+
+    // Third interval: t=120s to t=180s (refetch + retries)
+    await vi.advanceTimersByTimeAsync(60000)
+    expect(totalRequests).toBe(12)
+
+    queryObserver.destroy()
+    visibilityMock.mockRestore()
   })
 
   test('should provide context to queryFn', () => {

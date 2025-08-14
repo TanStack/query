@@ -1,4 +1,3 @@
-import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { pendingThenable } from './thenable'
 import { isServer, sleep } from './utils'
@@ -100,7 +99,6 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   }
 
   const canContinue = () =>
-    focusManager.isFocused() &&
     (config.networkMode === 'always' || onlineManager.isOnline()) &&
     config.canRun()
 
