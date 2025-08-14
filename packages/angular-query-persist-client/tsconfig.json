@@ -7,13 +7,7 @@
     "useDefineForClassFields": false,
     "target": "ES2022"
   },
-  "include": [
-    "src",
-    "test-setup.ts",
-    "*.config.js",
-    "*.config.ts",
-    "package.json"
-  ],
+  "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
   "references": [
     { "path": "../angular-query-experimental" },
     { "path": "../query-persist-client-core" }
