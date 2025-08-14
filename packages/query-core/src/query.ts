@@ -604,22 +604,26 @@ export class Query<
             fetchMeta: action.meta ?? null,
           }
         case 'success':
-          // If fetching ends successfully, we don't need revertState as a fallback anymore.
-          this.#revertState = undefined
-          return {
+          const newState = {
             ...state,
             data: action.data,
             dataUpdateCount: state.dataUpdateCount + 1,
             dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
             error: null,
             isInvalidated: false,
-            status: 'success',
+            status: 'success' as const,
             ...(!action.manual && {
-              fetchStatus: 'idle',
+              fetchStatus: 'idle' as const,
               fetchFailureCount: 0,
               fetchFailureReason: null,
             }),
           }
+
+          // If fetching ends successfully, we don't need revertState as a fallback anymore.
+          // For manual updates, capture the state to revert to it in case of a cancellation.
+          this.#revertState = action.manual ? newState : undefined
+
+          return newState
         case 'error':
           const error = action.error
 
