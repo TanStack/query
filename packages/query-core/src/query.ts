@@ -8,7 +8,7 @@ import {
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
-import { canFetch, createRetryer, isCancelledError } from './retryer'
+import { CancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
@@ -372,7 +372,7 @@ export class Query<
     }
   }
 
-  fetch(
+  async fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
@@ -495,32 +495,6 @@ export class Query<
       this.#dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
     }
 
-    const onError = (error: TError | { silent?: boolean }) => {
-      // Optimistically update state if needed
-      if (!(isCancelledError(error) && error.silent)) {
-        this.#dispatch({
-          type: 'error',
-          error: error as TError,
-        })
-      }
-
-      if (!isCancelledError(error)) {
-        // Notify cache callback
-        this.#cache.config.onError?.(
-          error as any,
-          this as Query<any, any, any, any>,
-        )
-        this.#cache.config.onSettled?.(
-          this.state.data,
-          error as any,
-          this as Query<any, any, any, any>,
-        )
-      }
-
-      // Schedule query gc after fetching
-      this.scheduleGc()
-    }
-
     // Try to fetch the data
     this.#retryer = createRetryer({
       initialPromise: fetchOptions?.initialPromise as
@@ -528,36 +502,6 @@ export class Query<
         | undefined,
       fn: context.fetchFn as () => Promise<TData>,
       abort: abortController.abort.bind(abortController),
-      onSuccess: (data) => {
-        if (data === undefined) {
-          if (process.env.NODE_ENV !== 'production') {
-            console.error(
-              `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
-            )
-          }
-          onError(new Error(`${this.queryHash} data is undefined`) as any)
-          return
-        }
-
-        try {
-          this.setData(data)
-        } catch (error) {
-          onError(error as TError)
-          return
-        }
-
-        // Notify cache callback
-        this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
-        this.#cache.config.onSettled?.(
-          data,
-          this.state.error as any,
-          this as Query<any, any, any, any>,
-        )
-
-        // Schedule query gc after fetching
-        this.scheduleGc()
-      },
-      onError,
       onFail: (failureCount, error) => {
         this.#dispatch({ type: 'failed', failureCount, error })
       },
@@ -573,7 +517,65 @@ export class Query<
       canRun: () => true,
     })
 
-    return this.#retryer.start()
+    try {
+      const data = await this.#retryer.start()
+      // this is more of a runtime guard
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (data === undefined) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(
+            `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
+          )
+        }
+        throw new Error(`${this.queryHash} data is undefined`)
+      }
+
+      this.setData(data)
+
+      // Notify cache callback
+      this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+      this.#cache.config.onSettled?.(
+        data,
+        this.state.error as any,
+        this as Query<any, any, any, any>,
+      )
+      return data
+    } catch (error) {
+      if (error instanceof CancelledError) {
+        if (error.silent) {
+          // silent cancellation implies a new fetch is going to be started,
+          // so we hatch onto that promise
+          return this.#retryer.promise
+        } else if (error.revert) {
+          this.setState({
+            ...this.#revertState,
+            fetchStatus: 'idle' as const,
+          })
+          // transform error into reverted state data
+          return this.state.data!
+        }
+      }
+      this.#dispatch({
+        type: 'error',
+        error: error as TError,
+      })
+
+      // Notify cache callback
+      this.#cache.config.onError?.(
+        error as any,
+        this as Query<any, any, any, any>,
+      )
+      this.#cache.config.onSettled?.(
+        this.state.data,
+        error as any,
+        this as Query<any, any, any, any>,
+      )
+
+      throw error // rethrow the error for further handling
+    } finally {
+      // Schedule query gc after fetching
+      this.scheduleGc()
+    }
   }
 
   #dispatch(action: Action<TData, TError>): void {
@@ -618,7 +620,6 @@ export class Query<
               fetchFailureReason: null,
             }),
           }
-
           // If fetching ends successfully, we don't need revertState as a fallback anymore.
           // For manual updates, capture the state to revert to it in case of a cancellation.
           this.#revertState = action.manual ? newState : undefined
@@ -626,11 +627,6 @@ export class Query<
           return newState
         case 'error':
           const error = action.error
-
-          if (isCancelledError(error) && error.revert && this.#revertState) {
-            return { ...this.#revertState, fetchStatus: 'idle' }
-          }
-
           return {
             ...state,
             error,

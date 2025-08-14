@@ -3075,6 +3075,7 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
     fireEvent.click(rendered.getByRole('button', { name: /cancel/i }))
     expect(rendered.getByRole('button', { name: /show/i })).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(1)
     fireEvent.click(rendered.getByRole('button', { name: /show/i }))
     await vi.advanceTimersByTimeAsync(11)
     await vi.advanceTimersByTimeAsync(110)
