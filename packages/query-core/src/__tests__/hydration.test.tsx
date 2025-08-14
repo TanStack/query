@@ -1398,8 +1398,5 @@ describe('dehydration and rehydration', () => {
     // Need to await the original promise or else it will get a cancellation
     // error and test will fail
     await originalPromise
-
-    clientQueryClient.clear()
-    serverQueryClient.clear()
   })
 })
