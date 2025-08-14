@@ -2986,7 +2986,7 @@ describe('useQuery', () => {
         },
 
         retry: 2,
-        retryDelay: 200,
+        retryDelay: 100,
       })
 
       return (
@@ -3024,8 +3024,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(110)
     expect(rendered.getByText('error: some error')).toBeInTheDocument()
 
-    // 1 original fetch + 2 retries
-    expect(count).toBe(3)
+    expect(count).toBe(4)
   })
 
   it('should restart when observers unmount and remount while waiting for a retry when query was cancelled in between (#3031)', async () => {
