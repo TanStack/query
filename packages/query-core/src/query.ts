@@ -168,6 +168,7 @@ export class Query<
   state: QueryState<TData, TError>
 
   #initialState: QueryState<TData, TError>
+  #revertState?: QueryState<TData, TError>
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
@@ -484,7 +485,7 @@ export class Query<
     this.options.behavior?.onFetch(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted
-    const revertState = this.state
+    this.#revertState = this.state
 
     // Set to fetching state if not already in it
     if (
@@ -547,7 +548,7 @@ export class Query<
           return this.#retryer.promise
         } else if (error.revert) {
           this.setState({
-            ...revertState,
+            ...this.#revertState,
             fetchStatus: 'idle' as const,
           })
           // transform error into reverted state data
@@ -605,20 +606,25 @@ export class Query<
             fetchMeta: action.meta ?? null,
           }
         case 'success':
-          return {
+          const newState = {
             ...state,
             data: action.data,
             dataUpdateCount: state.dataUpdateCount + 1,
             dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
             error: null,
             isInvalidated: false,
-            status: 'success',
+            status: 'success' as const,
             ...(!action.manual && {
-              fetchStatus: 'idle',
+              fetchStatus: 'idle' as const,
               fetchFailureCount: 0,
               fetchFailureReason: null,
             }),
           }
+          // If fetching ends successfully, we don't need revertState as a fallback anymore.
+          // For manual updates, capture the state to revert to it in case of a cancellation.
+          this.#revertState = action.manual ? newState : undefined
+
+          return newState
         case 'error':
           const error = action.error
           return {
