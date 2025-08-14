@@ -527,7 +527,7 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
 
     expect(onMutate).toHaveBeenCalledTimes(1)
-    expect(onMutate).toHaveBeenCalledWith('todo')
+    expect(onMutate).toHaveBeenCalledWith('todo', queryClient)
 
     onlineMock.mockReturnValue(true)
     queryClient.getMutationCache().resumePausedMutations()
@@ -981,12 +981,14 @@ describe('useMutation', () => {
       'result-todo1',
       'todo1',
       undefined,
+      queryClient,
     )
     expect(onSuccess).toHaveBeenNthCalledWith(
       2,
       'result-todo2',
       'todo2',
       undefined,
+      queryClient,
     )
     expect(onSettled).toHaveBeenCalledTimes(2)
     expect(onSuccessMutate).toHaveBeenCalledTimes(1)
@@ -994,14 +996,10 @@ describe('useMutation', () => {
       'result-todo2',
       'todo2',
       undefined,
+      queryClient,
     )
     expect(onSettledMutate).toHaveBeenCalledTimes(1)
-    expect(onSettledMutate).toHaveBeenCalledWith(
-      'result-todo2',
-      null,
-      'todo2',
-      undefined,
-    )
+    expect(onSettledMutate).toHaveBeenCalledWith('result-todo2', null, 'todo2', undefined, queryClient)
   })
 
   it('should go to error state if onSuccess callback errors', async () => {
@@ -1035,7 +1033,7 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('status: error')).toBeInTheDocument()
 
-    expect(onError).toHaveBeenCalledWith(error, 'todo', undefined)
+    expect(onError).toHaveBeenCalledWith(error, 'todo', undefined, queryClient)
   })
 
   it('should go to error state if onError callback errors', async () => {
@@ -1112,7 +1110,7 @@ describe('useMutation', () => {
     expect(
       rendered.getByText('error: mutateFnError, status: error'),
     ).toBeInTheDocument()
-    expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
+    expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined, queryClient)
   })
 
   it('should use provided custom queryClient', async () => {

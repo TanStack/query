@@ -1093,6 +1093,7 @@ export type MutationMeta = Register extends {
 
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables,
+  client : QueryClient
 ) => Promise<TData>
 
 export interface MutationOptions<
@@ -1105,22 +1106,26 @@ export interface MutationOptions<
   mutationKey?: MutationKey
   onMutate?: (
     variables: TVariables,
+    client: QueryClient,
   ) => Promise<TContext | undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,
     context: TContext,
+    client: QueryClient,
   ) => Promise<unknown> | unknown
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined,
+    client: QueryClient,
   ) => Promise<unknown> | unknown
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined,
+    client: QueryClient,
   ) => Promise<unknown> | unknown
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
@@ -1146,17 +1151,24 @@ export interface MutateOptions<
   TVariables = void,
   TContext = unknown,
 > {
-  onSuccess?: (data: TData, variables: TVariables, context: TContext) => void
+  onSuccess?: (
+    data: TData,
+    variables: TVariables,
+    context: TContext,
+    client: QueryClient,
+  ) => void
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined,
+    client: QueryClient,
   ) => void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined,
+    client: QueryClient,
   ) => void
 }
 

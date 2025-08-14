@@ -545,6 +545,7 @@ describe('dehydration and rehydration', () => {
       { id: 2, text: 'text' },
       { text: 'text' },
       { optimisticTodo: { id: 1, text: 'text' } },
+      client,
     )
 
     client.clear()
