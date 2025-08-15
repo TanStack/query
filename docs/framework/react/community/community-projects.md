@@ -31,11 +31,15 @@ A family of libraries for building building browser and gRPC-compatible HTTP API
 
 Link: https://connectrpc.com/docs
 
-## DevTools Chrome Extension
+## DevTools Browser Extensions
 
-A Chrome browser extension that provides devtools for TanStack Query, allowing you to inspect and debug queries, mutations, and cache state directly in Chrome DevTools.
+Browser extensions for Chrome, Firefox, and Edge that provide devtools for TanStack Query, allowing you to inspect and debug queries, mutations, and cache state directly in browser DevTools.
 
-Link: https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai
+Links:
+
+- <img alt="Chrome logo" src="https://www.google.com/chrome/static/images/chrome-logo.svg" width="16" height="16" class="inline mr-1" /> [Devtools for Chrome](https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai)
+- <img alt="Firefox logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" width="16" height="16" class="inline mr-1" /> [Devtools for Firefox](https://addons.mozilla.org/en-US/firefox/addon/tanstack-query-devtools/)
+- <img alt="Edge logo" src="https://upload.wikimedia.org/wikipedia/commons/9/98/Microsoft_Edge_logo_%282019%29.svg" width="16" height="16" class="inline mr-1" /> [Devtools for Edge](https://microsoftedge.microsoft.com/addons/detail/tanstack-query-devtools/edmdpkgkacmjopodhfolmphdenmddobj)
 
 ## GraphQL Code Generator
 
