@@ -64,6 +64,7 @@
     "react-dom": "^19.0.0",
     "sherif": "^1.6.1",
     "tinyglobby": "^0.2.14",
+    "tsdown": "^0.15.1",
     "tsup": "^8.4.0",
     "typescript": "5.8.3",
     "typescript50": "npm:typescript@5.0",
