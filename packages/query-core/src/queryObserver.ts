@@ -289,6 +289,8 @@ export class QueryObserver<
         isLoading: currentResult.fetchStatus === 'fetching',
         isInitialLoading: currentResult.fetchStatus === 'fetching',
         isPlaceholderData: false,
+        isFetched: false,
+        isFetchedAfterMount: false,
       }
     }
 
