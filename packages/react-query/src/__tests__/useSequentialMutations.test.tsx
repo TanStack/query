@@ -609,7 +609,7 @@ describe('useSequentialMutations', () => {
     let displayed: string | null = null
 
     function Page() {
-      const { results } = useSequentialMutations(
+      const { mutateAsync } = useSequentialMutations(
         {
           mutations: [
             {
@@ -627,10 +627,10 @@ describe('useSequentialMutations', () => {
 
       React.useEffect(() => {
         ;(async () => {
-          const value = await results[0]!.mutateAsync('X')
-          displayed = String(value)
+          const outputs = await mutateAsync('X')
+          displayed = String(outputs[0])
         })()
-      }, [results])
+      }, [mutateAsync])
 
       return <div>{displayed ?? 'pending'}</div>
     }
@@ -1111,5 +1111,126 @@ describe('useSequentialMutations', () => {
     renderWithClient(queryClient, <Page />)
     await vi.advanceTimersByTimeAsync(0)
     expect(outputs).toEqual(['ok:Z'])
+  })
+
+  it('reset() aborts active controllers and resets all states', async () => {
+    let resetFn: (() => void) | null = null
+    let currentStates: any = null
+
+    function Page() {
+      const { currentIndex, isLoading, error, reset, mutateAsync } =
+        useSequentialMutations(
+          {
+            mutations: [
+              {
+                options: {
+                  mutationFn: async (v: string) => {
+                    await sleep(50) // Long delay to allow reset during execution
+                    return `${v}-step1`
+                  },
+                },
+              },
+              {
+                options: {
+                  mutationFn: async (v: string) => {
+                    await sleep(50)
+                    return `${v}-step2`
+                  },
+                },
+              },
+            ],
+          },
+          queryClient,
+        )
+
+      resetFn = reset
+      currentStates = { currentIndex, isLoading, error }
+
+      React.useEffect(() => {
+        // Start mutation but don't await
+        void mutateAsync('test')
+      }, [mutateAsync])
+
+      return (
+        <div>
+          currentIndex:{currentIndex} isLoading:{String(isLoading)} error:
+          {error ? String(error) : 'null'}
+        </div>
+      )
+    }
+
+    const r = renderWithClient(queryClient, <Page />)
+
+    // Wait for mutation to start
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Should be in progress
+    expect(currentStates.isLoading).toBe(true)
+    expect(currentStates.currentIndex).toBe(0)
+    expect(currentStates.error).toBe(null)
+
+    // Call reset while mutation is in progress
+    resetFn!()
+
+    // Wait a bit for reset to take effect
+    await vi.advanceTimersByTimeAsync(10)
+
+    // All states should be reset
+    expect(currentStates.currentIndex).toBe(-1)
+    expect(currentStates.isLoading).toBe(false)
+    expect(currentStates.error).toBe(null)
+
+    // Verify the text is updated in DOM
+    expect(r.getByText(/currentIndex:-1/)).toBeInTheDocument()
+    expect(r.getByText(/isLoading:false/)).toBeInTheDocument()
+    expect(r.getByText(/error:null/)).toBeInTheDocument()
+  })
+
+  it('reset() clears activeControllersRef and calls observer.reset()', async () => {
+    let resetFn: (() => void) | null = null
+    let hookStates: any = null
+
+    function Page() {
+      const { reset, mutateAsync, results } = useSequentialMutations(
+        {
+          mutations: [
+            {
+              options: {
+                mutationFn: async (v: string) => {
+                  await sleep(100)
+                  return `${v}-done`
+                },
+              },
+            },
+          ],
+        },
+        queryClient,
+      )
+
+      resetFn = reset
+      hookStates = { results }
+
+      React.useEffect(() => {
+        void mutateAsync('test')
+      }, [mutateAsync])
+
+      return <div>status:{results[0]?.status}</div>
+    }
+
+    const r = renderWithClient(queryClient, <Page />)
+
+    // Start mutation
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Should be in loading state
+    expect(hookStates.results[0]?.status).toBe('pending')
+
+    // Call reset
+    resetFn!()
+    await vi.advanceTimersByTimeAsync(10)
+
+    // After reset, observer should be back to idle
+    expect(hookStates.results[0]?.status).toBe('idle')
+    expect(r.getByText('status:idle')).toBeInTheDocument()
   })
 })

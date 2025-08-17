@@ -8,7 +8,11 @@ import {
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { UseMutationOptions, UseMutationResult } from './types'
-import type { QueryClient, MutateOptions } from '@tanstack/query-core'
+import type {
+  MutateOptions,
+  QueryClient,
+  MutationObserverResult,
+} from '@tanstack/query-core'
 
 export interface SequentialMutationConfig<
   TData = unknown,
@@ -104,6 +108,13 @@ export function useSequentialMutations<
   const targetLength = mutations.length
 
   if (currentObservers.length !== targetLength) {
+    // Reset observers that are no longer needed
+    if (currentObservers.length > targetLength) {
+      for (let i = targetLength; i < currentObservers.length; i++) {
+        currentObservers[i]?.reset()
+      }
+    }
+
     const newObservers = currentObservers.slice(0, targetLength)
     for (let i = currentObservers.length; i < targetLength; i++) {
       newObservers[i] = new MutationObserver<any, any, any, any>(
@@ -131,20 +142,28 @@ export function useSequentialMutations<
 
   const observerCount = observersRef.current.length
 
-  const snapshotRef = React.useRef<Array<any>>([])
+  const snapshotRef = React.useRef<
+    Array<MutationObserverResult<any, any, any, any>>
+  >([])
 
-  const initialSnapshot = observersRef.current.map((o) => o.getCurrentResult())
+  const initialSnapshot = React.useMemo(
+    () => observersRef.current.map((o) => o.getCurrentResult()),
+    [observerCount],
+  )
+
   if (snapshotRef.current.length !== initialSnapshot.length) {
     snapshotRef.current = initialSnapshot
   }
+
+  const getCurrentSnapshot = React.useCallback(
+    () => observersRef.current.map((o) => o.getCurrentResult()),
+    [observerCount],
+  )
 
   const observerResults = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
         const batched = notifyManager.batchCalls(onStoreChange)
-
-        const getCurrentSnapshot = () =>
-          observersRef.current.map((o) => o.getCurrentResult())
 
         const updateSnapshot = () => {
           const newSnapshot = getCurrentSnapshot()
@@ -171,10 +190,10 @@ export function useSequentialMutations<
           unsubscribers.forEach((unsubscribe) => unsubscribe())
         }
       },
-      [observerCount],
+      [observerCount, getCurrentSnapshot],
     ),
     () => snapshotRef.current,
-    () => observersRef.current.map((o) => o.getCurrentResult()),
+    getCurrentSnapshot,
   )
 
   const results = React.useMemo(
@@ -182,12 +201,12 @@ export function useSequentialMutations<
       observerResults.map((r, idx) => ({
         ...r,
         mutate: (variables: unknown, mutateOptions?: unknown) =>
-          observersRef.current[idx]!.mutate(
+          void observersRef.current[idx]!.mutate(
             variables as any,
             mutateOptions as any,
           ).catch(noop),
         mutateAsync: (variables: unknown, mutateOptions?: unknown) =>
-          observersRef.current[idx]!.mutate(
+          void observersRef.current[idx]!.mutate(
             variables as any,
             mutateOptions as any,
           ),
@@ -242,7 +261,6 @@ export function useSequentialMutations<
             break
           }
 
-          currentMutations[i]!
           const variables = i === 0 ? _input : prevData
 
           setCurrentIndex(i)
@@ -315,6 +333,8 @@ export function useSequentialMutations<
   const reset = React.useCallback(() => {
     activeControllersRef.current.forEach((controller) => controller.abort())
     activeControllersRef.current.clear()
+    // Reset each step observer to 'idle'
+    observersRef.current.forEach((observer) => observer.reset())
     setCurrentIndex(-1)
     setIsLoading(false)
     setError(null)
