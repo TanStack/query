@@ -270,28 +270,26 @@ export class QueryObserver<
     | QueryObserverResult<TData, TError> {
     const currentResult = this.#currentResult
 
-    const isHydratedData =
+    if (
       currentResult.status === 'success' &&
       this.#currentQuery.state.dataUpdatedAt === 0
-
-    if (isHydratedData) {
-      return {
+    ) {
+      const pendingResult: QueryObserverPendingResult<TData, TError> = {
         ...currentResult,
-        status: 'pending' as const,
+        status: 'pending',
         isPending: true,
         isSuccess: false,
         isError: false,
+        isLoading: currentResult.fetchStatus === 'fetching',
+        isInitialLoading: currentResult.fetchStatus === 'fetching',
+        data: undefined,
         error: null,
         isLoadingError: false,
         isRefetchError: false,
-        data: undefined,
-        isRefetching: false,
-        isLoading: currentResult.fetchStatus === 'fetching',
-        isInitialLoading: currentResult.fetchStatus === 'fetching',
         isPlaceholderData: false,
-        isFetched: false,
-        isFetchedAfterMount: false,
       }
+
+      return pendingResult
     }
 
     return currentResult
