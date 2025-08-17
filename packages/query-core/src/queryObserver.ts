@@ -287,6 +287,7 @@ export class QueryObserver<
         isLoadingError: false,
         isRefetchError: false,
         isPlaceholderData: false,
+        isRefetching: false,
       }
 
       return pendingResult
