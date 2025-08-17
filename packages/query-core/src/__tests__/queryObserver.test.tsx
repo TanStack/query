@@ -1494,4 +1494,179 @@ describe('queryObserver', () => {
       unsubscribe2()
     })
   })
+
+  describe('SSR Hydration', () => {
+    describe('Hydration Mismatch Problem', () => {
+      test('should demonstrate hydration mismatch issue (before fix)', () => {
+        const key = queryKey()
+
+        queryClient.setQueryData(key, { amount: 10 })
+        const cache = queryClient.getQueryCache().find({ queryKey: key })
+        if (cache) {
+          cache.state.dataUpdatedAt = 0
+          cache.state.fetchStatus = 'idle'
+        }
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => ({ amount: 10 }),
+        })
+
+        const clientResult = observer.getCurrentResult()
+
+        expect(clientResult).toMatchObject({
+          status: 'success',
+          data: { amount: 10 },
+          isLoading: false,
+          isPending: false,
+        })
+      })
+    })
+
+    describe('Solution with getServerResult', () => {
+      test('getServerResult should return pending state for hydrated data', () => {
+        const key = queryKey()
+
+        queryClient.setQueryData(key, { amount: 10 })
+        const cache = queryClient.getQueryCache().find({ queryKey: key })
+        if (cache) {
+          cache.state.dataUpdatedAt = 0
+          cache.state.fetchStatus = 'idle'
+        }
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => ({ amount: 10 }),
+        })
+
+        const clientResult = observer.getCurrentResult()
+        expect(clientResult).toMatchObject({
+          status: 'success',
+          data: { amount: 10 },
+          isLoading: false,
+        })
+
+        const serverResult = observer.getServerResult()
+        expect(serverResult).toMatchObject({
+          status: 'pending',
+          data: undefined,
+          isLoading: false,
+          isPending: true,
+          isSuccess: false,
+        })
+      })
+
+      test('should handle fetching state during hydration', () => {
+        const key = queryKey()
+
+        queryClient.setQueryData(key, { amount: 10 })
+        const cache = queryClient.getQueryCache().find({ queryKey: key })
+        if (cache) {
+          cache.state.dataUpdatedAt = 0
+          cache.state.fetchStatus = 'fetching'
+        }
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => ({ amount: 10 }),
+        })
+
+        const serverResult = observer.getServerResult()
+        expect(serverResult).toMatchObject({
+          status: 'pending',
+          fetchStatus: 'fetching',
+          isLoading: true,
+          isPending: true,
+        })
+      })
+
+      test('should return normal result for non-hydrated data', () => {
+        const key = queryKey()
+
+        queryClient.setQueryData(key, { amount: 10 })
+        const cache = queryClient.getQueryCache().find({ queryKey: key })
+        if (cache) {
+          cache.state.dataUpdatedAt = Date.now()
+        }
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => ({ amount: 10 }),
+        })
+
+        const clientResult = observer.getCurrentResult()
+        const serverResult = observer.getServerResult()
+
+        expect(serverResult.status).toBe(clientResult.status)
+        expect(serverResult.data).toBe(clientResult.data)
+        expect(serverResult.isLoading).toBe(clientResult.isLoading)
+      })
+
+      test('should handle error state correctly', () => {
+        const key = queryKey()
+        const error = new Error('fetch error')
+
+        queryClient.getQueryCache().build(
+          queryClient,
+          {
+            queryKey: key,
+            queryFn: () => Promise.reject(error),
+          },
+          {
+            status: 'error',
+            error,
+            data: undefined,
+            dataUpdatedAt: 0,
+            dataUpdateCount: 0,
+            errorUpdateCount: 1,
+            errorUpdatedAt: Date.now(),
+            fetchFailureCount: 1,
+            fetchFailureReason: error,
+            fetchMeta: null,
+            fetchStatus: 'idle',
+            isInvalidated: false,
+          },
+        )
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => Promise.reject(error),
+        })
+
+        const serverResult = observer.getServerResult()
+
+        expect(serverResult).toMatchObject({
+          status: 'error',
+          error,
+          isError: true,
+        })
+      })
+    })
+
+    describe('Integration with useSyncExternalStore', () => {
+      test('should provide different snapshots for server and client', () => {
+        const key = queryKey()
+
+        queryClient.setQueryData(key, 'hydrated')
+        const cache = queryClient.getQueryCache().find({ queryKey: key })
+        if (cache) {
+          cache.state.dataUpdatedAt = 0
+        }
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => 'data',
+        })
+
+        const getSnapshot = () => observer.getCurrentResult()
+        const getServerSnapshot = () => observer.getServerResult()
+
+        const clientSnapshot = getSnapshot()
+        const serverSnapshot = getServerSnapshot()
+
+        expect(clientSnapshot.status).toBe('success')
+        expect(serverSnapshot.status).toBe('pending')
+      })
+    })
+  })
 })

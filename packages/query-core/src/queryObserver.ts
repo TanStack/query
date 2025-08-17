@@ -264,6 +264,34 @@ export class QueryObserver<
     return this.#currentResult
   }
 
+  getServerResult(): QueryObserverResult<TData, TError> {
+    const currentResult = this.#currentResult
+
+    if (
+      currentResult.status === 'success' &&
+      this.#currentQuery.state.dataUpdatedAt === 0
+    ) {
+      const pendingResult: QueryObserverResult<TData, TError> = {
+        ...currentResult,
+        status: 'pending',
+        isPending: true,
+        isSuccess: false,
+        isError: false,
+        isLoading: currentResult.fetchStatus === 'fetching',
+        isInitialLoading: currentResult.fetchStatus === 'fetching',
+        data: undefined,
+        error: null,
+        isLoadingError: false,
+        isRefetchError: false,
+        isPlaceholderData: false,
+      } as QueryObserverResult<TData, TError>
+
+      return pendingResult
+    }
+
+    return currentResult
+  }
+
   trackResult(
     result: QueryObserverResult<TData, TError>,
     onPropTracked?: (key: keyof QueryObserverResult) => void,
