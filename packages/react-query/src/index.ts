@@ -54,4 +54,9 @@ export { useMutation } from './useMutation'
 export { useSequentialMutations } from './useSequentialMutations'
 export { mutationOptions } from './mutationOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
+export type {
+  SequentialMutationConfig,
+  UseSequentialMutationsOptions,
+  UseSequentialMutationsResult,
+} from './useSequentialMutations'
 export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'

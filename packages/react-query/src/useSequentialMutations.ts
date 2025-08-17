@@ -186,7 +186,11 @@ export function useSequentialMutations<
             variables as any,
             mutateOptions as any,
           ).catch(noop),
-        mutateAsync: observersRef.current[idx]!.mutate,
+        mutateAsync: (variables: unknown, mutateOptions?: unknown) =>
+          observersRef.current[idx]!.mutate(
+            variables as any,
+            mutateOptions as any,
+          ),
       })),
     [observerResults],
   ) as unknown as StepResults<TSteps>
