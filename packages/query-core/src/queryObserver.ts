@@ -23,6 +23,7 @@ import type {
   QueryKey,
   QueryObserverBaseResult,
   QueryObserverOptions,
+  QueryObserverPendingResult,
   QueryObserverResult,
   QueryOptions,
   RefetchOptions,
@@ -264,29 +265,26 @@ export class QueryObserver<
     return this.#currentResult
   }
 
-  getServerResult(): QueryObserverResult<TData, TError> {
+  getServerResult():
+    | QueryObserverPendingResult<TData, TError>
+    | QueryObserverResult<TData, TError> {
     const currentResult = this.#currentResult
 
-    if (
+    const isHydratedData =
       currentResult.status === 'success' &&
       this.#currentQuery.state.dataUpdatedAt === 0
-    ) {
-      const pendingResult: QueryObserverResult<TData, TError> = {
+
+    if (isHydratedData) {
+      return {
         ...currentResult,
-        status: 'pending',
+        status: 'pending' as const,
         isPending: true,
         isSuccess: false,
-        isError: false,
+        data: undefined,
         isLoading: currentResult.fetchStatus === 'fetching',
         isInitialLoading: currentResult.fetchStatus === 'fetching',
-        data: undefined,
-        error: null,
-        isLoadingError: false,
-        isRefetchError: false,
         isPlaceholderData: false,
-      } as QueryObserverResult<TData, TError>
-
-      return pendingResult
+      }
     }
 
     return currentResult
