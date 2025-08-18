@@ -137,7 +137,6 @@ TanStack Query v5 allows for a way to set a global Error type for everything, wi
 ```tsx
 import '@tanstack/react-query'
 
-
 declare module '@tanstack/react-query' {
   interface Register {
     // Use unknown so call sites must narrow explicitly.
@@ -150,7 +149,6 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 ```
 
 [//]: # 'RegisterErrorType'
-
 [//]: # 'TypingMeta'
 
 ## Typing meta
