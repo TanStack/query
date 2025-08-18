@@ -130,14 +130,14 @@ if (axios.isAxiosError(error)) {
 
 ### Registering a global Error
 
-TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type. We recommend `unknown` to ensure safe, explicit narrowing at call sites, by amending the `Register` interface:
+TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type. If you want to enforce that call-sides must do explicit type-narrowing, set `defaultError` to `unknown`:
 
 [//]: # 'RegisterErrorType'
 
 ```tsx
 import '@tanstack/react-query'
 
-// ✅ Recommended
+
 declare module '@tanstack/react-query' {
   interface Register {
     // Use unknown so call sites must narrow explicitly.
@@ -151,42 +151,6 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 [//]: # 'RegisterErrorType'
 
-#### Why `unknown` instead of `AxiosError`?
-
-Queries can throw from multiple places—not only your `queryFn`, but also `select`, memoized callbacks, or other user-land code. If you set a global error type like `AxiosError`, consumers may assume all errors are Axios-driven when many are not. Using `unknown` forces safe, explicit narrowing at usage sites and works for any mixed error source.
-
-```tsx
-const { error } = useQuery(options)
-
-if (isAxiosError(error)) {
-  // handle Axios-specific details
-} else if (error instanceof Error) {
-  // handle generic errors
-} else {
-  // handle non-Error throwables if needed
-}
-```
-
-If you want a stable shape across your app, normalize errors where they're thrown and rethrow a domain error:
-
-```tsx
-class DomainError extends Error {
-  constructor(public kind: 'Network' | 'Auth' | 'Unknown', message?: string) {
-    super(message)
-  }
-}
-
-const queryFn = async () => {
-  try {
-    const res = await api.get('/user')
-    return res.data
-  } catch (e) {
-    throw normalizeToDomainError(e) // convert AxiosError or others → DomainError
-  }
-}
-```
-
-This pattern keeps UI code simple while avoiding incorrect global assumptions about the error source.
 [//]: # 'TypingMeta'
 
 ## Typing meta
