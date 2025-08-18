@@ -82,11 +82,6 @@ export class QueryObserver<
     this.#client = client
     this.#selectError = null
     this.#currentThenable = pendingThenable()
-    if (!this.options.experimental_prefetchInRender) {
-      this.#currentThenable.reject(
-        new Error('experimental_prefetchInRender feature flag is not enabled'),
-      )
-    }
 
     this.bindMethods()
     this.setOptions(options)
@@ -272,6 +267,15 @@ export class QueryObserver<
       get: (target, key) => {
         this.trackProp(key as keyof QueryObserverResult)
         onPropTracked?.(key as keyof QueryObserverResult)
+        console.log('tracking prop', key)
+        if (key === 'promise' && !this.options.experimental_prefetchInRender) {
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          ;(this.#currentThenable as PendingThenable<TData>).reject?.(
+            new Error(
+              'experimental_prefetchInRender feature flag is not enabled',
+            ),
+          )
+        }
         return Reflect.get(target, key)
       },
     })
