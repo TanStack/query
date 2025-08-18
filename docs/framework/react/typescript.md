@@ -236,9 +236,6 @@ Without `queryOptions`, the type of `data` would be `unknown`, unless we'd pass 
 const data = queryClient.getQueryData<Group[]>(['groups'])
 ```
 
-[//]: # 'TypingQueryOptions'
-[//]: # 'Materials'
-
 ## Typing Mutation Options
 
 Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation options into a separate function:
@@ -259,14 +256,18 @@ useIsMutating(groupMutationOptions())
 queryClient.isMutating(groupMutationOptions())
 ```
 
-## Further Reading
-
-For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog.md#6-react-query-and-typescript) from
-the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](../community/tkdodos-blog.md#19-type-safe-react-query).
-
-[//]: # 'Materials'
+[//]: # 'TypingQueryOptions'
 
 ## Typesafe disabling of queries using `skipToken`
 
 If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
 Read more about it in the [Disabling Queries](../guides/disabling-queries.md) guide.
+
+[//]: # 'Materials'
+
+## Further Reading
+
+For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog.md#6-react-query-and-typescript) from
+the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](../community/tkdodos-blog.md#19-type-safe-react-query). [The Query Options API](../community/tkdodos-blog.md#24-the-query-options-api) outlines how type inference works with the `queryOptions` helper function.
+
+[//]: # 'Materials'
