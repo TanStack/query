@@ -1,6 +1,8 @@
-const version = process.env.REACTJS_VERSION || '19'
+type ReactVersion = '19' | '18' | '17'
 
-const reactModulesByVersion = {
+const version = (process.env.REACTJS_VERSION || '19') as ReactVersion
+
+const reactModulesByVersion: Record<typeof version, Record<string, string>> = {
   '17': {
     '^react((\\/.*)?)$': 'react-17$1',
     '^react-dom((\\/.*)?)$': 'react-dom-17$1',
