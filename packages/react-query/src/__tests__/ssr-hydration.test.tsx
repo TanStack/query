@@ -13,15 +13,15 @@ import {
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
 
-const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
-const isReact17 = () => (process.env.REACTJS_VERSION || '17') === '17'
+const isReact18 = () => (process.env.REACTJS_VERSION || '19') === '18'
+const isReact17 = () => (process.env.REACTJS_VERSION || '19') === '17'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   if (isReact18()) {
     let root: any
     ReactDOMTestUtils.act(() => {
       // @ts-expect-error
-      root = ReactDOM?.hydrateRoot(container, element)
+      root = ReactDOM.hydrateRoot(container, element)
     })
     return () => {
       root.unmount()

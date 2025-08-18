@@ -9,7 +9,13 @@ import {
   useQuery,
   useQueryErrorResetBoundary,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import {
+  createQueryClient,
+  queryKey,
+  reactVersion,
+  renderWithClient,
+  sleep,
+} from './utils'
 import type { UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {
@@ -60,7 +66,7 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('data: 2'))
 
-    expect(renders).toBe(4)
+    expect(renders).toBe(reactVersion() === '19' ? 6 : 4)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: 1, status: 'success' })
     expect(states[1]).toMatchObject({ data: 2, status: 'success' })
@@ -221,7 +227,9 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('rendered'))
 
-    await waitFor(() => expect(successFn).toHaveBeenCalledTimes(1))
+    await waitFor(() =>
+      expect(successFn).toHaveBeenCalledTimes(reactVersion() === '19' ? 2 : 1),
+    )
     await waitFor(() => expect(successFn).toHaveBeenCalledWith('selected'))
   })
 
@@ -273,7 +281,9 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('second'))
 
-    await waitFor(() => expect(successFn1).toHaveBeenCalledTimes(1))
+    await waitFor(() =>
+      expect(successFn1).toHaveBeenCalledTimes(reactVersion() === '19' ? 2 : 1),
+    )
     await waitFor(() => expect(successFn2).toHaveBeenCalledTimes(1))
   })
 
@@ -1007,8 +1017,10 @@ describe("useQuery's in Suspense mode", () => {
       }),
     )
 
-    expect(renders).toBe(2)
-    expect(rendered.queryByText('rendered')).not.toBeNull()
+    expect(renders).toBe(reactVersion() === '19' ? 3 : 2)
+    await waitFor(() => {
+      expect(rendered.queryByText('rendered')).not.toBeNull()
+    })
   })
 })
 

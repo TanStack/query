@@ -11,6 +11,7 @@ import {
   mockNavigatorOnLine,
   mockVisibilityState,
   queryKey,
+  reactVersion,
   renderWithClient,
   setActTimeout,
   sleep,
@@ -2573,8 +2574,7 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 2'))
 
-    // Should be 2 / 3 instead of 5, uSES batches differently
-    expect(renders).toBe(process.env.REACTJS_VERSION === '17' ? 2 : 3)
+    expect(renders).toBe(reactVersion() === '18' ? 3 : 2)
 
     // Both callbacks should have been executed
     expect(callbackCount).toBe(2)
@@ -6204,12 +6204,12 @@ describe('useQuery', () => {
     spy.mockClear()
     fireEvent.click(rendered.getByRole('button', { name: /1/ }))
     await waitFor(() => rendered.getByText('Rendered Id: 1'))
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledTimes(reactVersion() === '19' ? 2 : 1)
 
     spy.mockClear()
     fireEvent.click(rendered.getByRole('button', { name: /2/ }))
     await waitFor(() => rendered.getByText('Rendered Id: 2'))
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledTimes(reactVersion() === '18' ? 1 : 2)
   })
   it('should not cause an infinite render loop when using unstable callback ref', async () => {
     const key = queryKey()
