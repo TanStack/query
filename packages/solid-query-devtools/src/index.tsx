@@ -9,8 +9,7 @@ export const SolidQueryDevtools: typeof SolidQueryDevtoolsComp = isDev
       return null
     }
 
-export const SolidQueryDevtoolsPanel: typeof SolidQueryDevtoolsCompPanel =
-  isDev
+export const SolidQueryDevtoolsPanel: typeof SolidQueryDevtoolsCompPanel = isDev
   ? clientOnly(() => import('./devtoolsPanel'))
   : function () {
       return null
