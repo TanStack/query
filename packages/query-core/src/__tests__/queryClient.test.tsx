@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
+  CancelledError,
   MutationObserver,
   QueryClient,
   QueryObserver,
@@ -1059,6 +1060,24 @@ describe('queryClient', () => {
       expect(state1).toMatchObject({
         status: 'error',
       })
+    })
+
+    test('should throw CancelledError when initial fetch is cancelled', async () => {
+      const key = queryKey()
+
+      const promise = queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(50)
+          return 25
+        },
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      await queryClient.cancelQueries({ queryKey: key })
+
+      await expect(promise).rejects.toBeInstanceOf(CancelledError)
     })
   })
 

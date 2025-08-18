@@ -558,7 +558,11 @@ export class Query<
             fetchStatus: 'idle' as const,
           })
           // transform error into reverted state data
-          return this.state.data!
+          // if the initial fetch was cancelled, we have no data, so we have
+          // to get into error state with the CancelledError
+          if (this.state.data !== undefined) {
+            return this.state.data
+          }
         }
       }
       this.#dispatch({
