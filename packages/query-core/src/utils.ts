@@ -169,9 +169,7 @@ export function functionalUpdate<TInput, TOutput>(
   updater: Updater<TInput, TOutput>,
   input: TInput,
 ): TOutput {
-  return typeof updater === 'function'
-    ? (updater as (_: TInput) => TOutput)(input)
-    : updater
+  return resolveOption(updater, input)
 }
 
 export function isValidTimeout(value: unknown): value is number {
