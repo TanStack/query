@@ -269,6 +269,7 @@ export class QueryObserver<
     | QueryObserverPendingResult<TData, TError>
     | QueryObserverResult<TData, TError> {
     const currentResult = this.#currentResult
+    const queryState = this.#currentQuery.state
 
     if (
       currentResult.status === 'success' &&
@@ -280,8 +281,8 @@ export class QueryObserver<
         isPending: true,
         isSuccess: false,
         isError: false,
-        isLoading: currentResult.fetchStatus === 'fetching',
-        isInitialLoading: currentResult.fetchStatus === 'fetching',
+        isLoading: queryState.fetchStatus === 'fetching',
+        isInitialLoading: queryState.fetchStatus === 'fetching',
         data: undefined,
         error: null,
         isLoadingError: false,

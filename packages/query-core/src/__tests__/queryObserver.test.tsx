@@ -1668,5 +1668,110 @@ describe('queryObserver', () => {
         expect(serverSnapshot.status).toBe('pending')
       })
     })
+
+    describe('Future-proof status handling', () => {
+      test('should handle unknown status types gracefully', () => {
+        const key = queryKey()
+
+        queryClient.getQueryCache().build(
+          queryClient,
+          { queryKey: key, queryFn: () => 'data' },
+          {
+            status: 'idle' as any, // Assuming that in future versions such as @tanstack/react-query v6, statuses other than “error,” “pending,” and “success” will be introduced.
+            data: { amount: 10 },
+            dataUpdatedAt: 0,
+            fetchStatus: 'idle',
+            dataUpdateCount: 1,
+            errorUpdateCount: 0,
+            errorUpdatedAt: 0,
+            error: null,
+            fetchFailureCount: 0,
+            fetchFailureReason: null,
+            fetchMeta: null,
+            isInvalidated: false,
+          },
+        )
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => ({ amount: 10 }),
+        })
+
+        const serverResult = observer.getServerResult()
+
+        expect(serverResult.status).toBe('idle')
+        // Indicates a possible problem where data exists even though the status is “idle.”
+        expect(serverResult.data).toEqual({ amount: 10 })
+      })
+    })
+
+    describe('Field consistency in edge cases', () => {
+      test('should handle isRefetching consistency', () => {
+        const key = queryKey()
+
+        queryClient.setQueryData(key, { amount: 10 })
+        const cache = queryClient.getQueryCache().find({ queryKey: key })
+        if (cache) {
+          cache.state.dataUpdatedAt = 0
+          cache.state.fetchStatus = 'fetching'
+        }
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => ({ amount: 10 }),
+        })
+
+        const clientResult = observer.getCurrentResult()
+        const serverResult = observer.getServerResult()
+
+        expect(clientResult.isRefetching).toBe(true)
+        expect(clientResult.isPending).toBe(false)
+
+        // Even if the client status is `isRefetching: true` and `isPending: false`, the masking of `isRefetching: false` and `isPending: true` in `getServerResult` must be maintained.
+        expect(serverResult.isRefetching).toBe(false)
+        expect(serverResult.isPending).toBe(true)
+      })
+    })
+
+    describe('Concurrency and race conditions', () => {
+      test('should handle state changes during hydration', async () => {
+        const key = queryKey()
+
+        queryClient.setQueryData(key, { amount: 10 })
+        const cache = queryClient.getQueryCache().find({ queryKey: key })
+        if (cache) {
+          cache.state.dataUpdatedAt = 0
+          cache.state.fetchStatus = 'idle'
+        }
+
+        const observer = new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            return { amount: 20 }
+          },
+        })
+
+        const initialServerResult = observer.getServerResult()
+        expect(initialServerResult.status).toBe('pending')
+
+        const refetchPromise = observer.refetch()
+        await Promise.resolve()
+
+        // Verify that hydration masking works correctly even during refetch.
+
+        const midServerResult = observer.getServerResult()
+        expect(midServerResult.status).toBe('pending')
+        expect(midServerResult.isLoading).toBe(true)
+
+        await vi.advanceTimersByTimeAsync(10)
+
+        const finalServerResult = observer.getServerResult()
+        expect(finalServerResult.status).toBe('success')
+        expect(finalServerResult.data).toEqual({ amount: 20 })
+
+        await refetchPromise
+      })
+    })
   })
 })
