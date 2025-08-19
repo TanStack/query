@@ -283,7 +283,7 @@ describe('useQueries', () => {
     await waitFor(() => rendered.getByText('isFetching: false'))
 
     await waitFor(() =>
-      expect(states.length).toBe(reactVersion() === '19' ? 7 : 6),
+      expect(states.length).toBe(reactVersion() === '18' ? 6 : 7),
     )
 
     expect(states[0]).toMatchObject([
