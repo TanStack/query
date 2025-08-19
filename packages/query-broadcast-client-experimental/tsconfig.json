@@ -4,6 +4,12 @@
     "outDir": "./dist-ts",
     "rootDir": "."
   },
-  "include": ["src", "*.config.js", "*.config.ts", "package.json"],
+  "include": [
+    "src",
+    "test-setup.ts",
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
   "references": [{ "path": "../query-core" }]
 }
