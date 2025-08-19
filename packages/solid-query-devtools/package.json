@@ -32,9 +32,9 @@
     "build:dev": "tsup --watch"
   },
   "type": "module",
-  "main": "./build/index.cjs",
-  "module": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "./build/index/index.cjs",
+  "module": "./build/index/index.js",
+  "types": "./build/index/index.d.ts",
   "browser": {},
   "exports": {
     ".": {
