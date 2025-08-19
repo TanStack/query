@@ -8,6 +8,7 @@ const preset_options = {
       dev_entry: true,
     },
     {
+      name: 'production',
       entry: 'src/production.tsx',
       dev_entry: true,
     },

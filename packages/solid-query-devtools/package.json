@@ -75,6 +75,16 @@
       },
       "require": "./build/production/index.cjs"
     },
+    "./build/production/index.js": {
+      "import": {
+        "types": "./build/production/index.d.ts",
+        "default": "./build/production/index.js"
+      },
+      "require": {
+        "types": "./build/production/index.d.cts",
+        "default": "./build/production/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "files": [
