@@ -267,9 +267,12 @@ export class QueryObserver<
       get: (target, key) => {
         this.trackProp(key as keyof QueryObserverResult)
         onPropTracked?.(key as keyof QueryObserverResult)
-        if (key === 'promise' && !this.options.experimental_prefetchInRender) {
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          ;(this.#currentThenable as PendingThenable<TData>).reject?.(
+        if (
+          key === 'promise' &&
+          !this.options.experimental_prefetchInRender &&
+          this.#currentThenable.status === 'pending'
+        ) {
+          this.#currentThenable.reject(
             new Error(
               'experimental_prefetchInRender feature flag is not enabled',
             ),
