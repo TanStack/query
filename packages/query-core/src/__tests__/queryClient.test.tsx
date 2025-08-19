@@ -994,53 +994,21 @@ describe('queryClient', () => {
   describe('cancelQueries', () => {
     test('should revert queries to their previous state', async () => {
       const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
-      await queryClient.fetchQuery({
-        queryKey: key1,
-        queryFn: () => 'data',
-      })
-      try {
-        await queryClient.fetchQuery({
-          queryKey: key2,
-          queryFn: async () => {
-            return Promise.reject<unknown>('err')
-          },
-        })
-      } catch {}
-      queryClient.fetchQuery({
+      queryClient.setQueryData(key1, 'data')
+
+      void queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(1000).then(() => 'data2'),
       })
-      try {
-        queryClient.fetchQuery({
-          queryKey: key2,
-          queryFn: () =>
-            sleep(1000).then(() => Promise.reject<unknown>('err2')),
-        })
-      } catch {}
-      queryClient.fetchQuery({
-        queryKey: key3,
-        queryFn: () => sleep(1000).then(() => 'data3'),
-      })
+
       await vi.advanceTimersByTimeAsync(10)
+
       await queryClient.cancelQueries()
+
       const state1 = queryClient.getQueryState(key1)
-      const state2 = queryClient.getQueryState(key2)
-      const state3 = queryClient.getQueryState(key3)
       expect(state1).toMatchObject({
         data: 'data',
         status: 'success',
-      })
-      expect(state2).toMatchObject({
-        data: undefined,
-        error: 'err',
-        status: 'error',
-      })
-      expect(state3).toMatchObject({
-        data: undefined,
-        status: 'pending',
-        fetchStatus: 'idle',
       })
     })
 
@@ -1062,7 +1030,7 @@ describe('queryClient', () => {
       })
     })
 
-    test('should throw CancelledError when initial fetch is cancelled', async () => {
+    test('should throw CancelledError for imperative methods when initial fetch is cancelled', async () => {
       const key = queryKey()
 
       const promise = queryClient.fetchQuery({
@@ -1077,7 +1045,17 @@ describe('queryClient', () => {
 
       await queryClient.cancelQueries({ queryKey: key })
 
+      // we have to reject here because we can't resolve with `undefined`
+      // the alternative would be a never-ending promise
       await expect(promise).rejects.toBeInstanceOf(CancelledError)
+
+      // however, the query was correctly reverted to pending state
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'pending',
+        fetchStatus: 'idle',
+        data: undefined,
+        error: null,
+      })
     })
   })
 

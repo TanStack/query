@@ -559,10 +559,11 @@ export class Query<
           })
           // transform error into reverted state data
           // if the initial fetch was cancelled, we have no data, so we have
-          // to get into error state with the CancelledError
-          if (this.state.data !== undefined) {
-            return this.state.data
+          // to get reject with a CancelledError
+          if (this.state.data === undefined) {
+            throw error
           }
+          return this.state.data
         }
       }
       this.#dispatch({
