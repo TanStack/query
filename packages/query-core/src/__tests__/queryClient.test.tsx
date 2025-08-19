@@ -996,7 +996,7 @@ describe('queryClient', () => {
       const key1 = queryKey()
       queryClient.setQueryData(key1, 'data')
 
-      void queryClient.fetchQuery({
+      const pending = queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(1000).then(() => 'data2'),
       })
@@ -1004,6 +1004,9 @@ describe('queryClient', () => {
       await vi.advanceTimersByTimeAsync(10)
 
       await queryClient.cancelQueries()
+
+      // with previous data present, imperative fetch should resolve to that data after cancel
+      await expect(pending).resolves.toBe('data')
 
       const state1 = queryClient.getQueryState(key1)
       expect(state1).toMatchObject({
