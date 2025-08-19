@@ -311,10 +311,10 @@ describe('useQueries', () => {
     //   { status: 'success', data: 5, isPreviousData: false, isFetching: true },
     //   { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     // ])
-    // expect(states[4]).toMatchObject([
-    //   { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-    //   { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    // ])
+    expect(states[4]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
     // expect(states[5]).toMatchObject([
     //   { status: 'success', data: 5, isPreviousData: false, isFetching: false },
     //   { status: 'success', data: 10, isPreviousData: false, isFetching: false },
