@@ -1192,4 +1192,135 @@ describe('query', () => {
     expect(initialDataFn).toHaveBeenCalledTimes(1)
     expect(query.state.data).toBe('initial data')
   })
+
+
+  it('should continue retry in background when refetchIntervalInBackground is true', async () => {
+    const key = queryKey()
+
+    // make page unfocused
+    const visibilityMock = mockVisibilityState('hidden')
+
+    let count = 0
+    let result
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: () => {
+        count++
+
+        if (count === 3) {
+          return `data${count}`
+        }
+
+        throw new Error(`error${count}`)
+      },
+      retry: 3,
+      retryDelay: 1,
+      refetchIntervalInBackground: true,
+    })
+
+    promise.then((data) => {
+      result = data
+    })
+
+    // Check if we do not have a result yet
+    expect(result).toBeUndefined()
+
+    // Query should continue retrying in background
+    await vi.advanceTimersByTimeAsync(50)
+    expect(result).toBe('data3')
+
+    // Reset visibilityState to original value
+    visibilityMock.mockRestore()
+  })
+
+  it('should pause retry when unfocused if refetchIntervalInBackground is false', async () => {
+    const key = queryKey()
+
+    // make page unfocused
+    const visibilityMock = mockVisibilityState('hidden')
+
+    let count = 0
+    let result
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: () => {
+        count++
+
+        if (count === 3) {
+          return `data${count}`
+        }
+
+        throw new Error(`error${count}`)
+      },
+      retry: 3,
+      retryDelay: 1,
+      refetchIntervalInBackground: false,
+    })
+
+    promise.then((data) => {
+      result = data
+    })
+
+    // Check if we do not have a result
+    expect(result).toBeUndefined()
+
+    // Check if the query is really paused
+    await vi.advanceTimersByTimeAsync(50)
+    expect(result).toBeUndefined()
+
+    // Reset visibilityState to original value
+    visibilityMock.mockRestore()
+    window.dispatchEvent(new Event('visibilitychange'))
+
+    // Query should now continue and resolve
+    await vi.advanceTimersByTimeAsync(50)
+    expect(result).toBe('data3')
+  })
+
+  it('should pause retry when unfocused if refetchIntervalInBackground is undefined (default behavior)', async () => {
+    const key = queryKey()
+
+    // make page unfocused
+    const visibilityMock = mockVisibilityState('hidden')
+
+    let count = 0
+    let result
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: () => {
+        count++
+
+        if (count === 3) {
+          return `data${count}`
+        }
+
+        throw new Error(`error${count}`)
+      },
+      retry: 3,
+      retryDelay: 1,
+      // refetchIntervalInBackground is not set (undefined by default)
+    })
+
+    promise.then((data) => {
+      result = data
+    })
+
+    // Check if we do not have a result
+    expect(result).toBeUndefined()
+
+    // Check if the query is really paused
+    await vi.advanceTimersByTimeAsync(50)
+    expect(result).toBeUndefined()
+
+    // Reset visibilityState to original value
+    visibilityMock.mockRestore()
+    window.dispatchEvent(new Event('visibilitychange'))
+
+    // Query should now continue and resolve
+    await vi.advanceTimersByTimeAsync(50)
+    expect(result).toBe('data3')
+  })
 })
