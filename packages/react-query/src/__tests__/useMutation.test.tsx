@@ -735,35 +735,25 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when useErrorBoundary is a function that returns true', async () => {
+    let boundary = false
     function Page() {
-      const clickCountRef = React.useRef(0)
-
-      const { mutate, isError, error } = useMutation<string, Error>(
+      const { mutate, error } = useMutation<string, Error>(
         () => {
           const err = new Error('mock error')
           err.stack = ''
           return Promise.reject(err)
         },
         {
-          useErrorBoundary: false,
-          retry: false,
+          useErrorBoundary: () => {
+            boundary = !boundary
+            return !boundary
+          },
         },
       )
 
-      if (isError && error && clickCountRef.current >= 2) {
-        throw error
-      }
-
       return (
         <div>
-          <button
-            onClick={() => {
-              clickCountRef.current += 1
-              mutate()
-            }}
-          >
-            mutate
-          </button>
+          <button onClick={() => mutate()}>mutate</button>
           {error && error.message}
         </div>
       )

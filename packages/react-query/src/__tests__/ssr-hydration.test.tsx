@@ -55,7 +55,7 @@ function PrintStateComponent({ componentName, result }: any): any {
   return `${componentName} - status:${result.status} fetching:${result.isFetching} data:${result.data}`
 }
 
-describe.only('Server side rendering with de/rehydration', () => {
+describe('Server side rendering with de/rehydration', () => {
   let previousIsReactActEnvironment: unknown
   beforeAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist

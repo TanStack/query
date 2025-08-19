@@ -19,9 +19,8 @@ const reactModulesByVersion = {
 }[reactVersion]
 
 export default {
-  displayName: 'react-query',
+  displayName: 'react-query-devtools',
   preset: '../../jest-preset.js',
   moduleNameMapper: reactModulesByVersion,
   setupFilesAfterEnv: ['./jest.setup.ts'],
-  testMatch: ['<rootDir>/src/**/*.test.tsx', '<rootDir>/codemods/**/*.test.js'],
 }
