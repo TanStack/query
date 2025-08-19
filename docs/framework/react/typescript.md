@@ -130,7 +130,7 @@ if (axios.isAxiosError(error)) {
 
 ### Registering a global Error
 
-TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type:
+TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type. If you want to enforce that call-sides must do explicit type-narrowing, set `defaultError` to `unknown`:
 
 [//]: # 'RegisterErrorType'
 
@@ -139,12 +139,13 @@ import '@tanstack/react-query'
 
 declare module '@tanstack/react-query' {
   interface Register {
-    defaultError: AxiosError
+    // Use unknown so call sites must narrow explicitly.
+    defaultError: unknown
   }
 }
 
 const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
-//      ^? const error: AxiosError | null
+//      ^? const error: unknown | null
 ```
 
 [//]: # 'RegisterErrorType'
