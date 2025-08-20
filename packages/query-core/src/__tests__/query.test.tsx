@@ -1197,6 +1197,7 @@ describe('query', () => {
     const key = queryKey()
 
     const queryFn = vi.fn(async ({ signal: _signal }) => {
+      // Destructure `signal` to intentionally consume it so observer-removal uses revert-cancel path
       await sleep(50)
       return 'data'
     })
