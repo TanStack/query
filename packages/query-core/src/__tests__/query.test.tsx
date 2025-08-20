@@ -1196,8 +1196,7 @@ describe('query', () => {
   test('should not override fetching state when revert happens after new observer subscribes', async () => {
     const key = queryKey()
 
-    // @ts-expect-error This field has been added for troubleshooting purposes. Disable ts error for testing.
-    const queryFn = vi.fn(async ({ signal }) => {
+    const queryFn = vi.fn(async ({ signal: _signal }) => {
       await sleep(50)
       return 'data'
     })
@@ -1235,5 +1234,48 @@ describe('query', () => {
     await Promise.resolve()
 
     expect(query.state.fetchStatus).toBe('fetching')
+  })
+
+  test('should throw CancelledError when revert happens with no data after observer removal', async () => {
+    const key = queryKey()
+
+    const queryFn = vi.fn(async ({ signal: _signal }) => {
+      await sleep(50)
+      return 'data'
+    })
+
+    const query = new Query({
+      client: queryClient,
+      queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
+      options: { queryFn },
+    })
+
+    const observer1 = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+
+    query.addObserver(observer1)
+    const promise1 = query.fetch()
+
+    await vi.advanceTimersByTimeAsync(5)
+
+    query.removeObserver(observer1)
+
+    const observer2 = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+
+    query.addObserver(observer2)
+    query.fetch()
+
+    await expect(promise1).rejects.toThrow(CancelledError)
+
+    expect(query.state.fetchStatus).toBe('fetching')
+
+    await vi.advanceTimersByTimeAsync(50)
+    expect(query.state.data).toBe('data')
   })
 })

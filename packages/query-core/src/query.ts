@@ -553,7 +553,7 @@ export class Query<
           // so we hatch onto that promise
           return this.#retryer.promise
         } else if (error.revert) {
-          if (error.isObserverRemoval && this.observers.length > 0) {
+          if (error.isObserverRemoval && this.isActive()) {
             if (this.state.data === undefined) {
               throw error
             }
