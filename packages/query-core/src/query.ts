@@ -349,7 +349,7 @@ export class Query<
         // we'll let the query continue so the result can be cached
         if (this.#retryer) {
           if (this.#abortSignalConsumed) {
-            this.#retryer.cancel({ revert: true })
+            this.#retryer.cancel({ revert: true, isObserverRemoval: true })
           } else {
             this.#retryer.cancelRetry()
           }
@@ -553,16 +553,25 @@ export class Query<
           // so we hatch onto that promise
           return this.#retryer.promise
         } else if (error.revert) {
+          // If cancellation was caused by observer removal and there are active observers again,
+          // do not revert to idle: a new fetch may already be in flight, and reverting would
+          // incorrectly flip isLoading/isFetching to false under StrictMode remounts.
+          if (error.isObserverRemoval && this.isActive()) {
+            if (this.state.data === undefined) {
+              throw error
+            }
+            return this.state.data
+          }
+
           this.setState({
             ...this.#revertState,
             fetchStatus: 'idle' as const,
           })
-          // transform error into reverted state data
-          // if the initial fetch was cancelled, we have no data, so we have
-          // to get reject with a CancelledError
+
           if (this.state.data === undefined) {
             throw error
           }
+
           return this.state.data
         }
       }
