@@ -1229,9 +1229,8 @@ describe('query', () => {
 
     query.fetch()
 
-    await promise1.catch(() => {})
-
-    await Promise.resolve()
+    await expect(promise1).rejects.toBeInstanceOf(CancelledError)
+    await vi.waitFor(() => expect(query.state.fetchStatus).toBe('fetching'))
 
     expect(query.state.fetchStatus).toBe('fetching')
   })
@@ -1240,6 +1239,7 @@ describe('query', () => {
     const key = queryKey()
 
     const queryFn = vi.fn(async ({ signal: _signal }) => {
+      // Destructure `signal` to intentionally consume it so observer-removal uses revert-cancel path
       await sleep(50)
       return 'data'
     })

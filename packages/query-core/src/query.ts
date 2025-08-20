@@ -553,6 +553,9 @@ export class Query<
           // so we hatch onto that promise
           return this.#retryer.promise
         } else if (error.revert) {
+          // If cancellation was caused by observer removal and there are active observers again,
+          // do not revert to idle: a new fetch may already be in flight, and reverting would
+          // incorrectly flip isLoading/isFetching to false under StrictMode remounts.
           if (error.isObserverRemoval && this.isActive()) {
             if (this.state.data === undefined) {
               throw error
