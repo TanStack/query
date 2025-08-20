@@ -1329,6 +1329,7 @@ export interface DefaultOptions<TError = DefaultError> {
 export interface CancelOptions {
   revert?: boolean
   silent?: boolean
+  isObserverRemoval?: boolean
 }
 
 export interface SetDataOptions {
