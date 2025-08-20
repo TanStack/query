@@ -22,3 +22,11 @@ You can generally pass everything to `queryOptions` that you can also pass to [`
   - Defaults to `false`
   - When set to `true`, queries will be prefetched during render, which can be useful for certain optimization scenarios
   - Needs to be turned on for the experimental `useQuery().promise` functionality
+
+[//]: # 'Materials'
+
+## Further reading
+
+To learn more about `QueryOptions`, have a look at [The Query Options API](../../community/tkdodos-blog.md#24-the-query-options-api) from the Community Resources.
+
+[//]: # 'Materials'
