@@ -44,5 +44,6 @@ Have a look at the following articles from our Community Resources for further e
 
 - [Practical React Query](../../community/tkdodos-blog.md#1-practical-react-query)
 - [React Query as a State Manager](../../community/tkdodos-blog.md#10-react-query-as-a-state-manager)
+- [Thinking in React Query](../../community/tkdodos-blog.md#21-thinking-in-react-query)
 
 [//]: # 'Materials'

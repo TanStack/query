@@ -257,3 +257,11 @@ return useInfiniteQuery({
 ```
 
 [//]: # 'Example9'
+[//]: # 'Materials'
+
+## Further reading
+
+To get a better understanding of how Infinite Queries work under the hood, read [How Infinite Queries work](../../community/tkdodos-blog.md#26-how-infinite-queries-work) from
+the Community Resources.
+
+[//]: # 'Materials'
