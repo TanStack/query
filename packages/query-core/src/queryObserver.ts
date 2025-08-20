@@ -23,6 +23,7 @@ import type {
   QueryKey,
   QueryObserverBaseResult,
   QueryObserverOptions,
+  QueryObserverPendingResult,
   QueryObserverResult,
   QueryOptions,
   RefetchOptions,
@@ -257,6 +258,38 @@ export class QueryObserver<
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
     return this.#currentResult
+  }
+
+  getServerResult():
+    | QueryObserverPendingResult<TData, TError>
+    | QueryObserverResult<TData, TError> {
+    const currentResult = this.#currentResult
+    const queryState = this.#currentQuery.state
+
+    if (
+      currentResult.status === 'success' &&
+      this.#currentQuery.state.dataUpdatedAt === 0
+    ) {
+      const pendingResult: QueryObserverPendingResult<TData, TError> = {
+        ...currentResult,
+        status: 'pending',
+        isPending: true,
+        isSuccess: false,
+        isError: false,
+        isLoading: queryState.fetchStatus === 'fetching',
+        isInitialLoading: queryState.fetchStatus === 'fetching',
+        data: undefined,
+        error: null,
+        isLoadingError: false,
+        isRefetchError: false,
+        isPlaceholderData: false,
+        isRefetching: false,
+      }
+
+      return pendingResult
+    }
+
+    return currentResult
   }
 
   trackResult(
