@@ -1,7 +1,6 @@
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
-import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 
@@ -13,6 +12,14 @@ const queryKeyUnref = ['foo', 'bar']
 const fn = () => 'mock'
 
 describe('QueryCache', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   describe('isFetching', () => {
     test('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
@@ -227,7 +234,7 @@ describe('QueryCache', () => {
       expect(invalidateQueries).toBeCalled()
       expect(refetchQueries).not.toBeCalled()
 
-      await sleep(0)
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(refetchQueries).toBeCalled()
     })
@@ -252,7 +259,7 @@ describe('QueryCache', () => {
       expect(invalidateQueries).toBeCalled()
       expect(refetchQueries).not.toBeCalled()
 
-      await sleep(0)
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(refetchQueries).not.toBeCalled()
     })

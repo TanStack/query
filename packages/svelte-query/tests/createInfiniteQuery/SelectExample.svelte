@@ -3,6 +3,7 @@
   import { createInfiniteQuery } from '../../src/index.js'
   import type { QueryObserverResult } from '@tanstack/query-core'
   import type { Writable } from 'svelte/store'
+  import { sleep } from '@tanstack/query-test-utils'
 
   export let states: Writable<Array<QueryObserverResult>>
 
@@ -11,7 +12,7 @@
   const query = createInfiniteQuery(
     {
       queryKey: ['test'],
-      queryFn: () => Promise.resolve({ count: 1 }),
+      queryFn: () => sleep(10).then(() => ({ count: 1 })),
       select: (data) => ({
         pages: data.pages.map((x) => `count: ${x.count}`),
         pageParams: data.pageParams,

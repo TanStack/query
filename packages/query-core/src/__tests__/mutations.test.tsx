@@ -29,7 +29,8 @@ describe('mutations', () => {
       },
     })
 
-    await mutation.mutate(null)
+    mutation.mutate(null)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(variables).toBe(null)
   })
@@ -42,7 +43,7 @@ describe('mutations', () => {
       mutationFn: fn,
     })
 
-    await executeMutation(
+    executeMutation(
       queryClient,
       {
         mutationKey: key,
@@ -50,6 +51,7 @@ describe('mutations', () => {
       'vars',
     )
 
+    await vi.advanceTimersByTimeAsync(0)
     expect(fn).toHaveBeenCalledTimes(1)
     expect(fn).toHaveBeenCalledWith('vars')
   })
@@ -106,7 +108,7 @@ describe('mutations', () => {
       submittedAt: expect.any(Number),
     })
 
-    await vi.advanceTimersByTimeAsync(5)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(states[1]).toEqual({
       context: 'todo',
@@ -126,7 +128,7 @@ describe('mutations', () => {
       submittedAt: expect.any(Number),
     })
 
-    await vi.advanceTimersByTimeAsync(20)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(states[2]).toEqual({
       context: 'todo',
@@ -153,7 +155,7 @@ describe('mutations', () => {
         sleep(20).then(() => Promise.reject(new Error('err'))),
       onMutate: (text) => text,
       retry: 1,
-      retryDelay: 1,
+      retryDelay: 10,
     })
 
     const states: Array<MutationState<string, unknown, string, string>> = []
@@ -184,7 +186,7 @@ describe('mutations', () => {
       submittedAt: expect.any(Number),
     })
 
-    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(states[1]).toEqual({
       context: 'todo',
@@ -292,7 +294,6 @@ describe('mutations', () => {
     })
 
     void queryClient.resumePausedMutations()
-    await vi.advanceTimersByTimeAsync(0)
 
     // check that the mutation is correctly resumed
     expect(mutation.state).toEqual({
@@ -307,7 +308,7 @@ describe('mutations', () => {
       submittedAt: 1,
     })
 
-    await vi.advanceTimersByTimeAsync(20)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(mutation.state).toEqual({
       context: 'todo',
@@ -371,7 +372,9 @@ describe('mutations', () => {
       },
     })
 
-    await mutation.mutate(undefined, { onSuccess, onSettled })
+    mutation.mutate(undefined, { onSuccess, onSettled })
+
+    await vi.advanceTimersByTimeAsync(0)
     expect(mutation.getCurrentResult().data).toEqual('update')
     expect(onSuccess).not.toHaveBeenCalled()
     expect(onSettled).not.toHaveBeenCalled()
@@ -387,7 +390,9 @@ describe('mutations', () => {
       },
     })
 
-    await mutation.mutate(undefined, { onSuccess, onSettled })
+    mutation.mutate(undefined, { onSuccess, onSettled })
+
+    await vi.advanceTimersByTimeAsync(0)
     expect(mutation.getCurrentResult().data).toEqual('update')
     expect(onSuccess).not.toHaveBeenCalled()
     expect(onSettled).not.toHaveBeenCalled()
@@ -397,8 +402,8 @@ describe('mutations', () => {
     const onSuccess = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: () => {
-        sleep(100)
+      mutationFn: async () => {
+        await sleep(100)
         return Promise.resolve('update')
       },
       onSuccess: () => {
@@ -409,8 +414,8 @@ describe('mutations', () => {
     void mutation.mutate()
 
     mutation.setOptions({
-      mutationFn: () => {
-        sleep(100)
+      mutationFn: async () => {
+        await sleep(100)
         return Promise.resolve('update')
       },
       onSuccess: () => {
@@ -418,7 +423,8 @@ describe('mutations', () => {
       },
     })
 
-    await vi.waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1))
+    await vi.advanceTimersByTimeAsync(100)
+    expect(onSuccess).toHaveBeenCalledTimes(1)
 
     expect(onSuccess).toHaveBeenCalledWith(2)
   })
@@ -478,7 +484,7 @@ describe('mutations', () => {
         isPaused: true,
       })
 
-      await vi.runAllTimersAsync()
+      await vi.advanceTimersByTimeAsync(20)
 
       expect(results).toStrictEqual([
         'start-A',
@@ -523,7 +529,7 @@ describe('mutations', () => {
       'vars2',
     )
 
-    await vi.runAllTimersAsync()
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(results).toStrictEqual([
       'start-A',
@@ -533,7 +539,7 @@ describe('mutations', () => {
     ])
   })
 
-  test('each scope should run should run in parallel, serial within scope', async () => {
+  test('each scope should run in parallel, serial within scope', async () => {
     const results: Array<string> = []
 
     executeMutation(
@@ -600,7 +606,7 @@ describe('mutations', () => {
       'vars2',
     )
 
-    await vi.runAllTimersAsync()
+    await vi.advanceTimersByTimeAsync(20)
 
     expect(results).toStrictEqual([
       'start-A1',
@@ -619,7 +625,7 @@ describe('mutations', () => {
       const key = queryKey()
       const results: Array<string> = []
 
-      await executeMutation(
+      executeMutation(
         queryClient,
         {
           mutationKey: key,
@@ -644,6 +650,8 @@ describe('mutations', () => {
         'vars',
       )
 
+      await vi.advanceTimersByTimeAsync(0)
+
       expect(results).toEqual([
         'onMutate-sync',
         'onSuccess-implicit-void',
@@ -662,12 +670,12 @@ describe('mutations', () => {
           mutationFn: () => Promise.resolve('success'),
           onMutate: async () => {
             results.push('onMutate-async')
-            await sleep(1)
+            await sleep(10)
             return { backup: 'async-data' }
           },
           onSuccess: async () => {
             results.push('onSuccess-async-start')
-            await sleep(2)
+            await sleep(20)
             results.push('onSuccess-async-end')
             // Implicit void return from async
           },
@@ -679,7 +687,7 @@ describe('mutations', () => {
         'vars',
       )
 
-      await vi.runAllTimersAsync()
+      await vi.advanceTimersByTimeAsync(30)
 
       expect(results).toEqual([
         'onMutate-async',
@@ -701,14 +709,14 @@ describe('mutations', () => {
           onSuccess: () => {
             results.push('onSuccess-start')
             return Promise.all([
-              sleep(2).then(() => results.push('invalidate-queries')),
-              sleep(1).then(() => results.push('track-analytics')),
+              sleep(20).then(() => results.push('invalidate-queries')),
+              sleep(10).then(() => results.push('track-analytics')),
             ])
           },
           onSettled: () => {
             results.push('onSettled-start')
             return Promise.allSettled([
-              sleep(1).then(() => results.push('cleanup-1')),
+              sleep(10).then(() => results.push('cleanup-1')),
               Promise.reject('error').catch(() =>
                 results.push('cleanup-2-failed'),
               ),
@@ -718,7 +726,7 @@ describe('mutations', () => {
         'vars',
       )
 
-      await vi.runAllTimersAsync()
+      await vi.advanceTimersByTimeAsync(30)
 
       expect(results).toEqual([
         'onSuccess-start',
@@ -745,7 +753,7 @@ describe('mutations', () => {
           },
           onSuccess: async () => {
             results.push('async-onSuccess')
-            await sleep(1)
+            await sleep(10)
             return 'success-return-ignored'
           },
           onError: () => {
@@ -763,7 +771,7 @@ describe('mutations', () => {
         'vars',
       )
 
-      await vi.runAllTimersAsync()
+      await vi.advanceTimersByTimeAsync(10)
 
       const mutationResult = await mutationPromise
 
@@ -797,11 +805,11 @@ describe('mutations', () => {
           },
           onError: async () => {
             results.push('onError-async')
-            await sleep(1)
+            await sleep(10)
             // Test Promise.all() in error callback
             return Promise.all([
-              sleep(1).then(() => results.push('error-cleanup-1')),
-              sleep(2).then(() => results.push('error-cleanup-2')),
+              sleep(10).then(() => results.push('error-cleanup-1')),
+              sleep(20).then(() => results.push('error-cleanup-2')),
             ])
           },
           onSettled: (_data, _error, _variables, context) => {
@@ -817,7 +825,7 @@ describe('mutations', () => {
         mutationError = error
       })
 
-      await vi.runAllTimersAsync()
+      await vi.advanceTimersByTimeAsync(30)
 
       expect(results).toEqual([
         'onMutate',

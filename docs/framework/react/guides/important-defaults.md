@@ -10,7 +10,6 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 > To change this behavior, you can configure your queries both globally and per-query using the `staleTime` option. Specifying a longer `staleTime` means queries will not refetch their data as often
 
 - A Query that has a `staleTime` set is considered **fresh** until that `staleTime` has elapsed.
-
   - set `staleTime` to e.g. `2 * 60 * 1000` to make sure data is read from the cache, without triggering any kinds of refetches, for 2 minutes, or until the Query is [invalidated manually](../query-invalidation.md).
   - set `staleTime` to `Infinity` to never trigger a refetch until the Query is [invalidated manually](../query-invalidation.md).
   - set `staleTime` to `'static'` to **never** trigger a refetch, even if the Query is [invalidated manually](../query-invalidation.md).
@@ -45,5 +44,6 @@ Have a look at the following articles from our Community Resources for further e
 
 - [Practical React Query](../../community/tkdodos-blog.md#1-practical-react-query)
 - [React Query as a State Manager](../../community/tkdodos-blog.md#10-react-query-as-a-state-manager)
+- [Thinking in React Query](../../community/tkdodos-blog.md#21-thinking-in-react-query)
 
 [//]: # 'Materials'

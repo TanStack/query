@@ -126,7 +126,7 @@ describe('withDevtools feature', () => {
       })
 
       TestBed.inject(ENVIRONMENT_INITIALIZER)
-      await vi.runAllTimersAsync()
+      await vi.advanceTimersByTimeAsync(0)
 
       if (expectedCalled) {
         expect(mockTanstackQueryDevtools).toHaveBeenCalled()
@@ -153,7 +153,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.runAllTimersAsync()
+    await vi.advanceTimersByTimeAsync(0)
 
     TestBed.tick()
 
@@ -188,7 +188,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.runAllTimersAsync()
+    await vi.advanceTimersByTimeAsync(0)
 
     TestBed.tick()
 
@@ -218,7 +218,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.runAllTimersAsync()
+    await vi.advanceTimersByTimeAsync(0)
 
     TestBed.tick()
 
@@ -248,7 +248,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.runAllTimersAsync()
+    await vi.advanceTimersByTimeAsync(0)
 
     TestBed.tick()
 
@@ -278,7 +278,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.runAllTimersAsync()
+    await vi.advanceTimersByTimeAsync(0)
 
     TestBed.tick()
 
@@ -307,7 +307,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.runAllTimersAsync()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)

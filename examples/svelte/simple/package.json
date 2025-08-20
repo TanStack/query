@@ -8,14 +8,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^5.81.5",
-    "@tanstack/svelte-query-devtools": "^5.81.5"
+    "@tanstack/svelte-query": "^5.85.5",
+    "@tanstack/svelte-query-devtools": "^5.85.5"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tsconfig/svelte": "^5.0.4",
-    "svelte": "^5.26.1",
-    "svelte-check": "^4.1.5",
+    "svelte": "^5.36.8",
+    "svelte-check": "^4.3.0",
     "typescript": "5.8.3",
     "vite": "^6.2.4"
   }
