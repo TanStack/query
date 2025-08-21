@@ -275,6 +275,11 @@ export interface QueryOptions<
    * Maximum number of pages to store in the data of an infinite query.
    */
   maxPages?: number
+  /**
+   * If set to `true`, the query will continue to refetch while their tab/window is in the background.
+   * Defaults to `false`.
+   */
+  refetchIntervalInBackground?: boolean
 }
 
 export interface InitialPageParam<TPageParam = unknown> {
