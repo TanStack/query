@@ -10,11 +10,7 @@ import {
   useQueryErrorResetBoundary,
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
-import type {
-  QueryObserverOptions,
-  UseInfiniteQueryResult,
-  UseQueryResult,
-} from '..'
+import type { UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
