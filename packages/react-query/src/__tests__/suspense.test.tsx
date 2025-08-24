@@ -1238,3 +1238,190 @@ describe('useQueries with suspense', () => {
     expect(results).toEqual(['1', '2', 'loading'])
   })
 })
+
+describe('cacheTime minimum enforcement with suspense', () => {
+  const queryClient = createQueryClient()
+
+  describe('boundary value tests', () => {
+    test.each([
+      [0, 1000],
+      [1, 1000],
+      [999, 1000],
+      [1000, 1000],
+      [2000, 2000],
+    ])(
+      'cacheTime %i should be adjusted to %i with suspense',
+      async (input, expected) => {
+        const key = queryKey()
+
+        function Page() {
+          const result = useQuery(key, () => 42, {
+            suspense: true,
+            cacheTime: input,
+          })
+          return <div>data: {result.data}</div>
+        }
+
+        const rendered = renderWithClient(
+          queryClient,
+          <React.Suspense fallback="loading">
+            <Page />
+          </React.Suspense>,
+        )
+
+        await waitFor(() => rendered.getByText('data: 42'))
+
+        const query = queryClient.getQueryCache().find(key)
+        const options = query?.options
+        expect(options?.cacheTime).toBe(expected)
+      },
+    )
+  })
+
+  it('should preserve user cacheTime when >= 1000ms', async () => {
+    const key = queryKey()
+    const userCacheTime = 5000
+
+    function Page() {
+      useQuery(key, () => 'test', {
+        suspense: true,
+        cacheTime: userCacheTime,
+      })
+      return <div>rendered</div>
+    }
+
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => {
+      const query = queryClient.getQueryCache().find(key)
+      const options = query?.options
+      expect(options?.cacheTime).toBe(userCacheTime)
+    })
+  })
+
+  it('should handle async queries with adjusted cacheTime', async () => {
+    const key = queryKey()
+    let renderCount = 0
+
+    function Page() {
+      renderCount++
+      const result = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return 'async-result'
+        },
+        {
+          suspense: true,
+          cacheTime: 0,
+        },
+      )
+      return <div>data: {result.data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('data: async-result'))
+    expect(renderCount).toBeLessThan(5)
+  })
+
+  describe('staleTime and cacheTime relationship', () => {
+    it('should handle when both need adjustment', async () => {
+      const key = queryKey()
+
+      function Page() {
+        useQuery(key, () => 42, {
+          suspense: true,
+          cacheTime: 0,
+          staleTime: undefined,
+        })
+        return <div>rendered</div>
+      }
+
+      renderWithClient(
+        queryClient,
+        <React.Suspense fallback="loading">
+          <Page />
+        </React.Suspense>,
+      )
+
+      await waitFor(() => {
+        const query = queryClient.getQueryCache().find(key)
+        const options = query?.options as any
+        expect(options?.cacheTime).toBe(1000)
+        expect(options?.staleTime).toBe(1000)
+      })
+    })
+
+    it('should maintain staleTime < cacheTime invariant', async () => {
+      const key = queryKey()
+
+      function Page() {
+        useQuery(key, () => 42, {
+          suspense: true,
+          cacheTime: 500,
+          staleTime: 2000,
+        })
+        return <div>rendered</div>
+      }
+
+      renderWithClient(
+        queryClient,
+        <React.Suspense fallback="loading">
+          <Page />
+        </React.Suspense>,
+      )
+
+      await waitFor(() => {
+        const query = queryClient.getQueryCache().find(key)
+        const options = query?.options as any
+        expect(options?.cacheTime).toBe(1000)
+        expect(options?.staleTime).toBe(2000)
+      })
+    })
+  })
+
+  it('should fix synchronous query with cacheTime 0 infinite loop', async () => {
+    const key = queryKey()
+    let renderCount = 0
+    let queryFnCallCount = 0
+
+    function Page() {
+      renderCount++
+      const result = useQuery(
+        key,
+        () => {
+          queryFnCallCount++
+          return 42
+        },
+        {
+          suspense: true,
+          cacheTime: 0,
+        },
+      )
+      return <div>data: {result.data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('data: 42'))
+
+    expect(renderCount).toBeLessThan(5)
+    expect(queryFnCallCount).toBe(1)
+  })
+})

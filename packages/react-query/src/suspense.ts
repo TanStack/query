@@ -4,6 +4,13 @@ import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 import type { QueryObserverResult } from '@tanstack/query-core'
 import type { QueryKey } from '@tanstack/query-core'
 
+/**
+ * Ensures minimum staleTime and cacheTime values when suspense is enabled.
+ * Despite the name, this function guards both staleTime and cacheTime to prevent
+ * infinite re-render loops with synchronous queries.
+ *
+ * @deprecated in v5 - replaced by ensureSuspenseTimers
+ */
 export const ensureStaleTime = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
 ) => {
@@ -12,6 +19,10 @@ export const ensureStaleTime = (
     // fetching again when directly mounting after suspending
     if (typeof defaultedOptions.staleTime !== 'number') {
       defaultedOptions.staleTime = 1000
+    }
+
+    if (typeof defaultedOptions.cacheTime === 'number') {
+      defaultedOptions.cacheTime = Math.max(defaultedOptions.cacheTime, 1000)
     }
   }
 }
