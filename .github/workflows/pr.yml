@@ -26,6 +26,8 @@ jobs:
         uses: tanstack/config/.github/setup@main
       - name: Get base and head commits for `nx affected`
         uses: nrwl/nx-set-shas@v4.1.2
+        with:
+          main-branch-name: 'v4'
       - run: |
           echo "BASE: ${{ env.NX_BASE }}"
           echo "HEAD: ${{ env.NX_HEAD }}"
