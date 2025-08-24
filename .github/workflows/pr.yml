@@ -28,11 +28,8 @@ jobs:
         uses: nrwl/nx-set-shas@v4.1.2
         with:
           main-branch-name: 'v4'
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ github.event.pull_request.head.sha }}"
       - name: Run Tests
-        run: pnpm run test:pr
+        run: pnpm run test:pr --base=${{env.NX_BASE}} --head=${{github.event.pull_request.head.sha}}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
   format:
