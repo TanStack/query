@@ -1,5 +1,6 @@
 import {
   ensureQueryFn,
+  hashKey,
   noop,
   replaceData,
   resolveEnabled,
@@ -20,6 +21,7 @@ import type {
   OmitKeyof,
   QueryFunctionContext,
   QueryKey,
+  QueryKeyHashFunction,
   QueryMeta,
   QueryOptions,
   QueryStatus,
@@ -154,6 +156,40 @@ export interface SetStateOptions {
   meta?: any
 }
 
+export class RefCountSet<T> {
+  #refcounts = new Map<T, number>();
+
+  [Symbol.iterator]() {
+    return this.#refcounts.keys()
+  }
+
+  get size() {
+    return this.#refcounts.size
+  }
+
+  add(value: T) {
+    const n = this.#refcounts.get(value) ?? 0
+    this.#refcounts.set(value, n + 1)
+  }
+
+  remove(value: T) {
+    let n = this.#refcounts.get(value)
+    if (n === undefined) {
+      return
+    }
+    n--
+    if (n === 0) {
+      this.#refcounts.delete(value)
+    } else {
+      this.#refcounts.set(value, n)
+    }
+  }
+}
+
+// Somewhere; I'm not sure what the appropriate place to store this is. Maybe part of QueryCache?
+// Making it global is easier in my example code.
+export const allQueryKeyHashFns = new RefCountSet<QueryKeyHashFunction<any>>()
+
 // CLASS
 
 export class Query<
@@ -202,7 +238,18 @@ export class Query<
   setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
+    const oldHashFn = this.options?.queryKeyHashFn
     this.options = { ...this.#defaultOptions, ...options }
+
+    const newHashFn = this.options?.queryKeyHashFn
+    if (oldHashFn !== newHashFn) {
+      if (oldHashFn && oldHashFn !== hashKey) {
+        allQueryKeyHashFns.remove(oldHashFn)
+      }
+      if (newHashFn && newHashFn !== hashKey) {
+        allQueryKeyHashFns.add(newHashFn)
+      }
+    }
 
     this.updateGcTime(this.options.gcTime)
   }
