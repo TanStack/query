@@ -1,5 +1,5 @@
 import { hashKey, hashQueryKeyByOptions, matchQuery } from './utils'
-import { Query, RefCountSet, allQueryKeyHashFns } from './query'
+import { Query } from './query'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import type { Action, QueryState } from './query'
@@ -86,6 +86,36 @@ export interface QueryStore {
   get: (queryHash: string) => Query | undefined
   delete: (queryHash: string) => void
   values: () => IterableIterator<Query>
+}
+
+class RefCountSet<T> {
+  #refcounts = new Map<T, number>();
+
+  [Symbol.iterator]() {
+    return this.#refcounts.keys()
+  }
+
+  get size() {
+    return this.#refcounts.size
+  }
+
+  add(value: T) {
+    const n = this.#refcounts.get(value) ?? 0
+    this.#refcounts.set(value, n + 1)
+  }
+
+  remove(value: T) {
+    let n = this.#refcounts.get(value)
+    if (n === undefined) {
+      return
+    }
+    n--
+    if (n === 0) {
+      this.#refcounts.delete(value)
+    } else {
+      this.#refcounts.set(value, n)
+    }
+  }
 }
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null
@@ -300,6 +330,7 @@ class MapTrieSet<TKey extends QueryKey, TValue> {
 export class QueryCache extends Subscribable<QueryCacheListener> {
   #queries: QueryStore
   #keyIndex = new MapTrieSet<QueryKey, Query>()
+  #knownHashFns = new RefCountSet<QueryKeyHashFunction<any>>()
 
   constructor(public config: QueryCacheConfig = {}) {
     super()
@@ -343,6 +374,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     if (!this.#queries.has(query.queryHash)) {
       this.#queries.set(query.queryHash, query)
       this.#keyIndex.add(query.queryKey, query)
+      const hashFn = query.options.queryKeyHashFn
+      if (hashFn) {
+        this.#knownHashFns.add(hashFn)
+      }
 
       this.notify({
         type: 'added',
@@ -360,6 +395,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       if (queryInMap === query) {
         this.#queries.delete(query.queryHash)
         this.#keyIndex.remove(query.queryKey, query)
+        const hashFn = query.options.queryKeyHashFn
+        if (hashFn) {
+          this.#knownHashFns.remove(hashFn)
+        }
       }
 
       this.notify({ type: 'removed', query })
@@ -457,7 +496,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
     let query = tryHashFn(hashKey)
     if (!query) {
-      for (const hashFn of allQueryKeyHashFns) {
+      for (const hashFn of this.#knownHashFns) {
         query = tryHashFn(hashFn)
         if (query) {
           break
@@ -490,5 +529,17 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         query.onOnline()
       })
     })
+  }
+
+  onQueryKeyHashFunctionChanged(
+    before: QueryKeyHashFunction<any> | undefined,
+    after: QueryKeyHashFunction<any> | undefined,
+  ): void {
+    if (before) {
+      this.#knownHashFns.remove(before)
+    }
+    if (after) {
+      this.#knownHashFns.add(after)
+    }
   }
 }
