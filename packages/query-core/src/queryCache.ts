@@ -434,10 +434,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   ): Query<TQueryFnData, TError, TData> | undefined {
     const defaultedFilters = { exact: true, ...filters }
     if (defaultedFilters.exact) {
-      return this.findExact(filters)
+      return this.findExact(defaultedFilters)
     }
 
-    const candidates = this.#keyIndex.getByPrefix(filters.queryKey)
+    const candidates = this.#keyIndex.getByPrefix(defaultedFilters.queryKey)
     if (!candidates) {
       return undefined
     }
