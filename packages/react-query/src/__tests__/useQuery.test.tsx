@@ -6205,7 +6205,7 @@ describe('useQuery', () => {
     spy.mockClear()
     fireEvent.click(rendered.getByRole('button', { name: /1/ }))
     await waitFor(() => rendered.getByText('Rendered Id: 1'))
-    expect(spy).toHaveBeenCalledTimes(reactVersion() === '18' ? 1 : 2)
+    expect(spy).toHaveBeenCalledTimes(reactVersion() === '19' ? 2 : 1)
 
     spy.mockClear()
     fireEvent.click(rendered.getByRole('button', { name: /2/ }))
