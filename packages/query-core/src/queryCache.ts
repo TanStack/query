@@ -316,9 +316,8 @@ class MapTrieSet<TKey extends QueryKey, TValue> {
           yield* node.nonPrimitiveSuffix
         }
         if (node.children) {
-          for (const child of node.children.values()) {
-            queue.push(child)
-          }
+          const children = Array.from(node.children.values()).reverse()
+          children.forEach((child) => queue.push(child))
         }
       }
     })()
