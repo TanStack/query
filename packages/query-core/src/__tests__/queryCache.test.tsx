@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryCache, QueryClient, QueryObserver } from '..'
+import { Query, QueryCache, QueryClient, QueryObserver } from '..'
 
 describe('queryCache', () => {
   let queryClient: QueryClient
@@ -291,6 +291,82 @@ describe('queryCache', () => {
       ])
       await vi.advanceTimersByTimeAsync(20)
       expect(queryCache.findAll({ fetchStatus: 'fetching' })).toEqual([])
+    })
+
+    test('only visits queries with the given prefix', async () => {
+      const prefix = ['posts']
+      queryClient.prefetchQuery({
+        queryKey: ['other'],
+        queryFn: () => sleep(100).then(() => 'other'),
+      })
+      queryClient.prefetchQuery({
+        queryKey: ['other', {}],
+        queryFn: () => sleep(100).then(() => 'otherObjectSuffix'),
+      })
+      queryClient.prefetchQuery({
+        queryKey: [{}, 'objectPrefix'],
+        queryFn: () => sleep(100).then(() => 'otherObjectPrefix'),
+      })
+
+      queryClient.prefetchQuery({
+        queryKey: prefix,
+        queryFn: () => sleep(100).then(() => 'exactMatch'),
+      })
+      const exactMatchQuery = queryCache.find({ queryKey: prefix })
+
+      queryClient.prefetchQuery({
+        queryKey: [...prefix, 1],
+        queryFn: () => sleep(100).then(() => 'primitiveSuffix'),
+      })
+      const primitiveSuffixQuery = queryCache.find({ queryKey: [...prefix, 1] })
+
+      queryClient.prefetchQuery({
+        queryKey: [...prefix, 2, 'primitiveSuffix'],
+        queryFn: () => sleep(100).then(() => 'primitiveSuffixLength2'),
+      })
+      const primitiveSuffixLength2Query = queryCache.find({
+        queryKey: [...prefix, 2, 'primitiveSuffix'],
+      })
+
+      queryClient.prefetchQuery({
+        queryKey: [...prefix, 3, {}, 'obj'],
+        queryFn: () => sleep(100).then(() => 'matchingObjectSuffix'),
+      })
+      const matchingObjectSuffixQuery = queryCache.find({
+        queryKey: [...prefix, 3, {}, 'obj'],
+      })
+
+      await vi.advanceTimersByTimeAsync(100)
+
+      let predicateCallCount = 0
+      const results = queryCache.findAll({
+        queryKey: prefix,
+        predicate: () => {
+          predicateCallCount++
+          return true
+        },
+      })
+
+      expect(predicateCallCount).toBe(results.length)
+
+      const sortByHash = (a: Query | undefined, b: Query | undefined) => {
+        if (!a && !b) return 0
+        if (!a) return -1
+        if (!b) return 1
+        if (a.queryHash < b.queryHash) return -1
+        if (a.queryHash > b.queryHash) return 1
+        return 0
+      }
+      results.sort(sortByHash)
+
+      expect(results).toEqual(
+        [
+          exactMatchQuery,
+          primitiveSuffixQuery,
+          primitiveSuffixLength2Query,
+          matchingObjectSuffixQuery,
+        ].sort(sortByHash),
+      )
     })
 
     test('should return all the queries when no filters are defined', async () => {

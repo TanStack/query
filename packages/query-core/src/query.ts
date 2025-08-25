@@ -202,7 +202,22 @@ export class Query<
   setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
+    const oldOptions = (this.options as typeof this.options | undefined)
+      ? this.options
+      : undefined
+
     this.options = { ...this.#defaultOptions, ...options }
+
+    if (oldOptions) {
+      // Do not do this update when first created.
+      // The QueryCache manages admission / removal itself.
+      // We only need to keep it up-to-date here.
+      const prevHashFn = oldOptions.queryKeyHashFn
+      const newHashFn = this.options.queryKeyHashFn
+      if (prevHashFn !== newHashFn) {
+        this.#cache.onQueryKeyHashFunctionChanged(prevHashFn, newHashFn)
+      }
+    }
 
     this.updateGcTime(this.options.gcTime)
   }
