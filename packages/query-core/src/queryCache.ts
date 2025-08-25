@@ -1,4 +1,9 @@
-import { hashKey, hashQueryKeyByOptions, matchQuery } from './utils'
+import {
+  hashKey,
+  hashQueryKeyByOptions,
+  matchQuery,
+  partialMatchKey,
+} from './utils'
 import { Query } from './query'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
@@ -141,120 +146,296 @@ function isPrimitive(value: unknown): value is Primitive {
   }
 }
 
-type MapTrieNode<TValue> = {
-  key: Primitive
-  /**
-   * - Entries who's TKey path leads exactly to this node,
-   *   therefor their path is all primitives.
-   *   ourPath = [p1, p2, p3, ...pN]
-   *   theirPath = [p1, p2, p3, ...pN]
-   */
-  exact?: RefCountSet<TValue>
-  /**
-   * - Entries who's path after this point contains non-primitive keys.
-   *   Such entries cannot be looked up by value deeper in the trie.
-   *   Implies their TKey path != this node's keyPath.
-   *   ourPath = [p1, p2, p3, ...pN]
-   *   theirPath = [p1, p2, p3, ...pN, nonPrimitive, ...]
-   */
-  nonPrimitiveSuffix?: RefCountSet<TValue>
-  /** Child nodes storing entries who's TKey path is prefixed with this node's path. */
-  children?: Map<Primitive, MapTrieNode<TValue>>
-}
+/**
+ * Like Map<TKey, TValue>, but object keys have value semantics equality based
+ * on partialMatchKey, instead of reference equality.
+ *
+ * Lookups by object are O(NumberOfKeys) instead of O(1).
+ *
+ * ```ts
+ * const queryKeyMap = new QueryKeyElementMap<{ orderBy: 'likes', order: 'desc', limit: 30 }, string>()
+ * queryKeyMap.set({ orderBy: 'likes', order: 'desc', limit: 30 }, 'value')
+ * queryKeyMap.get({ orderBy: 'likes', order: 'desc', limit: 30 }) // 'value'
+ *
+ * const vanillaMap = new Map<{ orderBy: 'likes', order: 'desc', limit: 30 }, string>()
+ * vanillaMap.set({ orderBy: 'likes', order: 'desc', limit: 30 }, 'value')
+ * vanillaMap.get({ orderBy: 'likes', order: 'desc', limit: 30 }) // undefined
+ * ```
+ */
+class QueryKeyElementMap<TKeyElement, TValue> {
+  #primitiveMap = new Map<TKeyElement & Primitive, TValue>()
+  #objectMap = new Map<TKeyElement & object, TValue>()
 
-/** Path length is always 1 greater than the key length, as it includes the root node. */
-function traverse<TValue>(
-  root: MapTrieNode<TValue>,
-  key: QueryKey,
-  // May create a child node if needed
-  lookup: (
-    parent: MapTrieNode<TValue>,
-    key: Primitive,
-  ) => MapTrieNode<TValue> | undefined,
-): Array<MapTrieNode<TValue>> {
-  const path: Array<MapTrieNode<TValue>> = [root]
-  let node: MapTrieNode<TValue> | undefined = root
-  for (let i = 0; i < key.length && node; i++) {
-    const keyPart = key[i]
-    if (isPrimitive(keyPart)) {
-      node = lookup(node, keyPart)
-    } else {
-      node = undefined
-    }
-    if (node) {
-      path.push(node)
-    }
+  get size() {
+    return this.#primitiveMap.size + this.#objectMap.size
   }
-  return path
-}
 
-function gcPath(path: Array<MapTrieNode<any>>): void {
-  if (path.length === 0) {
-    return
-  }
-  for (let i = path.length - 1; i >= 0; i--) {
-    const node = path[i]
-    if (!node) {
-      throw new Error('Should never occur (bug in MapTrie)')
+  get(
+    key: (TKeyElement & Primitive) | (TKeyElement & object),
+  ): TValue | undefined {
+    if (isPrimitive(key)) {
+      return this.#primitiveMap.get(key)
     }
 
-    if (
-      node.exact?.size ||
-      node.nonPrimitiveSuffix?.size ||
-      node.children?.size
-    ) {
-      // Has data. Do not GC.
+    const matchingKey = this.findMatchingObjectKey(key)
+    if (matchingKey) {
+      return this.#objectMap.get(matchingKey)
+    }
+
+    return undefined
+  }
+
+  set(
+    key: (TKeyElement & Primitive) | (TKeyElement & object),
+    value: TValue,
+  ): void {
+    if (isPrimitive(key)) {
+      this.#primitiveMap.set(key, value)
       return
     }
 
-    const parent = path[i - 1]
-    parent?.children?.delete(node.key)
+    const matchingKey = this.findMatchingObjectKey(key)
+    this.#objectMap.set(matchingKey ?? key, value)
+  }
+
+  delete(key: (TKeyElement & Primitive) | (TKeyElement & object)): boolean {
+    if (isPrimitive(key)) {
+      return this.#primitiveMap.delete(key)
+    }
+
+    const matchingKey = this.findMatchingObjectKey(key)
+    if (matchingKey) {
+      this.#objectMap.delete(matchingKey)
+      return true
+    }
+    return false
+  }
+
+  values(): Iterable<TValue> | undefined {
+    if (!this.#primitiveMap.size && !this.#objectMap.size) {
+      return undefined
+    }
+
+    if (this.#primitiveMap.size && !this.#objectMap.size) {
+      return this.#primitiveMap.values()
+    }
+
+    if (!this.#primitiveMap.size && this.#objectMap.size) {
+      return this.#objectMap.values()
+    }
+
+    const primitiveValues = this.#primitiveMap.values()
+    const objectValues = this.#objectMap.values()
+    return (function* () {
+      yield* primitiveValues
+      yield* objectValues
+    })()
+  }
+
+  private findMatchingObjectKey(
+    key: TKeyElement & object,
+  ): (TKeyElement & object) | undefined {
+    // Reference equality
+    if (this.#objectMap.has(key)) {
+      return key
+    }
+
+    // Linear search for the matching key.
+    // This makes lookups in the trie O(NumberOfObjectKeys)
+    // but it also gives lookups in the trie like
+    // `map.get(['a', { obj: true }, 'c'])` the same semantics
+    // as `partialMatchKey` itself.
+    const keyArray = [key]
+    for (const candidateKey of this.#objectMap.keys()) {
+      if (partialMatchKey([candidateKey], keyArray)) {
+        return candidateKey
+      }
+    }
+
+    return undefined
   }
 }
 
-class MapTrieSet<TKey extends QueryKey, TValue> {
-  #root: MapTrieNode<TValue> = {
-    key: undefined,
+type QueryKeyTrieNode<TKeyElement, TValue> = {
+  /** Element in the query key, QueryKey[number]. */
+  key: (TKeyElement & Primitive) | (TKeyElement & object)
+  /**
+   * Value stored at the end of the path leading to this node.
+   * This holds: `key[key.length - 1] === node.key`
+   * ```ts
+   * map.set(['a', 'b', 'c'], '123')
+   * // ->
+   * const root = {
+   *   children: {
+   *     'a': {
+   *       key: 'a',
+   *       children: {
+   *         'b': {
+   *           key: 'b',
+   *           children: {
+   *             'c': {
+   *               key: 'c',
+   *               value: '123',
+   *               insertionOrder: 0,
+   *             }
+   *           }
+   *         }
+   *       }
+   *     }
+   *   }
+   * }
+   * ```
+   */
+  value?: TValue
+  /**
+   * Insertion order of the *value* being stored in the trie.
+   * Unfortunately the natural iteration order of values in the trie does not
+   * match the insertion order, as expected from a map-like data structure.
+   *
+   * We need to track it explicitly.
+   */
+  insertionOrder?: number
+  /**
+   * Children map to the next index element in the queryKey.
+   */
+  children?: QueryKeyElementMap<
+    TKeyElement,
+    QueryKeyTrieNode<TKeyElement, TValue>
+  >
+}
+
+type QueryKeyTrieNodeWithValue<TKeyElement, TValue> = {
+  key: (TKeyElement & Primitive) | (TKeyElement & object)
+  value: TValue
+  insertionOrder: number
+  children?: QueryKeyElementMap<
+    TKeyElement,
+    QueryKeyTrieNode<TKeyElement, TValue>
+  >
+}
+
+/**
+ * We only consider a value to be stored in a node when insertionOrder is defined.
+ * This allows storing `undefined` as a value.
+ */
+function nodeHasValue<TKeyElement, TValue>(
+  node: QueryKeyTrieNode<TKeyElement, TValue>,
+): node is QueryKeyTrieNodeWithValue<TKeyElement, TValue> {
+  return node.insertionOrder !== undefined
+}
+
+/**
+ * Path length is always 1 greater than the key length, as it includes the root
+ * node.
+ * ```ts
+ * map.set(['a', 'b', 'c'], '123')
+ * const path = [root,  n1,  n2,  n3]
+ * const key  =       ['a', 'b', 'c']
+ */
+function traverse<
+  TKey extends QueryKey,
+  TValue,
+  TLookup extends QueryKeyTrieNode<TKey[number], TValue> | undefined,
+>(
+  root: QueryKeyTrieNode<TKey[number], TValue>,
+  key: TKey,
+  // May create a child node if needed
+  lookup: (
+    parent: QueryKeyTrieNode<TKey[number], TValue>,
+    key: (TKey[number] & Primitive) | (TKey[number] & object),
+  ) => TLookup,
+): TLookup extends undefined ? undefined : Array<TLookup | typeof root> {
+  const path: Array<QueryKeyTrieNode<TKey[number], TValue>> = [root]
+  let node: QueryKeyTrieNode<TKey[number], TValue> | undefined = root
+  // In hot code like this data structures, it is best to avoid creating
+  // Iterators with for-of loops.
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
+  for (let i = 0; i < key.length; i++) {
+    const keyPart = key[i]
+    node = lookup(
+      node,
+      keyPart as (TKey[number] & Primitive) | (TKey[number] & object),
+    )
+    if (node) {
+      path.push(node)
+    } else {
+      return undefined as never
+    }
+  }
+  return path as never
+}
+
+function* iterateSubtreeValueNodes<TKeyElement, TValue>(
+  node: QueryKeyTrieNode<TKeyElement, TValue>,
+): Generator<QueryKeyTrieNodeWithValue<TKeyElement, TValue>, void, undefined> {
+  if (nodeHasValue(node)) {
+    yield node
   }
 
-  add(key: TKey, value: TValue): void {
+  const children = node.children?.values()
+  if (!children) {
+    return
+  }
+
+  for (const child of children) {
+    yield* iterateSubtreeValueNodes(child)
+  }
+}
+
+class QueryKeyTrie<TKey extends QueryKey, TValue> {
+  #root: QueryKeyTrieNode<TKey[number], TValue> = {
+    key: undefined,
+  }
+  // Provides relative insertion ordering between values in the trie.
+  #insertionOrder = 0
+
+  set(key: TKey, value: TValue): void {
     const path = traverse(this.#root, key, (parent, keyPart) => {
-      parent.children ??= new Map()
+      parent.children ??= new QueryKeyElementMap()
       let child = parent.children.get(keyPart)
       if (!child) {
+        // Note: insertionOrder is for values, not when nodes enter the trie.
         child = { key: keyPart }
         parent.children.set(keyPart, child)
       }
       return child
     })
-    const lastPathNode = path[path.length - 1]
-    if (!lastPathNode) {
-      throw new Error('Should never occur (bug in MapTrie)')
-    }
 
-    if (key.length === path.length - 1) {
-      lastPathNode.exact ??= new RefCountSet()
-      lastPathNode.exact.add(value)
-    } else {
-      lastPathNode.nonPrimitiveSuffix ??= new RefCountSet()
-      lastPathNode.nonPrimitiveSuffix.add(value)
+    const lastNode = path[path.length - 1]!
+    if (!nodeHasValue(lastNode)) {
+      lastNode.insertionOrder = this.#insertionOrder++
     }
+    lastNode.value = value
   }
 
-  remove(key: TKey, value: TValue): void {
+  delete(key: TKey): void {
     const path = traverse(this.#root, key, (parent, keyPart) =>
       parent.children?.get(keyPart),
     )
-    const lastPathNode = path[path.length - 1]
-    if (!lastPathNode) {
-      throw new Error('Should never occur (bug in MapTrie)')
+    if (!path) {
+      return
     }
-    if (key.length === path.length - 1) {
-      lastPathNode.exact?.remove(value)
-      gcPath(path)
-    } else if (!isPrimitive(key[path.length - 1])) {
-      lastPathNode.nonPrimitiveSuffix?.remove(value)
-      gcPath(path)
+
+    const lastNode = path[path.length - 1]!
+    if (lastNode.insertionOrder === undefined) {
+      // No value stored at key.
+      return
+    }
+
+    // Drop.
+    lastNode.value = undefined
+    lastNode.insertionOrder = undefined
+
+    // GC nodes in path that are no longer needed.
+    for (let i = path.length - 1; i > 0; i--) {
+      const node = path[i]!
+      if (nodeHasValue(node) || node.children?.size) {
+        // Has data. Do not GC.
+        return
+      }
+
+      const parent = path[i - 1]
+      parent?.children?.delete(node.key)
     }
   }
 
@@ -263,64 +444,29 @@ class MapTrieSet<TKey extends QueryKey, TValue> {
    * Either the value has the same key and is all primitives,
    * Or the value's key is a suffix of the given key and contains a non-primitive key.
    */
-  getByPrefix(key: TKey): Iterable<TValue> | undefined {
-    let miss = false
-    const path = traverse(this.#root, key, (parent, keyPart) => {
-      const child = parent.children?.get(keyPart)
-      if (!child) {
-        miss = true
-        return undefined
-      }
-      return child
-    })
-    // Failed to look up one of the primitive keys in the path.
-    // This means there's no match at all.
-    // Appears to be incorrectly reported by @typescript-eslint as always false :\
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (miss) {
+  iteratePrefix(key: TKey): Array<TValue> | undefined {
+    const path = traverse(this.#root, key, (parent, keyPart) =>
+      parent.children?.get(keyPart),
+    )
+    if (!path) {
       return undefined
     }
 
-    const lastNode = path[path.length - 1]
-    if (!lastNode) {
-      throw new Error('Should never occur (bug in MapTrie)')
-    }
-
-    // If the `key` is all primitives then we need to recurse to find all values
-    // that match the prefix, as these values will be stored deeper in the trie.
-    //
-    // If the `key` contains a non-primitive part after the returned path,
-    // then all possible values that have the suffix are stored in this node.
-    const isPrimitivePath = path.length - 1 === key.length
-    if (!isPrimitivePath) {
-      return lastNode.nonPrimitiveSuffix?.[Symbol.iterator]()
-    }
-
-    // See if we can avoid instantiating a generator
-    if (
-      !lastNode.children &&
-      (lastNode.exact || lastNode.nonPrimitiveSuffix) &&
-      !(lastNode.exact && lastNode.nonPrimitiveSuffix)
-    ) {
-      return lastNode.exact ?? lastNode.nonPrimitiveSuffix
-    }
-
-    return (function* depthFirstPrefixIterator() {
-      const queue = [lastNode]
-      while (queue.length > 0) {
-        const node = queue.pop()!
-        if (node.exact) {
-          yield* node.exact
-        }
-        if (node.nonPrimitiveSuffix) {
-          yield* node.nonPrimitiveSuffix
-        }
-        if (node.children) {
-          const children = Array.from(node.children.values()).reverse()
-          children.forEach((child) => queue.push(child))
-        }
+    const lastNode = path[path.length - 1]!
+    if (!lastNode.children?.size) {
+      // No children - either return value if we have one, or nothing.
+      if (nodeHasValue(lastNode)) {
+        return [lastNode.value]
       }
-    })()
+      return undefined
+    }
+
+    const subtreeInDepthFirstOrder = Array.from(
+      iterateSubtreeValueNodes(lastNode),
+    )
+    return subtreeInDepthFirstOrder
+      .sort((a, b) => a.insertionOrder - b.insertionOrder)
+      .map((node) => node.value)
   }
 }
 
@@ -328,7 +474,7 @@ class MapTrieSet<TKey extends QueryKey, TValue> {
 
 export class QueryCache extends Subscribable<QueryCacheListener> {
   #queries: QueryStore
-  #keyIndex = new MapTrieSet<QueryKey, Query>()
+  #keyIndex = new QueryKeyTrie<QueryKey, Query>()
   #knownHashFns = new RefCountSet<QueryKeyHashFunction<any>>()
 
   constructor(public config: QueryCacheConfig = {}) {
@@ -372,7 +518,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   add(query: Query<any, any, any, any>): void {
     if (!this.#queries.has(query.queryHash)) {
       this.#queries.set(query.queryHash, query)
-      this.#keyIndex.add(query.queryKey, query)
+      this.#keyIndex.set(query.queryKey, query)
       const hashFn = query.options.queryKeyHashFn
       if (hashFn) {
         this.#knownHashFns.add(hashFn)
@@ -393,7 +539,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
       if (queryInMap === query) {
         this.#queries.delete(query.queryHash)
-        this.#keyIndex.remove(query.queryKey, query)
+        this.#keyIndex.delete(query.queryKey)
         const hashFn = query.options.queryKeyHashFn
         if (hashFn) {
           this.#knownHashFns.remove(hashFn)
@@ -437,20 +583,14 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       return this.findExact(defaultedFilters)
     }
 
-    const candidates = this.#keyIndex.getByPrefix(defaultedFilters.queryKey)
+    const candidates = this.#keyIndex.iteratePrefix(defaultedFilters.queryKey)
     if (!candidates) {
       return undefined
     }
 
-    for (const query of candidates) {
-      if (matchQuery(defaultedFilters, query)) {
-        return query as unknown as
-          | Query<TQueryFnData, TError, TData>
-          | undefined
-      }
-    }
-
-    return undefined
+    return candidates.find((query) => matchQuery(defaultedFilters, query)) as
+      | Query<TQueryFnData, TError, TData>
+      | undefined
   }
 
   findAll(filters: QueryFilters<any> = {}): Array<Query> {
@@ -460,9 +600,14 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     }
 
     if (filters.queryKey) {
-      const withPrefix = this.#keyIndex.getByPrefix(filters.queryKey)
-      const candidates = withPrefix ? Array.from(withPrefix) : []
-      return candidates.filter((query) => matchQuery(filters, query))
+      const candidates = this.#keyIndex.iteratePrefix(filters.queryKey)
+      if (!candidates) {
+        return []
+      }
+
+      return Object.keys(filters).length > 1
+        ? candidates.filter((query) => matchQuery(filters, query))
+        : candidates
     }
 
     const queries = this.getAll()
