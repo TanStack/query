@@ -120,7 +120,7 @@ TypeScript will also narrow the type of `data` correctly if you've checked for `
 
 In addition to the `status` field, you will also get an additional `fetchStatus` property with the following options:
 
-- `fetchStatus === 'fetching'` - The query is currently fetching.
+- `fetchStatus === 'fetching the data'` - The query is currently fetching.
 - `fetchStatus === 'paused'` - The query wanted to fetch, but it is paused. Read more about this in the [Network Mode](../network-mode.md) guide.
 - `fetchStatus === 'idle'` - The query is not doing anything at the moment.
 
