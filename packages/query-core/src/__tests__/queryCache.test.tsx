@@ -348,25 +348,12 @@ describe('queryCache', () => {
       })
 
       expect(predicateCallCount).toBe(results.length)
-
-      const sortByHash = (a: Query | undefined, b: Query | undefined) => {
-        if (!a && !b) return 0
-        if (!a) return -1
-        if (!b) return 1
-        if (a.queryHash < b.queryHash) return -1
-        if (a.queryHash > b.queryHash) return 1
-        return 0
-      }
-      results.sort(sortByHash)
-
-      expect(results).toEqual(
-        [
-          exactMatchQuery,
-          primitiveSuffixQuery,
-          primitiveSuffixLength2Query,
-          matchingObjectSuffixQuery,
-        ].sort(sortByHash),
-      )
+      expect(results).toEqual([
+        exactMatchQuery,
+        primitiveSuffixQuery,
+        primitiveSuffixLength2Query,
+        matchingObjectSuffixQuery,
+      ])
     })
 
     test('should return all the queries when no filters are defined', async () => {
