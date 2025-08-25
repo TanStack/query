@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { Query, QueryCache, QueryClient, QueryObserver } from '..'
+import { QueryCache, QueryClient, QueryObserver } from '..'
 
 describe('queryCache', () => {
   let queryClient: QueryClient
