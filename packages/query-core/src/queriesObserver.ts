@@ -128,7 +128,8 @@ export class QueriesObserver<
           return (
             !prev ||
             result.data !== prev.data ||
-            result.isPending !== prev.isPending
+            result.isPending !== prev.isPending ||
+            result.error !== prev.error
           )
         })
 
