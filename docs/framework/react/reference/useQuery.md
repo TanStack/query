@@ -178,7 +178,7 @@ const {
 
 **Parameter2 (QueryClient)**
 
-- `queryClient?: QueryClient`,
+- `queryClient?: QueryClient`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
