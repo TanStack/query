@@ -250,7 +250,7 @@ function groupMutationOptions() {
 }
 
 useMutation({
-  ...groupMutationOptions()
+  ...groupMutationOptions(),
   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['groups'] })
 })
 useIsMutating(groupMutationOptions())
