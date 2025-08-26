@@ -75,21 +75,19 @@ A mutation filter object supports the following properties:
 
 Cancel options are used to control the behavior of query cancellation operations.
 
-// Cancel all queries silently (no CancelledError thrown)
-await queryClient.cancelQueries(undefined, { silent: true })
-
-// Cancel specific queries with revert option
+```tsx
+// Cancel specific queries silently
 await queryClient.cancelQueries(
   { queryKey: ['posts'] },
-  { revert: true, silent: true }
+  { silent: true }
 )
+```
 
 A cancel options object supports the following properties:
 
 - `silent?: boolean`
   - When set to `true`, prevents `CancelledError` from being thrown during query cancellation.
   - Defaults to `false`
-  - Useful when you want to cancel queries without handling cancellation errors.
 - `revert?: boolean`
   - When set to `true`, reverts the query to its previous state before cancellation.
   - Defaults to `true`
