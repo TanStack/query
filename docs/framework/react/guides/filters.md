@@ -71,6 +71,29 @@ A mutation filter object supports the following properties:
 - `predicate?: (mutation: Mutation) => boolean`
   - This predicate function will be used as a final filter on all matching mutations. If no other filters are specified, this function will be evaluated against every mutation in the cache.
 
+## `Cancel Options`
+
+Cancel options are used to control the behavior of query cancellation operations.
+
+// Cancel all queries silently (no CancelledError thrown)
+await queryClient.cancelQueries(undefined, { silent: true })
+
+// Cancel specific queries with revert option
+await queryClient.cancelQueries(
+  { queryKey: ['posts'] },
+  { revert: true, silent: true }
+)
+
+A cancel options object supports the following properties:
+
+- `silent?: boolean`
+  - When set to `true`, prevents `CancelledError` from being thrown during query cancellation.
+  - Defaults to `false`
+  - Useful when you want to cancel queries without handling cancellation errors.
+- `revert?: boolean`
+  - When set to `true`, reverts the query to its previous state before cancellation.
+  - Defaults to `true`
+
 ## Utils
 
 ### `matchQuery`
