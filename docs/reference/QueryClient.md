@@ -409,6 +409,7 @@ await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
 **Options**
 
 - `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
+- `cancelOptions?: CancelOptions`: [Cancel Options](../../framework/react/guides/filters.md#query-filters)
 
 **Returns**
 
