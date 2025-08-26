@@ -123,6 +123,20 @@ export class QueriesObserver<
       )
 
       if (prevObservers.length === newObservers.length && !hasIndexChange) {
+        const resultChanged = newResult.some((result, index) => {
+          const prev = this.#result[index]
+          return (
+            !prev ||
+            result.data !== prev.data ||
+            result.isPending !== prev.isPending
+          )
+        })
+
+        if (resultChanged) {
+          this.#result = newResult
+          this.#notify()
+        }
+
         return
       }
 
