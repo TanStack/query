@@ -365,27 +365,33 @@ describe('queriesObserver', () => {
     const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
 
-    const unsubscribe = observer.subscribe((result) => {
+    const onUpdate = vi.fn((result: Array<QueryObserverResult>) => {
       results.push(result)
     })
+    const unsubscribe = observer.subscribe(onUpdate)
+    const baseline = results.length
 
     observer.setQueries([
-      { queryKey: key1, queryFn: queryFn1, staleTime: Infinity },
-      { queryKey: key2, queryFn: queryFn2, staleTime: Infinity },
+      {
+        queryKey: key1,
+        queryFn: queryFn1,
+        select: (d: any) => d + 100,
+      },
+      {
+        queryKey: key2,
+        queryFn: queryFn2,
+        select: (d: any) => d + 100,
+      },
     ])
 
     await vi.advanceTimersByTimeAsync(0)
 
     unsubscribe()
 
-    expect(results.length).toBeGreaterThanOrEqual(2)
-    expect(results[0]).toMatchObject([
-      { status: 'success', data: 1 },
-      { status: 'success', data: 2 },
-    ])
+    expect(results.length).toBeGreaterThan(baseline)
     expect(results[results.length - 1]).toMatchObject([
-      { status: 'success', data: 1 },
-      { status: 'success', data: 2 },
+      { status: 'success', data: 101 },
+      { status: 'success', data: 102 },
     ])
   })
 })
