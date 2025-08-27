@@ -41,22 +41,16 @@ export function streamedQuery<
   TQueryFnData = unknown,
   TData = Array<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
->(params: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<
+>({
+  queryFn,
+  refetchMode = 'reset',
+  reducer = (items, chunk) => addToEnd(items as Array<TQueryFnData>, chunk) as TData,
+  initialValue = [] as TData,
+}: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<
   TData,
   TQueryKey
 > {
-  let reducer;
-  let initialValue;
-  const {refetchMode='reset', queryFn} = params;
   
-  if('reducer' in params && typeof params.reducer === 'function'){
-    reducer=params.reducer;
-    initialValue=params.initialValue;
-  }else{
-    initialValue=[] as TData;
-    reducer=(items: TData, chunk: TQueryFnData) => addToEnd(items as Array<TQueryFnData>, chunk) as TData;
-  }
-
   return async (context) => {
     const query = context.client
       .getQueryCache()
