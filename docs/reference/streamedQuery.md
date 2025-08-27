@@ -37,7 +37,8 @@ const query = queryOptions({
   - Optional
   - A function to reduce the streamed chunks into the final data.
   - Defaults to a function that appends chunks to the end of the array.
-- `placeholderData?: TData = TQueryFnData`
+- `initialValue?: TData = TQueryFnData`
   - Optional
-  - Defines the initial data to be used while the first chunk is being fetched.
+  - Defines the initial data to be used while the first chunk is being fetched. 
+  - It is mandatory when custom `reducer` is provided.
   - Defaults to an empty array.
