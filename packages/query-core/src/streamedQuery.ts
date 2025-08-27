@@ -1,14 +1,27 @@
 import { addToEnd } from './utils'
 import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
 
-type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> = {
-  queryFn: (
+type BaseStreamedQueryParams<TQueryFnData,TQueryKey extends QueryKey> = {
+   queryFn: (
     context: QueryFunctionContext<TQueryKey>,
   ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
   refetchMode?: 'append' | 'reset' | 'replace'
-  reducer?: (acc: TData, chunk: TQueryFnData) => TData
-  placeholderData?: TData
 }
+
+type SimpleStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = BaseStreamedQueryParams<TQueryFnData,TQueryKey> & {
+  reducer?: never;
+  initialValue?: never;
+}
+
+type ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> = BaseStreamedQueryParams<TQueryFnData, TQueryKey> & {
+  reducer: (acc: TData, chunk: TQueryFnData) => TData
+  initialValue: TData
+}
+
+type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
+  | SimpleStreamedQueryParams<TQueryFnData, TQueryKey>
+  | ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey>
+
 
 /**
  * This is a helper function to create a query function that streams data from an AsyncIterable.
@@ -22,23 +35,28 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> = {
  * Set to `'replace'` to write all data to the cache once the stream ends.
  * @param reducer - A function to reduce the streamed chunks into the final data.
  * Defaults to a function that appends chunks to the end of the array.
- * @param placeholderData - Initial data to be used while the first chunk is being fetched.
- * Defaults to an empty array.
+ * @param initialValue - Initial value to be used while the first chunk is being fetched.
  */
 export function streamedQuery<
   TQueryFnData = unknown,
   TData = Array<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
->({
-  queryFn,
-  refetchMode = 'reset',
-  reducer = (items, chunk) =>
-    addToEnd((items ?? []) as Array<TQueryFnData>, chunk) as TData,
-  placeholderData = [] as TData,
-}: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<
+>(params: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<
   TData,
   TQueryKey
 > {
+  let reducer;
+  let initialValue;
+  const {refetchMode='reset', queryFn} = params;
+  
+  if('reducer' in params && typeof params.reducer === 'function'){
+    reducer=params.reducer;
+    initialValue=params.initialValue;
+  }else{
+    initialValue=[] as TData;
+    reducer=(items: TData, chunk: TQueryFnData) => addToEnd(items as Array<TQueryFnData>, chunk) as TData;
+  }
+
   return async (context) => {
     const query = context.client
       .getQueryCache()
@@ -53,7 +71,7 @@ export function streamedQuery<
       })
     }
 
-    let result = placeholderData
+    let result = initialValue
 
     const stream = await queryFn(context)
 
@@ -65,7 +83,7 @@ export function streamedQuery<
       // don't append to the cache directly when replace-refetching
       if (!isRefetch || refetchMode !== 'replace') {
         context.client.setQueryData<TData>(context.queryKey, (prev) =>
-          reducer(prev ?? placeholderData, chunk),
+          reducer(prev ?? initialValue, chunk),
         )
       }
       result = reducer(result, chunk)

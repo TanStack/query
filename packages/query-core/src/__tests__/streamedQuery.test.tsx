@@ -361,6 +361,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
+        initialValue: {}
       }),
     })
 
@@ -386,7 +387,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should support custom reducer with placeholderData', async () => {
+  test('should support custom reducer with initialValue', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -396,7 +397,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
-        placeholderData: {
+        initialValue: {
           10: true,
           11: true,
         },
