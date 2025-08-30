@@ -251,7 +251,7 @@ function groupMutationOptions() {
 
 useMutation({
   ...groupMutationOptions(),
-  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['groups'] })
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['groups'] }),
 })
 useIsMutating(groupMutationOptions())
 queryClient.isMutating(groupMutationOptions())
