@@ -128,7 +128,7 @@ mutate(variables, {
   - If you make multiple requests, `onSuccess` will fire only after the latest call you've made.
 - `mutateAsync: (variables: TVariables, { onSuccess, onSettled, onError }) => Promise<TData>`
   - Similar to `mutate` but returns a promise which can be awaited.
-- `status: string`
+- `status: MutationStatus`
   - Will be:
     - `idle` initial status prior to the mutation function executing.
     - `pending` if the mutation is currently executing.
