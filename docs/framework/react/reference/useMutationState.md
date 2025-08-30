@@ -72,7 +72,7 @@ const latest = data[data.length - 1]
   - `filters?: MutationFilters`: [Mutation Filters](../../guides/filters.md#mutation-filters)
   - `select?: (mutation: Mutation) => TResult`
     - Use this to transform the mutation state.
-- `queryClient?: QueryClient`,
+- `queryClient?: QueryClient`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
