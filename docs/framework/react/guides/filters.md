@@ -77,10 +77,7 @@ Cancel options are used to control the behavior of query cancellation operations
 
 ```tsx
 // Cancel specific queries silently
-await queryClient.cancelQueries(
-  { queryKey: ['posts'] },
-  { silent: true }
-)
+await queryClient.cancelQueries({ queryKey: ['posts'] }, { silent: true })
 ```
 
 A cancel options object supports the following properties:
