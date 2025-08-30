@@ -1,4 +1,4 @@
-import { noop } from '@tanstack/query-core'
+import { noop } from './utils'
 
 interface AsyncThrottleOptions {
   interval?: number
