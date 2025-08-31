@@ -280,9 +280,14 @@ export function replaceEqualDeep(a: unknown, b: unknown): any {
       }
 
       // either item is not an array or object
-      if (aItem === null || bItem === null || typeof aItem !== 'object' || typeof bItem !== 'object') {
-         copy[i] = bItem
-         continue
+      if (
+        aItem === null ||
+        bItem === null ||
+        typeof aItem !== 'object' ||
+        typeof bItem !== 'object'
+      ) {
+        copy[i] = bItem
+        continue
       }
 
       const v = replaceEqualDeep(aItem, bItem)
@@ -322,7 +327,12 @@ export function replaceEqualDeep(a: unknown, b: unknown): any {
     }
 
     // either item is not an array or object
-    if (aItem === null || bItem === null || typeof aItem !== 'object' || typeof bItem !== 'object') {
+    if (
+      aItem === null ||
+      bItem === null ||
+      typeof aItem !== 'object' ||
+      typeof bItem !== 'object'
+    ) {
       copy[k] = bItem
       continue
     }
