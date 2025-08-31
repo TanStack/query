@@ -257,9 +257,8 @@ export function replaceEqualDeep(a: any, b: any): any {
   }
 
   const array = isPlainArray(a) && isPlainArray(b)
-  const object = !array && isPlainObject(a) && isPlainObject(b)
 
-  if (!array && !object) return b
+  if (!array && !(isPlainObject(a) && isPlainObject(b))) return b
 
   const aItems = array ? a : Object.keys(a)
   const aSize = aItems.length
