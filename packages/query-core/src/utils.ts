@@ -245,46 +245,91 @@ export function partialMatchKey(a: any, b: any): boolean {
   return false
 }
 
+const hasOwn = Object.prototype.hasOwnProperty
+
 /**
  * This function returns `a` if `b` is deeply equal.
  * If not, it will replace any deeply equal children of `b` with those of `a`.
  * This can be used for structural sharing between JSON values for example.
  */
 export function replaceEqualDeep<T>(a: unknown, b: T): T
-export function replaceEqualDeep(a: any, b: any): any {
+export function replaceEqualDeep(a: unknown, b: unknown): any {
   if (a === b) {
     return a
   }
 
-  const array = isPlainArray(a) && isPlainArray(b)
+  const aIsArr = isPlainArray(a)
+  const bIsArr = isPlainArray(b)
 
-  if (!array && !(isPlainObject(a) && isPlainObject(b))) return b
+  // both are arrays
+  if (aIsArr && bIsArr) {
+    const aSize = a.length
+    const bSize = b.length
+    const copy: Array<unknown> = new Array(bSize)
+    let equalItems = 0
 
-  const aItems = array ? a : Object.keys(a)
-  const aSize = aItems.length
-  const bItems = array ? b : Object.keys(b)
-  const bSize = bItems.length
-  const copy: any = array ? new Array(bSize) : {}
+    for (let i = 0; i < bSize; i++) {
+      const aItem = a[i]
+      const bItem = b[i]
 
-  let equalItems = 0
-
-  for (let i = 0; i < bSize; i++) {
-    const key = array ? i : bItems[i]
-    const aItem = a[key]
-    if (
-      (array || Object.prototype.hasOwnProperty.call(a, key)) &&
-      aItem === undefined &&
-      b[key] === undefined
-    ) {
-      copy[key] = undefined
-      equalItems++
-    } else {
-      const value = replaceEqualDeep(aItem, b[key])
-      copy[key] = value
-      if (value === aItem && aItem !== undefined) {
-        equalItems++
+      // most common case (strict equality)
+      if (aItem === bItem) {
+        copy[i] = aItem
+        if (i < aSize) equalItems++
+        continue
       }
+
+      // either item is not an array or object
+      if (aItem === null || bItem === null || typeof aItem !== 'object' || typeof bItem !== 'object') {
+         copy[i] = bItem
+         continue
+      }
+
+      const v = replaceEqualDeep(aItem, bItem)
+      copy[i] = v
+      if (v === aItem) equalItems++
     }
+
+    return aSize === bSize && equalItems === aSize ? a : copy
+  }
+
+  // only 1 is an array
+  if (aIsArr || bIsArr) {
+    return b
+  }
+
+  // at least 1 is not an object
+  if (!isPlainObject(a) || !isPlainObject(b)) {
+    return b
+  }
+
+  const aSize = Object.keys(a).length
+  const copy: Record<PropertyKey, unknown> = {}
+  let equalItems = 0
+  let bSize = 0
+
+  for (const k in b) {
+    bSize++
+
+    const aItem = a[k]
+    const bItem = b[k]
+
+    // most common case (strict equality)
+    if (aItem === bItem) {
+      copy[k] = aItem
+      if (hasOwn.call(a, k)) equalItems++
+      continue
+    }
+
+    // either item is not an array or object
+    if (aItem === null || bItem === null || typeof aItem !== 'object' || typeof bItem !== 'object') {
+      copy[k] = bItem
+      continue
+    }
+
+    const v = replaceEqualDeep(aItem, bItem)
+    copy[k] = v
+    if (v === aItem) equalItems++
   }
 
   return aSize === bSize && equalItems === aSize ? a : copy
@@ -310,13 +355,12 @@ export function shallowEqualObjects<T extends Record<string, any>>(
   return true
 }
 
-export function isPlainArray(value: unknown) {
+export function isPlainArray(value: unknown): value is Array<unknown> {
   return Array.isArray(value) && value.length === Object.keys(value).length
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object
-// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
-export function isPlainObject(o: any): o is Object {
+export function isPlainObject(o: any): o is Record<PropertyKey, unknown> {
   if (!hasObjectPrototype(o)) {
     return false
   }
