@@ -1192,4 +1192,54 @@ describe('query', () => {
     expect(initialDataFn).toHaveBeenCalledTimes(1)
     expect(query.state.data).toBe('initial data')
   })
+
+  test('should not override fetching state when revert happens after new observer subscribes', async () => {
+    const key = queryKey()
+    let count = 0
+
+    const queryFn = vi.fn(async ({ signal: _signal }) => {
+      // Destructure `signal` to intentionally consume it so observer-removal uses revert-cancel path
+      await sleep(50)
+      return 'data' + count++
+    })
+
+    const query = new Query({
+      client: queryClient,
+      queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
+      options: { queryFn },
+    })
+
+    const observer1 = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+
+    query.addObserver(observer1)
+    const promise1 = query.fetch()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    query.removeObserver(observer1)
+
+    const observer2 = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+
+    query.addObserver(observer2)
+
+    query.fetch()
+
+    await expect(promise1).rejects.toBeInstanceOf(CancelledError)
+    await vi.waitFor(() => expect(query.state.fetchStatus).toBe('idle'))
+
+    expect(queryFn).toHaveBeenCalledTimes(2)
+
+    expect(query.state).toMatchObject({
+      fetchStatus: 'idle',
+      status: 'success',
+      data: 'data1',
+    })
+  })
 })
