@@ -8,6 +8,7 @@ import type {
   QueryKey,
   QueryOptions,
   StaleTime,
+  StaleTimeFunction,
 } from './types'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
@@ -102,9 +103,11 @@ export function resolveStaleTime<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  staleTime: undefined | StaleTime<TQueryFnData, TError, TData, TQueryKey>,
+  staleTime:
+    | undefined
+    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): number | undefined {
+): StaleTime | undefined {
   return typeof staleTime === 'function' ? staleTime(query) : staleTime
 }
 
@@ -261,13 +264,14 @@ export function replaceEqualDeep(a: any, b: any): any {
     const bItems = array ? b : Object.keys(b)
     const bSize = bItems.length
     const copy: any = array ? [] : {}
+    const aItemsSet = new Set(aItems)
 
     let equalItems = 0
 
     for (let i = 0; i < bSize; i++) {
       const key = array ? i : bItems[i]
       if (
-        ((!array && aItems.includes(key)) || array) &&
+        ((!array && aItemsSet.has(key)) || array) &&
         a[key] === undefined &&
         b[key] === undefined
       ) {

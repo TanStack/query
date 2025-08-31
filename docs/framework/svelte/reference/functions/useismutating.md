@@ -11,9 +11,13 @@ function useIsMutating(filters?, queryClient?): Readable<number>
 
 ## Parameters
 
-• **filters?**: `MutationFilters`
+### filters?
 
-• **queryClient?**: `QueryClient`
+`MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>
+
+### queryClient?
+
+`QueryClient`
 
 ## Returns
 
@@ -21,4 +25,4 @@ function useIsMutating(filters?, queryClient?): Readable<number>
 
 ## Defined in
 
-[packages/svelte-query/src/useIsMutating.ts:10](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/useIsMutating.ts#L10)
+[packages/svelte-query/src/useIsMutating.ts:7](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/useIsMutating.ts#L7)

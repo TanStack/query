@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query",
-  "version": "5.76.0",
+  "version": "5.85.6",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in Vue",
   "author": "Damian Osipiuk",
   "license": "MIT",
@@ -68,7 +68,7 @@
   },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitejs/plugin-vue": "^5.2.4",
     "@vue/composition-api": "1.7.2",
     "eslint-plugin-vue": "^9.27.0",
     "vue": "^3.4.27",

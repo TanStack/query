@@ -659,16 +659,27 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 
   const queries = createMemo(
     on(
-      () => [queryCount(), props.localStore.filter, sort(), sortOrder()],
+      () => [
+        queryCount(),
+        props.localStore.filter,
+        sort(),
+        sortOrder(),
+        props.localStore.hideDisabledQueries,
+      ],
       () => {
         const curr = query_cache().getAll()
 
-        const filtered = props.localStore.filter
+        let filtered = props.localStore.filter
           ? curr.filter(
               (item) =>
                 rankItem(item.queryHash, props.localStore.filter || '').passed,
             )
           : [...curr]
+
+        // Filter out disabled queries if hideDisabledQueries is enabled
+        if (props.localStore.hideDisabledQueries === 'true') {
+          filtered = filtered.filter((item) => !item.isDisabled())
+        }
 
         const sorted = sortFn()
           ? filtered.sort((a, b) => sortFn()!(a, b) * sortOrder())
@@ -1186,6 +1197,78 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       </DropdownMenu.SubContent>
                     </DropdownMenu.Portal>
                   </DropdownMenu.Sub>
+                  <DropdownMenu.Sub overlap gutter={8} shift={-4}>
+                    <DropdownMenu.SubTrigger
+                      class={cx(
+                        styles().settingsSubTrigger,
+                        'tsqd-settings-menu-sub-trigger',
+                        'tsqd-settings-menu-sub-trigger-disabled-queries',
+                      )}
+                    >
+                      <span>Disabled Queries</span>
+                      <ChevronDown />
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal
+                      ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                      mount={
+                        pip().pipWindow
+                          ? pip().pipWindow!.document.body
+                          : document.body
+                      }
+                    >
+                      <DropdownMenu.SubContent
+                        class={cx(
+                          styles().settingsMenu,
+                          'tsqd-settings-submenu',
+                        )}
+                      >
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            props.setLocalStore('hideDisabledQueries', 'false')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles().settingsSubButton,
+                            props.localStore.hideDisabledQueries !== 'true' &&
+                              styles().themeSelectedButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-show',
+                          )}
+                        >
+                          <span>Show</span>
+                          <Show
+                            when={
+                              props.localStore.hideDisabledQueries !== 'true'
+                            }
+                          >
+                            <CheckCircle />
+                          </Show>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            props.setLocalStore('hideDisabledQueries', 'true')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles().settingsSubButton,
+                            props.localStore.hideDisabledQueries === 'true' &&
+                              styles().themeSelectedButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-hide',
+                          )}
+                        >
+                          <span>Hide</span>
+                          <Show
+                            when={
+                              props.localStore.hideDisabledQueries === 'true'
+                            }
+                          >
+                            <CheckCircle />
+                          </Show>
+                        </DropdownMenu.Item>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
                 </DropdownMenu.Content>
               </DropdownMenu.Portal>
             </DropdownMenu.Root>
@@ -1263,6 +1346,17 @@ const QueryRow: Component<{ query: Query }> = (props) => {
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
+  const isStatic = createSubscribeToQueryCacheBatcher(
+    (queryCache) =>
+      queryCache()
+        .find({
+          queryKey: props.query.queryKey,
+        })
+        ?.isStatic() ?? false,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
+  )
+
   const isStale = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
       queryCache()
@@ -1336,6 +1430,9 @@ const QueryRow: Component<{ query: Query }> = (props) => {
         <code class="tsqd-query-hash">{props.query.queryHash}</code>
         <Show when={isDisabled()}>
           <div class="tsqd-query-disabled-indicator">disabled</div>
+        </Show>
+        <Show when={isStatic()}>
+          <div class="tsqd-query-static-indicator">static</div>
         </Show>
       </button>
     </Show>
@@ -3178,6 +3275,17 @@ const stylesFactory = (
         color: ${t(colors.gray[800], colors.gray[300])};
         background-color: ${t(colors.gray[300], colors.darkGray[600])};
         border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
+        font-size: ${font.size.xs};
+      }
+
+      & .tsqd-query-static-indicator {
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        padding: 0 ${tokens.size[2]};
+        color: ${t(colors.teal[800], colors.teal[300])};
+        background-color: ${t(colors.teal[100], colors.teal[900])};
+        border-bottom: 1px solid ${t(colors.teal[300], colors.teal[700])};
         font-size: ${font.size.xs};
       }
     `,

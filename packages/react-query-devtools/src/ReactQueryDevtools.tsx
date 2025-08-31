@@ -42,6 +42,10 @@ export interface DevtoolsOptions {
    * Use this so you can attach the devtool's styles to specific element in the DOM.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Set this to true to hide disabled queries from the devtools panel.
+   */
+  hideDisabledQueries?: boolean
 }
 
 export function ReactQueryDevtools(
@@ -56,6 +60,7 @@ export function ReactQueryDevtools(
     errorTypes,
     styleNonce,
     shadowDOMTarget,
+    hideDisabledQueries,
   } = props
   const [devtools] = React.useState(
     new TanstackQueryDevtools({
@@ -69,6 +74,7 @@ export function ReactQueryDevtools(
       errorTypes,
       styleNonce,
       shadowDOMTarget,
+      hideDisabledQueries,
     }),
   )
 

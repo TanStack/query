@@ -3,15 +3,17 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "baseUrl": ".",
-    "moduleResolution": "Bundler",
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
     "target": "ES2022"
   },
-  "include": ["src", "*.config.js", "*.config.ts", "package.json"],
+  "include": [
+    "src",
+    "test-setup.ts",
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
   "references": [
     { "path": "../angular-query-experimental" },
     { "path": "../query-persist-client-core" }

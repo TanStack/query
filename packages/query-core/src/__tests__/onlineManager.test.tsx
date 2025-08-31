@@ -34,7 +34,7 @@ describe('onlineManager', () => {
     navigatorSpy.mockRestore()
   })
 
-  test('setEventListener should use online boolean arg', async () => {
+  test('setEventListener should use online boolean arg', () => {
     let count = 0
 
     const setup = (setOnline: (online: boolean) => void) => {
@@ -47,7 +47,7 @@ describe('onlineManager', () => {
 
     onlineManager.setEventListener(setup)
 
-    await vi.advanceTimersByTimeAsync(30)
+    vi.advanceTimersByTime(20)
     expect(count).toEqual(1)
     expect(onlineManager.isOnline()).toBeFalsy()
   })

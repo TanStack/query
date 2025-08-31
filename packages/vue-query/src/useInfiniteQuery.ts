@@ -20,6 +20,7 @@ import type {
   MaybeRef,
   MaybeRefDeep,
   MaybeRefOrGetter,
+  ShallowOption,
 } from './types'
 import type { QueryClient } from './queryClient'
 
@@ -27,7 +28,6 @@ export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = MaybeRef<
@@ -36,7 +36,6 @@ export type UseInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >]: Property extends 'enabled'
@@ -45,7 +44,6 @@ export type UseInfiniteQueryOptions<
             TQueryFnData,
             TError,
             TData,
-            TQueryData,
             DeepUnwrapRef<TQueryKey>
           >[Property]
         >
@@ -54,14 +52,11 @@ export type UseInfiniteQueryOptions<
             TQueryFnData,
             TError,
             TData,
-            TQueryData,
             DeepUnwrapRef<TQueryKey>,
             TPageParam
           >[Property]
         >
-  } & {
-    shallow?: boolean
-  }
+  } & ShallowOption
 >
 
 export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
@@ -115,7 +110,6 @@ export function useInfiniteQuery<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >,
@@ -127,7 +121,6 @@ export function useInfiniteQuery(
   queryClient?: QueryClient,
 ) {
   return useBaseQuery(
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     options,
     queryClient,

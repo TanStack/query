@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.76.0",
+  "version": "5.85.6",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -66,7 +66,7 @@
   "devDependencies": {
     "@tanstack/solid-query": "workspace:*",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "^1.9.5",
+    "solid-js": "^1.9.7",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.11.6"
   },

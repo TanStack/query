@@ -5,7 +5,7 @@ title: Suspense
 
 Solid Query can also be used with Solid's [Suspense](https://docs.solidjs.com/reference/components/suspense) API's.
 
-To do that you need to wrap your suspendable component with `Suspense` component provided by Vue
+To do that you need to wrap your suspendable component with `Suspense` component provided by Solid
 
 ```tsx
 import { Suspense } from 'solid-js'
