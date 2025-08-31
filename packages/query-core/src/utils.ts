@@ -257,38 +257,39 @@ export function replaceEqualDeep(a: any, b: any): any {
   }
 
   const array = isPlainArray(a) && isPlainArray(b)
+  const object = !array && isPlainObject(a) && isPlainObject(b)
 
-  if (array || (isPlainObject(a) && isPlainObject(b))) {
-    const aItems = array ? a : Object.keys(a)
-    const aSize = aItems.length
-    const bItems = array ? b : Object.keys(b)
-    const bSize = bItems.length
-    const copy: any = array ? [] : {}
-    const aItemsSet = new Set(aItems)
+  if (!array && !object) return b
 
-    let equalItems = 0
+  const aItems = array ? a : Object.keys(a)
+  const aSize = aItems.length
+  const bItems = array ? b : Object.keys(b)
+  const bSize = bItems.length
+  const copy: any = array ? new Array(bSize) : {}
+  // const aItemsSet = new Set(aItems)
 
-    for (let i = 0; i < bSize; i++) {
-      const key = array ? i : bItems[i]
-      if (
-        ((!array && aItemsSet.has(key)) || array) &&
-        a[key] === undefined &&
-        b[key] === undefined
-      ) {
-        copy[key] = undefined
+  let equalItems = 0
+
+  for (let i = 0; i < bSize; i++) {
+    const key = array ? i : bItems[i]
+    const aItem = a[key]
+    if (
+      (array || a.hasOwnProperty(key)) &&
+      aItem === undefined &&
+      b[key] === undefined
+    ) {
+      copy[key] = undefined
+      equalItems++
+    } else {
+      const value = replaceEqualDeep(aItem, b[key])
+      copy[key] = value
+      if (value === aItem && aItem !== undefined) {
         equalItems++
-      } else {
-        copy[key] = replaceEqualDeep(a[key], b[key])
-        if (copy[key] === a[key] && a[key] !== undefined) {
-          equalItems++
-        }
       }
     }
-
-    return aSize === bSize && equalItems === aSize ? a : copy
   }
 
-  return b
+  return aSize === bSize && equalItems === aSize ? a : copy
 }
 
 /**
