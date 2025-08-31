@@ -266,7 +266,6 @@ export function replaceEqualDeep(a: any, b: any): any {
   const bItems = array ? b : Object.keys(b)
   const bSize = bItems.length
   const copy: any = array ? new Array(bSize) : {}
-  // const aItemsSet = new Set(aItems)
 
   let equalItems = 0
 
@@ -274,7 +273,7 @@ export function replaceEqualDeep(a: any, b: any): any {
     const key = array ? i : bItems[i]
     const aItem = a[key]
     if (
-      (array || a.hasOwnProperty(key)) &&
+      (array || Object.prototype.hasOwnProperty.call(a, key)) &&
       aItem === undefined &&
       b[key] === undefined
     ) {
