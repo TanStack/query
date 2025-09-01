@@ -253,92 +253,46 @@ const hasOwn = Object.prototype.hasOwnProperty
  * This can be used for structural sharing between JSON values for example.
  */
 export function replaceEqualDeep<T>(a: unknown, b: T): T
-export function replaceEqualDeep(a: unknown, b: unknown): any {
+export function replaceEqualDeep(a: any, b: any): any {
   if (a === b) {
     return a
   }
 
-  const aIsArr = isPlainArray(a)
-  const bIsArr = isPlainArray(b)
+  const array = isPlainArray(a) && isPlainArray(b)
 
-  // both are arrays
-  if (aIsArr && bIsArr) {
-    const aSize = a.length
-    const bSize = b.length
-    const copy: Array<unknown> = new Array(bSize)
-    let equalItems = 0
+  if (!array && !(isPlainObject(a) && isPlainObject(b))) return b
 
-    for (let i = 0; i < bSize; i++) {
-      const aItem = a[i]
-      const bItem = b[i]
+  const aItems = array ? a : Object.keys(a)
+  const aSize = aItems.length
+  const bItems = array ? b : Object.keys(b)
+  const bSize = bItems.length
+  const copy: any = array ? new Array(bSize) : {}
 
-      // most common case (strict equality)
-      if (aItem === bItem) {
-        copy[i] = aItem
-        if (i < aSize) equalItems++
-        continue
-      }
-
-      // either item is not an array or object
-      if (
-        aItem === null ||
-        bItem === null ||
-        typeof aItem !== 'object' ||
-        typeof bItem !== 'object'
-      ) {
-        copy[i] = bItem
-        continue
-      }
-
-      const v = replaceEqualDeep(aItem, bItem)
-      copy[i] = v
-      if (v === aItem) equalItems++
-    }
-
-    return aSize === bSize && equalItems === aSize ? a : copy
-  }
-
-  // only 1 is an array
-  if (aIsArr || bIsArr) {
-    return b
-  }
-
-  // at least 1 is not an object
-  if (!isPlainObject(a) || !isPlainObject(b)) {
-    return b
-  }
-
-  const aSize = Object.keys(a).length
-  const copy: Record<PropertyKey, unknown> = {}
   let equalItems = 0
-  let bSize = 0
 
-  for (const k in b) {
-    bSize++
+  for (let i = 0; i < bSize; i++) {
+    const key: any = array ? i : bItems[i]
+    const aItem = a[key]
+    const bItem = b[key]
 
-    const aItem = a[k]
-    const bItem = b[k]
-
-    // most common case (strict equality)
     if (aItem === bItem) {
-      copy[k] = aItem
-      if (hasOwn.call(a, k)) equalItems++
+      copy[key] = aItem
+      if (array ? i < aSize : hasOwn.call(a, key)) equalItems++
       continue
     }
 
-    // either item is not an array or object
     if (
       aItem === null ||
       bItem === null ||
       typeof aItem !== 'object' ||
       typeof bItem !== 'object'
     ) {
-      copy[k] = bItem
+      copy[key] = bItem
       continue
     }
 
     const v = replaceEqualDeep(aItem, bItem)
-    copy[k] = v
+    copy[key] = v
     if (v === aItem) equalItems++
   }
 
