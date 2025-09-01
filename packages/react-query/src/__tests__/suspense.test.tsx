@@ -1242,6 +1242,49 @@ describe('useQueries with suspense', () => {
 describe('cacheTime minimum enforcement with suspense', () => {
   const queryClient = createQueryClient()
 
+  it('should not cause infinite re-renders with synchronous query function and cacheTime: 0', async () => {
+    const key = queryKey()
+    let renderCount = 0
+    let queryFnCallCount = 0
+    const maxChecks = 20
+
+    function Page() {
+      renderCount++
+
+      if (renderCount > maxChecks) {
+        throw new Error(`Infinite loop detected! Renders: ${renderCount}`)
+      }
+
+      const result = useQuery(
+        key,
+        () => {
+          queryFnCallCount++
+          return 42
+        },
+        {
+          cacheTime: 0,
+          suspense: true,
+        },
+      )
+
+      return <div>data: {result.data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('data: 42'))
+
+    expect(renderCount).toBeLessThan(5)
+    expect(queryFnCallCount).toBe(1)
+    expect(rendered.queryByText('data: 42')).not.toBeNull()
+    expect(rendered.queryByText('loading')).toBeNull()
+  })
+
   describe('boundary value tests', () => {
     test.each([
       [0, 1000],
