@@ -20,11 +20,11 @@ export function streamedQuery<
   TQueryFnData = unknown,
   TQueryKey extends QueryKey = QueryKey,
 >({
-  queryFn,
+  streamFn,
   refetchMode = 'reset',
   maxChunks,
 }: {
-  queryFn: (
+  streamFn: (
     context: QueryFunctionContext<TQueryKey>,
   ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
   refetchMode?: 'append' | 'reset' | 'replace'
@@ -46,7 +46,7 @@ export function streamedQuery<
     }
 
     let result: Array<TQueryFnData> = []
-    const stream = await queryFn(context)
+    const stream = await streamFn(context)
 
     for await (const chunk of stream) {
       if (context.signal.aborted) {
