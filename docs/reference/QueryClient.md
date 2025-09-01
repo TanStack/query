@@ -403,13 +403,16 @@ The `cancelQueries` method can be used to cancel outgoing queries based on their
 This is most useful when performing optimistic updates since you will likely need to cancel any outgoing query refetches so they don't clobber your optimistic update when they resolve.
 
 ```tsx
-await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
+await queryClient.cancelQueries(
+  { queryKey: ['posts'], exact: true },
+  { silent: true }
+)
 ```
 
 **Options**
 
 - `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
-- `cancelOptions?: CancelOptions`: [Cancel Options](../../framework/react/guides/filters.md#cancel-options)
+- `cancelOptions?: CancelOptions`: [Cancel Options](../../framework/react/guides/query-cancellation.md#cancel-options)
 
 **Returns**
 
