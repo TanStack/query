@@ -99,7 +99,7 @@ export function useRefreshOnFocus() {
 }
 ```
 
-In the above code, The first focus (when the screen is initially mounted) is skipped because `useFocusEffect` calls our callback on mount in addition to screen focus.
+In the above code, the first focus (when the screen is initially mounted) is skipped because `useFocusEffect` calls our callback on mount in addition to screen focus.
 
 ## Disable queries on out of focus screens
 
