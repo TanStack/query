@@ -507,7 +507,15 @@ export class Query<
         | Promise<TData>
         | undefined,
       fn: context.fetchFn as () => Promise<TData>,
-      abort: abortController.abort.bind(abortController),
+      onCancel: (error) => {
+        if (error instanceof CancelledError && error.revert) {
+          this.setState({
+            ...this.#revertState,
+            fetchStatus: 'idle' as const,
+          })
+        }
+        abortController.abort()
+      },
       onFail: (failureCount, error) => {
         this.#dispatch({ type: 'failed', failureCount, error })
       },
@@ -550,15 +558,16 @@ export class Query<
       if (error instanceof CancelledError) {
         if (error.silent) {
           // silent cancellation implies a new fetch is going to be started,
-          // so we hatch onto that promise
+          // so we piggyback onto that promise
           return this.#retryer.promise
         } else if (error.revert) {
-          this.setState({
-            ...this.#revertState,
-            fetchStatus: 'idle' as const,
-          })
           // transform error into reverted state data
-          return this.state.data!
+          // if the initial fetch was cancelled, we have no data, so we have
+          // to get reject with a CancelledError
+          if (this.state.data === undefined) {
+            throw error
+          }
+          return this.state.data
         }
       }
       this.#dispatch({
