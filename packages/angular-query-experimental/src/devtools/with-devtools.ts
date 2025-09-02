@@ -168,7 +168,7 @@ export const withDevtools: WithDevtools = (
                 .catch((error) => {
                   console.error(
                     'Install @tanstack/query-devtools or reinstall without --omit=optional.',
-                    error
+                    error,
                   )
                 })
             },
