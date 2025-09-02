@@ -9,9 +9,9 @@ import {
   runInInjectionContext,
   untracked,
 } from '@angular/core'
-import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { isPlatformBrowser } from '@angular/common'
+import type { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type {
   DevtoolsPanelOptions,
   InjectDevtoolsPanel,
@@ -68,20 +68,29 @@ export const injectDevtoolsPanel: InjectDevtoolsPanel = (
       untracked(() => {
         if (!client) throw new Error('No QueryClient found')
         if (!devtools && hostElement) {
-          devtools = new TanstackQueryDevtoolsPanel({
-            client,
-            queryFlavor: 'Angular Query',
-            version: '5',
-            buttonPosition: 'bottom-left',
-            position: 'bottom',
-            initialIsOpen: true,
-            errorTypes,
-            styleNonce,
-            shadowDOMTarget,
-            onClose,
-            onlineManager,
-          })
-          devtools.mount(hostElement.nativeElement)
+          import('@tanstack/query-devtools')
+            .then((queryDevtools) => {
+              devtools = new queryDevtools.TanstackQueryDevtoolsPanel({
+                client,
+                queryFlavor: 'Angular Query',
+                version: '5',
+                buttonPosition: 'bottom-left',
+                position: 'bottom',
+                initialIsOpen: true,
+                errorTypes,
+                styleNonce,
+                shadowDOMTarget,
+                onClose,
+                onlineManager,
+              })
+              devtools.mount(hostElement.nativeElement)
+            })
+            .catch((error) => {
+              console.error(
+                'Install @tanstack/query-devtools or reinstall without --omit=optional.',
+                error,
+              )
+            })
         } else if (devtools && hostElement) {
           devtools.setClient(client)
           devtools.setErrorTypes(errorTypes)

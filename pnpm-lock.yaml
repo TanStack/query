@@ -2244,9 +2244,6 @@ importers:
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../query-core
-      '@tanstack/query-devtools':
-        specifier: workspace:*
-        version: link:../query-devtools
     devDependencies:
       '@angular/common':
         specifier: ^20.0.0
@@ -2278,6 +2275,10 @@ importers:
       vite-tsconfig-paths:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.3)(jiti@2.4.2)(less@4.3.0)(lightningcss@1.29.2)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.0))
+    optionalDependencies:
+      '@tanstack/query-devtools':
+        specifier: workspace:*
+        version: link:../query-devtools
     publishDirectory: dist
 
   packages/angular-query-persist-client:

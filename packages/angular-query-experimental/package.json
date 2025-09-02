@@ -82,8 +82,7 @@
     "**/*.mjs.map"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "@tanstack/query-devtools": "workspace:*"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
     "@angular/common": "^20.0.0",
@@ -96,6 +95,9 @@
     "vite-plugin-dts": "4.2.3",
     "vite-plugin-externalize-deps": "^0.9.0",
     "vite-tsconfig-paths": "^5.1.4"
+  },
+  "optionalDependencies": {
+    "@tanstack/query-devtools": "workspace:*"
   },
   "peerDependencies": {
     "@angular/common": ">=16.0.0",

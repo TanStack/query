@@ -146,24 +146,31 @@ export const withDevtools: WithDevtools = (
               }
 
               // Create devtools
-              import('@tanstack/query-devtools').then((queryDevtools) => {
-                // As this code runs async, the injector could have been destroyed
-                if (injectorIsDestroyed) return
+              import('@tanstack/query-devtools')
+                .then((queryDevtools) => {
+                  // As this code runs async, the injector could have been destroyed
+                  if (injectorIsDestroyed) return
 
-                devtools = new queryDevtools.TanstackQueryDevtools({
-                  ...devtoolsOptions(),
-                  client: getResolvedQueryClient(),
-                  queryFlavor: 'Angular Query',
-                  version: '5',
-                  onlineManager,
+                  devtools = new queryDevtools.TanstackQueryDevtools({
+                    ...devtoolsOptions(),
+                    client: getResolvedQueryClient(),
+                    queryFlavor: 'Angular Query',
+                    version: '5',
+                    onlineManager,
+                  })
+
+                  el = document.body.appendChild(document.createElement('div'))
+                  el.classList.add('tsqd-parent-container')
+                  devtools.mount(el)
+
+                  destroyRef.onDestroy(destroyDevtools)
                 })
-
-                el = document.body.appendChild(document.createElement('div'))
-                el.classList.add('tsqd-parent-container')
-                devtools.mount(el)
-
-                destroyRef.onDestroy(destroyDevtools)
-              })
+                .catch((error) => {
+                  console.error(
+                    'Install @tanstack/query-devtools or reinstall without --omit=optional.',
+                    error
+                  )
+                })
             },
             { injector },
           )
