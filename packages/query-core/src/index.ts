@@ -18,7 +18,11 @@ export {
   managedClearInterval,
   systemSetTimeoutZero,
   defaultTimeoutProvider,
+  timeoutManager,
   type ManagedTimerId,
+  type TimeoutCallback,
+  type TimeoutProvider,
+  type TimeoutProviderId,
 } from './timeoutManager'
 export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
