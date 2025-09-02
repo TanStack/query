@@ -122,36 +122,39 @@ export class QueriesObserver<
         (observer, index) => observer !== prevObservers[index],
       )
 
-      if (prevObservers.length === newObservers.length && !hasIndexChange) {
-        const hasResultChangeOnly = newResult.some((result, index) => {
-          const prev = this.#result[index]
-          return !prev || !shallowEqualObjects(result, prev)
-        })
+      const hasResultChange =
+        prevObservers.length === newObservers.length && !hasIndexChange
+          ? newResult.some((result, index) => {
+              const prev = this.#result[index]
+              const isChanged = !prev || !shallowEqualObjects(result, prev)
+              console.log(`Result ${index}:`, {
+                hasData: !!result.data,
+                prevData: prev?.data,
+                dataChanged: result.data !== prev?.data,
+              })
+              return isChanged
+            })
+          : true
 
-        if (hasResultChangeOnly) {
-          this.#result = newResult
-          this.#notify()
-        }
+      if (!hasIndexChange && !hasResultChange) return
 
-        return
+      if (hasIndexChange) {
+        this.#observers = newObservers
       }
-
-      this.#observers = newObservers
       this.#result = newResult
 
-      if (!this.hasListeners()) {
-        return
-      }
+      if (!this.hasListeners()) return
 
-      difference(prevObservers, newObservers).forEach((observer) => {
-        observer.destroy()
-      })
-
-      difference(newObservers, prevObservers).forEach((observer) => {
-        observer.subscribe((result) => {
-          this.#onUpdate(observer, result)
+      if (hasIndexChange) {
+        difference(prevObservers, newObservers).forEach((observer) => {
+          observer.destroy()
         })
-      })
+        difference(newObservers, prevObservers).forEach((observer) => {
+          observer.subscribe((result) => {
+            this.#onUpdate(observer, result)
+          })
+        })
+      }
 
       this.#notify()
     })
