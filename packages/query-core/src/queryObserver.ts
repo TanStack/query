@@ -263,27 +263,39 @@ export class QueryObserver<
   getServerResult():
     | QueryObserverPendingResult<TData, TError>
     | QueryObserverResult<TData, TError> {
-    const currentResult = this.#currentResult
-    const queryState = this.#currentQuery.state
+    const currentResult = this.getCurrentResult()
 
     if (
       currentResult.status === 'success' &&
       this.#currentQuery.state.dataUpdatedAt === 0
     ) {
       const pendingResult: QueryObserverPendingResult<TData, TError> = {
-        ...currentResult,
         status: 'pending',
+        fetchStatus: this.#currentQuery.state.fetchStatus,
         isPending: true,
         isSuccess: false,
         isError: false,
-        isLoading: queryState.fetchStatus === 'fetching',
-        isInitialLoading: queryState.fetchStatus === 'fetching',
+        isLoading: this.#currentQuery.state.fetchStatus === 'fetching',
+        isInitialLoading: this.#currentQuery.state.fetchStatus === 'fetching',
+        isFetching: this.#currentQuery.state.fetchStatus === 'fetching',
+        isRefetching: false,
         data: undefined,
+        dataUpdatedAt: 0,
         error: null,
+        errorUpdatedAt: 0,
+        errorUpdateCount: 0,
+        failureCount: 0,
+        failureReason: null,
         isLoadingError: false,
         isRefetchError: false,
+        isFetched: false,
+        isFetchedAfterMount: false,
+        isPaused: this.#currentQuery.state.fetchStatus === 'paused',
         isPlaceholderData: false,
-        isRefetching: false,
+        isStale: currentResult.isStale,
+        refetch: currentResult.refetch,
+        promise: currentResult.promise,
+        isEnabled: currentResult.isEnabled,
       }
 
       return pendingResult
