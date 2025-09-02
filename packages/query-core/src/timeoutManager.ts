@@ -8,16 +8,37 @@
  * Symbol.toPrimitive.
  */
 export type TimeoutProviderId = number | { [Symbol.toPrimitive]: () => number }
+export type TimeoutCallback = (_: void) => void
 
 export type TimeoutProvider = {
-  setTimeout: (callback: () => void, delay: number) => TimeoutProviderId
-  clearTimeout: (timeoutId: number | undefined) => void
+  /** Used in error messages. */
+  readonly name: string
+
+  readonly setTimeout: (
+    callback: TimeoutCallback,
+    delay: number,
+  ) => TimeoutProviderId
+  readonly clearTimeout: (timeoutId: number | undefined) => void
+
+  readonly setInterval: (
+    callback: TimeoutCallback,
+    delay: number,
+  ) => TimeoutProviderId
+  readonly clearInterval: (intervalId: number | undefined) => void
 }
 
-const defaultTimeoutProvider: TimeoutProvider = {
+export const defaultTimeoutProvider: TimeoutProvider = {
+  name: 'default',
+
   setTimeout: (callback, delay) => setTimeout(callback, delay),
   clearTimeout: (timeoutId) => clearTimeout(timeoutId),
+
+  setInterval: (callback, delay) => setInterval(callback, delay),
+  clearInterval: (intervalId) => clearInterval(intervalId),
 }
+
+/** Timeout ID returned by {@link TimeoutManager} */
+export type ManagedTimerId = number
 
 /**
  * Allows customization of how timeouts are created.
@@ -31,11 +52,13 @@ const defaultTimeoutProvider: TimeoutProvider = {
  * coalesces timeouts.
  */
 export class TimeoutManager implements TimeoutProvider {
+  public readonly name = 'TimeoutManager'
+
   #provider: TimeoutProvider = defaultTimeoutProvider
   #setTimeoutCalls = 0
 
   setTimeoutProvider(provider: TimeoutProvider): void {
-    if (this.#setTimeoutCalls > 0) {
+    if (this.#setTimeoutCalls > 0 && provider !== this.#provider) {
       // After changing providers, `clearTimeout` will not work as expected for
       // timeouts from the previous provider.
       //
@@ -48,21 +71,48 @@ export class TimeoutManager implements TimeoutProvider {
       // We could internally queue `setTimeout` calls to `TimeoutManager` until
       // some API call to set the initial provider.
       console.warn(
-        '[timeoutManager]: Provider changed after setTimeout calls were made. This might result in unexpected behavior.',
+        `[timeoutManager]: Switching to ${provider.name} provider after setTimeout calls were made with ${this.#provider.name} provider might result in unexpected behavior.`,
       )
     }
 
     this.#provider = provider
   }
 
-  setTimeout(callback: () => void, delay: number): number {
+  setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId {
     this.#setTimeoutCalls++
-    return Number(this.#provider.setTimeout(callback, delay))
+    return providerIdToNumber(
+      this.#provider,
+      this.#provider.setTimeout(callback, delay),
+    )
   }
 
-  clearTimeout(timeoutId: number | undefined): void {
+  clearTimeout(timeoutId: ManagedTimerId | undefined): void {
     this.#provider.clearTimeout(timeoutId)
   }
+
+  setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId {
+    return providerIdToNumber(
+      this.#provider,
+      this.#provider.setInterval(callback, delay),
+    )
+  }
+
+  clearInterval(intervalId: ManagedTimerId | undefined): void {
+    this.#provider.clearInterval(intervalId)
+  }
+}
+
+function providerIdToNumber(
+  provider: TimeoutProvider,
+  providerId: TimeoutProviderId,
+): ManagedTimerId {
+  const numberId = Number(providerId)
+  if (isNaN(numberId)) {
+    throw new Error(
+      `TimeoutManager: could not convert ${provider.name} provider timeout ID to valid number`,
+    )
+  }
+  return numberId
 }
 
 export const timeoutManager = new TimeoutManager()
@@ -70,12 +120,43 @@ export const timeoutManager = new TimeoutManager()
 // Exporting functions that use `setTimeout` to reduce bundle size impact, since
 // method names on objects are usually not minified.
 
-/** A version of `setTimeout` that uses {@link timeoutManager} to set the timeout. */
-export function managedSetTimeout(callback: () => void, delay: number): number {
+/** A version of `setTimeout` controlled by {@link timeoutManager}. */
+export function managedSetTimeout(
+  callback: TimeoutCallback,
+  delay: number,
+): ManagedTimerId {
   return timeoutManager.setTimeout(callback, delay)
 }
 
-/** A version of `clearTimeout` that uses {@link timeoutManager} to set the timeout. */
-export function managedClearTimeout(timeoutId: number | undefined): void {
+/** A version of `clearTimeout` controlled by {@link timeoutManager}. */
+export function managedClearTimeout(
+  timeoutId: ManagedTimerId | undefined,
+): void {
   timeoutManager.clearTimeout(timeoutId)
+}
+
+/** A version of `setInterval` controlled by {@link timeoutManager}. */
+export function managedSetInterval(
+  callback: TimeoutCallback,
+  delay: number,
+): ManagedTimerId {
+  return timeoutManager.setInterval(callback, delay)
+}
+
+/** A version of `clearInterval` controlled by {@link timeoutManager}. */
+export function managedClearInterval(
+  intervalId: ManagedTimerId | undefined,
+): void {
+  timeoutManager.clearInterval(intervalId)
+}
+
+/**
+ * In many cases code wants to delay to the next event loop tick; this is not
+ * mediated by {@link timeoutManager}.
+ *
+ * This function is provided to make auditing the `tanstack/query-core` for
+ * incorrect use of system `setTimeout` easier.
+ */
+export function systemSetTimeoutZero(callback: TimeoutCallback): void {
+  setTimeout(callback, 0)
 }

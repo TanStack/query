@@ -11,6 +11,15 @@ export { MutationCache } from './mutationCache'
 export type { MutationCacheNotifyEvent } from './mutationCache'
 export { MutationObserver } from './mutationObserver'
 export { notifyManager, defaultScheduler } from './notifyManager'
+export {
+  managedSetTimeout,
+  managedClearTimeout,
+  managedSetInterval,
+  managedClearInterval,
+  systemSetTimeoutZero,
+  defaultTimeoutProvider,
+  type ManagedTimerId,
+} from './timeoutManager'
 export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
 export {
