@@ -1,4 +1,3 @@
-import { managedSetTimeout } from '../../query-core/src/timeoutManager'
 import { noop } from './utils'
 
 interface AsyncThrottleOptions {
@@ -22,11 +21,11 @@ export function asyncThrottle<TArgs extends ReadonlyArray<unknown>>(
     if (isScheduled) return
     isScheduled = true
     while (isExecuting) {
-      await new Promise((done) => managedSetTimeout(done, interval))
+      await new Promise((done) => setTimeout(done, interval))
     }
     while (Date.now() < nextExecutionTime) {
       await new Promise((done) =>
-        managedSetTimeout(done, nextExecutionTime - Date.now()),
+        setTimeout(done, nextExecutionTime - Date.now()),
       )
     }
     isScheduled = false
