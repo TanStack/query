@@ -27,7 +27,9 @@ export const ensureSuspenseTimers = (
     const MIN_SUSPENSE_TIME_MS = 1000
 
     const clamp = (value: number | 'static' | undefined) =>
-      value === 'static' ? value : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS)
+      value === 'static'
+        ? value
+        : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS)
 
     const originalStaleTime = defaultedOptions.staleTime
     defaultedOptions.staleTime =
@@ -36,7 +38,10 @@ export const ensureSuspenseTimers = (
         : clamp(originalStaleTime)
 
     if (typeof defaultedOptions.gcTime === 'number') {
-      defaultedOptions.gcTime = Math.max(defaultedOptions.gcTime, MIN_SUSPENSE_TIME_MS)
+      defaultedOptions.gcTime = Math.max(
+        defaultedOptions.gcTime,
+        MIN_SUSPENSE_TIME_MS,
+      )
     }
   }
 }
