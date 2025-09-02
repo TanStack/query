@@ -1379,7 +1379,7 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
 
-    // no increase because just a re-render
+    // one extra call due to recomputing the combined result on rerender
     expect(spy).toHaveBeenCalledTimes(4)
 
     value = 1
@@ -1391,7 +1391,7 @@ describe('useQueries', () => {
       rendered.getByText('data: true first result:1,second result:1'),
     ).toBeInTheDocument()
 
-    // two value changes = two re-renders
+    // refetch with new values triggers: both pending -> one pending -> both resolved
     expect(spy).toHaveBeenCalledTimes(7)
   })
 
