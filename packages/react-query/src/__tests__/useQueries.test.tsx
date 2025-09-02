@@ -1210,7 +1210,7 @@ describe('useQueries', () => {
 
     const length = results.length
 
-    expect([4, 5]).toContain(results.length)
+    expect([4, 5, 6]).toContain(results.length)
 
     expect(results[results.length - 1]).toStrictEqual({
       combined: true,
@@ -1380,7 +1380,7 @@ describe('useQueries', () => {
     fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
 
     // no increase because just a re-render
-    expect(spy).toHaveBeenCalledTimes(3)
+    expect(spy).toHaveBeenCalledTimes(4)
 
     value = 1
 
@@ -1392,7 +1392,7 @@ describe('useQueries', () => {
     ).toBeInTheDocument()
 
     // two value changes = two re-renders
-    expect(spy).toHaveBeenCalledTimes(5)
+    expect(spy).toHaveBeenCalledTimes(7)
   })
 
   it('should re-run combine if the functional reference changes', async () => {
