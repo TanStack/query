@@ -362,9 +362,7 @@ function hasObjectPrototype(o: any): boolean {
 
 export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve) => {
-    const setTimeoutFn =
-      timeout === 0 ? systemSetTimeoutZero : managedSetTimeout
-    setTimeoutFn(resolve, timeout)
+    managedSetTimeout(resolve, timeout)
   })
 }
 
