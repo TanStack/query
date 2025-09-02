@@ -68,29 +68,35 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
       return
     }
 
-    if (this.#providerCalled) {
-      // After changing providers, `clearTimeout` will not work as expected for
-      // timeouts from the previous provider.
-      //
-      // Since they may allocate the same timeout ID, clearTimeout may cancel an
-      // arbitrary different timeout, or unexpected no-op.
-      //
-      // We could protect against this by mixing the timeout ID bits
-      // deterministically with some per-provider bits.
-      //
-      // We could internally queue `setTimeout` calls to `TimeoutManager` until
-      // some API call to set the initial provider.
-      console.warn(
-        `[timeoutManager]: Switching to ${provider.name} provider after calls to ${this.#provider.name} provider might result in unexpected behavior.`,
-      )
+    if (process.env.NODE_ENV !== 'production') {
+      if (this.#providerCalled) {
+        // After changing providers, `clearTimeout` will not work as expected for
+        // timeouts from the previous provider.
+        //
+        // Since they may allocate the same timeout ID, clearTimeout may cancel an
+        // arbitrary different timeout, or unexpected no-op.
+        //
+        // We could protect against this by mixing the timeout ID bits
+        // deterministically with some per-provider bits.
+        //
+        // We could internally queue `setTimeout` calls to `TimeoutManager` until
+        // some API call to set the initial provider.
+        console.error(
+          `[timeoutManager]: Switching to ${provider.name} provider after calls to ${this.#provider.name} provider might result in unexpected behavior.`,
+        )
+      }
     }
 
     this.#provider = provider
-    this.#providerCalled = false
+    if (process.env.NODE_ENV !== 'production') {
+      this.#providerCalled = false
+    }
   }
 
   setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId {
-    this.#providerCalled = true
+    if (process.env.NODE_ENV !== 'production') {
+      this.#providerCalled = true
+    }
     return providerIdToNumber(
       this.#provider,
       this.#provider.setTimeout(callback, delay),
@@ -102,7 +108,9 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
   }
 
   setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId {
-    this.#providerCalled = true
+    if (process.env.NODE_ENV !== 'production') {
+      this.#providerCalled = true
+    }
     return providerIdToNumber(
       this.#provider,
       this.#provider.setInterval(callback, delay),

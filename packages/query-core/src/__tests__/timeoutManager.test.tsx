@@ -21,8 +21,10 @@ describe('timeoutManager', () => {
     }
   }
 
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+
   beforeEach(() => {
-    vi.spyOn(console, 'warn')
+    consoleErrorSpy = vi.spyOn(console, 'error')
   })
 
   afterEach(() => {
@@ -82,7 +84,7 @@ describe('timeoutManager', () => {
         // 1. switching before making any calls does not warn
         const customProvider = createMockProvider()
         manager.setTimeoutProvider(customProvider)
-        expect(console.warn).not.toHaveBeenCalled()
+        expect(consoleErrorSpy).not.toHaveBeenCalled()
 
         // Make a call. The next switch should warn
         manager.setTimeout(vi.fn(), 100)
@@ -90,15 +92,15 @@ describe('timeoutManager', () => {
         // 2. switching after making a call should warn
         const customProvider2 = createMockProvider('custom2')
         manager.setTimeoutProvider(customProvider2)
-        expect(console.warn).toHaveBeenCalledWith(
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
           '[timeoutManager]: Switching to custom2 provider after calls to custom provider might result in unexpected behavior.',
         )
 
         // 3. Switching again with no intermediate calls should not warn
-        vi.mocked(console.warn).mockClear()
+        vi.mocked(consoleErrorSpy).mockClear()
         const customProvider3 = createMockProvider('custom3')
         manager.setTimeoutProvider(customProvider3)
-        expect(console.warn).not.toHaveBeenCalled()
+        expect(consoleErrorSpy).not.toHaveBeenCalled()
       })
     })
 
