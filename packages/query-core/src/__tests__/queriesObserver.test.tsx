@@ -377,7 +377,6 @@ describe('queriesObserver', () => {
         const clientResults = observer.getCurrentResult()
         const serverResults = observer.getServerResult()
 
-        // 서버와 클라이언트의 차이를 명확히 보여줌
         expect(serverResults[0]).toMatchObject({
           status: 'pending',
           data: undefined,
@@ -614,7 +613,7 @@ describe('queriesObserver', () => {
         })
       })
 
-      test('should handle combine with mixed hydrated and non-hydrated queries', () => {
+      test('should handle combine with hydrated and missing queries', () => {
         const key1 = queryKey()
         const key2 = queryKey()
 
