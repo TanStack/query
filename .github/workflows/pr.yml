@@ -65,12 +65,12 @@ jobs:
         run: |
           echo "COMMIT_SHA=${{ github.event.pull_request.head.sha || github.sha }}" >> $GITHUB_ENV
       - name: Preview Bundle Size
-        uses: marocchino/sticky-pull-request-comment@28d58c4b5a5eae3bbe45348c3990dcbc2ffcdc69
+        uses: marocchino/sticky-pull-request-comment@9c40848920de7cd32a71773ba792d8b04f03bf7a
         with:
           message: |
             Sizes for commit ${{ env.COMMIT_SHA }}:
             | Branch | Bundle Size |
             |--------|--------|
-            | Main | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.1.0/jsx-runtime?target=es2022%22,%22react@^19.1.0?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.1.0/jsx-runtime?target=es2022%22,%22react@%5E19.1.0?target=es2022%22%5D%7D%7D) |
-            | This PR | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.1.0/jsx-runtime?target=es2022%22,%22react@^19.1.0?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.1.0/jsx-runtime?target=es2022%22,%22react@%5E19.1.0?target=es2022%22%5D%7D%7D) |
+            | Main | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.1.1/jsx-runtime?target=es2022%22,%22react@^19.1.1?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.1.1/jsx-runtime?target=es2022%22,%22react@%5E19.1.1?target=es2022%22%5D%7D%7D) |
+            | This PR | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.1.1/jsx-runtime?target=es2022%22,%22react@^19.1.1?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.1.1/jsx-runtime?target=es2022%22,%22react@%5E19.1.1?target=es2022%22%5D%7D%7D) |
         continue-on-error: true

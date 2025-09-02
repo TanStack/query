@@ -32,4 +32,10 @@ export default [
       ],
     },
   },
+  {
+    files: ['**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+    },
+  },
 ]

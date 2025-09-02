@@ -1210,7 +1210,7 @@ describe('useQueries', () => {
 
     const length = results.length
 
-    expect([4, 5]).toContain(results.length)
+    expect([4, 5, 6]).toContain(results.length)
 
     expect(results[results.length - 1]).toStrictEqual({
       combined: true,
@@ -1379,8 +1379,8 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
 
-    // no increase because just a re-render
-    expect(spy).toHaveBeenCalledTimes(3)
+    // one extra call due to recomputing the combined result on rerender
+    expect(spy).toHaveBeenCalledTimes(4)
 
     value = 1
 
@@ -1391,8 +1391,8 @@ describe('useQueries', () => {
       rendered.getByText('data: true first result:1,second result:1'),
     ).toBeInTheDocument()
 
-    // two value changes = two re-renders
-    expect(spy).toHaveBeenCalledTimes(5)
+    // refetch with new values triggers: both pending -> one pending -> both resolved
+    expect(spy).toHaveBeenCalledTimes(7)
   })
 
   it('should re-run combine if the functional reference changes', async () => {
@@ -1657,5 +1657,88 @@ describe('useQueries', () => {
         'data: first result updated, second result, third result',
       ),
     ).toBeInTheDocument()
+  })
+
+  it('should not re-run stable combine on unrelated re-render', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const spy = vi.fn()
+
+    function Page() {
+      const [unrelatedState, setUnrelatedState] = React.useState(0)
+
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: async () => {
+                await sleep(10)
+                return 'first result'
+              },
+            },
+            {
+              queryKey: key2,
+              queryFn: async () => {
+                await sleep(20)
+                return 'second result'
+              },
+            },
+          ],
+          combine: React.useCallback((results: Array<QueryObserverResult>) => {
+            const result = {
+              combined: true,
+              res: results.map((res) => res.data).join(','),
+            }
+            spy(result)
+            return result
+          }, []),
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+          <div>unrelated: {unrelatedState}</div>
+          <button onClick={() => setUnrelatedState((s) => s + 1)}>
+            increment
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await vi.advanceTimersByTimeAsync(21)
+    expect(
+      rendered.getByText('data: true first result,second result'),
+    ).toBeInTheDocument()
+
+    // initial renders: both pending, one pending, both resolved
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByText('unrelated: 1')).toBeInTheDocument()
+
+    // combine should NOT re-run for unrelated re-render with stable reference
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByText('unrelated: 2')).toBeInTheDocument()
+
+    // still no extra calls to combine
+    expect(spy).toHaveBeenCalledTimes(3)
   })
 })

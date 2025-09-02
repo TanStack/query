@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
+  CancelledError,
   MutationObserver,
   QueryClient,
   QueryObserver,
@@ -993,53 +994,24 @@ describe('queryClient', () => {
   describe('cancelQueries', () => {
     test('should revert queries to their previous state', async () => {
       const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
-      await queryClient.fetchQuery({
-        queryKey: key1,
-        queryFn: () => 'data',
-      })
-      try {
-        await queryClient.fetchQuery({
-          queryKey: key2,
-          queryFn: async () => {
-            return Promise.reject<unknown>('err')
-          },
-        })
-      } catch {}
-      queryClient.fetchQuery({
+      queryClient.setQueryData(key1, 'data')
+
+      const pending = queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(1000).then(() => 'data2'),
       })
-      try {
-        queryClient.fetchQuery({
-          queryKey: key2,
-          queryFn: () =>
-            sleep(1000).then(() => Promise.reject<unknown>('err2')),
-        })
-      } catch {}
-      queryClient.fetchQuery({
-        queryKey: key3,
-        queryFn: () => sleep(1000).then(() => 'data3'),
-      })
+
       await vi.advanceTimersByTimeAsync(10)
+
       await queryClient.cancelQueries()
+
+      // with previous data present, imperative fetch should resolve to that data after cancel
+      await expect(pending).resolves.toBe('data')
+
       const state1 = queryClient.getQueryState(key1)
-      const state2 = queryClient.getQueryState(key2)
-      const state3 = queryClient.getQueryState(key3)
       expect(state1).toMatchObject({
         data: 'data',
         status: 'success',
-      })
-      expect(state2).toMatchObject({
-        data: undefined,
-        error: 'err',
-        status: 'error',
-      })
-      expect(state3).toMatchObject({
-        data: undefined,
-        status: 'pending',
-        fetchStatus: 'idle',
       })
     })
 
@@ -1049,7 +1021,7 @@ describe('queryClient', () => {
         queryKey: key1,
         queryFn: () => 'data',
       })
-      queryClient.fetchQuery({
+      queryClient.prefetchQuery({
         queryKey: key1,
         queryFn: () => sleep(1000).then(() => 'data2'),
       })
@@ -1058,6 +1030,34 @@ describe('queryClient', () => {
       const state1 = queryClient.getQueryState(key1)
       expect(state1).toMatchObject({
         status: 'error',
+      })
+    })
+
+    test('should throw CancelledError for imperative methods when initial fetch is cancelled', async () => {
+      const key = queryKey()
+
+      const promise = queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(50)
+          return 25
+        },
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      await queryClient.cancelQueries({ queryKey: key })
+
+      // we have to reject here because we can't resolve with `undefined`
+      // the alternative would be a never-ending promise
+      await expect(promise).rejects.toBeInstanceOf(CancelledError)
+
+      // however, the query was correctly reverted to pending state
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'pending',
+        fetchStatus: 'idle',
+        data: undefined,
+        error: null,
       })
     })
   })

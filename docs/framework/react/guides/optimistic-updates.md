@@ -185,3 +185,11 @@ useMutation({
 If you only have one place where the optimistic result should be shown, using `variables` and updating the UI directly is the approach that requires less code and is generally easier to reason about. For example, you don't need to handle rollbacks at all.
 
 However, if you have multiple places on the screen that would require to know about the update, manipulating the cache directly will take care of this for you automatically.
+
+[//]: # 'Materials'
+
+## Further reading
+
+Have a look at the Community Resources for a guide on [Concurrent Optimistic Updates](../../community/tkdodos-blog.md#29-concurrent-optimistic-updates-in-react-query).
+
+[//]: # 'Materials'

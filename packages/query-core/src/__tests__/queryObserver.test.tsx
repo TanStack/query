@@ -4,6 +4,7 @@ import {
   describe,
   expect,
   expectTypeOf,
+  it,
   test,
   vi,
 } from 'vitest'
@@ -1426,5 +1427,71 @@ describe('queryObserver', () => {
 
     const result = observer.getCurrentResult()
     expect(result.isEnabled).toBe(true)
+  })
+
+  describe('StrictMode behavior', () => {
+    it('should deduplicate calls to queryFn', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(async () => {
+        await sleep(50)
+        return 'data'
+      })
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+      })
+
+      const unsubscribe1 = observer.subscribe(vi.fn())
+
+      await vi.advanceTimersByTimeAsync(5)
+      unsubscribe1()
+
+      // replicate strict mode behavior
+      await vi.advanceTimersByTimeAsync(5)
+      const unsubscribe2 = observer.subscribe(vi.fn())
+
+      await vi.advanceTimersByTimeAsync(40)
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'success',
+        data: 'data',
+      })
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      unsubscribe2()
+    })
+
+    it('should resolve with data when signal was consumed', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(async ({ signal }) => {
+        await sleep(50)
+        return 'data' + String(signal)
+      })
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+      })
+
+      const unsubscribe1 = observer.subscribe(vi.fn())
+
+      await vi.advanceTimersByTimeAsync(5)
+      unsubscribe1()
+
+      // replicate strict mode behavior
+      await vi.advanceTimersByTimeAsync(5)
+      const unsubscribe2 = observer.subscribe(vi.fn())
+
+      await vi.advanceTimersByTimeAsync(50)
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'success',
+        data: 'data[object AbortSignal]',
+      })
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+
+      unsubscribe2()
+    })
   })
 })
