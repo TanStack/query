@@ -347,4 +347,184 @@ describe('queriesObserver', () => {
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(1)
   })
+
+  describe('SSR Hydration', () => {
+    describe('Hydration Mismatch Problem', () => {
+      test('should demonstrate hydration mismatch issue with multiple queries (before fix)', () => {
+        const key1 = queryKey()
+        const key2 = queryKey()
+
+        queryClient.setQueryData(key1, { amount: 10 })
+        queryClient.setQueryData(key2, { amount: 20 })
+
+        const cache1 = queryClient.getQueryCache().find({ queryKey: key1 })
+        const cache2 = queryClient.getQueryCache().find({ queryKey: key2 })
+
+        if (cache1) {
+          cache1.state.dataUpdatedAt = 0
+          cache1.state.fetchStatus = 'idle'
+        }
+        if (cache2) {
+          cache2.state.dataUpdatedAt = 0
+          cache2.state.fetchStatus = 'idle'
+        }
+
+        const observer = new QueriesObserver(queryClient, [
+          { queryKey: key1, queryFn: () => ({ amount: 10 }) },
+          { queryKey: key2, queryFn: () => ({ amount: 20 }) },
+        ])
+
+        const clientResults = observer.getCurrentResult()
+
+        expect(clientResults[0]).toMatchObject({
+          status: 'success',
+          data: { amount: 10 },
+          isLoading: false,
+          isPending: false,
+        })
+        expect(clientResults[1]).toMatchObject({
+          status: 'success',
+          data: { amount: 20 },
+          isLoading: false,
+          isPending: false,
+        })
+      })
+    })
+
+    describe('Solution with getServerResult', () => {
+      test('getServerResult should return pending state for hydrated queries', () => {
+        const key1 = queryKey()
+        const key2 = queryKey()
+
+        queryClient.setQueryData(key1, { amount: 10 })
+        queryClient.setQueryData(key2, { amount: 20 })
+
+        const cache1 = queryClient.getQueryCache().find({ queryKey: key1 })
+        const cache2 = queryClient.getQueryCache().find({ queryKey: key2 })
+
+        if (cache1) {
+          cache1.state.dataUpdatedAt = 0
+          cache1.state.fetchStatus = 'idle'
+        }
+        if (cache2) {
+          cache2.state.dataUpdatedAt = 0
+          cache2.state.fetchStatus = 'idle'
+        }
+
+        const observer = new QueriesObserver(queryClient, [
+          { queryKey: key1, queryFn: () => ({ amount: 10 }) },
+          { queryKey: key2, queryFn: () => ({ amount: 20 }) },
+        ])
+
+        const clientResults = observer.getCurrentResult()
+        const serverResults = observer.getServerResult()
+
+        expect(clientResults[0]).toMatchObject({
+          status: 'success',
+          data: { amount: 10 },
+          isLoading: false,
+        })
+        expect(serverResults[0]).toMatchObject({
+          status: 'pending',
+          data: undefined,
+          isLoading: false,
+          isPending: true,
+          isSuccess: false,
+        })
+
+        expect(clientResults[1]).toMatchObject({
+          status: 'success',
+          data: { amount: 20 },
+          isLoading: false,
+        })
+        expect(serverResults[1]).toMatchObject({
+          status: 'pending',
+          data: undefined,
+          isLoading: false,
+          isPending: true,
+          isSuccess: false,
+        })
+      })
+
+      test('should handle mixed hydrated and non-hydrated queries', () => {
+        const key1 = queryKey()
+        const key2 = queryKey()
+
+        queryClient.setQueryData(key1, { amount: 10 })
+        queryClient.setQueryData(key2, { amount: 20 })
+
+        const cache1 = queryClient.getQueryCache().find({ queryKey: key1 })
+        const cache2 = queryClient.getQueryCache().find({ queryKey: key2 })
+
+        if (cache1) {
+          cache1.state.dataUpdatedAt = 0
+          cache1.state.fetchStatus = 'idle'
+        }
+        if (cache2) {
+          cache2.state.dataUpdatedAt = Date.now()
+          cache2.state.fetchStatus = 'idle'
+        }
+
+        const observer = new QueriesObserver(queryClient, [
+          { queryKey: key1, queryFn: () => ({ amount: 10 }) },
+          { queryKey: key2, queryFn: () => ({ amount: 20 }) },
+        ])
+
+        const serverResults = observer.getServerResult()
+
+        expect(serverResults[0]).toMatchObject({
+          status: 'pending',
+          data: undefined,
+          isPending: true,
+        })
+
+        expect(serverResults[1]).toMatchObject({
+          status: 'success',
+          data: { amount: 20 },
+          isPending: false,
+        })
+      })
+
+      test('should handle fetching state during hydration for multiple queries', () => {
+        const key1 = queryKey()
+        const key2 = queryKey()
+
+        queryClient.setQueryData(key1, { amount: 10 })
+        queryClient.setQueryData(key2, { amount: 20 })
+
+        const cache1 = queryClient.getQueryCache().find({ queryKey: key1 })
+        const cache2 = queryClient.getQueryCache().find({ queryKey: key2 })
+
+        if (cache1) {
+          cache1.state.dataUpdatedAt = 0
+          cache1.state.fetchStatus = 'fetching'
+        }
+        if (cache2) {
+          cache2.state.dataUpdatedAt = 0
+          cache2.state.fetchStatus = 'idle'
+        }
+
+        const observer = new QueriesObserver(queryClient, [
+          { queryKey: key1, queryFn: () => ({ amount: 10 }) },
+          { queryKey: key2, queryFn: () => ({ amount: 20 }) },
+        ])
+
+        const serverResults = observer.getServerResult()
+
+        expect(serverResults[0]).toMatchObject({
+          status: 'pending',
+          fetchStatus: 'fetching',
+          isLoading: true,
+          isPending: true,
+        })
+
+        expect(serverResults[1]).toMatchObject({
+          status: 'pending',
+          fetchStatus: 'idle',
+          isLoading: false,
+          isPending: true,
+        })
+      })
+    })
+  })
 })
