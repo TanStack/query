@@ -1,7 +1,7 @@
 import { notifyManager } from './notifyManager'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
-import { replaceEqualDeep } from './utils'
+import { replaceEqualDeep, shallowEqualObjects } from './utils'
 import type {
   DefaultedQueryObserverOptions,
   QueryObserverOptions,
@@ -123,17 +123,12 @@ export class QueriesObserver<
       )
 
       if (prevObservers.length === newObservers.length && !hasIndexChange) {
-        const resultChanged = newResult.some((result, index) => {
+        const hasResultChangeOnly = newResult.some((result, index) => {
           const prev = this.#result[index]
-          return (
-            !prev ||
-            result.data !== prev.data ||
-            result.isPending !== prev.isPending ||
-            result.error !== prev.error
-          )
+          return !prev || !shallowEqualObjects(result, prev)
         })
 
-        if (resultChanged) {
+        if (hasResultChangeOnly) {
           this.#result = newResult
           this.#notify()
         }
