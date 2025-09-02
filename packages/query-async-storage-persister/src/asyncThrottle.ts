@@ -1,3 +1,4 @@
+import { managedSetTimeout } from '@tanstack/query-core'
 import { noop } from './utils'
 
 interface AsyncThrottleOptions {
@@ -21,11 +22,11 @@ export function asyncThrottle<TArgs extends ReadonlyArray<unknown>>(
     if (isScheduled) return
     isScheduled = true
     while (isExecuting) {
-      await new Promise((done) => setTimeout(done, interval))
+      await new Promise((done) => managedSetTimeout(done, interval))
     }
     while (Date.now() < nextExecutionTime) {
       await new Promise((done) =>
-        setTimeout(done, nextExecutionTime - Date.now()),
+        managedSetTimeout(done, nextExecutionTime - Date.now()),
       )
     }
     isScheduled = false
