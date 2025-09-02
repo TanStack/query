@@ -1,4 +1,10 @@
 /**
+ * Timeout manager does not support passing arguments to the callback.
+ * (`void` is the argument type inferred by TypeScript's default typings for `setTimeout(cb, number)`)
+ */
+export type TimeoutCallback = (_: void) => void
+
+/**
  * Wrapping `setTimeout` is awkward from a typing perspective because platform
  * typings may extend the return type of `setTimeout`. For example, NodeJS
  * typings add `NodeJS.Timeout`; but a non-default `timeoutManager` may not be
@@ -8,8 +14,10 @@
  * Symbol.toPrimitive.
  */
 export type TimeoutProviderId = number | { [Symbol.toPrimitive]: () => number }
-export type TimeoutCallback = (_: void) => void
 
+/**
+ * Backend for timer functions.
+ */
 export type TimeoutProvider = {
   /** Used in error messages. */
   readonly name: string
@@ -51,14 +59,16 @@ export type ManagedTimerId = number
  * If you hit this limitation, consider providing a custom TimeoutProvider that
  * coalesces timeouts.
  */
-export class TimeoutManager implements TimeoutProvider {
-  public readonly name = 'TimeoutManager'
-
+export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
   #provider: TimeoutProvider = defaultTimeoutProvider
-  #setTimeoutCalls = 0
+  #providerCalled = false
 
   setTimeoutProvider(provider: TimeoutProvider): void {
-    if (this.#setTimeoutCalls > 0 && provider !== this.#provider) {
+    if (provider === this.#provider) {
+      return
+    }
+
+    if (this.#providerCalled) {
       // After changing providers, `clearTimeout` will not work as expected for
       // timeouts from the previous provider.
       //
@@ -71,15 +81,16 @@ export class TimeoutManager implements TimeoutProvider {
       // We could internally queue `setTimeout` calls to `TimeoutManager` until
       // some API call to set the initial provider.
       console.warn(
-        `[timeoutManager]: Switching to ${provider.name} provider after setTimeout calls were made with ${this.#provider.name} provider might result in unexpected behavior.`,
+        `[timeoutManager]: Switching to ${provider.name} provider after calls to ${this.#provider.name} provider might result in unexpected behavior.`,
       )
     }
 
     this.#provider = provider
+    this.#providerCalled = false
   }
 
   setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId {
-    this.#setTimeoutCalls++
+    this.#providerCalled = true
     return providerIdToNumber(
       this.#provider,
       this.#provider.setTimeout(callback, delay),
@@ -91,6 +102,7 @@ export class TimeoutManager implements TimeoutProvider {
   }
 
   setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId {
+    this.#providerCalled = true
     return providerIdToNumber(
       this.#provider,
       this.#provider.setInterval(callback, delay),
