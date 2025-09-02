@@ -405,7 +405,7 @@ This is most useful when performing optimistic updates since you will likely nee
 ```tsx
 await queryClient.cancelQueries(
   { queryKey: ['posts'], exact: true },
-  { silent: true }
+  { silent: true },
 )
 ```
 
