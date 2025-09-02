@@ -24,9 +24,12 @@ export const ensureSuspenseTimers = (
   if (defaultedOptions.suspense) {
     // Handle staleTime to ensure minimum 1000ms in Suspense mode
     // This prevents unnecessary refetching when components remount after suspending
+    const MIN_SUSPENSE_TIME_MS = 1000
 
     const clamp = (value: number | 'static' | undefined) =>
-      value === 'static' ? value : Math.max(value ?? 1000, 1000)
+      value === 'static'
+        ? value
+        : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS)
 
     const originalStaleTime = defaultedOptions.staleTime
     defaultedOptions.staleTime =
@@ -35,7 +38,10 @@ export const ensureSuspenseTimers = (
         : clamp(originalStaleTime)
 
     if (typeof defaultedOptions.gcTime === 'number') {
-      defaultedOptions.gcTime = Math.max(defaultedOptions.gcTime, 1000)
+      defaultedOptions.gcTime = Math.max(
+        defaultedOptions.gcTime,
+        MIN_SUSPENSE_TIME_MS,
+      )
     }
   }
 }
