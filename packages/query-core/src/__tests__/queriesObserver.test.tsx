@@ -350,7 +350,7 @@ describe('queriesObserver', () => {
 
   describe('SSR Hydration', () => {
     describe('Hydration Mismatch Problem', () => {
-      test('should demonstrate hydration mismatch issue with multiple queries (before fix)', () => {
+      test('should demonstrate state divergence between server snapshot and client result for hydrated queries', () => {
         const key1 = queryKey()
         const key2 = queryKey()
 
@@ -525,6 +525,111 @@ describe('queriesObserver', () => {
           isPending: true,
         })
       })
+    })
+
+    test('should handle combine function with server snapshots', () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      queryClient.setQueryData(key1, { amount: 10 })
+      queryClient.setQueryData(key2, { amount: 20 })
+
+      const cache1 = queryClient.getQueryCache().find({ queryKey: key1 })
+      const cache2 = queryClient.getQueryCache().find({ queryKey: key2 })
+
+      if (cache1) {
+        cache1.state.dataUpdatedAt = 0
+        cache1.state.fetchStatus = 'idle'
+      }
+      if (cache2) {
+        cache2.state.dataUpdatedAt = 0
+        cache2.state.fetchStatus = 'idle'
+      }
+
+      const combineResults = vi.fn((results: Array<QueryObserverResult>) => ({
+        totalAmount: results.reduce(
+          (sum, r) => sum + ((r.data as any)?.amount ?? 0),
+          0,
+        ),
+        allSuccess: results.every((r) => r.status === 'success'),
+        allPending: results.every((r) => r.status === 'pending'),
+      }))
+
+      const observer = new QueriesObserver(
+        queryClient,
+        [
+          { queryKey: key1, queryFn: () => ({ amount: 10 }) },
+          { queryKey: key2, queryFn: () => ({ amount: 20 }) },
+        ],
+        { combine: combineResults },
+      )
+
+      const clientResults = observer.getCurrentResult()
+      expect(clientResults).toHaveLength(2)
+      expect(clientResults[0]).toMatchObject({
+        status: 'success',
+        data: { amount: 10 },
+      })
+      expect(clientResults[1]).toMatchObject({
+        status: 'success',
+        data: { amount: 20 },
+      })
+
+      const serverResults = observer.getServerResult()
+      expect(serverResults).toHaveLength(2)
+      expect(serverResults[0]).toMatchObject({
+        status: 'pending',
+        data: undefined,
+      })
+      expect(serverResults[1]).toMatchObject({
+        status: 'pending',
+        data: undefined,
+      })
+
+      const [_, getCombined] = observer.getOptimisticResult(
+        [
+          { queryKey: key1, queryFn: () => ({ amount: 10 }) },
+          { queryKey: key2, queryFn: () => ({ amount: 20 }) },
+        ],
+        combineResults,
+      )
+
+      const combined = getCombined(serverResults)
+      expect(combined).toEqual({
+        totalAmount: 0,
+        allSuccess: false,
+        allPending: true,
+      })
+    })
+
+    test('should handle combine with mixed hydrated and non-hydrated queries', () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      queryClient.setQueryData(key1, { amount: 10 })
+      const cache1 = queryClient.getQueryCache().find({ queryKey: key1 })
+      if (cache1) {
+        cache1.state.dataUpdatedAt = 0
+        cache1.state.fetchStatus = 'idle'
+      }
+
+      const observer = new QueriesObserver(
+        queryClient,
+        [
+          { queryKey: key1, queryFn: () => ({ amount: 10 }) },
+          { queryKey: key2, queryFn: () => ({ amount: 20 }) },
+        ],
+        {
+          combine: (results) => ({
+            hasAllData: results.every((r) => r.data !== undefined),
+            loadedCount: results.filter((r) => r.isSuccess).length,
+          }),
+        },
+      )
+
+      const serverResults = observer.getServerResult()
+
+      expect(serverResults[0]).toMatchObject({ status: 'pending' })
+      expect(serverResults[1]).toMatchObject({ status: 'pending' })
     })
   })
 })
