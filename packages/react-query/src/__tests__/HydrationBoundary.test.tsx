@@ -362,6 +362,54 @@ describe('React hydration', () => {
     queryClient.clear()
   })
 
+  test('should not hydrate queries if state is not an object', async () => {
+    const queryClient = new QueryClient()
+
+    const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
+
+    function Page() {
+      return null
+    }
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={'invalid-state' as any}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(hydrateSpy).toHaveBeenCalledTimes(0)
+
+    hydrateSpy.mockRestore()
+    queryClient.clear()
+  })
+
+  test('should handle state without queries property gracefully', async () => {
+    const queryClient = new QueryClient()
+
+    const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
+
+    function Page() {
+      return null
+    }
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={{} as any}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(hydrateSpy).toHaveBeenCalledTimes(0)
+
+    hydrateSpy.mockRestore()
+    queryClient.clear()
+  })
+
   // https://github.com/TanStack/query/issues/8677
   test('should not infinite loop when hydrating promises that resolve to errors', async () => {
     const originalHydrate = coreModule.hydrate
