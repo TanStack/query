@@ -126,13 +126,7 @@ export class QueriesObserver<
         prevObservers.length === newObservers.length && !hasIndexChange
           ? newResult.some((result, index) => {
               const prev = this.#result[index]
-              const isChanged = !prev || !shallowEqualObjects(result, prev)
-              console.log(`Result ${index}:`, {
-                hasData: !!result.data,
-                prevData: prev?.data,
-                dataChanged: result.data !== prev?.data,
-              })
-              return isChanged
+              return !prev || !shallowEqualObjects(result, prev)
             })
           : true
 
@@ -141,6 +135,7 @@ export class QueriesObserver<
       if (hasIndexChange) {
         this.#observers = newObservers
       }
+
       this.#result = newResult
 
       if (!this.hasListeners()) return
