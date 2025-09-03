@@ -9,7 +9,7 @@ import {
 describe('timeoutManager', () => {
   function createMockProvider(name: string = 'custom') {
     return {
-      name,
+      __TEST_ONLY__name: name,
       setTimeout: vi.fn(() => 123),
       clearTimeout: vi.fn(),
       setInterval: vi.fn(() => 456),
