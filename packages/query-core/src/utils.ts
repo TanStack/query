@@ -1,3 +1,4 @@
+import { timeoutManager } from './timeoutManager'
 import type {
   DefaultError,
   Enabled,
@@ -12,7 +13,6 @@ import type {
 } from './types'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
-import { timeoutManager } from './timeoutManager'
 
 // TYPES
 

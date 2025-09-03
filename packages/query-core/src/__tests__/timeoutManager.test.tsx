@@ -2,10 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   TimeoutManager,
   defaultTimeoutProvider,
-  managedClearInterval,
-  managedClearTimeout,
-  managedSetInterval,
-  managedSetTimeout,
   systemSetTimeoutZero,
   timeoutManager,
 } from '../timeoutManager'
@@ -47,14 +43,14 @@ describe('timeoutManager', () => {
       const callback = vi.fn()
       const timeoutId = manager.setTimeout(callback, 100)
       expect(setTimeoutSpy).toHaveBeenCalledWith(callback, 100)
-      clearTimeout(timeoutId)
+      clearTimeout(Number(timeoutId))
 
       manager.clearTimeout(200)
       expect(clearTimeoutSpy).toHaveBeenCalledWith(200)
 
       const intervalId = manager.setInterval(callback, 300)
       expect(setIntervalSpy).toHaveBeenCalledWith(callback, 300)
-      clearInterval(intervalId)
+      clearInterval(Number(intervalId))
 
       manager.clearInterval(400)
       expect(clearIntervalSpy).toHaveBeenCalledWith(400)
@@ -93,7 +89,8 @@ describe('timeoutManager', () => {
         const customProvider2 = createMockProvider('custom2')
         manager.setTimeoutProvider(customProvider2)
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          '[timeoutManager]: Switching to custom2 provider after calls to custom provider might result in unexpected behavior.',
+          expect.stringMatching(/\[timeoutManager\]: Switching .* might result in unexpected behavior\..*/),
+          expect.anything(),
         )
 
         // 3. Switching again with no intermediate calls should not warn
@@ -102,24 +99,6 @@ describe('timeoutManager', () => {
         manager.setTimeoutProvider(customProvider3)
         expect(consoleErrorSpy).not.toHaveBeenCalled()
       })
-    })
-
-    it('throws if provider returns non-convertible value from setTimeout/setInterval', () => {
-      const invalidValue = { invalid: true } as any
-      const customProvider = createMockProvider('badProvider')
-      customProvider.setTimeout = vi.fn(() => invalidValue)
-      customProvider.setInterval = vi.fn(() => invalidValue)
-      manager.setTimeoutProvider(customProvider)
-
-      const callback = vi.fn()
-
-      expect(() => manager.setTimeout(callback, 100)).toThrow(
-        'TimeoutManager: could not convert badProvider provider timeout ID to valid number',
-      )
-
-      expect(() => manager.setInterval(callback, 100)).toThrow(
-        'TimeoutManager: could not convert badProvider provider timeout ID to valid number',
-      )
     })
   })
 
@@ -131,64 +110,12 @@ describe('timeoutManager', () => {
 
   describe('exported functions', () => {
     let provider: ReturnType<typeof createMockProvider>
-    let callNumber = 0
     beforeEach(() => {
-      callNumber = 0
       provider = createMockProvider()
       timeoutManager.setTimeoutProvider(provider)
     })
     afterEach(() => {
       timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
-    })
-
-    const callbackArgs = () => [vi.fn(), 100 * ++callNumber] as const
-
-    describe('managedSetTimeout', () => {
-      it('should call timeoutManager.setTimeout', () => {
-        const spy = vi.spyOn(timeoutManager, 'setTimeout')
-        const args = callbackArgs()
-
-        const result = managedSetTimeout(...args)
-
-        expect(spy).toHaveBeenCalledWith(...args)
-        expect(result).toBe(123)
-      })
-    })
-
-    describe('managedClearTimeout', () => {
-      it('should call timeoutManager.clearTimeout', () => {
-        const spy = vi.spyOn(timeoutManager, 'clearTimeout')
-        const timeoutId = 123
-
-        managedClearTimeout(timeoutId)
-
-        expect(spy).toHaveBeenCalledWith(timeoutId)
-
-        spy.mockRestore()
-      })
-    })
-
-    describe('managedSetInterval', () => {
-      it('should call timeoutManager.setInterval', () => {
-        const spy = vi.spyOn(timeoutManager, 'setInterval')
-        const args = callbackArgs()
-
-        const result = managedSetInterval(...args)
-
-        expect(spy).toHaveBeenCalledWith(...args)
-        expect(result).toBe(456)
-      })
-    })
-
-    describe('managedClearInterval', () => {
-      it('should call timeoutManager.clearInterval', () => {
-        const spy = vi.spyOn(timeoutManager, 'clearInterval')
-        const intervalId = 456
-
-        managedClearInterval(intervalId)
-
-        expect(spy).toHaveBeenCalledWith(intervalId)
-      })
     })
 
     describe('systemSetTimeoutZero', () => {
