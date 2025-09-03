@@ -28,7 +28,7 @@ export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
     readonly clearInterval: (intervalId: TTimerId | undefined) => void
   }
 
-const defaultTimeoutProvider: TimeoutProvider<
+export const defaultTimeoutProvider: TimeoutProvider<
   ReturnType<typeof setTimeout>
 > = {
   // We need the wrapper function syntax below instead of direct references to

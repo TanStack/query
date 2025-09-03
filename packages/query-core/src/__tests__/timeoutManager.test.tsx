@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   TimeoutManager,
-  defaultTimeoutProvider,
   systemSetTimeoutZero,
   timeoutManager,
 } from '../timeoutManager'
@@ -89,7 +88,9 @@ describe('timeoutManager', () => {
         const customProvider2 = createMockProvider('custom2')
         manager.setTimeoutProvider(customProvider2)
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          expect.stringMatching(/\[timeoutManager\]: Switching .* might result in unexpected behavior\..*/),
+          expect.stringMatching(
+            /\[timeoutManager\]: Switching .* might result in unexpected behavior\..*/,
+          ),
           expect.anything(),
         )
 
