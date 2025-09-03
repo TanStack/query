@@ -35,8 +35,9 @@ const query = queryOptions({
   - When set to `'replace'`, all data will be written to the cache once the stream ends.
 - `reducer?: (accumulator: TData, chunk: TQueryFnData) => TData`
   - Optional
-  - A function to reduce the streamed chunks into the final data.
-  - Defaults to a function that appends chunks to the end of the array.
+  - Reduces streamed chunks (`TQueryFnData`) into the final data shape (`TData`).
+  - Default: appends each chunk to the end of the accumulator when `TData` is an array.
+  - If `TData` is not an array, you must provide a custom `reducer`.
 - `initialValue?: TData = TQueryFnData`
   - Optional
   - Defines the initial data to be used while the first chunk is being fetched. 
