@@ -21,7 +21,7 @@ export const POST: RequestHandler = async ({ request }) => {
   if (Math.random() > 0.7) {
     return json({ message: 'Could not add item!' }, { status: 500 })
   }
-  
+
   const newTodo = {
     id: Math.random().toString(),
     text: text.toUpperCase() as string,
