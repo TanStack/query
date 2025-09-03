@@ -27,7 +27,7 @@ describe('mutationCache', () => {
           mutationKey: key,
           mutationFn: () =>
             sleep(10).then(() => Promise.reject(new Error('error'))),
-          onMutate: () => 'context',
+          onMutate: () => 'scope',
         },
         'vars',
       ).catch(() => undefined)
@@ -39,7 +39,7 @@ describe('mutationCache', () => {
       expect(onError).toHaveBeenCalledWith(
         new Error('error'),
         'vars',
-        'context',
+        'scope',
         mutation,
       )
       expect(onSuccess).not.toHaveBeenCalled()
@@ -48,7 +48,7 @@ describe('mutationCache', () => {
         undefined,
         new Error('error'),
         'vars',
-        'context',
+        'scope',
         mutation,
       )
     })
@@ -109,7 +109,7 @@ describe('mutationCache', () => {
         {
           mutationKey: key,
           mutationFn: () => sleep(10).then(() => ({ data: 5 })),
-          onMutate: () => 'context',
+          onMutate: () => 'scope',
         },
         'vars',
       )
@@ -121,7 +121,7 @@ describe('mutationCache', () => {
       expect(onSuccess).toHaveBeenCalledWith(
         { data: 5 },
         'vars',
-        'context',
+        'scope',
         mutation,
       )
       expect(onError).not.toHaveBeenCalled()
@@ -130,7 +130,7 @@ describe('mutationCache', () => {
         { data: 5 },
         null,
         'vars',
-        'context',
+        'scope',
         mutation,
       )
     })
@@ -187,7 +187,7 @@ describe('mutationCache', () => {
         {
           mutationKey: key,
           mutationFn: () => sleep(10).then(() => ({ data: 5 })),
-          onMutate: () => 'context',
+          onMutate: () => 'scope',
         },
         'vars',
       )

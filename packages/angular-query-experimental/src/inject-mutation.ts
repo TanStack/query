@@ -46,16 +46,16 @@ export function injectMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TScope = unknown,
 >(
   injectMutationFn: () => CreateMutationOptions<
     TData,
     TError,
     TVariables,
-    TContext
+    TScope
   >,
   options?: InjectMutationOptions,
-): CreateMutationResult<TData, TError, TVariables, TContext> {
+): CreateMutationResult<TData, TError, TVariables, TScope> {
   !options?.injector && assertInInjectionContext(injectMutation)
   const injector = options?.injector ?? inject(Injector)
   const destroyRef = injector.get(DestroyRef)
@@ -70,7 +70,7 @@ export function injectMutation<
   const optionsSignal = computed(injectMutationFn)
 
   const observerSignal = (() => {
-    let instance: MutationObserver<TData, TError, TVariables, TContext> | null =
+    let instance: MutationObserver<TData, TError, TVariables, TScope> | null =
       null
 
     return computed(() => {
@@ -79,7 +79,7 @@ export function injectMutation<
   })()
 
   const mutateFnSignal = computed<
-    CreateMutateFunction<TData, TError, TVariables, TContext>
+    CreateMutateFunction<TData, TError, TVariables, TScope>
   >(() => {
     const observer = observerSignal()
     return (variables, mutateOptions) => {
@@ -102,7 +102,7 @@ export function injectMutation<
     TData,
     TError,
     TVariables,
-    TContext
+    TScope
   > | null>(null)
 
   effect(
@@ -167,6 +167,6 @@ export function injectMutation<
     TData,
     TError,
     TVariables,
-    TContext
+    TScope
   >
 }

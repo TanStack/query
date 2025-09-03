@@ -24,53 +24,53 @@ import type {
 import type { MaybeRefDeep, ShallowOption } from './types'
 import type { QueryClient } from './queryClient'
 
-type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
-  MutationObserverResult<TData, TError, TVariables, TContext>,
+type MutationResult<TData, TError, TVariables, TScope> = DistributiveOmit<
+  MutationObserverResult<TData, TError, TVariables, TScope>,
   'mutate' | 'reset'
 >
 
-type UseMutationOptionsBase<TData, TError, TVariables, TContext> =
-  MutationObserverOptions<TData, TError, TVariables, TContext> & ShallowOption
+type UseMutationOptionsBase<TData, TError, TVariables, TScope> =
+  MutationObserverOptions<TData, TError, TVariables, TScope> & ShallowOption
 
 export type UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> = MaybeRefDeep<UseMutationOptionsBase<TData, TError, TVariables, TContext>>
+  TScope = unknown,
+> = MaybeRefDeep<UseMutationOptionsBase<TData, TError, TVariables, TScope>>
 
 type MutateSyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TScope = unknown,
 > = (
-  ...options: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
+  ...options: Parameters<MutateFunction<TData, TError, TVariables, TScope>>
 ) => void
 
 export type UseMutationReturnType<
   TData,
   TError,
   TVariables,
-  TContext,
-  TResult = MutationResult<TData, TError, TVariables, TContext>,
+  TScope,
+  TResult = MutationResult<TData, TError, TVariables, TScope>,
 > = ToRefs<Readonly<TResult>> & {
-  mutate: MutateSyncFunction<TData, TError, TVariables, TContext>
-  mutateAsync: MutateFunction<TData, TError, TVariables, TContext>
-  reset: MutationObserverResult<TData, TError, TVariables, TContext>['reset']
+  mutate: MutateSyncFunction<TData, TError, TVariables, TScope>
+  mutateAsync: MutateFunction<TData, TError, TVariables, TScope>
+  reset: MutationObserverResult<TData, TError, TVariables, TScope>['reset']
 }
 
 export function useMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TScope = unknown,
 >(
   mutationOptions: MaybeRefDeep<
-    UseMutationOptionsBase<TData, TError, TVariables, TContext>
+    UseMutationOptionsBase<TData, TError, TVariables, TScope>
   >,
   queryClient?: QueryClient,
-): UseMutationReturnType<TData, TError, TVariables, TContext> {
+): UseMutationReturnType<TData, TError, TVariables, TScope> {
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
@@ -94,7 +94,7 @@ export function useMutation<
 
   const mutate = (
     variables: TVariables,
-    mutateOptions?: MutateOptions<TData, TError, TVariables, TContext>,
+    mutateOptions?: MutateOptions<TData, TError, TVariables, TScope>,
   ) => {
     observer.mutate(variables, mutateOptions).catch(() => {
       // This is intentional
@@ -114,7 +114,7 @@ export function useMutation<
     : readonly(state)
 
   const resultRefs = toRefs(readonlyState) as ToRefs<
-    Readonly<MutationResult<TData, TError, TVariables, TContext>>
+    Readonly<MutationResult<TData, TError, TVariables, TScope>>
   >
 
   watch(

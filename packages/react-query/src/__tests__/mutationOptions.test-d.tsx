@@ -54,15 +54,15 @@ describe('mutationOptions', () => {
     })
   })
 
-  it('should infer context type correctly', () => {
+  it('should infer scope type correctly', () => {
     mutationOptions<number, DefaultError, void, { name: string }>({
       mutationFn: () => Promise.resolve(5),
       mutationKey: ['key'],
       onMutate: () => {
-        return { name: 'context' }
+        return { name: 'scope' }
       },
-      onSuccess: (_data, _variables, context) => {
-        expectTypeOf(context).toEqualTypeOf<{ name: string }>()
+      onSuccess: (_data, _variables, scope) => {
+        expectTypeOf(scope).toEqualTypeOf<{ name: string }>()
       },
     })
   })

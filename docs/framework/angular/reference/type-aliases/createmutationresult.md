@@ -3,11 +3,11 @@ id: CreateMutationResult
 title: CreateMutationResult
 ---
 
-# Type Alias: CreateMutationResult\<TData, TError, TVariables, TContext, TState\>
+# Type Alias: CreateMutationResult\<TData, TError, TVariables, TScope, TState\>
 
 ```ts
-type CreateMutationResult<TData, TError, TVariables, TContext, TState> =
-  BaseMutationNarrowing<TData, TError, TVariables, TContext> &
+type CreateMutationResult<TData, TError, TVariables, TScope, TState> =
+  BaseMutationNarrowing<TData, TError, TVariables, TScope> &
     MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
 ```
 
@@ -19,9 +19,9 @@ type CreateMutationResult<TData, TError, TVariables, TContext, TState> =
 
 • **TVariables** = `unknown`
 
-• **TContext** = `unknown`
+• **TScope** = `unknown`
 
-• **TState** = `CreateStatusBasedMutationResult`\<[`CreateBaseMutationResult`](../createbasemutationresult.md)\[`"status"`\], `TData`, `TError`, `TVariables`, `TContext`\>
+• **TState** = `CreateStatusBasedMutationResult`\<[`CreateBaseMutationResult`](../createbasemutationresult.md)\[`"status"`\], `TData`, `TError`, `TVariables`, `TScope`\>
 
 ## Defined in
 

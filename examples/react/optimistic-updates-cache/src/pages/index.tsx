@@ -9,6 +9,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import type { MutationFunctionContext } from '@tanstack/react-query'
 
 const client = new QueryClient()
 
@@ -45,18 +46,20 @@ function Example() {
       return await response.json()
     },
     // When mutate is called:
-    onMutate: async (newTodo: string) => {
+    onMutate: async (newTodo: string, context: MutationFunctionContext) => {
       setText('')
       // Cancel any outgoing refetch
       // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries(todoListOptions)
+      await context.client.cancelQueries(todoListOptions)
 
       // Snapshot the previous value
-      const previousTodos = queryClient.getQueryData(todoListOptions.queryKey)
+      const previousTodos = context.client.getQueryData(
+        todoListOptions.queryKey,
+      )
 
       // Optimistically update to the new value
       if (previousTodos) {
-        queryClient.setQueryData(todoListOptions.queryKey, {
+        context.client.setQueryData(todoListOptions.queryKey, {
           ...previousTodos,
           items: [
             ...previousTodos.items,
@@ -65,17 +68,18 @@ function Example() {
         })
       }
 
-      return { previousTodos }
+      return { previousTodos, client: context.client }
     },
     // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, variables, context) => {
-      if (context?.previousTodos) {
-        queryClient.setQueryData<Todos>(['todos'], context.previousTodos)
+    // use the scope returned from onMutate to roll back
+    onError: (err, variables, scope) => {
+      if (scope?.previousTodos) {
+        scope.client.setQueryData<Todos>(['todos'], scope.previousTodos)
       }
     },
     // Always refetch after error or success:
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+    onSettled: (data, error, variables, scope) =>
+      scope?.client.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   return (
