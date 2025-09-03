@@ -2,6 +2,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { pendingThenable } from './thenable'
 import { isServer, sleep } from './utils'
+import type { Thenable } from './thenable'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 // TYPES
@@ -9,7 +10,7 @@ import type { CancelOptions, DefaultError, NetworkMode } from './types'
 interface RetryerConfig<TData = unknown, TError = DefaultError> {
   fn: () => TData | Promise<TData>
   initialPromise?: Promise<TData>
-  abort?: () => void
+  onCancel?: (error: TError) => void
   onFail?: (failureCount: number, error: TError) => void
   onPause?: () => void
   onContinue?: () => void
@@ -27,6 +28,7 @@ export interface Retryer<TData = unknown> {
   continueRetry: () => void
   canStart: () => boolean
   start: () => Promise<TData>
+  status: () => 'pending' | 'resolved' | 'rejected'
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -75,16 +77,19 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
 ): Retryer<TData> {
   let isRetryCancelled = false
   let failureCount = 0
-  let isResolved = false
   let continueFn: ((value?: unknown) => void) | undefined
 
   const thenable = pendingThenable<TData>()
 
-  const cancel = (cancelOptions?: CancelOptions): void => {
-    if (!isResolved) {
-      reject(new CancelledError(cancelOptions))
+  const isResolved = () =>
+    (thenable.status as Thenable<TData>['status']) !== 'pending'
 
-      config.abort?.()
+  const cancel = (cancelOptions?: CancelOptions): void => {
+    if (!isResolved()) {
+      const error = new CancelledError(cancelOptions) as TError
+      reject(error)
+
+      config.onCancel?.(error)
     }
   }
   const cancelRetry = () => {
@@ -103,16 +108,14 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const canStart = () => canFetch(config.networkMode) && config.canRun()
 
   const resolve = (value: any) => {
-    if (!isResolved) {
-      isResolved = true
+    if (!isResolved()) {
       continueFn?.()
       thenable.resolve(value)
     }
   }
 
   const reject = (value: any) => {
-    if (!isResolved) {
-      isResolved = true
+    if (!isResolved()) {
       continueFn?.()
       thenable.reject(value)
     }
@@ -121,14 +124,14 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const pause = () => {
     return new Promise((continueResolve) => {
       continueFn = (value) => {
-        if (isResolved || canContinue()) {
+        if (isResolved() || canContinue()) {
           continueResolve(value)
         }
       }
       config.onPause?.()
     }).then(() => {
       continueFn = undefined
-      if (!isResolved) {
+      if (!isResolved()) {
         config.onContinue?.()
       }
     })
@@ -137,7 +140,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   // Create loop function
   const run = () => {
     // Do nothing if already resolved
-    if (isResolved) {
+    if (isResolved()) {
       return
     }
 
@@ -158,7 +161,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       .then(resolve)
       .catch((error) => {
         // Stop if the fetch is already resolved
-        if (isResolved) {
+        if (isResolved()) {
           return
         }
 
@@ -203,6 +206,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
 
   return {
     promise: thenable,
+    status: () => thenable.status,
     cancel,
     continue: () => {
       continueFn?.()
