@@ -116,7 +116,6 @@ type GetResults<T> =
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
- * @public
  */
 export type QueriesOptions<
   T extends Array<any>,
@@ -159,7 +158,6 @@ export type QueriesOptions<
 
 /**
  * QueriesResults reducer recursively maps type param to results
- * @public
  */
 export type QueriesResults<
   T extends Array<any>,
@@ -200,8 +198,6 @@ export type QueriesResults<
  * @param root0.queries
  * @param root0.combine
  * @param injector
- * @param injector
- * @public
  */
 export function injectQueries<
   T extends Array<any>,

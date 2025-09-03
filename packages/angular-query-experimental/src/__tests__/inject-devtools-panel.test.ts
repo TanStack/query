@@ -4,12 +4,10 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import {
-  QueryClient,
-  provideTanStackQuery,
-} from '@tanstack/angular-query-experimental'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { injectDevtoolsPanel } from '../inject-devtools-panel'
+import { QueryClient } from '@tanstack/query-core'
+import { provideTanStackQuery } from '../providers'
+import { injectDevtoolsPanel } from '../devtools-panel'
 
 const mockDevtoolsPanelInstance = {
   mount: vi.fn(),
@@ -32,6 +30,12 @@ vi.mock('@tanstack/query-devtools', () => ({
 describe('injectDevtoolsPanel', () => {
   let queryClient: QueryClient
   let mockElementRef: ElementRef
+
+  const waitForDevtoolsToBeCreated = async () => {
+    await vi.waitFor(() => {
+      expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
+    })
+  }
 
   beforeEach(() => {
     queryClient = new QueryClient()
@@ -61,7 +65,7 @@ describe('injectDevtoolsPanel', () => {
     })
   })
 
-  it('should initialize TanstackQueryDevtoolsPanel', () => {
+  it('should initialize TanstackQueryDevtoolsPanel', async () => {
     TestBed.runInInjectionContext(() => {
       injectDevtoolsPanel(() => ({
         hostElement: TestBed.inject(ElementRef),
@@ -70,10 +74,12 @@ describe('injectDevtoolsPanel', () => {
 
     TestBed.tick()
 
-    expect(mocks.mockTanstackQueryDevtoolsPanel).toHaveBeenCalledTimes(1)
+    await waitForDevtoolsToBeCreated()
+
+    expect(mockDevtoolsPanelInstance.mount).toHaveBeenCalledTimes(1)
   })
 
-  it('should destroy TanstackQueryDevtoolsPanel', () => {
+  it('should destroy TanstackQueryDevtoolsPanel', async () => {
     const result = TestBed.runInInjectionContext(() => {
       return injectDevtoolsPanel(() => ({
         hostElement: TestBed.inject(ElementRef),
@@ -82,12 +88,14 @@ describe('injectDevtoolsPanel', () => {
 
     TestBed.tick()
 
+    await waitForDevtoolsToBeCreated()
+
     result.destroy()
 
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(1)
   })
 
-  it('should destroy TanstackQueryDevtoolsPanel when hostElement is removed', () => {
+  it('should destroy TanstackQueryDevtoolsPanel when hostElement is removed', async () => {
     const hostElement = signal<ElementRef>(mockElementRef)
 
     TestBed.runInInjectionContext(() => {
@@ -98,6 +106,8 @@ describe('injectDevtoolsPanel', () => {
 
     TestBed.tick()
 
+    await waitForDevtoolsToBeCreated()
+
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(0)
 
     hostElement.set(null as unknown as ElementRef)
@@ -107,7 +117,7 @@ describe('injectDevtoolsPanel', () => {
     expect(mockDevtoolsPanelInstance.unmount).toHaveBeenCalledTimes(1)
   })
 
-  it('should update client', () => {
+  it('should update client', async () => {
     const client = signal(new QueryClient())
 
     TestBed.runInInjectionContext(() => {
@@ -119,6 +129,8 @@ describe('injectDevtoolsPanel', () => {
 
     TestBed.tick()
 
+    await waitForDevtoolsToBeCreated()
+
     expect(mockDevtoolsPanelInstance.setClient).toHaveBeenCalledTimes(0)
 
     client.set(new QueryClient())
@@ -128,7 +140,7 @@ describe('injectDevtoolsPanel', () => {
     expect(mockDevtoolsPanelInstance.setClient).toHaveBeenCalledTimes(1)
   })
 
-  it('should update error types', () => {
+  it('should update error types', async () => {
     const errorTypes = signal([])
 
     TestBed.runInInjectionContext(() => {
@@ -140,6 +152,8 @@ describe('injectDevtoolsPanel', () => {
 
     TestBed.tick()
 
+    await waitForDevtoolsToBeCreated()
+
     expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(0)
 
     errorTypes.set([])
@@ -149,7 +163,7 @@ describe('injectDevtoolsPanel', () => {
     expect(mockDevtoolsPanelInstance.setErrorTypes).toHaveBeenCalledTimes(1)
   })
 
-  it('should update onclose', () => {
+  it('should update onclose', async () => {
     const functionA = () => {}
     const functionB = () => {}
 
@@ -163,6 +177,8 @@ describe('injectDevtoolsPanel', () => {
     })
 
     TestBed.tick()
+
+    await waitForDevtoolsToBeCreated()
 
     expect(mockDevtoolsPanelInstance.setOnClose).toHaveBeenCalledTimes(0)
 
