@@ -13,9 +13,6 @@ export type TimeoutCallback = (_: void) => void
  * typings may extend the return type of `setTimeout`. For example, NodeJS
  * typings add `NodeJS.Timeout`; but a non-default `timeoutManager` may not be
  * able to return such a type.
- *
- * Still, we can downlevel `NodeJS.Timeout` to `number` as it implements
- * Symbol.toPrimitive.
  */
 export type ManagedTimerId = number | { [Symbol.toPrimitive]: () => number }
 
@@ -31,7 +28,7 @@ export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
     readonly clearInterval: (intervalId: TTimerId | undefined) => void
   }
 
-export const defaultTimeoutProvider: TimeoutProvider<
+const defaultTimeoutProvider: TimeoutProvider<
   ReturnType<typeof setTimeout>
 > = {
   // We need the wrapper function syntax below instead of direct references to
