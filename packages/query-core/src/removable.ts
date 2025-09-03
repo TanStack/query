@@ -1,4 +1,4 @@
-import { managedClearTimeout, managedSetTimeout } from './timeoutManager'
+import { timeoutManager } from './timeoutManager'
 import { isServer, isValidTimeout } from './utils'
 import type { ManagedTimerId } from './timeoutManager'
 
@@ -14,7 +14,7 @@ export abstract class Removable {
     this.clearGcTimeout()
 
     if (isValidTimeout(this.gcTime)) {
-      this.#gcTimeout = managedSetTimeout(() => {
+      this.#gcTimeout = timeoutManager.setTimeout(() => {
         this.optionalRemove()
       }, this.gcTime)
     }
@@ -30,7 +30,7 @@ export abstract class Removable {
 
   protected clearGcTimeout() {
     if (this.#gcTimeout) {
-      managedClearTimeout(this.#gcTimeout)
+      timeoutManager.clearTimeout(this.#gcTimeout)
       this.#gcTimeout = undefined
     }
   }

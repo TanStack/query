@@ -122,53 +122,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
   }
 }
 
-function providerIdToNumber(
-  provider: TimeoutProvider,
-  providerId: TimeoutProviderId,
-): ManagedTimerId {
-  const numberId = Number(providerId)
-  if (isNaN(numberId)) {
-    throw new Error(
-      `TimeoutManager: could not convert ${provider.name} provider timeout ID to valid number`,
-    )
-  }
-  return numberId
-}
-
 export const timeoutManager = new TimeoutManager()
-
-// Exporting functions that use `setTimeout` to reduce bundle size impact, since
-// method names on objects are usually not minified.
-
-/** A version of `setTimeout` controlled by {@link timeoutManager}. */
-export function managedSetTimeout(
-  callback: TimeoutCallback,
-  delay: number,
-): ManagedTimerId {
-  return timeoutManager.setTimeout(callback, delay)
-}
-
-/** A version of `clearTimeout` controlled by {@link timeoutManager}. */
-export function managedClearTimeout(
-  timeoutId: ManagedTimerId | undefined,
-): void {
-  timeoutManager.clearTimeout(timeoutId)
-}
-
-/** A version of `setInterval` controlled by {@link timeoutManager}. */
-export function managedSetInterval(
-  callback: TimeoutCallback,
-  delay: number,
-): ManagedTimerId {
-  return timeoutManager.setInterval(callback, delay)
-}
-
-/** A version of `clearInterval` controlled by {@link timeoutManager}. */
-export function managedClearInterval(
-  intervalId: ManagedTimerId | undefined,
-): void {
-  timeoutManager.clearInterval(intervalId)
-}
 
 /**
  * In many cases code wants to delay to the next event loop tick; this is not

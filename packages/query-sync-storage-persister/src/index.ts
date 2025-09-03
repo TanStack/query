@@ -1,4 +1,4 @@
-import { managedSetTimeout } from '@tanstack/query-core'
+import { timeoutManager } from '@tanstack/query-core'
 import { noop } from './utils'
 import type { ManagedTimerId } from '@tanstack/query-core'
 import type {
@@ -107,7 +107,7 @@ function throttle<TArgs extends Array<any>>(
   return function (...args: TArgs) {
     params = args
     if (timer === null) {
-      timer = managedSetTimeout(() => {
+      timer = timeoutManager.setTimeout(() => {
         func(...params)
         timer = null
       }, wait)

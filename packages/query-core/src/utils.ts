@@ -1,4 +1,3 @@
-import { managedSetTimeout, systemSetTimeoutZero } from './timeoutManager'
 import type {
   DefaultError,
   Enabled,
@@ -13,6 +12,7 @@ import type {
 } from './types'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
+import { timeoutManager } from './timeoutManager'
 
 // TYPES
 
@@ -362,7 +362,7 @@ function hasObjectPrototype(o: any): boolean {
 
 export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve) => {
-    managedSetTimeout(resolve, timeout)
+    timeoutManager.setTimeout(resolve, timeout)
   })
 }
 
