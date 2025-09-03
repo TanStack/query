@@ -16,9 +16,7 @@ const addTodoMutation = useMutation({
   mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
   // make sure to _return_ the Promise from the query invalidation
   // so that the mutation stays in `pending` state until the refetch is finished
-  onSettled: async () => {
-    return await queryClient.invalidateQueries({ queryKey: ['todos'] })
-  },
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
 })
 
 const { isPending, submittedAt, variables, mutate, isError } = addTodoMutation
@@ -62,7 +60,7 @@ If the mutation errors, the item will also disappear. But we could continue to s
 
 ### If the mutation and the query don't live in the same component
 
-This approach works very well if the mutation and the query live in the same component, However, you also get access to all mutations in other components via the dedicated `useMutationState` hook. It is best combined with a `mutationKey`:
+This approach works very well if the mutation and the query live in the same component. However, you also get access to all mutations in other components via the dedicated `useMutationState` hook. It is best combined with a `mutationKey`:
 
 [//]: # 'ExampleUI4'
 
@@ -121,9 +119,7 @@ useMutation({
     queryClient.setQueryData(['todos'], context.previousTodos)
   },
   // Always refetch after error or success:
-  onSettled: () => {
-    queryClient.invalidateQueries({ queryKey: ['todos'] })
-  },
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
 })
 ```
 
@@ -159,9 +155,8 @@ useMutation({
     )
   },
   // Always refetch after error or success:
-  onSettled: (newTodo) => {
-    queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
-  },
+  onSettled: (newTodo) =>
+    queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
 })
 ```
 
@@ -175,7 +170,7 @@ You can also use the `onSettled` function in place of the separate `onError` and
 useMutation({
   mutationFn: updateTodo,
   // ...
-  onSettled: (newTodo, error, variables, context) => {
+  onSettled: async (newTodo, error, variables, context) => {
     if (error) {
       // do something
     }
@@ -190,3 +185,11 @@ useMutation({
 If you only have one place where the optimistic result should be shown, using `variables` and updating the UI directly is the approach that requires less code and is generally easier to reason about. For example, you don't need to handle rollbacks at all.
 
 However, if you have multiple places on the screen that would require to know about the update, manipulating the cache directly will take care of this for you automatically.
+
+[//]: # 'Materials'
+
+## Further reading
+
+Have a look at the Community Resources for a guide on [Concurrent Optimistic Updates](../../community/tkdodos-blog.md#29-concurrent-optimistic-updates-in-react-query).
+
+[//]: # 'Materials'

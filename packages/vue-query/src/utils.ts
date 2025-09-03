@@ -9,7 +9,7 @@ export function getClientKey(key?: string) {
 }
 
 export function updateState(
-  state: Record<string, unknown>,
+  state: Record<string, any>,
   update: Record<string, any>,
 ): void {
   Object.keys(state).forEach((key) => {
@@ -108,16 +108,4 @@ function isPlainObject(value: unknown): value is Object {
 
 function isFunction(value: unknown): value is Function {
   return typeof value === 'function'
-}
-
-export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
-  throwOnError: boolean | T | undefined,
-  params: Parameters<T>,
-): boolean {
-  // Allow throwOnError function to override throwing behavior on a per-error basis
-  if (typeof throwOnError === 'function') {
-    return throwOnError(...params)
-  }
-
-  return !!throwOnError
 }

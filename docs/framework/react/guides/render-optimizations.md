@@ -17,11 +17,11 @@ The top level object returned from `useQuery`, `useInfiniteQuery`, `useMutation`
 
 ## tracked properties
 
-React Query will only trigger a re-render if one of the properties returned from `useQuery` is actually "used". This is done by using [custom getters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#custom_setters_and_getters). This avoids a lot of unnecessary re-renders, e.g. because properties like `isFetching` or `isStale` might change often, but are not used in the component.
+React Query will only trigger a re-render if one of the properties returned from `useQuery` is actually "used". This is done by using [Proxy object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). This avoids a lot of unnecessary re-renders, e.g. because properties like `isFetching` or `isStale` might change often, but are not used in the component.
 
 You can customize this feature by setting `notifyOnChangeProps` manually globally or on a per-query basis. If you want to turn that feature off, you can set `notifyOnChangeProps: 'all'`.
 
-> Note: Custom getters are invoked by accessing a property, either via destructuring or by accessing it directly. If you use object rest destructuring, you will disable this optimization. We have a [lint rule](../../../../eslint/no-rest-destructuring) to guard against this pitfall.
+> Note: The get trap of a proxy is invoked by accessing a property, either via destructuring or by accessing it directly. If you use object rest destructuring, you will disable this optimization. We have a [lint rule](../../../../eslint/no-rest-destructuring.md) to guard against this pitfall.
 
 ## select
 
@@ -42,6 +42,8 @@ export const useTodoCount = () => {
 ```
 
 A component using the `useTodoCount` custom hook will only re-render if the length of the todos changes. It will **not** re-render if e.g. the name of a todo changed.
+
+> Note: `select` operates on successfully cached data and is not the appropriate place to throw errors. The source of truth for errors is the `queryFn`, and a `select` function that returns an error results in `data` being `undefined` and `isSuccess` being `true`. We recommend handling errors in the `queryFn` if you wish to have a query fail on incorrect data, or outside of the query hook if you have a error case not related to caching.
 
 ### memoization
 
@@ -70,5 +72,5 @@ export const useTodoCount = () => {
 
 ## Further Reading
 
-For an in-depth guide about these topics, read [React Query Render Optimizations](../../community/tkdodos-blog#3-react-query-render-optimizations) from
-the Community Resources.
+For an in-depth guide about these topics, read [React Query Render Optimizations](../../community/tkdodos-blog.md#3-react-query-render-optimizations) from
+the Community Resources. To learn how to best optimize the `select` option, read [React Query Selectors, Supercharged](../../community/tkdodos-blog.md#30-react-query-selectors-supercharged)

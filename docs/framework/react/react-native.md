@@ -3,15 +3,20 @@ id: react-native
 title: React Native
 ---
 
-React Query is designed to work out of the box with React Native, with the exception of the devtools, which are only supported with React DOM at this time.
+React Query is designed to work out of the box with React Native.
 
-There is a 3rd party [Expo](https://docs.expo.dev/) plugin which you can try: https://github.com/expo/dev-plugins/tree/main/packages/react-query
+## DevTools Support
 
-There is a 3rd party [Flipper](https://fbflipper.com/docs/getting-started/react-native/) plugin which you can try: https://github.com/bgaleotti/react-query-native-devtools
+There are several options available for React Native DevTools integration:
 
-There is a 3rd party [Reactotron](https://github.com/infinitered/reactotron/) plugin which you can try: https://github.com/hsndmr/reactotron-react-query
+1. **Native macOS App**: A 3rd party app for debugging React Query in any js-based application:
+   https://github.com/LovesWorking/rn-better-dev-tools
 
-If you would like to help us make the built-in devtools platform agnostic, please let us know!
+2. **Flipper Plugin**: A 3rd party plugin for Flipper users:
+   https://github.com/bgaleotti/react-query-native-devtools
+
+3. **Reactotron Plugin**: A 3rd party plugin for Reactotron users:
+   https://github.com/hsndmr/reactotron-react-query
 
 ## Online status management
 
@@ -26,6 +31,20 @@ onlineManager.setEventListener((setOnline) => {
   return NetInfo.addEventListener((state) => {
     setOnline(!!state.isConnected)
   })
+})
+```
+
+or
+
+```tsx
+import { onlineManager } from '@tanstack/react-query'
+import * as Network from 'expo-network'
+
+onlineManager.setEventListener((setOnline) => {
+  const eventSubscription = Network.addNetworkStateListener((state) => {
+    setOnline(!!state.isConnected)
+  })
+  return eventSubscription.remove
 })
 ```
 
@@ -55,13 +74,15 @@ useEffect(() => {
 ## Refresh on Screen focus
 
 In some situations, you may want to refetch the query when a React Native Screen is focused again.
-This custom hook will call the provided `refetch` function when the screen is focused again.
+This custom hook will refetch **all active stale queries** when the screen is focused again.
 
 ```tsx
 import React from 'react'
 import { useFocusEffect } from '@react-navigation/native'
+import { useQueryClient } from '@tanstack/react-query'
 
-export function useRefreshOnFocus<T>(refetch: () => Promise<T>) {
+export function useRefreshOnFocus() {
+  const queryClient = useQueryClient()
   const firstTimeRef = React.useRef(true)
 
   useFocusEffect(
@@ -71,106 +92,42 @@ export function useRefreshOnFocus<T>(refetch: () => Promise<T>) {
         return
       }
 
-      refetch()
-    }, [refetch]),
+      // refetch all stale active queries
+      queryClient.refetchQueries({
+        queryKey: ['posts'],
+        stale: true,
+        type: 'active',
+      })
+    }, [queryClient]),
   )
 }
 ```
 
-In the above code, `refetch` is skipped the first time because `useFocusEffect` calls our callback on mount in addition to screen focus.
+In the above code, the first focus (when the screen is initially mounted) is skipped because `useFocusEffect` calls our callback on mount in addition to screen focus.
 
-## Disable re-renders on out of focus Screens
+## Disable queries on out of focus screens
 
-In some situations, including performance concerns, you may want to stop re-renders when a React Native screen gets out of focus. To achieve this we can use `useFocusEffect` from `@react-navigation/native` together with the `notifyOnChangeProps` query option.
-
-This custom hook provides a `notifyOnChangeProps` option that will return an empty array whenever a screen goes out of focus - effectively stopping any re-renders on that scenario. Whenever the screens gets in focus again, the behavior goes back to normal.
-
-```tsx
-import React from 'react'
-import { NotifyOnChangeProps } from '@tanstack/query-core'
-import { useFocusEffect } from '@react-navigation/native'
-
-export function useFocusNotifyOnChangeProps(
-  notifyOnChangeProps?: NotifyOnChangeProps,
-) {
-  const focusedRef = React.useRef(true)
-
-  useFocusEffect(
-    React.useCallback(() => {
-      focusedRef.current = true
-
-      return () => {
-        focusedRef.current = false
-      }
-    }, []),
-  )
-
-  return () => {
-    if (!focusedRef.current) {
-      return []
-    }
-
-    if (typeof notifyOnChangeProps === 'function') {
-      return notifyOnChangeProps()
-    }
-
-    return notifyOnChangeProps
-  }
-}
-```
-
-In the above code, `useFocusEffect` is used to change the value of a reference that the callback will use as a condition.
-
-The argument is wrapped in a reference to also guarantee that the returned callback always keeps the same reference.
+If you don’t want certain queries to remain “live” while a screen is out of focus, you can use the subscribed prop on useQuery. This prop lets you control whether a query stays subscribed to updates. Combined with React Navigation’s useIsFocused, it allows you to seamlessly unsubscribe from queries when a screen isn’t in focus:
 
 Example usage:
 
 ```tsx
+import React from 'react'
+import { useIsFocused } from '@react-navigation/native'
+import { useQuery } from '@tanstack/react-query'
+import { Text } from 'react-native'
+
 function MyComponent() {
-  const notifyOnChangeProps = useFocusNotifyOnChangeProps()
+  const isFocused = useIsFocused()
 
   const { dataUpdatedAt } = useQuery({
-    queryKey: ['myKey'],
-    queryFn: async () => {
-      const response = await fetch(
-        'https://api.github.com/repos/tannerlinsley/react-query',
-      )
-      return response.json()
-    },
-    notifyOnChangeProps,
+    queryKey: ['key'],
+    queryFn: () => fetch(...),
+    subscribed: isFocused,
   })
 
   return <Text>DataUpdatedAt: {dataUpdatedAt}</Text>
 }
 ```
 
-## Disable queries on out of focus screens
-
-Enabled can also be set to a callback to support disabling queries on out of focus screens without state and re-rendering on navigation, similar to how notifyOnChangeProps works but in addition it wont trigger refetching when invalidating queries with refetchType active.
-
-```tsx
-import React from 'react'
-import { useFocusEffect } from '@react-navigation/native'
-
-export function useQueryFocusAware(notifyOnChangeProps?: NotifyOnChangeProps) {
-  const focusedRef = React.useRef(true)
-
-  useFocusEffect(
-    React.useCallback(() => {
-      focusedRef.current = true
-
-      return () => {
-        focusedRef.current = false
-      }
-    }, []),
-  )
-
-  return () => focusedRef.current
-
-  useQuery({
-    queryKey: ['key'],
-    queryFn: () => fetch(...),
-    enabled: () => focusedRef.current,
-  })
-}
-```
+When subscribed is false, the query unsubscribes from updates and won’t trigger re-renders or fetch new data for that screen. Once it becomes true again (e.g., when the screen regains focus), the query re-subscribes and stays up to date.

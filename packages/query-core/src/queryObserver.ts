@@ -1,3 +1,8 @@
+import { focusManager } from './focusManager'
+import { notifyManager } from './notifyManager'
+import { fetchState } from './query'
+import { Subscribable } from './subscribable'
+import { pendingThenable } from './thenable'
 import {
   isServer,
   isValidTimeout,
@@ -8,12 +13,9 @@ import {
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
-import { notifyManager } from './notifyManager'
-import { focusManager } from './focusManager'
-import { Subscribable } from './subscribable'
-import { fetchState } from './query'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
+import type { PendingThenable, Thenable } from './thenable'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -29,10 +31,6 @@ import type {
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
 ) => void
-
-export interface NotifyOptions {
-  listeners?: boolean
-}
 
 interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
@@ -57,6 +55,7 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
+  #currentThenable: Thenable<TData>
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
@@ -82,6 +81,8 @@ export class QueryObserver<
 
     this.#client = client
     this.#selectError = null
+    this.#currentThenable = pendingThenable()
+
     this.bindMethods()
     this.setOptions(options)
   }
@@ -141,7 +142,6 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
-    notifyOptions?: NotifyOptions,
   ): void {
     const prevOptions = this.options
     const prevQuery = this.#currentQuery
@@ -190,7 +190,7 @@ export class QueryObserver<
     }
 
     // Update result
-    this.updateResult(notifyOptions)
+    this.updateResult()
 
     // Update stale interval if needed
     if (
@@ -263,21 +263,24 @@ export class QueryObserver<
     result: QueryObserverResult<TData, TError>,
     onPropTracked?: (key: keyof QueryObserverResult) => void,
   ): QueryObserverResult<TData, TError> {
-    const trackedResult = {} as QueryObserverResult<TData, TError>
-
-    Object.keys(result).forEach((key) => {
-      Object.defineProperty(trackedResult, key, {
-        configurable: false,
-        enumerable: true,
-        get: () => {
-          this.trackProp(key as keyof QueryObserverResult)
-          onPropTracked?.(key as keyof QueryObserverResult)
-          return result[key as keyof QueryObserverResult]
-        },
-      })
+    return new Proxy(result, {
+      get: (target, key) => {
+        this.trackProp(key as keyof QueryObserverResult)
+        onPropTracked?.(key as keyof QueryObserverResult)
+        if (
+          key === 'promise' &&
+          !this.options.experimental_prefetchInRender &&
+          this.#currentThenable.status === 'pending'
+        ) {
+          this.#currentThenable.reject(
+            new Error(
+              'experimental_prefetchInRender feature flag is not enabled',
+            ),
+          )
+        }
+        return Reflect.get(target, key)
+      },
     })
-
-    return trackedResult
   }
 
   trackProp(key: keyof QueryObserverResult) {
@@ -310,7 +313,6 @@ export class QueryObserver<
     const query = this.#client
       .getQueryCache()
       .build(this.#client, defaultedOptions)
-    query.isFetchingOptimistic = true
 
     return query.fetch().then(() => this.createResult(query, defaultedOptions))
   }
@@ -470,33 +472,11 @@ export class QueryObserver<
 
     let { error, errorUpdatedAt, status } = newState
 
-    // Select data if needed
-    if (options.select && newState.data !== undefined) {
-      // Memoize select result
-      if (
-        prevResult &&
-        newState.data === prevResultState?.data &&
-        options.select === this.#selectFn
-      ) {
-        data = this.#selectResult
-      } else {
-        try {
-          this.#selectFn = options.select
-          data = options.select(newState.data)
-          data = replaceData(prevResult?.data, data, options)
-          this.#selectResult = data
-          this.#selectError = null
-        } catch (selectError) {
-          this.#selectError = selectError as TError
-        }
-      }
-    }
-    // Use query data
-    else {
-      data = newState.data as unknown as TData
-    }
+    // Per default, use query data
+    data = newState.data as unknown as TData
+    let skipSelect = false
 
-    // Show placeholder data if needed
+    // use placeholderData if needed
     if (
       options.placeholderData !== undefined &&
       data === undefined &&
@@ -510,7 +490,11 @@ export class QueryObserver<
         options.placeholderData === prevResultOptions?.placeholderData
       ) {
         placeholderData = prevResult.data
+        // we have to skip select when reading this memoization
+        // because prevResult.data is already "selected"
+        skipSelect = true
       } else {
+        // compute placeholderData
         placeholderData =
           typeof options.placeholderData === 'function'
             ? (
@@ -520,14 +504,6 @@ export class QueryObserver<
                 this.#lastQueryWithDefinedData as any,
               )
             : options.placeholderData
-        if (options.select && placeholderData !== undefined) {
-          try {
-            placeholderData = options.select(placeholderData)
-            this.#selectError = null
-          } catch (selectError) {
-            this.#selectError = selectError as TError
-          }
-        }
       }
 
       if (placeholderData !== undefined) {
@@ -538,6 +514,29 @@ export class QueryObserver<
           options,
         ) as TData
         isPlaceholderData = true
+      }
+    }
+
+    // Select data if needed
+    // this also runs placeholderData through the select function
+    if (options.select && data !== undefined && !skipSelect) {
+      // Memoize select result
+      if (
+        prevResult &&
+        data === prevResultState?.data &&
+        options.select === this.#selectFn
+      ) {
+        data = this.#selectResult
+      } else {
+        try {
+          this.#selectFn = options.select
+          data = options.select(data as any)
+          data = replaceData(prevResult?.data, data, options)
+          this.#selectResult = data
+          this.#selectError = null
+        } catch (selectError) {
+          this.#selectError = selectError as TError
+        }
       }
     }
 
@@ -582,17 +581,71 @@ export class QueryObserver<
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
+      promise: this.#currentThenable,
+      isEnabled: resolveEnabled(options.enabled, query) !== false,
     }
 
-    return result as QueryObserverResult<TData, TError>
+    const nextResult = result as QueryObserverResult<TData, TError>
+
+    if (this.options.experimental_prefetchInRender) {
+      const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
+        if (nextResult.status === 'error') {
+          thenable.reject(nextResult.error)
+        } else if (nextResult.data !== undefined) {
+          thenable.resolve(nextResult.data)
+        }
+      }
+
+      /**
+       * Create a new thenable and result promise when the results have changed
+       */
+      const recreateThenable = () => {
+        const pending =
+          (this.#currentThenable =
+          nextResult.promise =
+            pendingThenable())
+
+        finalizeThenableIfPossible(pending)
+      }
+
+      const prevThenable = this.#currentThenable
+      switch (prevThenable.status) {
+        case 'pending':
+          // Finalize the previous thenable if it was pending
+          // and we are still observing the same query
+          if (query.queryHash === prevQuery.queryHash) {
+            finalizeThenableIfPossible(prevThenable)
+          }
+          break
+        case 'fulfilled':
+          if (
+            nextResult.status === 'error' ||
+            nextResult.data !== prevThenable.value
+          ) {
+            recreateThenable()
+          }
+          break
+        case 'rejected':
+          if (
+            nextResult.status !== 'error' ||
+            nextResult.error !== prevThenable.reason
+          ) {
+            recreateThenable()
+          }
+          break
+      }
+    }
+
+    return nextResult
   }
 
-  updateResult(notifyOptions?: NotifyOptions): void {
+  updateResult(): void {
     const prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
+
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
 
@@ -606,9 +659,6 @@ export class QueryObserver<
     }
 
     this.#currentResult = nextResult
-
-    // Determine which callbacks to trigger
-    const defaultNotifyOptions: NotifyOptions = {}
 
     const shouldNotifyListeners = (): boolean => {
       if (!prevResult) {
@@ -639,15 +689,12 @@ export class QueryObserver<
       return Object.keys(this.#currentResult).some((key) => {
         const typedKey = key as keyof QueryObserverResult
         const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
+
         return changed && includedProps.has(typedKey)
       })
     }
 
-    if (notifyOptions?.listeners !== false && shouldNotifyListeners()) {
-      defaultNotifyOptions.listeners = true
-    }
-
-    this.#notify({ ...defaultNotifyOptions, ...notifyOptions })
+    this.#notify({ listeners: shouldNotifyListeners() })
   }
 
   #updateQuery(): void {
@@ -677,7 +724,7 @@ export class QueryObserver<
     }
   }
 
-  #notify(notifyOptions: NotifyOptions): void {
+  #notify(notifyOptions: { listeners: boolean }): void {
     notifyManager.batch(() => {
       // First, trigger the listeners
       if (notifyOptions.listeners) {
@@ -724,7 +771,10 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (resolveEnabled(options.enabled, query) !== false) {
+  if (
+    resolveEnabled(options.enabled, query) !== false &&
+    resolveStaleTime(options.staleTime, query) !== 'static'
+  ) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))

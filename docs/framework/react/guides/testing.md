@@ -27,31 +27,21 @@ export function useCustomHook() {
 }
 ```
 
-Using React 17 or earlier, we can write a test for this as follows:
+We can write a test for this as follows:
 
 ```tsx
+import { renderHook, waitFor } from '@testing-library/react'
+
 const queryClient = new QueryClient()
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 )
 
-const { result, waitFor } = renderHook(() => useCustomHook(), { wrapper })
+const { result } = renderHook(() => useCustomHook(), { wrapper })
 
-await waitFor(() => result.current.isSuccess)
+await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
 expect(result.current.data).toEqual('Hello')
-```
-
-Using React 18 or later, the semantics of `waitFor` have changed, and the above test needs to be modified as follows:
-
-```tsx
-import { renderHook, waitFor } from "@testing-library/react";
-
-...
-
-const { result } = renderHook(() => useCustomHook(), { wrapper });
-
-await waitFor(() => expect(result.current.isSuccess).toBe(true));
 ```
 
 Note that we provide a custom wrapper that builds the `QueryClient` and `QueryClientProvider`. This helps to ensure that our test is completely isolated from any other tests.
@@ -111,11 +101,9 @@ const expectation = nock('http://example.com').get('/api/data').reply(200, {
   answer: 42,
 })
 
-const { result, waitFor } = renderHook(() => useFetchData(), { wrapper })
+const { result } = renderHook(() => useFetchData(), { wrapper })
 
-await waitFor(() => {
-  return result.current.isSuccess
-})
+await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
 expect(result.current.data).toEqual({ answer: 42 })
 ```
@@ -155,11 +143,11 @@ const expectation = nock('http://example.com')
 Now we can safely run our tests, the trick here is to await for the data assertion to pass:
 
 ```tsx
-const { result, waitFor } = renderHook(() => useInfiniteQueryCustomHook(), {
+const { result } = renderHook(() => useInfiniteQueryCustomHook(), {
   wrapper,
 })
 
-await waitFor(() => result.current.isSuccess)
+await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
 expect(result.current.data.pages).toStrictEqual(generateMockedResponse(1))
 
@@ -179,5 +167,5 @@ _Note_: when using React 18, the semantics of `waitFor` have changed as noted ab
 
 ## Further reading
 
-For additional tips and an alternative setup using `mock-service-worker`, have a look at [Testing React Query](../../community/tkdodos-blog#5-testing-react-query) from
+For additional tips and an alternative setup using `mock-service-worker`, have a look at [Testing React Query](../../community/tkdodos-blog.md#5-testing-react-query) from
 the Community Resources.

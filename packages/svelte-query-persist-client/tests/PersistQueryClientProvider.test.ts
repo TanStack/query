@@ -2,6 +2,8 @@ import { render, waitFor } from '@testing-library/svelte'
 import { describe, expect, test, vi } from 'vitest'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { get, writable } from 'svelte/store'
+import { sleep } from '@tanstack/query-test-utils'
+import { QueryClient } from '@tanstack/svelte-query'
 import AwaitOnSuccess from './AwaitOnSuccess/Provider.svelte'
 import FreshData from './FreshData/Provider.svelte'
 import OnSuccess from './OnSuccess/Provider.svelte'
@@ -9,7 +11,6 @@ import InitialData from './InitialData/Provider.svelte'
 import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
-import { createQueryClient, sleep } from './utils.js'
 
 import type {
   PersistedClient,
@@ -22,7 +23,7 @@ const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
   return {
-    async persistClient(persistClient: PersistedClient) {
+    persistClient(persistClient: PersistedClient) {
       storedState = persistClient
     },
     async restoreClient() {
@@ -58,7 +59,7 @@ describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -83,7 +84,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
 
     const states = get(statesStore)
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -105,6 +106,12 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states[3]).toMatchObject({
       status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
+      status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
     })
@@ -113,7 +120,7 @@ describe('PersistQueryClientProvider', () => {
   test('should also put useQueries into idle state', async () => {
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -139,7 +146,7 @@ describe('PersistQueryClientProvider', () => {
 
     const states = get(statesStore)
 
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -161,6 +168,12 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states[3]).toMatchObject({
       status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
+      status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
     })
@@ -169,7 +182,7 @@ describe('PersistQueryClientProvider', () => {
   test('should show initialData while restoring', async () => {
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -194,7 +207,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
 
     const states = get(statesStore)
-    expect(states).toHaveLength(4)
+    expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
       status: 'success',
@@ -216,6 +229,12 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states[3]).toMatchObject({
       status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
+      status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
     })
@@ -224,7 +243,7 @@ describe('PersistQueryClientProvider', () => {
   test('should not refetch after restoring when data is fresh', async () => {
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -269,7 +288,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should call onSuccess after successful restoring', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -299,7 +318,7 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should await onSuccess after successful restoring', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
@@ -346,17 +365,21 @@ describe('PersistQueryClientProvider', () => {
       .mockImplementation(() => undefined)
     consoleMock.mockImplementation(() => undefined)
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const removeClient = vi.fn()
+    const onSuccess = vi.fn()
+    const onError = vi.fn()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
     const rendered = render(RemoveCache, {
-      props: { queryClient, persistOptions: { persister } },
+      props: { queryClient, persistOptions: { persister }, onError, onSuccess },
     })
 
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledTimes(0)
+    expect(onError).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenNthCalledWith(1, error)
     consoleMock.mockRestore()

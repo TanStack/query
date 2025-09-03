@@ -11,6 +11,7 @@ const {
   hasPreviousPage,
   isFetchingNextPage,
   isFetchingPreviousPage,
+  promise,
   ...result
 } = useInfiniteQuery({
   queryKey,
@@ -26,12 +27,12 @@ const {
 
 **Options**
 
-The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../useQuery) with the addition of the following:
+The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../../reference/useQuery.md) with the addition of the following:
 
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
-  - **Required, but only if no default query function has been defined** [`defaultQueryFn`](../../guides/default-query-function)
+  - **Required, but only if no default query function has been defined** [`defaultQueryFn`](../../guides/default-query-function.md)
   - The function that the query will use to request data.
-  - Receives a [QueryFunctionContext](../../guides/query-functions#queryfunctioncontext)
+  - Receives a [QueryFunctionContext](../../guides/query-functions.md#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error.
 - `initialPageParam: TPageParam`
   - **Required**
@@ -54,7 +55,7 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../use
 
 **Returns**
 
-The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](../useQuery), with the addition of the following properties and a small difference in `isRefetching` and `isRefetchError`:
+The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](../../reference/useQuery.md), with the addition of the following properties and a small difference in `isRefetching` and `isRefetchError`:
 
 - `data.pages: TData[]`
   - Array containing all pages.
@@ -85,5 +86,9 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
   - Is the same as `isFetching && !isPending && !isFetchingNextPage && !isFetchingPreviousPage`
 - `isRefetchError: boolean`
   - Will be `true` if the query failed while refetching a page.
+- `promise: Promise<TData>`
+  - A stable promise that resolves to the query result.
+  - This can be used with `React.use()` to fetch data
+  - Requires the `experimental_prefetchInRender` feature flag to be enabled on the `QueryClient`.
 
 Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch behaviour, resulting in outdated data. Make sure to call these functions only in response to user actions, or add conditions like `hasNextPage && !isFetching`.

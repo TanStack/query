@@ -8,20 +8,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.53.3",
+    "@tanstack/query-async-storage-persister": "^5.85.9",
     "@tanstack/react-location": "^3.7.4",
-    "@tanstack/react-query": "^5.53.3",
-    "@tanstack/react-query-devtools": "^5.53.3",
-    "@tanstack/react-query-persist-client": "^5.53.3",
-    "msw": "^2.3.4",
-    "react": "19.0.0-rc-4c2e457c7c-20240522",
-    "react-dom": "19.0.0-rc-4c2e457c7c-20240522",
-    "react-hot-toast": "^2.4.1"
+    "@tanstack/react-query": "^5.85.9",
+    "@tanstack/react-query-devtools": "^5.85.9",
+    "@tanstack/react-query-persist-client": "^5.85.9",
+    "msw": "^2.6.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.5.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "typescript": "5.3.3",
-    "vite": "^5.3.5"
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "5.8.3",
+    "vite": "^6.2.4"
   },
   "msw": {
     "workerDirectory": [

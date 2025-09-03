@@ -36,6 +36,9 @@ interface CreateSyncStoragePersisterOptions {
   retry?: PersistRetryer
 }
 
+/**
+ * @deprecated use `createAsyncStoragePersister` from `@tanstack/query-async-storage-persister` instead.
+ */
 export function createSyncStoragePersister({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
@@ -88,7 +91,7 @@ export function createSyncStoragePersister({
 
   return {
     persistClient: noop,
-    restoreClient: () => undefined,
+    restoreClient: noop,
     removeClient: noop,
   }
 }

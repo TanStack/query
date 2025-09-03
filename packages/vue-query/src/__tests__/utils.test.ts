@@ -142,6 +142,12 @@ describe('utils', () => {
       })
     })
 
+    test('should clone getters returning values in queryKey', () => {
+      const val = ref({ queryKey: [1, 2, () => '3'] })
+      const cp = cloneDeepUnref(val)
+      expect(cp).toStrictEqual({ queryKey: [1, 2, '3'] })
+    })
+
     test('should unref undefined', () => {
       expect(cloneDeepUnref(ref(undefined))).toBe(undefined)
     })

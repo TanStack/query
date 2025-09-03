@@ -1,0 +1,28 @@
+{
+  "name": "@tanstack/query-example-angular-query-options-from-a-service",
+  "type": "module",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@tanstack/angular-query-experimental": "^5.85.9",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.8.1",
+    "zone.js": "0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.0.0",
+    "@angular/cli": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
+    "typescript": "5.8.3"
+  }
+}

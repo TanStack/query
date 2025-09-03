@@ -1,0 +1,39 @@
+<div>
+  <p>
+    In this example, each page of data remains visible as the next page is
+    fetched. The buttons and capability to proceed to the next page are also
+    supressed until the next page cursor is known. Each page is cached as a
+    normal query too, so when going to previous pages, you'll see them
+    instantaneously while they are also refetched invisibly in the background.
+  </p>
+
+  @if (query.isPending()) {
+    <div>Loading...</div>
+  } @else if (query.isError()) {
+    <div>Error: {{ query.error().message }}</div>
+  } @else if (query.isSuccess()) {
+    <div>
+      @for (project of query.data().projects; track project.id) {
+        <p>{{ project.name }}</p>
+      }
+    </div>
+  }
+
+  <div>Current Page: {{ page() + 1 }}</div>
+
+  <button (click)="previousPage()" [disabled]="page() === 0">
+    Previous Page
+  </button>
+  <button
+    (click)="nextPage()"
+    [disabled]="query.isPlaceholderData() || !query.data()?.hasMore"
+  >
+    Next Page
+  </button>
+  <!-- Since the last page's data potentially sticks around between page requests, -->
+  <!-- we can use `isFetching` to show a background loading -->
+  <!-- indicator since our `status === 'pending'` state won't be triggered -->
+  @if (query.isFetching()) {
+    <span>Loading...</span>
+  }
+</div>

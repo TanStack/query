@@ -1,4 +1,4 @@
-# Angular Query infinite query example
+# TanStack Query Angular infinite query example
 
 To run this example:
 

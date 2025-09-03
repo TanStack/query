@@ -69,3 +69,42 @@ title: Videos & Talks
     width: '100%',
   }}
 ></iframe>
+
+<iframe
+  width="280"
+  height="400"
+  title="TanStack Query v4 (with Dominik Dorfmeister) — Learn With Jason"
+  src="https://www.youtube.com/embed/SPPQm0dvEes"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  style={{
+    width: '100%',
+  }}
+></iframe>
+
+<iframe
+  width="280"
+  height="400"
+  title="React Query Exposed by Its Maintainer"
+  src="https://www.youtube.com/embed/8-RTNnn9GR8"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  style={{
+    width: '100%',
+  }}
+></iframe>
+
+<iframe
+  width="280"
+  height="400"
+  title="React Query API Design: Lessons Learned - Dominik Dorfmeister"
+  src="https://www.youtube.com/embed/l3PxErcKeAI"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  style={{
+    width: '100%',
+  }}
+></iframe>

@@ -3,9 +3,8 @@ import * as React from 'react'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { QueryClient, useQueries, useQuery } from '@tanstack/react-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
-import { createQueryClient, queryKey, sleep } from './utils'
 import type {
   PersistedClient,
   Persister,
@@ -19,7 +18,7 @@ const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
   return {
-    async persistClient(persistClient: PersistedClient) {
+    persistClient(persistClient: PersistedClient) {
       storedState = persistClient
     },
     async restoreClient() {
@@ -56,7 +55,7 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -130,7 +129,7 @@ describe('PersistQueryClientProvider', () => {
   test('should subscribe correctly in StrictMode', async () => {
     const key = queryKey()
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -195,7 +194,7 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
     const states: Array<UseQueryResult> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -274,7 +273,7 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
     const states: Array<DefinedUseQueryResult<string>> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -354,7 +353,7 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -372,6 +371,7 @@ describe('PersistQueryClientProvider', () => {
       const state = useQuery({
         queryKey: key,
         queryFn: async () => {
+          // eslint-disable-next-line react-hooks/react-compiler
           fetched = true
           await sleep(10)
           return 'fetched'
@@ -422,7 +422,7 @@ describe('PersistQueryClientProvider', () => {
   test('should call onSuccess after successful restoring', async () => {
     const key = queryKey()
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -472,7 +472,7 @@ describe('PersistQueryClientProvider', () => {
   test('should await onSuccess after successful restoring', async () => {
     const key = queryKey()
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -537,8 +537,10 @@ describe('PersistQueryClientProvider', () => {
       .mockImplementation(() => undefined)
     consoleMock.mockImplementation(() => undefined)
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const removeClient = vi.fn()
+    const onSuccess = vi.fn()
+    const onError = vi.fn()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
@@ -563,6 +565,8 @@ describe('PersistQueryClientProvider', () => {
       <PersistQueryClientProvider
         client={queryClient}
         persistOptions={{ persister }}
+        onSuccess={onSuccess}
+        onError={onError}
       >
         <Page />
       </PersistQueryClientProvider>,
@@ -570,6 +574,9 @@ describe('PersistQueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledTimes(0)
+    expect(onError).toHaveBeenCalledTimes(1)
+
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenNthCalledWith(1, error)
     consoleMock.mockRestore()
@@ -580,7 +587,7 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
     const states: Array<UseQueryResult> = []
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),
@@ -699,7 +706,7 @@ describe('PersistQueryClientProvider', () => {
       let storedState: PersistedClient | undefined
 
       return {
-        async persistClient(persistClient) {
+        persistClient(persistClient) {
           storedState = persistClient
         },
         async restoreClient() {
@@ -715,7 +722,7 @@ describe('PersistQueryClientProvider', () => {
 
     const key = queryKey()
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => Promise.resolve('hydrated'),

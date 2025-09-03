@@ -1,0 +1,23 @@
+{
+  "name": "react-webpack-4",
+  "private": true,
+  "scripts": {
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider webpack --mode production"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "workspace:*",
+    "@tanstack/react-query-devtools": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.25.9",
+    "babel-loader": "^8.3.0",
+    "cross-env": "^7.0.3",
+    "html-webpack-plugin": "^4.5.2",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.10.0"
+  }
+}

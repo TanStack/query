@@ -10,6 +10,8 @@ type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
 
 type ScheduleFunction = (callback: () => void) => void
 
+export const defaultScheduler: ScheduleFunction = (cb) => setTimeout(cb, 0)
+
 export function createNotifyManager() {
   let queue: Array<NotifyCallback> = []
   let transactions = 0
@@ -19,25 +21,7 @@ export function createNotifyManager() {
   let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
     callback()
   }
-  let scheduleFn: ScheduleFunction = (cb) => setTimeout(cb, 0)
-
-  const setScheduler = (fn: ScheduleFunction) => {
-    scheduleFn = fn
-  }
-
-  const batch = <T>(callback: () => T): T => {
-    let result
-    transactions++
-    try {
-      result = callback()
-    } finally {
-      transactions--
-      if (!transactions) {
-        flush()
-      }
-    }
-    return result
-  }
+  let scheduleFn = defaultScheduler
 
   const schedule = (callback: NotifyCallback): void => {
     if (transactions) {
@@ -48,20 +32,6 @@ export function createNotifyManager() {
       })
     }
   }
-
-  /**
-   * All calls to the wrapped function will be batched.
-   */
-  const batchCalls = <T extends Array<unknown>>(
-    callback: BatchCallsCallback<T>,
-  ): BatchCallsCallback<T> => {
-    return (...args) => {
-      schedule(() => {
-        callback(...args)
-      })
-    }
-  }
-
   const flush = (): void => {
     const originalQueue = queue
     queue = []
@@ -76,29 +46,50 @@ export function createNotifyManager() {
     }
   }
 
-  /**
-   * Use this method to set a custom notify function.
-   * This can be used to for example wrap notifications with `React.act` while running tests.
-   */
-  const setNotifyFunction = (fn: NotifyFunction) => {
-    notifyFn = fn
-  }
-
-  /**
-   * Use this method to set a custom function to batch notifications together into a single tick.
-   * By default React Query will use the batch function provided by ReactDOM or React Native.
-   */
-  const setBatchNotifyFunction = (fn: BatchNotifyFunction) => {
-    batchNotifyFn = fn
-  }
-
   return {
-    batch,
-    batchCalls,
+    batch: <T>(callback: () => T): T => {
+      let result
+      transactions++
+      try {
+        result = callback()
+      } finally {
+        transactions--
+        if (!transactions) {
+          flush()
+        }
+      }
+      return result
+    },
+    /**
+     * All calls to the wrapped function will be batched.
+     */
+    batchCalls: <T extends Array<unknown>>(
+      callback: BatchCallsCallback<T>,
+    ): BatchCallsCallback<T> => {
+      return (...args) => {
+        schedule(() => {
+          callback(...args)
+        })
+      }
+    },
     schedule,
-    setNotifyFunction,
-    setBatchNotifyFunction,
-    setScheduler,
+    /**
+     * Use this method to set a custom notify function.
+     * This can be used to for example wrap notifications with `React.act` while running tests.
+     */
+    setNotifyFunction: (fn: NotifyFunction) => {
+      notifyFn = fn
+    },
+    /**
+     * Use this method to set a custom function to batch notifications together into a single tick.
+     * By default React Query will use the batch function provided by ReactDOM or React Native.
+     */
+    setBatchNotifyFunction: (fn: BatchNotifyFunction) => {
+      batchNotifyFn = fn
+    },
+    setScheduler: (fn: ScheduleFunction) => {
+      scheduleFn = fn
+    },
   } as const
 }
 

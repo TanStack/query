@@ -1,13 +1,17 @@
-import { beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { sleep } from '../utils'
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { FocusManager } from '../focusManager'
 import { setIsServer } from './utils'
 
 describe('focusManager', () => {
   let focusManager: FocusManager
   beforeEach(() => {
+    vi.useFakeTimers()
     vi.resetModules()
     focusManager = new FocusManager()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   it('should call previous remove handler when replacing an event listener', () => {
@@ -21,7 +25,7 @@ describe('focusManager', () => {
     expect(remove2Spy).not.toHaveBeenCalled()
   })
 
-  it('should use focused boolean arg', async () => {
+  it('should use focused boolean arg', () => {
     let count = 0
 
     const setup = (setFocused: (focused?: boolean) => void) => {
@@ -34,12 +38,12 @@ describe('focusManager', () => {
 
     focusManager.setEventListener(setup)
 
-    await sleep(30)
+    vi.advanceTimersByTime(20)
     expect(count).toEqual(1)
     expect(focusManager.isFocused()).toBeTruthy()
   })
 
-  it('should return true for isFocused if document is undefined', async () => {
+  it('should return true for isFocused if document is undefined', () => {
     const { document } = globalThis
 
     // @ts-expect-error
@@ -50,7 +54,7 @@ describe('focusManager', () => {
     globalThis.document = document
   })
 
-  test('cleanup (removeEventListener) should not be called if window is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window is not defined', () => {
     const restoreIsServer = setIsServer(true)
 
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
@@ -64,7 +68,7 @@ describe('focusManager', () => {
     restoreIsServer()
   })
 
-  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
@@ -81,7 +85,7 @@ describe('focusManager', () => {
     globalThis.window.addEventListener = addEventListener
   })
 
-  it('should replace default window listener when a new event listener is set', async () => {
+  it('should replace default window listener when a new event listener is set', () => {
     const unsubscribeSpy = vi.fn().mockImplementation(() => undefined)
     const handlerSpy = vi.fn().mockImplementation(() => unsubscribeSpy)
 

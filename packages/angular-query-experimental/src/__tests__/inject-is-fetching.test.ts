@@ -1,40 +1,48 @@
-import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
-import { beforeEach, describe, expect } from 'vitest'
-import { Injector } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { Injector, provideZonelessChangeDetection } from '@angular/core'
+import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectIsFetching,
   injectQuery,
-  provideAngularQuery,
+  provideTanStackQuery,
 } from '..'
-import { delayedFetcher } from './test-utils'
 
 describe('injectIsFetching', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
+    vi.useFakeTimers()
     queryClient = new QueryClient()
 
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
     })
   })
 
-  test('Returns number of fetching queries', fakeAsync(() => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test('Returns number of fetching queries', async () => {
     const isFetching = TestBed.runInInjectionContext(() => {
       injectQuery(() => ({
         queryKey: ['isFetching1'],
-        queryFn: delayedFetcher(100),
+        queryFn: () => sleep(100).then(() => 'Some data'),
       }))
       return injectIsFetching()
     })
 
-    tick()
-
-    expect(isFetching()).toStrictEqual(1)
-    flush()
     expect(isFetching()).toStrictEqual(0)
-  }))
+    await vi.advanceTimersByTimeAsync(1)
+    expect(isFetching()).toStrictEqual(1)
+    await vi.advanceTimersByTimeAsync(100)
+    expect(isFetching()).toStrictEqual(0)
+  })
 
   describe('injection context', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
@@ -45,7 +53,9 @@ describe('injectIsFetching', () => {
 
     test('can be used outside injection context when passing an injector', () => {
       expect(
-        injectIsFetching(undefined, TestBed.inject(Injector)),
+        injectIsFetching(undefined, {
+          injector: TestBed.inject(Injector),
+        }),
       ).not.toThrow()
     })
   })

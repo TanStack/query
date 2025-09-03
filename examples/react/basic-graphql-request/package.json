@@ -8,15 +8,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.53.3",
-    "@tanstack/react-query-devtools": "^5.53.3",
+    "@tanstack/react-query": "^5.85.9",
+    "@tanstack/react-query-devtools": "^5.85.9",
     "graphql": "^16.9.0",
-    "graphql-request": "^7.1.0",
-    "react": "19.0.0-rc-4c2e457c7c-20240522",
-    "react-dom": "19.0.0-rc-4c2e457c7c-20240522"
+    "graphql-request": "^7.1.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.3.5"
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.2.4"
   }
 }

@@ -1,7 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "Bundler"
+    "outDir": "./dist-ts",
+    "rootDir": "."
   },
-  "include": ["src", "eslint.config.js", "vite.config.ts"]
+  "include": ["src", "*.config.js", "*.config.ts", "package.json"]
 }

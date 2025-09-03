@@ -24,7 +24,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description:
-        'Disallow putting the result of useMutation directly in a React hook dependency array',
+        'Disallow putting the result of query hooks directly in a React hook dependency array',
       recommended: 'error',
     },
     messages: {
@@ -77,6 +77,7 @@ export const rule = createRule({
           node.specifiers.forEach((specifier) => {
             if (
               specifier.type === AST_NODE_TYPES.ImportSpecifier &&
+              specifier.imported.type === AST_NODE_TYPES.Identifier &&
               reactHookNames.includes(specifier.imported.name)
             ) {
               // Track alias or direct import

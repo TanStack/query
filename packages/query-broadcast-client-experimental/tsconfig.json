@@ -1,7 +1,15 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "Bundler"
+    "outDir": "./dist-ts",
+    "rootDir": "."
   },
-  "include": ["src", "eslint.config.js", "tsup.config.js"]
+  "include": [
+    "src",
+    "test-setup.ts",
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
+  "references": [{ "path": "../query-core" }]
 }

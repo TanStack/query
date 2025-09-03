@@ -1,25 +1,16 @@
 import {
   Component,
-  Injectable,
   Injector,
-  inject,
   input,
+  provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { describe, expect, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { QueryClient, injectMutation, provideAngularQuery } from '..'
-import {
-  errorMutator,
-  expectSignals,
-  setFixtureSignalInputs,
-  successMutator,
-} from './test-utils'
-
-const MUTATION_DURATION = 1000
-
-const resolveMutations = () => vi.advanceTimersByTimeAsync(MUTATION_DURATION)
+import { sleep } from '@tanstack/query-test-utils'
+import { QueryClient, injectMutation, provideTanStackQuery } from '..'
+import { expectSignals, setFixtureSignalInputs } from './test-utils'
 
 describe('injectMutation', () => {
   let queryClient: QueryClient
@@ -28,7 +19,10 @@ describe('injectMutation', () => {
     queryClient = new QueryClient()
     vi.useFakeTimers()
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
     })
   })
 
@@ -36,27 +30,10 @@ describe('injectMutation', () => {
     vi.useRealTimers()
   })
 
-  describe('callback helpers', () => {
-    test('can access client from options callback', async () => {
-      const mutation = TestBed.runInInjectionContext(() => {
-        return injectMutation((client) => ({
-          mutationFn: () => {
-            expect(client).toBe(queryClient)
-            return Promise.resolve()
-          },
-        }))
-      })
-
-      mutation.mutate()
-      vi.advanceTimersByTime(1)
-      expect(mutation.status()).toBe('pending')
-    })
-  })
-
   test('should be in idle state initially', () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: (params) => successMutator(params),
+        mutationFn: (params) => sleep(0).then(() => params),
       }))
     })
 
@@ -73,12 +50,14 @@ describe('injectMutation', () => {
 
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: (params: string) => successMutator(params),
+        mutationFn: (params: string) => sleep(10).then(() => params),
       }))
     })
 
+    TestBed.tick()
+
     mutation.mutate(result)
-    vi.advanceTimersByTime(1)
+    await vi.advanceTimersByTimeAsync(0)
 
     expectSignals(mutation, {
       isIdle: false,
@@ -93,12 +72,14 @@ describe('injectMutation', () => {
   test('should return error when request fails', async () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: errorMutator,
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
       }))
     })
-    mutation.mutate({})
 
-    await resolveMutations()
+    mutation.mutate()
+
+    await vi.advanceTimersByTimeAsync(11)
 
     expectSignals(mutation, {
       isIdle: false,
@@ -114,13 +95,13 @@ describe('injectMutation', () => {
     const result = 'Mock data'
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: (params: string) => successMutator(params),
+        mutationFn: (params: string) => sleep(10).then(() => params),
       }))
     })
 
     mutation.mutate(result)
 
-    await resolveMutations()
+    await vi.advanceTimersByTimeAsync(11)
 
     expectSignals(mutation, {
       isIdle: false,
@@ -132,7 +113,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('reactive options should update mutation', async () => {
+  test('reactive options should update mutation', () => {
     const mutationCache = queryClient.getMutationCache()
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
@@ -140,13 +121,11 @@ describe('injectMutation', () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
         mutationKey: mutationKey(),
-        mutationFn: (params: string) => successMutator(params),
+        mutationFn: (params: string) => sleep(0).then(() => params),
       }))
     })
 
     mutationKey.set(['2'])
-
-    TestBed.flushEffects()
 
     mutation.mutate('xyz')
 
@@ -158,19 +137,20 @@ describe('injectMutation', () => {
   test('should reset state after invoking mutation.reset', async () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationFn: (params: string) => errorMutator(params),
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
       }))
     })
 
-    mutation.mutate('')
+    mutation.mutate()
 
-    await resolveMutations()
+    await vi.advanceTimersByTimeAsync(11)
 
     expect(mutation.isError()).toBe(true)
 
     mutation.reset()
 
-    await resolveMutations()
+    await vi.advanceTimersByTimeAsync(0)
 
     expectSignals(mutation, {
       isIdle: true,
@@ -191,14 +171,14 @@ describe('injectMutation', () => {
       const onMutate = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(10).then(() => params),
           onMutate,
         }))
       })
 
       mutation.mutate('')
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(onMutate).toHaveBeenCalledTimes(1)
     })
@@ -207,14 +187,15 @@ describe('injectMutation', () => {
       const onError = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => errorMutator(params),
+          mutationFn: (_params: string) =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
           onError,
         }))
       })
 
       mutation.mutate('')
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(11)
 
       expect(onError).toHaveBeenCalledTimes(1)
     })
@@ -223,14 +204,14 @@ describe('injectMutation', () => {
       const onSuccess = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(10).then(() => params),
           onSuccess,
         }))
       })
 
       mutation.mutate('')
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(11)
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
@@ -239,14 +220,14 @@ describe('injectMutation', () => {
       const onSettled = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(10).then(() => params),
           onSettled,
         }))
       })
 
       mutation.mutate('')
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(11)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
@@ -255,13 +236,14 @@ describe('injectMutation', () => {
       const onError = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => errorMutator(params),
+          mutationFn: (_params: string) =>
+            sleep(10).then(() => Promise.reject(new Error('Some error'))),
         }))
       })
 
       mutation.mutate('', { onError })
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(11)
 
       expect(onError).toHaveBeenCalledTimes(1)
     })
@@ -270,13 +252,13 @@ describe('injectMutation', () => {
       const onSuccess = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(10).then(() => params),
         }))
       })
 
       mutation.mutate('', { onSuccess })
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(11)
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
@@ -285,13 +267,13 @@ describe('injectMutation', () => {
       const onSettled = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(10).then(() => params),
         }))
       })
 
       mutation.mutate('', { onSettled })
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(11)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
@@ -301,14 +283,14 @@ describe('injectMutation', () => {
       const onSettledOnFunction = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(10).then(() => params),
           onSettled,
         }))
       })
 
       mutation.mutate('', { onSettled: onSettledOnFunction })
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(11)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
       expect(onSettledOnFunction).toHaveBeenCalledTimes(1)
@@ -331,7 +313,7 @@ describe('injectMutation', () => {
 
       mutation = injectMutation(() => ({
         mutationKey: ['fake', this.name()],
-        mutationFn: () => successMutator(this.name()),
+        mutationFn: () => sleep(10).then(() => this.name()),
       }))
 
       mutate(): void {
@@ -346,7 +328,7 @@ describe('injectMutation', () => {
     const button = debugElement.query(By.css('button'))
     button.triggerEventHandler('click')
 
-    await resolveMutations()
+    await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
     const text = debugElement.query(By.css('span')).nativeElement.textContent
@@ -372,7 +354,7 @@ describe('injectMutation', () => {
 
       mutation = injectMutation(() => ({
         mutationKey: ['fake', this.name()],
-        mutationFn: () => successMutator(this.name()),
+        mutationFn: () => sleep(10).then(() => this.name()),
       }))
 
       mutate(): void {
@@ -388,7 +370,7 @@ describe('injectMutation', () => {
     const span = debugElement.query(By.css('span'))
 
     button.triggerEventHandler('click')
-    await resolveMutations()
+    await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
     expect(span.nativeElement.textContent).toEqual('value')
@@ -396,7 +378,7 @@ describe('injectMutation', () => {
     setFixtureSignalInputs(fixture, { name: 'updatedValue' })
 
     button.triggerEventHandler('click')
-    await resolveMutations()
+    await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
     expect(span.nativeElement.textContent).toEqual('updatedValue')
@@ -422,9 +404,11 @@ describe('injectMutation', () => {
         }))
       })
 
+      TestBed.tick()
+
       mutate()
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(boundaryFn).toHaveBeenCalledTimes(1)
       expect(boundaryFn).toHaveBeenCalledWith(err)
@@ -461,47 +445,6 @@ describe('injectMutation', () => {
     await expect(() => mutateAsync()).rejects.toThrowError(err)
   })
 
-  test('should execute callback in injection context', async () => {
-    const errorSpy = vi.fn()
-    @Injectable()
-    class FakeService {
-      updateData(name: string) {
-        return Promise.resolve(name)
-      }
-    }
-
-    @Component({
-      selector: 'app-fake',
-      template: ``,
-      standalone: true,
-      providers: [FakeService],
-    })
-    class FakeComponent {
-      mutation = injectMutation(() => {
-        try {
-          const service = inject(FakeService)
-          return {
-            mutationFn: (name: string) => service.updateData(name),
-          }
-        } catch (e) {
-          errorSpy(e)
-          throw e
-        }
-      })
-    }
-
-    const fixture = TestBed.createComponent(FakeComponent)
-    fixture.detectChanges()
-
-    // check if injection contexts persist in a different task
-    await new Promise<void>((resolve) => queueMicrotask(() => resolve()))
-
-    expect(
-      await fixture.componentInstance.mutation.mutateAsync('test'),
-    ).toEqual('test')
-    expect(errorSpy).not.toHaveBeenCalled()
-  })
-
   describe('injection context', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
       expect(() => {
@@ -519,7 +462,9 @@ describe('injectMutation', () => {
             mutationKey: ['injectionContextError'],
             mutationFn: () => Promise.resolve(),
           }),
-          TestBed.inject(Injector),
+          {
+            injector: TestBed.inject(Injector),
+          },
         )
       }).not.toThrow()
     })

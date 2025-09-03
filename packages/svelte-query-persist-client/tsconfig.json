@@ -1,8 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "outDir": "./dist-ts",
+    "rootDir": "."
   },
   "include": [
     "src/**/*.js",
@@ -11,8 +11,12 @@
     "tests/**/*.js",
     "tests/**/*.ts",
     "tests/**/*.svelte",
-    "eslint.config.js",
-    "svelte.config.js",
-    "vite.config.ts"
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
+  "references": [
+    { "path": "../query-persist-client-core" },
+    { "path": "../svelte-query" }
   ]
 }

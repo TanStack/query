@@ -1,4 +1,4 @@
-import { stringify } from 'superjson'
+import { serialize, stringify } from 'superjson'
 import { clsx as cx } from 'clsx'
 import { Index, Match, Show, Switch, createMemo, createSignal } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
@@ -9,8 +9,16 @@ import {
   displayValue,
   updateNestedDataByPath,
 } from './utils'
-import { Check, CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
-import { useQueryDevtoolsContext, useTheme } from './Context'
+import {
+  Check,
+  CopiedCopier,
+  Copier,
+  ErrorCopier,
+  List,
+  Pencil,
+  Trash,
+} from './icons'
+import { useQueryDevtoolsContext, useTheme } from './contexts'
 import type { Query } from '@tanstack/query-core'
 
 /**
@@ -243,6 +251,7 @@ type ExplorerProps = {
   dataPath?: Array<string>
   activeQuery?: Query
   itemsDeletable?: boolean
+  onEdit?: () => void
 }
 
 function isIterable(x: any): x is Iterable<unknown> {
@@ -350,6 +359,19 @@ export default function Explorer(props: ExplorerProps) {
                   activeQuery={props.activeQuery!}
                   dataPath={currentDataPath}
                 />
+              </Show>
+
+              <Show when={!!props.onEdit && !serialize(props.value).meta}>
+                <button
+                  class={styles().actionButton}
+                  title={'Bulk Edit Data'}
+                  aria-label={'Bulk Edit Data'}
+                  onClick={() => {
+                    props.onEdit?.()
+                  }}
+                >
+                  <Pencil />
+                </button>
               </Show>
             </div>
           </Show>
@@ -510,7 +532,8 @@ const stylesFactory = (
     entry: css`
       & * {
         font-size: ${font.size.xs};
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           'Liberation Mono', 'Courier New', monospace;
       }
       position: relative;

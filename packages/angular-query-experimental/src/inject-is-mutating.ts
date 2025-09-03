@@ -1,35 +1,51 @@
-import { DestroyRef, NgZone, inject, signal } from '@angular/core'
-import { notifyManager } from '@tanstack/query-core'
-import { assertInjector } from './util/assert-injector/assert-injector'
-import { injectQueryClient } from './inject-query-client'
+import {
+  DestroyRef,
+  Injector,
+  NgZone,
+  assertInInjectionContext,
+  inject,
+  signal,
+} from '@angular/core'
+import { QueryClient, notifyManager } from '@tanstack/query-core'
 import type { MutationFilters } from '@tanstack/query-core'
-import type { Injector, Signal } from '@angular/core'
+import type { Signal } from '@angular/core'
+
+export interface InjectIsMutatingOptions {
+  /**
+   * The `Injector` in which to create the isMutating signal.
+   *
+   * If this is not provided, the current injection context will be used instead (via `inject`).
+   */
+  injector?: Injector
+}
 
 /**
  * Injects a signal that tracks the number of mutations that your application is fetching.
  *
  * Can be used for app-wide loading indicators
  * @param filters - The filters to apply to the query.
- * @param injector - The Angular injector to use.
+ * @param options - Additional configuration
  * @returns signal with number of fetching mutations.
  * @public
  */
 export function injectIsMutating(
   filters?: MutationFilters,
-  injector?: Injector,
+  options?: InjectIsMutatingOptions,
 ): Signal<number> {
-  return assertInjector(injectIsMutating, injector, () => {
-    const queryClient = injectQueryClient()
-    const destroyRef = inject(DestroyRef)
-    const ngZone = inject(NgZone)
+  !options?.injector && assertInInjectionContext(injectIsMutating)
+  const injector = options?.injector ?? inject(Injector)
+  const destroyRef = injector.get(DestroyRef)
+  const ngZone = injector.get(NgZone)
+  const queryClient = injector.get(QueryClient)
 
-    const cache = queryClient.getMutationCache()
-    // isMutating is the prev value initialized on mount *
-    let isMutating = queryClient.isMutating(filters)
+  const cache = queryClient.getMutationCache()
+  // isMutating is the prev value initialized on mount *
+  let isMutating = queryClient.isMutating(filters)
 
-    const result = signal(isMutating)
+  const result = signal(isMutating)
 
-    const unsubscribe = cache.subscribe(
+  const unsubscribe = ngZone.runOutsideAngular(() =>
+    cache.subscribe(
       notifyManager.batchCalls(() => {
         const newIsMutating = queryClient.isMutating(filters)
         if (isMutating !== newIsMutating) {
@@ -40,10 +56,10 @@ export function injectIsMutating(
           })
         }
       }),
-    )
+    ),
+  )
 
-    destroyRef.onDestroy(unsubscribe)
+  destroyRef.onDestroy(unsubscribe)
 
-    return result
-  })
+  return result
 }

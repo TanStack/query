@@ -3,7 +3,7 @@ id: caching
 title: Caching Examples
 ---
 
-> Please thoroughly read the [Important Defaults](../important-defaults) before reading this guide
+> Please thoroughly read the [Important Defaults](../important-defaults.md) before reading this guide
 
 ## Basic Example
 
@@ -23,7 +23,7 @@ Let's assume we are using the default `gcTime` of **5 minutes** and the default 
 - A second instance of `injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodos })` initializes elsewhere.
   - Since the cache already has data for the `['todos']` key from the first query, that data is immediately returned from the cache.
   - The new instance triggers a new network request using its query function.
-    - Note that regardless of whether both `fetchTodos` query functions are identical or not, both queries' [`status`](../../reference/injectQuery) are updated (including `isFetching`, `isPending`, and other related values) because they have the same query key.
+    - Note that regardless of whether both `fetchTodos` query functions are identical or not, both queries' [`status`](../../reference/functions/injectquery.md) are updated (including `isFetching`, `isPending`, and other related values) because they have the same query key.
   - When the request completes successfully, the cache's data under the `['todos']` key is updated with the new data, and both instances are updated with the new data.
 - Both instances of the `injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodos })` query are destroyed and no longer in use.
   - Since there are no more active instances of this query, a garbage collection timeout is set using `gcTime` to delete and garbage collect the query (defaults to **5 minutes**).
@@ -31,3 +31,5 @@ Let's assume we are using the default `gcTime` of **5 minutes** and the default 
 - The final instance of `injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodos })` gets destroyed.
 - No more instances of `injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodos })` appear within **5 minutes**.
   - The cached data under the `['todos']` key is deleted and garbage collected.
+
+For more advanced use-cases, see [injectQuery](../../reference/functions/injectquery.md).

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query-persist-client",
-  "version": "5.53.3",
+  "version": "5.85.9",
   "description": "Svelte bindings to work with persisters in TanStack/svelte-query",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -15,7 +15,8 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "rimraf ./dist ./coverage ./.svelte-kit",
+    "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
+    "compile": "tsc --build",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint ./src",
     "test:lib": "vitest",
@@ -29,6 +30,7 @@
   "svelte": "./dist/index.js",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js",
       "import": "./dist/index.js"
@@ -38,22 +40,24 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "src"
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.3.2",
-    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "@sveltejs/package": "^2.4.0",
+    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/svelte-query": "workspace:*",
-    "@testing-library/svelte": "^5.2.1",
-    "eslint-plugin-svelte": "^2.43.0",
-    "svelte": "^4.2.18",
-    "svelte-check": "^3.8.4"
+    "@testing-library/svelte": "^5.2.8",
+    "eslint-plugin-svelte": "^3.11.0",
+    "svelte": "^5.36.8",
+    "svelte-check": "^4.3.0"
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:^",
-    "svelte": "^3.54.0 || ^4.0.0 || ^5.0.0-next.0"
+    "svelte": "^3.54.0 || ^4.0.0 || ^5.0.0"
   }
 }

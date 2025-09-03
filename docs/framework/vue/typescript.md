@@ -89,6 +89,21 @@ if (error.value instanceof Error) {
 [//]: # 'TypingError3'
 [//]: # 'TypingError3'
 [//]: # 'RegisterErrorType'
+
+```tsx
+import '@tanstack/vue-query'
+
+declare module '@tanstack/vue-query' {
+  interface Register {
+    // Use unknown so call sites must narrow explicitly.
+    defaultError: unknown
+  }
+}
+
+const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
+//      ^? const error: unknown | null
+```
+
 [//]: # 'RegisterErrorType'
 [//]: # 'TypingMeta'
 [//]: # 'TypingMeta'

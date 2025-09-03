@@ -1,4 +1,4 @@
-# Angular Query router example
+# TanStack Query Angular router example
 
 To run this example:
 

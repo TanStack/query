@@ -19,6 +19,7 @@ export default [
           cspell: {
             words: [
               'codemod', // We support our codemod
+              'combinate', // Library name
               'extralight', // Our public interface
               'jscodeshift',
               'Promisable', // Our public interface
@@ -44,10 +45,7 @@ export default [
   {
     files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
-    rules: {
-      ...vitest.configs.recommended.rules,
-      'vitest/expect-expect': 'warn',
-    },
+    rules: vitest.configs.recommended.rules,
     settings: { vitest: { typecheck: true } },
   },
 ]

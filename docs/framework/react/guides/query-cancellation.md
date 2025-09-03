@@ -188,6 +188,24 @@ return (
 
 [//]: # 'Example7'
 
+## `Cancel Options`
+
+Cancel options are used to control the behavior of query cancellation operations.
+
+```tsx
+// Cancel specific queries silently
+await queryClient.cancelQueries({ queryKey: ['posts'] }, { silent: true })
+```
+
+A cancel options object supports the following properties:
+
+- `silent?: boolean`
+  - When set to `true`, suppresses propagation of `CancelledError` to observers (e.g., `onError` callbacks) and related notifications, and returns the retry promise instead of rejecting.
+  - Defaults to `false`
+- `revert?: boolean`
+  - When set to `true`, restores the query’s state (data and status) from immediately before the in-flight fetch, sets `fetchStatus` back to `idle`, and only throws if there was no prior data.
+  - Defaults to `true`
+
 ## Limitations
 
-Cancelation does not work when working with `Suspense` hooks: `useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery`.
+Cancellation does not work when working with `Suspense` hooks: `useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery`.

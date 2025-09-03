@@ -1,15 +1,17 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "moduleResolution": "Bundler",
+    "outDir": "./dist-ts",
+    "rootDir": ".",
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
     "target": "ES2022"
   },
-  "include": ["src", "eslint.config.js", "vite.config.ts"]
+  "include": ["src", "*.config.js", "*.config.ts", "package.json"],
+  "references": [
+    { "path": "../query-devtools" },
+    { "path": "../angular-query-experimental" }
+  ]
 }

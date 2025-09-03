@@ -5,9 +5,9 @@ title: Server Rendering & Hydration
 
 In this guide you'll learn how to use React Query with server rendering.
 
-See the guide on [Prefetching & Router Integration](../prefetching) for some background. You might also want to check out the [Performance & Request Waterfalls guide](../request-waterfalls) before that.
+See the guide on [Prefetching & Router Integration](../prefetching.md) for some background. You might also want to check out the [Performance & Request Waterfalls guide](../request-waterfalls.md) before that.
 
-For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](../advanced-ssr).
+For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](../advanced-ssr.md).
 
 If you just want to see some code, you can skip ahead to the [Full Next.js pages router example](#full-nextjs-pages-router-example) or the [Full Remix example](#full-remix-example) below.
 
@@ -165,7 +165,7 @@ Setting up the full hydration solution is straightforward and does not have thes
 
 ## Using the Hydration APIs
 
-With just a little more setup, you can use a `queryClient` to prefetch queries during a preload phase, pass a serialized version of that `queryClient` to the rendering part of the app and reuse it there. This avoid the drawbacks above. Feel free to skip ahead for full Next.js pages router and Remix examples, but at a general level these are the extra steps:
+With just a little more setup, you can use a `queryClient` to prefetch queries during a preload phase, pass a serialized version of that `queryClient` to the rendering part of the app and reuse it there. This avoids the drawbacks above. Feel free to skip ahead for full Next.js pages router and Remix examples, but at a general level these are the extra steps:
 
 - In the framework loader function, create a `const queryClient = new QueryClient(options)`
 - In the loader function, do `await queryClient.prefetchQuery(...)` for each query you want to prefetch
@@ -177,11 +177,11 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 
 > An interesting detail is that there are actually _three_ `queryClient`s involved. The framework loaders are a form of "preloading" phase that happens before rendering, and this phase has its own `queryClient` that does the prefetching. The dehydrated result of this phase gets passed to **both** the server rendering process **and** the client rendering process which each has its own `queryClient`. This ensures they both start with the same data so they can return the same markup.
 
-> Server Components are another form of "preloading" phase, that can also "preload" (pre-render) parts of a React component tree. Read more in the [Advanced Server Rendering guide](../advanced-ssr).
+> Server Components are another form of "preloading" phase, that can also "preload" (pre-render) parts of a React component tree. Read more in the [Advanced Server Rendering guide](../advanced-ssr.md).
 
 ### Full Next.js pages router example
 
-> For app router documentation, see the [Advanced Server Rendering guide](../advanced-ssr).
+> For app router documentation, see the [Advanced Server Rendering guide](../advanced-ssr.md).
 
 Initial setup:
 
@@ -214,7 +214,7 @@ export default function MyApp({ Component, pageProps }) {
 In each route:
 
 ```tsx
-// pages/posts.jsx
+// pages/posts.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -386,7 +386,7 @@ With Remix, this is a little bit more involved, we recommend checking out the [u
 
 ## Prefetching dependent queries
 
-Over in the Prefetching guide we learned how to [prefetch dependent queries](../prefetching#dependent-queries--code-splitting), but how do we do this in framework loaders? Consider the following code, taken from the [Dependent Queries guide](../dependent-queries):
+Over in the Prefetching guide we learned how to [prefetch dependent queries](../prefetching.md#dependent-queries--code-splitting), but how do we do this in framework loaders? Consider the following code, taken from the [Dependent Queries guide](../dependent-queries.md):
 
 ```tsx
 // Get the user
@@ -482,7 +482,7 @@ If you are using a custom SSR setup, you need to take care of this step yourself
 
 ## A note about request waterfalls
 
-In the [Performance & Request Waterfalls guide](../request-waterfalls) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](../request-waterfalls#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetches their own data. With client rendering, this leads to the following request waterfall:
+In the [Performance & Request Waterfalls guide](../request-waterfalls.md) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](../request-waterfalls#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetches their own data. With client rendering, this leads to the following request waterfall:
 
 ```
 1. |> Markup (without content)
@@ -509,7 +509,7 @@ Note that the queries are no longer fetched on the client, instead their data wa
 
 We simply can not know before we have fetched the feed if we also need to fetch graph data, they are dependent queries. Because this happens on the server where latency is generally both lower and more stable, this often isn't such a big deal.
 
-Amazing, we've mostly flattened our waterfalls! There's a catch though. Let's call this page the `/feed` page, and let's pretend we also have another page like `/posts`. If we type in `www.example.com/feed` directly in the url bar and hit enter, we get all these great server rendering benefits, BUT, if we instead type in `www.example.com/posts` and then **click a link** to `/feed`, we're back to to this:
+Amazing, we've mostly flattened our waterfalls! There's a catch though. Let's call this page the `/feed` page, and let's pretend we also have another page like `/posts`. If we type in `www.example.com/feed` directly in the url bar and hit enter, we get all these great server rendering benefits, BUT, if we instead type in `www.example.com/posts` and then **click a link** to `/feed`, we're back to this:
 
 ```
 1. |> JS for <Feed>
@@ -520,7 +520,7 @@ Amazing, we've mostly flattened our waterfalls! There's a catch though. Let's ca
 
 This is because with SPA's, server rendering only works for the initial page load, not for any subsequent navigation.
 
-Modern frameworks often tries to solve this by fetching the initial code and data in parallel, so if you were using Next.js or Remix with the prefetching patterns we outlined in this guide, including how to prefetch dependent queries, it would actually look like this instead:
+Modern frameworks often try to solve this by fetching the initial code and data in parallel, so if you were using Next.js or Remix with the prefetching patterns we outlined in this guide, including how to prefetch dependent queries, it would actually look like this instead:
 
 ```
 1. |> JS for <Feed>
@@ -528,7 +528,7 @@ Modern frameworks often tries to solve this by fetching the initial code and dat
 2.   |> JS for <GraphFeedItem>
 ```
 
-This is much better, but if we want to improve this further we can flatten this to a single roundtrip with Server Components. Learn how in the [Advanced Server Rendering guide](../advanced-ssr).
+This is much better, but if we want to improve this further we can flatten this to a single roundtrip with Server Components. Learn how in the [Advanced Server Rendering guide](../advanced-ssr.md).
 
 ## Tips, Tricks and Caveats
 
@@ -546,14 +546,14 @@ In case you are creating the `QueryClient` for every request, React Query create
 
 On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
-Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../../reference/hydration#hydrationboundary) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
+Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../../reference/hydration.md#hydrationboundary) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../../reference/QueryClient/#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../../reference/QueryClient.md#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
 Alternatively, you can set a smaller `gcTime`.
 
 ### Caveat for Next.js rewrites
 
-There's a catch if you're using [Next.js' rewrites feature](https://nextjs.org/docs/api-reference/next.config.js/rewrites) together with [Automatic Static Optimization](https://nextjs.org/docs/advanced-features/automatic-static-optimization) or `getStaticProps`: It will cause a second hydration by React Query. That's because [Next.js needs to ensure that they parse the rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewrite-parameters) on the client and collect any params after hydration so that they can be provided in `router.query`.
+There's a catch if you're using [Next.js' rewrites feature](https://nextjs.org/docs/app/api-reference/next-config-js/rewrites) together with [Automatic Static Optimization](https://nextjs.org/docs/pages/building-your-application/rendering/automatic-static-optimization) or `getStaticProps`: It will cause a second hydration by React Query. That's because [Next.js needs to ensure that they parse the rewrites](https://nextjs.org/docs/app/api-reference/next-config-js/rewrites#rewrite-parameters) on the client and collect any params after hydration so that they can be provided in `router.query`.
 
 The result is missing referential equality for all the hydration data, which for example triggers wherever your data is used as props of components or in the dependency array of `useEffect`s/`useMemo`s.

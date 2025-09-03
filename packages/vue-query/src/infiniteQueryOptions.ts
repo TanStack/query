@@ -2,6 +2,7 @@ import type {
   DataTag,
   DefaultError,
   InfiniteData,
+  NonUndefinedGuard,
   QueryKey,
 } from '@tanstack/query-core'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
@@ -16,14 +17,11 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryFnData,
   TQueryKey,
   TPageParam
 > & {
   initialData?: undefined
 }
-
-type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
@@ -35,7 +33,6 @@ export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryFnData,
   TQueryKey,
   TPageParam
 > & {
@@ -65,7 +62,7 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam
 > & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 }
 
 export function infiniteQueryOptions<
@@ -89,7 +86,7 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam
 > & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 }
 
 export function infiniteQueryOptions(options: unknown) {

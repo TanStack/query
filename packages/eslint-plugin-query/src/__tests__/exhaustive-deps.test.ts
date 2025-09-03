@@ -355,24 +355,6 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
-      name: 'should ignore references of the queryClient',
-      code: `
-        const CONST_VAL = 1
-        function useHook() {
-          const queryClient = useQueryClient()
-          const queryClient2 = useQueryClient()
-          useQuery({
-            queryKey: ["foo"],
-            queryFn: () => {
-                doSomething(queryClient)
-                queryClient.invalidateQueries()
-                doSomethingSus(queryClient2)
-            }
-          });
-        }
-      `,
-    },
-    {
       name: 'query key with nullish coalescing operator',
       code: `
         const factory = (id: number) => ['foo', id];
@@ -413,6 +395,102 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
+    {
+      name: 'should not fail when queryFn uses nullish coalescing operator',
+      code: normalizeIndent`
+        useQuery({
+          queryKey: ["foo", options],
+          queryFn: () => options?.params ?? options
+        });
+      `,
+    },
+    {
+      name: 'should not fail when queryKey uses arrow function to produce a key',
+      code: normalizeIndent`
+      const obj = reactive<{ boo?: string }>({});
+
+      const query = useQuery({
+        queryKey: ['foo', () => obj.boo],
+        queryFn: () => fetch(\`/mock/getSomething/\${obj.boo}\`),
+        enable: () => !!obj.boo,
+      });
+      `,
+    },
+    {
+      name: 'should not fail when queryKey uses arrow function to produce a key as the body return',
+      code: normalizeIndent`
+      const obj = reactive<{ boo?: string }>({});
+
+      const query = useQuery({
+        queryKey: ['foo', () => { return obj.boo }],
+        queryFn: () => fetch(\`/mock/getSomething/\${obj.boo}\`),
+        enable: () => !!obj.boo,
+      });
+      `,
+    },
+    {
+      name: 'should not fail when queryKey uses function expression to produce a key as the body return',
+      code: normalizeIndent`
+      const obj = reactive<{ boo?: string }>({});
+
+      const query = useQuery({
+        queryKey: ['foo', function() {
+          return obj.boo
+        }],
+        queryFn: () => fetch(\`/mock/getSomething/\${obj.boo}\`),
+        enable: () => !!obj.boo,
+      });
+      `,
+    },
+    {
+      name: 'should not fail when queryFn inside queryOptions contains a reference to an external variable',
+      code: normalizeIndent`
+      const EXTERNAL = 1;
+
+      export const queries = {
+        foo: queryOptions({
+          queryKey: ['foo'],
+          queryFn: () => Promise.resolve(EXTERNAL),
+        }),
+      };
+      `,
+    },
+    {
+      name: 'should pass with optional chaining as key',
+      code: `
+        function useTest(data?: any) {
+          return useQuery({
+            queryKey: ['query-name', data?.address],
+            queryFn: async () => sendQuery(data.address),
+            enabled: !!data?.address,
+          })
+        }
+      `,
+    },
+    {
+      name: 'should pass with optional chaining as key and non-null assertion in queryFn',
+      code: `
+        function useTest(data?: any) {
+          return useQuery({
+            queryKey: ['query-name', data?.address],
+            queryFn: async () => sendQuery(data!.address),
+            enabled: !!data?.address,
+          })
+        }
+      `,
+    },
+    {
+      name: 'should pass with optional chaining as key and non-null assertion at the end of the variable in queryFn',
+      code: `
+        function useTest(data?: any) {
+          return useQuery({
+            queryKey: ['query-name', data?.address],
+            queryFn: async () => sendQuery(data!.address!),
+            enabled: !!data?.address,
+          })
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -445,8 +523,10 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should fail when no deps are passed (react)',
       code: normalizeIndent`
-        const id = 1;
-        useQuery({ queryKey: ["entity"], queryFn: () => api.getEntity(id) });
+        function Component() {
+          const id = 1;
+          useQuery({ queryKey: ["entity"], queryFn: () => api.getEntity(id) });
+        }
       `,
       errors: [
         {
@@ -457,8 +537,10 @@ ruleTester.run('exhaustive-deps', rule, {
               messageId: 'fixTo',
               data: { result: '["entity", id]' },
               output: normalizeIndent`
-                const id = 1;
-                useQuery({ queryKey: ["entity", id], queryFn: () => api.getEntity(id) });
+                function Component() {
+                  const id = 1;
+                  useQuery({ queryKey: ["entity", id], queryFn: () => api.getEntity(id) });
+                }
               `,
             },
           ],
@@ -468,8 +550,10 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should fail when no deps are passed (solid)',
       code: normalizeIndent`
-        const id = 1;
-        createQuery({ queryKey: ["entity"], queryFn: () => api.getEntity(id) });
+        function Component() {
+          const id = 1;
+          createQuery({ queryKey: ["entity"], queryFn: () => api.getEntity(id) });
+        }
       `,
       errors: [
         {
@@ -480,8 +564,10 @@ ruleTester.run('exhaustive-deps', rule, {
               messageId: 'fixTo',
               data: { result: '["entity", id]' },
               output: normalizeIndent`
-                const id = 1;
-                createQuery({ queryKey: ["entity", id], queryFn: () => api.getEntity(id) });
+                function Component() {
+                  const id = 1;
+                  createQuery({ queryKey: ["entity", id], queryFn: () => api.getEntity(id) });
+                }
               `,
             },
           ],
@@ -491,8 +577,10 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should fail when deps are passed incorrectly',
       code: normalizeIndent`
-        const id = 1;
-        useQuery({ queryKey: ["entity/\${id}"], queryFn: () => api.getEntity(id) });
+        function Component() {
+          const id = 1;
+          useQuery({ queryKey: ["entity/\${id}"], queryFn: () => api.getEntity(id) });
+        }
       `,
       errors: [
         {
@@ -503,8 +591,10 @@ ruleTester.run('exhaustive-deps', rule, {
               messageId: 'fixTo',
               data: { result: '["entity/${id}", id]' },
               output: normalizeIndent`
-                const id = 1;
-                useQuery({ queryKey: ["entity/\${id}", id], queryFn: () => api.getEntity(id) });
+                function Component() {
+                  const id = 1;
+                  useQuery({ queryKey: ["entity/\${id}", id], queryFn: () => api.getEntity(id) });
+                }
               `,
             },
           ],
@@ -514,9 +604,11 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should pass missing dep while key has a template literal',
       code: normalizeIndent`
-        const a = 1;
-        const b = 2;
-        useQuery({ queryKey: [\`entity/\${a}\`], queryFn: () => api.getEntity(a, b) });
+        function Component() {
+          const a = 1;
+          const b = 2;
+          useQuery({ queryKey: [\`entity/\${a}\`], queryFn: () => api.getEntity(a, b) });
+        }
       `,
       errors: [
         {
@@ -527,9 +619,11 @@ ruleTester.run('exhaustive-deps', rule, {
               messageId: 'fixTo',
               data: { result: '[`entity/${a}`, b]' },
               output: normalizeIndent`
-                const a = 1;
-                const b = 2;
-                useQuery({ queryKey: [\`entity/\${a}\`, b], queryFn: () => api.getEntity(a, b) });
+                function Component() {
+                  const a = 1;
+                  const b = 2;
+                  useQuery({ queryKey: [\`entity/\${a}\`, b], queryFn: () => api.getEntity(a, b) });
+                }
               `,
             },
           ],
@@ -539,14 +633,16 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should fail when dep exists inside setter and missing in queryKey',
       code: normalizeIndent`
-        const [id] = React.useState(1);
-        useQuery({
+        function Component() {
+          const [id] = React.useState(1);
+          useQuery({
             queryKey: ["entity"],
             queryFn: () => {
-                const { data } = axios.get(\`.../\${id}\`);
-                return data;
+              const { data } = axios.get(\`.../\${id}\`);
+              return data;
             }
-        });
+          });
+        }
       `,
       errors: [
         {
@@ -557,14 +653,16 @@ ruleTester.run('exhaustive-deps', rule, {
               messageId: 'fixTo',
               data: { result: '["entity", id]' },
               output: normalizeIndent`
-                const [id] = React.useState(1);
-                useQuery({
+                function Component() {
+                  const [id] = React.useState(1);
+                  useQuery({
                     queryKey: ["entity", id],
                     queryFn: () => {
-                        const { data } = axios.get(\`.../\${id}\`);
-                        return data;
+                      const { data } = axios.get(\`.../\${id}\`);
+                      return data;
                     }
-                });
+                  });
+                }
               `,
             },
           ],
@@ -666,9 +764,11 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should fail when a queryKey is a reference of an array expression with a missing dep',
       code: normalizeIndent`
-        const x = 5;
-        const queryKey = ['foo']
-        useQuery({ queryKey, queryFn: () => x })
+        function Component() {
+          const x = 5;
+          const queryKey = ['foo']
+          useQuery({ queryKey, queryFn: () => x })
+        }
       `,
       errors: [
         {
@@ -681,9 +781,11 @@ ruleTester.run('exhaustive-deps', rule, {
                 result: "['foo', x]",
               },
               output: normalizeIndent`
-                const x = 5;
-                const queryKey = ['foo', x]
-                useQuery({ queryKey, queryFn: () => x })
+                function Component() {
+                  const x = 5;
+                  const queryKey = ['foo', x]
+                  useQuery({ queryKey, queryFn: () => x })
+                }
               `,
             },
           ],
@@ -711,12 +813,14 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should fail if queryFn is using multiple object props when only one of them is in the queryKey',
       code: normalizeIndent`
-        const state = { foo: 'foo', bar: 'bar' }
+        function Component() {
+          const state = { foo: 'foo', bar: 'bar' }
 
-        useQuery({
+          useQuery({
             queryKey: ['state', state.foo],
             queryFn: () => Promise.resolve({ foo: state.foo, bar: state.bar })
-        })
+          })
+        }
       `,
       errors: [
         {
@@ -724,12 +828,14 @@ ruleTester.run('exhaustive-deps', rule, {
             {
               messageId: 'fixTo',
               output: normalizeIndent`
-              const state = { foo: 'foo', bar: 'bar' }
+              function Component() {
+                const state = { foo: 'foo', bar: 'bar' }
 
-              useQuery({
+                useQuery({
                   queryKey: ['state', state.foo, state.bar],
                   queryFn: () => Promise.resolve({ foo: state.foo, bar: state.bar })
-              })
+                })
+              }
             `,
             },
           ],
@@ -741,14 +847,16 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should fail if queryFn is invalid while using FunctionExpression syntax',
       code: normalizeIndent`
-        const id = 1;
+        function Component() {
+          const id = 1;
 
-        useQuery({
+          useQuery({
             queryKey: [],
             queryFn() {
               Promise.resolve(id)
             }
-        })
+          });
+        }
       `,
       errors: [
         {
@@ -756,14 +864,16 @@ ruleTester.run('exhaustive-deps', rule, {
             {
               messageId: 'fixTo',
               output: normalizeIndent`
-                const id = 1;
+                function Component() {
+                  const id = 1;
 
-                useQuery({
+                  useQuery({
                     queryKey: [id],
                     queryFn() {
                       Promise.resolve(id)
                     }
-                })
+                  });
+                }
               `,
             },
           ],

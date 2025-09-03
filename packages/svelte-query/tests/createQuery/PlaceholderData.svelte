@@ -1,7 +1,7 @@
 <script lang="ts">
   import { derived, writable } from 'svelte/store'
   import { createQuery, keepPreviousData } from '../../src/index.js'
-  import { sleep } from '../utils.js'
+  import { sleep } from '@tanstack/query-test-utils'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
   import type { Writable } from 'svelte/store'
 
@@ -12,10 +12,7 @@
 
   const options = derived(count, ($count) => ({
     queryKey: ['test', $count],
-    queryFn: async () => {
-      await sleep(5)
-      return $count
-    },
+    queryFn: () => sleep(10).then(() => $count),
     placeholderData: keepPreviousData,
   }))
 

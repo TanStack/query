@@ -1,44 +1,54 @@
-import { beforeEach, describe } from 'vitest'
-import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { Injector } from '@angular/core'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { TestBed } from '@angular/core/testing'
+import { Injector, provideZonelessChangeDetection } from '@angular/core'
+import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectIsMutating,
   injectMutation,
-  provideAngularQuery,
+  provideTanStackQuery,
 } from '..'
-import { successMutator } from './test-utils'
 
 describe('injectIsMutating', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
+    vi.useFakeTimers()
     queryClient = new QueryClient()
 
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
     })
   })
 
-  test('should properly return isMutating state', fakeAsync(() => {
-    TestBed.runInInjectionContext(() => {
-      const isMutating = injectIsMutating()
-      const mutation = injectMutation(() => ({
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test('should properly return isMutating state', async () => {
+    const [mutation, isMutating] = TestBed.runInInjectionContext(() => [
+      injectMutation(() => ({
         mutationKey: ['isMutating1'],
-        mutationFn: successMutator<{ par1: string }>,
-      }))
+        mutationFn: (params: { par1: string }) => sleep(10).then(() => params),
+      })),
+      injectIsMutating(),
+    ])
 
-      expect(isMutating()).toBe(0)
+    expect(isMutating()).toBe(0)
 
-      mutation.mutate({
-        par1: 'par1',
-      })
-
-      tick()
-
-      expect(isMutating()).toBe(1)
+    mutation.mutate({
+      par1: 'par1',
     })
-  }))
+
+    expect(isMutating()).toBe(0)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isMutating()).toBe(1)
+    await vi.advanceTimersByTimeAsync(11)
+    expect(isMutating()).toBe(0)
+  })
 
   describe('injection context', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
@@ -49,7 +59,9 @@ describe('injectIsMutating', () => {
 
     test('can be used outside injection context when passing an injector', () => {
       expect(
-        injectIsMutating(undefined, TestBed.inject(Injector)),
+        injectIsMutating(undefined, {
+          injector: TestBed.inject(Injector),
+        }),
       ).not.toThrow()
     })
   })

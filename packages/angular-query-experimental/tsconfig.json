@@ -1,22 +1,19 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "moduleResolution": "Bundler",
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "outDir": "./dist-ts",
+    "rootDir": ".",
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
-    "target": "ES2022",
-    "types": ["vitest/globals"]
+    "target": "ES2022"
   },
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  },
-  "include": ["src", "eslint.config.js", "vite.config.ts"]
+  "include": [
+    "src",
+    "scripts",
+    "test-setup.ts",
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
+  "references": [{ "path": "../query-core" }, { "path": "../query-devtools" }]
 }

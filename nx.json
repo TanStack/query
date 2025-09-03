@@ -8,8 +8,10 @@
     "sharedGlobals": [
       "{workspaceRoot}/.nvmrc",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/scripts/getTsupConfig.js",
-      "{workspaceRoot}/tsconfig.json"
+      "{workspaceRoot}/scripts/*.js",
+      "{workspaceRoot}/tsconfig.json",
+      "{workspaceRoot}/eslint.config.js",
+      "{workspaceRoot}/pnpm-workspace.yaml"
     ],
     "default": [
       "sharedGlobals",
@@ -23,6 +25,11 @@
     ]
   },
   "targetDefaults": {
+    "compile": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": ["{projectRoot}/dist-ts"]
+    },
     "test:knip": {
       "cache": true,
       "inputs": ["{workspaceRoot}/**/*"]
@@ -33,18 +40,17 @@
     },
     "test:eslint": {
       "cache": true,
-      "dependsOn": ["^build"],
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production", "{workspaceRoot}/eslint.config.js"]
     },
     "test:lib": {
       "cache": true,
-      "dependsOn": ["^build"],
+      "dependsOn": ["^compile"],
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/coverage"]
     },
     "test:types": {
       "cache": true,
-      "dependsOn": ["^build"],
       "inputs": ["default", "^production"]
     },
     "build": {

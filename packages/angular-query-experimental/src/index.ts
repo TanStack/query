@@ -8,21 +8,57 @@ export * from './types'
 export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
+  UnusedSkipTokenOptions,
 } from './query-options'
 export { queryOptions } from './query-options'
+
+export type { CreateMutationOptions } from './types'
+export { mutationOptions } from './mutation-options'
 
 export type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
+  UnusedSkipTokenInfiniteOptions,
 } from './infinite-query-options'
 export { infiniteQueryOptions } from './infinite-query-options'
 
-export * from './inject-infinite-query'
-export * from './inject-is-fetching'
-export * from './inject-is-mutating'
-export * from './inject-mutation'
-export * from './inject-mutation-state'
-export * from './inject-queries'
-export * from './inject-query'
-export { injectQueryClient, provideQueryClient } from './inject-query-client'
-export { provideAngularQuery } from './providers'
+export type { InjectInfiniteQueryOptions } from './inject-infinite-query'
+export { injectInfiniteQuery } from './inject-infinite-query'
+
+export type { InjectIsFetchingOptions } from './inject-is-fetching'
+export { injectIsFetching } from './inject-is-fetching'
+
+export type { InjectIsMutatingOptions } from './inject-is-mutating'
+export { injectIsMutating } from './inject-is-mutating'
+
+export { injectIsRestoring, provideIsRestoring } from './inject-is-restoring'
+
+export type { InjectMutationOptions } from './inject-mutation'
+export { injectMutation } from './inject-mutation'
+
+export type { InjectMutationStateOptions } from './inject-mutation-state'
+export { injectMutationState } from './inject-mutation-state'
+
+export type { QueriesOptions, QueriesResults } from './inject-queries'
+export { injectQueries } from './inject-queries'
+
+export type { InjectQueryOptions } from './inject-query'
+export { injectQuery } from './inject-query'
+
+export { injectQueryClient } from './inject-query-client'
+
+export type {
+  DeveloperToolsFeature,
+  DevtoolsOptions,
+  PersistQueryClientFeature,
+  QueryFeature,
+  QueryFeatureKind,
+  QueryFeatures,
+} from './providers'
+export {
+  provideQueryClient,
+  provideTanStackQuery,
+  queryFeature,
+  queryFeatures,
+  withDevtools,
+} from './providers'

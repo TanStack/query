@@ -1,4 +1,4 @@
-# Angular Query basic example
+# TanStack Query Angular basic example
 
 To run this example:
 

@@ -12,8 +12,11 @@ export const ExhaustiveDepsUtils = {
     const { sourceCode, reference, scopeManager, node } = params
     const component = ASTUtils.getFunctionAncestor(sourceCode, node)
 
+    if (component === undefined) {
+      return false
+    }
+
     if (
-      component !== undefined &&
       !ASTUtils.isDeclaredInNode({
         scopeManager,
         reference,
@@ -26,24 +29,13 @@ export const ExhaustiveDepsUtils = {
     return (
       reference.identifier.name !== 'undefined' &&
       reference.identifier.parent.type !== AST_NODE_TYPES.NewExpression &&
-      !ExhaustiveDepsUtils.isInstanceOfKind(reference.identifier.parent) &&
-      !ExhaustiveDepsUtils.isQueryClientReference(reference)
+      !ExhaustiveDepsUtils.isInstanceOfKind(reference.identifier.parent)
     )
   },
   isInstanceOfKind(node: TSESTree.Node) {
     return (
       node.type === AST_NODE_TYPES.BinaryExpression &&
       node.operator === 'instanceof'
-    )
-  },
-  isQueryClientReference(reference: TSESLint.Scope.Reference) {
-    const declarator = reference.resolved?.defs[0]?.node
-
-    return (
-      declarator?.type === AST_NODE_TYPES.VariableDeclarator &&
-      declarator.init?.type === AST_NODE_TYPES.CallExpression &&
-      declarator.init.callee.type === AST_NODE_TYPES.Identifier &&
-      declarator.init.callee.name === 'useQueryClient'
     )
   },
 }

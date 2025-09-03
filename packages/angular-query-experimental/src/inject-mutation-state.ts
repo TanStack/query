@@ -1,16 +1,18 @@
 import {
   DestroyRef,
+  Injector,
   NgZone,
-  effect,
+  assertInInjectionContext,
+  computed,
   inject,
   signal,
-  untracked,
 } from '@angular/core'
-import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
-import { assertInjector } from './util/assert-injector/assert-injector'
-import { injectQueryClient } from './inject-query-client'
-import { lazySignalInitializer } from './util/lazy-signal-initializer/lazy-signal-initializer'
-import type { Injector, Signal } from '@angular/core'
+import {
+  QueryClient,
+  notifyManager,
+  replaceEqualDeep,
+} from '@tanstack/query-core'
+import type { Signal } from '@angular/core'
 import type {
   Mutation,
   MutationCache,
@@ -23,6 +25,11 @@ type MutationStateOptions<TResult = MutationState> = {
   select?: (mutation: Mutation) => TResult
 }
 
+/**
+ *
+ * @param mutationCache
+ * @param options
+ */
 function getResult<TResult = MutationState>(
   mutationCache: MutationCache,
   options: MutationStateOptions<TResult>,
@@ -39,61 +46,80 @@ function getResult<TResult = MutationState>(
  * @public
  */
 export interface InjectMutationStateOptions {
+  /**
+   * The `Injector` in which to create the mutation state signal.
+   *
+   * If this is not provided, the current injection context will be used instead (via `inject`).
+   */
   injector?: Injector
 }
 
 /**
  * Injects a signal that tracks the state of all mutations.
- * @param mutationStateOptionsFn - A function that returns mutation state options.
+ * @param injectMutationStateFn - A function that returns mutation state options.
  * @param options - The Angular injector to use.
  * @returns The signal that tracks the state of all mutations.
  * @public
  */
 export function injectMutationState<TResult = MutationState>(
-  mutationStateOptionsFn: () => MutationStateOptions<TResult> = () => ({}),
+  injectMutationStateFn: () => MutationStateOptions<TResult> = () => ({}),
   options?: InjectMutationStateOptions,
 ): Signal<Array<TResult>> {
-  return assertInjector(injectMutationState, options?.injector, () => {
-    const destroyRef = inject(DestroyRef)
-    const queryClient = injectQueryClient()
-    const ngZone = inject(NgZone)
+  !options?.injector && assertInInjectionContext(injectMutationState)
+  const injector = options?.injector ?? inject(Injector)
+  const destroyRef = injector.get(DestroyRef)
+  const ngZone = injector.get(NgZone)
+  const queryClient = injector.get(QueryClient)
+  const mutationCache = queryClient.getMutationCache()
 
-    const mutationCache = queryClient.getMutationCache()
-
-    return lazySignalInitializer((injector) => {
-      const result = signal<Array<TResult>>(
-        getResult(mutationCache, mutationStateOptionsFn()),
-      )
-
-      effect(
-        () => {
-          const mutationStateOptions = mutationStateOptionsFn()
-          untracked(() => {
-            // Setting the signal from an effect because it's both 'computed' from options()
-            // and needs to be set imperatively in the mutationCache listener.
-            result.set(getResult(mutationCache, mutationStateOptions))
-          })
-        },
-        { injector },
-      )
-
-      const unsubscribe = mutationCache.subscribe(
-        notifyManager.batchCalls(() => {
-          const nextResult = replaceEqualDeep(
-            result(),
-            getResult(mutationCache, mutationStateOptionsFn()),
-          )
-          if (result() !== nextResult) {
-            ngZone.run(() => {
-              result.set(nextResult)
-            })
-          }
-        }),
-      )
-
-      destroyRef.onDestroy(unsubscribe)
-
-      return result
-    })
+  /**
+   * Computed signal that gets result from mutation cache based on passed options
+   * First element is the result, second element is the time when the result was set
+   */
+  const resultFromOptionsSignal = computed(() => {
+    return [
+      getResult(mutationCache, injectMutationStateFn()),
+      performance.now(),
+    ] as const
   })
+
+  /**
+   * Signal that contains result set by subscriber
+   * First element is the result, second element is the time when the result was set
+   */
+  const resultFromSubscriberSignal = signal<[Array<TResult>, number] | null>(
+    null,
+  )
+
+  /**
+   * Returns the last result by either subscriber or options
+   */
+  const effectiveResultSignal = computed(() => {
+    const optionsResult = resultFromOptionsSignal()
+    const subscriberResult = resultFromSubscriberSignal()
+    return subscriberResult && subscriberResult[1] > optionsResult[1]
+      ? subscriberResult[0]
+      : optionsResult[0]
+  })
+
+  const unsubscribe = ngZone.runOutsideAngular(() =>
+    mutationCache.subscribe(
+      notifyManager.batchCalls(() => {
+        const [lastResult] = effectiveResultSignal()
+        const nextResult = replaceEqualDeep(
+          lastResult,
+          getResult(mutationCache, injectMutationStateFn()),
+        )
+        if (lastResult !== nextResult) {
+          ngZone.run(() => {
+            resultFromSubscriberSignal.set([nextResult, performance.now()])
+          })
+        }
+      }),
+    ),
+  )
+
+  destroyRef.onDestroy(unsubscribe)
+
+  return effectiveResultSignal
 }

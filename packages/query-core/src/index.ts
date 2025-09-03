@@ -10,17 +10,20 @@ export { InfiniteQueryObserver } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
 export type { MutationCacheNotifyEvent } from './mutationCache'
 export { MutationObserver } from './mutationObserver'
-export { notifyManager } from './notifyManager'
+export { notifyManager, defaultScheduler } from './notifyManager'
 export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
 export {
   hashKey,
+  partialMatchKey,
   replaceEqualDeep,
   isServer,
   matchQuery,
   matchMutation,
   keepPreviousData,
   skipToken,
+  noop,
+  shouldThrowError,
 } from './utils'
 export type { MutationFilters, QueryFilters, Updater, SkipToken } from './utils'
 export { isCancelledError } from './retryer'
@@ -30,6 +33,8 @@ export {
   defaultShouldDehydrateQuery,
   defaultShouldDehydrateMutation,
 } from './hydration'
+
+export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
 
 // Types
 export * from './types'

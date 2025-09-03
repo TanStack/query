@@ -29,7 +29,7 @@ Visit https://tanstack.com/query/latest/docs/framework/angular/overview
 
 # Quick Start
 
-> Angular Query requires Angular 16 or higher.
+> The Angular adapter for TanStack Query requires Angular 16 or higher.
 
 1. Install `angular-query`
 
@@ -55,14 +55,14 @@ or
 $ bun add @tanstack/angular-query-experimental
 ```
 
-2. Initialize **Angular Query** by adding **provideAngularQuery** to your application
+2. Initialize **TanStack Query** by adding **provideTanStackQuery** to your application
 
 ```ts
-import { provideAngularQuery } from '@tanstack/angular-query-experimental'
+import { provideTanStackQuery } from '@tanstack/angular-query-experimental'
 import { QueryClient } from '@tanstack/angular-query-experimental'
 
 bootstrapApplication(AppComponent, {
-  providers: [provideAngularQuery(new QueryClient())],
+  providers: [provideTanStackQuery(new QueryClient())],
 })
 ```
 
@@ -71,14 +71,14 @@ or in a NgModule-based app
 ```ts
 import { provideHttpClient } from '@angular/common/http'
 import {
-  provideAngularQuery,
+  provideTanStackQuery,
   QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule],
-  providers: [provideAngularQuery(new QueryClient())],
+  providers: [provideTanStackQuery(new QueryClient())],
   bootstrap: [AppComponent],
 })
 ```
@@ -131,3 +131,5 @@ export interface Post {
   body: string
 }
 ```
+
+<!-- -->

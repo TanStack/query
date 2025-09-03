@@ -1,15 +1,16 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "outDir": "./dist-ts",
+    "rootDir": "."
   },
   "include": [
     "src/**/*.js",
     "src/**/*.ts",
     "src/**/*.svelte",
-    "eslint.config.js",
-    "svelte.config.js",
-    "vite.config.ts"
-  ]
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
+  "references": [{ "path": "../query-devtools" }, { "path": "../svelte-query" }]
 }

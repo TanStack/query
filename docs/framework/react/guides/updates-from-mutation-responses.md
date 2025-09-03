@@ -3,7 +3,7 @@ id: updates-from-mutation-responses
 title: Updates from Mutation Responses
 ---
 
-When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of refetching any queries for that item and wasting a network call for data we already have, we can take advantage of the object returned by the mutation function and update the existing query with the new data immediately using the [Query Client's `setQueryData`](../../../../reference/QueryClient/#queryclientsetquerydata) method:
+When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of refetching any queries for that item and wasting a network call for data we already have, we can take advantage of the object returned by the mutation function and update the existing query with the new data immediately using the [Query Client's `setQueryData`](../../../../reference/QueryClient.md#queryclientsetquerydata) method:
 
 [//]: # 'Example'
 

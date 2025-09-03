@@ -1,5 +1,5 @@
 import { derived, get, readable } from 'svelte/store'
-import { notifyManager } from '@tanstack/query-core'
+import { noop, notifyManager } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { isSvelteStore } from './utils.js'
@@ -56,9 +56,7 @@ export function createBaseQuery<
   >(client, get(defaultedOptionsStore))
 
   defaultedOptionsStore.subscribe(($defaultedOptions) => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setOptions($defaultedOptions, { listeners: false })
+    observer.setOptions($defaultedOptions)
   })
 
   const result = derived<
@@ -66,7 +64,7 @@ export function createBaseQuery<
     QueryObserverResult<TData, TError>
   >(isRestoring, ($isRestoring, set) => {
     const unsubscribe = $isRestoring
-      ? () => undefined
+      ? noop
       : observer.subscribe(notifyManager.batchCalls(set))
     observer.updateResult()
     return unsubscribe

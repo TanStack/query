@@ -4,10 +4,11 @@ import * as React from 'react'
 import {
   QueriesObserver,
   QueryObserver,
+  noop,
   notifyManager,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { useIsRestoring } from './isRestoring'
+import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
   ensurePreventErrorBoundaryRetry,
@@ -46,7 +47,7 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData'
+  'placeholderData' | 'subscribed'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
@@ -202,23 +203,7 @@ export type QueriesResults<
             [...TResults, GetUseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              UseQueryOptionsForUseQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              UseQueryResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<UseQueryResult>
+        : { [K in keyof T]: GetUseQueryResult<T[K]> }
 
 export function useQueries<
   T extends Array<any>,
@@ -228,8 +213,11 @@ export function useQueries<
     queries,
     ...options
   }: {
-    queries: readonly [...QueriesOptions<T>]
+    queries:
+      | readonly [...QueriesOptions<T>]
+      | readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
+    subscribed?: boolean
   },
   queryClient?: QueryClient,
 ): TCombinedResult {
@@ -270,33 +258,30 @@ export function useQueries<
       ),
   )
 
+  // note: this must be called before useSyncExternalStore
   const [optimisticResult, getCombinedResult, trackResult] =
     observer.getOptimisticResult(
       defaultedQueries,
       (options as QueriesObserverOptions<TCombinedResult>).combine,
     )
 
+  const shouldSubscribe = !isRestoring && options.subscribed !== false
   React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
-        isRestoring
-          ? () => undefined
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer, isRestoring],
+        shouldSubscribe
+          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
+          : noop,
+      [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
 
   React.useEffect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
     observer.setQueries(
       defaultedQueries,
       options as QueriesObserverOptions<TCombinedResult>,
-      {
-        listeners: false,
-      },
     )
   }, [defaultedQueries, options, observer])
 
@@ -333,6 +318,7 @@ export function useQueries<
           errorResetBoundary,
           throwOnError: query.throwOnError,
           query: client.getQueryCache().get(query.queryHash),
+          suspense: query.suspense,
         })
       )
     },

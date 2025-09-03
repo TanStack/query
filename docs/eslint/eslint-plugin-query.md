@@ -10,25 +10,25 @@ TanStack Query comes with its own ESLint plugin. This plugin is used to enforce 
 The plugin is a separate package that you need to install:
 
 ```bash
-$ npm i -D @tanstack/eslint-plugin-query
+npm i -D @tanstack/eslint-plugin-query
 ```
 
 or
 
 ```bash
-$ pnpm add -D @tanstack/eslint-plugin-query
+pnpm add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
 ```bash
-$ yarn add -D @tanstack/eslint-plugin-query
+yarn add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
 ```bash
-$ bun add -D @tanstack/eslint-plugin-query
+bun add -D @tanstack/eslint-plugin-query
 ```
 
 ## Flat Config (`eslint.config.js`)
@@ -70,17 +70,17 @@ export default [
 
 ### Recommended setup
 
-To enable all of the recommended rules for our plugin, add `plugin:@tanstack/eslint-plugin-query/recommended` in extends:
+To enable all of the recommended rules for our plugin, add `plugin:@tanstack/query/recommended` in extends:
 
 ```json
 {
-  "extends": ["plugin:@tanstack/eslint-plugin-query/recommended"]
+  "extends": ["plugin:@tanstack/query/recommended"]
 }
 ```
 
 ### Custom setup
 
-Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section, and configure the rules you want to use:
+Alternatively, add `@tanstack/query` to the plugins section, and configure the rules you want to use:
 
 ```json
 {
@@ -93,7 +93,9 @@ Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section, and c
 
 ## Rules
 
-- [@tanstack/query/exhaustive-deps](../exhaustive-deps)
-- [@tanstack/query/no-rest-destructuring](../no-rest-destructuring)
-- [@tanstack/query/stable-query-client](../stable-query-client)
+- [@tanstack/query/exhaustive-deps](../exhaustive-deps.md)
+- [@tanstack/query/no-rest-destructuring](../no-rest-destructuring.md)
+- [@tanstack/query/stable-query-client](../stable-query-client.md)
 - [@tanstack/query/no-unstable-deps](../no-unstable-deps.md)
+- [@tanstack/query/infinite-query-property-order](../infinite-query-property-order.md)
+- [@tanstack/query/no-void-query-fn](../no-void-query-fn.md)

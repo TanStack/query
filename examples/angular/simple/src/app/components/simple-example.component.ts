@@ -1,4 +1,3 @@
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { injectQuery } from '@tanstack/angular-query-experimental'
 import { HttpClient } from '@angular/common/http'
@@ -15,14 +14,12 @@ interface Response {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'simple-example',
-  standalone: true,
   templateUrl: './simple-example.component.html',
-  imports: [AngularQueryDevtools],
 })
 export class SimpleExampleComponent {
-  #http = inject(HttpClient)
+  readonly #http = inject(HttpClient)
 
-  query = injectQuery(() => ({
+  readonly query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(

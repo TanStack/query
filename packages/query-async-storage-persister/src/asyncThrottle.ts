@@ -1,6 +1,6 @@
 import { noop } from './utils'
 
-export interface AsyncThrottleOptions {
+interface AsyncThrottleOptions {
   interval?: number
   onError?: (error: unknown) => void
 }

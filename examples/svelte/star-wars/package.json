@@ -5,23 +5,22 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview",
-    "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^5.53.3",
-    "@tanstack/svelte-query-devtools": "^5.53.3"
+    "@tanstack/svelte-query": "^5.85.9",
+    "@tanstack/svelte-query-devtools": "^5.85.9"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^3.2.2",
-    "@sveltejs/kit": "^2.5.18",
-    "@sveltejs/vite-plugin-svelte": "^3.1.1",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.40",
-    "svelte": "^4.2.18",
-    "svelte-check": "^3.8.4",
+    "@sveltejs/adapter-auto": "^6.0.1",
+    "@sveltejs/kit": "^2.25.1",
+    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "svelte": "^5.36.8",
+    "svelte-check": "^4.3.0",
     "tailwindcss": "^3.4.7",
-    "typescript": "5.3.3",
-    "vite": "^5.3.5"
+    "typescript": "5.8.3",
+    "vite": "^6.2.4"
   }
 }

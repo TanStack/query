@@ -1,13 +1,15 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "Bundler"
+    "outDir": "./dist-ts",
+    "rootDir": "."
   },
   "include": [
     "src",
-    "eslint.config.js",
     "test-setup.ts",
-    "tsup.config.js",
-    "vite.config.ts"
-  ]
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
+  "references": [{ "path": "../query-core" }]
 }

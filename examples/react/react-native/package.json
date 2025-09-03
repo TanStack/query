@@ -11,26 +11,26 @@
     "type:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-native-community/netinfo": "^11.3.2",
+    "@react-native-community/netinfo": "^11.4.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
-    "@tanstack/react-query": "^5.53.3",
-    "@tanstack/react-query-devtools": "^5.53.3",
-    "expo": "^51.0.22",
-    "expo-constants": "^16.0.2",
-    "expo-status-bar": "^1.12.1",
-    "react": "19.0.0-rc-4c2e457c7c-20240522",
-    "react-native": "^0.74.3",
-    "react-native-gesture-handler": "^2.17.1",
+    "@tanstack/react-query": "^5.85.9",
+    "@tanstack/react-query-devtools": "^5.85.9",
+    "expo": "^52.0.11",
+    "expo-constants": "^17.0.3",
+    "expo-status-bar": "^2.0.0",
+    "react": "^19.0.0",
+    "react-native": "^0.76.3",
+    "react-native-gesture-handler": "^2.20.2",
     "react-native-paper": "^5.12.5",
-    "react-native-reanimated": "^3.14.0",
-    "react-native-safe-area-context": "^4.10.8",
-    "react-native-screens": "^3.32.0",
-    "react-native-web": "^0.19.12"
+    "react-native-reanimated": "^3.16.2",
+    "react-native-safe-area-context": "^4.12.0",
+    "react-native-screens": "^4.1.0",
+    "react-native-web": "^0.19.13"
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
-    "@expo/config": "^9.0.3",
-    "typescript": "5.3.3"
+    "@expo/config": "^10.0.5",
+    "typescript": "5.8.3"
   }
 }

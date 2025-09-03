@@ -14,6 +14,8 @@ If you are here to suggest a feature, first create an issue if it does not alrea
 
 ## Development
 
+_TanStack/query uses **symlink-based** configuration files. For smooth development in a local environment, we recommend developing in an environment that supports symlinks(ex: Linux, macOS, Windows Subsystem for Linux / WSL)._
+
 If you have been assigned to fix an issue or develop a new feature, please follow these steps to get started:
 
 - Fork this repository.
@@ -23,7 +25,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
   pnpm install
   ```
 
-  - We use [pnpm](https://pnpm.io/) v8 for package management (run in case of pnpm-related issues).
+  - We use [pnpm](https://pnpm.io/) v10 for package management (run in case of pnpm-related issues).
 
     ```bash
     corepack enable && corepack prepare
@@ -52,6 +54,63 @@ If you have been assigned to fix an issue or develop a new feature, please follo
 - Git stage your required changes and commit (see below commit guidelines).
 - Submit PR for review.
 
+### Editing the docs locally and previewing the changes
+
+The documentations for all the TanStack projects are hosted on [tanstack.com](https://tanstack.com), which is a TanStack Start application (https://github.com/TanStack/tanstack.com). You need to run this app locally to preview your changes in the `TanStack/query` docs.
+
+> [!NOTE]
+> The website fetches the doc pages from GitHub in production, and searches for them at `../query/docs` in development. Your local clone of `TanStack/query` needs to be in the same directory as the local clone of `TanStack/tanstack.com`.
+
+You can follow these steps to set up the docs for local development:
+
+1. Make a new directory called `tanstack`.
+
+```sh
+mkdir tanstack
+```
+
+2. Enter that directory and clone the [`TanStack/query`](https://github.com/TanStack/query) and [`TanStack/tanstack.com`](https://github.com/TanStack/tanstack.com) repos.
+
+```sh
+cd tanstack
+git clone git@github.com:TanStack/query.git
+# We probably don't need all the branches and commit history
+# from the `tanstack.com` repo, so let's just create a shallow
+# clone of the latest version of the `main` branch.
+# Read more about shallow clones here:
+# https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/#user-content-shallow-clones
+git clone git@github.com:TanStack/tanstack.com.git --depth=1 --single-branch --branch=main
+```
+
+> [!NOTE]
+> Your `tanstack` directory should look like this:
+>
+> ```
+> tanstack/
+>    |
+>    +-- query/ (<-- this directory cannot be called anything else!)
+>    |
+>    +-- tanstack.com/
+> ```
+
+3. Enter the `tanstack/tanstack.com` directory, install the dependencies and run the app in dev mode:
+
+```sh
+cd tanstack.com
+pnpm i
+# The app will run on https://localhost:3000 by default
+pnpm dev
+```
+
+4. Now you can visit http://localhost:3000/query/latest/docs/framework/react/overview in the browser and see the changes you make in `tanstack/query/docs` there.
+
+> [!WARNING]
+> You will need to update the `docs/config.json` file (in `TanStack/query`) if you add a new documentation page!
+
+You can see the whole process in the screen capture below:
+
+https://github.com/fulopkovacs/form/assets/43729152/9d35a3c3-8153-4e74-9cb2-af275f7a269b
+
 ### Running examples
 
 - Make sure you've installed the dependencies in the repo's root directory.
@@ -71,10 +130,6 @@ If you have been assigned to fix an issue or develop a new feature, please follo
   ```bash
   pnpm run dev
   ```
-
-#### Note on `examples/react-native`
-
-React Native example requires Expo to work. Please follow the instructions from example's README.md file to learn more.
 
 #### Note on standalone execution
 
@@ -183,3 +238,36 @@ Use an appropriate commit type. Be especially careful with breaking changes.
 ## Releases
 
 For each new commit added to `main` with `git push` or by merging a pull request or merging from another branch, a GitHub action is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
+
+## 🧪 Test
+
+TanStack Query uses [Nx](https://nx.dev/) as its monorepo tool.
+To run tests in a local environment, you should use `nx` commands from the root directory.
+
+### ✅ Run all tests
+
+To run tests for **all packages**, run:
+
+```bash
+npm run test
+```
+
+### ✅ Run tests for a specific package
+
+To run tests for a specific package, use the following command:
+
+```bash
+npx nx run @tanstack/{package-name}:test:lib
+```
+
+For example:
+
+```bash
+npx nx run @tanstack/react-query:test:lib
+```
+
+### ⚠️ Caution
+
+Do not run `pnpm run test:lib` inside individual package folders.
+This can cause test failures due to dependencies between packages.
+Always run tests from the **root folder** using `nx` commands.

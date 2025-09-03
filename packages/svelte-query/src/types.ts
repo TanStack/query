@@ -10,6 +10,7 @@ import type {
   MutationObserverResult,
   MutationState,
   OmitKeyof,
+  Override,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -53,14 +54,12 @@ export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = InfiniteQueryObserverOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryData,
   TQueryKey,
   TPageParam
 >
@@ -129,12 +128,6 @@ export type CreateMutationResult<
   TVariables = unknown,
   TContext = unknown,
 > = Readable<CreateBaseMutationResult<TData, TError, TVariables, TContext>>
-
-type Override<TTargetA, TTargetB> = {
-  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
-    ? TTargetB[AKey]
-    : TTargetA[AKey]
-}
 
 /** Options for useMutationState */
 export type MutationStateOptions<TResult = MutationState> = {

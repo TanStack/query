@@ -15,16 +15,19 @@ export type {
   SuspenseQueriesResults,
   SuspenseQueriesOptions,
 } from './useSuspenseQueries'
-export { usePrefetchQuery, usePrefetchInfiniteQuery } from './prefetch'
+export { usePrefetchQuery } from './usePrefetchQuery'
+export { usePrefetchInfiniteQuery } from './usePrefetchInfiniteQuery'
 export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
+  UnusedSkipTokenOptions,
 } from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
+  UnusedSkipTokenInfiniteOptions,
 } from './infiniteQueryOptions'
 export {
   QueryClientContext,
@@ -35,6 +38,12 @@ export type { QueryClientProviderProps } from './QueryClientProvider'
 export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
 export { HydrationBoundary } from './HydrationBoundary'
 export type { HydrationBoundaryProps } from './HydrationBoundary'
+export type {
+  QueryErrorClearResetFunction,
+  QueryErrorIsResetFunction,
+  QueryErrorResetBoundaryFunction,
+  QueryErrorResetFunction,
+} from './QueryErrorResetBoundary'
 export {
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,
@@ -42,5 +51,6 @@ export {
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating, useMutationState } from './useMutationState'
 export { useMutation } from './useMutation'
+export { mutationOptions } from './mutationOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
-export { useIsRestoring, IsRestoringProvider } from './isRestoring'
+export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'

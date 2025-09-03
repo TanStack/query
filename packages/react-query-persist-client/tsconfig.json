@@ -1,14 +1,19 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "moduleResolution": "Bundler"
+    "outDir": "./dist-ts",
+    "rootDir": ".",
+    "jsx": "react-jsx"
   },
   "include": [
     "src",
-    "eslint.config.js",
     "test-setup.ts",
-    "tsup.config.js",
-    "vite.config.ts"
+    "*.config.js",
+    "*.config.ts",
+    "package.json"
+  ],
+  "references": [
+    { "path": "../query-persist-client-core" },
+    { "path": "../react-query" }
   ]
 }
