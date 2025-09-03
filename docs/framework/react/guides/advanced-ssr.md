@@ -621,3 +621,11 @@ If you value DX/iteration/shipping speed with low code complexity over performan
 Server Components and streaming are still fairly new concepts and we are still figuring out how React Query fits in and what improvements we can make to the API. We welcome suggestions, feedback and bug reports!
 
 Similarly, it would be impossible to teach all the intricacies of this new paradigm all in one guide, on the first try. If you are missing some piece of information here or have suggestions on how to improve this content, also get in touch, or even better, click the "Edit on GitHub" button below and help us out.
+
+[//]: # 'Materials'
+
+## Further reading
+
+To understand if your application can benefit from React Query when also using Server Components, have a look at [You Might Not Need React Query](../../community/tkdodos-blog.md#20-you-might-not-need-react-query) from the Community Resources.
+
+[//]: # 'Materials'
