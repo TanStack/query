@@ -2,8 +2,10 @@
 
 export { focusManager } from './focusManager'
 export {
-  defaultShouldDehydrateMutation, defaultShouldDehydrateQuery, dehydrate,
-  hydrate
+  defaultShouldDehydrateMutation,
+  defaultShouldDehydrateQuery,
+  dehydrate,
+  hydrate,
 } from './hydration'
 export { InfiniteQueryObserver } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
@@ -21,11 +23,19 @@ export {
   timeoutManager,
   type ManagedTimerId,
   type TimeoutCallback,
-  type TimeoutProvider
+  type TimeoutProvider,
 } from './timeoutManager'
 export {
-  hashKey, isServer, keepPreviousData, matchMutation, matchQuery, noop, partialMatchKey,
-  replaceEqualDeep, shouldThrowError, skipToken
+  hashKey,
+  isServer,
+  keepPreviousData,
+  matchMutation,
+  matchQuery,
+  noop,
+  partialMatchKey,
+  replaceEqualDeep,
+  shouldThrowError,
+  skipToken,
 } from './utils'
 export type { MutationFilters, QueryFilters, SkipToken, Updater } from './utils'
 
@@ -33,7 +43,9 @@ export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
 
 // Types
 export type {
-  DehydratedState, DehydrateOptions, HydrateOptions
+  DehydratedState,
+  DehydrateOptions,
+  HydrateOptions,
 } from './hydration'
 export { Mutation } from './mutation'
 export type { MutationState } from './mutation'
@@ -41,4 +53,3 @@ export type { QueriesObserverOptions } from './queriesObserver'
 export { Query } from './query'
 export type { QueryState } from './query'
 export * from './types'
-
