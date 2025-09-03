@@ -1,19 +1,26 @@
 import { addToEnd } from './utils'
 import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
 
-type BaseStreamedQueryParams<TQueryFnData,TQueryKey extends QueryKey> = {
-   queryFn: (
+type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
+  queryFn: (
     context: QueryFunctionContext<TQueryKey>,
   ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
   refetchMode?: 'append' | 'reset' | 'replace'
 }
 
-type SimpleStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = BaseStreamedQueryParams<TQueryFnData,TQueryKey> & {
-  reducer?: never;
-  initialValue?: never;
+type SimpleStreamedQueryParams<
+  TQueryFnData,
+  TQueryKey extends QueryKey,
+> = BaseStreamedQueryParams<TQueryFnData, TQueryKey> & {
+  reducer?: never
+  initialValue?: never
 }
 
-type ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> = BaseStreamedQueryParams<TQueryFnData, TQueryKey> & {
+type ReducibleStreamedQueryParams<
+  TQueryFnData,
+  TData,
+  TQueryKey extends QueryKey,
+> = BaseStreamedQueryParams<TQueryFnData, TQueryKey> & {
   reducer: (acc: TData, chunk: TQueryFnData) => TData
   initialValue: TData
 }
@@ -21,7 +28,6 @@ type ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKe
 type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
   | SimpleStreamedQueryParams<TQueryFnData, TQueryKey>
   | ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey>
-
 
 /**
  * This is a helper function to create a query function that streams data from an AsyncIterable.
@@ -44,13 +50,13 @@ export function streamedQuery<
 >({
   queryFn,
   refetchMode = 'reset',
-  reducer = (items, chunk) => addToEnd(items as Array<TQueryFnData>, chunk) as TData,
+  reducer = (items, chunk) =>
+    addToEnd(items as Array<TQueryFnData>, chunk) as TData,
   initialValue = [] as TData,
 }: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<
   TData,
   TQueryKey
 > {
-  
   return async (context) => {
     const query = context.client
       .getQueryCache()

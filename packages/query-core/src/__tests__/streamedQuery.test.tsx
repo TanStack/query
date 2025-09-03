@@ -402,7 +402,7 @@ describe('streamedQuery', () => {
           ...acc,
           [chunk]: true,
         }),
-        initialValue: {}
+        initialValue: {},
       }),
     })
 
