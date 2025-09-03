@@ -144,9 +144,9 @@ export interface SolidMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TScope = unknown,
 > extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    MutationObserverOptions<TData, TError, TVariables, TScope>,
     '_defaulted'
   > {}
 
@@ -154,40 +154,40 @@ export type UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> = Accessor<SolidMutationOptions<TData, TError, TVariables, TContext>>
+  TScope = unknown,
+> = Accessor<SolidMutationOptions<TData, TError, TVariables, TScope>>
 
 export type UseMutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TScope = unknown,
 > = (
-  ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
+  ...args: Parameters<MutateFunction<TData, TError, TVariables, TScope>>
 ) => void
 
 export type UseMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> = MutateFunction<TData, TError, TVariables, TContext>
+  TScope = unknown,
+> = MutateFunction<TData, TError, TVariables, TScope>
 
 export type UseBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TScope = unknown,
 > = Override<
-  MutationObserverResult<TData, TError, TVariables, TContext>,
-  { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
+  MutationObserverResult<TData, TError, TVariables, TScope>,
+  { mutate: UseMutateFunction<TData, TError, TVariables, TScope> }
 > & {
-  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>
+  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TScope>
 }
 
 export type UseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
-> = UseBaseMutationResult<TData, TError, TVariables, TContext>
+  TScope = unknown,
+> = UseBaseMutationResult<TData, TError, TVariables, TScope>

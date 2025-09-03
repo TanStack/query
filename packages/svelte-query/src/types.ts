@@ -87,9 +87,9 @@ export type CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TScope = unknown,
 > = OmitKeyof<
-  MutationObserverOptions<TData, TError, TVariables, TContext>,
+  MutationObserverOptions<TData, TError, TVariables, TScope>,
   '_defaulted'
 >
 
@@ -97,28 +97,28 @@ export type CreateMutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TScope = unknown,
 > = (
-  ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
+  ...args: Parameters<MutateFunction<TData, TError, TVariables, TScope>>
 ) => void
 
 export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> = MutateFunction<TData, TError, TVariables, TContext>
+  TScope = unknown,
+> = MutateFunction<TData, TError, TVariables, TScope>
 
 export type CreateBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TScope = unknown,
 > = Override<
-  MutationObserverResult<TData, TError, TVariables, TContext>,
-  { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
+  MutationObserverResult<TData, TError, TVariables, TScope>,
+  { mutate: CreateMutateFunction<TData, TError, TVariables, TScope> }
 > & {
-  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
+  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TScope>
 }
 
 /** Result from createMutation */
@@ -126,8 +126,8 @@ export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
-> = Readable<CreateBaseMutationResult<TData, TError, TVariables, TContext>>
+  TScope = unknown,
+> = Readable<CreateBaseMutationResult<TData, TError, TVariables, TScope>>
 
 /** Options for useMutationState */
 export type MutationStateOptions<TResult = MutationState> = {

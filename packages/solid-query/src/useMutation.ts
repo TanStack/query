@@ -16,19 +16,19 @@ export function useMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TScope = unknown,
 >(
-  options: UseMutationOptions<TData, TError, TVariables, TContext>,
+  options: UseMutationOptions<TData, TError, TVariables, TScope>,
   queryClient?: Accessor<QueryClient>,
-): UseMutationResult<TData, TError, TVariables, TContext> {
+): UseMutationResult<TData, TError, TVariables, TScope> {
   const client = createMemo(() => useQueryClient(queryClient?.()))
 
-  const observer = new MutationObserver<TData, TError, TVariables, TContext>(
+  const observer = new MutationObserver<TData, TError, TVariables, TScope>(
     client(),
     options(),
   )
 
-  const mutate: UseMutateFunction<TData, TError, TVariables, TContext> = (
+  const mutate: UseMutateFunction<TData, TError, TVariables, TScope> = (
     variables,
     mutateOptions,
   ) => {
@@ -36,7 +36,7 @@ export function useMutation<
   }
 
   const [state, setState] = createStore<
-    UseMutationResult<TData, TError, TVariables, TContext>
+    UseMutationResult<TData, TError, TVariables, TScope>
   >({
     ...observer.getCurrentResult(),
     mutate,

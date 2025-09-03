@@ -143,20 +143,20 @@ const CreateTodo = () => {
 ```tsx
 useMutation({
   mutationFn: addTodo,
-  onMutate: (variables) => {
+  onMutate: (variables, context) => {
     // A mutation is about to happen!
 
-    // Optionally return a context containing data to use when for example rolling back
+    // Optionally return a scope containing data to use when for example rolling back
     return { id: 1 }
   },
-  onError: (error, variables, context) => {
+  onError: (error, variables, scope) => {
     // An error happened!
-    console.log(`rolling back optimistic update with id ${context.id}`)
+    console.log(`rolling back optimistic update with id ${scope.id}`)
   },
-  onSuccess: (data, variables, context) => {
+  onSuccess: (data, variables, scope) => {
     // Boom baby!
   },
-  onSettled: (data, error, variables, context) => {
+  onSettled: (data, error, variables, scope) => {
     // Error or success... doesn't matter!
   },
 })
@@ -189,25 +189,25 @@ You might find that you want to **trigger additional callbacks** beyond the ones
 ```tsx
 useMutation({
   mutationFn: addTodo,
-  onSuccess: (data, variables, context) => {
+  onSuccess: (data, variables, scope) => {
     // I will fire first
   },
-  onError: (error, variables, context) => {
+  onError: (error, variables, scope) => {
     // I will fire first
   },
-  onSettled: (data, error, variables, context) => {
+  onSettled: (data, error, variables, scope) => {
     // I will fire first
   },
 })
 
 mutate(todo, {
-  onSuccess: (data, variables, context) => {
+  onSuccess: (data, variables, scope) => {
     // I will fire second!
   },
-  onError: (error, variables, context) => {
+  onError: (error, variables, scope) => {
     // I will fire second!
   },
-  onSettled: (data, error, variables, context) => {
+  onSettled: (data, error, variables, scope) => {
     // I will fire second!
   },
 })
@@ -226,7 +226,7 @@ There is a slight difference in handling `onSuccess`, `onError` and `onSettled` 
 ```tsx
 useMutation({
   mutationFn: addTodo,
-  onSuccess: (data, variables, context) => {
+  onSuccess: (data, variables, scope) => {
     // Will be called 3 times
   },
 })
@@ -234,7 +234,7 @@ useMutation({
 const todos = ['Todo 1', 'Todo 2', 'Todo 3']
 todos.forEach((todo) => {
   mutate(todo, {
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, variables, scope) => {
       // Will execute only once, for the last mutation (Todo 3),
       // regardless which mutation resolves first
     },
@@ -294,31 +294,29 @@ const queryClient = new QueryClient()
 // Define the "addTodo" mutation
 queryClient.setMutationDefaults(['addTodo'], {
   mutationFn: addTodo,
-  onMutate: async (variables) => {
+  onMutate: async (variables, context) => {
     // Cancel current queries for the todos list
-    await queryClient.cancelQueries({ queryKey: ['todos'] })
+    await context.client.cancelQueries({ queryKey: ['todos'] })
 
     // Create optimistic todo
     const optimisticTodo = { id: uuid(), title: variables.title }
 
     // Add optimistic todo to todos list
-    queryClient.setQueryData(['todos'], (old) => [...old, optimisticTodo])
+    context.client.setQueryData(['todos'], (old) => [...old, optimisticTodo])
 
-    // Return context with the optimistic todo
-    return { optimisticTodo }
+    // Return scope with the optimistic todo
+    return { optimisticTodo, client: context.client }
   },
-  onSuccess: (result, variables, context) => {
+  onSuccess: (result, variables, scope) => {
     // Replace optimistic todo in the todos list with the result
-    queryClient.setQueryData(['todos'], (old) =>
-      old.map((todo) =>
-        todo.id === context.optimisticTodo.id ? result : todo,
-      ),
+    scope.client.setQueryData(['todos'], (old) =>
+      old.map((todo) => (todo.id === scope.optimisticTodo.id ? result : todo)),
     )
   },
-  onError: (error, variables, context) => {
+  onError: (error, variables, scope) => {
     // Remove optimistic todo from the todos list
-    queryClient.setQueryData(['todos'], (old) =>
-      old.filter((todo) => todo.id !== context.optimisticTodo.id),
+    scope.client.setQueryData(['todos'], (old) =>
+      old.filter((todo) => todo.id !== scope.optimisticTodo.id),
     )
   },
   retry: 3,

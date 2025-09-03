@@ -3,11 +3,11 @@ id: CreateMutationResult
 title: CreateMutationResult
 ---
 
-# Type Alias: CreateMutationResult\<TData, TError, TVariables, TContext\>
+# Type Alias: CreateMutationResult\<TData, TError, TVariables, TScope\>
 
 ```ts
-type CreateMutationResult<TData, TError, TVariables, TContext> = Readable<
-  CreateBaseMutationResult<TData, TError, TVariables, TContext>
+type CreateMutationResult<TData, TError, TVariables, TScope> = Readable<
+  CreateBaseMutationResult<TData, TError, TVariables, TScope>
 >
 ```
 
@@ -21,7 +21,7 @@ Result from createMutation
 
 • **TVariables** = `unknown`
 
-• **TContext** = `unknown`
+• **TScope** = `unknown`
 
 ## Defined in
 

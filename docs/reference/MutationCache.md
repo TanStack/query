@@ -28,15 +28,15 @@ Its available methods are:
 
 **Options**
 
-- `onError?: (error: unknown, variables: unknown, context: unknown, mutation: Mutation) => Promise<unknown> | unknown`
+- `onError?: (error: unknown, variables: unknown, scope: unknown, mutation: Mutation) => Promise<unknown> | unknown`
   - Optional
   - This function will be called if some mutation encounters an error.
   - If you return a Promise from it, it will be awaited
-- `onSuccess?: (data: unknown, variables: unknown, context: unknown, mutation: Mutation) => Promise<unknown> | unknown`
+- `onSuccess?: (data: unknown, variables: unknown, scope: unknown, mutation: Mutation) => Promise<unknown> | unknown`
   - Optional
   - This function will be called if some mutation is successful.
   - If you return a Promise from it, it will be awaited
-- `onSettled?: (data: unknown | undefined, error: unknown | null, variables: unknown, context: unknown, mutation: Mutation) => Promise<unknown> | unknown`
+- `onSettled?: (data: unknown | undefined, error: unknown | null, variables: unknown, scope: unknown, mutation: Mutation) => Promise<unknown> | unknown`
   - Optional
   - This function will be called if some mutation is settled (either successful or errored).
   - If you return a Promise from it, it will be awaited
@@ -50,7 +50,7 @@ Its available methods are:
 The `onError`, `onSuccess`, `onSettled` and `onMutate` callbacks on the MutationCache can be used to handle these events on a global level. They are different to `defaultOptions` provided to the QueryClient because:
 
 - `defaultOptions` can be overridden by each Mutation - the global callbacks will **always** be called.
-- `onMutate` does not allow returning a context value.
+- `onMutate` does not allow returning a scope value.
 
 ## `mutationCache.getAll`
 

@@ -99,27 +99,28 @@ const queryClient = useQueryClient()
 useMutation({
   mutationFn: updateTodo,
   // When mutate is called:
-  onMutate: async (newTodo) => {
+  onMutate: async (newTodo, context) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
-    await queryClient.cancelQueries({ queryKey: ['todos'] })
+    await context.client.cancelQueries({ queryKey: ['todos'] })
 
     // Snapshot the previous value
-    const previousTodos = queryClient.getQueryData(['todos'])
+    const previousTodos = context.client.getQueryData(['todos'])
 
     // Optimistically update to the new value
-    queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
+    context.client.setQueryData(['todos'], (old) => [...old, newTodo])
 
-    // Return a context object with the snapshotted value
-    return { previousTodos }
+    // Return a scope object with the snapshotted value
+    return { previousTodos, client: context.client }
   },
   // If the mutation fails,
-  // use the context returned from onMutate to roll back
-  onError: (err, newTodo, context) => {
-    queryClient.setQueryData(['todos'], context.previousTodos)
+  // use the scope returned from onMutate to roll back
+  onError: (err, newTodo, scope) => {
+    scope.client.setQueryData(['todos'], scope.previousTodos)
   },
   // Always refetch after error or success:
-  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  onSettled: (data, error, variables, scope) =>
+    scope.client.invalidateQueries({ queryKey: ['todos'] }),
 })
 ```
 
@@ -133,30 +134,27 @@ useMutation({
 useMutation({
   mutationFn: updateTodo,
   // When mutate is called:
-  onMutate: async (newTodo) => {
+  onMutate: async (newTodo, context) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
-    await queryClient.cancelQueries({ queryKey: ['todos', newTodo.id] })
+    await context.client.cancelQueries({ queryKey: ['todos', newTodo.id] })
 
     // Snapshot the previous value
-    const previousTodo = queryClient.getQueryData(['todos', newTodo.id])
+    const previousTodo = context.client.getQueryData(['todos', newTodo.id])
 
     // Optimistically update to the new value
-    queryClient.setQueryData(['todos', newTodo.id], newTodo)
+    context.client.setQueryData(['todos', newTodo.id], newTodo)
 
-    // Return a context with the previous and new todo
-    return { previousTodo, newTodo }
+    // Return a scope with the previous and new todo
+    return { previousTodo, newTodo, client: context.client }
   },
-  // If the mutation fails, use the context we returned above
-  onError: (err, newTodo, context) => {
-    queryClient.setQueryData(
-      ['todos', context.newTodo.id],
-      context.previousTodo,
-    )
+  // If the mutation fails, use the scope we returned above
+  onError: (err, newTodo, scope) => {
+    scope.client.setQueryData(['todos', scope.newTodo.id], scope.previousTodo)
   },
   // Always refetch after error or success:
-  onSettled: (newTodo) =>
-    queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
+  onSettled: (newTodo, error, variables, scope) =>
+    scope.client.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
 })
 ```
 
@@ -170,7 +168,7 @@ You can also use the `onSettled` function in place of the separate `onError` and
 useMutation({
   mutationFn: updateTodo,
   // ...
-  onSettled: async (newTodo, error, variables, context) => {
+  onSettled: async (newTodo, error, variables, scope) => {
     if (error) {
       // do something
     }

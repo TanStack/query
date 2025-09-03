@@ -632,7 +632,7 @@ describe('mutations', () => {
           mutationFn: () => Promise.resolve('success'),
           onMutate: () => {
             results.push('onMutate-sync')
-            return { backup: 'data' } // onMutate can return context
+            return { backup: 'data' } // onMutate can return scope
           },
           onSuccess: () => {
             results.push('onSuccess-implicit-void')
@@ -760,8 +760,8 @@ describe('mutations', () => {
             results.push('sync-onError')
             return Promise.resolve('error-return-ignored')
           },
-          onSettled: (_data, _error, _variables, context) => {
-            results.push(`settled-context-${context?.rollback}`)
+          onSettled: (_data, _error, _variables, scope) => {
+            results.push(`settled-scope-${scope?.rollback}`)
             return Promise.all([
               Promise.resolve('cleanup-1'),
               Promise.resolve('cleanup-2'),
@@ -781,7 +781,7 @@ describe('mutations', () => {
       expect(results).toEqual([
         'sync-onMutate',
         'async-onSuccess',
-        'settled-context-data',
+        'settled-scope-data',
       ])
     })
 
@@ -812,8 +812,8 @@ describe('mutations', () => {
               sleep(20).then(() => results.push('error-cleanup-2')),
             ])
           },
-          onSettled: (_data, _error, _variables, context) => {
-            results.push(`settled-error-${context?.backup}`)
+          onSettled: (_data, _error, _variables, scope) => {
+            results.push(`settled-error-${scope?.backup}`)
             return Promise.allSettled([
               Promise.resolve('settled-cleanup'),
               Promise.reject('settled-error'),
