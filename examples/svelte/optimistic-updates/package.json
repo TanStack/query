@@ -12,12 +12,12 @@
     "@tanstack/svelte-query-devtools": "^5.85.9"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^6.0.1",
-    "@sveltejs/kit": "^2.25.1",
+    "@sveltejs/adapter-auto": "^6.1.0",
+    "@sveltejs/kit": "^2.37.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
-    "svelte": "^5.36.8",
-    "svelte-check": "^4.3.0",
+    "svelte": "^5.38.6",
+    "svelte-check": "^4.3.1",
     "typescript": "5.8.3",
-    "vite": "^6.2.4"
+    "vite": "^6.3.5"
   }
 }

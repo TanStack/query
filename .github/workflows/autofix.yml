@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4.3.0
       - name: Setup Tools
         uses: tanstack/config/.github/setup@main
       - name: Fix formatting
