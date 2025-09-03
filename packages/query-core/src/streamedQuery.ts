@@ -77,7 +77,7 @@ export function streamedQuery<
       // don't append to the cache directly when replace-refetching
       if (!isRefetch || refetchMode !== 'replace') {
         context.client.setQueryData<TData>(context.queryKey, (prev) =>
-          reducer(prev ?? initialValue, chunk),
+          reducer(prev === undefined ? initialValue : prev, chunk),
         )
       }
       result = reducer(result, chunk)

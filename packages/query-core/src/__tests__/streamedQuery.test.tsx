@@ -396,13 +396,13 @@ describe('streamedQuery', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: streamedQuery<number, Record<number, boolean>>({
+      queryFn: streamedQuery({
         queryFn: () => createAsyncNumberGenerator(2),
         reducer: (acc, chunk) => ({
           ...acc,
           [chunk]: true,
         }),
-        initialValue: {}
+        initialValue: {} as Record<number, boolean>,
       }),
     })
 
@@ -432,7 +432,7 @@ describe('streamedQuery', () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: streamedQuery<number, Record<number, boolean>>({
+      queryFn: streamedQuery({
         queryFn: () => createAsyncNumberGenerator(2),
         reducer: (acc, chunk) => ({
           ...acc,
@@ -441,7 +441,7 @@ describe('streamedQuery', () => {
         initialValue: {
           10: true,
           11: true,
-        },
+        } as Record<number, boolean>,
       }),
     })
 
