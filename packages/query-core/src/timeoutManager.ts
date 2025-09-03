@@ -13,40 +13,39 @@ export type TimeoutCallback = (_: void) => void
  * Still, we can downlevel `NodeJS.Timeout` to `number` as it implements
  * Symbol.toPrimitive.
  */
-export type TimeoutProviderId = number | { [Symbol.toPrimitive]: () => number }
+export type ManagedTimerId = number | { [Symbol.toPrimitive]: () => number }
 
 /**
  * Backend for timer functions.
  */
-export type TimeoutProvider = {
-  /** Used in error messages. */
-  readonly name: string
+export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
+  {
+    readonly setTimeout: (callback: TimeoutCallback, delay: number) => TTimerId
+    readonly clearTimeout: (timeoutId: TTimerId | undefined) => void
 
-  readonly setTimeout: (
-    callback: TimeoutCallback,
-    delay: number,
-  ) => TimeoutProviderId
-  readonly clearTimeout: (timeoutId: number | undefined) => void
+    readonly setInterval: (callback: TimeoutCallback, delay: number) => TTimerId
+    readonly clearInterval: (intervalId: TTimerId | undefined) => void
+  }
 
-  readonly setInterval: (
-    callback: TimeoutCallback,
-    delay: number,
-  ) => TimeoutProviderId
-  readonly clearInterval: (intervalId: number | undefined) => void
-}
-
-export const defaultTimeoutProvider: TimeoutProvider = {
-  name: 'default',
-
+export const defaultTimeoutProvider: TimeoutProvider<
+  ReturnType<typeof setTimeout>
+> = {
+  // We need the wrapper function syntax below instead of direct references to
+  // global setTimeout etc.
+  //
+  // BAD: `setTimeout: setTimeout`
+  // GOOD: `setTimeout: (cb, delay) => setTimeout(cb, delay)`
+  //
+  // If we use direct references here, then anything that wants to spy on or
+  // replace the global setTimeout (like tests) won't work since we'll already
+  // have a hard reference to the original implementation at the time when this
+  // file was imported.
   setTimeout: (callback, delay) => setTimeout(callback, delay),
   clearTimeout: (timeoutId) => clearTimeout(timeoutId),
 
   setInterval: (callback, delay) => setInterval(callback, delay),
   clearInterval: (intervalId) => clearInterval(intervalId),
 }
-
-/** Timeout ID returned by {@link TimeoutManager} */
-export type ManagedTimerId = number
 
 /**
  * Allows customization of how timeouts are created.
@@ -60,10 +59,18 @@ export type ManagedTimerId = number
  * coalesces timeouts.
  */
 export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
-  #provider: TimeoutProvider = defaultTimeoutProvider
+  // We cannot have TimeoutManager<T> as we must instantiate it with a concrete
+  // type at app boot; and if we leave that type, then any new timer provider
+  // would need to support ReturnType<typeof setTimeout>, which is infeasible.
+  //
+  // We settle for type safety for the TimeoutProvider type, and accept that
+  // this class is unsafe internally to allow for extension.
+  #provider: TimeoutProvider<any> = defaultTimeoutProvider
   #providerCalled = false
 
-  setTimeoutProvider(provider: TimeoutProvider): void {
+  setTimeoutProvider<TTimerId extends ManagedTimerId>(
+    provider: TimeoutProvider<TTimerId>,
+  ): void {
     if (provider === this.#provider) {
       return
     }
@@ -82,7 +89,8 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
         // We could internally queue `setTimeout` calls to `TimeoutManager` until
         // some API call to set the initial provider.
         console.error(
-          `[timeoutManager]: Switching to ${provider.name} provider after calls to ${this.#provider.name} provider might result in unexpected behavior.`,
+          `[timeoutManager]: Switching provider after calls to previous provider might result in unexpected behavior.`,
+          { previous: this.#provider, provider },
         )
       }
     }
@@ -97,10 +105,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
     if (process.env.NODE_ENV !== 'production') {
       this.#providerCalled = true
     }
-    return providerIdToNumber(
-      this.#provider,
-      this.#provider.setTimeout(callback, delay),
-    )
+    return this.#provider.setTimeout(callback, delay)
   }
 
   clearTimeout(timeoutId: ManagedTimerId | undefined): void {
@@ -111,10 +116,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
     if (process.env.NODE_ENV !== 'production') {
       this.#providerCalled = true
     }
-    return providerIdToNumber(
-      this.#provider,
-      this.#provider.setInterval(callback, delay),
-    )
+    return this.#provider.setInterval(callback, delay)
   }
 
   clearInterval(intervalId: ManagedTimerId | undefined): void {
