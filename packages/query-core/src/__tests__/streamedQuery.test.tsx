@@ -391,13 +391,18 @@ describe('streamedQuery', () => {
     })
   })
 
-  test('should support maxChunks', async () => {
+  test('should support custom reducer', async () => {
     const key = queryKey()
+
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
-        maxChunks: 2,
+        queryFn: () => createAsyncNumberGenerator(2),
+        reducer: (acc, chunk) => ({
+          ...acc,
+          [chunk]: true,
+        }),
+        initialValue: {} as Record<number, boolean>,
       }),
     })
 
@@ -409,41 +414,34 @@ describe('streamedQuery', () => {
       data: undefined,
     })
 
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0, 1],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
-      data: [1, 2],
+      data: {
+        0: true,
+        1: true,
+      },
     })
 
     unsubscribe()
   })
 
-  test('maxChunks with append refetch', async () => {
+  test('should support custom reducer with initialValue', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
-        maxChunks: 2,
-        refetchMode: 'append',
+        queryFn: () => createAsyncNumberGenerator(2),
+        reducer: (acc, chunk) => ({
+          ...acc,
+          [chunk]: true,
+        }),
+        initialValue: {
+          10: true,
+          11: true,
+        } as Record<number, boolean>,
       }),
     })
 
@@ -455,62 +453,17 @@ describe('streamedQuery', () => {
       data: undefined,
     })
 
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0, 1],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
-      data: [1, 2],
-    })
-
-    void observer.refetch()
-
-    await vi.advanceTimersByTimeAsync(10)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [1, 2],
-    })
-
-    await vi.advanceTimersByTimeAsync(40)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [2, 0],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0, 1],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: [1, 2],
+      data: {
+        10: true,
+        11: true,
+        0: true,
+        1: true,
+      },
     })
 
     unsubscribe()
