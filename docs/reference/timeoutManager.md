@@ -39,9 +39,10 @@ export const queryClient = new QueryClient()
 
 Timers are very performance sensitive. Short term timers (such as those with delays less than 5 seconds) tend to be latency sensitive, where long-term timers may benefit more from [timer coalescing](https://en.wikipedia.org/wiki/Timer_coalescing) - batching timers with similar deadlines together - using a data structure like a [hierarchical time wheel](https://www.npmjs.com/package/timer-wheel).
 
-The `TimeoutProvider` type requires that implementations handle timer ID objects because runtimes like NodeJS return [objects][nodejs-timeout] from their global `setTimeout` and `setInterval` functions. You are free to coerce timer IDs to number internally, or to return your own custom object type.
+The `TimeoutProvider` type requires that implementations handle timer ID objects that can be converted to `number` via [Symbol.toPrimitive][toPrimitive] because runtimes like NodeJS return [objects][nodejs-timeout] from their global `setTimeout` and `setInterval` functions. TimeoutProvider implementations are free to coerce timer IDs to number internally, or to return their own custom object type that implements `{ [Symbol.toPrimitive]: () => number }`.
 
 [nodejs-timeout]: https://nodejs.org/api/timers.html#class-timeout
+[toPrimitive]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toPrimitive
 
 ```tsx
 type ManagedTimerId = number | { [Symbol.toPrimitive]: () => number }
@@ -59,7 +60,7 @@ type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> = {
 
 `setTimeout(callback, delayMs)` schedules a callback to run after approximately `delay` milliseconds, like the global [setTimeout function](https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout).The callback can be canceled with `timeoutManager.clearTimeout`.
 
-It returns a timer ID, which may be a number or an object that can be coerced to a number via [Symbol.toPrimitive](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toPrimitive).
+It returns a timer ID, which may be a number or an object that can be coerced to a number via [Symbol.toPrimitive][toPrimitive].
 
 ```tsx
 import { timeoutManager } from '@tanstack/react-query'
@@ -68,6 +69,8 @@ const timeoutId = timeoutManager.setTimeout(
   () => console.log('ran at:', new Date()),
   1000,
 )
+
+const timeoutIdNumber: number = Number(timeoutId)
 ```
 
 ## `timeoutManager.clearTimeout`
