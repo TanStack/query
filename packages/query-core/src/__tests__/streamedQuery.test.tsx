@@ -34,7 +34,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
+        streamFn: () => createAsyncNumberGenerator(3),
       }),
     })
 
@@ -78,7 +78,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: async function* () {
+        streamFn: async function* () {
           for await (const num of createAsyncNumberGenerator(3)) {
             yield [num, num] as const
           }
@@ -133,7 +133,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2),
+        streamFn: () => createAsyncNumberGenerator(2),
       }),
     })
 
@@ -187,7 +187,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2),
+        streamFn: () => createAsyncNumberGenerator(2),
         refetchMode: 'append',
       }),
     })
@@ -243,7 +243,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2, offset),
+        streamFn: () => createAsyncNumberGenerator(2, offset),
         refetchMode: 'replace',
       }),
     })
@@ -300,7 +300,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
+        streamFn: () => createAsyncNumberGenerator(3),
         refetchMode: 'append',
       }),
     })
@@ -355,7 +355,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: (context) => {
+        streamFn: (context) => {
           // just consume the signal
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           const numbers = context.signal ? 3 : 0
@@ -391,13 +391,18 @@ describe('streamedQuery', () => {
     })
   })
 
-  test('should support maxChunks', async () => {
+  test('should support custom reducer', async () => {
     const key = queryKey()
+
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
-        maxChunks: 2,
+        streamFn: () => createAsyncNumberGenerator(2),
+        reducer: (acc, chunk) => ({
+          ...acc,
+          [chunk]: true,
+        }),
+        initialValue: {} as Record<number, boolean>,
       }),
     })
 
@@ -409,41 +414,34 @@ describe('streamedQuery', () => {
       data: undefined,
     })
 
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0, 1],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
-      data: [1, 2],
+      data: {
+        0: true,
+        1: true,
+      },
     })
 
     unsubscribe()
   })
 
-  test('maxChunks with append refetch', async () => {
+  test('should support custom reducer with initialValue', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
-        maxChunks: 2,
-        refetchMode: 'append',
+        streamFn: () => createAsyncNumberGenerator(2),
+        reducer: (acc, chunk) => ({
+          ...acc,
+          [chunk]: true,
+        }),
+        initialValue: {
+          10: true,
+          11: true,
+        } as Record<number, boolean>,
       }),
     })
 
@@ -455,62 +453,17 @@ describe('streamedQuery', () => {
       data: undefined,
     })
 
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0, 1],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(100)
 
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
-      data: [1, 2],
-    })
-
-    void observer.refetch()
-
-    await vi.advanceTimersByTimeAsync(10)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [1, 2],
-    })
-
-    await vi.advanceTimersByTimeAsync(40)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [2, 0],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'fetching',
-      data: [0, 1],
-    })
-
-    await vi.advanceTimersByTimeAsync(50)
-
-    expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: [1, 2],
+      data: {
+        10: true,
+        11: true,
+        0: true,
+        1: true,
+      },
     })
 
     unsubscribe()

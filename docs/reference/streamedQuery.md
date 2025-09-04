@@ -13,7 +13,7 @@ import { experimental_streamedQuery as streamedQuery } from '@tanstack/react-que
 const query = queryOptions({
   queryKey: ['data'],
   queryFn: streamedQuery({
-    queryFn: fetchDataInChunks,
+    streamFn: fetchDataInChunks,
   }),
 })
 ```
@@ -22,20 +22,24 @@ const query = queryOptions({
 
 **Options**
 
-- `queryFn: (context: QueryFunctionContext) => Promise<AsyncIterable<TData>>`
+- `streamFn: (context: QueryFunctionContext) => Promise<AsyncIterable<TData>>`
   - **Required**
-  - The function that returns a Promise of an AsyncIterable of data to stream in.
+  - The function that returns a Promise of an AsyncIterable with data to stream in.
   - Receives a [QueryFunctionContext](../../framework/react/guides/query-functions.md#queryfunctioncontext)
-- `refetchMode?: 'append' | 'reset' | 'replace`
+- `refetchMode?: 'append' | 'reset' | 'replace'`
   - Optional
   - Defines how refetches are handled.
   - Defaults to `'reset'`
   - When set to `'reset'`, the query will erase all data and go back into `pending` state.
   - When set to `'append'`, data will be appended to existing data.
   - When set to `'replace'`, all data will be written to the cache once the stream ends.
-- `maxChunks?: number`
+- `reducer?: (accumulator: TData, chunk: TQueryFnData) => TData`
   - Optional
-  - The maximum number of chunks to keep in the cache.
-  - Defaults to `undefined`, meaning all chunks will be kept.
-  - If `undefined` or `0`, the number of chunks is unlimited.
-  - If the number of chunks exceeds this number, the oldest chunk will be removed.
+  - Reduces streamed chunks (`TQueryFnData`) into the final data shape (`TData`).
+  - Default: appends each chunk to the end of the accumulator when `TData` is an array.
+  - If `TData` is not an array, you must provide a custom `reducer`.
+- `initialValue?: TData = TQueryFnData`
+  - Optional
+  - Defines the initial data to be used while the first chunk is being fetched.
+  - It is mandatory when custom `reducer` is provided.
+  - Defaults to an empty array.
