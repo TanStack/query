@@ -34,7 +34,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
+        streamFn: () => createAsyncNumberGenerator(3),
       }),
     })
 
@@ -78,7 +78,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: async function* () {
+        streamFn: async function* () {
           for await (const num of createAsyncNumberGenerator(3)) {
             yield [num, num] as const
           }
@@ -133,7 +133,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2),
+        streamFn: () => createAsyncNumberGenerator(2),
       }),
     })
 
@@ -187,7 +187,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2),
+        streamFn: () => createAsyncNumberGenerator(2),
         refetchMode: 'append',
       }),
     })
@@ -243,7 +243,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2, offset),
+        streamFn: () => createAsyncNumberGenerator(2, offset),
         refetchMode: 'replace',
       }),
     })
@@ -300,7 +300,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
+        streamFn: () => createAsyncNumberGenerator(3),
         refetchMode: 'append',
       }),
     })
@@ -355,7 +355,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: (context) => {
+        streamFn: (context) => {
           // just consume the signal
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           const numbers = context.signal ? 3 : 0
@@ -397,7 +397,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2),
+        streamFn: () => createAsyncNumberGenerator(2),
         reducer: (acc, chunk) => ({
           ...acc,
           [chunk]: true,
@@ -433,7 +433,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2),
+        streamFn: () => createAsyncNumberGenerator(2),
         reducer: (acc, chunk) => ({
           ...acc,
           [chunk]: true,

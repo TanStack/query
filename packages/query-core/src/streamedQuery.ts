@@ -2,7 +2,7 @@ import { addToEnd } from './utils'
 import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
 
 type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
-  queryFn: (
+  streamFn: (
     context: QueryFunctionContext<TQueryKey>,
   ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
   refetchMode?: 'append' | 'reset' | 'replace'
@@ -48,7 +48,7 @@ export function streamedQuery<
   TData = Array<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
 >({
-  queryFn,
+  streamFn,
   refetchMode = 'reset',
   reducer = (items, chunk) =>
     addToEnd(items as Array<TQueryFnData>, chunk) as TData,
@@ -73,7 +73,7 @@ export function streamedQuery<
 
     let result = initialValue
 
-    const stream = await queryFn(context)
+    const stream = await streamFn(context)
 
     for await (const chunk of stream) {
       if (context.signal.aborted) {

@@ -13,7 +13,7 @@ import { experimental_streamedQuery as streamedQuery } from '@tanstack/react-que
 const query = queryOptions({
   queryKey: ['data'],
   queryFn: streamedQuery({
-    queryFn: fetchDataInChunks,
+    streamFn: fetchDataInChunks,
   }),
 })
 ```
@@ -22,11 +22,11 @@ const query = queryOptions({
 
 **Options**
 
-- `queryFn: (context: QueryFunctionContext) => Promise<AsyncIterable<TData>>`
+- `streamFn: (context: QueryFunctionContext) => Promise<AsyncIterable<TData>>`
   - **Required**
-  - The function that returns a Promise of an AsyncIterable of data to stream in.
+  - The function that returns a Promise of an AsyncIterable with data to stream in.
   - Receives a [QueryFunctionContext](../../framework/react/guides/query-functions.md#queryfunctioncontext)
-- `refetchMode?: 'append' | 'reset' | 'replace`
+- `refetchMode?: 'append' | 'reset' | 'replace'`
   - Optional
   - Defines how refetches are handled.
   - Defaults to `'reset'`
