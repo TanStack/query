@@ -96,14 +96,14 @@ mutation = injectMutation(() => ({
     // Optionally return a scope containing data to use when for example rolling back
     return { id: 1 }
   },
-  onError: (error, variables, scope) => {
+  onError: (error, variables, scope, context) => {
     // An error happened!
     console.log(`rolling back optimistic update with id ${scope.id}`)
   },
-  onSuccess: (data, variables, scope) => {
+  onSuccess: (data, variables, scope, context) => {
     // Boom baby!
   },
-  onSettled: (data, error, variables, scope) => {
+  onSettled: (data, error, variables, scope, context) => {
     // Error or success... doesn't matter!
   },
 }))
@@ -130,25 +130,25 @@ mutation = injectMutation(() => ({
 ```ts
 mutation = injectMutation(() => ({
   mutationFn: addTodo,
-  onSuccess: (data, variables, scope) => {
+  onSuccess: (data, variables, scope, context) => {
     // I will fire first
   },
-  onError: (error, variables, scope) => {
+  onError: (error, variables, scope, context) => {
     // I will fire first
   },
-  onSettled: (data, error, variables, scope) => {
+  onSettled: (data, error, variables, scope, context) => {
     // I will fire first
   },
 }))
 
 mutation.mutate(todo, {
-  onSuccess: (data, variables, scope) => {
+  onSuccess: (data, variables, scope, context) => {
     // I will fire second!
   },
-  onError: (error, variables, scope) => {
+  onError: (error, variables, scope, context) => {
     // I will fire second!
   },
-  onSettled: (data, error, variables, scope) => {
+  onSettled: (data, error, variables, scope, context) => {
     // I will fire second!
   },
 })
@@ -161,7 +161,7 @@ mutation.mutate(todo, {
 export class Example {
   mutation = injectMutation(() => ({
     mutationFn: addTodo,
-    onSuccess: (data, variables, scope) => {
+    onSuccess: (data, variables, scope, context) => {
       // Will be called 3 times
     },
   }))
@@ -169,7 +169,7 @@ export class Example {
   doMutations() {
     ;['Todo 1', 'Todo 2', 'Todo 3'].forEach((todo) => {
       this.mutation.mutate(todo, {
-        onSuccess: (data, variables, scope) => {
+        onSuccess: (data, variables, scope, context) => {
           // Will execute only once, for the last mutation (Todo 3),
           // regardless which mutation resolves first
         },

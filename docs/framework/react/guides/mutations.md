@@ -149,14 +149,14 @@ useMutation({
     // Optionally return a scope containing data to use when for example rolling back
     return { id: 1 }
   },
-  onError: (error, variables, scope) => {
+  onError: (error, variables, scope, context) => {
     // An error happened!
     console.log(`rolling back optimistic update with id ${scope.id}`)
   },
-  onSuccess: (data, variables, scope) => {
+  onSuccess: (data, variables, scope, context) => {
     // Boom baby!
   },
-  onSettled: (data, error, variables, scope) => {
+  onSettled: (data, error, variables, scope, context) => {
     // Error or success... doesn't matter!
   },
 })
@@ -189,25 +189,25 @@ You might find that you want to **trigger additional callbacks** beyond the ones
 ```tsx
 useMutation({
   mutationFn: addTodo,
-  onSuccess: (data, variables, scope) => {
+  onSuccess: (data, variables, scope, context) => {
     // I will fire first
   },
-  onError: (error, variables, scope) => {
+  onError: (error, variables, scope, context) => {
     // I will fire first
   },
-  onSettled: (data, error, variables, scope) => {
+  onSettled: (data, error, variables, scope, context) => {
     // I will fire first
   },
 })
 
 mutate(todo, {
-  onSuccess: (data, variables, scope) => {
+  onSuccess: (data, variables, scope, context) => {
     // I will fire second!
   },
-  onError: (error, variables, scope) => {
+  onError: (error, variables, scope, context) => {
     // I will fire second!
   },
-  onSettled: (data, error, variables, scope) => {
+  onSettled: (data, error, variables, scope, context) => {
     // I will fire second!
   },
 })
@@ -226,7 +226,7 @@ There is a slight difference in handling `onSuccess`, `onError` and `onSettled` 
 ```tsx
 useMutation({
   mutationFn: addTodo,
-  onSuccess: (data, variables, scope) => {
+  onSuccess: (data, variables, scope, context) => {
     // Will be called 3 times
   },
 })
@@ -234,7 +234,7 @@ useMutation({
 const todos = ['Todo 1', 'Todo 2', 'Todo 3']
 todos.forEach((todo) => {
   mutate(todo, {
-    onSuccess: (data, variables, scope) => {
+    onSuccess: (data, variables, scope, context) => {
       // Will execute only once, for the last mutation (Todo 3),
       // regardless which mutation resolves first
     },
