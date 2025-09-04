@@ -1117,7 +1117,7 @@ export interface MutationOptions<
   onSuccess?: (
     data: TData,
     variables: TVariables,
-    scope: TScope,
+    scope: TScope | undefined,
   ) => Promise<unknown> | unknown
   onError?: (
     error: TError,
@@ -1154,7 +1154,11 @@ export interface MutateOptions<
   TVariables = void,
   TScope = unknown,
 > {
-  onSuccess?: (data: TData, variables: TVariables, scope: TScope) => void
+  onSuccess?: (
+    data: TData,
+    variables: TVariables,
+    scope: TScope | undefined,
+  ) => void
   onError?: (
     error: TError,
     variables: TVariables,
