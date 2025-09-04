@@ -20,9 +20,9 @@ Its available methods are:
 
 ## `timeoutManager.setTimeoutProvider`
 
-`setTimeoutProvider` can be used to set a custom implementation of the other timeoutManager methods, called a `TimeoutProvider`.
+`setTimeoutProvider` can be used to set a custom implementation of the `setTimeout`, `clearTimeout`, `setInterval`, `clearInterval` functions, called a `TimeoutProvider`.
 
-This may be useful if you notice event loop performance issues with thousands of queries. A custom TimeoutProvider could also support timer delays longer than the browser maximum delay value of [24 days](https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout#maximum_delay_value).
+This may be useful if you notice event loop performance issues with thousands of queries. A custom TimeoutProvider could also support timer delays longer than the global `setTimeout` maximum delay value of about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout#maximum_delay_value).
 
 It is important to call `setTimeoutProvider` before creating a QueryClient or queries, so that the same provider is used consistently for all timers in the application, since different TimeoutProviders cannot cancel each others' timers.
 
