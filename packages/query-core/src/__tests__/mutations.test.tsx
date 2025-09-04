@@ -53,7 +53,11 @@ describe('mutations', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(fn).toHaveBeenCalledTimes(1)
-    expect(fn).toHaveBeenCalledWith('vars')
+    expect(fn).toHaveBeenCalledWith('vars', {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: key,
+    })
   })
 
   test('mutation should set correct success states', async () => {
