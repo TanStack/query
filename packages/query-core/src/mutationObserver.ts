@@ -146,18 +146,18 @@ export class MutationObserver<
       // First trigger the mutate callbacks
       if (this.#mutateOptions && this.hasListeners()) {
         const variables = this.#currentResult.variables!
-        const context = this.#currentResult.context
+        const scope = this.#currentResult.scope
 
         if (action?.type === 'success') {
-          this.#mutateOptions.onSuccess?.(action.data, variables, context!)
-          this.#mutateOptions.onSettled?.(action.data, null, variables, context)
+          this.#mutateOptions.onSuccess?.(action.data, variables, scope!)
+          this.#mutateOptions.onSettled?.(action.data, null, variables, scope)
         } else if (action?.type === 'error') {
-          this.#mutateOptions.onError?.(action.error, variables, context)
+          this.#mutateOptions.onError?.(action.error, variables, scope)
           this.#mutateOptions.onSettled?.(
             undefined,
             action.error,
             variables,
-            context,
+            scope,
           )
         }
       }
