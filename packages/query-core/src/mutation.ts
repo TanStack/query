@@ -30,7 +30,7 @@ export interface MutationState<
   TScope = unknown,
 > {
   /**
-   * @deprecated This will be removed in the next major version. Use the `scope` property instead.
+   * @deprecated `context` was renamed to `scope`. This will be removed in the next major version. Use the `scope` property instead.
    */
   context: TScope | undefined
   scope: TScope | undefined
