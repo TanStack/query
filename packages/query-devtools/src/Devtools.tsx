@@ -2427,7 +2427,7 @@ const MutationDetails = () => {
           <Explorer
             label="Context"
             defaultExpanded={['Context']}
-            value={activeMutation()!.state.context}
+            value={activeMutation()!.state.scope}
           />
         </div>
         <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>

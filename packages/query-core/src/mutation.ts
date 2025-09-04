@@ -29,7 +29,11 @@ export interface MutationState<
   TVariables = unknown,
   TScope = unknown,
 > {
+  /**
+   * @deprecated This will be removed in the next major version. Use the `scope` property instead.
+   */
   context: TScope | undefined
+  scope: TScope | undefined
   data: TData | undefined
   error: TError | null
   failureCount: number
@@ -50,7 +54,7 @@ interface PendingAction<TVariables, TScope> {
   type: 'pending'
   isPaused: boolean
   variables?: TVariables
-  context?: TScope
+  scope?: TScope
 }
 
 interface SuccessAction<TData> {
@@ -212,14 +216,14 @@ export class Mutation<
           variables,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
-        const context = await this.options.onMutate?.(
+        const scope = await this.options.onMutate?.(
           variables,
           mutationFnContext,
         )
-        if (context !== this.state.context) {
+        if (scope !== this.state.scope) {
           this.#dispatch({
             type: 'pending',
-            context,
+            scope,
             variables,
             isPaused,
           })
@@ -231,22 +235,22 @@ export class Mutation<
       await this.#mutationCache.config.onSuccess?.(
         data,
         variables,
-        this.state.context,
+        this.state.scope,
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSuccess?.(data, variables, this.state.context!)
+      await this.options.onSuccess?.(data, variables, this.state.scope!)
 
       // Notify cache callback
       await this.#mutationCache.config.onSettled?.(
         data,
         null,
         this.state.variables,
-        this.state.context,
+        this.state.scope,
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSettled?.(data, null, variables, this.state.context)
+      await this.options.onSettled?.(data, null, variables, this.state.scope)
 
       this.#dispatch({ type: 'success', data })
       return data
@@ -256,14 +260,14 @@ export class Mutation<
         await this.#mutationCache.config.onError?.(
           error as any,
           variables,
-          this.state.context,
+          this.state.scope,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
 
         await this.options.onError?.(
           error as TError,
           variables,
-          this.state.context,
+          this.state.scope,
         )
 
         // Notify cache callback
@@ -271,7 +275,7 @@ export class Mutation<
           undefined,
           error as any,
           this.state.variables,
-          this.state.context,
+          this.state.scope,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
 
@@ -279,7 +283,7 @@ export class Mutation<
           undefined,
           error as TError,
           variables,
-          this.state.context,
+          this.state.scope,
         )
         throw error
       } finally {
@@ -314,7 +318,8 @@ export class Mutation<
         case 'pending':
           return {
             ...state,
-            context: action.context,
+            context: action.scope,
+            scope: action.scope,
             data: undefined,
             failureCount: 0,
             failureReason: null,
@@ -369,6 +374,7 @@ export function getDefaultState<
 >(): MutationState<TData, TError, TVariables, TScope> {
   return {
     context: undefined,
+    scope: undefined,
     data: undefined,
     error: null,
     failureCount: 0,
