@@ -72,12 +72,8 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
   setTimeoutProvider<TTimerId extends ManagedTimerId>(
     provider: TimeoutProvider<TTimerId>,
   ): void {
-    if (provider === this.#provider) {
-      return
-    }
-
     if (process.env.NODE_ENV !== 'production') {
-      if (this.#providerCalled) {
+      if (this.#providerCalled && provider !== this.#provider) {
         // After changing providers, `clearTimeout` will not work as expected for
         // timeouts from the previous provider.
         //
