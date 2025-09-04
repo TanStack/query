@@ -6,7 +6,7 @@ import {
   numberAttribute,
 } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { injectQuery } from '@tanstack/angular-query-experimental'
+import { injectQuery } from '@tanstack/angular-query'
 import { lastValueFrom } from 'rxjs'
 import { PostsService } from '../services/posts-service'
 

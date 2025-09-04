@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { QueryClient, injectQuery } from '@tanstack/angular-query-experimental'
+import { QueryClient, injectQuery } from '@tanstack/angular-query'
 import { QueriesService } from '../services/queries-service'
 
 @Component({

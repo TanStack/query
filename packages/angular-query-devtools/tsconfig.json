@@ -12,6 +12,6 @@
   "include": ["src", "*.config.*", "package.json"],
   "references": [
     { "path": "../query-devtools" },
-    { "path": "../angular-query-experimental" }
+    { "path": "../angular-query" }
   ]
 }

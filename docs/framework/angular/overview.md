@@ -3,17 +3,7 @@ id: overview
 title: Overview
 ---
 
-> IMPORTANT: This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Upgrade carefully. If you use this in production while in experimental stage, please lock your version to a patch-level version to avoid unexpected breaking changes.
-
-The `@tanstack/angular-query-experimental` package offers a 1st-class API for using TanStack Query via Angular.
-
-## Feedback welcome!
-
-We are in the process of getting to a stable API for TanStack Query on Angular. If you have any feedback, please contact us at the [TanStack Discord](https://tlinz.com/discord) server or [visit this discussion](https://github.com/TanStack/query/discussions/6293) on Github.
-
-## Supported Angular Versions
-
-TanStack Query is compatible with Angular v16 and higher.
+The `@tanstack/angular-query` package offers a 1st-class API for using TanStack Query via Angular.
 
 TanStack Query (FKA React Query) is often described as the missing data-fetching library for web applications, but in more technical terms, it makes **fetching, caching, synchronizing and updating server state** in your web applications a breeze.
 
@@ -64,7 +54,7 @@ In the example below, you can see TanStack Query in its most basic and simple fo
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { CommonModule } from '@angular/common'
-import { injectQuery } from '@tanstack/angular-query-experimental'
+import { injectQuery } from '@tanstack/angular-query'
 import { lastValueFrom } from 'rxjs'
 
 @Component({

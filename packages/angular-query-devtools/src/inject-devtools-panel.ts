@@ -10,10 +10,7 @@ import {
   untracked,
 } from '@angular/core'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
-import {
-  QueryClient,
-  onlineManager,
-} from '@tanstack/angular-query-experimental'
+import { QueryClient, onlineManager } from '@tanstack/angular-query'
 import { isPlatformBrowser } from '@angular/common'
 import type { ElementRef } from '@angular/core'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'

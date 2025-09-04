@@ -20,7 +20,7 @@ import {
   QueryClient,
   provideTanStackQuery,
   withDevtools,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 
 export const appConfig: ApplicationConfig = {
   providers: [provideTanStackQuery(new QueryClient(), withDevtools())],

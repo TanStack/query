@@ -19,14 +19,14 @@ comment:
 
 component_management:
   individual_components:
-    - component_id: angular-query-devtools-experimental
-      name: '@tanstack/angular-query-devtools-experimental'
+    - component_id: angular-query-devtools
+      name: '@tanstack/angular-query-devtools'
       paths:
-        - packages/angular-query-devtools-experimental/**
-    - component_id: angular-query-experimental
-      name: '@tanstack/angular-query-experimental'
+        - packages/angular-query-devtools/**
+    - component_id: angular-query
+      name: '@tanstack/angular-query'
       paths:
-        - packages/angular-query-experimental/**
+        - packages/angular-query/**
     - component_id: eslint-plugin-query
       name: '@tanstack/eslint-plugin-query'
       paths:

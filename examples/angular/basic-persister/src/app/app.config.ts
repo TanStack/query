@@ -3,7 +3,7 @@ import {
   QueryClient,
   provideTanStackQuery,
   withDevtools,
-} from '@tanstack/angular-query-experimental'
+} from '@tanstack/angular-query'
 import { withPersistQueryClient } from '@tanstack/angular-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import type { ApplicationConfig } from '@angular/core'

@@ -79,8 +79,9 @@
   },
   "pnpm": {
     "overrides": {
-      "@tanstack/angular-query-devtools-experimental": "workspace:*",
-      "@tanstack/angular-query-experimental": "workspace:*",
+      "@tanstack/angular-query-devtools": "workspace:*",
+      "@tanstack/angular-query": "workspace:*",
+      "@tanstack/angular-query-persist-client": "workspace:*",
       "@tanstack/eslint-plugin-query": "workspace:*",
       "@tanstack/query-async-storage-persister": "workspace:*",
       "@tanstack/query-broadcast-client-experimental": "workspace:*",

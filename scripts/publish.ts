@@ -83,18 +83,17 @@ await publish({
       packageDir: 'packages/vue-query-devtools',
     },
     {
-      name: '@tanstack/angular-query-devtools-experimental',
-      packageDir: 'packages/angular-query-devtools-experimental',
+      name: '@tanstack/angular-query-devtools',
+      packageDir: 'packages/angular-query-devtools',
     },
     {
-      name: '@tanstack/angular-query-experimental',
-      packageDir: 'packages/angular-query-experimental',
+      name: '@tanstack/angular-query',
+      packageDir: 'packages/angular-query',
     },
-    // publish when angular-query is stable
-    // {
-    //   name: '@tanstack/angular-query-persist-client',
-    //   packageDir: 'packages/angular-persist-query-client',
-    // },
+    {
+      name: '@tanstack/angular-query-persist-client',
+      packageDir: 'packages/angular-query-persist-client',
+    },
   ],
   branchConfigs: {
     main: {

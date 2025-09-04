@@ -146,6 +146,10 @@
               "to": "framework/angular/installation"
             },
             {
+              "label": "Angular Version Compatibility",
+              "to": "framework/angular/angular-version-compatibility"
+            },
+            {
               "label": "Quick Start",
               "to": "framework/angular/quick-start"
             },

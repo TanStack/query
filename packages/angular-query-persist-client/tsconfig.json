@@ -9,7 +9,7 @@
   },
   "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
   "references": [
-    { "path": "../angular-query-experimental" },
+    { "path": "../angular-query" },
     { "path": "../query-persist-client-core" }
   ]
 }

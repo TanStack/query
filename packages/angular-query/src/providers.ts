@@ -56,7 +56,7 @@ export function provideQueryClient(
  * import {
  *   provideTanStackQuery,
  *   QueryClient,
- * } from '@tanstack/angular-query-experimental'
+ * } from '@tanstack/angular-query'
  *
  * bootstrapApplication(AppComponent, {
  *   providers: [provideTanStackQuery(new QueryClient())],
@@ -69,7 +69,7 @@ export function provideQueryClient(
  * import {
  *   provideTanStackQuery,
  *   QueryClient,
- * } from '@tanstack/angular-query-experimental'
+ * } from '@tanstack/angular-query'
  *
  * @NgModule({
  *   declarations: [AppComponent],
@@ -87,7 +87,7 @@ export function provideQueryClient(
  *   provideTanStackQuery,
  *   withDevtools
  *   QueryClient,
- * } from '@tanstack/angular-query-experimental'
+ * } from '@tanstack/angular-query'
  *
  * bootstrapApplication(AppComponent,
  *   {
@@ -122,20 +122,6 @@ export function provideTanStackQuery(
     provideQueryClient(queryClient),
     features.map((feature) => feature.ɵproviders),
   ]
-}
-
-/**
- * Sets up providers necessary to enable TanStack Query functionality for Angular applications.
- *
- * Allows to configure a `QueryClient`.
- * @param queryClient - A `QueryClient` instance.
- * @returns A set of providers to set up TanStack Query.
- * @public
- * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
- * @deprecated Use `provideTanStackQuery` instead.
- */
-export function provideAngularQuery(queryClient: QueryClient): Array<Provider> {
-  return provideTanStackQuery(queryClient)
 }
 
 /**

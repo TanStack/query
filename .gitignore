@@ -6,6 +6,10 @@ node_modules
 package-lock.json
 yarn.lock
 
+*.d.ts
+*.map
+*.tsbuildinfo
+
 # builds
 build
 coverage

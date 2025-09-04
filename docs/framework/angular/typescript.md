@@ -6,8 +6,8 @@ replace:
   {
     'useQuery': 'injectQuery',
     'useMutation': 'injectMutation',
-    'react-query': 'angular-query-experimental',
-    'public API of React Query': 'public API of TanStack Query and - after the experimental phase, the angular-query package',
+    'react-query': 'angular-query',
+    'public API of React Query': 'public API of TanStack Query and the angular-query package',
     'still follows': 'still follow',
     'React Query': 'TanStack Query',
     '`success`': '`isSuccess()`',
@@ -149,9 +149,9 @@ computed(() => {
 [//]: # 'RegisterErrorType'
 
 ```ts
-import '@tanstack/angular-query-experimental'
+import '@tanstack/angular-query'
 
-declare module '@tanstack/angular-query-experimental' {
+declare module '@tanstack/angular-query' {
   interface Register {
     // Use unknown so call sites must narrow explicitly.
     defaultError: unknown

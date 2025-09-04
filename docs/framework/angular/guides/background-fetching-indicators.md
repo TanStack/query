@@ -36,7 +36,7 @@ class TodosComponent {
 [//]: # 'Example2'
 
 ```angular-ts
-import { injectIsFetching } from '@tanstack/angular-query-experimental'
+import { injectIsFetching } from '@tanstack/angular-query'
 
 @Component({
   selector: 'global-loading-indicator',
