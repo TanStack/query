@@ -4,6 +4,7 @@ import { useIsMutating, useMutation, useMutationState } from '..'
 import { mutationOptions } from '../mutationOptions'
 import type {
   DefaultError,
+  MutationFunctionContext,
   MutationState,
   WithRequired,
 } from '@tanstack/query-core'
@@ -62,7 +63,29 @@ describe('mutationOptions', () => {
         return { name: 'scope' }
       },
       onSuccess: (_data, _variables, scope) => {
-        expectTypeOf(scope).toEqualTypeOf<{ name: string }>()
+        expectTypeOf(scope).toEqualTypeOf<{ name: string } | undefined>()
+      },
+    })
+  })
+
+  it('should infer context type correctly', () => {
+    mutationOptions<number>({
+      mutationFn: (_variables, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+        return Promise.resolve(5)
+      },
+      mutationKey: ['key'],
+      onMutate: (_variables, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSuccess: (_data, _variables, _scope, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onError: (_error, _variables, _scope, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSettled: (_data, _error, _variables, _scope, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
       },
     })
   })

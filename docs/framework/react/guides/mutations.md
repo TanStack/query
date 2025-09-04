@@ -305,17 +305,17 @@ queryClient.setMutationDefaults(['addTodo'], {
     context.client.setQueryData(['todos'], (old) => [...old, optimisticTodo])
 
     // Return scope with the optimistic todo
-    return { optimisticTodo, client: context.client }
+    return { optimisticTodo }
   },
-  onSuccess: (result, variables, scope) => {
+  onSuccess: (result, variables, scope, context) => {
     // Replace optimistic todo in the todos list with the result
-    scope.client.setQueryData(['todos'], (old) =>
+    context.client.setQueryData(['todos'], (old) =>
       old.map((todo) => (todo.id === scope.optimisticTodo.id ? result : todo)),
     )
   },
-  onError: (error, variables, scope) => {
+  onError: (error, variables, scope, context) => {
     // Remove optimistic todo from the todos list
-    scope.client.setQueryData(['todos'], (old) =>
+    context.client.setQueryData(['todos'], (old) =>
       old.filter((todo) => todo.id !== scope.optimisticTodo.id),
     )
   },
