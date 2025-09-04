@@ -16,10 +16,7 @@ Allows to configure a `QueryClient` and optional features such as developer tool
 **Example - standalone**
 
 ```ts
-import {
-  provideTanStackQuery,
-  QueryClient,
-} from '@tanstack/angular-query'
+import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query'
 
 bootstrapApplication(AppComponent, {
   providers: [provideTanStackQuery(new QueryClient())],
@@ -29,10 +26,7 @@ bootstrapApplication(AppComponent, {
 **Example - NgModule-based**
 
 ```ts
-import {
-  provideTanStackQuery,
-  QueryClient,
-} from '@tanstack/angular-query'
+import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query'
 
 @NgModule({
   declarations: [AppComponent],
@@ -53,13 +47,9 @@ import {
   QueryClient,
 } from '@tanstack/angular-query'
 
-bootstrapApplication(AppComponent,
-  {
-    providers: [
-      provideTanStackQuery(new QueryClient(), withDevtools())
-    ]
-  }
-)
+bootstrapApplication(AppComponent, {
+  providers: [provideTanStackQuery(new QueryClient(), withDevtools())],
+})
 ```
 
 **Example: using an InjectionToken**
