@@ -14,7 +14,7 @@ The TanStack Query Angular adapter's dependency range will specify at least the 
 }
 ```
 
-As of the time of writing, Angular 17 is the oldest version under LTS support but there has not been a reason yet to remove support for Angular 16.
+As of the time of writing, Angular 18 is the oldest version under LTS support but there has not been a reason yet to remove support for Angular 16.
 
 Support for older versions not under LTS support will be dropped from the adapter's dependency range when supporting both the older- and more recent versions becomes impractical. Bugs that only affect Angular versions not under LTS support will in principle not be fixed.
 
