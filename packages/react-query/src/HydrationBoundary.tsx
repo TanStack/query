@@ -92,6 +92,14 @@ export const HydrationBoundary = ({
           hydrate(client, { queries: newQueries }, optionsRef.current)
         }
         if (existingQueries.length > 0) {
+          existingQueries.forEach((q) => {
+            const query = queryCache.get(q.queryHash)
+            if (query) {
+              // Temporary flag to prevent double-fetching during hydration
+              // Will be immediately removed in QueryObserver.onSubscribe
+              ;(query as any)._pendingHydration = true
+            }
+          })
           return existingQueries
         }
       }
@@ -101,6 +109,12 @@ export const HydrationBoundary = ({
   React.useEffect(() => {
     if (hydrationQueue) {
       hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+      hydrationQueue.forEach((q) => {
+        const query = client.getQueryCache().get(q.queryHash)
+        if (query) {
+          delete (query as any)._pendingHydration
+        }
+      })
     }
   }, [client, hydrationQueue])
 

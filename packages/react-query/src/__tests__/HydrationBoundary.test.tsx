@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import * as React from 'react'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import * as coreModule from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import {
@@ -488,5 +488,204 @@ describe('React hydration', () => {
     hydrateSpy.mockRestore()
     prefetchQueryClient.clear()
     clientQueryClient.clear()
+  })
+
+  test('should not refetch when hydrating existing query with fresh data on subsequent visits', async () => {
+    vi.useFakeTimers()
+
+    const queryFn = vi.fn()
+    queryFn
+      .mockResolvedValueOnce('initial-data')
+      .mockResolvedValueOnce('refetch-data')
+
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 0,
+        },
+      },
+    })
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['revisit-test'],
+        queryFn,
+      })
+      return <div>{data}</div>
+    }
+
+    const { rerender } = render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    await vi.waitFor(() => {
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    const serverQueryClient = new QueryClient()
+    await serverQueryClient.prefetchQuery({
+      queryKey: ['revisit-test'],
+      queryFn: () => Promise.resolve('fresh-from-server'),
+    })
+    const dehydratedState = dehydrate(serverQueryClient)
+
+    queryFn.mockClear()
+
+    rerender(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.runOnlyPendingTimersAsync()
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    expect(screen.getByText('fresh-from-server')).toBeInTheDocument()
+
+    vi.useRealTimers()
+  })
+
+  test('should still refetch when refetchOnMount is explicitly set to "always" despite hydration', async () => {
+    vi.useFakeTimers()
+
+    const queryFn = vi.fn()
+    queryFn
+      .mockResolvedValueOnce('initial-data')
+      .mockResolvedValueOnce('refetch-data')
+
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 0,
+        },
+      },
+    })
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['always-refetch-test'],
+        queryFn,
+        refetchOnMount: 'always',
+      })
+      return <div>{data}</div>
+    }
+
+    const { rerender } = render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    await vi.waitFor(() => {
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    const serverQueryClient = new QueryClient()
+    await serverQueryClient.prefetchQuery({
+      queryKey: ['always-refetch-test'],
+      queryFn: () => Promise.resolve('fresh-from-server'),
+    })
+    const dehydratedState = dehydrate(serverQueryClient)
+
+    queryFn.mockClear()
+
+    rerender(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.runOnlyPendingTimersAsync()
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('refetch-data')).toBeInTheDocument()
+    })
+
+    vi.useRealTimers()
+  })
+
+  test('should handle multiple observers subscribing to the same query during hydration', async () => {
+    vi.useFakeTimers()
+
+    const queryFn = vi.fn()
+    queryFn
+      .mockResolvedValueOnce('initial-data')
+      .mockResolvedValueOnce('refetch-data')
+
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 0,
+        },
+      },
+    })
+
+    function ComponentA() {
+      const { data } = useQuery({
+        queryKey: ['shared-query'],
+        queryFn,
+      })
+      return <div>A: {data}</div>
+    }
+
+    function ComponentB() {
+      const { data } = useQuery({
+        queryKey: ['shared-query'],
+        queryFn,
+      })
+      return <div>B: {data}</div>
+    }
+
+    const { rerender } = render(
+      <QueryClientProvider client={queryClient}>
+        <ComponentA />
+      </QueryClientProvider>,
+    )
+
+    await vi.waitFor(() => {
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    const serverQueryClient = new QueryClient()
+    await serverQueryClient.prefetchQuery({
+      queryKey: ['shared-query'],
+      queryFn: () => Promise.resolve('fresh-from-server'),
+    })
+    const dehydratedState = dehydrate(serverQueryClient)
+
+    queryFn.mockClear()
+
+    rerender(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <ComponentA />
+          <ComponentB />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.runOnlyPendingTimersAsync()
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    expect(screen.getByText('A: fresh-from-server')).toBeInTheDocument()
+    expect(screen.getByText('B: fresh-from-server')).toBeInTheDocument()
+
+    vi.useRealTimers()
   })
 })
