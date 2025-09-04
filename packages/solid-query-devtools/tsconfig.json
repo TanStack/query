@@ -6,6 +6,6 @@
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },
-  "include": ["src", "*.config.js", "*.config.ts", "package.json"],
+  "include": ["src", "*.config.*", "package.json"],
   "references": [{ "path": "../query-devtools" }, { "path": "../solid-query" }]
 }
