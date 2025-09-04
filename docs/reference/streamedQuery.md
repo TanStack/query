@@ -26,7 +26,7 @@ const query = queryOptions({
   - **Required**
   - The function that returns a Promise of an AsyncIterable with data to stream in.
   - Receives a [QueryFunctionContext](../../framework/react/guides/query-functions.md#queryfunctioncontext)
-- `refetchMode?: 'append' | 'reset' | 'replace`
+- `refetchMode?: 'append' | 'reset' | 'replace'`
   - Optional
   - Defines how refetches are handled.
   - Defaults to `'reset'`
