@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query",
-  "version": "5.74.3",
+  "version": "5.86.0",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -30,6 +30,7 @@
   "svelte": "./dist/index.js",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js",
       "import": "./dist/index.js"
@@ -46,12 +47,13 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.3.10",
-    "@sveltejs/vite-plugin-svelte": "^5.0.3",
-    "@testing-library/svelte": "^5.2.6",
-    "eslint-plugin-svelte": "^2.46.0",
-    "svelte": "^5.26.1",
-    "svelte-check": "^4.1.5"
+    "@sveltejs/package": "^2.4.0",
+    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "@tanstack/query-test-utils": "workspace:*",
+    "@testing-library/svelte": "^5.2.8",
+    "eslint-plugin-svelte": "^3.11.0",
+    "svelte": "^5.36.8",
+    "svelte-check": "^4.3.0"
   },
   "peerDependencies": {
     "svelte": "^3.54.0 || ^4.0.0 || ^5.0.0"

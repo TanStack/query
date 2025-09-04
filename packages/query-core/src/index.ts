@@ -15,12 +15,15 @@ export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
 export {
   hashKey,
+  partialMatchKey,
   replaceEqualDeep,
   isServer,
   matchQuery,
   matchMutation,
   keepPreviousData,
   skipToken,
+  noop,
+  shouldThrowError,
 } from './utils'
 export type { MutationFilters, QueryFilters, Updater, SkipToken } from './utils'
 export { isCancelledError } from './retryer'

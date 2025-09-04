@@ -1,18 +1,14 @@
 import { describe, expect, test, vi } from 'vitest'
-import { QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, QueryClient } from '@tanstack/query-core'
 import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,
 } from '../persist'
-import {
-  createMockPersister,
-  createQueryClient,
-  createSpyPersister,
-} from './utils'
+import { createMockPersister, createSpyPersister } from './utils'
 
 describe('persistQueryClientSubscribe', () => {
   test('should persist mutations', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     const persister = createMockPersister()
 
@@ -36,7 +32,7 @@ describe('persistQueryClientSubscribe', () => {
 
 describe('persistQueryClientSave', () => {
   test('should not be triggered on observer type events', () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     const persister = createSpyPersister()
 
@@ -77,7 +73,7 @@ describe('persistQueryClientRestore', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => undefined)
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     const restoreError = new Error('Error restoring client')
 
@@ -109,7 +105,7 @@ describe('persistQueryClientRestore', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => undefined)
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     const restoreError = new Error('Error restoring client')
     const removeError = new Error('Error removing client')
@@ -135,7 +131,7 @@ describe('persistQueryClientRestore', () => {
   })
 
   test('should rethrow error in `removeClient`', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     const persister = createSpyPersister()
     const removeError = new Error('Error removing client')

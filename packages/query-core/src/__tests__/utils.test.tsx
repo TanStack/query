@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { QueryClient } from '..'
 import {
   addToEnd,
   addToStart,
@@ -11,9 +12,9 @@ import {
   partialMatchKey,
   replaceEqualDeep,
   shallowEqualObjects,
+  shouldThrowError,
 } from '../utils'
 import { Mutation } from '../mutation'
-import { createQueryClient } from './utils'
 
 describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
@@ -420,7 +421,7 @@ describe('core/utils', () => {
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
       const filters = { mutationKey: ['key1'] }
-      const queryClient = createQueryClient()
+      const queryClient = new QueryClient()
       const mutation = new Mutation({
         mutationId: 1,
         mutationCache: queryClient.getMutationCache(),
@@ -528,6 +529,24 @@ describe('core/utils', () => {
       const nested2 = [{ b: 2, a: { c: 3, d: 4 } }]
 
       expect(hashKey(nested1)).toEqual(hashKey(nested2))
+    })
+  })
+
+  describe('shouldThrowError', () => {
+    it('should return the result of executing throwOnError if throwOnError parameter is a function', () => {
+      const throwOnError = (error: Error) => error.message === 'test error'
+      expect(shouldThrowError(throwOnError, [new Error('test error')])).toBe(
+        true,
+      )
+      expect(shouldThrowError(throwOnError, [new Error('other error')])).toBe(
+        false,
+      )
+    })
+
+    it('should return throwOnError parameter itself if throwOnError is not a function', () => {
+      expect(shouldThrowError(true, [new Error('test error')])).toBe(true)
+      expect(shouldThrowError(false, [new Error('test error')])).toBe(false)
+      expect(shouldThrowError(undefined, [new Error('test error')])).toBe(false)
     })
   })
 })

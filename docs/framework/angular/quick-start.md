@@ -3,8 +3,6 @@ id: quick-start
 title: Quick Start
 ---
 
-> IMPORTANT: This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Upgrade carefully. If you use this in production while in experimental stage, please lock your version to a patch-level version to avoid unexpected breaking changes.
-
 [//]: # 'Example'
 
 If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](../examples/basic)

@@ -5,10 +5,10 @@ import {
   withDevtools,
 } from '@tanstack/angular-query'
 import { withPersistQueryClient } from '@tanstack/angular-query-persist-client'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import type { ApplicationConfig } from '@angular/core'
 
-const localStoragePersister = createSyncStoragePersister({
+const localStoragePersister = createAsyncStoragePersister({
   storage: window.localStorage,
 })
 

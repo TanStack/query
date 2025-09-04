@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-core",
-  "version": "5.74.3",
+  "version": "5.86.0",
   "description": "The framework agnostic core that powers TanStack Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -40,6 +40,7 @@
   "react-native": "src/index.ts",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "import": {
         "types": "./build/modern/index.d.ts",
         "default": "./build/modern/index.js"
@@ -58,7 +59,7 @@
     "!src/__tests__"
   ],
   "devDependencies": {
-    "@testing-library/dom": "^10.4.0",
+    "@tanstack/query-test-utils": "workspace:*",
     "npm-run-all2": "^5.0.0"
   }
 }

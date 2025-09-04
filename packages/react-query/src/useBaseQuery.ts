@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { isServer, notifyManager } from '@tanstack/query-core'
+import { isServer, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -9,14 +9,13 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { useIsRestoring } from './isRestoring'
+import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
   willFetch,
 } from './suspense'
-import { noop } from './utils'
 import type {
   QueryClient,
   QueryKey,
@@ -50,9 +49,9 @@ export function useBaseQuery<
     }
   }
 
-  const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
 
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(

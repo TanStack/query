@@ -1,6 +1,15 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  assertType,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  it,
+  vi,
+} from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
 import { createNotifyManager } from '../notifyManager'
-import { sleep } from './utils'
 
 describe('notifyManager', () => {
   beforeEach(() => {
@@ -30,7 +39,7 @@ describe('notifyManager', () => {
     })
     notifyManagerTest.batch(callbackBatchLevel1Spy)
 
-    await vi.advanceTimersByTimeAsync(20)
+    await vi.advanceTimersByTimeAsync(0)
     expect(callbackBatchLevel1Spy).toHaveBeenCalledTimes(1)
     expect(callbackBatchLevel2Spy).toHaveBeenCalledTimes(1)
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
@@ -48,9 +57,7 @@ describe('notifyManager', () => {
 
     expect(customCallback).toHaveBeenCalledOnce()
 
-    // wait until the microtask has run
-    await new Promise<void>((res) => queueMicrotask(res))
-
+    await vi.advanceTimersByTimeAsync(0)
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
 
@@ -81,10 +88,13 @@ describe('notifyManager', () => {
     // now someFn expect to be called with args [a: string, b: number]
     const someFn = notifyManagerTest.batchCalls(fn)
 
-    someFn('im happy', 4)
-
-    // @ts-expect-error
-    someFn('im not happy', false)
+    expectTypeOf(someFn).parameters.toEqualTypeOf<Parameters<typeof fn>>()
+    assertType<Parameters<typeof someFn>>(['im happy', 4])
+    assertType<Parameters<typeof someFn>>([
+      'im not happy',
+      // @ts-expect-error
+      false,
+    ])
   })
 
   it('should use custom batch notify function', async () => {

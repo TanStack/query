@@ -155,7 +155,13 @@ export function useUserProjects(userId: MaybeRef<string>) {
 }
 ```
 
-More details on this option can be found on the [useQuery reference](./reference/useQuery.md) page.
+More details on this option can be found on the [useQuery reference](../reference/useQuery.md) page.
+
+## Immutability
+
+Results from `useQuery` are always immutable. This is necessary for performance and caching purposes. If you need to mutate a value returned from `useQuery`, you must create a copy of the data.
+
+One implication of this design is that passing values from `useQuery` to a two-way binding such as `v-model` will not work. You must create a mutable copy of the data before attempting to update it in place.
 
 # Key Takeaways
 
@@ -164,3 +170,4 @@ More details on this option can be found on the [useQuery reference](./reference
 - If you expect a query to react to changes based on the values it consumes, ensure that the values are reactive. (i.e. pass in refs directly to the query, or use reactive getters)
 - If you don't need a query to be reactive pass in a plain value.
 - For trivial derived state such as property access consider using a reactive getter in place of a `computed`.
+- Results from `useQuery` are always immutable.

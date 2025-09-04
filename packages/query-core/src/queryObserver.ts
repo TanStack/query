@@ -82,11 +82,6 @@ export class QueryObserver<
     this.#client = client
     this.#selectError = null
     this.#currentThenable = pendingThenable()
-    if (!this.options.experimental_prefetchInRender) {
-      this.#currentThenable.reject(
-        new Error('experimental_prefetchInRender feature flag is not enabled'),
-      )
-    }
 
     this.bindMethods()
     this.setOptions(options)
@@ -268,21 +263,24 @@ export class QueryObserver<
     result: QueryObserverResult<TData, TError>,
     onPropTracked?: (key: keyof QueryObserverResult) => void,
   ): QueryObserverResult<TData, TError> {
-    const trackedResult = {} as QueryObserverResult<TData, TError>
-
-    Object.keys(result).forEach((key) => {
-      Object.defineProperty(trackedResult, key, {
-        configurable: false,
-        enumerable: true,
-        get: () => {
-          this.trackProp(key as keyof QueryObserverResult)
-          onPropTracked?.(key as keyof QueryObserverResult)
-          return result[key as keyof QueryObserverResult]
-        },
-      })
+    return new Proxy(result, {
+      get: (target, key) => {
+        this.trackProp(key as keyof QueryObserverResult)
+        onPropTracked?.(key as keyof QueryObserverResult)
+        if (
+          key === 'promise' &&
+          !this.options.experimental_prefetchInRender &&
+          this.#currentThenable.status === 'pending'
+        ) {
+          this.#currentThenable.reject(
+            new Error(
+              'experimental_prefetchInRender feature flag is not enabled',
+            ),
+          )
+        }
+        return Reflect.get(target, key)
+      },
     })
-
-    return trackedResult
   }
 
   trackProp(key: keyof QueryObserverResult) {
@@ -584,6 +582,7 @@ export class QueryObserver<
       isStale: isStale(query, options),
       refetch: this.refetch,
       promise: this.#currentThenable,
+      isEnabled: resolveEnabled(options.enabled, query) !== false,
     }
 
     const nextResult = result as QueryObserverResult<TData, TError>
@@ -772,7 +771,10 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (resolveEnabled(options.enabled, query) !== false) {
+  if (
+    resolveEnabled(options.enabled, query) !== false &&
+    resolveStaleTime(options.staleTime, query) !== 'static'
+  ) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))

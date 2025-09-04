@@ -5,18 +5,19 @@ import {
   createRenderStream,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
+import { queryKey } from '@tanstack/query-test-utils'
 import {
+  QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
   keepPreviousData,
   useQuery,
 } from '..'
 import { QueryCache } from '../index'
-import { createQueryClient, queryKey } from './utils'
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({
+  const queryClient = new QueryClient({
     queryCache,
   })
 
@@ -620,12 +621,12 @@ describe('useQuery().promise', () => {
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading..')
+      expect(withinDOM().getByText('loading..')).toBeInTheDocument()
     }
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('error boundary')
+      expect(withinDOM().getByText('error boundary')).toBeInTheDocument()
     }
 
     consoleMock.mockRestore()
@@ -979,7 +980,7 @@ describe('useQuery().promise', () => {
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading..')
+      expect(withinDOM().getByText('loading..')).toBeInTheDocument()
     }
 
     rendered.getByText('enable').click()
@@ -989,7 +990,7 @@ describe('useQuery().promise', () => {
 
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('test1')
+      expect(withinDOM().getByText('test1')).toBeInTheDocument()
     }
   })
 

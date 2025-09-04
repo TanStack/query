@@ -1,20 +1,42 @@
-import { describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { fireEvent, render, waitFor } from '@solidjs/testing-library'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  it,
+  vi,
+} from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueriesObserver,
   QueryCache,
+  QueryClient,
   QueryClientProvider,
   useQueries,
 } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
-import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
-import type { QueryFunction, SolidQueryOptions, UseQueryResult } from '..'
+import type {
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+  SolidQueryOptions,
+  UseQueryResult,
+} from '..'
 
 describe('useQueries', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states', async () => {
     const key1 = queryKey()
@@ -61,7 +83,8 @@ describe('useQueries', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('data1: 1, data2: 2'))
+    await vi.advanceTimersByTimeAsync(100)
+    expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
@@ -69,7 +92,7 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  it('handles type parameter - tuple of tuples', async () => {
+  it('handles type parameter - tuple of tuples', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -174,7 +197,7 @@ describe('useQueries', () => {
     }
   })
 
-  it('handles type parameter - tuple of objects', async () => {
+  it('handles type parameter - tuple of objects', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -315,7 +338,7 @@ describe('useQueries', () => {
     }
   })
 
-  it('handles array literal without type parameter to infer result type', async () => {
+  it('handles array literal without type parameter to infer result type', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -544,7 +567,7 @@ describe('useQueries', () => {
     type QueryKeyA = ['queryA']
     const getQueryKeyA = (): QueryKeyA => ['queryA']
     type GetQueryFunctionA = () => QueryFunction<number, QueryKeyA>
-    const getQueryFunctionA: GetQueryFunctionA = () => async () => {
+    const getQueryFunctionA: GetQueryFunctionA = () => () => {
       return 1
     }
     type SelectorA = (data: number) => [number, string]
@@ -553,7 +576,7 @@ describe('useQueries', () => {
     type QueryKeyB = ['queryB', string]
     const getQueryKeyB = (id: string): QueryKeyB => ['queryB', id]
     type GetQueryFunctionB = () => QueryFunction<string, QueryKeyB>
-    const getQueryFunctionB: GetQueryFunctionB = () => async () => {
+    const getQueryFunctionB: GetQueryFunctionB = () => () => {
       return '1'
     }
     type SelectorB = (data: string) => [string, number]
@@ -648,6 +671,7 @@ describe('useQueries', () => {
     }
   })
 
+  // eslint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     const key1 = queryKey()
 
@@ -708,7 +732,7 @@ describe('useQueries', () => {
     // Should not display the console error
     // "Warning: Can't perform a React state update on an unmounted component"
 
-    await sleep(20)
+    await vi.advanceTimersByTimeAsync(20)
     QueriesObserverSpy.mockRestore()
   })
 })

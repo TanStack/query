@@ -1,23 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
+import { QueryClient } from '../queryClient'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
-import {
-  createQueryClient,
-  executeMutation,
-  mockOnlineManagerIsOnline,
-  sleep,
-} from './utils'
-
-async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
-  await sleep(ms || 0)
-  return value
-}
-
-async function fetchDate(value: string, ms?: number): Promise<Date> {
-  await sleep(ms || 0)
-  return new Date(value)
-}
+import { executeMutation, mockOnlineManagerIsOnline } from './utils'
 
 describe('dehydration and rehydration', () => {
   beforeEach(() => {
@@ -30,42 +17,42 @@ describe('dehydration and rehydration', () => {
 
   test('should work with serializable values', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['number'],
-        queryFn: () => fetchData(1),
+        queryFn: () => sleep(0).then(() => 1),
       }),
     )
 
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['boolean'],
-        queryFn: () => fetchData(true),
+        queryFn: () => sleep(0).then(() => true),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['null'],
-        queryFn: () => fetchData(null),
+        queryFn: () => sleep(0).then(() => null),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['array'],
-        queryFn: () => fetchData(['string', 0]),
+        queryFn: () => sleep(0).then(() => ['string', 0]),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['nested'],
-        queryFn: () => fetchData({ key: [{ nestedKey: 1 }] }),
+        queryFn: () => sleep(0).then(() => ({ key: [{ nestedKey: 1 }] })),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -75,7 +62,7 @@ describe('dehydration and rehydration', () => {
 
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({
+    const hydrationClient = new QueryClient({
       queryCache: hydrationCache,
     })
     hydrate(hydrationClient, parsed)
@@ -133,13 +120,13 @@ describe('dehydration and rehydration', () => {
     hydrationClient.clear()
   })
 
-  test('should not dehydrate queries if dehydrateQueries is set to false', async () => {
+  test('should not dehydrate queries if dehydrateQueries is set to false', () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
 
@@ -154,11 +141,11 @@ describe('dehydration and rehydration', () => {
 
   test('should use the garbage collection time from the client', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
         gcTime: 50,
       }),
     )
@@ -171,7 +158,7 @@ describe('dehydration and rehydration', () => {
 
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
     expect(hydrationCache.find({ queryKey: ['string'] })?.state.data).toBe(
       'string',
@@ -185,18 +172,18 @@ describe('dehydration and rehydration', () => {
 
   test('should be able to provide default options for the hydrated queries', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed, {
       defaultOptions: { queries: { retry: 10 } },
     })
@@ -209,7 +196,7 @@ describe('dehydration and rehydration', () => {
 
   test('should respect query defaultOptions specified on the QueryClient', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: {
         dehydrate: { shouldDehydrateQuery: () => true },
@@ -228,7 +215,7 @@ describe('dehydration and rehydration', () => {
     const stringified = JSON.stringify(dehydrated)
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({
+    const hydrationClient = new QueryClient({
       queryCache: hydrationCache,
       defaultOptions: { hydrate: { queries: { retry: 10 } } },
     })
@@ -247,7 +234,7 @@ describe('dehydration and rehydration', () => {
 
   test('should respect mutation defaultOptions specified on the QueryClient', async () => {
     const mutationCache = new MutationCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       mutationCache,
       defaultOptions: {
         dehydrate: {
@@ -270,7 +257,7 @@ describe('dehydration and rehydration', () => {
     const stringified = JSON.stringify(dehydrated)
     const parsed = JSON.parse(stringified)
     const hydrationCache = new MutationCache()
-    const hydrationClient = createQueryClient({
+    const hydrationClient = new QueryClient({
       mutationCache: hydrationCache,
       defaultOptions: { hydrate: { mutations: { retry: 10 } } },
     })
@@ -289,11 +276,11 @@ describe('dehydration and rehydration', () => {
 
   test('should work with complex keys', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string', { key: ['string'], key2: 0 }],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -303,7 +290,7 @@ describe('dehydration and rehydration', () => {
 
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
     expect(
       hydrationCache.find({
@@ -331,16 +318,16 @@ describe('dehydration and rehydration', () => {
     consoleMock.mockImplementation(() => undefined)
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['success'],
-        queryFn: () => fetchData('success'),
+        queryFn: () => sleep(0).then(() => 'success'),
       }),
     )
     queryClient.prefetchQuery({
       queryKey: ['loading'],
-      queryFn: () => fetchData('loading', 10000),
+      queryFn: () => sleep(10000).then(() => 'loading'),
     })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
@@ -357,7 +344,7 @@ describe('dehydration and rehydration', () => {
 
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
 
     expect(hydrationCache.find({ queryKey: ['success'] })).toBeTruthy()
@@ -371,17 +358,17 @@ describe('dehydration and rehydration', () => {
 
   test('should filter queries via dehydrateQuery', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string'),
+        queryFn: () => sleep(0).then(() => 'string'),
       }),
     )
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['number'],
-        queryFn: () => fetchData(1),
+        queryFn: () => sleep(0).then(() => 1),
       }),
     )
     const dehydrated = dehydrate(queryClient, {
@@ -401,7 +388,7 @@ describe('dehydration and rehydration', () => {
 
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
     expect(hydrationCache.find({ queryKey: ['string'] })).toBeUndefined()
     expect(hydrationCache.find({ queryKey: ['number'] })?.state.data).toBe(1)
@@ -412,11 +399,11 @@ describe('dehydration and rehydration', () => {
 
   test('should not overwrite query in cache if hydrated query is older', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string-older', 5),
+        queryFn: () => sleep(5).then(() => 'string-older'),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -426,11 +413,11 @@ describe('dehydration and rehydration', () => {
 
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     await vi.waitFor(() =>
       hydrationClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string-newer', 5),
+        queryFn: () => sleep(5).then(() => 'string-newer'),
       }),
     )
 
@@ -445,22 +432,22 @@ describe('dehydration and rehydration', () => {
 
   test('should overwrite query in cache if hydrated query is newer', async () => {
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     await vi.waitFor(() =>
       hydrationClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string-older', 5),
+        queryFn: () => sleep(5).then(() => 'string-older'),
       }),
     )
 
     // ---
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['string'],
-        queryFn: () => fetchData('string-newer', 5),
+        queryFn: () => sleep(5).then(() => 'string-newer'),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -486,13 +473,15 @@ describe('dehydration and rehydration', () => {
     const serverAddTodo = vi
       .fn()
       .mockImplementation(() => Promise.reject(new Error('offline')))
-    const serverOnMutate = vi.fn().mockImplementation((variables) => {
-      const optimisticTodo = { id: 1, text: variables.text }
-      return { optimisticTodo }
-    })
+    const serverOnMutate = vi
+      .fn()
+      .mockImplementation((variables: { text: string }) => {
+        const optimisticTodo = { id: 1, text: variables.text }
+        return { optimisticTodo }
+      })
     const serverOnSuccess = vi.fn()
 
-    const serverClient = createQueryClient()
+    const serverClient = new QueryClient()
 
     serverClient.setMutationDefaults(['addTodo'], {
       mutationFn: serverAddTodo,
@@ -522,15 +511,19 @@ describe('dehydration and rehydration', () => {
     onlineMock.mockReturnValue(true)
 
     const parsed = JSON.parse(stringified)
-    const client = createQueryClient()
+    const client = new QueryClient()
 
-    const clientAddTodo = vi.fn().mockImplementation((variables) => {
-      return { id: 2, text: variables.text }
-    })
-    const clientOnMutate = vi.fn().mockImplementation((variables) => {
-      const optimisticTodo = { id: 1, text: variables.text }
-      return { optimisticTodo }
-    })
+    const clientAddTodo = vi
+      .fn()
+      .mockImplementation((variables: { text: string }) => {
+        return { id: 2, text: variables.text }
+      })
+    const clientOnMutate = vi
+      .fn()
+      .mockImplementation((variables: { text: string }) => {
+        const optimisticTodo = { id: 1, text: variables.text }
+        return { optimisticTodo }
+      })
     const clientOnSuccess = vi.fn()
 
     client.setMutationDefaults(['addTodo'], {
@@ -567,7 +560,7 @@ describe('dehydration and rehydration', () => {
       .fn()
       .mockImplementation(() => Promise.reject(new Error('offline')))
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     queryClient.setMutationDefaults(['addTodo'], {
       mutationFn: serverAddTodo,
@@ -601,7 +594,7 @@ describe('dehydration and rehydration', () => {
       .fn()
       .mockImplementation(() => Promise.reject(new Error('offline')))
 
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     queryClient.setMutationDefaults(['addTodo'], {
       mutationFn: serverAddTodo,
@@ -630,7 +623,7 @@ describe('dehydration and rehydration', () => {
 
   test('should not hydrate if the hydratedState is null or is not an object', () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
 
     expect(() => hydrate(queryClient, null)).not.toThrow()
     expect(() => hydrate(queryClient, 'invalid')).not.toThrow()
@@ -640,7 +633,7 @@ describe('dehydration and rehydration', () => {
 
   test('should support hydratedState with undefined queries and mutations', () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
 
     expect(() => hydrate(queryClient, {})).not.toThrow()
     expect(() => hydrate(queryClient, {})).not.toThrow()
@@ -650,7 +643,7 @@ describe('dehydration and rehydration', () => {
 
   test('should set the fetchStatus to idle when creating a query with dehydrate', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
 
     let isInitialFetch = true
     let resolvePromise: (value: unknown) => void = () => undefined
@@ -686,7 +679,7 @@ describe('dehydration and rehydration', () => {
     // ---
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
     expect(
       hydrationCache.find({ queryKey: ['string'] })?.state.fetchStatus,
@@ -695,7 +688,7 @@ describe('dehydration and rehydration', () => {
 
   test('should dehydrate and hydrate meta for queries', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['meta'],
@@ -736,7 +729,7 @@ describe('dehydration and rehydration', () => {
 
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({
+    const hydrationClient = new QueryClient({
       queryCache: hydrationCache,
     })
     hydrate(hydrationClient, parsed)
@@ -750,7 +743,7 @@ describe('dehydration and rehydration', () => {
 
   test('should dehydrate and hydrate meta for mutations', async () => {
     const mutationCache = new MutationCache()
-    const queryClient = createQueryClient({ mutationCache })
+    const queryClient = new QueryClient({ mutationCache })
 
     await executeMutation(
       queryClient,
@@ -795,7 +788,7 @@ describe('dehydration and rehydration', () => {
 
     const parsed = JSON.parse(stringified)
     const hydrationCache = new MutationCache()
-    const hydrationClient = createQueryClient({
+    const hydrationClient = new QueryClient({
       mutationCache: hydrationCache,
     })
     hydrate(hydrationClient, parsed)
@@ -808,7 +801,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should not change fetchStatus when updating a query with dehydrate', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     const options = {
       queryKey: ['string'],
@@ -830,7 +823,7 @@ describe('dehydration and rehydration', () => {
     // ---
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
 
     const promise = hydrationClient.prefetchQuery(options)
     hydrate(hydrationClient, parsed)
@@ -844,7 +837,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should dehydrate and hydrate mutation scopes', () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
     const onlineMock = mockOnlineManagerIsOnline(false)
 
     void executeMutation(
@@ -868,7 +861,7 @@ describe('dehydration and rehydration', () => {
     // ---
     const parsed = JSON.parse(stringified)
     const hydrationCache = new MutationCache()
-    const hydrationClient = createQueryClient({ mutationCache: hydrationCache })
+    const hydrationClient = new QueryClient({ mutationCache: hydrationCache })
 
     hydrate(hydrationClient, parsed)
 
@@ -879,20 +872,20 @@ describe('dehydration and rehydration', () => {
 
   test('should dehydrate promises for pending queries', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
     })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['success'],
-        queryFn: () => fetchData('success'),
+        queryFn: () => sleep(0).then(() => 'success'),
       }),
     )
 
     const promise = queryClient.prefetchQuery({
       queryKey: ['pending'],
-      queryFn: () => fetchData('pending', 10),
+      queryFn: () => sleep(10).then(() => 'pending'),
     })
     const dehydrated = dehydrate(queryClient)
 
@@ -905,27 +898,27 @@ describe('dehydration and rehydration', () => {
 
   test('should hydrate promises even without observers', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
     })
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['success'],
-        queryFn: () => fetchData('success'),
+        queryFn: () => sleep(0).then(() => 'success'),
       }),
     )
 
     void queryClient.prefetchQuery({
       queryKey: ['pending'],
-      queryFn: () => fetchData('pending', 20),
+      queryFn: () => sleep(20).then(() => 'pending'),
     })
     const dehydrated = dehydrate(queryClient)
     // no stringify/parse here because promises can't be serialized to json
     // but nextJs still can do it
 
     const hydrationCache = new QueryCache()
-    const hydrationClient = createQueryClient({
+    const hydrationClient = new QueryClient({
       queryCache: hydrationCache,
     })
 
@@ -973,7 +966,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should transform promise result', async () => {
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
@@ -984,12 +977,12 @@ describe('dehydration and rehydration', () => {
 
     const promise = queryClient.prefetchQuery({
       queryKey: ['transformedStringToDate'],
-      queryFn: () => fetchDate('2024-01-01T00:00:00.000Z', 20),
+      queryFn: () => sleep(20).then(() => new Date('2024-01-01T00:00:00.000Z')),
     })
     const dehydrated = dehydrate(queryClient)
     expect(dehydrated.queries[0]?.promise).toBeInstanceOf(Promise)
 
-    const hydrationClient = createQueryClient({
+    const hydrationClient = new QueryClient({
       defaultOptions: {
         hydrate: {
           deserializeData: (data) => new Date(data),
@@ -1009,7 +1002,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should transform query data if promise is already resolved', async () => {
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
@@ -1020,12 +1013,12 @@ describe('dehydration and rehydration', () => {
 
     const promise = queryClient.prefetchQuery({
       queryKey: ['transformedStringToDate'],
-      queryFn: () => fetchDate('2024-01-01T00:00:00.000Z', 0),
+      queryFn: () => sleep(0).then(() => new Date('2024-01-01T00:00:00.000Z')),
     })
     await vi.advanceTimersByTimeAsync(20)
     const dehydrated = dehydrate(queryClient)
 
-    const hydrationClient = createQueryClient({
+    const hydrationClient = new QueryClient({
       defaultOptions: {
         hydrate: {
           deserializeData: (data) => new Date(data),
@@ -1045,7 +1038,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should overwrite query in cache if hydrated query is newer (with transformation)', async () => {
-    const hydrationClient = createQueryClient({
+    const hydrationClient = new QueryClient({
       defaultOptions: {
         hydrate: {
           deserializeData: (data) => new Date(data),
@@ -1055,13 +1048,14 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       hydrationClient.prefetchQuery({
         queryKey: ['date'],
-        queryFn: () => fetchDate('2024-01-01T00:00:00.000Z', 5),
+        queryFn: () =>
+          sleep(5).then(() => new Date('2024-01-01T00:00:00.000Z')),
       }),
     )
 
     // ---
 
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
@@ -1072,7 +1066,8 @@ describe('dehydration and rehydration', () => {
     await vi.waitFor(() =>
       queryClient.prefetchQuery({
         queryKey: ['date'],
-        queryFn: () => fetchDate('2024-01-02T00:00:00.000Z', 10),
+        queryFn: () =>
+          sleep(10).then(() => new Date('2024-01-02T00:00:00.000Z')),
       }),
     )
     const dehydrated = dehydrate(queryClient)
@@ -1092,7 +1087,7 @@ describe('dehydration and rehydration', () => {
   test('should overwrite query in cache if hydrated query is newer (with promise)', async () => {
     // --- server ---
 
-    const serverQueryClient = createQueryClient({
+    const serverQueryClient = new QueryClient({
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
@@ -1112,7 +1107,7 @@ describe('dehydration and rehydration', () => {
 
     // --- client ---
 
-    const clientQueryClient = createQueryClient()
+    const clientQueryClient = new QueryClient()
 
     clientQueryClient.setQueryData(['data'], 'old data', { updatedAt: 10 })
 
@@ -1127,13 +1122,67 @@ describe('dehydration and rehydration', () => {
     serverQueryClient.clear()
   })
 
+  test('should not overwrite query in cache if existing query is newer (with promise)', async () => {
+    // --- server ---
+
+    const serverQueryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+
+    const promise = serverQueryClient.prefetchQuery({
+      queryKey: ['data'],
+      queryFn: async () => {
+        await sleep(10)
+        return 'server data'
+      },
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    await vi.advanceTimersByTimeAsync(10)
+    await promise
+
+    // Pretend the output of this server part is cached for a long time
+
+    // --- client ---
+
+    await vi.advanceTimersByTimeAsync(10_000) // Arbitrary time in the future
+
+    const clientQueryClient = new QueryClient()
+
+    clientQueryClient.setQueryData(['data'], 'newer data', {
+      updatedAt: Date.now(),
+    })
+
+    hydrate(clientQueryClient, dehydrated)
+
+    // If the query was hydrated in error, it would still take some time for it
+    // to end up in the cache, so for the test to fail properly on regressions,
+    // wait for the fetchStatus to be idle
+    await vi.waitFor(() =>
+      expect(clientQueryClient.getQueryState(['data'])?.fetchStatus).toBe(
+        'idle',
+      ),
+    )
+    await vi.waitFor(() =>
+      expect(clientQueryClient.getQueryData(['data'])).toBe('newer data'),
+    )
+
+    clientQueryClient.clear()
+    serverQueryClient.clear()
+  })
+
   test('should overwrite data when a new promise is streamed in', async () => {
     const serializeDataMock = vi.fn((data: any) => data)
     const deserializeDataMock = vi.fn((data: any) => data)
 
     const countRef = { current: 0 }
     // --- server ---
-    const serverQueryClient = createQueryClient({
+    const serverQueryClient = new QueryClient({
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
@@ -1156,7 +1205,7 @@ describe('dehydration and rehydration', () => {
 
     // --- client ---
 
-    const clientQueryClient = createQueryClient({
+    const clientQueryClient = new QueryClient({
       defaultOptions: {
         hydrate: {
           deserializeData: deserializeDataMock,
@@ -1205,7 +1254,7 @@ describe('dehydration and rehydration', () => {
 
   test('should not redact errors when shouldRedactErrors returns false', async () => {
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: {
         dehydrate: {
@@ -1237,7 +1286,7 @@ describe('dehydration and rehydration', () => {
     consoleMock.mockImplementation(() => undefined)
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: {
         dehydrate: {
@@ -1271,7 +1320,7 @@ describe('dehydration and rehydration', () => {
     consoleMock.mockImplementation(() => undefined)
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: {
         dehydrate: {
@@ -1301,5 +1350,53 @@ describe('dehydration and rehydration', () => {
 
     process.env.NODE_ENV = originalNodeEnv
     consoleMock.mockRestore()
+  })
+
+  // When React hydrates promises across RSC/client boundaries, it passes
+  // them as special ReactPromise types. There are situations where the
+  // promise might have time to resolve before we end up hydrating it, in
+  // which case React will have made it a special synchronous thenable where
+  // .then() resolves immediately.
+  // In these cases it's important we hydrate the data synchronously, or else
+  // the data in the cache wont match the content that was rendered on the server.
+  // What can end up happening otherwise is that the content is visible from the
+  // server, but the client renders a Suspense fallback, only to immediately show
+  // the data again.
+  test('should rehydrate synchronous thenable immediately', async () => {
+    // --- server ---
+
+    const serverQueryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+    const originalPromise = serverQueryClient.prefetchQuery({
+      queryKey: ['data'],
+      queryFn: () => null,
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    // --- server end ---
+
+    // Simulate a synchronous thenable
+    // @ts-expect-error
+    dehydrated.queries[0].promise.then = (cb) => {
+      cb?.('server data')
+    }
+
+    // --- client ---
+
+    const clientQueryClient = new QueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    // If data is already resolved, it should end up in the cache immediately
+    expect(clientQueryClient.getQueryData(['data'])).toBe('server data')
+
+    // Need to await the original promise or else it will get a cancellation
+    // error and test will fail
+    await originalPromise
   })
 })

@@ -1,4 +1,4 @@
-import { describe, expectTypeOf, it, test } from 'vitest'
+import { assertType, describe, expectTypeOf, it, test } from 'vitest'
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
@@ -12,14 +12,16 @@ import type {
 
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
-    infiniteQueryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve('data'),
-      getNextPageParam: () => 1,
-      initialPageParam: 1,
-      // @ts-expect-error this is a good error, because stallTime does not exist!
-      stallTime: 1000,
-    })
+    assertType(
+      infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('data'),
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
+        // @ts-expect-error this is a good error, because stallTime does not exist!
+        stallTime: 1000,
+      }),
+    )
   })
   it('should infer types for callbacks', () => {
     infiniteQueryOptions({
@@ -159,14 +161,22 @@ describe('infiniteQueryOptions', () => {
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
-    // @ts-expect-error cannot pass infinite options to non-infinite query functions
-    useQuery(options)
-    // @ts-expect-error cannot pass infinite options to non-infinite query functions
-    queryClient.ensureQueryData(options)
-    // @ts-expect-error cannot pass infinite options to non-infinite query functions
-    queryClient.fetchQuery(options)
-    // @ts-expect-error cannot pass infinite options to non-infinite query functions
-    queryClient.prefetchQuery(options)
+    assertType(
+      // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      useQuery(options),
+    )
+    assertType(
+      // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      queryClient.ensureQueryData(options),
+    )
+    assertType(
+      // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      queryClient.fetchQuery(options),
+    )
+    assertType(
+      // @ts-expect-error cannot pass infinite options to non-infinite query functions
+      queryClient.prefetchQuery(options),
+    )
   })
 
   test('allow optional initialData function', () => {

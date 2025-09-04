@@ -8,11 +8,11 @@ import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import {
   Component,
   effect,
-  provideExperimentalZonelessChangeDetection,
+  provideZonelessChangeDetection,
 } from '@angular/core'
 import { render, screen, waitFor } from '@testing-library/angular'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { withPersistQueryClient } from '../with-persist-query-client'
-import { queryKey, sleep } from './utils'
 import type {
   PersistedClient,
   Persister,
@@ -102,7 +102,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient({ persistOptions: { persister } }),
@@ -190,7 +190,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient({ persistOptions: { persister } }),
@@ -272,7 +272,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient({ persistOptions: { persister } }),
@@ -335,7 +335,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient({
@@ -382,7 +382,7 @@ describe('withPersistQueryClient', () => {
 
     render(Page, {
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(
           queryClient,
           withPersistQueryClient({

@@ -7,7 +7,7 @@ replace:
     'useQuery': 'injectQuery',
     'useMutation': 'injectMutation',
     'react-query': 'angular-query',
-    'public API of React Query': 'public API of TanStack Query and - after the experimental phase, the angular-query package',
+    'public API of React Query': 'public API of TanStack Query and the angular-query package',
     'still follows': 'still follow',
     'React Query': 'TanStack Query',
     '`success`': '`isSuccess()`',
@@ -153,7 +153,8 @@ import '@tanstack/angular-query'
 
 declare module '@tanstack/angular-query' {
   interface Register {
-    defaultError: AxiosError
+    // Use unknown so call sites must narrow explicitly.
+    defaultError: unknown
   }
 }
 
@@ -164,7 +165,7 @@ const query = injectQuery(() => ({
 
 computed(() => {
   const error = query.error()
-  //      ^? error: AxiosError | null
+  //      ^? error: unknown | null
 })
 ```
 

@@ -1,12 +1,20 @@
-import { describe, it } from 'vitest'
-import { fireEvent, render, waitFor } from '@solidjs/testing-library'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, Suspense, createSignal, startTransition } from 'solid-js'
-import { QueryCache, QueryClientProvider, useQuery } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { QueryCache, QueryClient, QueryClientProvider, useQuery } from '..'
 
 describe("useQuery's in Suspense mode with transitions", () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should render the content when the transition is done', async () => {
     const key = queryKey()
@@ -50,11 +58,12 @@ describe("useQuery's in Suspense mode with transitions", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Show'))
+    expect(rendered.getByText('Show')).toBeInTheDocument()
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await waitFor(() => rendered.getByText('Message'))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Message')).toBeInTheDocument()
     // verify that the button also updated. See https://github.com/solidjs/solid/issues/1249
-    await waitFor(() => rendered.getByText('Hide'))
+    expect(rendered.getByText('Hide')).toBeInTheDocument()
   })
 })

@@ -1,20 +1,13 @@
 import { TestBed } from '@angular/core/testing'
-import { beforeEach, describe, expect } from 'vitest'
-import {
-  Injector,
-  provideExperimentalZonelessChangeDetection,
-} from '@angular/core'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { Injector, provideZonelessChangeDetection } from '@angular/core'
+import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectIsFetching,
   injectQuery,
   provideTanStackQuery,
 } from '..'
-import { delayedFetcher } from './test-utils'
-
-const QUERY_DURATION = 100
-
-const resolveQueries = () => vi.advanceTimersByTimeAsync(QUERY_DURATION)
 
 describe('injectIsFetching', () => {
   let queryClient: QueryClient
@@ -25,7 +18,7 @@ describe('injectIsFetching', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(queryClient),
       ],
     })
@@ -39,15 +32,15 @@ describe('injectIsFetching', () => {
     const isFetching = TestBed.runInInjectionContext(() => {
       injectQuery(() => ({
         queryKey: ['isFetching1'],
-        queryFn: delayedFetcher(100),
+        queryFn: () => sleep(100).then(() => 'Some data'),
       }))
       return injectIsFetching()
     })
 
-    vi.advanceTimersByTime(1)
-
+    expect(isFetching()).toStrictEqual(0)
+    await vi.advanceTimersByTimeAsync(1)
     expect(isFetching()).toStrictEqual(1)
-    await resolveQueries()
+    await vi.advanceTimersByTimeAsync(100)
     expect(isFetching()).toStrictEqual(0)
   })
 

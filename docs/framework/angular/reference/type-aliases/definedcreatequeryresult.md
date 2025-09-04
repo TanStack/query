@@ -3,10 +3,14 @@ id: DefinedCreateQueryResult
 title: DefinedCreateQueryResult
 ---
 
-# Type Alias: DefinedCreateQueryResult\<TData, TError, TDefinedQueryObserver\>
+# Type Alias: DefinedCreateQueryResult\<TData, TError, TState\>
 
 ```ts
-type DefinedCreateQueryResult<TData, TError, TDefinedQueryObserver>: MapToSignals<TDefinedQueryObserver>;
+type DefinedCreateQueryResult<TData, TError, TState> = BaseQueryNarrowing<
+  TData,
+  TError
+> &
+  MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 ```
 
 ## Type Parameters
@@ -15,8 +19,8 @@ type DefinedCreateQueryResult<TData, TError, TDefinedQueryObserver>: MapToSignal
 
 • **TError** = `DefaultError`
 
-• **TDefinedQueryObserver** = `DefinedQueryObserverResult`\<`TData`, `TError`\>
+• **TState** = `DefinedQueryObserverResult`\<`TData`, `TError`\>
 
 ## Defined in
 
-[types.ts:134](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L134)
+[types.ts:135](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L135)
