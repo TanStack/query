@@ -20,6 +20,7 @@ export { QueryClient } from './queryClient'
 export { QueryObserver } from './queryObserver'
 export { CancelledError, isCancelledError } from './retryer'
 export {
+  systemSetTimeoutZero,
   timeoutManager,
   type ManagedTimerId,
   type TimeoutCallback,
