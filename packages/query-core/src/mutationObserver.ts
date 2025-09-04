@@ -6,6 +6,7 @@ import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
   MutateOptions,
+  MutationFunctionContext,
   MutationObserverOptions,
   MutationObserverResult,
 } from './types'
@@ -148,16 +149,34 @@ export class MutationObserver<
         const variables = this.#currentResult.variables!
         const scope = this.#currentResult.scope
 
+        const context = {
+          client: this.#client,
+          meta: this.options.meta,
+          mutationKey: this.options.mutationKey,
+        } satisfies MutationFunctionContext
+
         if (action?.type === 'success') {
-          this.#mutateOptions.onSuccess?.(action.data, variables, scope!)
-          this.#mutateOptions.onSettled?.(action.data, null, variables, scope)
+          this.#mutateOptions.onSuccess?.(
+            action.data,
+            variables,
+            scope,
+            context,
+          )
+          this.#mutateOptions.onSettled?.(
+            action.data,
+            null,
+            variables,
+            scope,
+            context,
+          )
         } else if (action?.type === 'error') {
-          this.#mutateOptions.onError?.(action.error, variables, scope)
+          this.#mutateOptions.onError?.(action.error, variables, scope, context)
           this.#mutateOptions.onSettled?.(
             undefined,
             action.error,
             variables,
             scope,
+            context,
           )
         }
       }

@@ -68,18 +68,18 @@ function Example() {
         })
       }
 
-      return { previousTodos, client: context.client }
+      return { previousTodos }
     },
     // If the mutation fails,
     // use the scope returned from onMutate to roll back
-    onError: (err, variables, scope) => {
+    onError: (err, variables, scope, context) => {
       if (scope?.previousTodos) {
-        scope.client.setQueryData<Todos>(['todos'], scope.previousTodos)
+        context.client.setQueryData<Todos>(['todos'], scope.previousTodos)
       }
     },
     // Always refetch after error or success:
-    onSettled: (data, error, variables, scope) =>
-      scope?.client.invalidateQueries({ queryKey: ['todos'] }),
+    onSettled: (data, error, variables, scope, context) =>
+      context.client.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   return (

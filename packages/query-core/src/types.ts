@@ -1118,17 +1118,20 @@ export interface MutationOptions<
     data: TData,
     variables: TVariables,
     scope: TScope | undefined,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onError?: (
     error: TError,
     variables: TVariables,
     scope: TScope | undefined,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     scope: TScope | undefined,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
@@ -1158,17 +1161,20 @@ export interface MutateOptions<
     data: TData,
     variables: TVariables,
     scope: TScope | undefined,
+    context: MutationFunctionContext,
   ) => void
   onError?: (
     error: TError,
     variables: TVariables,
     scope: TScope | undefined,
+    context: MutationFunctionContext,
   ) => void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     scope: TScope | undefined,
+    context: MutationFunctionContext,
   ) => void
 }
 

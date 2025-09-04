@@ -111,16 +111,16 @@ useMutation({
     context.client.setQueryData(['todos'], (old) => [...old, newTodo])
 
     // Return a scope object with the snapshotted value
-    return { previousTodos, client: context.client }
+    return { previousTodos }
   },
   // If the mutation fails,
   // use the scope returned from onMutate to roll back
-  onError: (err, newTodo, scope) => {
-    scope.client.setQueryData(['todos'], scope.previousTodos)
+  onError: (err, newTodo, scope, context) => {
+    context.client.setQueryData(['todos'], scope.previousTodos)
   },
   // Always refetch after error or success:
-  onSettled: (data, error, variables, scope) =>
-    scope.client.invalidateQueries({ queryKey: ['todos'] }),
+  onSettled: (data, error, variables, scope, context) =>
+    context.client.invalidateQueries({ queryKey: ['todos'] }),
 })
 ```
 
@@ -146,15 +146,15 @@ useMutation({
     context.client.setQueryData(['todos', newTodo.id], newTodo)
 
     // Return a scope with the previous and new todo
-    return { previousTodo, newTodo, client: context.client }
+    return { previousTodo, newTodo }
   },
   // If the mutation fails, use the scope we returned above
-  onError: (err, newTodo, scope) => {
-    scope.client.setQueryData(['todos', scope.newTodo.id], scope.previousTodo)
+  onError: (err, newTodo, scope, context) => {
+    context.client.setQueryData(['todos', scope.newTodo.id], scope.previousTodo)
   },
   // Always refetch after error or success:
-  onSettled: (newTodo, error, variables, scope) =>
-    scope.client.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
+  onSettled: (newTodo, error, variables, scope, context) =>
+    context.client.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
 })
 ```
 

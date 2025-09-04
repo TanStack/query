@@ -175,11 +175,11 @@ export class Mutation<
       this.#dispatch({ type: 'continue' })
     }
 
-    const mutationFnContext: MutationFunctionContext = {
+    const mutationFnContext = {
       client: this.#client,
       meta: this.options.meta,
       mutationKey: this.options.mutationKey,
-    }
+    } satisfies MutationFunctionContext
 
     this.#retryer = createRetryer({
       fn: () => {
@@ -239,7 +239,12 @@ export class Mutation<
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSuccess?.(data, variables, this.state.scope!)
+      await this.options.onSuccess?.(
+        data,
+        variables,
+        this.state.scope,
+        mutationFnContext,
+      )
 
       // Notify cache callback
       await this.#mutationCache.config.onSettled?.(
@@ -250,7 +255,13 @@ export class Mutation<
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSettled?.(data, null, variables, this.state.scope)
+      await this.options.onSettled?.(
+        data,
+        null,
+        variables,
+        this.state.scope,
+        mutationFnContext,
+      )
 
       this.#dispatch({ type: 'success', data })
       return data
@@ -268,6 +279,7 @@ export class Mutation<
           error as TError,
           variables,
           this.state.scope,
+          mutationFnContext,
         )
 
         // Notify cache callback
@@ -284,6 +296,7 @@ export class Mutation<
           error as TError,
           variables,
           this.state.scope,
+          mutationFnContext,
         )
         throw error
       } finally {
