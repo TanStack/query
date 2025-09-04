@@ -5,7 +5,7 @@ title: Installation
 
 ### NPM
 
-TanStack Angular Query is compatible with Angular v16 and higher. See [Angular Version Compatibility](./angular-version-compatibility) for more details.
+TanStack Angular Query is compatible with Angular v16 and higher. See [Angular Version Compatibility](./angular-version-compatibility.md) for more details.
 
 ```bash
 npm i @tanstack/angular-query
