@@ -688,4 +688,70 @@ describe('React hydration', () => {
 
     vi.useRealTimers()
   })
+
+  test('should still refetch when refetchOnMount is a function returning "always" despite hydration', async () => {
+    vi.useFakeTimers()
+
+    const queryFn = vi.fn()
+    queryFn
+      .mockResolvedValueOnce('initial-data')
+      .mockResolvedValueOnce('refetch-data')
+
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 0,
+        },
+      },
+    })
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['fn-always-test'],
+        queryFn,
+        refetchOnMount: () => 'always',
+      })
+      return <div>{data}</div>
+    }
+
+    const { rerender } = render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    await vi.waitFor(() => {
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    const serverQueryClient = new QueryClient()
+    await serverQueryClient.prefetchQuery({
+      queryKey: ['fn-always-test'],
+      queryFn: () => Promise.resolve('fresh-from-server'),
+    })
+    const dehydratedState = dehydrate(serverQueryClient)
+
+    queryFn.mockClear()
+
+    rerender(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.runOnlyPendingTimersAsync()
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('refetch-data')).toBeInTheDocument()
+    })
+
+    queryClient.clear()
+    vi.useRealTimers()
+  })
 })

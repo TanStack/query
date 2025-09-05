@@ -95,13 +95,18 @@ export class QueryObserver<
     if (this.listeners.size === 1) {
       this.#currentQuery.addObserver(this)
 
-      // Check hydration flag but DON'T delete it
-      // The flag is only meaningful during the current render cycle
+      // Check hydration flag but DON'T delete it here.
+      // The flag is cleared in HydrationBoundary's effect after hydrate().
       const hasPendingHydration = !!(this.#currentQuery as any)
         ._pendingHydration
 
+      const resolvedRefetchOnMount =
+        typeof this.options.refetchOnMount === 'function'
+          ? this.options.refetchOnMount(this.#currentQuery)
+          : this.options.refetchOnMount
+
       const shouldSkipFetch =
-        hasPendingHydration && this.options.refetchOnMount !== 'always'
+        hasPendingHydration && resolvedRefetchOnMount !== 'always'
 
       if (
         shouldFetchOnMount(this.#currentQuery, this.options) &&

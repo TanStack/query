@@ -96,7 +96,7 @@ export const HydrationBoundary = ({
             const query = queryCache.get(q.queryHash)
             if (query) {
               // Temporary flag to prevent double-fetching during hydration
-              // Will be immediately removed in QueryObserver.onSubscribe
+              // Will be immediately removed in HydrationBoundary useEffect
               ;(query as any)._pendingHydration = true
             }
           })
