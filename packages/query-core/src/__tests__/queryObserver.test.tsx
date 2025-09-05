@@ -1494,4 +1494,89 @@ describe('queryObserver', () => {
       unsubscribe2()
     })
   })
+
+  describe('hydration flag handling', () => {
+    test('should skip fetch when _pendingHydration flag is present', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn().mockResolvedValue('data')
+
+      queryClient.setQueryData(key, 'initial-data')
+
+      const query = queryClient.getQueryCache().find({ queryKey: key })
+      if (query) {
+        ;(query as any)._pendingHydration = true
+      }
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 0,
+      })
+
+      const unsubscribe = observer.subscribe(() => undefined)
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(0)
+
+      expect((query as any)?._pendingHydration).toBe(true)
+
+      unsubscribe()
+    })
+
+    test('should still fetch when _pendingHydration flag is present but refetchOnMount is "always"', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn().mockResolvedValue('data')
+
+      queryClient.setQueryData(key, 'initial-data')
+
+      const query = queryClient.getQueryCache().find({ queryKey: key })
+      if (query) {
+        ;(query as any)._pendingHydration = true
+      }
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 0,
+        refetchOnMount: 'always',
+      })
+
+      const unsubscribe = observer.subscribe(() => undefined)
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      unsubscribe()
+    })
+
+    test('should handle refetchOnMount as a function returning "always" with hydration flag', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn().mockResolvedValue('data')
+      const refetchOnMountFn = vi.fn(() => 'always' as const)
+
+      queryClient.setQueryData(key, 'initial-data')
+
+      const query = queryClient.getQueryCache().find({ queryKey: key })
+      if (query) {
+        ;(query as any)._pendingHydration = true
+      }
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        staleTime: 0,
+        refetchOnMount: refetchOnMountFn,
+      })
+
+      const unsubscribe = observer.subscribe(() => undefined)
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(refetchOnMountFn).toHaveBeenCalledTimes(1)
+      expect(refetchOnMountFn).toHaveBeenCalledWith(query)
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      unsubscribe()
+    })
+  })
 })
