@@ -394,4 +394,43 @@ describe('queriesObserver', () => {
       { status: 'success', data: 102 },
     ])
   })
+
+  test('combine with stable reference should invalidate cache when query count changes', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    const combine = vi.fn((results) => results)
+
+    const observer = new QueriesObserver(
+      queryClient,
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      { combine },
+    )
+
+    const results: Array<Array<QueryObserverResult>> = []
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    const initialCallCount = combine.mock.calls.length
+
+    observer.setQueries(
+      [
+        { queryKey: key1, queryFn: queryFn1 },
+        { queryKey: key2, queryFn: queryFn2 },
+      ],
+      { combine },
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(combine.mock.calls.length).toBeGreaterThan(initialCallCount)
+    expect(results[results.length - 1]).toHaveLength(2)
+
+    unsubscribe()
+  })
 })
