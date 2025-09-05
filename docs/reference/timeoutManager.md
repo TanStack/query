@@ -97,7 +97,7 @@ Like `setTimeout`, it returns a timer ID, which may be a number or an object tha
 ```tsx
 import { timeoutManager } from '@tanstack/react-query'
 
-const intervalId = timeoutManager.setTimeout(
+const intervalId = timeoutManager.setInterval(
   () => console.log('ran at:', new Date()),
   1000,
 )
