@@ -105,11 +105,16 @@ export class QueryObserver<
           ? this.options.refetchOnMount(this.#currentQuery)
           : this.options.refetchOnMount
 
+      const localOptions = {
+        ...this.options,
+        refetchOnMount: resolvedRefetchOnMount,
+      }
+
       const shouldSkipFetch =
         hasPendingHydration && resolvedRefetchOnMount !== 'always'
 
       if (
-        shouldFetchOnMount(this.#currentQuery, this.options) &&
+        shouldFetchOnMount(this.#currentQuery, localOptions) &&
         !shouldSkipFetch
       ) {
         this.#executeFetch()
