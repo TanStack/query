@@ -414,23 +414,34 @@ describe('queriesObserver', () => {
       results.push(result)
     })
 
-    await vi.advanceTimersByTimeAsync(0)
+    try {
+      await vi.advanceTimersByTimeAsync(0)
 
-    const initialCallCount = combine.mock.calls.length
+      const initialCallCount = combine.mock.calls.length
+      const baselineResults = results.length
 
-    observer.setQueries(
-      [
-        { queryKey: key1, queryFn: queryFn1 },
-        { queryKey: key2, queryFn: queryFn2 },
-      ],
-      { combine },
-    )
+      observer.setQueries(
+        [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+        { combine },
+      )
 
-    await vi.advanceTimersByTimeAsync(0)
+      await vi.advanceTimersByTimeAsync(0)
 
-    expect(combine.mock.calls.length).toBeGreaterThan(initialCallCount)
-    expect(results[results.length - 1]).toHaveLength(2)
+      expect(combine.mock.calls.length).toBeGreaterThan(initialCallCount)
 
-    unsubscribe()
+      expect(
+        combine.mock.calls.some(
+          (call) => Array.isArray(call[0]) && call[0].length === 2,
+        ),
+      ).toBe(true)
+
+      expect(results.length).toBeGreaterThan(baselineResults)
+      expect(results[results.length - 1]).toHaveLength(2)
+    } finally {
+      unsubscribe()
+    }
   })
 })
