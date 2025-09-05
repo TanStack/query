@@ -205,6 +205,18 @@ export class Query<
     this.options = { ...this.#defaultOptions, ...options }
 
     this.updateGcTime(this.options.gcTime)
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (this.state && this.state.data === undefined) {
+      const defaultState = getDefaultState(this.options)
+      if (defaultState.data !== undefined) {
+        this.setData(defaultState.data, {
+          updatedAt: defaultState.dataUpdatedAt,
+          manual: true,
+        })
+        this.#initialState = defaultState
+      }
+    }
   }
 
   protected optionalRemove() {
