@@ -110,7 +110,7 @@ const intervalId = timeoutManager.setInterval(
 ```tsx
 import { timeoutManager } from '@tanstack/react-query'
 
-const intervalId = timeoutManager.setTimeout(
+const intervalId = timeoutManager.setInterval(
   () => console.log('ran at:', new Date()),
   1000,
 )
