@@ -1,4 +1,6 @@
+import { timeoutManager } from '@tanstack/query-core'
 import { noop } from './utils'
+import type { ManagedTimerId } from '@tanstack/query-core'
 import type {
   PersistRetryer,
   PersistedClient,
@@ -100,12 +102,12 @@ function throttle<TArgs extends Array<any>>(
   func: (...args: TArgs) => any,
   wait = 100,
 ) {
-  let timer: ReturnType<typeof setTimeout> | null = null
+  let timer: ManagedTimerId | null = null
   let params: TArgs
   return function (...args: TArgs) {
     params = args
     if (timer === null) {
-      timer = setTimeout(() => {
+      timer = timeoutManager.setTimeout(() => {
         func(...params)
         timer = null
       }, wait)

@@ -13,6 +13,8 @@ import {
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
+import { timeoutManager } from './timeoutManager'
+import type { ManagedTimerId } from './timeoutManager'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
 import type { PendingThenable, Thenable } from './thenable'
@@ -62,8 +64,8 @@ export class QueryObserver<
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
-  #staleTimeoutId?: ReturnType<typeof setTimeout>
-  #refetchIntervalId?: ReturnType<typeof setInterval>
+  #staleTimeoutId?: ManagedTimerId
+  #refetchIntervalId?: ManagedTimerId
   #currentRefetchInterval?: number | false
   #trackedProps = new Set<keyof QueryObserverResult>()
 
@@ -365,7 +367,7 @@ export class QueryObserver<
     // To mitigate this issue we always add 1 ms to the timeout.
     const timeout = time + 1
 
-    this.#staleTimeoutId = setTimeout(() => {
+    this.#staleTimeoutId = timeoutManager.setTimeout(() => {
       if (!this.#currentResult.isStale) {
         this.updateResult()
       }
@@ -394,7 +396,7 @@ export class QueryObserver<
       return
     }
 
-    this.#refetchIntervalId = setInterval(() => {
+    this.#refetchIntervalId = timeoutManager.setInterval(() => {
       if (
         this.options.refetchIntervalInBackground ||
         focusManager.isFocused()
@@ -411,14 +413,14 @@ export class QueryObserver<
 
   #clearStaleTimeout(): void {
     if (this.#staleTimeoutId) {
-      clearTimeout(this.#staleTimeoutId)
+      timeoutManager.clearTimeout(this.#staleTimeoutId)
       this.#staleTimeoutId = undefined
     }
   }
 
   #clearRefetchInterval(): void {
     if (this.#refetchIntervalId) {
-      clearInterval(this.#refetchIntervalId)
+      timeoutManager.clearInterval(this.#refetchIntervalId)
       this.#refetchIntervalId = undefined
     }
   }

@@ -223,9 +223,9 @@ function App() {
   - ##### `gcTime: number | Infinity`
     - Defaults to `5 * 60 * 1000` (5 minutes) or `Infinity` during SSR
     - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used.
-    - Note: the maximum allowed time is about 24 days. See [more](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value).
+    - Note: the maximum allowed time is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
     - If set to `Infinity`, will disable garbage collection
-  - ##### `networkMode: 'online' | 'always' | 'offlineFirst`
+  - ##### `networkMode: 'online' | 'always' | 'offlineFirst'`
     - optional
     - defaults to `'online'`
     - see [Network Mode](../../guides/network-mode.md) for more information.

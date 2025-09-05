@@ -1,50 +1,55 @@
 /* istanbul ignore file */
 
-export { CancelledError } from './retryer'
-export { QueryCache } from './queryCache'
-export type { QueryCacheNotifyEvent } from './queryCache'
-export { QueryClient } from './queryClient'
-export { QueryObserver } from './queryObserver'
-export { QueriesObserver } from './queriesObserver'
+export { focusManager } from './focusManager'
+export {
+  defaultShouldDehydrateMutation,
+  defaultShouldDehydrateQuery,
+  dehydrate,
+  hydrate,
+} from './hydration'
 export { InfiniteQueryObserver } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
 export type { MutationCacheNotifyEvent } from './mutationCache'
 export { MutationObserver } from './mutationObserver'
-export { notifyManager, defaultScheduler } from './notifyManager'
-export { focusManager } from './focusManager'
+export { defaultScheduler, notifyManager } from './notifyManager'
 export { onlineManager } from './onlineManager'
+export { QueriesObserver } from './queriesObserver'
+export { QueryCache } from './queryCache'
+export type { QueryCacheNotifyEvent } from './queryCache'
+export { QueryClient } from './queryClient'
+export { QueryObserver } from './queryObserver'
+export { CancelledError, isCancelledError } from './retryer'
+export {
+  timeoutManager,
+  type ManagedTimerId,
+  type TimeoutCallback,
+  type TimeoutProvider,
+} from './timeoutManager'
 export {
   hashKey,
+  isServer,
+  keepPreviousData,
+  matchMutation,
+  matchQuery,
+  noop,
   partialMatchKey,
   replaceEqualDeep,
-  isServer,
-  matchQuery,
-  matchMutation,
-  keepPreviousData,
-  skipToken,
-  noop,
   shouldThrowError,
+  skipToken,
 } from './utils'
-export type { MutationFilters, QueryFilters, Updater, SkipToken } from './utils'
-export { isCancelledError } from './retryer'
-export {
-  dehydrate,
-  hydrate,
-  defaultShouldDehydrateQuery,
-  defaultShouldDehydrateMutation,
-} from './hydration'
+export type { MutationFilters, QueryFilters, SkipToken, Updater } from './utils'
 
 export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
 
 // Types
-export * from './types'
-export type { QueryState } from './query'
-export { Query } from './query'
-export type { MutationState } from './mutation'
-export { Mutation } from './mutation'
 export type {
-  DehydrateOptions,
   DehydratedState,
+  DehydrateOptions,
   HydrateOptions,
 } from './hydration'
+export { Mutation } from './mutation'
+export type { MutationState } from './mutation'
 export type { QueriesObserverOptions } from './queriesObserver'
+export { Query } from './query'
+export type { QueryState } from './query'
+export * from './types'

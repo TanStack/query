@@ -1,3 +1,4 @@
+import { timeoutManager } from './timeoutManager'
 import type {
   DefaultError,
   Enabled,
@@ -359,7 +360,7 @@ function hasObjectPrototype(o: any): boolean {
 
 export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve) => {
-    setTimeout(resolve, timeout)
+    timeoutManager.setTimeout(resolve, timeout)
   })
 }
 
