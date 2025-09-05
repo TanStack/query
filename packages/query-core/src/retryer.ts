@@ -1,7 +1,7 @@
-import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { pendingThenable } from './thenable'
 import { isServer, sleep } from './utils'
+import { focusManager } from './focusManager'
 import type { Thenable } from './thenable'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
@@ -18,6 +18,7 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   retryDelay?: RetryDelayValue<TError>
   networkMode: NetworkMode | undefined
   canRun: () => boolean
+  refetchIntervalInBackground?: boolean
 }
 
 export interface Retryer<TData = unknown> {
@@ -101,7 +102,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   }
 
   const canContinue = () =>
-    focusManager.isFocused() &&
+    (config.refetchIntervalInBackground === true || focusManager.isFocused()) &&
     (config.networkMode === 'always' || onlineManager.isOnline()) &&
     config.canRun()
 
