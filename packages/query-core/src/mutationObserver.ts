@@ -6,6 +6,7 @@ import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
   MutateOptions,
+  MutationFunctionContext,
   MutationObserverOptions,
   MutationObserverResult,
 } from './types'
@@ -13,8 +14,8 @@ import type { Action, Mutation } from './mutation'
 
 // TYPES
 
-type MutationObserverListener<TData, TError, TVariables, TContext> = (
-  result: MutationObserverResult<TData, TError, TVariables, TContext>,
+type MutationObserverListener<TData, TError, TVariables, TScope> = (
+  result: MutationObserverResult<TData, TError, TVariables, TScope>,
 ) => void
 
 // CLASS
@@ -23,21 +24,21 @@ export class MutationObserver<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TScope = unknown,
 > extends Subscribable<
-  MutationObserverListener<TData, TError, TVariables, TContext>
+  MutationObserverListener<TData, TError, TVariables, TScope>
 > {
-  options!: MutationObserverOptions<TData, TError, TVariables, TContext>
+  options!: MutationObserverOptions<TData, TError, TVariables, TScope>
 
   #client: QueryClient
-  #currentResult: MutationObserverResult<TData, TError, TVariables, TContext> =
+  #currentResult: MutationObserverResult<TData, TError, TVariables, TScope> =
     undefined!
-  #currentMutation?: Mutation<TData, TError, TVariables, TContext>
-  #mutateOptions?: MutateOptions<TData, TError, TVariables, TContext>
+  #currentMutation?: Mutation<TData, TError, TVariables, TScope>
+  #mutateOptions?: MutateOptions<TData, TError, TVariables, TScope>
 
   constructor(
     client: QueryClient,
-    options: MutationObserverOptions<TData, TError, TVariables, TContext>,
+    options: MutationObserverOptions<TData, TError, TVariables, TScope>,
   ) {
     super()
 
@@ -53,10 +54,10 @@ export class MutationObserver<
   }
 
   setOptions(
-    options: MutationObserverOptions<TData, TError, TVariables, TContext>,
+    options: MutationObserverOptions<TData, TError, TVariables, TScope>,
   ) {
     const prevOptions = this.options as
-      | MutationObserverOptions<TData, TError, TVariables, TContext>
+      | MutationObserverOptions<TData, TError, TVariables, TScope>
       | undefined
     this.options = this.#client.defaultMutationOptions(options)
     if (!shallowEqualObjects(this.options, prevOptions)) {
@@ -84,7 +85,7 @@ export class MutationObserver<
     }
   }
 
-  onMutationUpdate(action: Action<TData, TError, TVariables, TContext>): void {
+  onMutationUpdate(action: Action<TData, TError, TVariables, TScope>): void {
     this.#updateResult()
 
     this.#notify(action)
@@ -94,7 +95,7 @@ export class MutationObserver<
     TData,
     TError,
     TVariables,
-    TContext
+    TScope
   > {
     return this.#currentResult
   }
@@ -110,7 +111,7 @@ export class MutationObserver<
 
   mutate(
     variables: TVariables,
-    options?: MutateOptions<TData, TError, TVariables, TContext>,
+    options?: MutateOptions<TData, TError, TVariables, TScope>,
   ): Promise<TData> {
     this.#mutateOptions = options
 
@@ -128,7 +129,7 @@ export class MutationObserver<
   #updateResult(): void {
     const state =
       this.#currentMutation?.state ??
-      getDefaultState<TData, TError, TVariables, TContext>()
+      getDefaultState<TData, TError, TVariables, TScope>()
 
     this.#currentResult = {
       ...state,
@@ -138,25 +139,43 @@ export class MutationObserver<
       isIdle: state.status === 'idle',
       mutate: this.mutate,
       reset: this.reset,
-    } as MutationObserverResult<TData, TError, TVariables, TContext>
+    } as MutationObserverResult<TData, TError, TVariables, TScope>
   }
 
-  #notify(action?: Action<TData, TError, TVariables, TContext>): void {
+  #notify(action?: Action<TData, TError, TVariables, TScope>): void {
     notifyManager.batch(() => {
       // First trigger the mutate callbacks
       if (this.#mutateOptions && this.hasListeners()) {
         const variables = this.#currentResult.variables!
-        const context = this.#currentResult.context
+        const scope = this.#currentResult.scope
+
+        const context = {
+          client: this.#client,
+          meta: this.options.meta,
+          mutationKey: this.options.mutationKey,
+        } satisfies MutationFunctionContext
 
         if (action?.type === 'success') {
-          this.#mutateOptions.onSuccess?.(action.data, variables, context!)
-          this.#mutateOptions.onSettled?.(action.data, null, variables, context)
+          this.#mutateOptions.onSuccess?.(
+            action.data,
+            variables,
+            scope,
+            context,
+          )
+          this.#mutateOptions.onSettled?.(
+            action.data,
+            null,
+            variables,
+            scope,
+            context,
+          )
         } else if (action?.type === 'error') {
-          this.#mutateOptions.onError?.(action.error, variables, context)
+          this.#mutateOptions.onError?.(action.error, variables, scope, context)
           this.#mutateOptions.onSettled?.(
             undefined,
             action.error,
             variables,
+            scope,
             context,
           )
         }

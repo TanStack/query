@@ -3,6 +3,7 @@ import { Removable } from './removable'
 import { createRetryer } from './retryer'
 import type {
   DefaultError,
+  MutationFunctionContext,
   MutationMeta,
   MutationOptions,
   MutationStatus,
@@ -10,23 +11,29 @@ import type {
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import type { Retryer } from './retryer'
+import type { QueryClient } from './queryClient'
 
 // TYPES
 
-interface MutationConfig<TData, TError, TVariables, TContext> {
+interface MutationConfig<TData, TError, TVariables, TScope> {
+  client: QueryClient
   mutationId: number
   mutationCache: MutationCache
-  options: MutationOptions<TData, TError, TVariables, TContext>
-  state?: MutationState<TData, TError, TVariables, TContext>
+  options: MutationOptions<TData, TError, TVariables, TScope>
+  state?: MutationState<TData, TError, TVariables, TScope>
 }
 
 export interface MutationState<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TScope = unknown,
 > {
-  context: TContext | undefined
+  /**
+   * @deprecated `context` was renamed to `scope`. This will be removed in the next major version. Use the `scope` property instead.
+   */
+  context: TScope | undefined
+  scope: TScope | undefined
   data: TData | undefined
   error: TError | null
   failureCount: number
@@ -43,11 +50,11 @@ interface FailedAction<TError> {
   error: TError | null
 }
 
-interface PendingAction<TVariables, TContext> {
+interface PendingAction<TVariables, TScope> {
   type: 'pending'
   isPaused: boolean
   variables?: TVariables
-  context?: TContext
+  scope?: TScope
 }
 
 interface SuccessAction<TData> {
@@ -68,11 +75,11 @@ interface ContinueAction {
   type: 'continue'
 }
 
-export type Action<TData, TError, TVariables, TContext> =
+export type Action<TData, TError, TVariables, TScope> =
   | ContinueAction
   | ErrorAction<TError>
   | FailedAction<TError>
-  | PendingAction<TVariables, TContext>
+  | PendingAction<TVariables, TScope>
   | PauseAction
   | SuccessAction<TData>
 
@@ -82,19 +89,21 @@ export class Mutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TScope = unknown,
 > extends Removable {
-  state: MutationState<TData, TError, TVariables, TContext>
-  options!: MutationOptions<TData, TError, TVariables, TContext>
+  state: MutationState<TData, TError, TVariables, TScope>
+  options!: MutationOptions<TData, TError, TVariables, TScope>
   readonly mutationId: number
 
-  #observers: Array<MutationObserver<TData, TError, TVariables, TContext>>
+  #client: QueryClient
+  #observers: Array<MutationObserver<TData, TError, TVariables, TScope>>
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>
 
-  constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
+  constructor(config: MutationConfig<TData, TError, TVariables, TScope>) {
     super()
 
+    this.#client = config.client
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
     this.#observers = []
@@ -105,7 +114,7 @@ export class Mutation<
   }
 
   setOptions(
-    options: MutationOptions<TData, TError, TVariables, TContext>,
+    options: MutationOptions<TData, TError, TVariables, TScope>,
   ): void {
     this.options = options
 
@@ -166,12 +175,19 @@ export class Mutation<
       this.#dispatch({ type: 'continue' })
     }
 
+    const mutationFnContext = {
+      client: this.#client,
+      meta: this.options.meta,
+      mutationKey: this.options.mutationKey,
+    } satisfies MutationFunctionContext
+
     this.#retryer = createRetryer({
       fn: () => {
         if (!this.options.mutationFn) {
           return Promise.reject(new Error('No mutationFn found'))
         }
-        return this.options.mutationFn(variables)
+
+        return this.options.mutationFn(variables, mutationFnContext)
       },
       onFail: (failureCount, error) => {
         this.#dispatch({ type: 'failed', failureCount, error })
@@ -200,11 +216,14 @@ export class Mutation<
           variables,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
-        const context = await this.options.onMutate?.(variables)
-        if (context !== this.state.context) {
+        const scope = await this.options.onMutate?.(
+          variables,
+          mutationFnContext,
+        )
+        if (scope !== this.state.scope) {
           this.#dispatch({
             type: 'pending',
-            context,
+            scope,
             variables,
             isPaused,
           })
@@ -216,22 +235,33 @@ export class Mutation<
       await this.#mutationCache.config.onSuccess?.(
         data,
         variables,
-        this.state.context,
+        this.state.scope,
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSuccess?.(data, variables, this.state.context!)
+      await this.options.onSuccess?.(
+        data,
+        variables,
+        this.state.scope,
+        mutationFnContext,
+      )
 
       // Notify cache callback
       await this.#mutationCache.config.onSettled?.(
         data,
         null,
         this.state.variables,
-        this.state.context,
+        this.state.scope,
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSettled?.(data, null, variables, this.state.context)
+      await this.options.onSettled?.(
+        data,
+        null,
+        variables,
+        this.state.scope,
+        mutationFnContext,
+      )
 
       this.#dispatch({ type: 'success', data })
       return data
@@ -241,14 +271,15 @@ export class Mutation<
         await this.#mutationCache.config.onError?.(
           error as any,
           variables,
-          this.state.context,
+          this.state.scope,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
 
         await this.options.onError?.(
           error as TError,
           variables,
-          this.state.context,
+          this.state.scope,
+          mutationFnContext,
         )
 
         // Notify cache callback
@@ -256,7 +287,7 @@ export class Mutation<
           undefined,
           error as any,
           this.state.variables,
-          this.state.context,
+          this.state.scope,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
 
@@ -264,7 +295,8 @@ export class Mutation<
           undefined,
           error as TError,
           variables,
-          this.state.context,
+          this.state.scope,
+          mutationFnContext,
         )
         throw error
       } finally {
@@ -275,10 +307,10 @@ export class Mutation<
     }
   }
 
-  #dispatch(action: Action<TData, TError, TVariables, TContext>): void {
+  #dispatch(action: Action<TData, TError, TVariables, TScope>): void {
     const reducer = (
-      state: MutationState<TData, TError, TVariables, TContext>,
-    ): MutationState<TData, TError, TVariables, TContext> => {
+      state: MutationState<TData, TError, TVariables, TScope>,
+    ): MutationState<TData, TError, TVariables, TScope> => {
       switch (action.type) {
         case 'failed':
           return {
@@ -299,7 +331,8 @@ export class Mutation<
         case 'pending':
           return {
             ...state,
-            context: action.context,
+            context: action.scope,
+            scope: action.scope,
             data: undefined,
             failureCount: 0,
             failureReason: null,
@@ -350,10 +383,11 @@ export function getDefaultState<
   TData,
   TError,
   TVariables,
-  TContext,
->(): MutationState<TData, TError, TVariables, TContext> {
+  TScope,
+>(): MutationState<TData, TError, TVariables, TScope> {
   return {
     context: undefined,
+    scope: undefined,
     data: undefined,
     error: null,
     failureCount: 0,

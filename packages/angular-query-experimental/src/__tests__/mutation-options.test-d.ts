@@ -8,6 +8,7 @@ import {
 } from '..'
 import type {
   DefaultError,
+  MutationFunctionContext,
   MutationState,
   WithRequired,
 } from '@tanstack/query-core'
@@ -58,15 +59,37 @@ describe('mutationOptions', () => {
     })
   })
 
-  it('should infer context type correctly', () => {
+  it('should infer scope type correctly', () => {
     mutationOptions<number, DefaultError, void, { name: string }>({
       mutationFn: () => Promise.resolve(5),
       mutationKey: ['key'],
       onMutate: () => {
-        return { name: 'context' }
+        return { name: 'scope' }
       },
-      onSuccess: (_data, _variables, context) => {
-        expectTypeOf(context).toEqualTypeOf<{ name: string }>()
+      onSuccess: (_data, _variables, scope) => {
+        expectTypeOf(scope).toEqualTypeOf<{ name: string } | undefined>()
+      },
+    })
+  })
+
+  it('should infer context type correctly', () => {
+    mutationOptions<number>({
+      mutationFn: (_variables, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+        return Promise.resolve(5)
+      },
+      mutationKey: ['key'],
+      onMutate: (_variables, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSuccess: (_data, _variables, _scope, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onError: (_error, _variables, _scope, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSettled: (_data, _error, _variables, _scope, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
       },
     })
   })

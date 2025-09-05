@@ -53,7 +53,11 @@ describe('mutations', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     expect(fn).toHaveBeenCalledTimes(1)
-    expect(fn).toHaveBeenCalledWith('vars')
+    expect(fn).toHaveBeenCalledWith('vars', {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: key,
+    })
   })
 
   test('mutation should set correct success states', async () => {
@@ -64,6 +68,7 @@ describe('mutations', () => {
 
     expect(mutation.getCurrentResult()).toEqual({
       context: undefined,
+      scope: undefined,
       data: undefined,
       error: null,
       failureCount: 0,
@@ -92,6 +97,7 @@ describe('mutations', () => {
 
     expect(states[0]).toEqual({
       context: undefined,
+      scope: undefined,
       data: undefined,
       error: null,
       failureCount: 0,
@@ -112,6 +118,7 @@ describe('mutations', () => {
 
     expect(states[1]).toEqual({
       context: 'todo',
+      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 0,
@@ -132,6 +139,7 @@ describe('mutations', () => {
 
     expect(states[2]).toEqual({
       context: 'todo',
+      scope: 'todo',
       data: 'todo',
       error: null,
       failureCount: 0,
@@ -170,6 +178,7 @@ describe('mutations', () => {
 
     expect(states[0]).toEqual({
       context: undefined,
+      scope: undefined,
       data: undefined,
       error: null,
       failureCount: 0,
@@ -190,6 +199,7 @@ describe('mutations', () => {
 
     expect(states[1]).toEqual({
       context: 'todo',
+      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 0,
@@ -210,6 +220,7 @@ describe('mutations', () => {
 
     expect(states[2]).toEqual({
       context: 'todo',
+      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 1,
@@ -230,6 +241,7 @@ describe('mutations', () => {
 
     expect(states[3]).toEqual({
       context: 'todo',
+      scope: 'todo',
       data: undefined,
       error: new Error('err'),
       failureCount: 2,
@@ -270,6 +282,7 @@ describe('mutations', () => {
         },
         {
           context: 'todo',
+          scope: 'todo',
           data: undefined,
           error: null,
           failureCount: 1,
@@ -283,6 +296,7 @@ describe('mutations', () => {
 
     expect(mutation.state).toEqual({
       context: 'todo',
+      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 1,
@@ -298,6 +312,7 @@ describe('mutations', () => {
     // check that the mutation is correctly resumed
     expect(mutation.state).toEqual({
       context: 'todo',
+      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 1,
@@ -312,6 +327,7 @@ describe('mutations', () => {
 
     expect(mutation.state).toEqual({
       context: 'todo',
+      scope: 'todo',
       data: 'todo',
       error: null,
       failureCount: 0,
@@ -632,7 +648,7 @@ describe('mutations', () => {
           mutationFn: () => Promise.resolve('success'),
           onMutate: () => {
             results.push('onMutate-sync')
-            return { backup: 'data' } // onMutate can return context
+            return { backup: 'data' } // onMutate can return scope
           },
           onSuccess: () => {
             results.push('onSuccess-implicit-void')
@@ -760,8 +776,8 @@ describe('mutations', () => {
             results.push('sync-onError')
             return Promise.resolve('error-return-ignored')
           },
-          onSettled: (_data, _error, _variables, context) => {
-            results.push(`settled-context-${context?.rollback}`)
+          onSettled: (_data, _error, _variables, scope) => {
+            results.push(`settled-scope-${scope?.rollback}`)
             return Promise.all([
               Promise.resolve('cleanup-1'),
               Promise.resolve('cleanup-2'),
@@ -781,7 +797,7 @@ describe('mutations', () => {
       expect(results).toEqual([
         'sync-onMutate',
         'async-onSuccess',
-        'settled-context-data',
+        'settled-scope-data',
       ])
     })
 
@@ -812,8 +828,8 @@ describe('mutations', () => {
               sleep(20).then(() => results.push('error-cleanup-2')),
             ])
           },
-          onSettled: (_data, _error, _variables, context) => {
-            results.push(`settled-error-${context?.backup}`)
+          onSettled: (_data, _error, _variables, scope) => {
+            results.push(`settled-error-${scope?.backup}`)
             return Promise.allSettled([
               Promise.resolve('settled-cleanup'),
               Promise.reject('settled-error'),

@@ -3,12 +3,10 @@ id: CreateMutateFunction
 title: CreateMutateFunction
 ---
 
-# Type Alias: CreateMutateFunction()\<TData, TError, TVariables, TContext\>
+# Type Alias: CreateMutateFunction()\<TData, TError, TVariables, TScope\>
 
 ```ts
-type CreateMutateFunction<TData, TError, TVariables, TContext> = (
-  ...args
-) => void
+type CreateMutateFunction<TData, TError, TVariables, TScope> = (...args) => void
 ```
 
 ## Type Parameters
@@ -19,13 +17,13 @@ type CreateMutateFunction<TData, TError, TVariables, TContext> = (
 
 • **TVariables** = `void`
 
-• **TContext** = `unknown`
+• **TScope** = `unknown`
 
 ## Parameters
 
 ### args
 
-...`Parameters`\<`MutateFunction`\<`TData`, `TError`, `TVariables`, `TContext`\>\>
+...`Parameters`\<`MutateFunction`\<`TData`, `TError`, `TVariables`, `TScope`\>\>
 
 ## Returns
 
