@@ -43,6 +43,7 @@ export class QueriesObserver<
   #combinedResult?: TCombinedResult
   #lastCombine?: CombineFn<TCombinedResult>
   #lastResult?: Array<QueryObserverResult>
+  #lastInput?: Array<QueryObserverResult>
   #observerMatches: Array<QueryObserverMatch> = []
 
   constructor(
@@ -216,10 +217,13 @@ export class QueriesObserver<
       if (
         !this.#combinedResult ||
         this.#result !== this.#lastResult ||
+        // Compare input.length to handle optimistic updates where input differs from this.#result
+        input.length !== this.#lastInput?.length ||
         combine !== this.#lastCombine
       ) {
         this.#lastCombine = combine
         this.#lastResult = this.#result
+        this.#lastInput = input
         this.#combinedResult = replaceEqualDeep(
           this.#combinedResult,
           combine(input),
