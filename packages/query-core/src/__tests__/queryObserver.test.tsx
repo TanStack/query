@@ -1503,6 +1503,7 @@ describe('queryObserver', () => {
       queryClient.setQueryData(key, 'initial-data')
 
       const query = queryClient.getQueryCache().find({ queryKey: key })
+      expect(query).toBeDefined()
       if (query) {
         ;(query as any)._pendingHydration = true
       }
@@ -1518,6 +1519,12 @@ describe('queryObserver', () => {
 
       expect(queryFn).toHaveBeenCalledTimes(0)
 
+      expect(observer.getCurrentResult()).toMatchObject({
+        status: 'success',
+        fetchStatus: 'idle',
+        data: 'initial-data',
+      })
+
       expect((query as any)?._pendingHydration).toBe(true)
 
       unsubscribe()
@@ -1530,6 +1537,7 @@ describe('queryObserver', () => {
       queryClient.setQueryData(key, 'initial-data')
 
       const query = queryClient.getQueryCache().find({ queryKey: key })
+      expect(query).toBeDefined()
       if (query) {
         ;(query as any)._pendingHydration = true
       }
@@ -1557,6 +1565,7 @@ describe('queryObserver', () => {
       queryClient.setQueryData(key, 'initial-data')
 
       const query = queryClient.getQueryCache().find({ queryKey: key })
+      expect(query).toBeDefined()
       if (query) {
         ;(query as any)._pendingHydration = true
       }
