@@ -21,7 +21,7 @@ It should be set as the same value or higher than persistQueryClient's `maxAge` 
 
 You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
-Due to a Javascript limitation, the maximum allowed `gcTime` is about 24 days (see [more](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value)).
+Due to a JavaScript limitation, the maximum allowed `gcTime` is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
 
 ```tsx
 const queryClient = new QueryClient({
