@@ -265,6 +265,8 @@ describe('useQueries combine memoization edge cases', () => {
     rerender({ keys: ['c', 'd'] })
     expect(result.current.length).toBe(2)
 
+    // Note: Same-length changes may use cached result for one render cycle,
+    // but data will be correct after setQueries updates this.#result
     await waitFor(() => {
       expect(result.current[0]?.data).toBe('c')
       expect(result.current[1]?.data).toBe('d')

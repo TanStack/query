@@ -43,6 +43,7 @@ export class QueriesObserver<
   #combinedResult?: TCombinedResult
   #lastCombine?: CombineFn<TCombinedResult>
   #lastResult?: Array<QueryObserverResult>
+  // Tracks the last input passed to #combineResult to detect query count changes in optimistic updates
   #lastInput?: Array<QueryObserverResult>
   #observerMatches: Array<QueryObserverMatch> = []
 
