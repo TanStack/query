@@ -121,3 +121,8 @@ export function setIsServer(isServer: boolean) {
     })
   }
 }
+
+export function reactVersion() {
+  const version = (process.env.REACTJS_VERSION || '19') as '17' | '18' | '19'
+  return version
+}
