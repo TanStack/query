@@ -275,7 +275,7 @@ export function useQueries<
       [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
+    () => observer.getServerResult(),
   )
 
   React.useEffect(() => {

@@ -25,6 +25,7 @@ import type {
   QueryKey,
   QueryObserverBaseResult,
   QueryObserverOptions,
+  QueryObserverPendingResult,
   QueryObserverResult,
   QueryOptions,
   RefetchOptions,
@@ -259,6 +260,50 @@ export class QueryObserver<
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
     return this.#currentResult
+  }
+
+  getServerResult():
+    | QueryObserverPendingResult<TData, TError>
+    | QueryObserverResult<TData, TError> {
+    const currentResult = this.getCurrentResult()
+
+    if (
+      currentResult.status === 'success' &&
+      this.#currentQuery.state.dataUpdatedAt === 0
+    ) {
+      const pendingResult: QueryObserverPendingResult<TData, TError> = {
+        status: 'pending',
+        fetchStatus: this.#currentQuery.state.fetchStatus,
+        isPending: true,
+        isSuccess: false,
+        isError: false,
+        isLoading: this.#currentQuery.state.fetchStatus === 'fetching',
+        isInitialLoading: this.#currentQuery.state.fetchStatus === 'fetching',
+        isFetching: this.#currentQuery.state.fetchStatus === 'fetching',
+        isRefetching: false,
+        data: undefined,
+        dataUpdatedAt: 0,
+        error: null,
+        errorUpdatedAt: 0,
+        errorUpdateCount: 0,
+        failureCount: 0,
+        failureReason: null,
+        isLoadingError: false,
+        isRefetchError: false,
+        isFetched: false,
+        isFetchedAfterMount: false,
+        isPaused: this.#currentQuery.state.fetchStatus === 'paused',
+        isPlaceholderData: false,
+        isStale: currentResult.isStale,
+        refetch: currentResult.refetch,
+        promise: currentResult.promise,
+        isEnabled: currentResult.isEnabled,
+      }
+
+      return pendingResult
+    }
+
+    return currentResult
   }
 
   trackResult(

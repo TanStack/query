@@ -109,7 +109,7 @@ export function useBaseQuery<
       [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
+    () => observer.getServerResult(),
   )
 
   React.useEffect(() => {

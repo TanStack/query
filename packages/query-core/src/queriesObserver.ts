@@ -191,6 +191,10 @@ export class QueriesObserver<
     ]
   }
 
+  getServerResult(): Array<QueryObserverResult> {
+    return this.#observers.map((observer) => observer.getServerResult())
+  }
+
   #trackResult(
     result: Array<QueryObserverResult>,
     matches: Array<QueryObserverMatch>,
