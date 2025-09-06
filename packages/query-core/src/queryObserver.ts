@@ -97,7 +97,28 @@ export class QueryObserver<
     if (this.listeners.size === 1) {
       this.#currentQuery.addObserver(this)
 
-      if (shouldFetchOnMount(this.#currentQuery, this.options)) {
+      // Check hydration flag but DON'T delete it here.
+      // The flag is cleared in HydrationBoundary's effect after hydrate().
+      const hasPendingHydration = !!(this.#currentQuery as any)
+        ._pendingHydration
+
+      const resolvedRefetchOnMount =
+        typeof this.options.refetchOnMount === 'function'
+          ? this.options.refetchOnMount(this.#currentQuery)
+          : this.options.refetchOnMount
+
+      const localOptions = {
+        ...this.options,
+        refetchOnMount: resolvedRefetchOnMount,
+      }
+
+      const shouldSkipFetch =
+        hasPendingHydration && resolvedRefetchOnMount !== 'always'
+
+      if (
+        shouldFetchOnMount(this.#currentQuery, localOptions) &&
+        !shouldSkipFetch
+      ) {
         this.#executeFetch()
       } else {
         this.updateResult()
