@@ -1,5 +1,4 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
-import { useInfiniteQuery } from './useInfiniteQuery'
 import { useBaseQuery } from './useBaseQuery'
 import type {
   InfiniteQueryObserverSuccessResult,
