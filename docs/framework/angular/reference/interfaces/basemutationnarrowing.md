@@ -3,7 +3,7 @@ id: BaseMutationNarrowing
 title: BaseMutationNarrowing
 ---
 
-# Interface: BaseMutationNarrowing\<TData, TError, TVariables, TScope\>
+# Interface: BaseMutationNarrowing\<TData, TError, TVariables, TOnMutateResult\>
 
 ## Type Parameters
 
@@ -13,7 +13,7 @@ title: BaseMutationNarrowing
 
 • **TVariables** = `unknown`
 
-• **TScope** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Properties
 
@@ -25,12 +25,19 @@ isError: SignalFunction<
     TData,
     TError,
     TVariables,
-    TScope,
+    TOnMutateResult,
     Override<
-      MutationObserverErrorResult<TData, TError, TVariables, TScope>,
-      { mutate: CreateMutateFunction<TData, TError, TVariables, TScope> }
+      MutationObserverErrorResult<TData, TError, TVariables, TOnMutateResult>,
+      {
+        mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
+      }
     > & {
-      mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TScope>
+      mutateAsync: CreateMutateAsyncFunction<
+        TData,
+        TError,
+        TVariables,
+        TOnMutateResult
+      >
     }
   >
 >
@@ -50,12 +57,19 @@ isIdle: SignalFunction<
     TData,
     TError,
     TVariables,
-    TScope,
+    TOnMutateResult,
     Override<
-      MutationObserverIdleResult<TData, TError, TVariables, TScope>,
-      { mutate: CreateMutateFunction<TData, TError, TVariables, TScope> }
+      MutationObserverIdleResult<TData, TError, TVariables, TOnMutateResult>,
+      {
+        mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
+      }
     > & {
-      mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TScope>
+      mutateAsync: CreateMutateAsyncFunction<
+        TData,
+        TError,
+        TVariables,
+        TOnMutateResult
+      >
     }
   >
 >
@@ -75,12 +89,19 @@ isPending: SignalFunction<
     TData,
     TError,
     TVariables,
-    TScope,
+    TOnMutateResult,
     Override<
-      MutationObserverLoadingResult<TData, TError, TVariables, TScope>,
-      { mutate: CreateMutateFunction<TData, TError, TVariables, TScope> }
+      MutationObserverLoadingResult<TData, TError, TVariables, TOnMutateResult>,
+      {
+        mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
+      }
     > & {
-      mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TScope>
+      mutateAsync: CreateMutateAsyncFunction<
+        TData,
+        TError,
+        TVariables,
+        TOnMutateResult
+      >
     }
   >
 >
@@ -100,12 +121,19 @@ isSuccess: SignalFunction<
     TData,
     TError,
     TVariables,
-    TScope,
+    TOnMutateResult,
     Override<
-      MutationObserverSuccessResult<TData, TError, TVariables, TScope>,
-      { mutate: CreateMutateFunction<TData, TError, TVariables, TScope> }
+      MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>,
+      {
+        mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
+      }
     > & {
-      mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TScope>
+      mutateAsync: CreateMutateAsyncFunction<
+        TData,
+        TError,
+        TVariables,
+        TOnMutateResult
+      >
     }
   >
 >

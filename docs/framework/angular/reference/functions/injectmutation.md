@@ -6,10 +6,10 @@ title: injectMutation
 # Function: injectMutation()
 
 ```ts
-function injectMutation<TData, TError, TVariables, TScope>(
+function injectMutation<TData, TError, TVariables, TOnMutateResult>(
   injectMutationFn,
   options?,
-): CreateMutationResult<TData, TError, TVariables, TScope>
+): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>
 ```
 
 Injects a mutation: an imperative function that can be invoked which typically performs server side effects.
@@ -24,13 +24,13 @@ Unlike queries, mutations are not run automatically.
 
 • **TVariables** = `void`
 
-• **TScope** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Parameters
 
 ### injectMutationFn
 
-() => [`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TScope`\>
+() => [`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 A function that returns mutation options.
 
@@ -42,7 +42,7 @@ Additional configuration
 
 ## Returns
 
-[`CreateMutationResult`](../../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TScope`\>
+[`CreateMutationResult`](../../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 The mutation.
 

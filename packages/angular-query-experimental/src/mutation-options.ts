@@ -35,27 +35,30 @@ export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 >(
   options: WithRequired<
-    CreateMutationOptions<TData, TError, TVariables, TScope>,
+    CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): WithRequired<
-  CreateMutationOptions<TData, TError, TVariables, TScope>,
+  CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 >(
   options: Omit<
-    CreateMutationOptions<TData, TError, TVariables, TScope>,
+    CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
-): Omit<CreateMutationOptions<TData, TError, TVariables, TScope>, 'mutationKey'>
+): Omit<
+  CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  'mutationKey'
+>
 
 /**
  * Allows to share and re-use mutation options in a type-safe way.
@@ -91,9 +94,9 @@ export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 >(
-  options: CreateMutationOptions<TData, TError, TVariables, TScope>,
-): CreateMutationOptions<TData, TError, TVariables, TScope> {
+  options: CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+): CreateMutationOptions<TData, TError, TVariables, TOnMutateResult> {
   return options
 }

@@ -3,11 +3,11 @@ id: CreateMutateAsyncFunction
 title: CreateMutateAsyncFunction
 ---
 
-# Type Alias: CreateMutateAsyncFunction\<TData, TError, TVariables, TScope\>
+# Type Alias: CreateMutateAsyncFunction\<TData, TError, TVariables, TOnMutateResult\>
 
 ```ts
-type CreateMutateAsyncFunction<TData, TError, TVariables, TScope> =
-  MutateFunction<TData, TError, TVariables, TScope>
+type CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> =
+  MutateFunction<TData, TError, TVariables, TOnMutateResult>
 ```
 
 ## Type Parameters
@@ -18,7 +18,7 @@ type CreateMutateAsyncFunction<TData, TError, TVariables, TScope> =
 
 • **TVariables** = `void`
 
-• **TScope** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Defined in
 

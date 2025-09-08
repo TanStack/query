@@ -93,17 +93,17 @@ mutation = injectMutation(() => ({
   onMutate: (variables, context) => {
     // A mutation is about to happen!
 
-    // Optionally return a scope containing data to use when for example rolling back
+    // Optionally return a result containing data to use when for example rolling back
     return { id: 1 }
   },
-  onError: (error, variables, scope, context) => {
+  onError: (error, variables, onMutateResult, context) => {
     // An error happened!
-    console.log(`rolling back optimistic update with id ${scope.id}`)
+    console.log(`rolling back optimistic update with id ${onMutateResult.id}`)
   },
-  onSuccess: (data, variables, scope, context) => {
+  onSuccess: (data, variables, onMutateResult, context) => {
     // Boom baby!
   },
-  onSettled: (data, error, variables, scope, context) => {
+  onSettled: (data, error, variables, onMutateResult, context) => {
     // Error or success... doesn't matter!
   },
 }))
@@ -130,25 +130,25 @@ mutation = injectMutation(() => ({
 ```ts
 mutation = injectMutation(() => ({
   mutationFn: addTodo,
-  onSuccess: (data, variables, scope, context) => {
+  onSuccess: (data, variables, onMutateResult, context) => {
     // I will fire first
   },
-  onError: (error, variables, scope, context) => {
+  onError: (error, variables, onMutateResult, context) => {
     // I will fire first
   },
-  onSettled: (data, error, variables, scope, context) => {
+  onSettled: (data, error, variables, onMutateResult, context) => {
     // I will fire first
   },
 }))
 
 mutation.mutate(todo, {
-  onSuccess: (data, variables, scope, context) => {
+  onSuccess: (data, variables, onMutateResult, context) => {
     // I will fire second!
   },
-  onError: (error, variables, scope, context) => {
+  onError: (error, variables, onMutateResult, context) => {
     // I will fire second!
   },
-  onSettled: (data, error, variables, scope, context) => {
+  onSettled: (data, error, variables, onMutateResult, context) => {
     // I will fire second!
   },
 })
@@ -161,7 +161,7 @@ mutation.mutate(todo, {
 export class Example {
   mutation = injectMutation(() => ({
     mutationFn: addTodo,
-    onSuccess: (data, variables, scope, context) => {
+    onSuccess: (data, variables, onMutateResult, context) => {
       // Will be called 3 times
     },
   }))
@@ -169,7 +169,7 @@ export class Example {
   doMutations() {
     ;['Todo 1', 'Todo 2', 'Todo 3'].forEach((todo) => {
       this.mutation.mutate(todo, {
-        onSuccess: (data, variables, scope, context) => {
+        onSuccess: (data, variables, onMutateResult, context) => {
           // Will execute only once, for the last mutation (Todo 3),
           // regardless which mutation resolves first
         },
@@ -224,19 +224,21 @@ queryClient.setMutationDefaults(['addTodo'], {
     // Add optimistic todo to todos list
     context.client.setQueryData(['todos'], (old) => [...old, optimisticTodo])
 
-    // Return scope with the optimistic todo
+    // Return result with the optimistic todo
     return { optimisticTodo }
   },
-  onSuccess: (result, variables, scope, context) => {
+  onSuccess: (result, variables, onMutateResult, context) => {
     // Replace optimistic todo in the todos list with the result
     context.client.setQueryData(['todos'], (old) =>
-      old.map((todo) => (todo.id === scope.optimisticTodo.id ? result : todo)),
+      old.map((todo) =>
+        todo.id === onMutateResult.optimisticTodo.id ? result : todo,
+      ),
     )
   },
-  onError: (error, variables, scope, context) => {
+  onError: (error, variables, onMutateResult, context) => {
     // Remove optimistic todo from the todos list
     context.client.setQueryData(['todos'], (old) =>
-      old.filter((todo) => todo.id !== scope.optimisticTodo.id),
+      old.filter((todo) => todo.id !== onMutateResult.optimisticTodo.id),
     )
   },
   retry: 3,

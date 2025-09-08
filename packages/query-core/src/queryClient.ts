@@ -512,11 +512,11 @@ export class QueryClient {
     TData = unknown,
     TError = DefaultError,
     TVariables = void,
-    TScope = unknown,
+    TOnMutateResult = unknown,
   >(
     mutationKey: MutationKey,
     options: OmitKeyof<
-      MutationObserverOptions<TData, TError, TVariables, TScope>,
+      MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
       'mutationKey'
     >,
   ): void {

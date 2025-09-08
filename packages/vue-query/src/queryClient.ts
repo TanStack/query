@@ -456,11 +456,11 @@ export class QueryClient extends QC {
     TData = unknown,
     TError = DefaultError,
     TVariables = void,
-    TScope = unknown,
+    TOnMutateResult = unknown,
   >(
     mutationKey: MaybeRefDeep<MutationKey>,
     options: MaybeRefDeep<
-      MutationObserverOptions<TData, TError, TVariables, TScope>
+      MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
     >,
   ): void {
     super.setMutationDefaults(

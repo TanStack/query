@@ -6,9 +6,9 @@ title: mutationOptions
 # Function: mutationOptions()
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TScope>(
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(
   options,
-): CreateMutationOptions<TData, TError, TVariables, TScope>
+): CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>
 ```
 
 Allows to share and re-use mutation options in a type-safe way.
@@ -46,19 +46,19 @@ mutation.mutate({ title: 'New Title' })
 
 • **TVariables** = `void`
 
-• **TScope** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Parameters
 
 ### options
 
-`MutationObserverOptions`\<`TData`, `TError`, `TVariables`, `TScope`\>
+`MutationObserverOptions`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 The mutation options.
 
 ## Returns
 
-[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TScope`\>
+[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 Mutation options.
 

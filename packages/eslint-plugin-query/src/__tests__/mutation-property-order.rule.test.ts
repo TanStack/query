@@ -143,9 +143,9 @@ function getCode({ mutationFunction: mutationFunction, properties }: TestCase) {
       case 'onMutate':
         return 'onMutate: (data) => {\n return { foo: data }\n}'
       case 'onError':
-        return 'onError: (error, variables, scope) => {\n  console.log("error:", error, "scope:", scope)\n}'
+        return 'onError: (error, variables, onMutateResult) => {\n  console.log("error:", error, "onMutateResult:", scope)\n}'
       case 'onSettled':
-        return 'onSettled: (data, error, variables, scope) => {\n  console.log("settled", scope)\n}'
+        return 'onSettled: (data, error, variables, onMutateResult) => {\n  console.log("settled", onMutateResult)\n}'
     }
   }
   return `
@@ -202,11 +202,11 @@ const regressionTestCases = {
         onMutate: (data) => {
           return { foo: data }
         },
-        onError: (error, variables, scope) => {
-          console.log(error, scope)
+        onError: (error, variables, onMutateResult) => {
+          console.log(error, onMutateResult)
         },
-        onSettled: (data, error, variables, scope) => {
-          console.log('settled', scope)
+        onSettled: (data, error, variables, onMutateResult) => {
+          console.log('settled', onMutateResult)
         },
       })
       `,

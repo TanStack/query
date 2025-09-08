@@ -87,9 +87,9 @@ export type CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 > = OmitKeyof<
-  MutationObserverOptions<TData, TError, TVariables, TScope>,
+  MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
   '_defaulted'
 >
 
@@ -97,28 +97,35 @@ export type CreateMutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 > = (
-  ...args: Parameters<MutateFunction<TData, TError, TVariables, TScope>>
+  ...args: Parameters<
+    MutateFunction<TData, TError, TVariables, TOnMutateResult>
+  >
 ) => void
 
 export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
-> = MutateFunction<TData, TError, TVariables, TScope>
+  TOnMutateResult = unknown,
+> = MutateFunction<TData, TError, TVariables, TOnMutateResult>
 
 export type CreateBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 > = Override<
-  MutationObserverResult<TData, TError, TVariables, TScope>,
-  { mutate: CreateMutateFunction<TData, TError, TVariables, TScope> }
+  MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+  { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }
 > & {
-  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TScope>
+  mutateAsync: CreateMutateAsyncFunction<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >
 }
 
 /** Result from createMutation */
@@ -126,8 +133,10 @@ export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TScope = unknown,
-> = Readable<CreateBaseMutationResult<TData, TError, TVariables, TScope>>
+  TOnMutateResult = unknown,
+> = Readable<
+  CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>
+>
 
 /** Options for useMutationState */
 export type MutationStateOptions<TResult = MutationState> = {

@@ -193,9 +193,9 @@ export interface UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 > extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TScope>,
+    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
     '_defaulted'
   > {}
 
@@ -203,31 +203,40 @@ export type UseMutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 > = (
-  ...args: Parameters<MutateFunction<TData, TError, TVariables, TScope>>
+  ...args: Parameters<
+    MutateFunction<TData, TError, TVariables, TOnMutateResult>
+  >
 ) => void
 
 export type UseMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
-> = MutateFunction<TData, TError, TVariables, TScope>
+  TOnMutateResult = unknown,
+> = MutateFunction<TData, TError, TVariables, TOnMutateResult>
 
 export type UseBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 > = Override<
-  MutationObserverResult<TData, TError, TVariables, TScope>,
-  { mutate: UseMutateFunction<TData, TError, TVariables, TScope> }
-> & { mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TScope> }
+  MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+  { mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult> }
+> & {
+  mutateAsync: UseMutateAsyncFunction<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >
+}
 
 export type UseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TScope = unknown,
-> = UseBaseMutationResult<TData, TError, TVariables, TScope>
+  TOnMutateResult = unknown,
+> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>

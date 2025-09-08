@@ -9,7 +9,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import type { MutationFunctionContext } from '@tanstack/react-query'
 
 const client = new QueryClient()
 
@@ -46,7 +45,7 @@ function Example() {
       return await response.json()
     },
     // When mutate is called:
-    onMutate: async (newTodo: string, context: MutationFunctionContext) => {
+    onMutate: async (newTodo, context) => {
       setText('')
       // Cancel any outgoing refetch
       // (so they don't overwrite our optimistic update)
@@ -71,14 +70,17 @@ function Example() {
       return { previousTodos }
     },
     // If the mutation fails,
-    // use the scope returned from onMutate to roll back
-    onError: (err, variables, scope, context) => {
-      if (scope?.previousTodos) {
-        context.client.setQueryData<Todos>(['todos'], scope.previousTodos)
+    // use the result returned from onMutate to roll back
+    onError: (err, variables, onMutateResult, context) => {
+      if (onMutateResult?.previousTodos) {
+        context.client.setQueryData<Todos>(
+          ['todos'],
+          onMutateResult.previousTodos,
+        )
       }
     },
     // Always refetch after error or success:
-    onSettled: (data, error, variables, scope, context) =>
+    onSettled: (data, error, variables, onMutateResult, context) =>
       context.client.invalidateQueries({ queryKey: ['todos'] }),
   })
 

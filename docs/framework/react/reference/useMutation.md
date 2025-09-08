@@ -64,20 +64,20 @@ mutate(variables, {
   - Optional
   - defaults to `'online'`
   - see [Network Mode](../../guides/network-mode.md) for more information.
-- `onMutate: (variables: TVariables) => Promise<TScope | void> | TScope | void`
+- `onMutate: (variables: TVariables) => Promise<TOnMutateResult | void> | TOnMutateResult | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
   - Useful to perform optimistic updates to a resource in hopes that the mutation succeeds
   - The value returned from this function will be passed to both the `onError` and `onSettled` functions in the event of a mutation failure and can be useful for rolling back optimistic updates.
-- `onSuccess: (data: TData, variables: TVariables, scope: TScope | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
+- `onSuccess: (data: TData, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onError: (err: TError, variables: TVariables, scope: TScope | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
+- `onError: (err: TError, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onSettled: (data: TData, error: TError, variables: TVariables, scope: TScope | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
+- `onSettled: (data: TData, error: TError, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - If a promise is returned, it will be awaited and resolved before proceeding
@@ -114,15 +114,15 @@ mutate(variables, {
   - `variables: TVariables`
     - Optional
     - The variables object to pass to the `mutationFn`.
-  - `onSuccess: (data: TData, variables: TVariables, scope: TScope | undefined, context: MutationFunctionContext) => void`
+  - `onSuccess: (data: TData, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => void`
     - Optional
     - This function will fire when the mutation is successful and will be passed the mutation's result.
     - Void function, the returned value will be ignored
-  - `onError: (err: TError, variables: TVariables, scope: TScope | undefined, context: MutationFunctionContext) => void`
+  - `onError: (err: TError, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => void`
     - Optional
     - This function will fire if the mutation encounters an error and will be passed the error.
     - Void function, the returned value will be ignored
-  - `onSettled: (data: TData | undefined, error: TError | null, variables: TVariables, scope: TScope | undefined, context: MutationFunctionContext) => void`
+  - `onSettled: (data: TData | undefined, error: TError | null, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => void`
     - Optional
     - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
     - Void function, the returned value will be ignored

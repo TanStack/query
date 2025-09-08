@@ -46,16 +46,16 @@ export function injectMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TScope = unknown,
+  TOnMutateResult = unknown,
 >(
   injectMutationFn: () => CreateMutationOptions<
     TData,
     TError,
     TVariables,
-    TScope
+    TOnMutateResult
   >,
   options?: InjectMutationOptions,
-): CreateMutationResult<TData, TError, TVariables, TScope> {
+): CreateMutationResult<TData, TError, TVariables, TOnMutateResult> {
   !options?.injector && assertInInjectionContext(injectMutation)
   const injector = options?.injector ?? inject(Injector)
   const destroyRef = injector.get(DestroyRef)
@@ -70,8 +70,12 @@ export function injectMutation<
   const optionsSignal = computed(injectMutationFn)
 
   const observerSignal = (() => {
-    let instance: MutationObserver<TData, TError, TVariables, TScope> | null =
-      null
+    let instance: MutationObserver<
+      TData,
+      TError,
+      TVariables,
+      TOnMutateResult
+    > | null = null
 
     return computed(() => {
       return (instance ||= new MutationObserver(queryClient, optionsSignal()))
@@ -79,7 +83,7 @@ export function injectMutation<
   })()
 
   const mutateFnSignal = computed<
-    CreateMutateFunction<TData, TError, TVariables, TScope>
+    CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(() => {
     const observer = observerSignal()
     return (variables, mutateOptions) => {
@@ -102,7 +106,7 @@ export function injectMutation<
     TData,
     TError,
     TVariables,
-    TScope
+    TOnMutateResult
   > | null>(null)
 
   effect(
@@ -167,6 +171,6 @@ export function injectMutation<
     TData,
     TError,
     TVariables,
-    TScope
+    TOnMutateResult
   >
 }

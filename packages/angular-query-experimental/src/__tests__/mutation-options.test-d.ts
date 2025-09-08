@@ -59,15 +59,17 @@ describe('mutationOptions', () => {
     })
   })
 
-  it('should infer scope type correctly', () => {
+  it('should infer result type correctly', () => {
     mutationOptions<number, DefaultError, void, { name: string }>({
       mutationFn: () => Promise.resolve(5),
       mutationKey: ['key'],
       onMutate: () => {
-        return { name: 'scope' }
+        return { name: 'onMutateResult' }
       },
-      onSuccess: (_data, _variables, scope) => {
-        expectTypeOf(scope).toEqualTypeOf<{ name: string } | undefined>()
+      onSuccess: (_data, _variables, onMutateResult) => {
+        expectTypeOf(onMutateResult).toEqualTypeOf<
+          { name: string } | undefined
+        >()
       },
     })
   })
@@ -82,13 +84,13 @@ describe('mutationOptions', () => {
       onMutate: (_variables, context) => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
       },
-      onSuccess: (_data, _variables, _scope, context) => {
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
       },
-      onError: (_error, _variables, _scope, context) => {
+      onError: (_error, _variables, _onMutateResult, context) => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
       },
-      onSettled: (_data, _error, _variables, _scope, context) => {
+      onSettled: (_data, _error, _variables, _onMutateResult, context) => {
         expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
       },
     })

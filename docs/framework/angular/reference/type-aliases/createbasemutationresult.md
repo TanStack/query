@@ -3,16 +3,17 @@ id: CreateBaseMutationResult
 title: CreateBaseMutationResult
 ---
 
-# Type Alias: CreateBaseMutationResult\<TData, TError, TVariables, TScope\>
+# Type Alias: CreateBaseMutationResult\<TData, TError, TVariables, TOnMutateResult\>
 
 ```ts
-type CreateBaseMutationResult<TData, TError, TVariables, TScope> = Override<
-  MutationObserverResult<TData, TError, TVariables, TScope>,
-  {
-    mutate: CreateMutateFunction<TData, TError, TVariables, TScope>
-  }
-> &
-  object
+type CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult> =
+  Override<
+    MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+    {
+      mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
+    }
+  > &
+    object
 ```
 
 ## Type declaration
@@ -20,7 +21,12 @@ type CreateBaseMutationResult<TData, TError, TVariables, TScope> = Override<
 ### mutateAsync
 
 ```ts
-mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TScope>
+mutateAsync: CreateMutateAsyncFunction<
+  TData,
+  TError,
+  TVariables,
+  TOnMutateResult
+>
 ```
 
 ## Type Parameters
@@ -31,7 +37,7 @@ mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TScope>
 
 • **TVariables** = `unknown`
 
-• **TScope** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Defined in
 
