@@ -3342,6 +3342,10 @@ const stylesFactory = (
         margin: 0;
         font-size: ${font.size.xs};
         line-height: ${font.lineHeight.xs};
+        max-width: 100%;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
       }
 
       & pre {
