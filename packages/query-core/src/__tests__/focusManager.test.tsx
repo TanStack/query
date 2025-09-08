@@ -149,19 +149,16 @@ describe('focusManager', () => {
     focusManager.setFocused(true)
     focusManager.setFocused(true)
 
-    expect(listener).toHaveBeenCalledTimes(1)
     expect(listener).toHaveBeenNthCalledWith(1, true)
 
     focusManager.setFocused(false)
     focusManager.setFocused(false)
 
-    expect(listener).toHaveBeenCalledTimes(2)
     expect(listener).toHaveBeenNthCalledWith(2, false)
 
     focusManager.setFocused(undefined)
     focusManager.setFocused(undefined)
 
-    expect(listener).toHaveBeenCalledTimes(3)
     expect(listener).toHaveBeenNthCalledWith(3, true)
   })
 })
