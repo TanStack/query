@@ -175,6 +175,7 @@ export class Query<
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
+  #isInfiniteQuery?: boolean
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
@@ -197,6 +198,10 @@ export class Query<
 
   get promise(): Promise<TData> | undefined {
     return this.#retryer?.promise
+  }
+
+  get isInfiniteQuery(): boolean | undefined {
+    return this.#isInfiniteQuery
   }
 
   setOptions(
@@ -247,6 +252,10 @@ export class Query<
     setStateOptions?: SetStateOptions,
   ): void {
     this.#dispatch({ type: 'setState', state, setStateOptions })
+  }
+
+  setIsInfiniteQuery(value: boolean): void {
+    this.#isInfiniteQuery = value
   }
 
   cancel(options?: CancelOptions): Promise<void> {
@@ -395,7 +404,17 @@ export class Query<
       // pending state when that happens
       this.#retryer?.status() !== 'rejected'
     ) {
-      if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
+      const isStuckHydratedInfinite =
+        this.#isInfiniteQuery &&
+        this.state.data === undefined &&
+        this.#retryer?.status() === 'pending' &&
+        options?.behavior &&
+        fetchOptions?.cancelRefetch
+
+      if (isStuckHydratedInfinite) {
+        // Silently cancel current fetch if the user wants to cancel refetch
+        this.cancel({ silent: true })
+      } else if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetch
         this.cancel({ silent: true })
       } else if (this.#retryer) {

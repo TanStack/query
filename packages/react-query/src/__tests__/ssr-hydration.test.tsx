@@ -3,6 +3,7 @@ import { hydrateRoot } from 'react-dom/client'
 import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 import {
+  InfiniteQueryObserver,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -265,5 +266,242 @@ describe('Server side rendering with de/rehydration', () => {
     unmount()
     queryClient.clear()
     consoleMock.mockRestore()
+  })
+
+  it('should handle failed SSR infinite query without data corruption', async () => {
+    const serverClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await serverClient
+      .prefetchInfiniteQuery({
+        queryKey: ['posts'],
+        queryFn: () => {
+          throw new Error('Network error')
+        },
+        initialPageParam: 1,
+        getNextPageParam: (_lastPage: any, allPages: any) =>
+          allPages.length + 1,
+        retry: false,
+      })
+      .catch(() => {})
+
+    const dehydrated = dehydrate(serverClient)
+
+    const clientQueryClient = new QueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    const observer = new InfiniteQueryObserver(clientQueryClient, {
+      queryKey: ['posts'],
+      queryFn: ({ pageParam = 1 }) => {
+        return Promise.resolve({
+          posts: [`Post ${pageParam}-1`, `Post ${pageParam}-2`],
+          nextCursor: pageParam + 1,
+        })
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      retry: 1,
+    })
+
+    const initialResult = observer.getCurrentResult()
+
+    expect(() => {
+      const pageCount = initialResult.data?.pages?.length ?? 0
+      console.log('Initial page count:', pageCount)
+    }).not.toThrow()
+
+    await observer.refetch()
+    const afterRefetch = observer.getCurrentResult()
+
+    expect(afterRefetch.data).toBeDefined()
+    expect(afterRefetch.data?.pages).toBeDefined()
+    expect(afterRefetch.data?.pages).toHaveLength(1)
+    expect(afterRefetch.data?.pageParams).toHaveLength(1)
+
+    await observer.fetchNextPage()
+    const afterNextPage = observer.getCurrentResult()
+
+    expect(afterNextPage.data?.pages).toHaveLength(2)
+    expect(afterNextPage.data?.pages[1]).toEqual({
+      posts: ['Post 2-1', 'Post 2-2'],
+      nextCursor: 3,
+    })
+  })
+
+  it('should handle race conditions between hydration and observer', async () => {
+    const serverClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await Promise.all([
+      serverClient
+        .prefetchInfiniteQuery({
+          queryKey: ['posts', 'user1'],
+          queryFn: () => Promise.reject(new Error('Failed')),
+          initialPageParam: 0,
+          getNextPageParam: () => 1,
+          retry: false,
+        })
+        .catch(() => {}),
+      serverClient
+        .prefetchInfiniteQuery({
+          queryKey: ['posts', 'user2'],
+          queryFn: () => Promise.reject(new Error('Failed')),
+          initialPageParam: 0,
+          getNextPageParam: () => 1,
+          retry: false,
+        })
+        .catch(() => {}),
+    ])
+
+    const dehydrated = dehydrate(serverClient)
+    const clientQueryClient = new QueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    const observer1 = new InfiniteQueryObserver(clientQueryClient, {
+      queryKey: ['posts', 'user1'],
+      queryFn: ({ pageParam = 0 }) =>
+        Promise.resolve({ data: `user1-${pageParam}` }),
+      initialPageParam: 0,
+      getNextPageParam: () => 1,
+    })
+
+    const observer2 = new InfiniteQueryObserver(clientQueryClient, {
+      queryKey: ['posts', 'user2'],
+      queryFn: ({ pageParam = 0 }) =>
+        Promise.resolve({ data: `user2-${pageParam}` }),
+      initialPageParam: 0,
+      getNextPageParam: () => 1,
+    })
+
+    const [result1, result2] = await Promise.all([
+      observer1.refetch(),
+      observer2.refetch(),
+    ])
+
+    expect(result1.data?.pages).toBeDefined()
+    expect(result2.data?.pages).toBeDefined()
+    expect(result1.data?.pages[0]).toEqual({ data: 'user1-0' })
+    expect(result2.data?.pages[0]).toEqual({ data: 'user2-0' })
+  })
+
+  it('should handle regular query (non-infinite) after hydration', async () => {
+    const serverClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await serverClient
+      .prefetchQuery({
+        queryKey: ['regular'],
+        queryFn: () => Promise.reject(new Error('Failed')),
+        retry: false,
+      })
+      .catch(() => {})
+
+    const dehydrated = dehydrate(serverClient)
+    const clientQueryClient = new QueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    const query = clientQueryClient
+      .getQueryCache()
+      .find({ queryKey: ['regular'] })
+    expect((query as any)?.__isInfiniteQuery).toBeUndefined()
+  })
+
+  it('should handle mixed queries (infinite + regular) in same hydration', async () => {
+    const serverClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await Promise.all([
+      serverClient
+        .prefetchInfiniteQuery({
+          queryKey: ['infinite'],
+          queryFn: () => Promise.reject(new Error('Failed')),
+          initialPageParam: 0,
+          getNextPageParam: () => 1,
+          retry: false,
+        })
+        .catch(() => {}),
+      serverClient
+        .prefetchQuery({
+          queryKey: ['regular'],
+          queryFn: () => Promise.reject(new Error('Failed')),
+          retry: false,
+        })
+        .catch(() => {}),
+    ])
+
+    const dehydrated = dehydrate(serverClient)
+    const clientQueryClient = new QueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    const infiniteObserver = new InfiniteQueryObserver(clientQueryClient, {
+      queryKey: ['infinite'],
+      queryFn: () => Promise.resolve({ data: 'infinite' }),
+      initialPageParam: 0,
+      getNextPageParam: () => 1,
+    })
+
+    const regularPromise = clientQueryClient.fetchQuery({
+      queryKey: ['regular'],
+      queryFn: () => Promise.resolve('regular'),
+    })
+
+    const [infiniteResult, regularResult] = await Promise.all([
+      infiniteObserver.refetch(),
+      regularPromise,
+    ])
+
+    expect(infiniteResult.data?.pages).toBeDefined()
+    expect(regularResult).toBe('regular')
+  })
+
+  it('should handle successful hydrated infinite query (no failure)', async () => {
+    const serverClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await serverClient.prefetchInfiniteQuery({
+      queryKey: ['success'],
+      queryFn: ({ pageParam = 0 }) =>
+        Promise.resolve({
+          data: `page-${pageParam}`,
+          next: pageParam + 1,
+        }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage: any) => lastPage.next,
+    })
+
+    const dehydrated = dehydrate(serverClient)
+    const clientQueryClient = new QueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    const observer = new InfiniteQueryObserver(clientQueryClient, {
+      queryKey: ['success'],
+      queryFn: ({ pageParam = 0 }) =>
+        Promise.resolve({
+          data: `page-${pageParam}`,
+          next: pageParam + 1,
+        }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.next,
+    })
+
+    const result = observer.getCurrentResult()
+
+    expect(result.data?.pages).toHaveLength(1)
+    expect(result.data?.pages[0]).toEqual({ data: 'page-0', next: 1 })
   })
 })

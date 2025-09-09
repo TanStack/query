@@ -51,6 +51,7 @@ interface DehydratedQuery {
   // without it which we need to handle for backwards compatibility.
   // This should be changed to required in the future.
   dehydratedAt?: number
+  isInfiniteQuery?: boolean
 }
 
 export interface DehydratedState {
@@ -104,6 +105,7 @@ function dehydrateQuery(
       }),
     }),
     ...(query.meta && { meta: query.meta }),
+    ...(query.options.behavior && { isInfiniteQuery: true }),
   }
 }
 
@@ -196,7 +198,15 @@ export function hydrate(
   })
 
   queries.forEach(
-    ({ queryKey, state, queryHash, meta, promise, dehydratedAt }) => {
+    ({
+      queryKey,
+      state,
+      queryHash,
+      meta,
+      promise,
+      dehydratedAt,
+      isInfiniteQuery,
+    }) => {
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
       const data = rawData === undefined ? rawData : deserializeData(rawData)
@@ -245,6 +255,10 @@ export function hydrate(
             status: data !== undefined ? 'success' : state.status,
           },
         )
+
+        if (isInfiniteQuery) {
+          query.setIsInfiniteQuery(true)
+        }
       }
 
       if (

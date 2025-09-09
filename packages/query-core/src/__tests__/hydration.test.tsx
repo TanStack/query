@@ -1399,4 +1399,207 @@ describe('dehydration and rehydration', () => {
     // error and test will fail
     await originalPromise
   })
+
+  test('should preserve infinite query type when hydrating failed promise', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+
+    const promise = queryClient
+      .prefetchInfiniteQuery({
+        queryKey: ['infinite', 'failed'],
+        queryFn: () => Promise.reject(new Error('fetch failed')),
+        initialPageParam: 0,
+        getNextPageParam: () => 1,
+        retry: false,
+      })
+      .catch(() => {})
+
+    const dehydrated = dehydrate(queryClient)
+
+    const hydrationClient = new QueryClient()
+    hydrate(hydrationClient, dehydrated)
+
+    const hydratedQuery = hydrationClient.getQueryCache().find({
+      queryKey: ['infinite', 'failed'],
+    })
+
+    expect(hydratedQuery?.isInfiniteQuery).toBe(true)
+
+    await promise
+  })
+
+  test('should mark infinite queries with isInfiniteQuery flag during dehydration', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await queryClient.prefetchInfiniteQuery({
+      queryKey: ['infinite'],
+      queryFn: ({ pageParam = 0 }) => Promise.resolve(`page-${pageParam}`),
+      initialPageParam: 0,
+      getNextPageParam: (_lastPage: any, pages: any) => pages.length,
+      retry: false,
+    })
+
+    await queryClient.prefetchQuery({
+      queryKey: ['regular'],
+      queryFn: () => Promise.resolve('data'),
+    })
+
+    const dehydrated = dehydrate(queryClient)
+
+    const infiniteQuery = dehydrated.queries.find(
+      (q) => q.queryKey[0] === 'infinite',
+    )
+    expect(infiniteQuery?.isInfiniteQuery).toBe(true)
+
+    const regularQuery = dehydrated.queries.find(
+      (q) => q.queryKey[0] === 'regular',
+    )
+    expect(regularQuery?.isInfiniteQuery).toBeUndefined()
+  })
+
+  test('should preserve isInfiniteQuery flag through hydration', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await queryClient
+      .prefetchInfiniteQuery({
+        queryKey: ['infinite'],
+        queryFn: () => Promise.reject(new Error('Failed')),
+        initialPageParam: 0,
+        getNextPageParam: () => 1,
+        retry: false,
+      })
+      .catch(() => {})
+
+    const dehydrated = dehydrate(queryClient)
+
+    expect(dehydrated.queries[0]?.isInfiniteQuery).toBe(true)
+
+    const newClient = new QueryClient()
+    hydrate(newClient, dehydrated)
+
+    const hydratedQuery = newClient.getQueryCache().find({
+      queryKey: ['infinite'],
+    })
+
+    expect(hydratedQuery?.isInfiniteQuery).toBe(true)
+  })
+
+  test('should handle JSON serialization of dehydrated infinite queries', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await queryClient
+      .prefetchInfiniteQuery({
+        queryKey: ['infinite'],
+        queryFn: () => Promise.reject(new Error('Failed')),
+        initialPageParam: 0,
+        getNextPageParam: () => 1,
+        retry: false,
+      })
+      .catch(() => {})
+
+    const dehydrated = dehydrate(queryClient)
+
+    const serialized = JSON.stringify(dehydrated)
+    const deserialized = JSON.parse(serialized)
+
+    expect(deserialized.queries[0]?.isInfiniteQuery).toBe(true)
+
+    const newClient = new QueryClient()
+    hydrate(newClient, deserialized)
+
+    const hydratedQuery = newClient.getQueryCache().find({
+      queryKey: ['infinite'],
+    })
+
+    expect(hydratedQuery?.isInfiniteQuery).toBe(true)
+  })
+
+  test('should not affect regular query hydration', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await Promise.all([
+      queryClient.prefetchQuery({
+        queryKey: ['regular1'],
+        queryFn: () => Promise.resolve('data1'),
+      }),
+      queryClient.prefetchInfiniteQuery({
+        queryKey: ['infinite1'],
+        queryFn: () => Promise.resolve('page1'),
+        initialPageParam: 0,
+        getNextPageParam: () => 1,
+      }),
+      queryClient
+        .prefetchQuery({
+          queryKey: ['regular2'],
+          queryFn: () => Promise.reject(new Error('Failed')),
+          retry: false,
+        })
+        .catch(() => {}),
+    ])
+
+    const dehydrated = dehydrate(queryClient)
+    const newClient = new QueryClient()
+    hydrate(newClient, dehydrated)
+
+    const regular1 = newClient.getQueryCache().find({ queryKey: ['regular1'] })
+    const infinite1 = newClient
+      .getQueryCache()
+      .find({ queryKey: ['infinite1'] })
+    const regular2 = newClient.getQueryCache().find({ queryKey: ['regular2'] })
+
+    expect(regular1?.isInfiniteQuery).toBeUndefined()
+    expect(infinite1?.isInfiniteQuery).toBe(true)
+    expect(regular2?.isInfiniteQuery).toBeUndefined()
+
+    expect(regular1?.state.data).toBe('data1')
+  })
+
+  test('should handle nested infinite query keys correctly', async () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    await queryClient
+      .prefetchInfiniteQuery({
+        queryKey: ['posts', { userId: 1, filter: 'active' }],
+        queryFn: () => Promise.reject(new Error('Failed')),
+        initialPageParam: 0,
+        getNextPageParam: () => 1,
+        retry: false,
+      })
+      .catch(() => {})
+
+    const dehydrated = dehydrate(queryClient)
+    const newClient = new QueryClient()
+    hydrate(newClient, dehydrated)
+
+    const hydratedQuery = newClient.getQueryCache().find({
+      queryKey: ['posts', { userId: 1, filter: 'active' }],
+    })
+
+    expect(hydratedQuery?.isInfiniteQuery).toBe(true)
+  })
 })
