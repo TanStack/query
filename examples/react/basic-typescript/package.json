@@ -8,9 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.40.1",
-    "@tanstack/react-query-devtools": "^4.40.1",
-    "@tanstack/react-query-persist-client": "^4.40.1",
+    "@tanstack/react-query": "^4.40.2",
+    "@tanstack/react-query-devtools": "^4.40.2",
+    "@tanstack/react-query-persist-client": "^4.40.2",
     "@tanstack/query-sync-storage-persister": "^4.40.0",
     "axios": "^0.26.1",
     "react": "^18.0.0",
