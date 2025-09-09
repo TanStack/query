@@ -12,6 +12,7 @@ export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'
 export { useSuspenseQuery } from './useSuspenseQuery'
+export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
 export { useSuspenseQueries } from './useSuspenseQueries'
 export type {
   SuspenseQueriesResults,
@@ -22,6 +23,11 @@ export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
 } from './queryOptions'
+export { infiniteQueryOptions } from './infiniteQueryOptions'
+export type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
 export {
   defaultContext,
   QueryClientProvider,

@@ -55,7 +55,7 @@ export function useQuery<
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UseQueryResult<TData, TError>
 
-/** @deprecated */
+/** @deprecated This function overload will be removed in the next major version. */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -68,7 +68,7 @@ export function useQuery<
     'queryKey' | 'initialData'
   >,
 ): UseQueryResult<TData, TError>
-/** @deprecated */
+/** @deprecated This function overload will be removed in the next major version. */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -81,7 +81,7 @@ export function useQuery<
     'queryKey' | 'initialData'
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedUseQueryResult<TData, TError>
-/** @deprecated */
+/** @deprecated This function overload will be removed in the next major version. */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -94,7 +94,7 @@ export function useQuery<
     'queryKey'
   >,
 ): UseQueryResult<TData, TError>
-/** @deprecated */
+/** @deprecated This function overload will be removed in the next major version. */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -108,7 +108,7 @@ export function useQuery<
     'queryKey' | 'queryFn' | 'initialData'
   > & { initialData?: () => undefined },
 ): UseQueryResult<TData, TError>
-/** @deprecated */
+/** @deprecated This function overload will be removed in the next major version. */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -122,7 +122,7 @@ export function useQuery<
     'queryKey' | 'queryFn' | 'initialData'
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedUseQueryResult<TData, TError>
-/** @deprecated */
+/** @deprecated This function overload will be removed in the next major version. */
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,

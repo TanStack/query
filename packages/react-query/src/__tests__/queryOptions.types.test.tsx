@@ -19,13 +19,14 @@ const queryFn = () => Promise.resolve({ field: 'success' })
 describe('queryOptions', () => {
   it('should be used with useQuery', () => {
     doNotExecute(() => {
-      const dd = useQuery(
-        queryOptions({
-          queryKey,
-          queryFn,
-        }),
-      )
-      expectTypeOf(dd).toEqualTypeOf<UseQueryResult<{ field: string }>>()
+      expectTypeOf(
+        useQuery(
+          queryOptions({
+            queryKey,
+            queryFn,
+          }),
+        ),
+      ).toEqualTypeOf<UseQueryResult<{ field: string }>>()
       expectTypeOf(
         useQuery({
           ...queryOptions({
