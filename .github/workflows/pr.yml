@@ -1,7 +1,6 @@
 name: pr
 
-on:
-  pull_request:
+on: [pull_request]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -53,9 +52,12 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run prettier
         run: pnpm run test:format
-  test-react-17:
-    name: 'Test React 17'
+  test-react-version:
+    name: 'Test React Version'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        react-version: [17, 18]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
@@ -74,7 +76,7 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v2
-      - name: Run Tests
+      - name: Run Tests for React ${{ matrix.react-version }}
         uses: nick-fields/retry@v2.8.3
         with:
           timeout_minutes: 5
@@ -82,4 +84,4 @@ jobs:
           command: npx nx affected --targets=test:lib --base=${{ github.event.pull_request.base.sha }}
         env:
           NX_CLOUD_DISTRIBUTED_EXECUTION: false
-          REACTJS_VERSION: 17
+          REACTJS_VERSION: ${{ matrix.react-version }}
