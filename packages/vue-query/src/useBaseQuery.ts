@@ -22,6 +22,7 @@ import type {
 import type { QueryClient } from './queryClient'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
+import type { MaybeRefOrGetter } from './types'
 
 export type UseBaseQueryReturnType<
   TData,
@@ -58,14 +59,14 @@ export function useBaseQuery<
   TPageParam,
 >(
   Observer: typeof QueryObserver,
-  options: UseQueryOptionsGeneric<
+  options: MaybeRefOrGetter<UseQueryOptionsGeneric<
     TQueryFnData,
     TError,
     TData,
     TQueryData,
     TQueryKey,
     TPageParam
-  >,
+  >>,
   queryClient?: QueryClient,
 ): UseBaseQueryReturnType<TData, TError> {
   if (process.env.NODE_ENV === 'development') {

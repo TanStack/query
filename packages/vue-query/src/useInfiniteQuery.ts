@@ -72,13 +72,13 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: DefinedInitialDataInfiniteOptions<
+  options: MaybeRefOrGetter<DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
     TPageParam
-  >,
+  >>,
   queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError>
 
@@ -89,13 +89,13 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UndefinedInitialDataInfiniteOptions<
+  options: MaybeRefOrGetter<UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
     TPageParam
-  >,
+  >>,
   queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError>
 
@@ -106,18 +106,18 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UseInfiniteQueryOptions<
+  options: MaybeRefOrGetter<UseInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
     TPageParam
-  >,
+  >>,
   queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError>
 
 export function useInfiniteQuery(
-  options: UseInfiniteQueryOptions,
+  options: MaybeRefOrGetter<UseInfiniteQueryOptions> ,
   queryClient?: QueryClient,
 ) {
   return useBaseQuery(

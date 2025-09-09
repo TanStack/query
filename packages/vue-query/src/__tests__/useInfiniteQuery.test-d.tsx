@@ -2,8 +2,8 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
-import type { InfiniteData } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import type { InfiniteData } from '@tanstack/query-core'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {
@@ -97,7 +97,7 @@ describe('Discriminated union return type', () => {
     }
   })
 
-  it('should accept computed options with infiniteQueryOptions', () => {
+  it('should accept computed options using infiniteQueryOptions', () => {
     const options = computed(() => infiniteQueryOptions({
       queryKey: ['infiniteQuery'],
       queryFn: () => sleep(0).then(() => 'Some data'),
