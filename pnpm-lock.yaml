@@ -197,10 +197,10 @@ importers:
         specifier: 4.11.0
         version: 4.11.0
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.12.2
@@ -234,10 +234,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^0.21.1
@@ -258,10 +258,10 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^0.21.1
@@ -286,10 +286,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^15.3.0
@@ -314,16 +314,16 @@ importers:
   examples/react/basic-typescript:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^0.26.1
@@ -363,10 +363,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^0.26.1
@@ -388,10 +388,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^0.21.1
@@ -415,10 +415,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^0.23.0
@@ -445,19 +445,19 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.0
         version: 3.7.4(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^0.30.0
@@ -485,10 +485,10 @@ importers:
   examples/react/optimistic-updates-typescript:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^0.21.1
@@ -519,10 +519,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^0.21.1
@@ -543,10 +543,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.0.0
@@ -565,10 +565,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^0.21.1
@@ -598,10 +598,10 @@ importers:
         specifier: ^6.0.2
         version: 6.2.2(@react-navigation/native@6.0.11)(react-native-gesture-handler@1.10.3)(react-native-safe-area-context@3.3.2)(react-native-screens@3.8.0)(react-native@0.64.3)(react@17.0.1)
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ~43.0.2
@@ -677,10 +677,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -717,10 +717,10 @@ importers:
         specifier: ^4.9.7
         version: 4.12.4(@types/react@19.1.9)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.0.0
@@ -745,10 +745,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^0.26.1
@@ -773,10 +773,10 @@ importers:
         specifier: ^4.9.7
         version: 4.12.4(@types/react@19.1.9)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.0.0
@@ -801,10 +801,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^4.40.2
+        specifier: ^4.41.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^0.21.1
@@ -829,7 +829,7 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/solid-query
       graphql:
         specifier: ^16.6.0
@@ -854,7 +854,7 @@ importers:
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/solid-query
       solid-js:
         specifier: ^1.5.1
@@ -873,7 +873,7 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/solid-query
       solid-js:
         specifier: ^1.5.1
@@ -892,7 +892,7 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/solid-query
       solid-js:
         specifier: ^1.5.1
@@ -914,7 +914,7 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -942,7 +942,7 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -970,7 +970,7 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -998,7 +998,7 @@ importers:
   examples/svelte/optimistic-updates-typescript:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1026,7 +1026,7 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1054,7 +1054,7 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1082,7 +1082,7 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1110,7 +1110,7 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1147,7 +1147,7 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.2.41
@@ -1166,7 +1166,7 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/vue-query
       vue:
         specifier: 3.2.39
@@ -1185,13 +1185,13 @@ importers:
   examples/vue/persister:
     dependencies:
       '@tanstack/query-persist-client-core':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^4.40.0
+        specifier: ^4.41.0
         version: link:../../../packages/vue-query
       vue:
         specifier: 3.2.41
