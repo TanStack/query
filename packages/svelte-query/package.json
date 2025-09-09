@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query",
-  "version": "4.40.0",
+  "version": "4.41.0",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "Lachlan Collins",
   "license": "MIT",

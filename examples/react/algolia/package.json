@@ -10,8 +10,8 @@
   "dependencies": {
     "@algolia/client-search": "4.11.0",
     "@algolia/transporter": "4.11.0",
-    "@tanstack/react-query": "^4.40.2",
-    "@tanstack/react-query-devtools": "^4.40.2",
+    "@tanstack/react-query": "^4.41.0",
+    "@tanstack/react-query-devtools": "^4.41.0",
     "algoliasearch": "4.12.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
