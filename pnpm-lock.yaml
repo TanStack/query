@@ -1703,7 +1703,7 @@ packages:
       '@babel/parser': 7.28.0
       '@babel/template': 7.27.2
       '@babel/traverse': 7.27.1
-      '@babel/types': 7.27.1
+      '@babel/types': 7.28.2
       convert-source-map: 1.8.0
       debug: 4.4.1
       gensync: 1.0.0-beta.2
@@ -4432,8 +4432,8 @@ packages:
       '@babel/helper-annotate-as-pure': 7.18.6
       '@babel/helper-module-imports': 7.18.6
       '@babel/helper-plugin-utils': 7.19.0
-      '@babel/plugin-syntax-jsx': 7.18.6(@babel/core@7.27.1)
-      '@babel/types': 7.27.1
+      '@babel/plugin-syntax-jsx': 7.18.6(@babel/core@7.28.0)
+      '@babel/types': 7.28.2
     dev: false
 
   /@babel/plugin-transform-react-pure-annotations@7.18.6(@babel/core@7.19.1):
@@ -4874,7 +4874,7 @@ packages:
       '@babel/plugin-transform-unicode-escapes': 7.18.6(@babel/core@7.9.0)
       '@babel/plugin-transform-unicode-regex': 7.18.6(@babel/core@7.9.0)
       '@babel/preset-modules': 0.1.5(@babel/core@7.9.0)
-      '@babel/types': 7.27.1
+      '@babel/types': 7.28.2
       core-js-compat: 3.23.3
       semver: 5.7.1
     transitivePeerDependencies:
@@ -9415,7 +9415,7 @@ packages:
       '@babel/compat-data': 7.19.1
       '@babel/core': 7.28.0
       '@babel/helper-define-polyfill-provider': 0.3.1(@babel/core@7.28.0)
-      semver: 6.3.1
+      semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
     dev: true
