@@ -2,6 +2,7 @@
 
 import type * as React from 'react'
 import type {
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
   InfiniteQueryObserverOptions,
@@ -119,6 +120,19 @@ export type UseInfiniteQueryResult<
   TData = unknown,
   TError = unknown,
 > = InfiniteQueryObserverResult<TData, TError>
+
+export type DefinedUseInfiniteQueryResult<
+  TData = unknown,
+  TError = unknown,
+> = DefinedInfiniteQueryObserverResult<TData, TError>
+
+export type UseSuspenseInfiniteQueryResult<
+  TData = unknown,
+  TError = unknown,
+> = OmitKeyof<
+  DefinedInfiniteQueryObserverResult<TData, TError>,
+  'isPlaceholderData'
+>
 
 export interface UseMutationOptions<
   TData = unknown,
