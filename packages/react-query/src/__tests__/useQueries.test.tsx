@@ -1766,20 +1766,24 @@ describe('useQueries', () => {
           <div data-testid="query-count">queries: {result.length}</div>
           <button
             onClick={() => {
-              setQueries([{
-                queryKey: ['query1'],
-                queryFn: () => 'data1',
-              }])
+              setQueries([
+                {
+                  queryKey: ['query1'],
+                  queryFn: () => 'data1',
+                },
+              ])
             }}
           >
             remove last
           </button>
           <button
             onClick={() => {
-              setQueries([{
-                queryKey: ['query2'],
-                queryFn: () => 'data2',
-              }])
+              setQueries([
+                {
+                  queryKey: ['query2'],
+                  queryFn: () => 'data2',
+                },
+              ])
             }}
           >
             remove first
@@ -1789,7 +1793,7 @@ describe('useQueries', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
-    
+
     await vi.advanceTimersByTimeAsync(0)
     renderCount = 0
 
