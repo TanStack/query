@@ -1742,7 +1742,6 @@ describe('useQueries', () => {
     expect(spy).toHaveBeenCalledTimes(3)
   })
 
-  // Regression test for issue #9638
   it('should not cause infinite re-renders when removing last query', async () => {
     let renderCount = 0
 
@@ -1767,7 +1766,6 @@ describe('useQueries', () => {
           <div data-testid="query-count">queries: {result.length}</div>
           <button
             onClick={() => {
-              // This should NOT cause infinite re-renders (removing last query)
               setQueries([{
                 queryKey: ['query1'],
                 queryFn: () => 'data1',
@@ -1778,7 +1776,6 @@ describe('useQueries', () => {
           </button>
           <button
             onClick={() => {
-              // This should work fine (removing first query)
               setQueries([{
                 queryKey: ['query2'],
                 queryFn: () => 'data2',
@@ -1794,28 +1791,19 @@ describe('useQueries', () => {
     const rendered = renderWithClient(queryClient, <Page />)
     
     await vi.advanceTimersByTimeAsync(0)
-
-    // Reset render count after initial render
     renderCount = 0
 
-    // Remove last query - this was causing infinite re-renders
     fireEvent.click(rendered.getByRole('button', { name: /remove last/i }))
-
     await vi.advanceTimersByTimeAsync(100)
 
-    // Should have a reasonable number of renders (not infinite)
     expect(renderCount).toBeLessThan(10)
     expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
 
-    // Reset render count
     renderCount = 0
 
-    // Remove first query - this should also work fine
     fireEvent.click(rendered.getByRole('button', { name: /remove first/i }))
-
     await vi.advanceTimersByTimeAsync(100)
 
-    // Should have a reasonable number of renders
     expect(renderCount).toBeLessThan(10)
     expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
   })
