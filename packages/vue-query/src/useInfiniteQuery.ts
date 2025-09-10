@@ -117,7 +117,7 @@ export function useInfiniteQuery<
 ): UseInfiniteQueryReturnType<TData, TError>
 
 export function useInfiniteQuery(
-  options: MaybeRefOrGetter<UseInfiniteQueryOptions> ,
+  options: MaybeRefOrGetter<UseInfiniteQueryOptions>,
   queryClient?: QueryClient,
 ) {
   return useBaseQuery(

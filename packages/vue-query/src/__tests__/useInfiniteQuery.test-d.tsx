@@ -110,4 +110,18 @@ describe('Discriminated union return type', () => {
       expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
   })
+
+  it('should accept plain options using infiniteQueryOptions', () => {
+    const options = () => infiniteQueryOptions({
+      queryKey: ['infiniteQuery'],
+      queryFn: () => sleep(0).then(() => 'Some data'),
+      getNextPageParam: () => undefined,
+      initialPageParam: 0,
+    })
+    const query = reactive(useInfiniteQuery(options))
+
+    if (query.isSuccess) {
+      expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
+    }
+  })
 })
