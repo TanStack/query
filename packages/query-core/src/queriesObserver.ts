@@ -118,21 +118,22 @@ export class QueriesObserver<
         observer.getCurrentResult(),
       )
 
+      const hasLengthChange = prevObservers.length !== newObservers.length
       const hasIndexChange = newObservers.some(
         (observer, index) => observer !== prevObservers[index],
       )
+      const hasStructuralChange = hasLengthChange || hasIndexChange
 
-      const hasResultChange =
-        prevObservers.length === newObservers.length && !hasIndexChange
-          ? newResult.some((result, index) => {
-              const prev = this.#result[index]
-              return !prev || !shallowEqualObjects(result, prev)
-            })
-          : true
+      const hasResultChange = hasStructuralChange
+        ? true
+        : newResult.some((result, index) => {
+            const prev = this.#result[index]
+            return !prev || !shallowEqualObjects(result, prev)
+          })
 
-      if (!hasIndexChange && !hasResultChange) return
+      if (!hasStructuralChange && !hasResultChange) return
 
-      if (hasIndexChange) {
+      if (hasStructuralChange) {
         this.#observers = newObservers
       }
 
@@ -140,7 +141,7 @@ export class QueriesObserver<
 
       if (!this.hasListeners()) return
 
-      if (hasIndexChange) {
+      if (hasStructuralChange) {
         difference(prevObservers, newObservers).forEach((observer) => {
           observer.destroy()
         })
