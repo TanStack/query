@@ -1,7 +1,7 @@
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=be2d8a11-9712-4c1d-9963-580b2d4fb133" />
 
 <div align="center">
-  <img src="./media/header_query.png" >
+  <img src="./media/header_query.png" alt="TanStack Query" />
 </div>
 
 A data‑fetching library built to simplify fetching, caching, synchronizing, and updating server state.
