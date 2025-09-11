@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { sleep } from '../utils.js'
+  import { sleep } from '@tanstack/query-test-utils'
   import type { Writable } from 'svelte/store'
   import type { StatusResult } from '../utils.js'
 

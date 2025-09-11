@@ -7,9 +7,12 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import { QueryClient, notifyManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  notifyManager,
+  shouldThrowError,
+} from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { shouldThrowError } from './util'
 import { injectIsRestoring } from './inject-is-restoring'
 import type {
   QueryKey,

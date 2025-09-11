@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, QueryObserver } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('queryCache', () => {
   let queryClient: QueryClient
@@ -8,7 +8,7 @@ describe('queryCache', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    queryClient = createQueryClient()
+    queryClient = new QueryClient()
     queryCache = queryClient.getQueryCache()
   })
 
@@ -18,13 +18,12 @@ describe('queryCache', () => {
   })
 
   describe('subscribe', () => {
-    test('should pass the correct query', async () => {
+    test('should pass the correct query', () => {
       const key = queryKey()
       const subscriber = vi.fn()
       const unsubscribe = queryCache.subscribe(subscriber)
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find({ queryKey: key })
-      await vi.advanceTimersByTimeAsync(0)
       expect(subscriber).toHaveBeenCalledWith({ query, type: 'added' })
       unsubscribe()
     })
@@ -58,7 +57,8 @@ describe('queryCache', () => {
 
       const unsubScribeObserver = observer.subscribe(vi.fn())
 
-      await vi.waitFor(() => expect(events.length).toBe(8))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(events.length).toBe(8)
 
       expect(events).toEqual([
         'added', // 1. Query added -> loading
@@ -87,8 +87,8 @@ describe('queryCache', () => {
         queryKey: key,
         queryFn: () => sleep(100).then(() => 'data'),
       })
-      const query = queryCache.find({ queryKey: key })
       await vi.advanceTimersByTimeAsync(100)
+      const query = queryCache.find({ queryKey: key })
       expect(callback).toHaveBeenCalledWith({ query, type: 'added' })
     })
 
@@ -129,13 +129,11 @@ describe('queryCache', () => {
         queryKey: ['key1'],
         queryFn: () => sleep(100).then(() => 'data1'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       expect(testCache.findAll().length).toBe(1)
       testClient.prefetchQuery({
         queryKey: ['key2'],
         queryFn: () => sleep(100).then(() => 'data2'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       expect(testCache.findAll().length).toBe(2)
       testClient.prefetchQuery({
         queryKey: ['key3'],
@@ -182,17 +180,14 @@ describe('queryCache', () => {
         queryKey: key1,
         queryFn: () => sleep(100).then(() => 'data1'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       queryClient.prefetchQuery({
         queryKey: key2,
         queryFn: () => sleep(100).then(() => 'data2'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       queryClient.prefetchQuery({
         queryKey: [{ a: 'a', b: 'b' }],
         queryFn: () => sleep(100).then(() => 'data3'),
       })
-      await vi.advanceTimersByTimeAsync(100)
       queryClient.prefetchQuery({
         queryKey: ['posts', 1],
         queryFn: () => sleep(100).then(() => 'data4'),
@@ -320,7 +315,7 @@ describe('queryCache', () => {
       const onSettled = vi.fn()
       const onError = vi.fn()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
-      const testClient = createQueryClient({ queryCache: testCache })
+      const testClient = new QueryClient({ queryCache: testCache })
       testClient.prefetchQuery({
         queryKey: key,
         queryFn: () => sleep(100).then(() => Promise.reject<unknown>('error')),
@@ -342,7 +337,7 @@ describe('queryCache', () => {
       const onSettled = vi.fn()
       const onError = vi.fn()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
-      const testClient = createQueryClient({ queryCache: testCache })
+      const testClient = new QueryClient({ queryCache: testCache })
       testClient.prefetchQuery({
         queryKey: key,
         queryFn: () => sleep(100).then(() => ({ data: 5 })),

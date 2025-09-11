@@ -3,15 +3,20 @@ id: react-native
 title: React Native
 ---
 
-React Query is designed to work out of the box with React Native, with the exception of the devtools, which are only supported with React DOM at this time.
+React Query is designed to work out of the box with React Native.
 
-There is a 3rd party [Expo](https://docs.expo.dev/) plugin which you can try: https://github.com/expo/dev-plugins/tree/main/packages/react-query
+## DevTools Support
 
-There is a 3rd party [Flipper](https://fbflipper.com/docs/getting-started/react-native/) plugin which you can try: https://github.com/bgaleotti/react-query-native-devtools
+There are several options available for React Native DevTools integration:
 
-There is a 3rd party [Reactotron](https://github.com/infinitered/reactotron/) plugin which you can try: https://github.com/hsndmr/reactotron-react-query
+1. **Native macOS App**: A 3rd party app for debugging React Query in any js-based application:
+   https://github.com/LovesWorking/rn-better-dev-tools
 
-If you would like to help us make the built-in devtools platform agnostic, please let us know!
+2. **Flipper Plugin**: A 3rd party plugin for Flipper users:
+   https://github.com/bgaleotti/react-query-native-devtools
+
+3. **Reactotron Plugin**: A 3rd party plugin for Reactotron users:
+   https://github.com/hsndmr/reactotron-react-query
 
 ## Online status management
 
@@ -69,13 +74,15 @@ useEffect(() => {
 ## Refresh on Screen focus
 
 In some situations, you may want to refetch the query when a React Native Screen is focused again.
-This custom hook will call the provided `refetch` function when the screen is focused again.
+This custom hook will refetch **all active stale queries** when the screen is focused again.
 
 ```tsx
 import React from 'react'
 import { useFocusEffect } from '@react-navigation/native'
+import { useQueryClient } from '@tanstack/react-query'
 
-export function useRefreshOnFocus<T>(refetch: () => Promise<T>) {
+export function useRefreshOnFocus() {
+  const queryClient = useQueryClient()
   const firstTimeRef = React.useRef(true)
 
   useFocusEffect(
@@ -85,13 +92,18 @@ export function useRefreshOnFocus<T>(refetch: () => Promise<T>) {
         return
       }
 
-      refetch()
-    }, [refetch]),
+      // refetch all stale active queries
+      queryClient.refetchQueries({
+        queryKey: ['posts'],
+        stale: true,
+        type: 'active',
+      })
+    }, [queryClient]),
   )
 }
 ```
 
-In the above code, `refetch` is skipped the first time because `useFocusEffect` calls our callback on mount in addition to screen focus.
+In the above code, the first focus (when the screen is initially mounted) is skipped because `useFocusEffect` calls our callback on mount in addition to screen focus.
 
 ## Disable queries on out of focus screens
 

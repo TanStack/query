@@ -7,6 +7,7 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
+  MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
   Override,
@@ -96,7 +97,6 @@ export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
@@ -104,7 +104,6 @@ export interface CreateInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -145,7 +144,8 @@ export type DefinedCreateQueryResult<
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+> = BaseQueryNarrowing<TData, TError> &
+  MapToSignals<InfiniteQueryObserverResult<TData, TError>>
 
 /**
  * @public
@@ -158,6 +158,16 @@ export type DefinedCreateInfiniteQueryResult<
     TError
   >,
 > = MapToSignals<TDefinedInfiniteQueryObserver>
+
+export interface CreateMutationOptions<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TContext = unknown,
+> extends OmitKeyof<
+    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    '_defaulted'
+  > {}
 
 /**
  * @public
@@ -308,8 +318,3 @@ export type CreateMutationResult<
   >,
 > = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
   MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
-
-/**
- * @public
- */
-export type NonUndefinedGuard<T> = T extends undefined ? never : T

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createQueries } from '../../src/index.js'
-  import { sleep } from '../utils.js'
+  import { sleep } from '@tanstack/query-test-utils'
   import type { QueryClient } from '@tanstack/query-core'
 
   export let queryClient: QueryClient
@@ -11,10 +11,7 @@
     {
       queries: ids.map((id) => ({
         queryKey: [id],
-        queryFn: async () => {
-          await sleep(5)
-          return id
-        },
+        queryFn: () => sleep(10).then(() => id),
       })),
       combine: (results) => {
         return {

@@ -36,12 +36,7 @@ class TodosComponent {
 
 ```ts
 export class BlogPostComponent {
-  // Until Angular supports signal-based inputs, we have to set a signal
-  @Input({ required: true, alias: 'postId' })
-  set _postId(value: number) {
-    this.postId.set(value)
-  }
-  postId = signal(0)
+  postId = input.required<number>()
   queryClient = inject(QueryClient)
 
   result = injectQuery(() => ({

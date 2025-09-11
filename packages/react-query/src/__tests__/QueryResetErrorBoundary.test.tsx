@@ -1,21 +1,30 @@
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
-
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
+  QueryClient,
   QueryErrorResetBoundary,
   useQueries,
   useQuery,
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { renderWithClient } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   describe('useQuery', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
@@ -29,17 +38,15 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data } = useQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            if (!succeed) {
-              throw new Error('Error')
-            } else {
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Error')
               return 'data'
-            }
-          },
+            }),
           retry: false,
           throwOnError: true,
         })
+
         return <div>{data}</div>
       }
 
@@ -68,11 +75,16 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       succeed = true
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('data')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
 
@@ -87,18 +99,16 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data, status } = useQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            if (!succeed) {
-              throw new Error('Error')
-            } else {
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Error')
               return 'data'
-            }
-          },
+            }),
           retry: false,
           enabled: !succeed,
           throwOnError: true,
         })
+
         return (
           <div>
             <div>status: {status}</div>
@@ -132,11 +142,16 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       succeed = true
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('status: error'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('status: error')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
 
@@ -153,14 +168,11 @@ describe('QueryErrorResetBoundary', () => {
         const [enabled, setEnabled] = React.useState(false)
         const { data } = useQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            if (!succeed) {
-              throw new Error('Error')
-            } else {
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Error')
               return 'data'
-            }
-          },
+            }),
           retry: false,
           enabled,
           throwOnError: true,
@@ -198,11 +210,16 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       succeed = true
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('data')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
 
@@ -216,7 +233,8 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data, refetch, status, fetchStatus } = useQuery<string>({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Error')),
+          queryFn: () =>
+            sleep(10).then(() => Promise.reject(new Error('Error'))),
           retry: false,
           enabled: false,
           throwOnError: true,
@@ -258,11 +276,18 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() =>
+      expect(
         rendered.getByText('status: pending, fetchStatus: idle'),
-      )
+      ).toBeInTheDocument()
+      await vi.advanceTimersByTimeAsync(11)
+      expect(
+        rendered.getByText('status: pending, fetchStatus: idle'),
+      ).toBeInTheDocument()
+
       fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-      await waitFor(() => rendered.getByText('error boundary'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
 
@@ -278,17 +303,15 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data } = useQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            if (!succeed) {
-              throw new Error('Error')
-            } else {
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Error')
               return 'data'
-            }
-          },
+            }),
           retry: false,
           throwOnError: true,
         })
+
         return <div>{data}</div>
       }
 
@@ -316,11 +339,16 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       succeed = true
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('error boundary'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
 
@@ -336,18 +364,16 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data } = useQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            if (!succeed) {
-              throw new Error('Error')
-            } else {
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Error')
               return 'data'
-            }
-          },
+            }),
           retry: false,
           throwOnError: true,
           initialData: 'initial',
         })
+
         return <div>{data}</div>
       }
 
@@ -376,11 +402,17 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      expect(rendered.getByText('initial')).toBeInTheDocument()
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       succeed = true
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('data')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
 
@@ -392,22 +424,20 @@ describe('QueryErrorResetBoundary', () => {
       const key = queryKey()
 
       let succeed = false
-      let shouldReset = true
+      let shouldReset = false
 
       function Page() {
         const { data } = useQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            if (!succeed) {
-              throw new Error('Error')
-            } else {
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Error')
               return 'data'
-            }
-          },
+            }),
           retry: false,
           throwOnError: true,
         })
+
         return <div>{data}</div>
       }
 
@@ -440,15 +470,31 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
+      succeed = false
       shouldReset = true
-      fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('error boundary'))
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       succeed = true
       shouldReset = false
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('error boundary'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
+      succeed = true
+      shouldReset = true
+
+      fireEvent.click(rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('data')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
 
@@ -463,14 +509,15 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data } = useQuery<string>({
           queryKey: key,
-          queryFn: async () => {
-            fetchCount++
-            await sleep(10)
-            throw new Error('Error')
-          },
+          queryFn: () =>
+            sleep(10).then(() => {
+              fetchCount++
+              throw new Error('Error')
+            }),
           retry: false,
           throwOnError: true,
         })
+
         return <div>{data}</div>
       }
 
@@ -499,14 +546,21 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('error boundary'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
       expect(fetchCount).toBe(3)
+
       consoleMock.mockRestore()
     })
 
@@ -522,18 +576,17 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data } = useSuspenseQuery({
           queryKey: key,
-          queryFn: async () => {
-            fetchCount++
-            await sleep(10)
-            if (fetchCount > 2) {
-              return 'data'
-            } else {
+          queryFn: () =>
+            sleep(10).then(() => {
+              fetchCount++
+              if (fetchCount > 2) return 'data'
               throw new Error('Error')
-            }
-          },
+            }),
           retry: false,
         })
+
         renders++
+
         return <div>{data}</div>
       }
 
@@ -564,15 +617,25 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      expect(rendered.getByText('loading')).toBeInTheDocument()
+      await act(() => vi.advanceTimersByTimeAsync(10))
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      expect(rendered.getByText('loading')).toBeInTheDocument()
+      await act(() => vi.advanceTimersByTimeAsync(10))
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      expect(rendered.getByText('loading')).toBeInTheDocument()
+      await act(() => vi.advanceTimersByTimeAsync(10))
+      expect(rendered.getByText('data')).toBeInTheDocument()
+
       expect(fetchCount).toBe(3)
       expect(renders).toBe(1)
+
       consoleMock.mockRestore()
     })
 
@@ -597,6 +660,7 @@ describe('QueryErrorResetBoundary', () => {
       )
 
       expect(rendered.queryByText('page')).not.toBeNull()
+
       consoleMock.mockRestore()
     })
 
@@ -612,17 +676,15 @@ describe('QueryErrorResetBoundary', () => {
       function Page() {
         const { data } = useQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            if (!succeed) {
-              throw new Error('Error')
-            } else {
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Error')
               return 'data'
-            }
-          },
+            }),
           retry: false,
           throwOnError: true,
         })
+
         return <div>{data}</div>
       }
 
@@ -651,14 +713,20 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       succeed = true
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('data')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
   })
+
   describe('useQueries', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
       const consoleMock = vi
@@ -673,20 +741,18 @@ describe('QueryErrorResetBoundary', () => {
           queries: [
             {
               queryKey: key,
-              queryFn: async () => {
-                await sleep(10)
-                if (!succeed) {
-                  throw new Error('Error')
-                } else {
+              queryFn: () =>
+                sleep(10).then(() => {
+                  if (!succeed) throw new Error('Error')
                   return 'data'
-                }
-              },
+                }),
               retry: false,
               throwOnError: true,
               retryOnMount: true,
             },
           ],
         })
+
         return <div>{data}</div>
       }
 
@@ -715,11 +781,16 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       succeed = true
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('data')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
 
@@ -736,19 +807,17 @@ describe('QueryErrorResetBoundary', () => {
           queries: [
             {
               queryKey: key,
-              queryFn: async () => {
-                await sleep(10)
-                if (!succeed) {
-                  throw new Error('Error')
-                } else {
+              queryFn: () =>
+                sleep(10).then(() => {
+                  if (!succeed) throw new Error('Error')
                   return 'data'
-                }
-              },
+                }),
               retry: false,
               retryOnMount: true,
             },
           ],
         })
+
         return <div>{data}</div>
       }
 
@@ -771,7 +840,7 @@ describe('QueryErrorResetBoundary', () => {
                 </div>
               )}
             >
-              <React.Suspense fallback="Loader">
+              <React.Suspense fallback="loading">
                 <Page />
               </React.Suspense>
             </ErrorBoundary>
@@ -779,11 +848,18 @@ describe('QueryErrorResetBoundary', () => {
         </QueryErrorResetBoundary>,
       )
 
-      await waitFor(() => rendered.getByText('error boundary'))
-      await waitFor(() => rendered.getByText('retry'))
+      expect(rendered.getByText('loading')).toBeInTheDocument()
+      await act(() => vi.advanceTimersByTimeAsync(10))
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+
       succeed = true
+
       fireEvent.click(rendered.getByText('retry'))
-      await waitFor(() => rendered.getByText('data'))
+      expect(rendered.getByText('loading')).toBeInTheDocument()
+      await act(() => vi.advanceTimersByTimeAsync(10))
+      expect(rendered.getByText('data')).toBeInTheDocument()
+
       consoleMock.mockRestore()
     })
   })

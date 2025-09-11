@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "5.74.3",
+  "version": "5.87.4",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -28,10 +28,12 @@
   "main": "dist/esm/index.js",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./dist/esm/index.d.ts",
       "default": "./dist/esm/index.js"
     },
     "./production": {
+      "@tanstack/custom-condition": "./src/production.ts",
       "types": "./dist/esm/production.d.ts",
       "default": "./dist/esm/production.js"
     },
@@ -52,10 +54,10 @@
   },
   "devDependencies": {
     "@tanstack/vue-query": "workspace:*",
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitejs/plugin-vue": "^5.2.4",
     "eslint-plugin-vue": "^9.27.0",
     "typescript": "5.8.3",
-    "vite": "^6.2.4",
+    "vite": "^6.3.5",
     "vue": "^3.4.27",
     "vue-tsc": "^2.2.8"
   },

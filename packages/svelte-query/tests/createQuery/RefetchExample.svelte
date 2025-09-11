@@ -2,7 +2,7 @@
   import { QueryClient } from '@tanstack/query-core'
   import { derived, writable } from 'svelte/store'
   import { createQuery } from '../../src/index.js'
-  import { sleep } from '../utils.js'
+  import { sleep } from '@tanstack/query-test-utils'
   import type { QueryObserverResult } from '@tanstack/query-core'
   import type { Writable } from 'svelte/store'
 
@@ -13,10 +13,7 @@
 
   const options = derived(count, ($count) => ({
     queryKey: ['test'],
-    queryFn: async () => {
-      await sleep(5)
-      return ++$count
-    },
+    queryFn: () => sleep(10).then(() => ++$count),
   }))
 
   const query = createQuery(options, queryClient)

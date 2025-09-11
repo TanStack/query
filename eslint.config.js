@@ -45,10 +45,7 @@ export default [
   {
     files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
-    rules: {
-      ...vitest.configs.recommended.rules,
-      'vitest/expect-expect': 'warn',
-    },
+    rules: vitest.configs.recommended.rules,
     settings: { vitest: { typecheck: true } },
   },
 ]

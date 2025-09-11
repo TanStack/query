@@ -9,7 +9,7 @@ const result = useSuspenseInfiniteQuery(options)
 
 **Options**
 
-The same as for [useInfiniteQuery](../reference/useInfiniteQuery.md), except for:
+The same as for [useInfiniteQuery](../useInfiniteQuery.md), except for:
 
 - `suspense`
 - `throwOnError`
@@ -18,7 +18,7 @@ The same as for [useInfiniteQuery](../reference/useInfiniteQuery.md), except for
 
 **Returns**
 
-Same object as [useInfiniteQuery](../reference/useInfiniteQuery.md), except that:
+Same object as [useInfiniteQuery](../useInfiniteQuery.md), except that:
 
 - `data` is guaranteed to be defined
 - `isPlaceholderData` is missing
@@ -27,4 +27,4 @@ Same object as [useInfiniteQuery](../reference/useInfiniteQuery.md), except that
 
 **Caveat**
 
-[Cancellation](../guides/query-cancellation.md) does not work.
+[Cancellation](../../guides/query-cancellation.md) does not work.
