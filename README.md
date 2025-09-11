@@ -4,7 +4,7 @@
   <img src="./media/header_query.png" alt="TanStack Query" />
 </div>
 
-A data‑fetching library built to simplify fetching, caching, synchronizing, and updating server state.
+An async state management library built to simplify fetching, caching, synchronizing, and updating server state.
 
 - Protocol‑agnostic fetching (REST, GraphQL, promises, etc.)
 - Caching, refetching, pagination & infinite scroll
