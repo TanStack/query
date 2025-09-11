@@ -23,8 +23,8 @@ export class TasksService {
     queryOptions({
       queryKey: ['tasks'],
       queryFn: () => {
-        return lastValueFrom(this.#http.get<Array<string>>('/api/tasks'));
-      }
+        return lastValueFrom(this.#http.get<Array<string>>('/api/tasks'))
+      },
     })
 
   /**

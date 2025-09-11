@@ -13,7 +13,8 @@ import { TasksService } from '../services/tasks.service'
   imports: [FormsModule, DatePipe],
   template: `
     <p>
-      This example is the same as the optimistic-updates one but where we show how to test your service.
+      This example is the same as the optimistic-updates one but where we show
+      how to test your service.
     </p>
 
     <hr />

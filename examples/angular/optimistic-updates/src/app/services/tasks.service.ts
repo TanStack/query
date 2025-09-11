@@ -48,7 +48,7 @@ export class TasksService {
         ),
       mutationKey: ['tasks'],
       onSuccess: () => {},
-      onMutate: async ({ task } : {task: string}) => {
+      onMutate: async ({ task }: { task: string }) => {
         // Cancel any outgoing refetches
         // (so they don't overwrite our optimistic update)
         await this.#queryClient.cancelQueries({ queryKey: ['tasks'] })

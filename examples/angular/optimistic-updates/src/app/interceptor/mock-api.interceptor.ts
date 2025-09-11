@@ -46,7 +46,7 @@ export const mockInterceptor: HttpInterceptorFn = (
     }
   }
   if (req.url === '/api/tasks-wrong-url') {
-    return throwError(() => new Error('error')).pipe(delay(1000));
+    return throwError(() => new Error('error')).pipe(delay(1000))
   }
 
   return next(req)
