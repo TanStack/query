@@ -45,7 +45,7 @@ export class BlogPostComponent {
     placeholderData: () => {
       // Use the smaller/preview version of the blogPost from the 'blogPosts'
       // query as the placeholder data for this blogPost query
-      return queryClient
+      return this.queryClient
         .getQueryData(['blogPosts'])
         ?.find((d) => d.id === this.postId())
     },
