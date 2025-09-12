@@ -21,19 +21,19 @@ interface MutationCacheConfig {
     variables: unknown,
     onMutateResult: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-    mutationFnContext: MutationFunctionContext,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onSuccess?: (
     data: unknown,
     variables: unknown,
     onMutateResult: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-    mutationFnContext: MutationFunctionContext,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onMutate?: (
     variables: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-    mutationFnContext: MutationFunctionContext,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onSettled?: (
     data: unknown | undefined,
@@ -41,7 +41,7 @@ interface MutationCacheConfig {
     variables: unknown,
     onMutateResult: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-    mutationFnContext: MutationFunctionContext,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
 }
 

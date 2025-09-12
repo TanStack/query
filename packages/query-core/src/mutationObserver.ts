@@ -163,7 +163,7 @@ export class MutationObserver<
       // First trigger the mutate callbacks
       if (this.#mutateOptions && this.hasListeners()) {
         const variables = this.#currentResult.variables!
-        const scope = this.#currentResult.scope
+        const onMutateResult = this.#currentResult.context
 
         const context = {
           client: this.#client,
@@ -175,23 +175,28 @@ export class MutationObserver<
           this.#mutateOptions.onSuccess?.(
             action.data,
             variables,
-            scope,
+            onMutateResult,
             context,
           )
           this.#mutateOptions.onSettled?.(
             action.data,
             null,
             variables,
-            scope,
+            onMutateResult,
             context,
           )
         } else if (action?.type === 'error') {
-          this.#mutateOptions.onError?.(action.error, variables, scope, context)
+          this.#mutateOptions.onError?.(
+            action.error,
+            variables,
+            onMutateResult,
+            context,
+          )
           this.#mutateOptions.onSettled?.(
             undefined,
             action.error,
             variables,
-            scope,
+            onMutateResult,
             context,
           )
         }

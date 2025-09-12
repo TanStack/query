@@ -68,7 +68,6 @@ describe('mutations', () => {
 
     expect(mutation.getCurrentResult()).toEqual({
       context: undefined,
-      scope: undefined,
       data: undefined,
       error: null,
       failureCount: 0,
@@ -97,7 +96,6 @@ describe('mutations', () => {
 
     expect(states[0]).toEqual({
       context: undefined,
-      scope: undefined,
       data: undefined,
       error: null,
       failureCount: 0,
@@ -118,7 +116,6 @@ describe('mutations', () => {
 
     expect(states[1]).toEqual({
       context: 'todo',
-      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 0,
@@ -139,7 +136,6 @@ describe('mutations', () => {
 
     expect(states[2]).toEqual({
       context: 'todo',
-      scope: 'todo',
       data: 'todo',
       error: null,
       failureCount: 0,
@@ -178,7 +174,6 @@ describe('mutations', () => {
 
     expect(states[0]).toEqual({
       context: undefined,
-      scope: undefined,
       data: undefined,
       error: null,
       failureCount: 0,
@@ -199,7 +194,6 @@ describe('mutations', () => {
 
     expect(states[1]).toEqual({
       context: 'todo',
-      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 0,
@@ -220,7 +214,6 @@ describe('mutations', () => {
 
     expect(states[2]).toEqual({
       context: 'todo',
-      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 1,
@@ -241,7 +234,6 @@ describe('mutations', () => {
 
     expect(states[3]).toEqual({
       context: 'todo',
-      scope: 'todo',
       data: undefined,
       error: new Error('err'),
       failureCount: 2,
@@ -282,7 +274,6 @@ describe('mutations', () => {
         },
         {
           context: 'todo',
-          scope: 'todo',
           data: undefined,
           error: null,
           failureCount: 1,
@@ -296,7 +287,6 @@ describe('mutations', () => {
 
     expect(mutation.state).toEqual({
       context: 'todo',
-      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 1,
@@ -312,7 +302,6 @@ describe('mutations', () => {
     // check that the mutation is correctly resumed
     expect(mutation.state).toEqual({
       context: 'todo',
-      scope: 'todo',
       data: undefined,
       error: null,
       failureCount: 1,
@@ -327,7 +316,6 @@ describe('mutations', () => {
 
     expect(mutation.state).toEqual({
       context: 'todo',
-      scope: 'todo',
       data: 'todo',
       error: null,
       failureCount: 0,

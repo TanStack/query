@@ -29,11 +29,7 @@ export interface MutationState<
   TVariables = unknown,
   TOnMutateResult = unknown,
 > {
-  /**
-   * @deprecated `context` was renamed to `scope`. This will be removed in the next major version. Use the `scope` property instead.
-   */
   context: TOnMutateResult | undefined
-  scope: TOnMutateResult | undefined
   data: TData | undefined
   error: TError | null
   failureCount: number
@@ -54,7 +50,7 @@ interface PendingAction<TVariables, TOnMutateResult> {
   type: 'pending'
   isPaused: boolean
   variables?: TVariables
-  scope?: TOnMutateResult
+  context?: TOnMutateResult
 }
 
 interface SuccessAction<TData> {
@@ -221,14 +217,14 @@ export class Mutation<
           this as Mutation<unknown, unknown, unknown, unknown>,
           mutationFnContext,
         )
-        const scope = await this.options.onMutate?.(
+        const context = await this.options.onMutate?.(
           variables,
           mutationFnContext,
         )
-        if (scope !== this.state.scope) {
+        if (context !== this.state.context) {
           this.#dispatch({
             type: 'pending',
-            scope,
+            context,
             variables,
             isPaused,
           })
@@ -240,7 +236,7 @@ export class Mutation<
       await this.#mutationCache.config.onSuccess?.(
         data,
         variables,
-        this.state.scope,
+        this.state.context,
         this as Mutation<unknown, unknown, unknown, unknown>,
         mutationFnContext,
       )
@@ -248,7 +244,7 @@ export class Mutation<
       await this.options.onSuccess?.(
         data,
         variables,
-        this.state.scope,
+        this.state.context,
         mutationFnContext,
       )
 
@@ -257,7 +253,7 @@ export class Mutation<
         data,
         null,
         this.state.variables,
-        this.state.scope,
+        this.state.context,
         this as Mutation<unknown, unknown, unknown, unknown>,
         mutationFnContext,
       )
@@ -266,7 +262,7 @@ export class Mutation<
         data,
         null,
         variables,
-        this.state.scope,
+        this.state.context,
         mutationFnContext,
       )
 
@@ -278,7 +274,7 @@ export class Mutation<
         await this.#mutationCache.config.onError?.(
           error as any,
           variables,
-          this.state.scope,
+          this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>,
           mutationFnContext,
         )
@@ -286,7 +282,7 @@ export class Mutation<
         await this.options.onError?.(
           error as TError,
           variables,
-          this.state.scope,
+          this.state.context,
           mutationFnContext,
         )
 
@@ -295,7 +291,7 @@ export class Mutation<
           undefined,
           error as any,
           this.state.variables,
-          this.state.scope,
+          this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>,
           mutationFnContext,
         )
@@ -304,7 +300,7 @@ export class Mutation<
           undefined,
           error as TError,
           variables,
-          this.state.scope,
+          this.state.context,
           mutationFnContext,
         )
         throw error
@@ -340,8 +336,7 @@ export class Mutation<
         case 'pending':
           return {
             ...state,
-            context: action.scope,
-            scope: action.scope,
+            context: action.context,
             data: undefined,
             failureCount: 0,
             failureReason: null,
@@ -396,7 +391,6 @@ export function getDefaultState<
 >(): MutationState<TData, TError, TVariables, TOnMutateResult> {
   return {
     context: undefined,
-    scope: undefined,
     data: undefined,
     error: null,
     failureCount: 0,
