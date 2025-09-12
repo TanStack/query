@@ -8,10 +8,10 @@ title: PersistQueryClientFeature
 # Type Alias: PersistQueryClientFeature
 
 ```ts
-type PersistQueryClientFeature = QueryFeature<'PersistQueryClient'>
+type PersistQueryClientFeature = QueryFeature<"PersistQueryClient">;
 ```
 
-Defined in: [providers.ts:164](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/providers.ts#L164)
+Defined in: [providers.ts:164](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L164)
 
 A type alias that represents a feature which enables persistence.
 The type is used to describe the return value of the `withPersistQueryClient` function.

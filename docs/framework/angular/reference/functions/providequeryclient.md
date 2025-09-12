@@ -11,7 +11,7 @@ title: provideQueryClient
 function provideQueryClient(queryClient): Provider
 ```
 
-Defined in: [providers.ts:14](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/providers.ts#L14)
+Defined in: [providers.ts:14](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L14)
 
 Usually [provideTanStackQuery](../providetanstackquery.md) is used once to set up TanStack Query and the
 [https://tanstack.com/query/latest/docs/reference/QueryClient\|QueryClient](https://tanstack.com/query/latest/docs/reference/QueryClient|QueryClient)

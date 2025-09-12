@@ -7,7 +7,7 @@ title: InjectIsMutatingOptions
 
 # Interface: InjectIsMutatingOptions
 
-Defined in: [inject-is-mutating.ts:13](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L13)
+Defined in: [inject-is-mutating.ts:13](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L13)
 
 ## Properties
 
@@ -17,7 +17,7 @@ Defined in: [inject-is-mutating.ts:13](https://github.com/arnoud-dv/query/blob/m
 optional injector: Injector;
 ```
 
-Defined in: [inject-is-mutating.ts:19](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L19)
+Defined in: [inject-is-mutating.ts:19](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L19)
 
 The `Injector` in which to create the isMutating signal.
 

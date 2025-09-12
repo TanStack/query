@@ -10,7 +10,6 @@ title: injectQuery
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
-
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -26,7 +25,6 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
-
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -55,18 +53,14 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 ## Call Signature
 
 ```ts
-function injectQuery<TQueryFnData, TError, TData, TQueryKey>(
-  injectQueryFn,
-  options?,
-): DefinedCreateQueryResult<TData, TError>
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): DefinedCreateQueryResult<TData, TError>
 ```
 
-Defined in: [inject-query.ts:65](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L65)
+Defined in: [inject-query.ts:65](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L65)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
-
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -82,7 +76,6 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
-
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -104,7 +97,7 @@ class ServiceOrComponent {
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
@@ -147,18 +140,14 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 ## Call Signature
 
 ```ts
-function injectQuery<TQueryFnData, TError, TData, TQueryKey>(
-  injectQueryFn,
-  options?,
-): CreateQueryResult<TData, TError>
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): CreateQueryResult<TData, TError>
 ```
 
-Defined in: [inject-query.ts:116](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L116)
+Defined in: [inject-query.ts:116](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L116)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
-
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -174,7 +163,6 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
-
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -196,7 +184,7 @@ class ServiceOrComponent {
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 
@@ -239,18 +227,14 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 ## Call Signature
 
 ```ts
-function injectQuery<TQueryFnData, TError, TData, TQueryKey>(
-  injectQueryFn,
-  options?,
-): CreateQueryResult<TData, TError>
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): CreateQueryResult<TData, TError>
 ```
 
-Defined in: [inject-query.ts:167](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L167)
+Defined in: [inject-query.ts:167](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L167)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
-
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -266,7 +250,6 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
-
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -288,7 +271,7 @@ class ServiceOrComponent {
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 ### Parameters
 

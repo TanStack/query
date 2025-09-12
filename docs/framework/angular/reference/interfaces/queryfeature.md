@@ -7,25 +7,25 @@ title: QueryFeature
 
 # Interface: QueryFeature\<TFeatureKind\>
 
-Defined in: [providers.ts:135](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/providers.ts#L135)
+Defined in: [providers.ts:135](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L135)
 
 Helper type to represent a Query feature.
 
 ## Type Parameters
 
-• **TFeatureKind** _extends_ `QueryFeatureKind`
+• **TFeatureKind** *extends* `QueryFeatureKind`
 
 ## Properties
 
 ### ɵkind
 
 ```ts
-ɵkind: TFeatureKind
+ɵkind: TFeatureKind;
 ```
 
-Defined in: [providers.ts:136](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/providers.ts#L136)
+Defined in: [providers.ts:136](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L136)
 
----
+***
 
 ### ɵproviders
 
@@ -33,4 +33,4 @@ Defined in: [providers.ts:136](https://github.com/arnoud-dv/query/blob/main/pack
 ɵproviders: Provider[];
 ```
 
-Defined in: [providers.ts:137](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/providers.ts#L137)
+Defined in: [providers.ts:137](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L137)

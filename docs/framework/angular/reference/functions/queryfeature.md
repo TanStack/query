@@ -11,13 +11,13 @@ title: queryFeature
 function queryFeature<TFeatureKind>(kind, providers): QueryFeature<TFeatureKind>
 ```
 
-Defined in: [providers.ts:146](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/providers.ts#L146)
+Defined in: [providers.ts:146](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L146)
 
 Helper function to create an object that represents a Query feature.
 
 ## Type Parameters
 
-• **TFeatureKind** _extends_ `"Devtools"` \| `"PersistQueryClient"`
+• **TFeatureKind** *extends* `"Devtools"` \| `"PersistQueryClient"`
 
 ## Parameters
 

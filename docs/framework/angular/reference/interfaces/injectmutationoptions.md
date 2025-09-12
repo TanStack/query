@@ -7,7 +7,7 @@ title: InjectMutationOptions
 
 # Interface: InjectMutationOptions
 
-Defined in: [inject-mutation.ts:24](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L24)
+Defined in: [inject-mutation.ts:27](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L27)
 
 ## Properties
 
@@ -17,7 +17,7 @@ Defined in: [inject-mutation.ts:24](https://github.com/arnoud-dv/query/blob/main
 optional injector: Injector;
 ```
 
-Defined in: [inject-mutation.ts:30](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L30)
+Defined in: [inject-mutation.ts:33](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L33)
 
 The `Injector` in which to create the mutation.
 

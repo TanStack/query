@@ -8,10 +8,10 @@ title: CreateQueryResult
 # Type Alias: CreateQueryResult\<TData, TError\>
 
 ```ts
-type CreateQueryResult<TData, TError> = CreateBaseQueryResult<TData, TError>
+type CreateQueryResult<TData, TError> = CreateBaseQueryResult<TData, TError>;
 ```
 
-Defined in: [types.ts:104](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/types.ts#L104)
+Defined in: [types.ts:105](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L105)
 
 ## Type Parameters
 

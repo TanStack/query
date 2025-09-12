@@ -8,14 +8,10 @@ title: CreateInfiniteQueryResult
 # Type Alias: CreateInfiniteQueryResult\<TData, TError\>
 
 ```ts
-type CreateInfiniteQueryResult<TData, TError> = BaseQueryNarrowing<
-  TData,
-  TError
-> &
-  MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+type CreateInfiniteQueryResult<TData, TError> = BaseQueryNarrowing<TData, TError> & MapToSignals<InfiniteQueryObserverResult<TData, TError>>;
 ```
 
-Defined in: [types.ts:116](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/types.ts#L116)
+Defined in: [types.ts:117](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L117)
 
 ## Type Parameters
 

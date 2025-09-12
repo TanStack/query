@@ -7,7 +7,7 @@ title: CreateQueryOptions
 
 # Interface: CreateQueryOptions\<TQueryFnData, TError, TData, TQueryKey\>
 
-Defined in: [types.ts:34](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/types.ts#L34)
+Defined in: [types.ts:35](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L35)
 
 ## Extends
 
@@ -21,4 +21,4 @@ Defined in: [types.ts:34](https://github.com/arnoud-dv/query/blob/main/packages/
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* `QueryKey` = `QueryKey`

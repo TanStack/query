@@ -7,13 +7,44 @@ title: mutationOptions
 
 # Function: mutationOptions()
 
+Allows to share and re-use mutation options in a type-safe way.
+
+**Example**
+
 ```ts
-function mutationOptions<TData, TError, TVariables, TContext>(
-  options,
-): CreateMutationOptions<TData, TError, TVariables, TContext>
+export class QueriesService {
+  private http = inject(HttpClient);
+
+  updatePost(id: number) {
+    return mutationOptions({
+      mutationFn: (post: Post) => Promise.resolve(post),
+      mutationKey: ["updatePost", id],
+      onSuccess: (newPost) => {
+        //           ^? newPost: Post
+        this.queryClient.setQueryData(["posts", id], newPost);
+      },
+    });
+  }
+}
+
+queries = inject(QueriesService)
+idSignal = new Signal(0);
+mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+
+mutation.mutate({ title: 'New Title' })
 ```
 
-Defined in: [mutation-options.ts:37](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L37)
+## Param
+
+The mutation options.
+
+## Call Signature
+
+```ts
+function mutationOptions<TData, TError, TVariables, TContext>(options): WithRequired<CreateMutationOptions<TData, TError, TVariables, TContext>, "mutationKey">
+```
+
+Defined in: [mutation-options.ts:34](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L34)
 
 Allows to share and re-use mutation options in a type-safe way.
 
@@ -21,28 +52,28 @@ Allows to share and re-use mutation options in a type-safe way.
 
 ```ts
 export class QueriesService {
-  private http = inject(HttpClient)
+  private http = inject(HttpClient);
 
   updatePost(id: number) {
     return mutationOptions({
       mutationFn: (post: Post) => Promise.resolve(post),
-      mutationKey: ['updatePost', id],
+      mutationKey: ["updatePost", id],
       onSuccess: (newPost) => {
         //           ^? newPost: Post
-        this.queryClient.setQueryData(['posts', id], newPost)
+        this.queryClient.setQueryData(["posts", id], newPost);
       },
-    })
+    });
   }
 }
 
 queries = inject(QueriesService)
-idSignal = new Signal(0)
+idSignal = new Signal(0);
 mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
 
 mutation.mutate({ title: 'New Title' })
 ```
 
-## Type Parameters
+### Type Parameters
 
 • **TData** = `unknown`
 
@@ -52,16 +83,87 @@ mutation.mutate({ title: 'New Title' })
 
 • **TContext** = `unknown`
 
-## Parameters
+### Parameters
 
-### options
+#### options
 
-`MutationObserverOptions`\<`TData`, `TError`, `TVariables`, `TContext`\>
+`WithRequired`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>, `"mutationKey"`\>
 
 The mutation options.
 
-## Returns
+### Returns
 
-[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>
+`WithRequired`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>, `"mutationKey"`\>
 
 Mutation options.
+
+Mutation options.
+
+### Param
+
+The mutation options.
+
+## Call Signature
+
+```ts
+function mutationOptions<TData, TError, TVariables, TContext>(options): Omit<CreateMutationOptions<TData, TError, TVariables, TContext>, "mutationKey">
+```
+
+Defined in: [mutation-options.ts:48](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L48)
+
+Allows to share and re-use mutation options in a type-safe way.
+
+**Example**
+
+```ts
+export class QueriesService {
+  private http = inject(HttpClient);
+
+  updatePost(id: number) {
+    return mutationOptions({
+      mutationFn: (post: Post) => Promise.resolve(post),
+      mutationKey: ["updatePost", id],
+      onSuccess: (newPost) => {
+        //           ^? newPost: Post
+        this.queryClient.setQueryData(["posts", id], newPost);
+      },
+    });
+  }
+}
+
+queries = inject(QueriesService)
+idSignal = new Signal(0);
+mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+
+mutation.mutate({ title: 'New Title' })
+```
+
+### Type Parameters
+
+• **TData** = `unknown`
+
+• **TError** = `Error`
+
+• **TVariables** = `void`
+
+• **TContext** = `unknown`
+
+### Parameters
+
+#### options
+
+`Omit`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>, `"mutationKey"`\>
+
+The mutation options.
+
+### Returns
+
+`Omit`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>, `"mutationKey"`\>
+
+Mutation options.
+
+Mutation options.
+
+### Param
+
+The mutation options.

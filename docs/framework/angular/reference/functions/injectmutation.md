@@ -8,13 +8,10 @@ title: injectMutation
 # Function: injectMutation()
 
 ```ts
-function injectMutation<TData, TError, TVariables, TContext>(
-  injectMutationFn,
-  options?,
-): CreateMutationResult<TData, TError, TVariables, TContext>
+function injectMutation<TData, TError, TVariables, TContext>(injectMutationFn, options?): CreateMutationResult<TData, TError, TVariables, TContext>
 ```
 
-Defined in: [inject-mutation.ts:41](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L41)
+Defined in: [inject-mutation.ts:44](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation.ts#L44)
 
 Injects a mutation: an imperative function that can be invoked which typically performs server side effects.
 

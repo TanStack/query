@@ -7,7 +7,7 @@ title: InjectMutationStateOptions
 
 # Interface: InjectMutationStateOptions
 
-Defined in: [inject-mutation-state.ts:45](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L45)
+Defined in: [inject-mutation-state.ts:45](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L45)
 
 ## Properties
 
@@ -17,7 +17,7 @@ Defined in: [inject-mutation-state.ts:45](https://github.com/arnoud-dv/query/blo
 optional injector: Injector;
 ```
 
-Defined in: [inject-mutation-state.ts:51](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L51)
+Defined in: [inject-mutation-state.ts:51](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L51)
 
 The `Injector` in which to create the mutation state signal.
 

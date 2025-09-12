@@ -7,7 +7,7 @@ title: CreateMutationOptions
 
 # Interface: CreateMutationOptions\<TData, TError, TVariables, TContext\>
 
-Defined in: [mutation-options.ts:48](https://github.com/arnoud-dv/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L48)
+Defined in: [types.ts:132](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L132)
 
 ## Extends
 
