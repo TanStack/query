@@ -8,10 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-core": "^5.85.9",
-    "@tanstack/query-persist-client-core": "^5.85.9",
-    "@tanstack/query-sync-storage-persister": "^5.85.9",
-    "@tanstack/vue-query": "^5.85.9",
+    "@tanstack/query-core": "^5.87.4",
+    "@tanstack/query-persist-client-core": "^5.87.4",
+    "@tanstack/query-sync-storage-persister": "^5.87.4",
+    "@tanstack/vue-query": "^5.87.4",
     "idb-keyval": "^6.2.1",
     "vue": "^3.4.27"
   },

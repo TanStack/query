@@ -48,16 +48,14 @@ describe('createMutation', () => {
     expect(rendered.queryByText('Count: 3')).toBeInTheDocument()
 
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
-
-    expect(onSuccessMock).toHaveBeenCalledWith(1)
-    expect(onSuccessMock).toHaveBeenCalledWith(2)
-    expect(onSuccessMock).toHaveBeenCalledWith(3)
+    expect(onSuccessMock).toHaveBeenNthCalledWith(1, 1)
+    expect(onSuccessMock).toHaveBeenNthCalledWith(2, 2)
+    expect(onSuccessMock).toHaveBeenNthCalledWith(3, 3)
 
     expect(onSettledMock).toHaveBeenCalledTimes(3)
-
-    expect(onSettledMock).toHaveBeenCalledWith(1)
-    expect(onSettledMock).toHaveBeenCalledWith(2)
-    expect(onSettledMock).toHaveBeenCalledWith(3)
+    expect(onSettledMock).toHaveBeenNthCalledWith(1, 1)
+    expect(onSettledMock).toHaveBeenNthCalledWith(2, 2)
+    expect(onSettledMock).toHaveBeenNthCalledWith(3, 3)
   })
 
   test('Set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
