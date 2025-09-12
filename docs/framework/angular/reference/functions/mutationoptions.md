@@ -13,17 +13,17 @@ Allows to share and re-use mutation options in a type-safe way.
 
 ```ts
 export class QueriesService {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient)
 
   updatePost(id: number) {
     return mutationOptions({
       mutationFn: (post: Post) => Promise.resolve(post),
-      mutationKey: ["updatePost", id],
+      mutationKey: ['updatePost', id],
       onSuccess: (newPost) => {
         //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost)
+        this.queryClient.setQueryData(['posts', id], newPost)
       },
-    });
+    })
   }
 }
 
@@ -45,7 +45,12 @@ The mutation options.
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TContext>(options): WithRequired<CreateMutationOptions<TData, TError, TVariables, TContext>, "mutationKey">
+function mutationOptions<TData, TError, TVariables, TContext>(
+  options,
+): WithRequired<
+  CreateMutationOptions<TData, TError, TVariables, TContext>,
+  'mutationKey'
+>
 ```
 
 Defined in: [mutation-options.ts:38](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L38)
@@ -56,17 +61,17 @@ Allows to share and re-use mutation options in a type-safe way.
 
 ```ts
 export class QueriesService {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient)
 
   updatePost(id: number) {
     return mutationOptions({
       mutationFn: (post: Post) => Promise.resolve(post),
-      mutationKey: ["updatePost", id],
+      mutationKey: ['updatePost', id],
       onSuccess: (newPost) => {
         //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost)
+        this.queryClient.setQueryData(['posts', id], newPost)
       },
-    });
+    })
   }
 }
 
@@ -114,7 +119,12 @@ The mutation options.
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TContext>(options): Omit<CreateMutationOptions<TData, TError, TVariables, TContext>, "mutationKey">
+function mutationOptions<TData, TError, TVariables, TContext>(
+  options,
+): Omit<
+  CreateMutationOptions<TData, TError, TVariables, TContext>,
+  'mutationKey'
+>
 ```
 
 Defined in: [mutation-options.ts:52](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L52)
@@ -125,17 +135,17 @@ Allows to share and re-use mutation options in a type-safe way.
 
 ```ts
 export class QueriesService {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient)
 
   updatePost(id: number) {
     return mutationOptions({
       mutationFn: (post: Post) => Promise.resolve(post),
-      mutationKey: ["updatePost", id],
+      mutationKey: ['updatePost', id],
       onSuccess: (newPost) => {
         //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost)
+        this.queryClient.setQueryData(['posts', id], newPost)
       },
-    });
+    })
   }
 }
 
