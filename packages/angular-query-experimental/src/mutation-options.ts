@@ -8,7 +8,8 @@ import type { CreateMutationOptions } from './types'
  *
  * ```ts
  * export class QueriesService {
- *   private http = inject(HttpClient);
+ *   private http = inject(HttpClient)
+ *   private queryClient = inject(QueryClient)
  *
  *   updatePost(id: number) {
  *     return mutationOptions({
@@ -26,10 +27,10 @@ import type { CreateMutationOptions } from './types'
  *   queries = inject(QueriesService)
  *   id = signal(0)
  *   mutation = injectMutation(() => this.queries.updatePost(this.id()))
- * }
  *
- * save() {
- *   this.mutation.mutate({ title: 'New Title' })
+ *   save() {
+ *     this.mutation.mutate({ title: 'New Title' })
+ *   }
  * }
  * ```
  * @param options - The mutation options.
@@ -71,7 +72,8 @@ export function mutationOptions<
  *
  * ```ts
  * export class QueriesService {
- *   private http = inject(HttpClient);
+ *   private http = inject(HttpClient)
+ *   private queryClient = inject(QueryClient)
  *
  *   updatePost(id: number) {
  *     return mutationOptions({
@@ -86,13 +88,13 @@ export function mutationOptions<
  * }
  *
  * class ComponentOrService {
- *  queries = inject(QueriesService)
- *  id = signal(0)
+ *   queries = inject(QueriesService)
+ *   id = signal(0)
  *   mutation = injectMutation(() => this.queries.updatePost(this.id()))
- * }
  *
- * save() {
- *   this.mutation.mutate({ title: 'New Title' })
+ *   save() {
+ *     this.mutation.mutate({ title: 'New Title' })
+ *   }
  * }
  * ```
  * @param options - The mutation options.
