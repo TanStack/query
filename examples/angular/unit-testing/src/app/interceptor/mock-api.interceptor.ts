@@ -15,6 +15,8 @@ import type {
 } from '@angular/common/http'
 import type { Observable } from 'rxjs'
 
+let callNumber = 0
+
 export const mockInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
@@ -24,21 +26,26 @@ export const mockInterceptor: HttpInterceptorFn = (
   if (req.url === '/api/tasks') {
     switch (req.method) {
       case 'GET':
-        return respondWith(
-          200,
-          JSON.parse(
-            sessionStorage.getItem('optimistic-updates-tasks') || '[]',
-          ),
-        )
+        callNumber++
+        if (callNumber === 1) {
+          return respondWith(
+            200,
+            JSON.parse(sessionStorage.getItem('unit-testing-tasks') || '[]'),
+          )
+        } else {
+          return respondWith(
+            200,
+            JSON.parse(
+              sessionStorage.getItem('unit-testing-tasks') || '[]',
+            ).concat([`CallNumber ${callNumber}`]),
+          )
+        }
       case 'POST':
         const tasks = JSON.parse(
-          sessionStorage.getItem('optimistic-updates-tasks') || '[]',
+          sessionStorage.getItem('unit-testing-tasks') || '[]',
         )
         tasks.push(req.body)
-        sessionStorage.setItem(
-          'optimistic-updates-tasks',
-          JSON.stringify(tasks),
-        )
+        sessionStorage.setItem('unit-testing-tasks', JSON.stringify(tasks))
         return respondWith(201, {
           status: 'success',
           task: req.body,

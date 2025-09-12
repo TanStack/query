@@ -38,7 +38,7 @@ export class TasksService {
         lastValueFrom(this.#http.post('/api/tasks', task)),
       mutationKey: ['tasks'],
       onSuccess: () => {
-        this.#queryClient.invalidateQueries({ queryKey: ['tasks'] })
+        return this.#queryClient.invalidateQueries({ queryKey: ['tasks'] })
       },
     })
   }
@@ -52,7 +52,7 @@ export class TasksService {
       mutationFn: () => lastValueFrom(this.#http.delete('/api/tasks')),
       mutationKey: ['clearTasks'],
       onSuccess: () => {
-        this.#queryClient.invalidateQueries({ queryKey: ['tasks'] })
+        return this.#queryClient.invalidateQueries({ queryKey: ['tasks'] })
       },
     })
   }
