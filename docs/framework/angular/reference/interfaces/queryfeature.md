@@ -13,19 +13,19 @@ Helper type to represent a Query feature.
 
 ## Type Parameters
 
-• **TFeatureKind** *extends* `QueryFeatureKind`
+• **TFeatureKind** _extends_ `QueryFeatureKind`
 
 ## Properties
 
 ### ɵkind
 
 ```ts
-ɵkind: TFeatureKind;
+ɵkind: TFeatureKind
 ```
 
 Defined in: [providers.ts:136](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L136)
 
-***
+---
 
 ### ɵproviders
 

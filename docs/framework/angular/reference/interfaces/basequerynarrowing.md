@@ -35,7 +35,7 @@ Defined in: [types.ts:65](https://github.com/TanStack/query/blob/main/packages/a
 
 `this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"error", TData, TError>>`
 
-***
+---
 
 ### isPending()
 
@@ -55,7 +55,7 @@ Defined in: [types.ts:72](https://github.com/TanStack/query/blob/main/packages/a
 
 `this is CreateBaseQueryResult<TData, TError, CreateStatusBasedQueryResult<"pending", TData, TError>>`
 
-***
+---
 
 ### isSuccess()
 

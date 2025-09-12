@@ -8,9 +8,7 @@ title: QueryFeatures
 # Type Alias: QueryFeatures
 
 ```ts
-type QueryFeatures = 
-  | DeveloperToolsFeature
-  | PersistQueryClientFeature;
+type QueryFeatures = DeveloperToolsFeature | PersistQueryClientFeature
 ```
 
 Defined in: [providers.ts:173](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L173)

@@ -8,7 +8,10 @@ title: injectMutationState
 # Function: injectMutationState()
 
 ```ts
-function injectMutationState<TResult>(injectMutationStateFn, options?): Signal<TResult[]>
+function injectMutationState<TResult>(
+  injectMutationStateFn,
+  options?,
+): Signal<TResult[]>
 ```
 
 Defined in: [inject-mutation-state.ts:60](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L60)

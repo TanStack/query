@@ -8,7 +8,9 @@ title: CreateMutationResult
 # Type Alias: CreateMutationResult\<TData, TError, TVariables, TContext, TState\>
 
 ```ts
-type CreateMutationResult<TData, TError, TVariables, TContext, TState> = BaseMutationNarrowing<TData, TError, TVariables, TContext> & MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, "safely">>;
+type CreateMutationResult<TData, TError, TVariables, TContext, TState> =
+  BaseMutationNarrowing<TData, TError, TVariables, TContext> &
+    MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
 ```
 
 Defined in: [types.ts:259](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L259)
