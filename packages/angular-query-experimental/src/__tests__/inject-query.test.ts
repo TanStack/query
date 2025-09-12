@@ -1,4 +1,5 @@
 import {
+  ApplicationRef,
   Component,
   Injector,
   computed,
@@ -8,6 +9,11 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import { HttpClient, provideHttpClient } from '@angular/common/http'
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing'
 import {
   afterEach,
   beforeEach,
@@ -18,6 +24,7 @@ import {
   vi,
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { lastValueFrom } from 'rxjs'
 import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
 import { setSignalInputs } from './test-utils'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
@@ -429,7 +436,6 @@ describe('injectQuery', () => {
     await vi.advanceTimersByTimeAsync(11)
 
     keySignal.set('key12')
-    TestBed.tick()
 
     query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(2)
@@ -559,6 +565,205 @@ describe('injectQuery', () => {
       )
 
       expect(query.status()).toBe('pending')
+    })
+
+    test('should complete queries before whenStable() resolves', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['pendingTasksTest'],
+          queryFn: async () => {
+            await sleep(50)
+            return 'test data'
+          },
+        })),
+      )
+
+      expect(query.status()).toBe('pending')
+      expect(query.data()).toBeUndefined()
+
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(60)
+      await stablePromise
+
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('test data')
+    })
+
+    test('should complete HttpClient-based queries before whenStable() resolves', async () => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+        ],
+      })
+
+      const app = TestBed.inject(ApplicationRef)
+      const httpClient = TestBed.inject(HttpClient)
+      const httpTestingController = TestBed.inject(HttpTestingController)
+
+      // Create a query using HttpClient
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['httpClientTest'],
+          queryFn: () =>
+            lastValueFrom(httpClient.get<{ message: string }>('/api/test')),
+        })),
+      )
+
+      // Schedule the HTTP response
+      setTimeout(() => {
+        const req = httpTestingController.expectOne('/api/test')
+        req.flush({ message: 'http test data' })
+      }, 10)
+
+      // Initial state
+      expect(query.status()).toBe('pending')
+
+      // Advance timers and wait for Angular to be "stable"
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(20)
+      await stablePromise
+
+      // Query should be complete after whenStable() thanks to PendingTasks integration
+      expect(query.status()).toBe('success')
+      expect(query.data()).toEqual({ message: 'http test data' })
+
+      httpTestingController.verify()
+    })
+
+    test('should handle synchronous queryFn with staleTime', async () => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+        ],
+      })
+
+      const app = TestBed.inject(ApplicationRef)
+      let callCount = 0
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['sync-stale'],
+          staleTime: 1000,
+          queryFn: () => {
+            callCount++
+            return `sync-data-${callCount}`
+          },
+        })),
+      )
+
+      // Synchronize pending effects
+      TestBed.tick()
+
+      const stablePromise = app.whenStable()
+      await stablePromise
+
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('sync-data-1')
+      expect(callCount).toBe(1)
+
+      await query.refetch()
+      await Promise.resolve()
+      await vi.runAllTimersAsync()
+      await app.whenStable()
+
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('sync-data-2')
+      expect(callCount).toBe(2)
+    })
+
+    test('should handle enabled/disabled transitions with synchronous queryFn', async () => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+        ],
+      })
+
+      const app = TestBed.inject(ApplicationRef)
+      const enabledSignal = signal(false)
+      let callCount = 0
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['sync-enabled'],
+          enabled: enabledSignal(),
+          queryFn: () => {
+            callCount++
+            return `sync-data-${callCount}`
+          },
+        })),
+      )
+
+      // Initially disabled
+      TestBed.tick()
+      await app.whenStable()
+      expect(query.status()).toBe('pending')
+      expect(query.data()).toBeUndefined()
+      expect(callCount).toBe(0)
+
+      // Enable the query
+      enabledSignal.set(true)
+      TestBed.tick()
+
+      await app.whenStable()
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('sync-data-1')
+      expect(callCount).toBe(1)
+    })
+
+    test('should handle query invalidation with synchronous data', async () => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+        ],
+      })
+
+      const app = TestBed.inject(ApplicationRef)
+      const testKey = ['sync-invalidate']
+      let callCount = 0
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: testKey,
+          queryFn: () => {
+            callCount++
+            return `sync-data-${callCount}`
+          },
+        })),
+      )
+
+      // Synchronize pending effects
+      TestBed.tick()
+
+      await app.whenStable()
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('sync-data-1')
+      expect(callCount).toBe(1)
+
+      // Invalidate the query
+      queryClient.invalidateQueries({ queryKey: testKey })
+      TestBed.tick()
+
+      // Wait for the invalidation to trigger a refetch
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(10)
+      TestBed.tick()
+
+      await app.whenStable()
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('sync-data-2')
+      expect(callCount).toBe(2)
     })
   })
 })
