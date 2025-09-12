@@ -163,7 +163,7 @@ export class MutationObserver<
       // First trigger the mutate callbacks
       if (this.#mutateOptions && this.hasListeners()) {
         const variables = this.#currentResult.variables!
-        const scope = this.#currentResult.scope
+        const scope = this.#currentResult.context
 
         const context = {
           client: this.#client,
