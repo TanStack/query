@@ -17,7 +17,7 @@ Helper function to create an object that represents a Query feature.
 
 ## Type Parameters
 
-• **TFeatureKind** *extends* `"Devtools"` \| `"PersistQueryClient"`
+• **TFeatureKind** _extends_ `"Devtools"` \| `"PersistQueryClient"`
 
 ## Parameters
 

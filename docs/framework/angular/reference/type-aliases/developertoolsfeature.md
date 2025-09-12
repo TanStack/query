@@ -8,7 +8,7 @@ title: DeveloperToolsFeature
 # Type Alias: DeveloperToolsFeature
 
 ```ts
-type DeveloperToolsFeature = QueryFeature<"Devtools">;
+type DeveloperToolsFeature = QueryFeature<'Devtools'>
 ```
 
 Defined in: [providers.ts:158](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L158)

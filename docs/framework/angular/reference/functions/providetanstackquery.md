@@ -49,6 +49,7 @@ export class AppModule {}
 
 You can also enable optional developer tools by adding `withDevtools`. By
 default the tools will then be loaded when your app is in development mode.
+
 ```ts
 import {
   provideTanStackQuery,
@@ -75,6 +76,7 @@ export const MY_QUERY_CLIENT = new InjectionToken('', {
 // In a lazy loaded route or lazy loaded component's providers array:
 providers: [provideTanStackQuery(MY_QUERY_CLIENT)]
 ```
+
 Using an InjectionToken for the QueryClient is an advanced optimization which allows TanStack Query to be absent from the main application bundle.
 This can be beneficial if you want to include TanStack Query on lazy loaded routes only while still sharing a `QueryClient`.
 
@@ -102,5 +104,5 @@ A set of providers to set up TanStack Query.
 
 ## See
 
- - https://tanstack.com/query/v5/docs/framework/angular/quick-start
- - withDevtools
+- https://tanstack.com/query/v5/docs/framework/angular/quick-start
+- withDevtools

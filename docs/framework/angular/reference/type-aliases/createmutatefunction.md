@@ -8,7 +8,9 @@ title: CreateMutateFunction
 # Type Alias: CreateMutateFunction()\<TData, TError, TVariables, TContext\>
 
 ```ts
-type CreateMutateFunction<TData, TError, TVariables, TContext> = (...args) => void;
+type CreateMutateFunction<TData, TError, TVariables, TContext> = (
+  ...args
+) => void
 ```
 
 Defined in: [types.ts:142](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L142)
