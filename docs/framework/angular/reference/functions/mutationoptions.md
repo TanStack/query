@@ -21,17 +21,21 @@ export class QueriesService {
       mutationKey: ["updatePost", id],
       onSuccess: (newPost) => {
         //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost);
+        this.queryClient.setQueryData(["posts", id], newPost)
       },
     });
   }
 }
 
-queries = inject(QueriesService)
-idSignal = new Signal(0);
-mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+class ComponentOrService {
+  queries = inject(QueriesService)
+  id = signal(0)
+  mutation = injectMutation(() => this.queries.updatePost(this.id()))
 
-mutation.mutate({ title: 'New Title' })
+  save() {
+    this.mutation.mutate({ title: 'New Title' })
+  }
+}
 ```
 
 ## Param
@@ -44,7 +48,7 @@ The mutation options.
 function mutationOptions<TData, TError, TVariables, TContext>(options): WithRequired<CreateMutationOptions<TData, TError, TVariables, TContext>, "mutationKey">
 ```
 
-Defined in: [mutation-options.ts:34](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L34)
+Defined in: [mutation-options.ts:38](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L38)
 
 Allows to share and re-use mutation options in a type-safe way.
 
@@ -60,17 +64,21 @@ export class QueriesService {
       mutationKey: ["updatePost", id],
       onSuccess: (newPost) => {
         //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost);
+        this.queryClient.setQueryData(["posts", id], newPost)
       },
     });
   }
 }
 
-queries = inject(QueriesService)
-idSignal = new Signal(0);
-mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+class ComponentOrService {
+  queries = inject(QueriesService)
+  id = signal(0)
+  mutation = injectMutation(() => this.queries.updatePost(this.id()))
 
-mutation.mutate({ title: 'New Title' })
+  save() {
+    this.mutation.mutate({ title: 'New Title' })
+  }
+}
 ```
 
 ### Type Parameters
@@ -109,7 +117,7 @@ The mutation options.
 function mutationOptions<TData, TError, TVariables, TContext>(options): Omit<CreateMutationOptions<TData, TError, TVariables, TContext>, "mutationKey">
 ```
 
-Defined in: [mutation-options.ts:48](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L48)
+Defined in: [mutation-options.ts:52](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/mutation-options.ts#L52)
 
 Allows to share and re-use mutation options in a type-safe way.
 
@@ -125,17 +133,21 @@ export class QueriesService {
       mutationKey: ["updatePost", id],
       onSuccess: (newPost) => {
         //           ^? newPost: Post
-        this.queryClient.setQueryData(["posts", id], newPost);
+        this.queryClient.setQueryData(["posts", id], newPost)
       },
     });
   }
 }
 
-queries = inject(QueriesService)
-idSignal = new Signal(0);
-mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+class ComponentOrService {
+  queries = inject(QueriesService)
+  id = signal(0)
+  mutation = injectMutation(() => this.queries.updatePost(this.id()))
 
-mutation.mutate({ title: 'New Title' })
+  save() {
+    this.mutation.mutate({ title: 'New Title' })
+  }
+}
 ```
 
 ### Type Parameters
