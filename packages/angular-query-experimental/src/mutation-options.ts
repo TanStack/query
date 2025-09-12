@@ -8,7 +8,8 @@ import type { CreateMutationOptions } from './types'
  *
  * ```ts
  * export class QueriesService {
- *   private http = inject(HttpClient);
+ *   private http = inject(HttpClient)
+ *   private queryClient = inject(QueryClient)
  *
  *   updatePost(id: number) {
  *     return mutationOptions({
@@ -71,7 +72,8 @@ export function mutationOptions<
  *
  * ```ts
  * export class QueriesService {
- *   private http = inject(HttpClient);
+ *   private http = inject(HttpClient)
+ *   private queryClient = inject(QueryClient)
  *
  *   updatePost(id: number) {
  *     return mutationOptions({
