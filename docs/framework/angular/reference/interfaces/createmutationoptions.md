@@ -3,11 +3,11 @@ id: CreateMutationOptions
 title: CreateMutationOptions
 ---
 
-# Interface: CreateMutationOptions\<TData, TError, TVariables, TContext\>
+# Interface: CreateMutationOptions\<TData, TError, TVariables, TOnMutateResult\>
 
 ## Extends
 
-- `OmitKeyof`\<`MutationObserverOptions`\<`TData`, `TError`, `TVariables`, `TContext`\>, `"_defaulted"`\>
+- `OmitKeyof`\<`MutationObserverOptions`\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"_defaulted"`\>
 
 ## Type Parameters
 
@@ -17,4 +17,4 @@ title: CreateMutationOptions
 
 • **TVariables** = `void`
 
-• **TContext** = `unknown`
+• **TOnMutateResult** = `unknown`

@@ -6,10 +6,10 @@ title: createMutation
 # Function: createMutation()
 
 ```ts
-function createMutation<TData, TError, TVariables, TContext>(
+function createMutation<TData, TError, TVariables, TOnMutateResult>(
   options,
   queryClient?,
-): CreateMutationResult<TData, TError, TVariables, TContext>
+): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>
 ```
 
 ## Type Parameters
@@ -20,13 +20,13 @@ function createMutation<TData, TError, TVariables, TContext>(
 
 • **TVariables** = `void`
 
-• **TContext** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Parameters
 
 ### options
 
-[`StoreOrVal`](../../type-aliases/storeorval.md)\<[`CreateMutationOptions`](../../type-aliases/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>\>
+[`StoreOrVal`](../../type-aliases/storeorval.md)\<[`CreateMutationOptions`](../../type-aliases/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>\>
 
 ### queryClient?
 
@@ -34,7 +34,7 @@ function createMutation<TData, TError, TVariables, TContext>(
 
 ## Returns
 
-[`CreateMutationResult`](../../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TContext`\>
+[`CreateMutationResult`](../../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 ## Defined in
 

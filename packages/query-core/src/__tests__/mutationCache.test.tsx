@@ -27,7 +27,7 @@ describe('mutationCache', () => {
           mutationKey: key,
           mutationFn: () =>
             sleep(10).then(() => Promise.reject(new Error('error'))),
-          onMutate: () => 'context',
+          onMutate: () => 'result',
         },
         'vars',
       ).catch(() => undefined)
@@ -39,8 +39,13 @@ describe('mutationCache', () => {
       expect(onError).toHaveBeenCalledWith(
         new Error('error'),
         'vars',
-        'context',
+        'result',
         mutation,
+        {
+          client: testClient,
+          meta: undefined,
+          mutationKey: key,
+        },
       )
       expect(onSuccess).not.toHaveBeenCalled()
       expect(onSettled).toHaveBeenCalledTimes(1)
@@ -48,8 +53,13 @@ describe('mutationCache', () => {
         undefined,
         new Error('error'),
         'vars',
-        'context',
+        'result',
         mutation,
+        {
+          client: testClient,
+          meta: undefined,
+          mutationKey: key,
+        },
       )
     })
 
@@ -109,7 +119,7 @@ describe('mutationCache', () => {
         {
           mutationKey: key,
           mutationFn: () => sleep(10).then(() => ({ data: 5 })),
-          onMutate: () => 'context',
+          onMutate: () => 'result',
         },
         'vars',
       )
@@ -121,8 +131,13 @@ describe('mutationCache', () => {
       expect(onSuccess).toHaveBeenCalledWith(
         { data: 5 },
         'vars',
-        'context',
+        'result',
         mutation,
+        {
+          client: testClient,
+          meta: undefined,
+          mutationKey: key,
+        },
       )
       expect(onError).not.toHaveBeenCalled()
       expect(onSettled).toHaveBeenCalledTimes(1)
@@ -130,8 +145,13 @@ describe('mutationCache', () => {
         { data: 5 },
         null,
         'vars',
-        'context',
+        'result',
         mutation,
+        {
+          client: testClient,
+          meta: undefined,
+          mutationKey: key,
+        },
       )
     })
 
@@ -187,14 +207,18 @@ describe('mutationCache', () => {
         {
           mutationKey: key,
           mutationFn: () => sleep(10).then(() => ({ data: 5 })),
-          onMutate: () => 'context',
+          onMutate: () => 'result',
         },
         'vars',
       )
 
       const mutation = testCache.getAll()[0]
 
-      expect(onMutate).toHaveBeenCalledWith('vars', mutation)
+      expect(onMutate).toHaveBeenCalledWith('vars', mutation, {
+        client: testClient,
+        meta: undefined,
+        mutationKey: key,
+      })
     })
 
     test('should be awaited', async () => {

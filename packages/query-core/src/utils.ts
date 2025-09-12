@@ -47,7 +47,7 @@ export interface MutationFilters<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > {
   /**
    * Match mutation key exactly
@@ -57,7 +57,7 @@ export interface MutationFilters<
    * Include mutations matching this predicate function
    */
   predicate?: (
-    mutation: Mutation<TData, TError, TVariables, TContext>,
+    mutation: Mutation<TData, TError, TVariables, TOnMutateResult>,
   ) => boolean
   /**
    * Include mutations matching this mutation key

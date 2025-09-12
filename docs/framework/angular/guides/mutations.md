@@ -89,20 +89,20 @@ export class TodosComponent {
 ```ts
 mutation = injectMutation(() => ({
   mutationFn: addTodo,
-  onMutate: (variables) => {
+  onMutate: (variables, context) => {
     // A mutation is about to happen!
 
-    // Optionally return a context containing data to use when for example rolling back
+    // Optionally return a result containing data to use when for example rolling back
     return { id: 1 }
   },
-  onError: (error, variables, context) => {
+  onError: (error, variables, onMutateResult, context) => {
     // An error happened!
-    console.log(`rolling back optimistic update with id ${context.id}`)
+    console.log(`rolling back optimistic update with id ${onMutateResult.id}`)
   },
-  onSuccess: (data, variables, context) => {
+  onSuccess: (data, variables, onMutateResult, context) => {
     // Boom baby!
   },
-  onSettled: (data, error, variables, context) => {
+  onSettled: (data, error, variables, onMutateResult, context) => {
     // Error or success... doesn't matter!
   },
 }))
@@ -129,25 +129,25 @@ mutation = injectMutation(() => ({
 ```ts
 mutation = injectMutation(() => ({
   mutationFn: addTodo,
-  onSuccess: (data, variables, context) => {
+  onSuccess: (data, variables, onMutateResult, context) => {
     // I will fire first
   },
-  onError: (error, variables, context) => {
+  onError: (error, variables, onMutateResult, context) => {
     // I will fire first
   },
-  onSettled: (data, error, variables, context) => {
+  onSettled: (data, error, variables, onMutateResult, context) => {
     // I will fire first
   },
 }))
 
 mutation.mutate(todo, {
-  onSuccess: (data, variables, context) => {
+  onSuccess: (data, variables, onMutateResult, context) => {
     // I will fire second!
   },
-  onError: (error, variables, context) => {
+  onError: (error, variables, onMutateResult, context) => {
     // I will fire second!
   },
-  onSettled: (data, error, variables, context) => {
+  onSettled: (data, error, variables, onMutateResult, context) => {
     // I will fire second!
   },
 })
@@ -160,7 +160,7 @@ mutation.mutate(todo, {
 export class Example {
   mutation = injectMutation(() => ({
     mutationFn: addTodo,
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, variables, onMutateResult, context) => {
       // Will be called 3 times
     },
   }))
@@ -168,7 +168,7 @@ export class Example {
   doMutations() {
     ;['Todo 1', 'Todo 2', 'Todo 3'].forEach((todo) => {
       this.mutation.mutate(todo, {
-        onSuccess: (data, variables, context) => {
+        onSuccess: (data, variables, onMutateResult, context) => {
           // Will execute only once, for the last mutation (Todo 3),
           // regardless which mutation resolves first
         },
@@ -213,31 +213,31 @@ const queryClient = new QueryClient()
 // Define the "addTodo" mutation
 queryClient.setMutationDefaults(['addTodo'], {
   mutationFn: addTodo,
-  onMutate: async (variables) => {
+  onMutate: async (variables, context) => {
     // Cancel current queries for the todos list
-    await queryClient.cancelQueries({ queryKey: ['todos'] })
+    await context.client.cancelQueries({ queryKey: ['todos'] })
 
     // Create optimistic todo
     const optimisticTodo = { id: uuid(), title: variables.title }
 
     // Add optimistic todo to todos list
-    queryClient.setQueryData(['todos'], (old) => [...old, optimisticTodo])
+    context.client.setQueryData(['todos'], (old) => [...old, optimisticTodo])
 
-    // Return context with the optimistic todo
+    // Return result with the optimistic todo
     return { optimisticTodo }
   },
-  onSuccess: (result, variables, context) => {
+  onSuccess: (result, variables, onMutateResult, context) => {
     // Replace optimistic todo in the todos list with the result
-    queryClient.setQueryData(['todos'], (old) =>
+    context.client.setQueryData(['todos'], (old) =>
       old.map((todo) =>
-        todo.id === context.optimisticTodo.id ? result : todo,
+        todo.id === onMutateResult.optimisticTodo.id ? result : todo,
       ),
     )
   },
-  onError: (error, variables, context) => {
+  onError: (error, variables, onMutateResult, context) => {
     // Remove optimistic todo from the todos list
-    queryClient.setQueryData(['todos'], (old) =>
-      old.filter((todo) => todo.id !== context.optimisticTodo.id),
+    context.client.setQueryData(['todos'], (old) =>
+      old.filter((todo) => todo.id !== onMutateResult.optimisticTodo.id),
     )
   },
   retry: 3,
