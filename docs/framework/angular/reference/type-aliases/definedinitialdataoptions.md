@@ -6,7 +6,11 @@ title: DefinedInitialDataOptions
 # Type Alias: DefinedInitialDataOptions\<TQueryFnData, TError, TData, TQueryKey\>
 
 ```ts
-type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<
+  CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'queryFn'
+> &
+  object
 ```
 
 ## Type declaration
@@ -14,7 +18,15 @@ type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>: CreateQu
 ### initialData
 
 ```ts
-initialData: NonUndefinedGuard<TQueryFnData> | () => NonUndefinedGuard<TQueryFnData>;
+initialData:
+  | NonUndefinedGuard<TQueryFnData>
+| () => NonUndefinedGuard<TQueryFnData>;
+```
+
+### queryFn?
+
+```ts
+optional queryFn: QueryFunction<TQueryFnData, TQueryKey>;
 ```
 
 ## Type Parameters
@@ -29,4 +41,4 @@ initialData: NonUndefinedGuard<TQueryFnData> | () => NonUndefinedGuard<TQueryFnD
 
 ## Defined in
 
-[query-options.ts:19](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/query-options.ts#L19)
+[query-options.ts:41](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L41)

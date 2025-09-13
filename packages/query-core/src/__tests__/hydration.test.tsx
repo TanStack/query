@@ -473,10 +473,12 @@ describe('dehydration and rehydration', () => {
     const serverAddTodo = vi
       .fn()
       .mockImplementation(() => Promise.reject(new Error('offline')))
-    const serverOnMutate = vi.fn().mockImplementation((variables) => {
-      const optimisticTodo = { id: 1, text: variables.text }
-      return { optimisticTodo }
-    })
+    const serverOnMutate = vi
+      .fn()
+      .mockImplementation((variables: { text: string }) => {
+        const optimisticTodo = { id: 1, text: variables.text }
+        return { optimisticTodo }
+      })
     const serverOnSuccess = vi.fn()
 
     const serverClient = new QueryClient()
@@ -511,13 +513,17 @@ describe('dehydration and rehydration', () => {
     const parsed = JSON.parse(stringified)
     const client = new QueryClient()
 
-    const clientAddTodo = vi.fn().mockImplementation((variables) => {
-      return { id: 2, text: variables.text }
-    })
-    const clientOnMutate = vi.fn().mockImplementation((variables) => {
-      const optimisticTodo = { id: 1, text: variables.text }
-      return { optimisticTodo }
-    })
+    const clientAddTodo = vi
+      .fn()
+      .mockImplementation((variables: { text: string }) => {
+        return { id: 2, text: variables.text }
+      })
+    const clientOnMutate = vi
+      .fn()
+      .mockImplementation((variables: { text: string }) => {
+        const optimisticTodo = { id: 1, text: variables.text }
+        return { optimisticTodo }
+      })
     const clientOnSuccess = vi.fn()
 
     client.setMutationDefaults(['addTodo'], {
@@ -1116,6 +1122,60 @@ describe('dehydration and rehydration', () => {
     serverQueryClient.clear()
   })
 
+  test('should not overwrite query in cache if existing query is newer (with promise)', async () => {
+    // --- server ---
+
+    const serverQueryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+
+    const promise = serverQueryClient.prefetchQuery({
+      queryKey: ['data'],
+      queryFn: async () => {
+        await sleep(10)
+        return 'server data'
+      },
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    await vi.advanceTimersByTimeAsync(10)
+    await promise
+
+    // Pretend the output of this server part is cached for a long time
+
+    // --- client ---
+
+    await vi.advanceTimersByTimeAsync(10_000) // Arbitrary time in the future
+
+    const clientQueryClient = new QueryClient()
+
+    clientQueryClient.setQueryData(['data'], 'newer data', {
+      updatedAt: Date.now(),
+    })
+
+    hydrate(clientQueryClient, dehydrated)
+
+    // If the query was hydrated in error, it would still take some time for it
+    // to end up in the cache, so for the test to fail properly on regressions,
+    // wait for the fetchStatus to be idle
+    await vi.waitFor(() =>
+      expect(clientQueryClient.getQueryState(['data'])?.fetchStatus).toBe(
+        'idle',
+      ),
+    )
+    await vi.waitFor(() =>
+      expect(clientQueryClient.getQueryData(['data'])).toBe('newer data'),
+    )
+
+    clientQueryClient.clear()
+    serverQueryClient.clear()
+  })
+
   test('should overwrite data when a new promise is streamed in', async () => {
     const serializeDataMock = vi.fn((data: any) => data)
     const deserializeDataMock = vi.fn((data: any) => data)
@@ -1290,5 +1350,53 @@ describe('dehydration and rehydration', () => {
 
     process.env.NODE_ENV = originalNodeEnv
     consoleMock.mockRestore()
+  })
+
+  // When React hydrates promises across RSC/client boundaries, it passes
+  // them as special ReactPromise types. There are situations where the
+  // promise might have time to resolve before we end up hydrating it, in
+  // which case React will have made it a special synchronous thenable where
+  // .then() resolves immediately.
+  // In these cases it's important we hydrate the data synchronously, or else
+  // the data in the cache wont match the content that was rendered on the server.
+  // What can end up happening otherwise is that the content is visible from the
+  // server, but the client renders a Suspense fallback, only to immediately show
+  // the data again.
+  test('should rehydrate synchronous thenable immediately', async () => {
+    // --- server ---
+
+    const serverQueryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+    const originalPromise = serverQueryClient.prefetchQuery({
+      queryKey: ['data'],
+      queryFn: () => null,
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    // --- server end ---
+
+    // Simulate a synchronous thenable
+    // @ts-expect-error
+    dehydrated.queries[0].promise.then = (cb) => {
+      cb?.('server data')
+    }
+
+    // --- client ---
+
+    const clientQueryClient = new QueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    // If data is already resolved, it should end up in the cache immediately
+    expect(clientQueryClient.getQueryData(['data'])).toBe('server data')
+
+    // Need to await the original promise or else it will get a cancellation
+    // error and test will fail
+    await originalPromise
   })
 })

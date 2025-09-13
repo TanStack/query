@@ -2,15 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist-ts",
-    "rootDir": ".",
-    "baseUrl": "."
+    "rootDir": "."
   },
-  "include": [
-    "src",
-    "test-setup.ts",
-    "*.config.js",
-    "*.config.ts",
-    "package.json"
-  ],
+  "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
   "references": [{ "path": "../query-core" }]
 }

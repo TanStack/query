@@ -1,5 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { usePrefetchQuery } from '..'
+import { skipToken, usePrefetchQuery } from '..'
 
 describe('usePrefetchQuery', () => {
   it('should return nothing', () => {
@@ -36,6 +36,23 @@ describe('usePrefetchQuery', () => {
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
         throwOnError: true,
+      }),
+    )
+  })
+
+  it('should not allow skipToken in queryFn', () => {
+    assertType(
+      usePrefetchQuery({
+        queryKey: ['key'],
+        // @ts-expect-error
+        queryFn: skipToken,
+      }),
+    )
+    assertType(
+      usePrefetchQuery({
+        queryKey: ['key'],
+        // @ts-expect-error
+        queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
       }),
     )
   })
