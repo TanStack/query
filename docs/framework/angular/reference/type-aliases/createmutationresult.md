@@ -6,7 +6,9 @@ title: CreateMutationResult
 # Type Alias: CreateMutationResult\<TData, TError, TVariables, TContext, TState\>
 
 ```ts
-type CreateMutationResult<TData, TError, TVariables, TContext, TState>: BaseMutationNarrowing<TData, TError, TVariables, TContext> & MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, "safely">>;
+type CreateMutationResult<TData, TError, TVariables, TContext, TState> =
+  BaseMutationNarrowing<TData, TError, TVariables, TContext> &
+    MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
 ```
 
 ## Type Parameters
@@ -19,8 +21,8 @@ type CreateMutationResult<TData, TError, TVariables, TContext, TState>: BaseMuta
 
 • **TContext** = `unknown`
 
-• **TState** = `CreateStatusBasedMutationResult`\<[`CreateBaseMutationResult`](createbasemutationresult.md)\[`"status"`\], `TData`, `TError`, `TVariables`, `TContext`\>
+• **TState** = `CreateStatusBasedMutationResult`\<[`CreateBaseMutationResult`](../createbasemutationresult.md)\[`"status"`\], `TData`, `TError`, `TVariables`, `TContext`\>
 
 ## Defined in
 
-[types.ts:292](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L292)
+[types.ts:298](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L298)

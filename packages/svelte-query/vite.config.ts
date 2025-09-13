@@ -5,6 +5,7 @@ import { svelteTesting } from '@testing-library/svelte/vite'
 import packageJson from './package.json'
 
 export default defineConfig({
+  // @ts-expect-error
   plugins: [svelte(), svelteTesting()],
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {

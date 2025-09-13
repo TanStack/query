@@ -3,6 +3,7 @@ import type {
   DefaultError,
   InfiniteData,
   InitialDataFunction,
+  NonUndefinedGuard,
   OmitKeyof,
   QueryKey,
   SkipToken,
@@ -19,7 +20,6 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryFnData,
   TQueryKey,
   TPageParam
 > & {
@@ -42,7 +42,6 @@ export type UnusedSkipTokenInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >,
@@ -53,15 +52,12 @@ export type UnusedSkipTokenInfiniteOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryFnData,
       TQueryKey,
       TPageParam
     >['queryFn'],
     SkipToken | undefined
   >
 }
-
-type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
@@ -73,7 +69,6 @@ export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryFnData,
   TQueryKey,
   TPageParam
 > & {

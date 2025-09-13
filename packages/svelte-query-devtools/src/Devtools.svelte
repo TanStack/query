@@ -43,6 +43,8 @@
      * Use this so you can attach the devtool's styles to specific element in the DOM.
      */
     shadowDOMTarget?: ShadowRoot
+
+    hideDisabledQueries?: boolean
   }
 
   let {
@@ -53,6 +55,7 @@
     errorTypes = [],
     styleNonce = undefined,
     shadowDOMTarget = undefined,
+    hideDisabledQueries = false,
   }: DevtoolsOptions = $props()
 
   let ref: HTMLDivElement
@@ -74,6 +77,7 @@
           errorTypes,
           styleNonce,
           shadowDOMTarget,
+          hideDisabledQueries,
         })
 
         devtools.mount(ref)

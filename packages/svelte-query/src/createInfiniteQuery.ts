@@ -25,7 +25,6 @@ export function createInfiniteQuery<
       TQueryFnData,
       TError,
       TData,
-      TQueryFnData,
       TQueryKey,
       TPageParam
     >
