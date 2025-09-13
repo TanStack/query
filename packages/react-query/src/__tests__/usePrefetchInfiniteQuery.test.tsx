@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import React from 'react'
-import { fireEvent, waitFor } from '@testing-library/react'
+import { act, fireEvent } from '@testing-library/react'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -40,6 +40,14 @@ const generateInfiniteQueryOptions = (
 }
 
 describe('usePrefetchInfiniteQuery', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
 
@@ -50,7 +58,6 @@ describe('usePrefetchInfiniteQuery', () => {
       T,
       Error,
       InfiniteData<T>,
-      any,
       Array<string>,
       any
     >
@@ -99,15 +106,16 @@ describe('usePrefetchInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('data: Do you fetch on render?'))
+    await act(() => vi.advanceTimersByTimeAsync(30))
+    rendered.getByText('data: Do you fetch on render?')
     fireEvent.click(rendered.getByText('Next Page'))
-    await waitFor(() =>
+    expect(
       rendered.getByText('data: Or do you render as you fetch?'),
-    )
+    ).toBeInTheDocument()
     fireEvent.click(rendered.getByText('Next Page'))
-    await waitFor(() =>
+    expect(
       rendered.getByText('data: Either way, Tanstack Query helps you!'),
-    )
+    ).toBeInTheDocument()
     expect(Fallback).toHaveBeenCalledTimes(1)
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(3)
   })
@@ -122,7 +130,8 @@ describe('usePrefetchInfiniteQuery', () => {
       ]),
     }
 
-    await queryClient.prefetchInfiniteQuery({ ...queryOpts, pages: 3 })
+    queryClient.prefetchInfiniteQuery({ ...queryOpts, pages: 3 })
+    await vi.advanceTimersByTimeAsync(30)
     ;(queryOpts.queryFn as Mock).mockClear()
 
     function App() {
@@ -140,11 +149,11 @@ describe('usePrefetchInfiniteQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('data: Prefetch rocks!'))
+    expect(rendered.getByText('data: Prefetch rocks!')).toBeInTheDocument()
     fireEvent.click(rendered.getByText('Next Page'))
-    await waitFor(() => rendered.getByText('data: No waterfalls, boy!'))
+    expect(rendered.getByText('data: No waterfalls, boy!')).toBeInTheDocument()
     fireEvent.click(rendered.getByText('Next Page'))
-    await waitFor(() => rendered.getByText('data: Tanstack Query #ftw'))
+    expect(rendered.getByText('data: Tanstack Query #ftw')).toBeInTheDocument()
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
     expect(Fallback).not.toHaveBeenCalled()
   })
@@ -178,11 +187,15 @@ describe('usePrefetchInfiniteQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <App />)
-    await waitFor(() => rendered.getByText('data: Infinite Page 1'))
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    rendered.getByText('data: Infinite Page 1')
     fireEvent.click(rendered.getByText('Next Page'))
-    await waitFor(() => rendered.getByText('data: Infinite Page 2'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: Infinite Page 2')).toBeInTheDocument()
     fireEvent.click(rendered.getByText('Next Page'))
-    await waitFor(() => rendered.getByText('data: Infinite Page 3'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('data: Infinite Page 3')).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(3)
   })
 })

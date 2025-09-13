@@ -7,10 +7,9 @@ import {
   effect,
   inject,
 } from '@angular/core'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
+import { QueryClient, noop, onlineManager } from '@tanstack/query-core'
 import { isPlatformBrowser } from '@angular/common'
 import { isDevMode } from './util/is-dev-mode/is-dev-mode'
-import { noop } from './util'
 import type { Provider } from '@angular/core'
 import type {
   DevtoolsButtonPosition,
@@ -212,6 +211,10 @@ export interface DevtoolsOptions {
    * Use this so you can attach the devtool's styles to a specific element in the DOM.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Set this to true to hide disabled queries from the devtools panel.
+   */
+  hideDisabledQueries?: boolean
 
   /**
    * Whether the developer tools should load.

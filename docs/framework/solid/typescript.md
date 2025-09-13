@@ -129,16 +129,15 @@ if (axios.isAxiosError(query.error)) {
 
 [typescript playground](https://www.typescriptlang.org/play/?#code/JYWwDg9gTgLgBAbzgYygUwIYzQRQK5pQCecAvnAGZQQhwDkAAjBgHYDOzyA1gPRsQAbYABMAtAEcCxOgFgAUKEiw4GAB7AIbStVp01GtrLnyYRMGjgBxanjBwAvIjgiAXHBZ4QAI0Jl585Ah2eAo0GGQAC2sIWy1HAAoASjcABR1gNjQAHmjbAG0AXQA+BxL9TQA6AHMw+LoeKpswQ0SKmAi0Fnj0Nkh2C3sSnr7MiuEsDET-OUDguElCEkdUTGx8Rfik0rh4hHk4A-mpIgBpNCI3PLpGmOa6AoAaOH3DheIAMRY3UPCoprYHvJSIkpsY5G8iBVCNQoPIeDxDnAAHoAfmmwAoO3KbAqGQAgupNABRKAw+IQqGk6AgxAvA4U6HQOlweGI1FA+RAA)
 
-## Registering a global `Error`
-
-TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type:
+[//]: # 'RegisterErrorType'
 
 ```tsx
 import '@tanstack/solid-query'
 
 declare module '@tanstack/solid-query' {
   interface Register {
-    defaultError: AxiosError
+    // Use unknown so call sites must narrow explicitly.
+    defaultError: unknown
   }
 }
 
@@ -148,12 +147,14 @@ const query = useQuery(() => ({
 }))
 
 query.error
-//    ^? (property) error: AxiosError | null
+//    ^? (property) error: unknown | null
 ```
+
+[//]: # 'RegisterErrorType'
 
 ## Registering global `Meta`
 
-Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../useQuery) and [mutations](../createMutation) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
+Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../reference/useQuery.md) and [mutations](../reference/useMutation.md) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
 
 ```ts
 import '@tanstack/solid-query'
@@ -214,4 +215,4 @@ const data = queryClient.getQueryData<Group[]>(['groups'])
 
 If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
 
-Read more about it in the [Disabling Queries](../disabling-queries) guide.
+Read more about it in the [Disabling Queries](../guides/disabling-queries.md) guide.

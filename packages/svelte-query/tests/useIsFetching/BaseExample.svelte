@@ -11,10 +11,7 @@
   const query = createQuery(
     () => ({
       queryKey: ['test'],
-      queryFn: async () => {
-        await sleep(5)
-        return 'test'
-      },
+      queryFn: () => sleep(10).then(() => 'test'),
       enabled: ready,
     }),
     () => queryClient,

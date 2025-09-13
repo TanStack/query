@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, ref } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
@@ -11,6 +11,11 @@ vi.mock('../useQueryClient')
 describe('useQueries', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   test('should return result for each query', () => {
@@ -55,7 +60,7 @@ describe('useQueries', () => {
     ]
     const queriesState = useQueries({ queries })
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesState.value).toMatchObject([
       {
@@ -87,7 +92,7 @@ describe('useQueries', () => {
     ]
     const queriesState = useQueries({ queries })
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesState.value).toMatchObject([
       {
@@ -122,7 +127,7 @@ describe('useQueries', () => {
     ])
     const queriesState = useQueries({ queries })
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     queries.value.splice(
       0,
@@ -137,8 +142,8 @@ describe('useQueries', () => {
       },
     )
 
-    await sleep(0)
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesState.value.length).toEqual(2)
     expect(queriesState.value).toMatchObject([
@@ -176,7 +181,7 @@ describe('useQueries', () => {
       },
     ]
     const queriesState = useQueries({ queries })
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesState.value).toMatchObject([
       {
@@ -208,7 +213,7 @@ describe('useQueries', () => {
     ]
 
     useQueries({ queries }, queryClient)
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(useQueryClient).toHaveBeenCalledTimes(0)
   })
@@ -241,7 +246,7 @@ describe('useQueries', () => {
       },
       queryClient,
     )
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesResult.value).toMatchObject({
       combined: true,
@@ -267,7 +272,7 @@ describe('useQueries', () => {
 
     checked.value = true
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalled()
   })
@@ -290,13 +295,13 @@ describe('useQueries', () => {
 
     key1.value = 'key3'
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key4'
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(3)
   })
@@ -335,31 +340,31 @@ describe('useQueries', () => {
 
     key1.value = 'key1-updated'
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key2-updated'
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(3)
 
     key3.value = 'key3-updated'
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(4)
 
     key4.value = 'key4-updated'
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(5)
 
     key5.value = 'key5-updated'
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(6)
   })

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-next-experimental",
-  "version": "5.75.7",
+  "version": "5.87.4",
   "description": "Hydration utils for React Query in the NextJs app directory",
   "author": "tannerlinsley",
   "license": "MIT",

@@ -13,6 +13,8 @@ import {
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
+import { timeoutManager } from './timeoutManager'
+import type { ManagedTimerId } from './timeoutManager'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
 import type { PendingThenable, Thenable } from './thenable'
@@ -62,8 +64,8 @@ export class QueryObserver<
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
-  #staleTimeoutId?: ReturnType<typeof setTimeout>
-  #refetchIntervalId?: ReturnType<typeof setInterval>
+  #staleTimeoutId?: ManagedTimerId
+  #refetchIntervalId?: ManagedTimerId
   #currentRefetchInterval?: number | false
   #trackedProps = new Set<keyof QueryObserverResult>()
 
@@ -82,11 +84,6 @@ export class QueryObserver<
     this.#client = client
     this.#selectError = null
     this.#currentThenable = pendingThenable()
-    if (!this.options.experimental_prefetchInRender) {
-      this.#currentThenable.reject(
-        new Error('experimental_prefetchInRender feature flag is not enabled'),
-      )
-    }
 
     this.bindMethods()
     this.setOptions(options)
@@ -272,6 +269,17 @@ export class QueryObserver<
       get: (target, key) => {
         this.trackProp(key as keyof QueryObserverResult)
         onPropTracked?.(key as keyof QueryObserverResult)
+        if (
+          key === 'promise' &&
+          !this.options.experimental_prefetchInRender &&
+          this.#currentThenable.status === 'pending'
+        ) {
+          this.#currentThenable.reject(
+            new Error(
+              'experimental_prefetchInRender feature flag is not enabled',
+            ),
+          )
+        }
         return Reflect.get(target, key)
       },
     })
@@ -359,7 +367,7 @@ export class QueryObserver<
     // To mitigate this issue we always add 1 ms to the timeout.
     const timeout = time + 1
 
-    this.#staleTimeoutId = setTimeout(() => {
+    this.#staleTimeoutId = timeoutManager.setTimeout(() => {
       if (!this.#currentResult.isStale) {
         this.updateResult()
       }
@@ -388,7 +396,7 @@ export class QueryObserver<
       return
     }
 
-    this.#refetchIntervalId = setInterval(() => {
+    this.#refetchIntervalId = timeoutManager.setInterval(() => {
       if (
         this.options.refetchIntervalInBackground ||
         focusManager.isFocused()
@@ -405,14 +413,14 @@ export class QueryObserver<
 
   #clearStaleTimeout(): void {
     if (this.#staleTimeoutId) {
-      clearTimeout(this.#staleTimeoutId)
+      timeoutManager.clearTimeout(this.#staleTimeoutId)
       this.#staleTimeoutId = undefined
     }
   }
 
   #clearRefetchInterval(): void {
     if (this.#refetchIntervalId) {
-      clearInterval(this.#refetchIntervalId)
+      timeoutManager.clearInterval(this.#refetchIntervalId)
       this.#refetchIntervalId = undefined
     }
   }
@@ -576,6 +584,7 @@ export class QueryObserver<
       isStale: isStale(query, options),
       refetch: this.refetch,
       promise: this.#currentThenable,
+      isEnabled: resolveEnabled(options.enabled, query) !== false,
     }
 
     const nextResult = result as QueryObserverResult<TData, TError>
@@ -764,7 +773,10 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (resolveEnabled(options.enabled, query) !== false) {
+  if (
+    resolveEnabled(options.enabled, query) !== false &&
+    resolveStaleTime(options.staleTime, query) !== 'static'
+  ) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))

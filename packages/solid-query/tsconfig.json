@@ -3,16 +3,9 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "baseUrl": ".",
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },
-  "include": [
-    "src",
-    "test-setup.ts",
-    "*.config.js",
-    "*.config.ts",
-    "package.json"
-  ],
+  "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
   "references": [{ "path": "../query-core" }]
 }

@@ -34,7 +34,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
+        streamFn: () => createAsyncNumberGenerator(3),
       }),
     })
 
@@ -78,7 +78,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: async function* () {
+        streamFn: async function* () {
           for await (const num of createAsyncNumberGenerator(3)) {
             yield [num, num] as const
           }
@@ -133,7 +133,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2),
+        streamFn: () => createAsyncNumberGenerator(2),
       }),
     })
 
@@ -187,7 +187,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2),
+        streamFn: () => createAsyncNumberGenerator(2),
         refetchMode: 'append',
       }),
     })
@@ -243,7 +243,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(2, offset),
+        streamFn: () => createAsyncNumberGenerator(2, offset),
         refetchMode: 'replace',
       }),
     })
@@ -300,7 +300,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        queryFn: () => createAsyncNumberGenerator(3),
+        streamFn: () => createAsyncNumberGenerator(3),
         refetchMode: 'append',
       }),
     })
@@ -345,6 +345,125 @@ describe('streamedQuery', () => {
       status: 'success',
       fetchStatus: 'idle',
       data: [0, 1, 0, 1, 2],
+    })
+
+    unsubscribe()
+  })
+
+  test('should abort when unsubscribed', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        streamFn: (context) => {
+          // just consume the signal
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          const numbers = context.signal ? 3 : 0
+          return createAsyncNumberGenerator(numbers)
+        },
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(60)
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0],
+    })
+
+    unsubscribe()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [0],
+    })
+  })
+
+  test('should support custom reducer', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        streamFn: () => createAsyncNumberGenerator(2),
+        reducer: (acc, chunk) => ({
+          ...acc,
+          [chunk]: true,
+        }),
+        initialValue: {} as Record<number, boolean>,
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: {
+        0: true,
+        1: true,
+      },
+    })
+
+    unsubscribe()
+  })
+
+  test('should support custom reducer with initialValue', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        streamFn: () => createAsyncNumberGenerator(2),
+        reducer: (acc, chunk) => ({
+          ...acc,
+          [chunk]: true,
+        }),
+        initialValue: {
+          10: true,
+          11: true,
+        } as Record<number, boolean>,
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: {
+        10: true,
+        11: true,
+        0: true,
+        1: true,
+      },
     })
 
     unsubscribe()

@@ -2,6 +2,7 @@ import type {
   DataTag,
   DefaultError,
   InitialDataFunction,
+  NonUndefinedGuard,
   OmitKeyof,
   QueryFunction,
   QueryKey,
@@ -35,8 +36,6 @@ export type UnusedSkipTokenOptions<
     SkipToken | undefined
   >
 }
-
-type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,

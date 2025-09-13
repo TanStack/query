@@ -6,7 +6,10 @@ title: DefinedCreateQueryResult
 # Type Alias: DefinedCreateQueryResult\<TData, TError\>
 
 ```ts
-type DefinedCreateQueryResult<TData, TError>: DefinedCreateBaseQueryResult<TData, TError>;
+type DefinedCreateQueryResult<TData, TError> = DefinedCreateBaseQueryResult<
+  TData,
+  TError
+>
 ```
 
 Options for createQuery with initialData
@@ -19,4 +22,4 @@ Options for createQuery with initialData
 
 ## Defined in
 
-[packages/svelte-query/src/types.ts:81](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/types.ts#L81)
+[packages/svelte-query/src/types.ts:82](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L82)

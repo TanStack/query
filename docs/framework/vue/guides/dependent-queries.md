@@ -48,7 +48,7 @@ const queries = computed(() => {
 
 // Then get the users messages
 const usersMessages = useQueries({
-  queries, // if users is undefined, an empty array will be returned
+  queries, // if userIds.value is undefined or has no items, an empty array will be returned
 })
 ```
 

@@ -27,14 +27,13 @@ export class InfiniteQueryObserver<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends QueryObserver<
   TQueryFnData,
   TError,
   TData,
-  InfiniteData<TQueryData, TPageParam>,
+  InfiniteData<TQueryFnData, TPageParam>,
   TQueryKey
 > {
   // Type override
@@ -48,7 +47,7 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      InfiniteData<TQueryData, TPageParam>,
+      InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey
     >['getCurrentResult'],
     InfiniteQueryObserverResult<TData, TError>
@@ -60,7 +59,7 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      InfiniteData<TQueryData, TPageParam>,
+      InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey
     >['fetch'],
     Promise<InfiniteQueryObserverResult<TData, TError>>
@@ -72,7 +71,6 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -91,7 +89,6 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -107,7 +104,6 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -145,14 +141,13 @@ export class InfiniteQueryObserver<
     query: Query<
       TQueryFnData,
       TError,
-      InfiniteData<TQueryData, TPageParam>,
+      InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey
     >,
     options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,

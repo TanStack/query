@@ -5,7 +5,7 @@
   @if (query.isPending()) {
     <p>Loading...</p>
   } @else if (query.isError()) {
-    <span>Error: {{ query.error()?.message }}</span>
+    <span>Error: {{ query.error().message }}</span>
   } @else {
     <div>
       <button
@@ -15,7 +15,7 @@
         {{ previousButtonText() }}
       </button>
     </div>
-    @for (page of query.data()?.pages; track $index) {
+    @for (page of query.data().pages; track $index) {
       @for (project of page.data; track project.id) {
         <p [projectStyle]="project.id">{{ project.name }} {{ project.id }}</p>
       }

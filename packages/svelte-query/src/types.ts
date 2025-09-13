@@ -53,14 +53,12 @@ export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = InfiniteQueryObserverOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryData,
   TQueryKey,
   TPageParam
 >

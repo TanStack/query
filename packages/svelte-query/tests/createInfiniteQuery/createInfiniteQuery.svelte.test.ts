@@ -1,11 +1,19 @@
-import { describe, expect, test } from 'vitest'
-import { render, waitFor } from '@testing-library/svelte'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { render } from '@testing-library/svelte'
 import { ref } from '../utils.svelte.js'
 import BaseExample from './BaseExample.svelte'
 import SelectExample from './SelectExample.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('Return the correct states for a successful query', async () => {
     let states = ref<Array<QueryObserverResult>>([])
 
@@ -15,9 +23,8 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await waitFor(() => {
-      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('Status: success')).toBeInTheDocument()
 
     expect(states.value).toHaveLength(2)
 
@@ -51,6 +58,7 @@ describe('createInfiniteQuery', () => {
       isRefetching: false,
       isStale: true,
       isSuccess: false,
+      isEnabled: true,
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
@@ -87,6 +95,7 @@ describe('createInfiniteQuery', () => {
       isRefetching: false,
       isStale: true,
       isSuccess: true,
+      isEnabled: true,
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
@@ -103,9 +112,8 @@ describe('createInfiniteQuery', () => {
       },
     })
 
-    await waitFor(() => {
-      expect(rendered.queryByText('count: 1')).toBeInTheDocument()
-    })
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
 
     expect(states.value).toHaveLength(2)
 

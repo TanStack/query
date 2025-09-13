@@ -6,7 +6,13 @@ title: CreateBaseMutationResult
 # Type Alias: CreateBaseMutationResult\<TData, TError, TVariables, TContext\>
 
 ```ts
-type CreateBaseMutationResult<TData, TError, TVariables, TContext>: Override<MutationObserverResult<TData, TError, TVariables, TContext>, object> & object;
+type CreateBaseMutationResult<TData, TError, TVariables, TContext> = Override<
+  MutationObserverResult<TData, TError, TVariables, TContext>,
+  {
+    mutate: CreateMutateFunction<TData, TError, TVariables, TContext>
+  }
+> &
+  object
 ```
 
 ## Type declaration
@@ -29,4 +35,4 @@ mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
 
 ## Defined in
 
-[types.ts:198](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/types.ts#L198)
+[types.ts:188](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L188)

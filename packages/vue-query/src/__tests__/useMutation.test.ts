@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { reactive, ref } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
@@ -7,6 +7,13 @@ import { useQueryClient } from '../useQueryClient'
 vi.mock('../useQueryClient')
 
 describe('useMutation', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('should be in idle state initially', () => {
     const mutation = useMutation({
       mutationFn: (params) => sleep(0).then(() => params),
@@ -41,10 +48,10 @@ describe('useMutation', () => {
   test('should return error when request fails', async () => {
     const mutation = useMutation({
       mutationFn: () =>
-        sleep(0).then(() => Promise.reject(new Error('Some error'))),
+        sleep(10).then(() => Promise.reject(new Error('Some error'))),
     })
     mutation.mutate()
-    await sleep(10)
+    await vi.advanceTimersByTimeAsync(10)
     expect(mutation).toMatchObject({
       isIdle: { value: false },
       isPending: { value: false },
@@ -58,12 +65,12 @@ describe('useMutation', () => {
   test('should return data when request succeeds', async () => {
     const result = 'Mock data'
     const mutation = useMutation({
-      mutationFn: (params: string) => sleep(0).then(() => params),
+      mutationFn: (params: string) => sleep(10).then(() => params),
     })
 
     mutation.mutate(result)
 
-    await sleep(10)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(mutation).toMatchObject({
       isIdle: { value: false },
@@ -80,15 +87,15 @@ describe('useMutation', () => {
     const mutationCache = queryClient.getMutationCache()
     const options = reactive({
       mutationKey: ['foo'],
-      mutationFn: (params: string) => sleep(0).then(() => params),
+      mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const mutation = useMutation(options)
 
     options.mutationKey = ['bar']
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(10)
     mutation.mutate('xyz')
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     const mutations = mutationCache.find({ mutationKey: ['bar'] })
 
@@ -112,15 +119,15 @@ describe('useMutation', () => {
     const mutationCache = queryClient.getMutationCache()
     const options = reactive({
       mutationKey,
-      mutationFn: (params: string) => sleep(0).then(() => params),
+      mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const mutation = useMutation(options)
 
     mutationKey.value[0]!.otherObject.name = 'someOtherObjectName'
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(10)
     mutation.mutate('xyz')
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     const mutations = mutationCache.getAll()
     const relevantMutation = mutations.find((m) => {
@@ -147,12 +154,12 @@ describe('useMutation', () => {
     let proof = false
     mutationFn.value = (params: string) => {
       proof = true
-      return sleep(0).then(() => params)
+      return sleep(10).then(() => params)
     }
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     mutation.mutate('xyz')
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(10)
 
     const mutations = mutationCache.find({ mutationKey: ['bar2'] })
     expect(mutations?.options.mutationKey).toEqual(['bar2'])
@@ -162,12 +169,12 @@ describe('useMutation', () => {
   test('should reset state after invoking mutation.reset', async () => {
     const mutation = useMutation({
       mutationFn: () =>
-        sleep(0).then(() => Promise.reject(new Error('Some error'))),
+        sleep(10).then(() => Promise.reject(new Error('Some error'))),
     })
 
     mutation.mutate()
 
-    await sleep(10)
+    await vi.advanceTimersByTimeAsync(10)
 
     mutation.reset()
 
@@ -189,13 +196,13 @@ describe('useMutation', () => {
     test('should call onMutate when passed as an option', async () => {
       const onMutate = vi.fn()
       const mutation = useMutation({
-        mutationFn: (params: string) => sleep(0).then(() => params),
+        mutationFn: (params: string) => sleep(10).then(() => params),
         onMutate,
       })
 
       mutation.mutate('')
 
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onMutate).toHaveBeenCalledTimes(1)
     })
@@ -204,13 +211,13 @@ describe('useMutation', () => {
       const onError = vi.fn()
       const mutation = useMutation({
         mutationFn: () =>
-          sleep(0).then(() => Promise.reject(new Error('Some error'))),
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
         onError,
       })
 
       mutation.mutate('')
 
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onError).toHaveBeenCalledTimes(1)
     })
@@ -218,13 +225,13 @@ describe('useMutation', () => {
     test('should call onSuccess when passed as an option', async () => {
       const onSuccess = vi.fn()
       const mutation = useMutation({
-        mutationFn: (params: string) => sleep(0).then(() => params),
+        mutationFn: (params: string) => sleep(10).then(() => params),
         onSuccess,
       })
 
       mutation.mutate('')
 
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
@@ -232,13 +239,13 @@ describe('useMutation', () => {
     test('should call onSettled when passed as an option', async () => {
       const onSettled = vi.fn()
       const mutation = useMutation({
-        mutationFn: (params: string) => sleep(0).then(() => params),
+        mutationFn: (params: string) => sleep(10).then(() => params),
         onSettled,
       })
 
       mutation.mutate('')
 
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
@@ -247,12 +254,12 @@ describe('useMutation', () => {
       const onError = vi.fn()
       const mutation = useMutation({
         mutationFn: () =>
-          sleep(0).then(() => Promise.reject(new Error('Some error'))),
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
       })
 
       mutation.mutate(undefined, { onError })
 
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onError).toHaveBeenCalledTimes(1)
     })
@@ -260,12 +267,12 @@ describe('useMutation', () => {
     test('should call onSuccess when passed as an argument of mutate function', async () => {
       const onSuccess = vi.fn()
       const mutation = useMutation({
-        mutationFn: (params: string) => sleep(0).then(() => params),
+        mutationFn: (params: string) => sleep(10).then(() => params),
       })
 
       mutation.mutate('', { onSuccess })
 
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
@@ -273,12 +280,12 @@ describe('useMutation', () => {
     test('should call onSettled when passed as an argument of mutate function', async () => {
       const onSettled = vi.fn()
       const mutation = useMutation({
-        mutationFn: (params: string) => sleep(0).then(() => params),
+        mutationFn: (params: string) => sleep(10).then(() => params),
       })
 
       mutation.mutate('', { onSettled })
 
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
@@ -287,13 +294,13 @@ describe('useMutation', () => {
       const onSettled = vi.fn()
       const onSettledOnFunction = vi.fn()
       const mutation = useMutation({
-        mutationFn: (params: string) => sleep(0).then(() => params),
+        mutationFn: (params: string) => sleep(10).then(() => params),
         onSettled,
       })
 
       mutation.mutate('', { onSettled: onSettledOnFunction })
 
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(onSettled).toHaveBeenCalledTimes(1)
       expect(onSettledOnFunction).toHaveBeenCalledTimes(1)
@@ -308,10 +315,12 @@ describe('useMutation', () => {
     test('should resolve properly', async () => {
       const result = 'Mock data'
       const mutation = useMutation({
-        mutationFn: (params: string) => sleep(0).then(() => params),
+        mutationFn: (params: string) => sleep(10).then(() => params),
       })
 
-      await expect(mutation.mutateAsync(result)).resolves.toBe(result)
+      await vi.waitFor(() =>
+        expect(mutation.mutateAsync(result)).resolves.toBe(result),
+      )
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
@@ -326,10 +335,12 @@ describe('useMutation', () => {
     test('should throw on error', async () => {
       const mutation = useMutation({
         mutationFn: () =>
-          sleep(0).then(() => Promise.reject(new Error('Some error'))),
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
       })
 
-      await expect(mutation.mutateAsync()).rejects.toThrowError('Some error')
+      await vi.waitFor(() =>
+        expect(mutation.mutateAsync()).rejects.toThrowError('Some error'),
+      )
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
@@ -347,15 +358,13 @@ describe('useMutation', () => {
       const err = new Error('Expected mock error. All is well!')
       const boundaryFn = vi.fn()
       const { mutate } = useMutation({
-        mutationFn: () => {
-          return Promise.reject(err)
-        },
+        mutationFn: () => sleep(10).then(() => Promise.reject(err)),
         throwOnError: boundaryFn,
       })
 
       mutate()
 
-      await sleep(0)
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(boundaryFn).toHaveBeenCalledTimes(1)
       expect(boundaryFn).toHaveBeenCalledWith(err)

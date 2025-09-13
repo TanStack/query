@@ -27,13 +27,32 @@ const queryClient = useQueryClient()
 // When this mutation succeeds, invalidate any queries with the `todos` or `reminders` query key
 const mutation = useMutation({
   mutationFn: addTodo,
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['todos'] })
-    queryClient.invalidateQueries({ queryKey: ['reminders'] })
+  onSuccess: async () => {
+    // If you're invalidating a single query
+    await queryClient.invalidateQueries({ queryKey: ['todos'] })
+
+    // If you're invalidating multiple queries
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['todos'] }),
+      queryClient.invalidateQueries({ queryKey: ['reminders'] }),
+    ])
   },
 })
 ```
 
 [//]: # 'Example2'
 
-You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](./mutations.md)
+Returning a Promise on `onSuccess` makes sure the data is updated before the mutation is entirely complete (i.e., isPending is true until onSuccess is fulfilled)
+
+[//]: # 'Example2'
+
+You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](../mutations.md)
+
+[//]: # 'Materials'
+
+## Further reading
+
+For a technique to automatically invalidate Queries after Mutations, have a look at [Automatic Query Invalidation after Mutations](../../community/tkdodos-blog.md#25-automatic-query-invalidation-after-mutations) from
+the Community Resources.
+
+[//]: # 'Materials'

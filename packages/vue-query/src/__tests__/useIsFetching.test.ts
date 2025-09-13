@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, reactive } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
@@ -8,6 +8,14 @@ import type { MockedFunction } from 'vitest'
 vi.mock('../useQueryClient')
 
 describe('useIsFetching', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('should properly return isFetching state', async () => {
     const { isFetching: isFetchingQuery } = useQuery({
       queryKey: ['isFetching1'],
@@ -22,7 +30,7 @@ describe('useIsFetching', () => {
     expect(isFetchingQuery.value).toStrictEqual(true)
     expect(isFetching.value).toStrictEqual(2)
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(isFetchingQuery.value).toStrictEqual(false)
     expect(isFetching.value).toStrictEqual(0)
@@ -43,12 +51,12 @@ describe('useIsFetching', () => {
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
@@ -72,7 +80,7 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(0)
 
     filter.stale = true
-    await sleep(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(isFetching.value).toStrictEqual(1)
   })

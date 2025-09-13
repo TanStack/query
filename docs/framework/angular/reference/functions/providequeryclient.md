@@ -6,22 +6,29 @@ title: provideQueryClient
 # Function: provideQueryClient()
 
 ```ts
-function provideQueryClient(value): Provider
+function provideQueryClient(queryClient): Provider
 ```
 
-Usually [provideAngularQuery](provideangularquery.md) is used once to set up TanStack Query and the
-[https://tanstack.com/query/latest/docs/reference/QueryClient|QueryClient](https://tanstack.com/query/latest/docs/reference/QueryClient|QueryClient)
-for the entire application. You can use `provideQueryClient` to provide a
-different `QueryClient` instance for a part of the application.
+Usually [provideTanStackQuery](../providetanstackquery.md) is used once to set up TanStack Query and the
+[https://tanstack.com/query/latest/docs/reference/QueryClient\|QueryClient](https://tanstack.com/query/latest/docs/reference/QueryClient|QueryClient)
+for the entire application. Internally it calls `provideQueryClient`.
+You can use `provideQueryClient` to provide a different `QueryClient` instance for a part
+of the application or for unit testing purposes.
 
 ## Parameters
 
-• **value**: `QueryClient` \| () => `QueryClient`
+### queryClient
+
+A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
+
+`QueryClient` | `InjectionToken`\<`QueryClient`\>
 
 ## Returns
 
 `Provider`
 
+a provider object that can be used to provide the `QueryClient` instance.
+
 ## Defined in
 
-[inject-query-client.ts:25](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-query-client.ts#L25)
+[providers.ts:31](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L31)

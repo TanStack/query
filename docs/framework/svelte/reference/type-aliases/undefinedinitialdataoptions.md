@@ -6,7 +6,8 @@ title: UndefinedInitialDataOptions
 # Type Alias: UndefinedInitialDataOptions\<TQueryFnData, TError, TData, TQueryKey\>
 
 ```ts
-type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object;
+type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> =
+  CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object
 ```
 
 ## Type declaration
@@ -14,7 +15,7 @@ type UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>: Create
 ### initialData?
 
 ```ts
-optional initialData: undefined;
+optional initialData: InitialDataFunction<NonUndefinedGuard<TQueryFnData>>;
 ```
 
 ## Type Parameters
@@ -29,4 +30,4 @@ optional initialData: undefined;
 
 ## Defined in
 
-[packages/svelte-query/src/queryOptions.ts:4](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/queryOptions.ts#L4)
+[packages/svelte-query/src/queryOptions.ts:9](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/queryOptions.ts#L9)

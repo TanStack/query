@@ -27,7 +27,7 @@ export const chatQueryOptions = (question: string) =>
   queryOptions({
     queryKey: ['chat', question],
     queryFn: streamedQuery({
-      queryFn: () => chatAnswer(question),
+      streamFn: () => chatAnswer(question),
     }),
     staleTime: Infinity,
   })

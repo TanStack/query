@@ -13,6 +13,10 @@ title: InjectMutationStateOptions
 optional injector: Injector;
 ```
 
+The `Injector` in which to create the mutation state signal.
+
+If this is not provided, the current injection context will be used instead (via `inject`).
+
 #### Defined in
 
-[inject-mutation-state.ts:43](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/angular-query-experimental/src/inject-mutation-state.ts#L43)
+[inject-mutation-state.ts:54](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-mutation-state.ts#L54)

@@ -5,7 +5,7 @@ title: Advanced Server Rendering
 
 Welcome to the Advanced Server Rendering guide, where you will learn all about using React Query with streaming, Server Components and the Next.js app router.
 
-You might want to read the [Server Rendering & Hydration guide](./ssr.md) before this one as it teaches the basics for using React Query with SSR, and [Performance & Request Waterfalls](./request-waterfalls.md) as well as [Prefetching & Router Integration](./prefetching.md) also contains valuable background.
+You might want to read the [Server Rendering & Hydration guide](../ssr.md) before this one as it teaches the basics for using React Query with SSR, and [Performance & Request Waterfalls](../request-waterfalls.md) as well as [Prefetching & Router Integration](../prefetching.md) also contains valuable background.
 
 Before we start, let's note that while the `initialData` approach outlined in the SSR guide also works with Server Components, we'll focus this guide on the hydration APIs.
 
@@ -13,7 +13,7 @@ Before we start, let's note that while the `initialData` approach outlined in th
 
 We won't cover Server Components in depth here, but the short version is that they are components that are guaranteed to _only_ run on the server, both for the initial page view and **also on page transitions**. This is similar to how Next.js `getServerSideProps`/`getStaticProps` and Remix `loader` works, as these also always run on the server but while those can only return data, Server Components can do a lot more. The data part is central to React Query however, so let's focus on that.
 
-How do we take what we learned in the Server Rendering guide about [passing data prefetched in framework loaders to the app](./ssr.md#using-the-hydration-apis) and apply that to Server Components and the Next.js app router? The best way to start thinking about this is to consider Server Components as "just" another framework loader.
+How do we take what we learned in the Server Rendering guide about [passing data prefetched in framework loaders to the app](../ssr.md#using-the-hydration-apis) and apply that to Server Components and the Next.js app router? The best way to start thinking about this is to consider Server Components as "just" another framework loader.
 
 ### A quick note on terminology
 
@@ -101,7 +101,7 @@ This part is pretty similar to what we did in the SSR guide, we just need to spl
 
 ### Prefetching and de/hydrating data
 
-Let's next look at how to actually prefetch data and dehydrate and hydrate it. This is what it looked like using the **Next.js pages router**:
+Next, let’s look at how to actually prefetch data, then dehydrate and hydrate it. This is what it looked like using the **Next.js Pages Router**:
 
 ```tsx
 // pages/posts.tsx
@@ -530,7 +530,7 @@ export default function Posts() {
 
 Now, your `getPosts` function can return e.g. `Temporal` datetime objects and the data will be serialized and deserialized on the client, assuming your transformer can serialize and deserialize those data types.
 
-For more information, check out the [Next.js App with Prefetching Example](../examples/nextjs-app-prefetching).
+For more information, check out the [Next.js App with Prefetching Example](../../examples/nextjs-app-prefetching).
 
 ## Experimental streaming without prefetching in Next.js
 
@@ -597,11 +597,11 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../examples/nextjs-suspense-streaming).
+For more information, check out the [NextJs Suspense Streaming Example](../../examples/nextjs-suspense-streaming).
 
 The big upside is that you no longer need to prefetch queries manually to have SSR work, and it even still streams in the result! This gives you phenomenal DX and lower code complexity.
 
-The downside is easiest to explain if we look back at [the complex request waterfall example](./request-waterfalls.md#code-splitting) in the Performance & Request Waterfalls guide. Server Components with prefetching effectively eliminates the request waterfalls both for the initial page load **and** any subsequent navigation. This prefetch-less approach however will only flatten the waterfalls on the initial page load but ends up the same deep waterfall as the original example on page navigations:
+The downside is easiest to explain if we look back at [the complex request waterfall example](../request-waterfalls.md#code-splitting) in the Performance & Request Waterfalls guide. Server Components with prefetching effectively eliminates the request waterfalls both for the initial page load **and** any subsequent navigation. This prefetch-less approach however will only flatten the waterfalls on the initial page load but ends up the same deep waterfall as the original example on page navigations:
 
 ```
 1. |> JS for <Feed>
@@ -621,3 +621,11 @@ If you value DX/iteration/shipping speed with low code complexity over performan
 Server Components and streaming are still fairly new concepts and we are still figuring out how React Query fits in and what improvements we can make to the API. We welcome suggestions, feedback and bug reports!
 
 Similarly, it would be impossible to teach all the intricacies of this new paradigm all in one guide, on the first try. If you are missing some piece of information here or have suggestions on how to improve this content, also get in touch, or even better, click the "Edit on GitHub" button below and help us out.
+
+[//]: # 'Materials'
+
+## Further reading
+
+To understand if your application can benefit from React Query when also using Server Components, have a look at [You Might Not Need React Query](../../community/tkdodos-blog.md#20-you-might-not-need-react-query) from the Community Resources.
+
+[//]: # 'Materials'

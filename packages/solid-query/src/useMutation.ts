@@ -1,8 +1,7 @@
-import { MutationObserver, shouldThrowError } from '@tanstack/query-core'
+import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
 import { createComputed, createMemo, on, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
-import { noop } from './utils'
 import type { DefaultError } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type {

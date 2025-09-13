@@ -14,7 +14,7 @@ There are a few ways to supply placeholder data for a query to the cache before 
 - Declaratively:
   - Provide `placeholderData` to a query to prepopulate its cache if empty
 - Imperatively:
-  - [Prefetch or fetch the data using `queryClient` and the `placeholderData` option](./prefetching.md)
+  - [Prefetch or fetch the data using `queryClient` and the `placeholderData` option](../prefetching.md)
 
 When we use `placeholderData`, our Query will not be in a `pending` state - it will start out as being in `success` state, because we have `data` to display - even if that data is just "placeholder" data. To distinguish it from "real" data, we will also have the `isPlaceholderData` flag set to `true` on the Query result.
 
@@ -54,7 +54,7 @@ function Todos() {
 
 ## Placeholder Data as a Function
 
-`placeholderData` can also be a function, where you can get access to the data and Query meta information of a "previous" successful Query. This is useful for situations where you want to use the data from one query as the placeholder data for another query. When the QueryKey changes, e.g. from `['todos', 1]` to `['todos', 2]`, we can keep displaying "old" data instead of having to show a loading spinner while data is _transitioning_ from one Query to the next. For more information, see [Paginated Queries](./paginated-queries.md).
+`placeholderData` can also be a function, where you can get access to the data and Query meta information of a "previous" successful Query. This is useful for situations where you want to use the data from one query as the placeholder data for another query. When the QueryKey changes, e.g. from `['todos', 1]` to `['todos', 2]`, we can keep displaying "old" data instead of having to show a loading spinner while data is _transitioning_ from one Query to the next. For more information, see [Paginated Queries](../paginated-queries.md).
 
 [//]: # 'ExampleFunction'
 
@@ -96,6 +96,6 @@ function Todo({ blogPostId }) {
 
 ## Further reading
 
-For a comparison between `Placeholder Data` and `Initial Data`, have a look at the [Community Resources](../community/tkdodos-blog.md#9-placeholder-and-initial-data-in-react-query).
+For a comparison between `Placeholder Data` and `Initial Data`, have a look at the [Community Resources](../../community/tkdodos-blog.md#9-placeholder-and-initial-data-in-react-query).
 
 [//]: # 'Materials'

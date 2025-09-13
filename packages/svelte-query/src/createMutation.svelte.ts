@@ -43,11 +43,11 @@ export function createMutation<
     observer.setOptions(options())
   })
 
-  const result = $state(observer.getCurrentResult())
+  let result = $state(() => observer.getCurrentResult())
 
   const unsubscribe = observer.subscribe((val) => {
     notifyManager.batchCalls(() => {
-      Object.assign(result, val)
+      result = () => val
     })()
   })
 
@@ -56,12 +56,12 @@ export function createMutation<
   })
 
   // @ts-expect-error
-  return new Proxy(result, {
+  return new Proxy(() => result(), {
     get: (_, prop) => {
       const r = {
-        ...result,
+        ...result(),
         mutate,
-        mutateAsync: result.mutate,
+        mutateAsync: result().mutate,
       }
       if (prop == 'value') return r
       // @ts-expect-error

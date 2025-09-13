@@ -3,6 +3,7 @@
   "compilerOptions": {
     "incremental": false,
     "composite": false,
-    "rootDir": "../../"
+    "rootDir": "../../",
+    "customConditions": null
   }
 }

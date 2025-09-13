@@ -2,20 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist-ts",
-    "rootDir": ".",
-    "baseUrl": "."
+    "rootDir": "."
   },
-  "include": [
-    "src/**/*.js",
-    "src/**/*.ts",
-    "src/**/*.svelte",
-    "tests/**/*.js",
-    "tests/**/*.ts",
-    "tests/**/*.svelte",
-    "*.config.js",
-    "*.config.ts",
-    "package.json"
-  ],
+  "include": ["src", "tests", "*.config.*", "package.json"],
   "references": [
     { "path": "../query-persist-client-core" },
     { "path": "../svelte-query" }

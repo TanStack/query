@@ -1,5 +1,5 @@
-import { queryKey } from 'src/queryKey'
 import { describe, expect, it } from 'vitest'
+import { queryKey } from '../queryKey'
 
 describe('queryKey', () => {
   it('should return a query key', () => {

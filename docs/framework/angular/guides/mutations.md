@@ -47,7 +47,6 @@ export class TodosComponent {
 
 ```angular-ts
 @Component({
-  standalone: true,
   selector: 'todo-item',
   imports: [ReactiveFormsModule],
   template: `

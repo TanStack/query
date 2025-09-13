@@ -167,5 +167,5 @@ _Note_: when using React 18, the semantics of `waitFor` have changed as noted ab
 
 ## Further reading
 
-For additional tips and an alternative setup using `mock-service-worker`, have a look at [Testing React Query](../community/tkdodos-blog.md#5-testing-react-query) from
+For additional tips and an alternative setup using `mock-service-worker`, have a look at [Testing React Query](../../community/tkdodos-blog.md#5-testing-react-query) from
 the Community Resources.
