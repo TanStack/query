@@ -47,7 +47,7 @@ export function createMutation<
 
   const unsubscribe = observer.subscribe((val) => {
     notifyManager.batchCalls(() => {
-      Object.assign(result, val)
+      result = () => val
     })()
   })
 
