@@ -13,7 +13,6 @@ import { PostsService } from '../services/posts-service'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'post',
-  standalone: true,
   templateUrl: './post.component.html',
 })
 export class PostComponent {

@@ -16,17 +16,21 @@ import type { CreateMutationOptions } from './types'
  *       mutationKey: ["updatePost", id],
  *       onSuccess: (newPost) => {
  *         //           ^? newPost: Post
- *         this.queryClient.setQueryData(["posts", id], newPost);
+ *         this.queryClient.setQueryData(["posts", id], newPost)
  *       },
  *     });
  *   }
  * }
  *
- * queries = inject(QueriesService)
- * idSignal = new Signal(0);
- * mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+ * class ComponentOrService {
+ *   queries = inject(QueriesService)
+ *   id = signal(0)
+ *   mutation = injectMutation(() => this.queries.updatePost(this.id()))
+ * }
  *
- * mutation.mutate({ title: 'New Title' })
+ * save() {
+ *   this.mutation.mutate({ title: 'New Title' })
+ * }
  * ```
  * @param options - The mutation options.
  * @returns Mutation options.
@@ -75,17 +79,21 @@ export function mutationOptions<
  *       mutationKey: ["updatePost", id],
  *       onSuccess: (newPost) => {
  *         //           ^? newPost: Post
- *         this.queryClient.setQueryData(["posts", id], newPost);
+ *         this.queryClient.setQueryData(["posts", id], newPost)
  *       },
  *     });
  *   }
  * }
  *
- * queries = inject(QueriesService)
- * idSignal = new Signal(0);
- * mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+ * class ComponentOrService {
+ *  queries = inject(QueriesService)
+ *  id = signal(0)
+ *   mutation = injectMutation(() => this.queries.updatePost(this.id()))
+ * }
  *
- * mutation.mutate({ title: 'New Title' })
+ * save() {
+ *   this.mutation.mutate({ title: 'New Title' })
+ * }
  * ```
  * @param options - The mutation options.
  * @returns Mutation options.
