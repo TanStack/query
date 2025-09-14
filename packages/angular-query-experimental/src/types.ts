@@ -157,8 +157,8 @@ export type DefinedCreateInfiniteQueryResult<
     TData,
     TError
   >,
-> =BaseQueryNarrowing<TData, TError> &
- MapToSignals<TDefinedInfiniteQueryObserver>
+> = BaseQueryNarrowing<TData, TError> &
+  MapToSignals<TDefinedInfiniteQueryObserver>
 
 export interface CreateMutationOptions<
   TData = unknown,
