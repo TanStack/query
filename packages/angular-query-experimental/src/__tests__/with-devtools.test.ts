@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing'
 import {
   ENVIRONMENT_INITIALIZER,
   EnvironmentInjector,
+  InjectionToken,
   PLATFORM_ID,
   createEnvironmentInjector,
   isDevMode,
@@ -53,55 +54,57 @@ describe('withDevtools feature', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.useRealTimers()
+    TestBed.resetTestingModule()
   })
 
   test.each([
     {
-      description: 'should load developer tools in development mode',
+      description: 'should load devtools in development mode',
       isDevMode: true,
       expectedCalled: true,
     },
     {
-      description: 'should not load developer tools in production mode',
+      description: 'should not load devtools in production mode',
       isDevMode: false,
       expectedCalled: false,
     },
     {
-      description: `should load developer tools in development mode when 'loadDevtools' is set to 'auto'`,
+      description: `should load devtools in development mode when 'loadDevtools' is set to 'auto'`,
       isDevMode: true,
       loadDevtools: 'auto',
       expectedCalled: true,
     },
     {
-      description: `should not load developer tools in production mode when 'loadDevtools' is set to 'auto'`,
+      description: `should not load devtools in production mode when 'loadDevtools' is set to 'auto'`,
       isDevMode: false,
       loadDevtools: 'auto',
       expectedCalled: false,
     },
     {
       description:
-        "should load developer tools in development mode when 'loadDevtools' is set to true",
+        "should load devtools in development mode when 'loadDevtools' is set to true",
       isDevMode: true,
       loadDevtools: true,
       expectedCalled: true,
     },
     {
       description:
-        "should load developer tools in production mode when 'loadDevtools' is set to true",
+        "should load devtools in production mode when 'loadDevtools' is set to true",
       isDevMode: false,
       loadDevtools: true,
       expectedCalled: true,
     },
     {
       description:
-        "should not load developer tools in development mode when 'loadDevtools' is set to false",
+        "should not load devtools in development mode when 'loadDevtools' is set to false",
       isDevMode: true,
       loadDevtools: false,
       expectedCalled: false,
     },
     {
       description:
-        "should not load developer tools in production mode when 'loadDevtools' is set to false",
+        "should not load devtools in production mode when 'loadDevtools' is set to false",
       isDevMode: false,
       loadDevtools: false,
       expectedCalled: false,
@@ -139,8 +142,10 @@ describe('withDevtools feature', () => {
 
       if (expectedCalled) {
         expect(mockTanstackQueryDevtools).toHaveBeenCalled()
+        expect(mockDevtoolsInstance.mount).toHaveBeenCalled()
       } else {
         expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+        expect(mockDevtoolsInstance.mount).not.toHaveBeenCalled()
       }
     },
   )
@@ -162,6 +167,7 @@ describe('withDevtools feature', () => {
     // Destroys injector
     TestBed.resetTestingModule()
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
   })
@@ -247,16 +253,21 @@ describe('withDevtools feature', () => {
 
     expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledTimes(0)
 
-    errorTypes.set([
+    const newErrorTypes = [
       {
         name: '',
         initializer: () => new Error(),
       },
-    ])
+    ]
+
+    errorTypes.set(newErrorTypes)
 
     TestBed.tick()
 
     expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setErrorTypes).toHaveBeenCalledWith(
+      newErrorTypes,
+    )
   })
 
   it('should update client', async () => {
@@ -282,11 +293,13 @@ describe('withDevtools feature', () => {
 
     expect(mockDevtoolsInstance.setClient).toHaveBeenCalledTimes(0)
 
-    client.set(new QueryClient())
+    const newClient = new QueryClient()
+    client.set(newClient)
 
     TestBed.tick()
 
     expect(mockDevtoolsInstance.setClient).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setClient).toHaveBeenCalledWith(newClient)
   })
 
   it('should update position', async () => {
@@ -317,6 +330,7 @@ describe('withDevtools feature', () => {
     TestBed.tick()
 
     expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledWith('left')
   })
 
   it('should update button position', async () => {
@@ -347,6 +361,9 @@ describe('withDevtools feature', () => {
     TestBed.tick()
 
     expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setButtonPosition).toHaveBeenCalledWith(
+      'bottom-right',
+    )
   })
 
   it('should update initialIsOpen', async () => {
@@ -377,6 +394,7 @@ describe('withDevtools feature', () => {
     TestBed.tick()
 
     expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.setInitialIsOpen).toHaveBeenCalledWith(true)
   })
 
   it('should destroy devtools', async () => {
@@ -405,5 +423,181 @@ describe('withDevtools feature', () => {
     TestBed.tick()
 
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(1)
+  })
+
+  it('should unmount devtools when injector is destroyed', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: true,
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.advanceTimersByTimeAsync(0)
+    TestBed.tick()
+    await vi.dynamicImportSettled()
+
+    expect(mockTanstackQueryDevtools).toHaveBeenCalled()
+    expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)
+
+    // Destroy the injector
+    TestBed.resetTestingModule()
+
+    expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(1)
+  })
+
+  it('should remount devtools when toggled from false to true', async () => {
+    const loadDevtools = signal(false)
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          new QueryClient(),
+          withDevtools(() => ({
+            loadDevtools: loadDevtools(),
+          })),
+        ),
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+    expect(mockDevtoolsInstance.mount).not.toHaveBeenCalled()
+
+    loadDevtools.set(true)
+    TestBed.tick()
+    await vi.dynamicImportSettled()
+
+    expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.unmount).not.toHaveBeenCalled()
+
+    loadDevtools.set(false)
+    TestBed.tick()
+
+    expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(1)
+    expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
+
+    loadDevtools.set(true)
+    TestBed.tick()
+    await vi.dynamicImportSettled()
+
+    // Should remount (mount called twice now)
+    expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(2)
+    expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(1)
+  })
+
+  describe('deps parameter', () => {
+    it('should inject dependencies and pass them to withDevtoolsFn in correct order', async () => {
+      const mockService1 = { value: 'service1' }
+      const mockService2 = { value: 'service2' }
+      const mockService1Token = new InjectionToken('MockService1')
+      const mockService2Token = new InjectionToken('MockService2')
+      const withDevtoolsFn = vi.fn().mockReturnValue({ loadDevtools: true })
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          {
+            provide: mockService1Token,
+            useValue: mockService1,
+          },
+          {
+            provide: mockService2Token,
+            useValue: mockService2,
+          },
+          provideTanStackQuery(
+            new QueryClient(),
+            withDevtools(withDevtoolsFn, {
+              deps: [mockService1Token, mockService2Token],
+            }),
+          ),
+        ],
+      })
+
+      TestBed.inject(ENVIRONMENT_INITIALIZER)
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(withDevtoolsFn).toHaveBeenCalledWith(mockService1, mockService2)
+    })
+
+    it('should work with empty deps array', async () => {
+      const withDevtoolsFn = vi.fn().mockReturnValue({ loadDevtools: true })
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(
+            new QueryClient(),
+            withDevtools(withDevtoolsFn, {
+              deps: [],
+            }),
+          ),
+        ],
+      })
+
+      TestBed.inject(ENVIRONMENT_INITIALIZER)
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(withDevtoolsFn).toHaveBeenCalledWith()
+    })
+
+    it('should reactively update when injected services change', async () => {
+      class ReactiveService {
+        enabled = signal(false)
+        position = signal<DevtoolsPosition>('bottom')
+      }
+
+      const withDevtoolsFn = (service: ReactiveService) => ({
+        loadDevtools: service.enabled(),
+        position: service.position(),
+      })
+
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          ReactiveService,
+          provideTanStackQuery(
+            new QueryClient(),
+            withDevtools(withDevtoolsFn, {
+              deps: [ReactiveService],
+            }),
+          ),
+        ],
+      })
+
+      TestBed.inject(ENVIRONMENT_INITIALIZER)
+      await vi.advanceTimersByTimeAsync(0)
+
+      const service = TestBed.inject(ReactiveService)
+
+      expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+
+      service.enabled.set(true)
+      TestBed.tick()
+      await vi.dynamicImportSettled()
+
+      expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
+      expect(mockTanstackQueryDevtools).toHaveBeenCalledWith(
+        expect.objectContaining({
+          position: 'bottom',
+        }),
+      )
+
+      service.position.set('top')
+      TestBed.tick()
+
+      expect(mockDevtoolsInstance.setPosition).toHaveBeenCalledWith('top')
+    })
   })
 })
