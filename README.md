@@ -26,10 +26,10 @@
   <a href="https://twitter.com/tan_stack"><img src="https://img.shields.io/twitter/follow/tan_stack.svg?style=social" alt="Follow @TanStack"/></a>
 </div>
 
-
 <div align="center">
 
 ### [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)
+
 </div>
 
 # TanStack Query
