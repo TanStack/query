@@ -59,14 +59,16 @@ export function useBaseQuery<
   TPageParam,
 >(
   Observer: typeof QueryObserver,
-  options: MaybeRefOrGetter<UseQueryOptionsGeneric<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey,
-    TPageParam
-  >>,
+  options: MaybeRefOrGetter<
+    UseQueryOptionsGeneric<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >
+  >,
   queryClient?: QueryClient,
 ): UseBaseQueryReturnType<TData, TError> {
   if (process.env.NODE_ENV === 'development') {

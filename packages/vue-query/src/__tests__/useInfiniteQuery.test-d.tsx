@@ -98,12 +98,14 @@ describe('Discriminated union return type', () => {
   })
 
   it('should accept computed options using infiniteQueryOptions', () => {
-    const options = computed(() => infiniteQueryOptions({
-      queryKey: ['infiniteQuery'],
-      queryFn: () => sleep(0).then(() => 'Some data'),
-      getNextPageParam: () => undefined,
-      initialPageParam: 0,
-    }))
+    const options = computed(() =>
+      infiniteQueryOptions({
+        queryKey: ['infiniteQuery'],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+      }),
+    )
     const query = reactive(useInfiniteQuery(options))
 
     if (query.isSuccess) {
@@ -112,12 +114,13 @@ describe('Discriminated union return type', () => {
   })
 
   it('should accept plain options using infiniteQueryOptions', () => {
-    const options = () => infiniteQueryOptions({
-      queryKey: ['infiniteQuery'],
-      queryFn: () => sleep(0).then(() => 'Some data'),
-      getNextPageParam: () => undefined,
-      initialPageParam: 0,
-    })
+    const options = () =>
+      infiniteQueryOptions({
+        queryKey: ['infiniteQuery'],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+      })
     const query = reactive(useInfiniteQuery(options))
 
     if (query.isSuccess) {
