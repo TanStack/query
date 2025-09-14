@@ -3,6 +3,7 @@ import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
+import type { JSX } from 'solid-js'
 
 export interface DevtoolsPanelOptions {
   /**
@@ -28,7 +29,7 @@ export interface DevtoolsPanelOptions {
    * @example { height: '100%' }
    * @example { height: '100%', width: '100%' }
    */
-  style?: CSSStyleValue
+  style?: JSX.CSSProperties
 
   /**
    * Callback function that is called when the devtools panel is closed

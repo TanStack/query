@@ -20,7 +20,9 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating()
+
       isMutatingArray.push(isMutating)
+
       return null
     }
 
@@ -52,6 +54,7 @@ describe('useIsMutating', () => {
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     await vi.advanceTimersByTimeAsync(10)
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
@@ -62,12 +65,14 @@ describe('useIsMutating', () => {
     // [ +0, 1, 2, 1, +0 ]
     // our batching strategy might yield different results
 
-    await vi.advanceTimersByTimeAsync(40)
+    await vi.advanceTimersByTimeAsync(41)
     expect(isMutatingArray[0]).toEqual(0)
     expect(isMutatingArray[1]).toEqual(1)
     expect(isMutatingArray[2]).toEqual(2)
-    await vi.advanceTimersByTimeAsync(1)
-    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+    expect(isMutatingArray[3]).toEqual(1)
+    expect(isMutatingArray[4]).toEqual(0)
+
+    expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
   })
 
   it('should filter correctly by mutationKey', async () => {
@@ -99,6 +104,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(101)
     expect(isMutatingArray).toEqual([0, 1, 0])
   })
@@ -135,6 +141,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
+
     await vi.advanceTimersByTimeAsync(101)
     expect(isMutatingArray).toEqual([0, 1, 0])
   })
@@ -163,7 +170,7 @@ describe('useIsMutating', () => {
       )
     }
 
-    const rendered = render(<Page></Page>)
+    const rendered = render(<Page />)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
@@ -220,12 +227,11 @@ describe('useMutationState', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    rendered.getByText('data: null')
+    expect(rendered.getByText('data: null')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-
     await vi.advanceTimersByTimeAsync(151)
-    rendered.getByText('data: data1')
+    expect(rendered.getByText('data: data1')).toBeInTheDocument()
 
     expect(variables).toEqual([[], [1], []])
   })

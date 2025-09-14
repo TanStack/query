@@ -347,4 +347,51 @@ describe('queriesObserver', () => {
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(1)
   })
+
+  test('should notify when results change during early return', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    queryClient.setQueryData(key1, 1)
+    queryClient.setQueryData(key2, 2)
+
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ])
+
+    const results: Array<Array<QueryObserverResult>> = []
+    results.push(observer.getCurrentResult())
+
+    const onUpdate = vi.fn((result: Array<QueryObserverResult>) => {
+      results.push(result)
+    })
+    const unsubscribe = observer.subscribe(onUpdate)
+    const baseline = results.length
+
+    observer.setQueries([
+      {
+        queryKey: key1,
+        queryFn: queryFn1,
+        select: (d: any) => d + 100,
+      },
+      {
+        queryKey: key2,
+        queryFn: queryFn2,
+        select: (d: any) => d + 100,
+      },
+    ])
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    unsubscribe()
+
+    expect(results.length).toBeGreaterThan(baseline)
+    expect(results[results.length - 1]).toMatchObject([
+      { status: 'success', data: 101 },
+      { status: 'success', data: 102 },
+    ])
+  })
 })
