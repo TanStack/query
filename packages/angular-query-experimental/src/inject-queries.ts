@@ -297,14 +297,15 @@ export function injectQueries<
       const [_optimisticResult, getCombinedResult] = optimisticResultSignal()
 
       untracked(() => {
-        const unsubscribe =  isRestoring()
-          ? () => undefined :ngZone.runOutsideAngular(() =>
-          observer.subscribe(
-            notifyManager.batchCalls((state) => {
-              resultFromSubscriberSignal.set(getCombinedResult(state))
-            }),
-          ),
-        )
+        const unsubscribe = isRestoring()
+          ? () => undefined
+          : ngZone.runOutsideAngular(() =>
+              observer.subscribe(
+                notifyManager.batchCalls((state) => {
+                  resultFromSubscriberSignal.set(getCombinedResult(state))
+                }),
+              ),
+            )
 
         destroyRef.onDestroy(unsubscribe)
       })
