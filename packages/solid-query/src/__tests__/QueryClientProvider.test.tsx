@@ -1,18 +1,26 @@
-import { describe, expect, it, vi } from 'vitest'
-import { render, waitFor } from '@solidjs/testing-library'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { render } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
-import { QueryClientProvider, createQuery, useQueryClient } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '..'
 
 describe('QueryClientProvider', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('sets a specific cache for all queries to use', async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
 
     function Page() {
-      const query = createQuery(() => ({
+      const query = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -33,9 +41,8 @@ describe('QueryClientProvider', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => {
-      return rendered.getByText('test')
-    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('test')).toBeInTheDocument()
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
@@ -47,11 +54,11 @@ describe('QueryClientProvider', () => {
     const queryCache1 = new QueryCache()
     const queryCache2 = new QueryCache()
 
-    const queryClient1 = createQueryClient({ queryCache: queryCache1 })
-    const queryClient2 = createQueryClient({ queryCache: queryCache2 })
+    const queryClient1 = new QueryClient({ queryCache: queryCache1 })
+    const queryClient2 = new QueryClient({ queryCache: queryCache2 })
 
     function Page1() {
-      const query = createQuery(() => ({
+      const query = useQuery(() => ({
         queryKey: key1,
         queryFn: async () => {
           await sleep(10)
@@ -66,7 +73,7 @@ describe('QueryClientProvider', () => {
       )
     }
     function Page2() {
-      const query = createQuery(() => ({
+      const query = useQuery(() => ({
         queryKey: key2,
         queryFn: async () => {
           await sleep(10)
@@ -92,8 +99,9 @@ describe('QueryClientProvider', () => {
       </>
     ))
 
-    await waitFor(() => rendered.getByText('test1'))
-    await waitFor(() => rendered.getByText('test2'))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('test1')).toBeInTheDocument()
+    expect(rendered.getByText('test2')).toBeInTheDocument()
 
     expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
     expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
@@ -105,7 +113,7 @@ describe('QueryClientProvider', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: {
         queries: {
@@ -115,7 +123,7 @@ describe('QueryClientProvider', () => {
     })
 
     function Page() {
-      const query = createQuery(() => ({
+      const query = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -136,7 +144,8 @@ describe('QueryClientProvider', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('test'))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('test')).toBeInTheDocument()
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
@@ -167,7 +176,7 @@ describe('QueryClientProvider', () => {
       .mockImplementation(() => undefined)
 
     function Page() {
-      const client = createQueryClient()
+      const client = new QueryClient()
       useQueryClient(client)
       return null
     }

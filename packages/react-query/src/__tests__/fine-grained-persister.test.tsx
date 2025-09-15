@@ -1,17 +1,24 @@
-import { describe, expect, it, vi } from 'vitest'
-import { waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
-import { QueryCache, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
-  experimental_createPersister,
+  experimental_createQueryPersister,
 } from '@tanstack/query-persist-client-core'
-import { useQuery } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { QueryCache, QueryClient, hashKey, useQuery } from '..'
+import { renderWithClient } from './utils'
 
 describe('fine grained persister', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should restore query state from persister and not refetch', async () => {
     const key = queryKey()
@@ -21,11 +28,13 @@ describe('fine grained persister', () => {
     const mapStorage = new Map()
     const storage = {
       getItem: (itemKey: string) => Promise.resolve(mapStorage.get(itemKey)),
-      setItem: async (itemKey: string, value: unknown) => {
+      setItem: (itemKey: string, value: unknown) => {
         mapStorage.set(itemKey, value)
+        return Promise.resolve()
       },
-      removeItem: async (itemKey: string) => {
+      removeItem: (itemKey: string) => {
         mapStorage.delete(itemKey)
+        return Promise.resolve()
       },
     }
 
@@ -48,9 +57,9 @@ describe('fine grained persister', () => {
       const { data } = useQuery({
         queryKey: key,
         queryFn: spy,
-        persister: experimental_createPersister({
+        persister: experimental_createQueryPersister({
           storage,
-        }),
+        }).persisterFn,
         staleTime: 5000,
       })
 
@@ -59,7 +68,8 @@ describe('fine grained persister', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
 
-    await waitFor(() => rendered.getByText('Works from persister'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('Works from persister')).toBeInTheDocument()
     expect(spy).not.toHaveBeenCalled()
   })
 
@@ -75,11 +85,13 @@ describe('fine grained persister', () => {
     const mapStorage = new Map()
     const storage = {
       getItem: (itemKey: string) => Promise.resolve(mapStorage.get(itemKey)),
-      setItem: async (itemKey: string, value: unknown) => {
+      setItem: (itemKey: string, value: unknown) => {
         mapStorage.set(itemKey, value)
+        return Promise.resolve()
       },
-      removeItem: async (itemKey: string) => {
+      removeItem: (itemKey: string) => {
         mapStorage.delete(itemKey)
+        return Promise.resolve()
       },
     }
 
@@ -102,9 +114,9 @@ describe('fine grained persister', () => {
       const { data } = useQuery({
         queryKey: key,
         queryFn: spy,
-        persister: experimental_createPersister({
+        persister: experimental_createQueryPersister({
           storage,
-        }),
+        }).persisterFn,
       })
 
       return <div ref={(value) => setRef(value)}>{data}</div>
@@ -112,8 +124,10 @@ describe('fine grained persister', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
 
-    await waitFor(() => rendered.getByText('Works from persister'))
-    await waitFor(() => rendered.getByText('Works from queryFn'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('Works from persister')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(6)
+    expect(rendered.getByText('Works from queryFn')).toBeInTheDocument()
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
@@ -125,11 +139,13 @@ describe('fine grained persister', () => {
     const mapStorage = new Map()
     const storage = {
       getItem: (itemKey: string) => Promise.resolve(mapStorage.get(itemKey)),
-      setItem: async (itemKey: string, value: unknown) => {
+      setItem: (itemKey: string, value: unknown) => {
         mapStorage.set(itemKey, value)
+        return Promise.resolve()
       },
-      removeItem: async (itemKey: string) => {
+      removeItem: (itemKey: string) => {
         mapStorage.delete(itemKey)
+        return Promise.resolve()
       },
     }
 
@@ -139,9 +155,9 @@ describe('fine grained persister', () => {
       const { data } = useQuery({
         queryKey: key,
         queryFn: spy,
-        persister: experimental_createPersister({
+        persister: experimental_createQueryPersister({
           storage,
-        }),
+        }).persisterFn,
       })
 
       return <div ref={(value) => setRef(value)}>{data}</div>
@@ -149,7 +165,8 @@ describe('fine grained persister', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
 
-    await waitFor(() => rendered.getByText('Works from queryFn'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('Works from queryFn')).toBeInTheDocument()
     expect(spy).toHaveBeenCalledTimes(1)
 
     const storedItem = await storage.getItem(`${PERSISTER_KEY_PREFIX}-${hash}`)

@@ -1,8 +1,8 @@
-import { QueriesObserver, notifyManager } from '@tanstack/query-core'
+import { QueriesObserver, noop, notifyManager } from '@tanstack/query-core'
 import { derived, get, readable } from 'svelte/store'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import { isSvelteStore, noop } from './utils.js'
+import { isSvelteStore } from './utils.js'
 import type { Readable } from 'svelte/store'
 import type { StoreOrVal } from './types.js'
 import type {
@@ -235,7 +235,6 @@ export function createQueries<
     observer.setQueries(
       $defaultedQueries,
       options as QueriesObserverOptions<TCombinedResult>,
-      { listeners: false },
     )
   })
 

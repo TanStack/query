@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.66.9",
+  "version": "5.87.4",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -26,7 +26,8 @@
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json",
-    "test:types:ts57": "tsc --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest --retry=3",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
@@ -39,6 +40,7 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
+    "@tanstack/custom-condition": "./src/index.ts",
     "development": {
       "import": {
         "types": "./build/index.d.ts",
@@ -68,10 +70,11 @@
   },
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.10",
-    "npm-run-all": "^4.1.5",
-    "solid-js": "^1.9.3",
+    "@tanstack/query-test-utils": "workspace:*",
+    "npm-run-all2": "^5.0.0",
+    "solid-js": "^1.9.7",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.10.2"
+    "vite-plugin-solid": "^2.11.6"
   },
   "peerDependencies": {
     "solid-js": "^1.6.0"

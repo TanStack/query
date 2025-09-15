@@ -2,9 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist-ts",
-    "rootDir": ".",
-    "baseUrl": ".",
-    "moduleResolution": "Bundler"
+    "rootDir": "."
   },
-  "include": ["src", "*.config.js", "package.json"]
+  "include": ["src", "*.config.*", "package.json"]
 }

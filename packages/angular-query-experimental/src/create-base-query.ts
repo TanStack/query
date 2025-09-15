@@ -1,18 +1,19 @@
 import {
-  DestroyRef,
-  Injector,
   NgZone,
   VERSION,
   computed,
   effect,
   inject,
-  runInInjectionContext,
   signal,
   untracked,
 } from '@angular/core'
-import { QueryClient, notifyManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  notifyManager,
+  shouldThrowError,
+} from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { shouldThrowError } from './util'
+import { injectIsRestoring } from './inject-is-restoring'
 import type {
   QueryKey,
   QueryObserver,
@@ -22,6 +23,8 @@ import type { CreateBaseQueryOptions } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
+ * @param optionsFn
+ * @param Observer
  */
 export function createBaseQuery<
   TQueryFnData,
@@ -39,10 +42,9 @@ export function createBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ) {
-  const injector = inject(Injector)
-  const ngZone = injector.get(NgZone)
-  const destroyRef = injector.get(DestroyRef)
-  const queryClient = injector.get(QueryClient)
+  const ngZone = inject(NgZone)
+  const queryClient = inject(QueryClient)
+  const isRestoring = injectIsRestoring()
 
   /**
    * Signal that has the default options from query client applied
@@ -51,9 +53,10 @@ export function createBaseQuery<
    * are preserved and can keep being applied after signal changes
    */
   const defaultedOptionsSignal = computed(() => {
-    const options = runInInjectionContext(injector, () => optionsFn())
-    const defaultedOptions = queryClient.defaultQueryOptions(options)
-    defaultedOptions._optimisticResults = 'optimistic'
+    const defaultedOptions = queryClient.defaultQueryOptions(optionsFn())
+    defaultedOptions._optimisticResults = isRestoring()
+      ? 'isRestoring'
+      : 'optimistic'
     return defaultedOptions
   })
 
@@ -86,11 +89,7 @@ export function createBaseQuery<
       const defaultedOptions = defaultedOptionsSignal()
 
       untracked(() => {
-        observer.setOptions(defaultedOptions, {
-          // Do not notify on updates because of changes in the options because
-          // these changes should already be reflected in the optimistic result.
-          listeners: false,
-        })
+        observer.setOptions(defaultedOptions)
       })
       onCleanup(() => {
         ngZone.run(() => resultFromSubscriberSignal.set(null))
@@ -100,37 +99,37 @@ export function createBaseQuery<
       // Set allowSignalWrites to support Angular < v19
       // Set to undefined to avoid warning on newer versions
       allowSignalWrites: VERSION.major < '19' || undefined,
-      injector,
     },
   )
 
-  effect(() => {
+  effect((onCleanup) => {
     // observer.trackResult is not used as this optimization is not needed for Angular
     const observer = observerSignal()
-
-    untracked(() => {
-      const unsubscribe = ngZone.runOutsideAngular(() =>
-        observer.subscribe(
-          notifyManager.batchCalls((state) => {
-            ngZone.run(() => {
-              if (
-                state.isError &&
-                !state.isFetching &&
-                // !isRestoring() && // todo: enable when client persistence is implemented
-                shouldThrowError(observer.options.throwOnError, [
-                  state.error,
-                  observer.getCurrentQuery(),
-                ])
-              ) {
-                throw state.error
-              }
-              resultFromSubscriberSignal.set(state)
-            })
-          }),
-        ),
-      )
-      destroyRef.onDestroy(unsubscribe)
-    })
+    const unsubscribe = isRestoring()
+      ? () => undefined
+      : untracked(() =>
+          ngZone.runOutsideAngular(() =>
+            observer.subscribe(
+              notifyManager.batchCalls((state) => {
+                ngZone.run(() => {
+                  if (
+                    state.isError &&
+                    !state.isFetching &&
+                    shouldThrowError(observer.options.throwOnError, [
+                      state.error,
+                      observer.getCurrentQuery(),
+                    ])
+                  ) {
+                    ngZone.onError.emit(state.error)
+                    throw state.error
+                  }
+                  resultFromSubscriberSignal.set(state)
+                })
+              }),
+            ),
+          ),
+        )
+    onCleanup(unsubscribe)
   })
 
   return signalProxy(

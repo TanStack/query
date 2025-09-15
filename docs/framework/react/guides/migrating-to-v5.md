@@ -9,57 +9,57 @@ v5 is a major version, so there are some breaking changes to be aware of:
 
 ### Supports a single signature, one object
 
-useQuery and friends used to have many overloads in TypeScript - different ways how the function can be invoked. Not only this was tough to maintain, type wise, it also required a runtime check to see which type the first and the second parameter, to correctly create options.
+useQuery and friends used to have many overloads in TypeScript: different ways how the function could be invoked. Not only was this tough to maintain, type wise, it also required a runtime check to see which types the first and the second parameter were, to correctly create options.
 
 now we only support the object format.
 
 ```tsx
-;-useQuery(key, fn, options) + // [!code --]
-  useQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  useInfiniteQuery(key, fn, options) + // [!code --]
-  useInfiniteQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  useMutation(fn, options) + // [!code --]
-  useMutation({ mutationFn, ...options }) - // [!code ++]
-  useIsFetching(key, filters) + // [!code --]
-  useIsFetching({ queryKey, ...filters }) - // [!code ++]
-  useIsMutating(key, filters) + // [!code --]
-  useIsMutating({ mutationKey, ...filters }) // [!code ++]
+useQuery(key, fn, options) // [!code --]
+useQuery({ queryKey, queryFn, ...options }) // [!code ++]
+useInfiniteQuery(key, fn, options) // [!code --]
+useInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
+useMutation(fn, options) // [!code --]
+useMutation({ mutationFn, ...options }) // [!code ++]
+useIsFetching(key, filters) // [!code --]
+useIsFetching({ queryKey, ...filters }) // [!code ++]
+useIsMutating(key, filters) // [!code --]
+useIsMutating({ mutationKey, ...filters }) // [!code ++]
 ```
 
 ```tsx
-;-queryClient.isFetching(key, filters) + // [!code --]
-  queryClient.isFetching({ queryKey, ...filters }) - // [!code ++]
-  queryClient.ensureQueryData(key, filters) + // [!code --]
-  queryClient.ensureQueryData({ queryKey, ...filters }) - // [!code ++]
-  queryClient.getQueriesData(key, filters) + // [!code --]
-  queryClient.getQueriesData({ queryKey, ...filters }) - // [!code ++]
-  queryClient.setQueriesData(key, updater, filters, options) + // [!code --]
-  queryClient.setQueriesData({ queryKey, ...filters }, updater, options) - // [!code ++]
-  queryClient.removeQueries(key, filters) + // [!code --]
-  queryClient.removeQueries({ queryKey, ...filters }) - // [!code ++]
-  queryClient.resetQueries(key, filters, options) + // [!code --]
-  queryClient.resetQueries({ queryKey, ...filters }, options) - // [!code ++]
-  queryClient.cancelQueries(key, filters, options) + // [!code --]
-  queryClient.cancelQueries({ queryKey, ...filters }, options) - // [!code ++]
-  queryClient.invalidateQueries(key, filters, options) + // [!code --]
-  queryClient.invalidateQueries({ queryKey, ...filters }, options) - // [!code ++]
-  queryClient.refetchQueries(key, filters, options) + // [!code --]
-  queryClient.refetchQueries({ queryKey, ...filters }, options) - // [!code ++]
-  queryClient.fetchQuery(key, fn, options) + // [!code --]
-  queryClient.fetchQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  queryClient.prefetchQuery(key, fn, options) + // [!code --]
-  queryClient.prefetchQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  queryClient.fetchInfiniteQuery(key, fn, options) + // [!code --]
-  queryClient.fetchInfiniteQuery({ queryKey, queryFn, ...options }) - // [!code ++]
-  queryClient.prefetchInfiniteQuery(key, fn, options) + // [!code --]
-  queryClient.prefetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
+queryClient.isFetching(key, filters) // [!code --]
+queryClient.isFetching({ queryKey, ...filters }) // [!code ++]
+queryClient.ensureQueryData(key, filters) // [!code --]
+queryClient.ensureQueryData({ queryKey, ...filters }) // [!code ++]
+queryClient.getQueriesData(key, filters) // [!code --]
+queryClient.getQueriesData({ queryKey, ...filters }) // [!code ++]
+queryClient.setQueriesData(key, updater, filters, options) // [!code --]
+queryClient.setQueriesData({ queryKey, ...filters }, updater, options) // [!code ++]
+queryClient.removeQueries(key, filters) // [!code --]
+queryClient.removeQueries({ queryKey, ...filters }) // [!code ++]
+queryClient.resetQueries(key, filters, options) // [!code --]
+queryClient.resetQueries({ queryKey, ...filters }, options) // [!code ++]
+queryClient.cancelQueries(key, filters, options) // [!code --]
+queryClient.cancelQueries({ queryKey, ...filters }, options) // [!code ++]
+queryClient.invalidateQueries(key, filters, options) // [!code --]
+queryClient.invalidateQueries({ queryKey, ...filters }, options) // [!code ++]
+queryClient.refetchQueries(key, filters, options) // [!code --]
+queryClient.refetchQueries({ queryKey, ...filters }, options) // [!code ++]
+queryClient.fetchQuery(key, fn, options) // [!code --]
+queryClient.fetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
+queryClient.prefetchQuery(key, fn, options) // [!code --]
+queryClient.prefetchQuery({ queryKey, queryFn, ...options }) // [!code ++]
+queryClient.fetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient.fetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
+queryClient.prefetchInfiniteQuery(key, fn, options) // [!code --]
+queryClient.prefetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
 ```
 
 ```tsx
-;-queryCache.find(key, filters) + // [!code --]
-  queryCache.find({ queryKey, ...filters }) - // [!code ++]
-  queryCache.findAll(key, filters) + // [!code --]
-  queryCache.findAll({ queryKey, ...filters }) // [!code ++]
+queryCache.find(key, filters) // [!code --]
+queryCache.find({ queryKey, ...filters }) // [!code ++]
+queryCache.findAll(key, filters) // [!code --]
+queryCache.findAll({ queryKey, ...filters }) // [!code ++]
 ```
 
 ### `queryClient.getQueryData` now accepts queryKey only as an Argument
@@ -67,8 +67,8 @@ now we only support the object format.
 `queryClient.getQueryData` argument is changed to accept only a `queryKey`
 
 ```tsx
-;-queryClient.getQueryData(queryKey, filters) + // [!code --]
-  queryClient.getQueryData(queryKey) // [!code ++]
+queryClient.getQueryData(queryKey, filters) // [!code --]
+queryClient.getQueryData(queryKey) // [!code ++]
 ```
 
 ### `queryClient.getQueryState` now accepts queryKey only as an Argument
@@ -76,8 +76,8 @@ now we only support the object format.
 `queryClient.getQueryState` argument is changed to accept only a `queryKey`
 
 ```tsx
-;-queryClient.getQueryState(queryKey, filters) + // [!code --]
-  queryClient.getQueryState(queryKey) // [!code ++]
+queryClient.getQueryState(queryKey, filters) // [!code --]
+queryClient.getQueryState(queryKey) // [!code ++]
 ```
 
 #### Codemod
@@ -142,8 +142,8 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 const queryClient = useQueryClient()
 const query = useQuery({ queryKey, queryFn })
 
-;-query.remove() + // [!code --]
-  queryClient.removeQueries({ queryKey }) // [!code ++]
+query.remove() // [!code --]
+queryClient.removeQueries({ queryKey }) // [!code ++]
 ```
 
 ### The minimum required TypeScript version is now 4.7
@@ -157,7 +157,7 @@ Previously, This function was used to indicate whether to use previous `data` (`
 You can achieve the same functionality by passing a function to `structuralSharing` instead:
 
 ```tsx
- import { replaceEqualDeep } from '@tanstack/react-query'
+import { replaceEqualDeep } from '@tanstack/react-query'
 
 - isDataEqual: (oldData, newData) => customCheck(oldData, newData) // [!code --]
 + structuralSharing: (oldData, newData) => customCheck(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData) // [!code ++]
@@ -218,7 +218,7 @@ useQuery<number, string>({
 })
 ```
 
-For a way to set a different kind of Error globally, see [the TypeScript Guide](../../typescript#registering-a-global-error).
+For a way to set a different kind of Error globally, see [the TypeScript Guide](../../typescript.md#registering-a-global-error).
 
 ### eslint `prefer-query-object-syntax` rule is removed
 
@@ -480,7 +480,7 @@ if (queryInfo.data) {
 }
 ```
 
-Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../optimistic-updates).
+Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../optimistic-updates.md).
 
 ### Limited, Infinite Queries with new maxPages option
 
@@ -494,21 +494,21 @@ Note that the infinite list must be bi-directional, which requires both `getNext
 
 ### Infinite Queries can prefetch multiple pages
 
-Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](../prefetching) for more information.
+Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](../prefetching.md) for more information.
 
 ### New `combine` option for `useQueries`
 
-See the [useQueries docs](../../reference/useQueries#combine) for more details.
+See the [useQueries docs](../../reference/useQueries.md#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 
-See the [experimental_createPersister docs](../../../react/plugins/createPersister) for more details.
+See the [experimental_createPersister docs](../../plugins/createPersister.md) for more details.
 
 [//]: # 'FrameworkSpecificNewFeatures'
 
 ### Typesafe way to create Query Options
 
-See the [TypeScript docs](../../typescript#typing-query-options) for more details.
+See the [TypeScript docs](../../typescript.md#typing-query-options) for more details.
 
 ### new hooks for suspense
 
@@ -524,6 +524,6 @@ const { data: post } = useSuspenseQuery({
 
 The experimental `suspense: boolean` flag on the query hooks has been removed.
 
-You can read more about them in the [suspense docs](../suspense).
+You can read more about them in the [suspense docs](../suspense.md).
 
 [//]: # 'FrameworkSpecificNewFeatures'

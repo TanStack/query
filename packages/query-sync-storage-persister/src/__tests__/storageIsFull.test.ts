@@ -6,8 +6,8 @@ import {
   dehydrate,
 } from '@tanstack/query-core'
 import { removeOldestQuery } from '@tanstack/query-persist-client-core'
+import { sleep } from '@tanstack/query-test-utils'
 import { createSyncStoragePersister } from '../index'
-import { sleep } from './utils'
 
 function getMockStorage(limitSize?: number) {
   const dataSet = new Map<string, string>()

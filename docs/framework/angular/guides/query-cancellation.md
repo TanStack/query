@@ -83,7 +83,6 @@ You might want to cancel a query manually. For example, if the request takes a l
 
 ```angular-ts
 @Component({
-  standalone: true,
   template: `<button (click)="onCancel()">Cancel</button>`,
 })
 export class TodosComponent {

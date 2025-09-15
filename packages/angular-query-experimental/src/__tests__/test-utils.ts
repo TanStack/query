@@ -1,67 +1,10 @@
 import { isSignal, untracked } from '@angular/core'
 import { SIGNAL, signalSetFn } from '@angular/core/primitives/signals'
+import { expect } from 'vitest'
 import type { InputSignal, Signal } from '@angular/core'
 import type { ComponentFixture } from '@angular/core/testing'
 
-let queryKeyCount = 0
-export function queryKey() {
-  queryKeyCount++
-  return [`query_${queryKeyCount}`]
-}
-
-export function simpleFetcher(): Promise<string> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve('Some data')
-    }, 0)
-  })
-}
-
-export function delayedFetcher(timeout = 0): () => Promise<string> {
-  return () =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        return resolve('Some data')
-      }, timeout)
-    })
-}
-
-export function getSimpleFetcherWithReturnData(returnData: unknown) {
-  return () =>
-    new Promise((resolve) => setTimeout(() => resolve(returnData), 0))
-}
-
-export function rejectFetcher(): Promise<Error> {
-  return new Promise((_, reject) => {
-    setTimeout(() => {
-      return reject(new Error('Some error'))
-    }, 0)
-  })
-}
-
-export function infiniteFetcher({
-  pageParam,
-}: {
-  pageParam?: number
-}): Promise<string> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve('data on page ' + pageParam)
-    }, 0)
-  })
-}
-
-export function successMutator<T>(param: T): Promise<T> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve(param)
-    }, 0)
-  })
-}
-
-export function errorMutator(_parameter?: unknown): Promise<Error> {
-  return rejectFetcher()
-}
+/* eslint jsdoc/require-jsdoc: 0, jsdoc/require-param: 0 */
 
 // Evaluate all signals on an object and return the result
 export function evaluateSignals<T extends Record<string, any>>(

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { createMutation, useIsMutating } from '../../src/index.js'
-  import { sleep } from '../utils.js'
+  import { sleep } from '@tanstack/query-test-utils'
 
   const queryClient = new QueryClient()
   const isMutating = useIsMutating(undefined, queryClient)
@@ -9,10 +9,7 @@
   const mutation = createMutation(
     {
       mutationKey: ['mutation-1'],
-      mutationFn: async () => {
-        await sleep(5)
-        return 'data'
-      },
+      mutationFn: () => sleep(10).then(() => 'data'),
     },
     queryClient,
   )

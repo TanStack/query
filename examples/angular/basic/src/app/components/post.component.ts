@@ -1,12 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Output,
   inject,
   input,
+  output,
 } from '@angular/core'
-import { QueryClient, injectQuery } from '@tanstack/angular-query-experimental'
+import { injectQuery } from '@tanstack/angular-query-experimental'
 import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
 import { PostsService } from '../services/posts-service'
 
@@ -16,16 +15,15 @@ import { PostsService } from '../services/posts-service'
   templateUrl: './post.component.html',
 })
 export class PostComponent {
-  #postsService = inject(PostsService)
+  readonly #postsService = inject(PostsService)
 
-  @Output() setPostId = new EventEmitter<number>()
+  readonly setPostId = output<number>()
+  readonly postId = input(0)
 
-  postId = input(0)
-
-  postQuery = injectQuery(() => ({
+  readonly postQuery = injectQuery(() => ({
     enabled: this.postId() > 0,
     queryKey: ['post', this.postId()],
-    queryFn: async (context) => {
+    queryFn: (context) => {
       // Cancels the request when component is destroyed before the request finishes
       const abort$ = fromEvent(context.signal, 'abort')
       return lastValueFrom(
@@ -33,6 +31,4 @@ export class PostComponent {
       )
     },
   }))
-
-  queryClient = inject(QueryClient)
 }

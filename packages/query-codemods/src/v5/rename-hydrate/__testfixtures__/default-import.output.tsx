@@ -10,11 +10,11 @@ export default function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
 
   return (
-    (<QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={pageProps.dehydratedState}>
         <Component {...pageProps} />
       </HydrationBoundary>
       <ReactQueryDevtools />
-    </QueryClientProvider>)
+    </QueryClientProvider>
   );
 }

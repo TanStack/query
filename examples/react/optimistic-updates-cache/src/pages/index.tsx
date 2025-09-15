@@ -20,8 +20,8 @@ type Todos = {
   ts: number
 }
 
-async function fetchTodos(): Promise<Todos> {
-  const response = await fetch('/api/data')
+async function fetchTodos({ signal }: { signal: AbortSignal }): Promise<Todos> {
+  const response = await fetch('/api/data', { signal })
   return await response.json()
 }
 
@@ -75,9 +75,7 @@ function Example() {
       }
     },
     // Always refetch after error or success:
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   return (

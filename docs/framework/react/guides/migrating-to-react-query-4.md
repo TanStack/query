@@ -58,9 +58,9 @@ Please note in the case of `TypeScript` you need to use `tsx` as the parser; oth
 
 ### Query Keys (and Mutation Keys) need to be an Array
 
-In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](../default-query-function) easier.
+In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](../default-query-function.md) easier.
 
-However, we have not followed this concept through to all apis. For example, when using the `predicate` function on [Query Filters](../filters) you would get the raw Query Key. This makes it difficult to work with such functions if you use Query Keys that are mixed Arrays and Strings. The same was true when using global callbacks.
+However, we have not followed this concept through to all apis. For example, when using the `predicate` function on [Query Filters](../filters.md) you would get the raw Query Key. This makes it difficult to work with such functions if you use Query Keys that are mixed Arrays and Strings. The same was true when using global callbacks.
 
 To streamline all apis, we've decided to make all keys Arrays only:
 
@@ -100,7 +100,7 @@ Please note in the case of `TypeScript` you need to use `tsx` as the parser; oth
 
 ### The idle state has been removed
 
-With the introduction of the new [fetchStatus](../queries#fetchstatus) for better offline support, the `idle` state became irrelevant, because `fetchStatus: 'idle'` captures the same state better. For more information, please read [Why two different states](../queries#why-two-different-states).
+With the introduction of the new [fetchStatus](../queries.md#fetchstatus) for better offline support, the `idle` state became irrelevant, because `fetchStatus: 'idle'` captures the same state better. For more information, please read [Why two different states](../queries.md#why-two-different-states).
 
 This will mostly affect `disabled` queries that don't have any `data` yet, as those were in `idle` state before:
 
@@ -110,7 +110,7 @@ This will mostly affect `disabled` queries that don't have any `data` yet, as th
 + fetchStatus: 'idle' // [!code ++]
 ```
 
-Also, have a look at [the guide on dependent queries](../dependent-queries)
+Also, have a look at [the guide on dependent queries](../dependent-queries.md)
 
 #### disabled queries
 
@@ -121,7 +121,7 @@ Due to this change, disabled queries (even temporarily disabled ones) will start
   isInitialLoading // [!code ++]
 ```
 
-See also the guide on [disabling queries](../disabling-queries#isInitialLoading)
+See also the guide on [disabling queries](../disabling-queries.md#isInitialLoading)
 
 ### new API for `useQueries`
 
@@ -142,7 +142,7 @@ The `useQueries` hook now accepts an object with a `queries` prop as its input. 
 
 ### Undefined is an illegal cache value for successful queries
 
-In order to make bailing out of updates possible by returning `undefined`, we had to make `undefined` an illegal cache value. This is in-line with other concepts of react-query, for example, returning `undefined` from the [initialData function](../initial-query-data#initial-data-function) will also _not_ set data.
+In order to make bailing out of updates possible by returning `undefined`, we had to make `undefined` an illegal cache value. This is in-line with other concepts of react-query, for example, returning `undefined` from the [initialData function](../initial-query-data.md#initial-data-function) will also _not_ set data.
 
 Further, it is an easy bug to produce `Promise<void>` by adding logging in the queryFn:
 
@@ -156,7 +156,7 @@ This is now disallowed on type level; at runtime, `undefined` will be transforme
 
 ### Queries and mutations, per default, need network connection to run
 
-Please read the [New Features announcement](#proper-offline-support) about online / offline support, and also the dedicated page about [Network mode](../network-mode)
+Please read the [New Features announcement](#proper-offline-support) about online / offline support, and also the dedicated page about [Network mode](../network-mode.md)
 
 Even though React Query is an Async State Manager that can be used for anything that produces a Promise, it is most often used for data fetching in combination with data fetching libraries. That is why, per default, queries and mutations will be `paused` if there is no network connection. If you want to opt-in to the previous behavior, you can globally set `networkMode: offlineFirst` for both queries and mutations:
 
@@ -217,7 +217,7 @@ queryClient.refetchQueries({ queryKey: ['todos'] }, { cancelRefetch: false })
 
 ### Query Filters
 
-A [query filter](../filters) is an object with certain conditions to match a query. Historically, the filter options have mostly been a combination of boolean flags. However, combining those flags can lead to impossible states. Specifically:
+A [query filter](../filters.md) is an object with certain conditions to match a query. Historically, the filter options have mostly been a combination of boolean flags. However, combining those flags can lead to impossible states. Specifically:
 
 ```
 active?: boolean
@@ -242,7 +242,7 @@ The filter defaults to `all`, and you can choose to only match `active` or `inac
 
 #### refetchActive / refetchInactive
 
-[queryClient.invalidateQueries](../../../../reference/QueryClient/#queryclientinvalidatequeries) had two additional, similar flags:
+[queryClient.invalidateQueries](../../../../reference/QueryClient.md#queryclientinvalidatequeries) had two additional, similar flags:
 
 ```
 refetchActive: Boolean
@@ -280,7 +280,7 @@ React.useEffect(() => mySideEffectHere(data), [data])
 
 ### `persistQueryClient` and the corresponding persister plugins are no longer experimental and have been renamed
 
-The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createSyncStoragePersister`](../../plugins/createSyncStoragePersister) and [`createAsyncStoragePersister`](../../plugins/createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
+The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createSyncStoragePersister`](../../plugins/createSyncStoragePersister.md) and [`createAsyncStoragePersister`](../../plugins/createAsyncStoragePersister.md) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
 
 Since these plugins are no longer experimental, their import paths have also been updated:
 
@@ -296,7 +296,7 @@ Since these plugins are no longer experimental, their import paths have also bee
 
 ### The `cancel` method on promises is no longer supported
 
-The [old `cancel` method](../query-cancellation#old-cancel-function) that allowed you to define a `cancel` function on promises, which was then used by the library to support query cancellation, has been removed. We recommend to use the [newer API](../query-cancellation) (introduced with v3.30.0) for query cancellation that uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) for your query function to support query cancellation.
+The [old `cancel` method](../query-cancellation.md#old-cancel-function) that allowed you to define a `cancel` function on promises, which was then used by the library to support query cancellation, has been removed. We recommend to use the [newer API](../query-cancellation.md) (introduced with v3.30.0) for query cancellation that uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) for your query function to support query cancellation.
 
 ### TypeScript
 
@@ -368,7 +368,7 @@ With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/
 
 ### Removed undocumented methods from the `queryClient`, `query` and `mutation`
 
-The methods `cancelMutatations` and `executeMutation` on the `QueryClient` were undocumented and unused internally, so we removed them. Since it was just a wrapper around a method available on the `mutationCache`, you can still use the functionality of `executeMutation`
+The methods `cancelMutations` and `executeMutation` on the `QueryClient` were undocumented and unused internally, so we removed them. Since it was just a wrapper around a method available on the `mutationCache`, you can still use the functionality of `executeMutation`
 
 ```tsx
 - executeMutation< // [!code --]
@@ -427,7 +427,7 @@ React Query defaults to "tracking" query properties, which should give you a nic
 
 ### Bailing out of updates with setQueryData
 
-When using the [functional updater form of setQueryData](../../../../reference/QueryClient/#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
+When using the [functional updater form of setQueryData](../../../../reference/QueryClient.md#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
 
 ```tsx
 queryClient.setQueryData(['todo', id], (previousTodo) =>

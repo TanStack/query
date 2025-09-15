@@ -100,6 +100,10 @@
               "to": "framework/vue/typescript"
             },
             {
+              "label": "Reactivity",
+              "to": "framework/vue/reactivity"
+            },
+            {
               "label": "GraphQL",
               "to": "framework/vue/graphql"
             }
@@ -115,6 +119,10 @@
             {
               "label": "Installation",
               "to": "framework/svelte/installation"
+            },
+            {
+              "label": "Devtools",
+              "to": "framework/svelte/devtools"
             },
             {
               "label": "SSR & SvelteKit",
@@ -140,6 +148,10 @@
             {
               "label": "Quick Start",
               "to": "framework/angular/quick-start"
+            },
+            {
+              "label": "Angular HttpClient and other data fetching clients",
+              "to": "framework/angular/angular-httpclient-and-other-data-fetching-clients"
             },
             {
               "label": "Devtools",
@@ -311,6 +323,143 @@
             {
               "label": "Migrating to v5",
               "to": "framework/react/guides/migrating-to-v5"
+            }
+          ]
+        },
+        {
+          "label": "solid",
+          "children": [
+            {
+              "label": "Important Defaults",
+              "to": "framework/solid/guides/important-defaults"
+            },
+            {
+              "label": "Queries",
+              "to": "framework/solid/guides/queries"
+            },
+            {
+              "label": "Query Keys",
+              "to": "framework/solid/guides/query-keys"
+            },
+            {
+              "label": "Query Functions",
+              "to": "framework/solid/guides/query-functions"
+            },
+            {
+              "label": "Query Options",
+              "to": "framework/solid/guides/query-options"
+            },
+            {
+              "label": "Network Mode",
+              "to": "framework/solid/guides/network-mode"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "framework/solid/guides/parallel-queries"
+            },
+            {
+              "label": "Dependent Queries",
+              "to": "framework/solid/guides/dependent-queries"
+            },
+            {
+              "label": "Background Fetching Indicators",
+              "to": "framework/solid/guides/background-fetching-indicators"
+            },
+            {
+              "label": "Window Focus Refetching",
+              "to": "framework/solid/guides/window-focus-refetching"
+            },
+            {
+              "label": "Disabling/Pausing Queries",
+              "to": "framework/solid/guides/disabling-queries"
+            },
+            {
+              "label": "Query Retries",
+              "to": "framework/solid/guides/query-retries"
+            },
+            {
+              "label": "Paginated Queries",
+              "to": "framework/solid/guides/paginated-queries"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "framework/solid/guides/infinite-queries"
+            },
+            {
+              "label": "Initial Query Data",
+              "to": "framework/solid/guides/initial-query-data"
+            },
+            {
+              "label": "Placeholder Query Data",
+              "to": "framework/solid/guides/placeholder-query-data"
+            },
+            {
+              "label": "Mutations",
+              "to": "framework/solid/guides/mutations"
+            },
+            {
+              "label": "Query Invalidation",
+              "to": "framework/solid/guides/query-invalidation"
+            },
+            {
+              "label": "Invalidation from Mutations",
+              "to": "framework/solid/guides/invalidations-from-mutations"
+            },
+            {
+              "label": "Updates from Mutation Responses",
+              "to": "framework/solid/guides/updates-from-mutation-responses"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/solid/guides/optimistic-updates"
+            },
+            {
+              "label": "Query Cancellation",
+              "to": "framework/solid/guides/query-cancellation"
+            },
+            {
+              "label": "Scroll Restoration",
+              "to": "framework/solid/guides/scroll-restoration"
+            },
+            {
+              "label": "Filters",
+              "to": "framework/solid/guides/filters"
+            },
+            {
+              "label": "Request Waterfalls",
+              "to": "framework/solid/guides/request-waterfalls"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/solid/guides/prefetching"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/solid/guides/ssr"
+            },
+            {
+              "label": "Advanced SSR",
+              "to": "framework/solid/guides/advanced-ssr"
+            },
+            {
+              "label": "Caching",
+              "to": "framework/solid/guides/caching"
+            },
+            {
+              "label": "Default Query Fn",
+              "to": "framework/solid/guides/default-query-function"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/solid/guides/suspense"
+            },
+            {
+              "label": "Testing",
+              "to": "framework/solid/guides/testing"
+            },
+            {
+              "label": "Does this replace state managers?",
+              "to": "framework/solid/guides/does-this-replace-client-state"
             }
           ]
         },
@@ -594,6 +743,10 @@
           "to": "reference/QueriesObserver"
         },
         {
+          "label": "streamedQuery",
+          "to": "reference/streamedQuery"
+        },
+        {
           "label": "focusManager",
           "to": "reference/focusManager"
         },
@@ -604,6 +757,10 @@
         {
           "label": "notifyManager",
           "to": "reference/notifyManager"
+        },
+        {
+          "label": "timeoutManager",
+          "to": "reference/timeoutManager"
         }
       ],
       "frameworks": [
@@ -665,6 +822,10 @@
             {
               "label": "infiniteQueryOptions",
               "to": "framework/react/reference/infiniteQueryOptions"
+            },
+            {
+              "label": "mutationOptions",
+              "to": "framework/react/reference/mutationOptions"
             },
             {
               "label": "usePrefetchQuery",
@@ -741,8 +902,44 @@
           "label": "solid",
           "children": [
             {
-              "label": "createQuery",
-              "to": "framework/solid/reference/createQuery"
+              "label": "useQuery",
+              "to": "framework/solid/reference/useQuery"
+            },
+            {
+              "label": "useQueries",
+              "to": "framework/solid/reference/useQueries"
+            },
+            {
+              "label": "useInfiniteQuery",
+              "to": "framework/solid/reference/useInfiniteQuery"
+            },
+            {
+              "label": "useMutation",
+              "to": "framework/solid/reference/useMutation"
+            },
+            {
+              "label": "useIsFetching",
+              "to": "framework/solid/reference/useIsFetching"
+            },
+            {
+              "label": "useIsMutating",
+              "to": "framework/solid/reference/useIsMutating"
+            },
+            {
+              "label": "useMutationState",
+              "to": "framework/solid/reference/useMutationState"
+            },
+            {
+              "label": "queryOptions",
+              "to": "framework/solid/reference/queryOptions"
+            },
+            {
+              "label": "infiniteQueryOptions",
+              "to": "framework/solid/reference/infiniteQueryOptions"
+            },
+            {
+              "label": "hydration",
+              "to": "framework/solid/reference/hydration"
             }
           ]
         },
@@ -825,6 +1022,19 @@
             {
               "label": "Community Projects",
               "to": "framework/react/community/community-projects"
+            }
+          ]
+        },
+        {
+          "label": "solid",
+          "children": [
+            {
+              "label": "TkDodo's Blog",
+              "to": "framework/solid/community/tkdodos-blog"
+            },
+            {
+              "label": "Community Projects",
+              "to": "framework/solid/community/community-projects"
             }
           ]
         },
@@ -945,6 +1155,10 @@
             {
               "label": "Devtools Embedded Panel",
               "to": "framework/react/examples/devtools-panel"
+            },
+            {
+              "label": "Chat example (streaming)",
+              "to": "framework/react/examples/chat"
             }
           ]
         },
@@ -1108,6 +1322,19 @@
             {
               "label": "createPersister (Experimental)",
               "to": "framework/react/plugins/createPersister"
+            }
+          ]
+        },
+        {
+          "label": "solid",
+          "children": [
+            {
+              "label": "broadcastQueryClient (Experimental)",
+              "to": "framework/solid/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "framework/solid/plugins/createPersister"
             }
           ]
         },

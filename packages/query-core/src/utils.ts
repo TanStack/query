@@ -1,3 +1,4 @@
+import { timeoutManager } from './timeoutManager'
 import type {
   DefaultError,
   Enabled,
@@ -8,18 +9,14 @@ import type {
   QueryKey,
   QueryOptions,
   StaleTime,
+  StaleTimeFunction,
 } from './types'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
 
 // TYPES
 
-export interface QueryFilters<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> {
+export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
    */
@@ -31,7 +28,7 @@ export interface QueryFilters<
   /**
    * Include queries matching this predicate function
    */
-  predicate?: (query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean
+  predicate?: (query: Query) => boolean
   /**
    * Include queries matching this query key
    */
@@ -107,9 +104,11 @@ export function resolveStaleTime<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  staleTime: undefined | StaleTime<TQueryFnData, TError, TData, TQueryKey>,
+  staleTime:
+    | undefined
+    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): number | undefined {
+): StaleTime | undefined {
   return typeof staleTime === 'function' ? staleTime(query) : staleTime
 }
 
@@ -241,11 +240,13 @@ export function partialMatchKey(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    return !Object.keys(b).some((key) => !partialMatchKey(a[key], b[key]))
+    return Object.keys(b).every((key) => partialMatchKey(a[key], b[key]))
   }
 
   return false
 }
+
+const hasOwn = Object.prototype.hasOwnProperty
 
 /**
  * This function returns `a` if `b` is deeply equal.
@@ -260,36 +261,43 @@ export function replaceEqualDeep(a: any, b: any): any {
 
   const array = isPlainArray(a) && isPlainArray(b)
 
-  if (array || (isPlainObject(a) && isPlainObject(b))) {
-    const aItems = array ? a : Object.keys(a)
-    const aSize = aItems.length
-    const bItems = array ? b : Object.keys(b)
-    const bSize = bItems.length
-    const copy: any = array ? [] : {}
+  if (!array && !(isPlainObject(a) && isPlainObject(b))) return b
 
-    let equalItems = 0
+  const aItems = array ? a : Object.keys(a)
+  const aSize = aItems.length
+  const bItems = array ? b : Object.keys(b)
+  const bSize = bItems.length
+  const copy: any = array ? new Array(bSize) : {}
 
-    for (let i = 0; i < bSize; i++) {
-      const key = array ? i : bItems[i]
-      if (
-        ((!array && aItems.includes(key)) || array) &&
-        a[key] === undefined &&
-        b[key] === undefined
-      ) {
-        copy[key] = undefined
-        equalItems++
-      } else {
-        copy[key] = replaceEqualDeep(a[key], b[key])
-        if (copy[key] === a[key] && a[key] !== undefined) {
-          equalItems++
-        }
-      }
+  let equalItems = 0
+
+  for (let i = 0; i < bSize; i++) {
+    const key: any = array ? i : bItems[i]
+    const aItem = a[key]
+    const bItem = b[key]
+
+    if (aItem === bItem) {
+      copy[key] = aItem
+      if (array ? i < aSize : hasOwn.call(a, key)) equalItems++
+      continue
     }
 
-    return aSize === bSize && equalItems === aSize ? a : copy
+    if (
+      aItem === null ||
+      bItem === null ||
+      typeof aItem !== 'object' ||
+      typeof bItem !== 'object'
+    ) {
+      copy[key] = bItem
+      continue
+    }
+
+    const v = replaceEqualDeep(aItem, bItem)
+    copy[key] = v
+    if (v === aItem) equalItems++
   }
 
-  return b
+  return aSize === bSize && equalItems === aSize ? a : copy
 }
 
 /**
@@ -312,13 +320,12 @@ export function shallowEqualObjects<T extends Record<string, any>>(
   return true
 }
 
-export function isPlainArray(value: unknown) {
+export function isPlainArray(value: unknown): value is Array<unknown> {
   return Array.isArray(value) && value.length === Object.keys(value).length
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object
-// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
-export function isPlainObject(o: any): o is Object {
+export function isPlainObject(o: any): o is Record<PropertyKey, unknown> {
   if (!hasObjectPrototype(o)) {
     return false
   }
@@ -355,7 +362,7 @@ function hasObjectPrototype(o: any): boolean {
 
 export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve) => {
-    setTimeout(resolve, timeout)
+    timeoutManager.setTimeout(resolve, timeout)
   })
 }
 
@@ -373,6 +380,9 @@ export function replaceData<
         console.error(
           `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
         )
+
+        // Prevent the replaceEqualDeep from being called again down below.
+        throw error
       }
     }
     // Structurally share data between prev and new data if needed
@@ -431,4 +441,16 @@ export function ensureQueryFn<
   }
 
   return options.queryFn
+}
+
+export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
+  throwOnError: boolean | T | undefined,
+  params: Parameters<T>,
+): boolean {
+  // Allow throwOnError function to override throwing behavior on a per-error basis
+  if (typeof throwOnError === 'function') {
+    return throwOnError(...params)
+  }
+
+  return !!throwOnError
 }

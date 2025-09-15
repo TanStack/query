@@ -2,7 +2,7 @@
   import { QueryClient } from '@tanstack/query-core'
   import { derived, writable } from 'svelte/store'
   import { createQuery, useIsFetching } from '../../src/index.js'
-  import { sleep } from '../utils.js'
+  import { sleep } from '@tanstack/query-test-utils'
 
   const queryClient = new QueryClient()
   const ready = writable(false)
@@ -11,10 +11,7 @@
 
   const options = derived(ready, ($ready) => ({
     queryKey: ['test'],
-    queryFn: async () => {
-      await sleep(5)
-      return 'test'
-    },
+    queryFn: () => sleep(10).then(() => 'test'),
     enabled: $ready,
   }))
 

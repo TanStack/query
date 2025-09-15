@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { isServer, notifyManager } from '@tanstack/query-core'
+import { isServer, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -9,14 +9,13 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { useIsRestoring } from './isRestoring'
+import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
   willFetch,
 } from './suspense'
-import { noop } from './utils'
 import type {
   QueryClient,
   QueryKey,
@@ -50,14 +49,22 @@ export function useBaseQuery<
     }
   }
 
-  const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
 
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
     defaultedOptions,
   )
+
+  if (process.env.NODE_ENV !== 'production') {
+    if (!defaultedOptions.queryFn) {
+      console.error(
+        `[${defaultedOptions.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
+      )
+    }
+  }
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
@@ -106,9 +113,7 @@ export function useBaseQuery<
   )
 
   React.useEffect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setOptions(defaultedOptions, { listeners: false })
+    observer.setOptions(defaultedOptions)
   }, [defaultedOptions, observer])
 
   // Handle suspense

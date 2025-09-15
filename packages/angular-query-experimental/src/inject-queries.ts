@@ -7,6 +7,7 @@ import {
   DestroyRef,
   Injector,
   NgZone,
+  assertInInjectionContext,
   computed,
   effect,
   inject,
@@ -16,6 +17,7 @@ import {
 } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
+import { injectIsRestoring } from './inject-is-restoring'
 import type {
   DefaultError,
   OmitKeyof,
@@ -225,11 +227,12 @@ export function injectQueries<
   optionsFn: () => InjectQueriesOptions<T, TCombinedResult>,
   injector?: Injector,
 ): Signal<TCombinedResult> {
-  return assertInjector(injectQueries, injector, () => {
-    const ngInjector = inject(Injector)
+  !injector && assertInInjectionContext(injectQueries)
+  return runInInjectionContext(injector ?? inject(Injector), () => {
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
     const queryClient = inject(QueryClient)
+    const isRestoring = injectIsRestoring()
 
     /**
      * Signal that has the default options from query client applied
@@ -245,7 +248,9 @@ export function injectQueries<
       return optionsSignal().queries.map((opts) => {
         const defaultedOptions = queryClient.defaultQueryOptions(opts)
         // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = 'optimistic'
+        defaultedOptions._optimisticResults = isRestoring()
+          ? 'isRestoring'
+          : 'optimistic'
 
         return defaultedOptions as QueryObserverOptions
       })
@@ -276,7 +281,6 @@ export function injectQueries<
       observerSignal().setQueries(
         defaultedQueries(),
         optionsSignal() as QueriesObserverOptions<TCombinedResult>,
-        { listeners: false },
       )
     })
 
@@ -293,7 +297,8 @@ export function injectQueries<
       const [_optimisticResult, getCombinedResult] = optimisticResultSignal()
 
       untracked(() => {
-        const unsubscribe = ngZone.runOutsideAngular(() =>
+        const unsubscribe =  isRestoring()
+          ? () => undefined :ngZone.runOutsideAngular(() =>
           observer.subscribe(
             notifyManager.batchCalls((state) => {
               resultFromSubscriberSignal.set(getCombinedResult(state))

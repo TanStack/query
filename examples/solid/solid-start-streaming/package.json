@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.15.2",
-    "@solidjs/start": "^1.0.10",
-    "@tanstack/solid-query": "^5.66.9",
-    "@tanstack/solid-query-devtools": "^5.66.9",
-    "solid-js": "^1.9.3",
-    "vinxi": "^0.4.1"
+    "@solidjs/router": "^0.15.3",
+    "@solidjs/start": "^1.1.3",
+    "@tanstack/solid-query": "^5.87.4",
+    "@tanstack/solid-query-devtools": "^5.87.4",
+    "solid-js": "^1.9.7",
+    "vinxi": "^0.5.3"
   },
   "engines": {
     "node": ">=18"

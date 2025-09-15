@@ -38,7 +38,7 @@ const data = useMutationState({
 })
 ```
 
-**Example 3: Access the latest mutation data via the `mutationKey`**
+**Example 3: Access the latest mutation data via the `mutationKey`**.
 Each invocation of `mutate` adds a new entry to the mutation cache for `gcTime` milliseconds.
 
 To access the latest invocation, you can check for the last item that `useMutationState` returns.
@@ -69,10 +69,10 @@ const latest = data[data.length - 1]
 **Options**
 
 - `options`
-  - `filters?: MutationFilters`: [Mutation Filters](../../guides/filters#mutation-filters)
+  - `filters?: MutationFilters`: [Mutation Filters](../../guides/filters.md#mutation-filters)
   - `select?: (mutation: Mutation) => TResult`
     - Use this to transform the mutation state.
-- `queryClient?: QueryClient`,
+- `queryClient?: QueryClient`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**

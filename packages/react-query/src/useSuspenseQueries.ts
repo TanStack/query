@@ -173,11 +173,24 @@ export function useSuspenseQueries<
     combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): TCombinedResult {
+): TCombinedResult
+
+export function useSuspenseQueries<
+  T extends Array<any>,
+  TCombinedResult = SuspenseQueriesResults<T>,
+>(
+  options: {
+    queries: readonly [...SuspenseQueriesOptions<T>]
+    combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
+  },
+  queryClient?: QueryClient,
+): TCombinedResult
+
+export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
   return useQueries(
     {
       ...options,
-      queries: options.queries.map((query) => {
+      queries: options.queries.map((query: any) => {
         if (process.env.NODE_ENV !== 'production') {
           if (query.queryFn === skipToken) {
             console.error('skipToken is not allowed for useSuspenseQueries')
@@ -192,7 +205,7 @@ export function useSuspenseQueries<
           placeholderData: undefined,
         }
       }),
-    } as any,
+    },
     queryClient,
   )
 }

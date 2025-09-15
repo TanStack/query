@@ -25,15 +25,37 @@ The Missing Fullstack Toolkit for Next.js
 
 Link: https://blitzjs.com/
 
+## Connect
+
+A family of libraries for building building browser and gRPC-compatible HTTP APIs.
+
+Link: https://connectrpc.com/docs
+
+## DevTools Browser Extensions
+
+Browser extensions for Chrome, Firefox, and Edge that provide devtools for TanStack Query, allowing you to inspect and debug queries, mutations, and cache state directly in browser DevTools.
+
+Links:
+
+- <img alt="Chrome logo" src="https://www.google.com/chrome/static/images/chrome-logo.svg" width="16" height="16" class="inline mr-1 not-prose" /> [Devtools for Chrome](https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai)
+- <img alt="Firefox logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" width="16" height="16" class="inline mr-1 not-prose" /> [Devtools for Firefox](https://addons.mozilla.org/en-US/firefox/addon/tanstack-query-devtools/)
+- <img alt="Edge logo" src="https://upload.wikimedia.org/wikipedia/commons/9/98/Microsoft_Edge_logo_%282019%29.svg" width="16" height="16" class="inline mr-1 not-prose" /> [Devtools for Edge](https://microsoftedge.microsoft.com/addons/detail/tanstack-query-devtools/edmdpkgkacmjopodhfolmphdenmddobj)
+
 ## GraphQL Code Generator
 
 Generate React Query hooks from your GraphQL schema
 
 Link: https://the-guild.dev/graphql/codegen
 
+## Hey API
+
+The OpenAPI to TypeScript codegen. Generate clients, SDKs, validators, and more.
+
+Link: https://heyapi.dev/openapi-ts/plugins/tanstack-query
+
 ## Http-wizard
 
-End-to-end type-safe Fastify API with typecript magic ✨
+End-to-end type-safe Fastify API with typeScript magic ✨
 
 Link: https://http-wizard.com
 
@@ -85,6 +107,12 @@ Link: https://github.com/astahmer/openapi-zod-client
 A 2KB min, typesafe fetch wrapper that uses static TypeScript type inference and no runtime checks.
 
 Link: https://openapi-ts.dev/openapi-react-query/
+
+## oRPC
+
+Easy to build APIs that are end-to-end type-safe and adhere to OpenAPI standards.
+
+Link: https://orpc.unnoq.com/docs/integrations/tanstack-query
 
 ## Orval
 

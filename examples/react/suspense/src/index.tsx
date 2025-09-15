@@ -70,18 +70,18 @@ function Example() {
             )}
             onReset={reset}
           >
-            <React.Suspense fallback={<h1>Loading projects...</h1>}>
-              {showProjects ? (
-                activeProject ? (
+            {showProjects ? (
+              <React.Suspense fallback={<h1>Loading projects...</h1>}>
+                {activeProject ? (
                   <Project
                     activeProject={activeProject}
                     setActiveProject={setActiveProject}
                   />
                 ) : (
                   <Projects setActiveProject={setActiveProject} />
-                )
-              ) : null}
-            </React.Suspense>
+                )}
+              </React.Suspense>
+            ) : null}
           </ErrorBoundary>
         )}
       </QueryErrorResetBoundary>

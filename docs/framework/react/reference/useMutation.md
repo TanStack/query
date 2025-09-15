@@ -55,14 +55,14 @@ mutate(variables, {
 - `gcTime: number | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a mutation's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
-  - Note: the maximum allowed time is about 24 days. See [more](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value).
+  - Note: the maximum allowed time is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
 - `mutationKey: unknown[]`
   - Optional
   - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults`.
 - `networkMode: 'online' | 'always' | 'offlineFirst'`
   - Optional
   - defaults to `'online'`
-  - see [Network Mode](../../guides/network-mode) for more information.
+  - see [Network Mode](../../guides/network-mode.md) for more information.
 - `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
@@ -103,7 +103,7 @@ mutate(variables, {
 
 **Parameter2 (QueryClient)**
 
-- `queryClient?: QueryClient`,
+- `queryClient?: QueryClient`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
@@ -128,7 +128,7 @@ mutate(variables, {
   - If you make multiple requests, `onSuccess` will fire only after the latest call you've made.
 - `mutateAsync: (variables: TVariables, { onSuccess, onSettled, onError }) => Promise<TData>`
   - Similar to `mutate` but returns a promise which can be awaited.
-- `status: string`
+- `status: MutationStatus`
   - Will be:
     - `idle` initial status prior to the mutation function executing.
     - `pending` if the mutation is currently executing.
@@ -137,7 +137,7 @@ mutate(variables, {
 - `isIdle`, `isPending`, `isSuccess`, `isError`: boolean variables derived from `status`
 - `isPaused: boolean`
   - will be `true` if the mutation has been `paused`
-  - see [Network Mode](../../guides/network-mode) for more information.
+  - see [Network Mode](../../guides/network-mode.md) for more information.
 - `data: undefined | unknown`
   - Defaults to `undefined`
   - The last successfully resolved data for the mutation.
