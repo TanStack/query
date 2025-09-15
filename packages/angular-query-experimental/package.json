@@ -74,7 +74,7 @@
     "@angular/platform-browser": "^20.0.0",
     "@tanstack/query-test-utils": "workspace:*",
     "eslint-plugin-jsdoc": "^50.5.0",
-    "@testing-library/angular": "^17.3.6",
+    "@testing-library/angular": "^18.0.0",
     "npm-run-all2": "^5.0.0",
     "vite-plugin-dts": "4.2.3",
     "vite-plugin-externalize-deps": "^0.9.0",
