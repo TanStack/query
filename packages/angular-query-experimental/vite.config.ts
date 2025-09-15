@@ -111,7 +111,7 @@ export default mergeConfig(
   config,
   tanstackViteConfig({
     cjs: false,
-    entry: ['./src/index.ts'],
+    entry: ['./src/index.ts', './src/inject-queries-experimental/index.ts'],
     exclude: ['./src/__tests__'],
     srcDir: './src',
     tsconfigPath: './tsconfig.prod.json',

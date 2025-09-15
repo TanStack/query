@@ -40,7 +40,6 @@ export type { InjectMutationStateOptions } from './inject-mutation-state'
 export { injectMutationState } from './inject-mutation-state'
 
 export type { QueriesOptions, QueriesResults } from './inject-queries'
-export { injectQueries } from './inject-queries'
 
 export type { InjectQueryOptions } from './inject-query'
 export { injectQuery } from './inject-query'
