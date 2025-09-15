@@ -40,7 +40,7 @@ import { withDevtools } from '@tanstack/angular-query-experimental/devtools/prod
 
 To control when devtools are loaded, you can use the `loadDevtools` option.
 
-When not setting the option or setting it to 'auto', the devtools will be loaded automatically when Angular runs in development mode.
+When not setting the option or setting it to 'auto', the devtools will be loaded automatically only when Angular runs in development mode.
 
 ```ts
 import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
@@ -82,8 +82,6 @@ provideTanStackQuery(
 
 Options are passed to `withDevtools` from a callback function to support reactivity through signals. In the following example
 a signal is created from a RxJS observable that emits on a keyboard shortcut. When the derived signal is set to true, the devtools are lazily loaded.
-
-> If you don't need devtools in production builds, don't use the `production` sub-path. Even though most of the devtools are lazy loaded on-demand, code is needed for on-demand loading and option handling. When importing devtools from `@tanstack/angular-query-experimental/devtools`, all devtools code will be excluded from your build and no lazy chunks will be created, minimizing deployment size.
 
 The example below always loads devtools in development mode and loads on-demand in production mode when a keyboard shortcut is pressed.
 
