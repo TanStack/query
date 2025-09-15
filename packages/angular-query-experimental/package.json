@@ -55,6 +55,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.mjs"
     },
+    "./inject-queries-experimental": {
+      "types": "./dist/inject-queries-experimental/index.d.ts",
+      "default": "./dist/inject-queries-experimental/index.mjs"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
