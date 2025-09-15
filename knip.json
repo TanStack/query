@@ -15,6 +15,9 @@
   ],
   "ignoreWorkspaces": ["examples/**", "integrations/**"],
   "workspaces": {
+    "packages/angular-query-experimental": {
+      "entry": ["src/index.ts", "src/inject-queries-experimental/index.ts"]
+    },
     "packages/query-codemods": {
       "entry": ["src/v4/**/*.cjs", "src/v5/**/*.cjs"],
       "ignore": ["**/__testfixtures__/**"]
