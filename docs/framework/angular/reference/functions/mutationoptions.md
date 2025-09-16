@@ -45,10 +45,10 @@ The mutation options.
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TContext>(
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(
   options,
 ): WithRequired<
-  CreateMutationOptions<TData, TError, TVariables, TContext>,
+  CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 ```
@@ -94,19 +94,19 @@ class ComponentOrService {
 
 • **TVariables** = `void`
 
-• **TContext** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ### Parameters
 
 #### options
 
-`WithRequired`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>, `"mutationKey"`\>
+`WithRequired`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The mutation options.
 
 ### Returns
 
-`WithRequired`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>, `"mutationKey"`\>
+`WithRequired`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 Mutation options.
 
@@ -119,10 +119,10 @@ The mutation options.
 ## Call Signature
 
 ```ts
-function mutationOptions<TData, TError, TVariables, TContext>(
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(
   options,
 ): Omit<
-  CreateMutationOptions<TData, TError, TVariables, TContext>,
+  CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 ```
@@ -168,19 +168,19 @@ class ComponentOrService {
 
 • **TVariables** = `void`
 
-• **TContext** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ### Parameters
 
 #### options
 
-`Omit`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>, `"mutationKey"`\>
+`Omit`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The mutation options.
 
 ### Returns
 
-`Omit`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>, `"mutationKey"`\>
+`Omit`\<[`CreateMutationOptions`](../../interfaces/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 Mutation options.
 
