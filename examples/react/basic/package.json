@@ -9,15 +9,15 @@
     "test:eslint": "eslint ./src"
   },
   "dependencies": {
-    "@tanstack/query-async-storage-persister": "^5.87.4",
-    "@tanstack/react-query": "^5.87.4",
-    "@tanstack/react-query-devtools": "^5.87.4",
-    "@tanstack/react-query-persist-client": "^5.87.4",
+    "@tanstack/query-async-storage-persister": "^5.89.0",
+    "@tanstack/react-query": "^5.89.0",
+    "@tanstack/react-query-devtools": "^5.89.0",
+    "@tanstack/react-query-persist-client": "^5.89.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.86.0",
+    "@tanstack/eslint-plugin-query": "^5.89.0",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.3.4",
