@@ -8,7 +8,8 @@ import type { CreateMutationOptions } from './types'
  *
  * ```ts
  * export class QueriesService {
- *   private http = inject(HttpClient);
+ *   private http = inject(HttpClient)
+ *   private queryClient = inject(QueryClient)
  *
  *   updatePost(id: number) {
  *     return mutationOptions({
@@ -16,17 +17,21 @@ import type { CreateMutationOptions } from './types'
  *       mutationKey: ["updatePost", id],
  *       onSuccess: (newPost) => {
  *         //           ^? newPost: Post
- *         this.queryClient.setQueryData(["posts", id], newPost);
+ *         this.queryClient.setQueryData(["posts", id], newPost)
  *       },
  *     });
  *   }
  * }
  *
- * queries = inject(QueriesService)
- * idSignal = new Signal(0);
- * mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+ * class ComponentOrService {
+ *   queries = inject(QueriesService)
+ *   id = signal(0)
+ *   mutation = injectMutation(() => this.queries.updatePost(this.id()))
  *
- * mutation.mutate({ title: 'New Title' })
+ *   save() {
+ *     this.mutation.mutate({ title: 'New Title' })
+ *   }
+ * }
  * ```
  * @param options - The mutation options.
  * @returns Mutation options.
@@ -35,28 +40,28 @@ export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
   options: WithRequired<
-    CreateMutationOptions<TData, TError, TVariables, TContext>,
+    CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): WithRequired<
-  CreateMutationOptions<TData, TError, TVariables, TContext>,
+  CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
   options: Omit<
-    CreateMutationOptions<TData, TError, TVariables, TContext>,
+    CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): Omit<
-  CreateMutationOptions<TData, TError, TVariables, TContext>,
+  CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 
@@ -67,7 +72,8 @@ export function mutationOptions<
  *
  * ```ts
  * export class QueriesService {
- *   private http = inject(HttpClient);
+ *   private http = inject(HttpClient)
+ *   private queryClient = inject(QueryClient)
  *
  *   updatePost(id: number) {
  *     return mutationOptions({
@@ -75,17 +81,21 @@ export function mutationOptions<
  *       mutationKey: ["updatePost", id],
  *       onSuccess: (newPost) => {
  *         //           ^? newPost: Post
- *         this.queryClient.setQueryData(["posts", id], newPost);
+ *         this.queryClient.setQueryData(["posts", id], newPost)
  *       },
  *     });
  *   }
  * }
  *
- * queries = inject(QueriesService)
- * idSignal = new Signal(0);
- * mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+ * class ComponentOrService {
+ *   queries = inject(QueriesService)
+ *   id = signal(0)
+ *   mutation = injectMutation(() => this.queries.updatePost(this.id()))
  *
- * mutation.mutate({ title: 'New Title' })
+ *   save() {
+ *     this.mutation.mutate({ title: 'New Title' })
+ *   }
+ * }
  * ```
  * @param options - The mutation options.
  * @returns Mutation options.
@@ -94,9 +104,9 @@ export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
-  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
-): CreateMutationOptions<TData, TError, TVariables, TContext> {
+  options: CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+): CreateMutationOptions<TData, TError, TVariables, TOnMutateResult> {
   return options
 }

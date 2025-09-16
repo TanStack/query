@@ -306,7 +306,6 @@ describe('injectMutation', () => {
         <button (click)="mutate()"></button>
         <span>{{ mutation.data() }}</span>
       `,
-      standalone: true,
     })
     class FakeComponent {
       name = input.required<string>()
@@ -347,7 +346,6 @@ describe('injectMutation', () => {
         <button (click)="mutate()"></button>
         <span>{{ mutation.data() }}</span>
       `,
-      standalone: true,
     })
     class FakeComponent {
       name = input.required<string>()

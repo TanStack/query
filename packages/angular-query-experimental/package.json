@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.85.6",
+  "version": "5.89.0",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -55,7 +55,29 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.mjs"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./inject-queries-experimental": {
+      "types": "./dist/inject-queries-experimental/index.d.ts",
+      "default": "./dist/inject-queries-experimental/index.mjs"
+    },
+    "./devtools": {
+      "types": "./dist/devtools/index.d.ts",
+      "development": "./dist/devtools/index.mjs",
+      "default": "./dist/devtools/stub.mjs"
+    },
+    "./devtools/production": {
+      "types": "./dist/devtools/production/index.d.ts",
+      "default": "./dist/devtools/index.mjs"
+    },
+    "./devtools-panel": {
+      "types": "./dist/devtools-panel/index.d.ts",
+      "development": "./dist/devtools-panel/index.mjs",
+      "default": "./dist/devtools-panel/stub.mjs"
+    },
+    "./devtools-panel/production": {
+      "types": "./dist/devtools-panel/production/index.d.ts",
+      "default": "./dist/devtools-panel/index.mjs"
+    }
   },
   "sideEffects": false,
   "files": [
@@ -64,8 +86,7 @@
     "**/*.mjs.map"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "@tanstack/query-devtools": "workspace:*"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
     "@angular/common": "^20.0.0",
@@ -78,6 +99,9 @@
     "vite-plugin-dts": "4.2.3",
     "vite-plugin-externalize-deps": "^0.9.0",
     "vite-tsconfig-paths": "^5.1.4"
+  },
+  "optionalDependencies": {
+    "@tanstack/query-devtools": "workspace:*"
   },
   "peerDependencies": {
     "@angular/common": ">=16.0.0",

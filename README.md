@@ -1,74 +1,98 @@
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=be2d8a11-9712-4c1d-9963-580b2d4fb133" />
 
-![TanStack Query Header](https://github.com/TanStack/query/raw/main/media/repo-header.png)
+<div align="center">
+  <img src="./media/header_query.png" alt="TanStack Query" />
+</div>
 
-Hooks for fetching, caching and updating asynchronous data in React, Solid, Svelte and Vue
+<br />
 
-<a href="https://twitter.com/intent/tweet?button_hashtag=TanStack" target="\_parent">
-  <img alt="#TanStack" src="https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack">
-</a><a href="https://discord.com/invite/WrRKjPJ" target="\_parent">
-  <img alt="" src="https://img.shields.io/badge/Discord-TanStack-%235865F2" />
-</a><a href="https://www.npmjs.com/package/@tanstack/query-core" target="\_parent">
-  <img alt="" src="https://img.shields.io/npm/dm/@tanstack/query-core.svg" />
-</a><a href="https://bundlejs.com/?q=%40tanstack%2Freact-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="\_parent">
-  <img alt="" src="https://deno.bundlejs.com/?q=@tanstack/react-query&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-dom%22]}}&badge=detailed" />
-</a><a href="#badge">
-    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
-  </a><a href="https://github.com/TanStack/query/discussions">
-  <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
-</a><a href="https://bestofjs.org/projects/tanstack-query"><img alt="Best of JS" src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily" /></a><a href="https://github.com/TanStack/query/" target="\_parent">
-  <img alt="" src="https://img.shields.io/github/stars/TanStack/query.svg?style=social&label=Star" />
-</a><a href="https://twitter.com/tannerlinsley" target="\_parent">
-  <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
-</a> <a href="https://gitpod.io/from-referrer/">
-  <img src="https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod" alt="Gitpod Ready-to-Code"/>
+<div align="center">
+<a href="https://www.npmjs.com/package/@tanstack/query-core" target="\_parent">
+  <img alt="" src="https://img.shields.io/npm/dm/@tanstack/query-core.svg" alt="npm downloads" />
 </a>
+ <a href="https://github.com/TanStack/query/" target="\_parent">
+  <img alt="" src="https://img.shields.io/github/stars/TanStack/query.svg?style=social&label=Star" alt="GitHub stars" />
+</a>
+<a href="https://bundlejs.com/?q=%40tanstack%2Freact-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="\_parent">
+  <img alt="" src="https://deno.bundlejs.com/?q=@tanstack/react-query&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-dom%22]}}&badge=detailed" alt="Bundle size" />
+</a>
+</div>
 
-Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [TanStack Table](https://github.com/TanStack/table), [TanStack Router](https://github.com/tanstack/router), [TanStack Virtual](https://github.com/tanstack/virtual), [React Charts](https://github.com/TanStack/react-charts), [React Ranger](https://github.com/TanStack/ranger)
+<div align="center">
+<a href="#badge">
+    <img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="semantic-release">
+  </a>
+<a href="https://bestofjs.org/projects/tanstack-query"><img src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily" alt="Best of JS" /></a>
+  <a href="https://twitter.com/tan_stack"><img src="https://img.shields.io/twitter/follow/tan_stack.svg?style=social" alt="Follow @TanStack"/></a>
+</div>
 
-## Visit [tanstack.com/query](https://tanstack.com/query) for docs, guides, API and more!
+<div align="center">
 
-Still on **React Query v2**? No problem! Check out the v2 docs here: https://github.com/TanStack/query/tree/2.x/docs/src/pages/docs.<br />
-Still on **React Query v3**? No problem! Check out the v3 docs here: https://tanstack.com/query/v3/docs/.<br />
-Still on **React Query v4**? No problem! Check out the v4 docs here: https://tanstack.com/query/v4/docs/.
+### [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)
 
-## Quick Features
+</div>
 
-- Transport/protocol/backend agnostic data fetching (REST, GraphQL, promises, whatever!)
-- Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
-- Parallel + Dependent Queries
-- Mutations + Reactive Query Refetching
-- Multi-layer Cache + Automatic Garbage Collection
-- Paginated + Cursor-based Queries
-- Load-More + Infinite Scroll Queries w/ Scroll Recovery
-- Request Cancellation
-- [React Suspense](https://react.dev/reference/react/Suspense) + Fetch-As-You-Render Query Prefetching
-- Dedicated Devtools
+# TanStack Query
+
+An async state management library built to simplify fetching, caching, synchronizing, and updating server state.
+
+- Protocol‑agnostic fetching (REST, GraphQL, promises, etc.)
+- Caching, refetching, pagination & infinite scroll
+- Mutations, dependent queries & background updates
+- Prefetching, cancellation & React Suspense support
+
+### <a href="https://tanstack.com/query">Read the docs →</b></a>
+
+## Get Involved
+
+- We welcome issues and pull requests!
+- Participate in [GitHub discussions](https://github.com/TanStack/query/discussions)
+- Chat with the community on [Discord](https://discord.com/invite/WrRKjPJ)
+- See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup instructions
 
 ## Partners
 
-<a href="https://www.speakeasy.com/product/react-query?utm_source=tanstack&utm_campaign=tanstack">
-  <picture>
-    <source
-      srcset="https://tanstack.com/assets/speakeasy-dark-BjP-Hd9M.svg"
-      media="(prefers-color-scheme: dark)"
-    />
-    <source
-      srcset="https://tanstack.com/assets/speakeasy-light-UpY7QmwQ.svg"
-      media="(prefers-color-scheme: light)"
-    />
-    <!-- fallback -->
-    <img
-      src="https://tanstack.com/assets/speakeasy-light-UpY7QmwQ.svg"
-      alt="Speakeasy Logo"
-    />
-  </picture>
-</a>
+<table align="center">
+  <tr>
+    <td>
+        <a href="https://www.coderabbit.ai/?via=tanstack&dub_id=aCcEEdAOqqutX6OS">
+          <img src="https://tanstack.com/assets/coderabbit-light-DVMJ2jHi.svg" height="40" padding="20px" alt="Code Rabbit"/>
+        </a>
+    </td>
+    <td padding="20">
+      <a href="https://www.cloudflare.com?utm_source=tanstack">
+         <img src="https://tanstack.com/assets/cloudflare-black-CPufaW0B.svg" height="70" alt="Cloudflare"/>
+      </a>
+    </td>
+  </tr>
+  
+</table>
 
-## Contributing
+<div align="center">
+<img src="./media/partner_logo.svg" alt="Query & you?" height="65">
+<p>
+We're looking for TanStack Query Partners to join our mission! Partner with us to push the boundaries of TanStack Query and build amazing things together.
+</p>
+<a href="mailto:partners@tanstack.com?subject=TanStack Query Partnership"><b>LET'S CHAT</b></a>
+</div>
 
-View the contributing guidelines [here](/CONTRIBUTING.md)
+</div>
 
-### [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)
+## Explore the TanStack Ecosystem
+
+- <a href="https://github.com/tanstack/config"><b>TanStack Config</b></a> – Tooling for JS/TS packages
+- <a href="https://github.com/tanstack/db"><b>TanStack DB</b></a> – Reactive sync client store
+- <a href="https://github.com/tanstack/devtools"><b>TanStack DevTools</b></a> – Unified devtools panel
+- <a href="https://github.com/tanstack/form"><b>TanStack Form</b></a> – Type‑safe form state
+- <a href="https://github.com/tanstack/pacer"><b>TanStack Pacer</b></a> – Debouncing, throttling, batching <br/>
+- <a href="https://github.com/tanstack/query"><b>TanStack Query</b></a> – Async state & caching
+- <a href="https://github.com/tanstack/ranger"><b>TanStack Ranger</b></a> – Range & slider primitives
+- <a href="https://github.com/tanstack/router"><b>TanStack Router</b></a> – Type‑safe routing, caching & URL state
+- <a href="https://github.com/tanstack/router"><b>TanStack Start</b></a> – Full‑stack SSR & streaming
+- <a href="https://github.com/tanstack/store"><b>TanStack Store</b></a> – Reactive data store
+- <a href="https://github.com/tanstack/table"><b>TanStack Table</b></a> – Headless datagrids
+- <a href="https://github.com/tanstack/virtual"><b>TanStack Virtual</b></a> – Virtualized rendering
+
+… and more at <a href="https://tanstack.com"><b>TanStack.com »</b></a>
 
 <!-- Use the force, Luke -->

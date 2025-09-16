@@ -12,10 +12,10 @@ export class MutationCache extends MC {
     TData = unknown,
     TError = DefaultError,
     TVariables = any,
-    TContext = unknown,
+    TOnMutateResult = unknown,
   >(
     filters: MaybeRefDeep<MutationFilters>,
-  ): Mutation<TData, TError, TVariables, TContext> | undefined {
+  ): Mutation<TData, TError, TVariables, TOnMutateResult> | undefined {
     return super.find(cloneDeepUnref(filters))
   }
 
