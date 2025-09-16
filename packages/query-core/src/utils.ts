@@ -78,43 +78,6 @@ export function noop(): undefined
 export function noop() {}
 
 /**
- * Type guard that checks if a value is the function variant of a union type.
- *
- * This utility is designed for the common pattern in TanStack Query where options
- * can be either a direct value or a function that computes that value.
- *
- * @template T - The direct value type
- * @template TArgs - Array of argument types that the function variant accepts
- * @param value - The value to check, which can be either T or a function that returns something
- * @returns True if the value is a function, false otherwise. When true, TypeScript narrows the type to the function variant.
- *
- * @example
- * ```ts
- * // Basic usage with no arguments
- * const initialData: string | (() => string) = getValue()
- * if (isFunctionVariant(initialData)) {
- *   // TypeScript knows initialData is () => string here
- *   const result = initialData()
- * }
- * ```
- *
- * @example
- * ```ts
- * // Usage with function arguments
- * const staleTime: number | ((query: Query) => number) = getStaleTime()
- * if (isFunctionVariant<number, [Query]>(staleTime)) {
- *   // TypeScript knows staleTime is (query: Query) => number here
- *   const result = staleTime(query)
- * }
- * ```
- */
-function isFunctionVariant<T, TArgs extends Array<any> = []>(
-  value: T | ((...args: TArgs) => any),
-): value is (...args: TArgs) => any {
-  return typeof value === 'function'
-}
-
-/**
  * Resolves a value that can either be a direct value or a function that computes the value.
  *
  * This utility eliminates the need for repetitive `typeof value === 'function'` checks
@@ -158,14 +121,27 @@ function isFunctionVariant<T, TArgs extends Array<any> = []>(
  * const delay = resolveOption(retryDelay, failureCount, error)
  * ```
  */
-export function resolveOption<T, TArgs extends Array<any>>(
+type NonFunction =
+  | string
+  | number
+  | boolean
+  | bigint
+  | symbol
+  | null
+  | undefined
+  | object
+
+export function resolveOption<
+  T extends NonFunction,
+  TArgs extends Array<any>
+>(
   value: T | ((...args: TArgs) => T),
   ...args: TArgs
 ): T {
-  return isFunctionVariant(value) ? value(...args) : value
+  return typeof value  === 'function' ? value(...args) : value
 }
 
-export function functionalUpdate<TInput, TOutput>(
+export function functionalUpdate<TInput, TOutput extends NonFunction>(
   updater: Updater<TInput, TOutput>,
   input: TInput,
 ): TOutput {
