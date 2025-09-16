@@ -1,0 +1,37 @@
+{
+  "name": "@tanstack/query-example-angular-unit-testing",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^19.2.4",
+    "@angular/compiler": "^19.2.4",
+    "@angular/core": "^19.2.4",
+    "@angular/forms": "^19.2.4",
+    "@angular/platform-browser": "^19.2.4",
+    "@angular/platform-browser-dynamic": "^19.2.4",
+    "@tanstack/angular-query-experimental": "^5.72.3",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.8.1",
+    "zone.js": "0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^19.2.5",
+    "@angular-builders/jest": "^19.0.0",
+    "@angular/cli": "^19.2.5",
+    "@angular/compiler-cli": "^19.2.4",
+    "@testing-library/angular": "17.3.7",
+    "@testing-library/dom": "^10.0.0",
+    "@testing-library/jest-dom": "^6.4.8",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^12.11.1",
+    "jest": "^29.7.0",
+    "ts-node": "~10.8.1",
+    "typescript": "5.8.2"
+  }
+}

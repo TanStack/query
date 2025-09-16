@@ -29,7 +29,7 @@ export class TasksService {
 
   /**
    * Creates a mutation for adding a task.
-   * On success, invalidates and refetches the "tasks" query cache to update the task list.
+   * On success, invalidates and refetch the "tasks" query cache to update the task list.
    */
   addTask() {
     return mutationOptions({
@@ -48,8 +48,8 @@ export class TasksService {
         ),
       mutationKey: ['tasks'],
       onSuccess: () => {},
-      onMutate: async ({ task }: { task: string }) => {
-        // Cancel any outgoing refetches
+      onMutate: async ({ task }) => {
+        // Cancel any outgoing refetch
         // (so they don't overwrite our optimistic update)
         await this.#queryClient.cancelQueries({ queryKey: ['tasks'] })
 
@@ -68,8 +68,9 @@ export class TasksService {
 
         return previousTodos
       },
-      onError: (_err: any, _variables: any, context: any) => {
+      onError: (_err, _variables, context) => {
         if (context) {
+          // Rollback the optimistic update
           this.#queryClient.setQueryData<Array<string>>(['tasks'], context)
         }
       },
