@@ -79,13 +79,29 @@ export function noop(): undefined
 export function noop() {}
 
 /**
+ * Constraint type that excludes function types to prevent ambiguity in value-or-function patterns.
+ *
+ * This ensures that T in resolveOption<T> cannot be a function type itself, which would create
+ * recursive ambiguity about whether to call the function or return it as the resolved value.
+ */
+type NonFunction =
+  | string
+  | number
+  | boolean
+  | bigint
+  | symbol
+  | null
+  | undefined
+  | object
+
+/**
  * Resolves a value that can either be a direct value or a function that computes the value.
  *
  * This utility eliminates the need for repetitive `typeof value === 'function'` checks
  * throughout the codebase and provides a clean way to handle the common pattern where
  * options can be static values or dynamic functions.
  *
- * @template T - The type of the resolved value
+ * @template T - The type of the resolved value (constrained to non-function types)
  * @template TArgs - Array of argument types when resolving function variants
  * @param value - Either a direct value of type T or a function that returns T
  * @param args - Arguments to pass to the function if value is a function
@@ -122,16 +138,6 @@ export function noop() {}
  * const delay = resolveOption(retryDelay, failureCount, error)
  * ```
  */
-type NonFunction =
-  | string
-  | number
-  | boolean
-  | bigint
-  | symbol
-  | null
-  | undefined
-  | object
-
 export function resolveOption<
   T extends NonFunction,
   TArgs extends Array<any>
