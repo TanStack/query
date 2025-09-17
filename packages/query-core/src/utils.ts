@@ -66,7 +66,14 @@ export interface MutationFilters<
   status?: MutationStatus
 }
 
-export type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput)
+/**
+ * Utility type that excludes function types from T.
+ * If T is a function, it resolves to `never`, effectively removing T
+ * from unions and preventing ambiguity in value-or-function patterns.
+ */
+export type NonFunction<T> = T extends (...args: Array<any>) => any ? never : T
+
+export type Updater<TInput, TOutput> = NonFunction<TOutput> | ((input: TInput) => TOutput)
 
 export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
@@ -78,21 +85,6 @@ export function noop(): void
 export function noop(): undefined
 export function noop() {}
 
-/**
- * Constraint type that excludes function types to prevent ambiguity in value-or-function patterns.
- *
- * This ensures that T in resolveOption<T> cannot be a function type itself, which would create
- * recursive ambiguity about whether to call the function or return it as the resolved value.
- */
-type NonFunction =
-  | string
-  | number
-  | boolean
-  | bigint
-  | symbol
-  | null
-  | undefined
-  | object
 
 /**
  * Resolves a value that can either be a direct value or a function that computes the value.
@@ -138,22 +130,29 @@ type NonFunction =
  * const delay = resolveOption(retryDelay, failureCount, error)
  * ```
  */
-export function resolveOption<
-  T extends NonFunction,
-  TArgs extends Array<any>
->(
-  value: T | ((...args: TArgs) => T),
+export function resolveOption<T, TArgs extends Array<any>>(
+  valueOrFn: NonFunction<T> | ((...args: TArgs) => T) | undefined,
   ...args: TArgs
-): T {
-  return typeof value  === 'function' ? value(...args) : value
+): T | undefined
+// Overload for when value is guaranteed to be present
+export function resolveOption<T, TArgs extends Array<any>>(
+  valueOrFn: NonFunction<T> | ((...args: TArgs) => T),
+  ...args: TArgs
+): T
+// Implementation
+export function resolveOption<T, TArgs extends Array<any>>(
+  valueOrFn: NonFunction<T> | ((...args: TArgs) => T) | undefined,
+  ...args: TArgs
+): T | undefined {
+  if (typeof valueOrFn === 'function') {
+    // Because of our NonFunction<T> utility, TypeScript now correctly
+    // infers that if valueOrFn is a function, it must be the producer `(...args: TArgs) => T`.
+    return (valueOrFn as (...args: TArgs) => T)(...args)
+  }
+  // If it's not a function, it must be of type T or undefined.
+  return valueOrFn as T | undefined
 }
 
-export function functionalUpdate<TInput, TOutput extends NonFunction>(
-  updater: Updater<TInput, TOutput>,
-  input: TInput,
-): TOutput {
-  return resolveOption(updater, input)
-}
 
 export function isValidTimeout(value: unknown): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
