@@ -214,15 +214,24 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
  * Hashes the value into a stable hash.
  */
 export function hashKey(queryKey: QueryKey | MutationKey): string {
-  return JSON.stringify(queryKey, (_, val) =>
-    isPlainObject(val)
-      ? Object.keys(val)
-          .sort()
-          .reduce((result, key) => {
-            result[key] = val[key]
-            return result
-          }, {} as any)
-      : val,
+  return JSON.stringify(
+    queryKey,
+    (_, val) => {
+      if (typeof val === 'bigint') {
+        return val.toString() + 'n'
+      }
+
+      if(isPlainObject(val)) {
+        return Object.keys(val)
+            .sort()
+            .reduce((result, key) => {
+              result[key] = val[key]
+              return result
+            }, {} as any)
+      }
+
+      return val
+    },
   )
 }
 
