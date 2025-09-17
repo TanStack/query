@@ -1,5 +1,4 @@
 import {
-  functionalUpdate,
   hashKey,
   hashQueryKeyByOptions,
   noop,
@@ -197,7 +196,7 @@ export class QueryClient {
       defaultedOptions.queryHash,
     )
     const prevData = query?.state.data
-    const data = functionalUpdate(updater, prevData)
+    const data = resolveOption(updater, prevData)
 
     if (data === undefined) {
       return undefined
