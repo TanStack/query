@@ -93,6 +93,14 @@ export function noop() {}
  * throughout the codebase and provides a clean way to handle the common pattern where
  * options can be static values or dynamic functions.
  *
+ * The NonFunction<T> constraint eliminates ambiguity by ensuring T can never be a function
+ * type. This makes the value-or-function pattern type-safe and unambiguous.
+ *
+ * The function provides two overloads: one that includes `| undefined` for optional values
+ * (where the value might not be provided), and another without `| undefined` for required
+ * values. This allows proper type inference for both optional config parameters and
+ * required ones while maintaining type safety.
+ *
  * @template T - The type of the resolved value (constrained to non-function types)
  * @template TArgs - Array of argument types when resolving function variants
  * @param value - Either a direct value of type T or a function that returns T
