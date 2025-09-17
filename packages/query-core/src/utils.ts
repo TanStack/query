@@ -138,14 +138,11 @@ type NonFunction =
  * const delay = resolveOption(retryDelay, failureCount, error)
  * ```
  */
-export function resolveOption<
-  T extends NonFunction,
-  TArgs extends Array<any>
->(
+export function resolveOption<T extends NonFunction, TArgs extends Array<any>>(
   value: T | ((...args: TArgs) => T),
   ...args: TArgs
 ): T {
-  return typeof value  === 'function' ? value(...args) : value
+  return typeof value === 'function' ? value(...args) : value
 }
 
 export function functionalUpdate<TInput, TOutput extends NonFunction>(
