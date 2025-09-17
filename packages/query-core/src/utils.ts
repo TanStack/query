@@ -218,7 +218,7 @@ export function hashKey(queryKey: QueryKey | MutationKey): string {
     queryKey,
     (_, val) => {
       if (typeof val === 'bigint') {
-        return val.toString() + 'n'
+        return { __TQ_BIGINT__: val.toString() }
       }
 
       if(isPlainObject(val)) {
