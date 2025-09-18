@@ -9,7 +9,7 @@ import { TestBed } from '@angular/core/testing'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient, provideTanStackQuery } from '..'
 import { injectQueries } from '../inject-queries'
-import { evaluateSignals, } from './test-utils'
+import { evaluateSignals } from './test-utils'
 
 let queryClient: QueryClient
 
