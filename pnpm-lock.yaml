@@ -2312,8 +2312,8 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       '@testing-library/angular':
-        specifier: ^17.3.7
-        version: 17.3.7(44e06ac0fb247039d3919c909462d711)
+        specifier: ^18.0.0
+        version: 18.0.0(b638270d50b9f611fb362719c9f1adf5)
       '@testing-library/dom':
         specifier: ^10.4.0
         version: 10.4.0
@@ -6596,16 +6596,6 @@ packages:
   '@tanstack/vite-config@0.2.0':
     resolution: {integrity: sha512-WpL1C9iR5/U7g3GpvHIssN5QvKnDnWhW05BQhaD6bAqoPCkQyBepxUF8ZRO4IGZRGVAZeMVqTbUA05BAQH/88g==}
     engines: {node: '>=18'}
-
-  '@testing-library/angular@17.3.7':
-    resolution: {integrity: sha512-99Wf/06CCyBP3rmIu+WacUTGZMDKTQR12phe1lUMrknwxHLFUf5jn230L/mW4XIZ+ThDJ/4D6OzhVskbOYDqig==}
-    peerDependencies:
-      '@angular/animations': '>= 17.0.0'
-      '@angular/common': '>= 17.0.0'
-      '@angular/core': '>= 17.0.0'
-      '@angular/platform-browser': '>= 17.0.0'
-      '@angular/router': '>= 17.0.0'
-      '@testing-library/dom': ^10.0.0
 
   '@testing-library/angular@18.0.0':
     resolution: {integrity: sha512-0seNMa4ql2I3VD7CtnI9i4sFgxEgRES+EtGid8H4MTuOK/dlj457mVk8tWdFjPQPC/cPromcUNw0is1ogO3DSA==}
@@ -19899,16 +19889,6 @@ snapshots:
       - supports-color
       - typescript
       - vite
-
-  '@testing-library/angular@17.3.7(44e06ac0fb247039d3919c909462d711)':
-    dependencies:
-      '@angular/animations': 20.0.0(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))
-      '@angular/common': 20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
-      '@angular/core': 20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0)
-      '@angular/platform-browser': 20.0.0(@angular/animations@20.0.0(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))
-      '@angular/router': 20.0.0(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.0.0(@angular/animations@20.0.0(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
-      '@testing-library/dom': 10.4.0
-      tslib: 2.8.1
 
   '@testing-library/angular@18.0.0(b638270d50b9f611fb362719c9f1adf5)':
     dependencies:

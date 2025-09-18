@@ -239,7 +239,7 @@ export function injectQueries<
      * are preserved and can keep being applied after signal changes
      */
     const optionsSignal = computed(() => {
-      return runInInjectionContext(injector ?? ngInjector, () => optionsFn())
+      return optionsFn()
     })
 
     const defaultedQueries = computed(() => {
@@ -317,7 +317,13 @@ export function injectQueries<
 
     return computed(() => {
       const result = resultSignal()
-      return result.map((query) => signalProxy(signal(query)))
+      const { combine } = optionsSignal()
+
+      return combine
+        ? result
+        : (result as QueriesResults<T>).map((query) =>
+            signalProxy(signal(query)),
+          )
     })
   }) as unknown as Signal<TCombinedResult>
 }
