@@ -4,17 +4,7 @@
   <img src="./media/header_query.png" alt="TanStack Query" />
 </div>
 
-An async state management library built to simplify fetching, caching, synchronizing, and updating server state.
-
-- Protocol‑agnostic fetching (REST, GraphQL, promises, etc.)
-- Caching, refetching, pagination & infinite scroll
-- Mutations, dependent queries & background updates
-- Prefetching, cancellation & React Suspense support
-
-<a href="https://tanstack.com/query" style="font-weight: bold">Read the Query Docs →</a>
 <br />
-
-<div align="center" style="display: flex; gap: 10px; flex-direction: column; justify-content: center;">
 
 <div align="center">
 <a href="https://www.npmjs.com/package/@tanstack/query-core" target="\_parent">
@@ -30,19 +20,28 @@ An async state management library built to simplify fetching, caching, synchroni
 
 <div align="center">
 <a href="#badge">
-    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
+    <img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="semantic-release">
   </a>
-<a href="https://bestofjs.org/projects/tanstack-query"><img alt="Best of JS" src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily" /></a>
+<a href="https://bestofjs.org/projects/tanstack-query"><img src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily" alt="Best of JS" /></a>
   <a href="https://twitter.com/tan_stack"><img src="https://img.shields.io/twitter/follow/tan_stack.svg?style=social" alt="Follow @TanStack"/></a>
 </div>
 
-<div align="center" style="font-size: 2rem; font-weight: bolder;">
+<div align="center">
 
-[Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)
-
-</div>
+### [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)
 
 </div>
+
+# TanStack Query
+
+An async state management library built to simplify fetching, caching, synchronizing, and updating server state.
+
+- Protocol‑agnostic fetching (REST, GraphQL, promises, etc.)
+- Caching, refetching, pagination & infinite scroll
+- Mutations, dependent queries & background updates
+- Prefetching, cancellation & React Suspense support
+
+### <a href="https://tanstack.com/query">Read the docs →</b></a>
 
 ## Get Involved
 
@@ -53,41 +52,47 @@ An async state management library built to simplify fetching, caching, synchroni
 
 ## Partners
 
-<div style="display: flex; flex-wrap: wrap; gap: 50px; justify-content: center; align-items: center;">
-<a href="https://www.speakeasy.com/product/react-query?utm_source=tanstack&utm_campaign=tanstack">
-  <picture>
-    <source
-      srcset="https://tanstack.com/assets/speakeasy-dark-BjP-Hd9M.svg"
-      media="(prefers-color-scheme: dark)"
-    />
-    <source
-      srcset="https://tanstack.com/assets/speakeasy-light-UpY7QmwQ.svg"
-      media="(prefers-color-scheme: light)"
-    />
-    <!-- fallback -->
-    <img
-      src="https://tanstack.com/assets/speakeasy-light-UpY7QmwQ.svg"
-      alt="Speakeasy Logo"
-    />
-  </picture>
-</a>
+<table align="center">
+  <tr>
+    <td>
+        <a href="https://www.coderabbit.ai/?via=tanstack&dub_id=aCcEEdAOqqutX6OS">
+          <img src="https://tanstack.com/assets/coderabbit-light-DVMJ2jHi.svg" height="40" padding="20px" alt="Code Rabbit"/>
+        </a>
+    </td>
+    <td padding="20">
+      <a href="https://www.cloudflare.com?utm_source=tanstack">
+         <img src="https://tanstack.com/assets/cloudflare-black-CPufaW0B.svg" height="70" alt="Cloudflare"/>
+      </a>
+    </td>
+  </tr>
+  
+</table>
+
+<div align="center">
+<img src="./media/partner_logo.svg" alt="Query & you?" height="65">
+<p>
+We're looking for TanStack Query Partners to join our mission! Partner with us to push the boundaries of TanStack Query and build amazing things together.
+</p>
+<a href="mailto:partners@tanstack.com?subject=TanStack Query Partnership"><b>LET'S CHAT</b></a>
+</div>
+
 </div>
 
 ## Explore the TanStack Ecosystem
 
-<div align="center">
-<a href="https://github.com/tanstack/config" style="font-weight: bold;">TanStack Config</a> – Tooling for JS/TS packages <br/>
-  <a href="https://github.com/tanstack/db" style="font-weight: bold;">TanStack DB</a> – Reactive sync client store <br/>
-  <a href="https://github.com/tanstack/devtools" style="font-weight: bold;">TanStack DevTools</a> – Unified devtools panel <br/>
-  <a href="https://github.com/tanstack/form" style="font-weight: bold;">TanStack Form</a> – Type‑safe form state <br/>
-  <a href="https://github.com/tanstack/pacer" style="font-weight: bold;">TanStack Pacer</a> – Debouncing, throttling, batching <br/>
-  <a href="https://github.com/tanstack/ranger" style="font-weight: bold;">TanStack Ranger</a> – Range & slider primitives <br/>
-  <a href="https://github.com/tanstack/router" style="font-weight: bold;">TanStack Router</a> –  Type‑safe routing, caching & URL state<br/>
-  <a href="https://github.com/tanstack/router" style="font-weight: bold;">TanStack Start</a> –  Full‑stack SSR & streaming<br/>
-  <a href="https://github.com/tanstack/store" style="font-weight: bold;">TanStack Store</a> – Reactive data store <br/>
-  <a href="https://github.com/tanstack/table" style="font-weight: bold;">TanStack Table</a> – Headless datagrids <br/>
-  <a href="https://github.com/tanstack/virtual" style="font-weight: bold;">TanStack Virtual</a> – Virtualized rendering <br/>
-  … and more at <a href="https://tanstack.com" style="font-weight: bold;">TanStack.com »</a>
-</div>
+- <a href="https://github.com/tanstack/config"><b>TanStack Config</b></a> – Tooling for JS/TS packages
+- <a href="https://github.com/tanstack/db"><b>TanStack DB</b></a> – Reactive sync client store
+- <a href="https://github.com/tanstack/devtools"><b>TanStack DevTools</b></a> – Unified devtools panel
+- <a href="https://github.com/tanstack/form"><b>TanStack Form</b></a> – Type‑safe form state
+- <a href="https://github.com/tanstack/pacer"><b>TanStack Pacer</b></a> – Debouncing, throttling, batching <br/>
+- <a href="https://github.com/tanstack/query"><b>TanStack Query</b></a> – Async state & caching
+- <a href="https://github.com/tanstack/ranger"><b>TanStack Ranger</b></a> – Range & slider primitives
+- <a href="https://github.com/tanstack/router"><b>TanStack Router</b></a> – Type‑safe routing, caching & URL state
+- <a href="https://github.com/tanstack/router"><b>TanStack Start</b></a> – Full‑stack SSR & streaming
+- <a href="https://github.com/tanstack/store"><b>TanStack Store</b></a> – Reactive data store
+- <a href="https://github.com/tanstack/table"><b>TanStack Table</b></a> – Headless datagrids
+- <a href="https://github.com/tanstack/virtual"><b>TanStack Virtual</b></a> – Virtualized rendering
+
+… and more at <a href="https://tanstack.com"><b>TanStack.com »</b></a>
 
 <!-- Use the force, Luke -->
