@@ -37,7 +37,6 @@ export interface InjectInfiniteQueryOptions {
  * @param injectInfiniteQueryFn - A function that returns infinite query options.
  * @param options - Additional configuration.
  * @returns The infinite query result.
- * @public
  */
 export function injectInfiniteQuery<
   TQueryFnData,
@@ -62,7 +61,6 @@ export function injectInfiniteQuery<
  * @param injectInfiniteQueryFn - A function that returns infinite query options.
  * @param options - Additional configuration.
  * @returns The infinite query result.
- * @public
  */
 export function injectInfiniteQuery<
   TQueryFnData,
@@ -87,7 +85,6 @@ export function injectInfiniteQuery<
  * @param injectInfiniteQueryFn - A function that returns infinite query options.
  * @param options - Additional configuration.
  * @returns The infinite query result.
- * @public
  */
 export function injectInfiniteQuery<
   TQueryFnData,
@@ -112,7 +109,6 @@ export function injectInfiniteQuery<
  * @param injectInfiniteQueryFn - A function that returns infinite query options.
  * @param options - Additional configuration.
  * @returns The infinite query result.
- * @public
  */
 export function injectInfiniteQuery(
   injectInfiniteQueryFn: () => CreateInfiniteQueryOptions,

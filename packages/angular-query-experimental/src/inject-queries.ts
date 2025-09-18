@@ -15,7 +15,6 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
 import type {
@@ -183,7 +182,6 @@ export type QueriesOptions<
 
 /**
  * QueriesResults reducer recursively maps type param to results
- * @public
  */
 export type QueriesResults<
   T extends Array<any>,

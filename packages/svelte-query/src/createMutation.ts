@@ -14,22 +14,24 @@ export function createMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
   options: StoreOrVal<
-    CreateMutationOptions<TData, TError, TVariables, TContext>
+    CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>
   >,
   queryClient?: QueryClient,
-): CreateMutationResult<TData, TError, TVariables, TContext> {
+): CreateMutationResult<TData, TError, TVariables, TOnMutateResult> {
   const client = useQueryClient(queryClient)
 
   const optionsStore = isSvelteStore(options) ? options : readable(options)
 
-  const observer = new MutationObserver<TData, TError, TVariables, TContext>(
-    client,
-    get(optionsStore),
-  )
-  let mutate: CreateMutateFunction<TData, TError, TVariables, TContext>
+  const observer = new MutationObserver<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >(client, get(optionsStore))
+  let mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
 
   optionsStore.subscribe(($options) => {
     mutate = (variables, mutateOptions) => {
