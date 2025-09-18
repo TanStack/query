@@ -244,7 +244,9 @@ export function injectQueries<
 
     const defaultedQueries = computed(() => {
       return optionsSignal().queries.map((opts) => {
-        const defaultedOptions = queryClient.defaultQueryOptions(opts)
+        const defaultedOptions = queryClient.defaultQueryOptions(
+          opts as QueryObserverOptions,
+        )
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring()
           ? 'isRestoring'
