@@ -144,8 +144,9 @@ export type DefinedCreateQueryResult<
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
+  TState = InfiniteQueryObserverResult<TData, TError>,
 > = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+  MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
 /**
  * @public
@@ -153,12 +154,9 @@ export type CreateInfiniteQueryResult<
 export type DefinedCreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-  TDefinedInfiniteQueryObserver = DefinedInfiniteQueryObserverResult<
-    TData,
-    TError
-  >,
+  TState = DefinedInfiniteQueryObserverResult<TData, TError>,
 > = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<TDefinedInfiniteQueryObserver>
+  MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
 export interface CreateMutationOptions<
   TData = unknown,
