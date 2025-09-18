@@ -7,7 +7,7 @@ import type { ComponentFixture } from '@angular/core/testing'
 /* eslint jsdoc/require-jsdoc: 0, jsdoc/require-param: 0 */
 
 // Evaluate all signals on an object and return the result
-export function evaluateSignals<T extends Record<string, any>>(
+function evaluateSignals<T extends Record<string, any>>(
   obj: T,
 ): { [K in keyof T]: ReturnType<T[K]> } {
   const result: Partial<{ [K in keyof T]: ReturnType<T[K]> }> = {}

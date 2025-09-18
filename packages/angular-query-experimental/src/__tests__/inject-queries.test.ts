@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { render, waitFor } from '@testing-library/angular'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { render } from '@testing-library/angular'
 import {
   Component,
   effect,
@@ -9,7 +9,6 @@ import { TestBed } from '@angular/core/testing'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient, provideTanStackQuery } from '..'
 import { injectQueries } from '../inject-queries'
-import { evaluateSignals } from './test-utils'
 
 let queryClient: QueryClient
 
@@ -23,11 +22,7 @@ beforeEach(() => {
   })
 })
 
-afterEach(() => {
-  // vi.useRealTimers()
-})
-
-describe('useQueries', () => {
+describe('injectQueries', () => {
   it('should return the correct states', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -37,8 +32,8 @@ describe('useQueries', () => {
       template: `
         <div>
           <div>
-            data1: {{ toString(result()[0].data() ?? 'null') }}, data2:
-            {{ toString(result()[1].data() ?? 'null') }}
+            data1: {{ result()[0].data() ?? 'null' }}, data2:
+            {{ result()[1].data() ?? 'null' }}
           </div>
         </div>
       `,
@@ -67,13 +62,14 @@ describe('useQueries', () => {
       }))
 
       _pushResults = effect(() => {
-        results.push(this.result().map(evaluateSignals))
+        const snapshot = this.result().map((q) => ({ data: q.data() }))
+        results.push(snapshot)
       })
     }
 
     const rendered = await render(Page)
 
-    await waitFor(() => rendered.getByText('data1: 1, data2: 2'))
+    await rendered.findByText('data1: 1, data2: 2')
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
