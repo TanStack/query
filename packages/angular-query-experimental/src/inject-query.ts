@@ -226,5 +226,5 @@ export function injectQuery(
   !options?.injector && assertInInjectionContext(injectQuery)
   return runInInjectionContext(options?.injector ?? inject(Injector), () =>
     createBaseQuery(injectQueryFn, QueryObserver),
-  ) as unknown as CreateQueryResult
+  ) as unknown as CreateQueryResult | DefinedCreateQueryResult
 }

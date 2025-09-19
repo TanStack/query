@@ -61,32 +61,48 @@ type CreateStatusBasedQueryResult<
   TStatus extends QueryObserverResult['status'],
   TData = unknown,
   TError = DefaultError,
-> = Extract<QueryObserverResult<TData, TError>, { status: TStatus }>
+  TState = QueryObserverResult<TData, TError>,
+> = Extract<TState, { status: TStatus }>
+
+type CreateNarrowQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+  TState = QueryObserverResult<TData, TError>,
+  TNarrowState = TState,
+> = BaseQueryNarrowing<TData, TError, TState> &
+  MapToSignals<OmitKeyof<TNarrowState, keyof BaseQueryNarrowing, 'safely'>>
 
 /**
  * @public
  */
-export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
+export interface BaseQueryNarrowing<
+  TData = unknown,
+  TError = DefaultError,
+  TState = QueryObserverResult<TData, TError>,
+> {
   isSuccess: (
     this: CreateBaseQueryResult<TData, TError>,
-  ) => this is CreateBaseQueryResult<
+  ) => this is CreateNarrowQueryResult<
     TData,
     TError,
-    CreateStatusBasedQueryResult<'success', TData, TError>
+    TState,
+    CreateStatusBasedQueryResult<'success', TData, TError, TState>
   >
   isError: (
     this: CreateBaseQueryResult<TData, TError>,
-  ) => this is CreateBaseQueryResult<
+  ) => this is CreateNarrowQueryResult<
     TData,
     TError,
-    CreateStatusBasedQueryResult<'error', TData, TError>
+    TState,
+    CreateStatusBasedQueryResult<'error', TData, TError, TState>
   >
   isPending: (
     this: CreateBaseQueryResult<TData, TError>,
-  ) => this is CreateBaseQueryResult<
+  ) => this is CreateNarrowQueryResult<
     TData,
     TError,
-    CreateStatusBasedQueryResult<'pending', TData, TError>
+    TState,
+    CreateStatusBasedQueryResult<'pending', TData, TError, TState>
   >
 }
 
@@ -117,7 +133,7 @@ export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
   TState = QueryObserverResult<TData, TError>,
-> = BaseQueryNarrowing<TData, TError> &
+> = BaseQueryNarrowing<TData, TError, TState> &
   MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
 /**
@@ -135,7 +151,7 @@ export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
   TState = DefinedQueryObserverResult<TData, TError>,
-> = BaseQueryNarrowing<TData, TError> &
+> = BaseQueryNarrowing<TData, TError, TState> &
   MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
 /**
@@ -145,7 +161,7 @@ export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
   TState = InfiniteQueryObserverResult<TData, TError>,
-> = BaseQueryNarrowing<TData, TError> &
+> = BaseQueryNarrowing<TData, TError, TState> &
   MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
 /**
@@ -155,7 +171,7 @@ export type DefinedCreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
   TState = DefinedInfiniteQueryObserverResult<TData, TError>,
-> = BaseQueryNarrowing<TData, TError> &
+> = BaseQueryNarrowing<TData, TError, TState> &
   MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
 export interface CreateMutationOptions<
