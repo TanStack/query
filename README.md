@@ -52,7 +52,6 @@ An async state management library built to simplify fetching, caching, synchroni
 
 ## Partners
 
-
 <table align="center">
   <tr>
     <td>
