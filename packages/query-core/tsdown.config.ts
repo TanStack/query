@@ -4,7 +4,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs', 'esm'],
   target: ['es2022'],
-  outDir: 'dist',
+  outDir: 'dist-test',
   unbundle: true,
   dts: true,
   sourcemap: true,
