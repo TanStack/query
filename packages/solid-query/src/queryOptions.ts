@@ -29,11 +29,6 @@ export function queryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TOptions extends ReturnType<
-    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  > = ReturnType<
-    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
 >(
   options: ReturnType<
     UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -49,11 +44,6 @@ export function queryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TOptions extends ReturnType<
-    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  > = ReturnType<
-    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
 >(
   options: ReturnType<
     DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
