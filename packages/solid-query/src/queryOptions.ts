@@ -41,7 +41,7 @@ export function queryOptions<
 ): ReturnType<
   UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
 > & {
-  queryKey: DataTag<TQueryKey, TQueryFnData>
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
 export function queryOptions<
@@ -61,7 +61,7 @@ export function queryOptions<
 ): ReturnType<
   DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
 > & {
-  queryKey: DataTag<TQueryKey, TQueryFnData>
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
 export function queryOptions(options: unknown) {
