@@ -1,18 +1,15 @@
 import { timeoutManager } from './timeoutManager'
+import type { Mutation } from './mutation'
+import type { FetchOptions, Query } from './query'
 import type {
   DefaultError,
-  Enabled,
   FetchStatus,
   MutationKey,
   MutationStatus,
   QueryFunction,
   QueryKey,
   QueryOptions,
-  StaleTime,
-  StaleTimeFunction,
 } from './types'
-import type { Mutation } from './mutation'
-import type { FetchOptions, Query } from './query'
 
 // TYPES
 
@@ -81,13 +78,78 @@ export function noop(): void
 export function noop(): undefined
 export function noop() {}
 
-export function functionalUpdate<TInput, TOutput>(
+/**
+ * Constraint type that excludes function types to prevent ambiguity in value-or-function patterns.
+ *
+ * This ensures that T in resolveOption<T> cannot be a function type itself, which would create
+ * recursive ambiguity about whether to call the function or return it as the resolved value.
+ */
+type NonFunction =
+  | string
+  | number
+  | boolean
+  | bigint
+  | symbol
+  | null
+  | undefined
+  | object
+
+/**
+ * Resolves a value that can either be a direct value or a function that computes the value.
+ *
+ * This utility eliminates the need for repetitive `typeof value === 'function'` checks
+ * throughout the codebase and provides a clean way to handle the common pattern where
+ * options can be static values or dynamic functions.
+ *
+ * @template T - The type of the resolved value (constrained to non-function types)
+ * @template TArgs - Array of argument types when resolving function variants
+ * @param value - Either a direct value of type T or a function that returns T
+ * @param args - Arguments to pass to the function if value is a function
+ * @returns The resolved value of type T
+ *
+ * @example
+ * ```ts
+ * // Zero-argument function resolution (like initialData)
+ * const initialData: string | (() => string) = 'hello'
+ * const resolved = resolveOption(initialData) // 'hello'
+ *
+ * const initialDataFn: string | (() => string) = () => 'world'
+ * const resolved2 = resolveOption(initialDataFn) // 'world'
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Function with arguments (like staleTime, retryDelay)
+ * const staleTime: number | ((query: Query) => number) = (query) => query.state.dataUpdatedAt + 5000
+ * const resolved = resolveOption(staleTime, query) // number
+ *
+ * const retryDelay: number | ((failureCount: number, error: Error) => number) = 1000
+ * const resolved2 = resolveOption(retryDelay, 3, new Error()) // 1000
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Replaces verbose patterns like:
+ * // const delay = typeof retryDelay === 'function'
+ * //   ? retryDelay(failureCount, error)
+ * //   : retryDelay
+ *
+ * // With:
+ * const delay = resolveOption(retryDelay, failureCount, error)
+ * ```
+ */
+export function resolveOption<T extends NonFunction, TArgs extends Array<any>>(
+  value: T | ((...args: TArgs) => T),
+  ...args: TArgs
+): T {
+  return typeof value === 'function' ? value(...args) : value
+}
+
+export function functionalUpdate<TInput, TOutput extends NonFunction>(
   updater: Updater<TInput, TOutput>,
   input: TInput,
 ): TOutput {
-  return typeof updater === 'function'
-    ? (updater as (_: TInput) => TOutput)(input)
-    : updater
+  return resolveOption(updater, input)
 }
 
 export function isValidTimeout(value: unknown): value is number {
@@ -96,32 +158,6 @@ export function isValidTimeout(value: unknown): value is number {
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
-}
-
-export function resolveStaleTime<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  staleTime:
-    | undefined
-    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
-  query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): StaleTime | undefined {
-  return typeof staleTime === 'function' ? staleTime(query) : staleTime
-}
-
-export function resolveEnabled<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  enabled: undefined | Enabled<TQueryFnData, TError, TData, TQueryKey>,
-  query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): boolean | undefined {
-  return typeof enabled === 'function' ? enabled(query) : enabled
 }
 
 export function matchQuery(
