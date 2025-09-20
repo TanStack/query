@@ -2269,6 +2269,9 @@ importers:
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
       vite-plugin-dts:
         specifier: 4.2.3
         version: 4.2.3(@types/node@22.15.3)(rollup@4.40.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.3)(jiti@2.4.2)(less@4.3.0)(lightningcss@1.29.2)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.0))

@@ -97,6 +97,7 @@
     "@testing-library/angular": "^18.0.0",
     "eslint-plugin-jsdoc": "^50.5.0",
     "npm-run-all2": "^5.0.0",
+    "rxjs": "^7.8.2",
     "vite-plugin-dts": "4.2.3",
     "vite-plugin-externalize-deps": "^0.9.0",
     "vite-tsconfig-paths": "^5.1.4"
