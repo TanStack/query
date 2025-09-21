@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts",
     "compile": "vue-tsc --build",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "vue-tsc --build",
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm run compile && vite build"
