@@ -48,7 +48,6 @@
     "@types/react-dom": "^19.0.2",
     "@vitest/coverage-istanbul": "3.2.4",
     "@vitest/eslint-plugin": "^1.1.36",
-    "cpy-cli": "^6.0.0",
     "esbuild-plugin-file-path-extensions": "^2.1.4",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^6.0.0-rc.2",
