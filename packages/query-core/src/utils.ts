@@ -1,3 +1,4 @@
+import { timeoutManager } from './timeoutManager'
 import type {
   DefaultError,
   Enabled,
@@ -46,7 +47,7 @@ export interface MutationFilters<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > {
   /**
    * Match mutation key exactly
@@ -56,7 +57,7 @@ export interface MutationFilters<
    * Include mutations matching this predicate function
    */
   predicate?: (
-    mutation: Mutation<TData, TError, TVariables, TContext>,
+    mutation: Mutation<TData, TError, TVariables, TOnMutateResult>,
   ) => boolean
   /**
    * Include mutations matching this mutation key
@@ -361,7 +362,7 @@ function hasObjectPrototype(o: any): boolean {
 
 export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve) => {
-    setTimeout(resolve, timeout)
+    timeoutManager.setTimeout(resolve, timeout)
   })
 }
 

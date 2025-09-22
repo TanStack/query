@@ -9,24 +9,10 @@ export default [
   pluginJsdoc.configs['flat/recommended-typescript'],
   {
     rules: {
-      'cspell/spellchecker': [
-        'warn',
-        {
-          cspell: {
-            ignoreRegExpList: ['\\ɵ.+'],
-          },
-        },
-      ],
       'jsdoc/require-hyphen-before-param-description': 1,
       'jsdoc/sort-tags': 1,
       'jsdoc/require-throws': 1,
-      'jsdoc/check-tag-names': [
-        'warn',
-        {
-          // Not compatible with Api Extractor @public
-          typed: false,
-        },
-      ],
+      'jsdoc/check-tag-names': ['warn'],
     },
   },
   {
@@ -42,6 +28,8 @@ export default [
     files: ['**/__tests__/**'],
     rules: {
       '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/require-await': 'off',
+      'jsdoc/require-returns': 'off',
     },
   },
 ]

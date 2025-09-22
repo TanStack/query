@@ -1741,4 +1741,74 @@ describe('useQueries', () => {
     // still no extra calls to combine
     expect(spy).toHaveBeenCalledTimes(3)
   })
+
+  it('should not cause infinite re-renders when removing last query', async () => {
+    let renderCount = 0
+
+    function Page() {
+      const [queries, setQueries] = React.useState([
+        {
+          queryKey: ['query1'],
+          queryFn: () => 'data1',
+        },
+        {
+          queryKey: ['query2'],
+          queryFn: () => 'data2',
+        },
+      ])
+      renderCount++
+
+      const result = useQueries({ queries })
+
+      return (
+        <div>
+          <div data-testid="render-count">renders: {renderCount}</div>
+          <div data-testid="query-count">queries: {result.length}</div>
+          <button
+            onClick={() => {
+              setQueries([
+                {
+                  queryKey: ['query1'],
+                  queryFn: () => 'data1',
+                },
+              ])
+            }}
+          >
+            remove last
+          </button>
+          <button
+            onClick={() => {
+              setQueries([
+                {
+                  queryKey: ['query2'],
+                  queryFn: () => 'data2',
+                },
+              ])
+            }}
+          >
+            remove first
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(0)
+    renderCount = 0
+
+    fireEvent.click(rendered.getByRole('button', { name: /remove last/i }))
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(renderCount).toBeLessThan(10)
+    expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
+
+    renderCount = 0
+
+    fireEvent.click(rendered.getByRole('button', { name: /remove first/i }))
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(renderCount).toBeLessThan(10)
+    expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
+  })
 })

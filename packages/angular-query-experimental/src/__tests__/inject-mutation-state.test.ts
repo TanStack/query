@@ -145,7 +145,6 @@ describe('injectMutationState', () => {
             <span>{{ mutation.status }}</span>
           }
         `,
-        standalone: true,
       })
       class FakeComponent {
         name = input.required<string>()
