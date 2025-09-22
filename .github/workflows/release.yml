@@ -35,15 +35,19 @@ jobs:
       - name: Stop Nx Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
-      - name: Run Changesets (version or publish)
-        uses: changesets/action@v1.5.3
-        with:
-          version: pnpm run changeset:version
-          publish: pnpm run changeset:publish
-          commit: 'ci: Version Packages'
-          title: 'ci: Version Packages'
+      - name: Version Packages
+        run: pnpm run changeset:version
+      - name: Commit version files
+        run: |
+          git config --global user.name 'Tanner Linsley'
+          git config --global user.email 'tannerlinsley@users.noreply.github.com'            git add -A
+          git commit -m "ci: Version Packages"
+          git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Packages
+        run: pnpm run changeset:publish
+        env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4.6.0
