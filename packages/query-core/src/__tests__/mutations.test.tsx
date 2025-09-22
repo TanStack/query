@@ -1,6 +1,6 @@
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { QueryClient } from '..'
+import { MutationCache, QueryClient } from '..'
 import { MutationObserver } from '../mutationObserver'
 import { executeMutation } from './utils'
 import type { MutationState } from '../mutation'
@@ -840,6 +840,324 @@ describe('mutations', () => {
       ])
 
       expect(mutationError).toEqual(newMutationError)
+    })
+  })
+
+  describe('erroneous mutation callback', () => {
+    afterEach(() => {
+      process.removeAllListeners('unhandledRejection')
+    })
+
+    test('error by global onSuccess triggers onError callback', async () => {
+      const newMutationError = new Error('mutation-error')
+
+      queryClient = new QueryClient({
+        mutationCache: new MutationCache({
+          onSuccess: () => {
+            throw newMutationError
+          },
+        }),
+      })
+      queryClient.mount()
+
+      const key = queryKey()
+      const results: Array<string> = []
+
+      let mutationError: Error | undefined
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve('success'),
+          onMutate: async () => {
+            results.push('onMutate-async')
+            await sleep(10)
+            return { backup: 'async-data' }
+          },
+          onSuccess: async () => {
+            results.push('onSuccess-async-start')
+            await sleep(10)
+            throw newMutationError
+          },
+          onError: async () => {
+            results.push('onError-async-start')
+            await sleep(10)
+            results.push('onError-async-end')
+          },
+          onSettled: () => {
+            results.push('onSettled-promise')
+            return Promise.resolve('also-ignored') // Promise<string> (should be ignored)
+          },
+        },
+        'vars',
+      ).catch((error) => {
+        mutationError = error
+      })
+
+      await vi.advanceTimersByTimeAsync(30)
+
+      expect(results).toEqual([
+        'onMutate-async',
+        'onError-async-start',
+        'onError-async-end',
+        'onSettled-promise',
+      ])
+
+      expect(mutationError).toEqual(newMutationError)
+    })
+
+    test('error by mutations onSuccess triggers onError callback', async () => {
+      const key = queryKey()
+      const results: Array<string> = []
+
+      const newMutationError = new Error('mutation-error')
+
+      let mutationError: Error | undefined
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve('success'),
+          onMutate: async () => {
+            results.push('onMutate-async')
+            await sleep(10)
+            return { backup: 'async-data' }
+          },
+          onSuccess: async () => {
+            results.push('onSuccess-async-start')
+            await sleep(10)
+            throw newMutationError
+          },
+          onError: async () => {
+            results.push('onError-async-start')
+            await sleep(10)
+            results.push('onError-async-end')
+          },
+          onSettled: () => {
+            results.push('onSettled-promise')
+            return Promise.resolve('also-ignored') // Promise<string> (should be ignored)
+          },
+        },
+        'vars',
+      ).catch((error) => {
+        mutationError = error
+      })
+
+      await vi.advanceTimersByTimeAsync(30)
+
+      expect(results).toEqual([
+        'onMutate-async',
+        'onSuccess-async-start',
+        'onError-async-start',
+        'onError-async-end',
+        'onSettled-promise',
+      ])
+
+      expect(mutationError).toEqual(newMutationError)
+    })
+
+    test('error by global onSettled triggers onError callback, calling global onSettled callback twice', async () => {
+      const newMutationError = new Error('mutation-error')
+
+      queryClient = new QueryClient({
+        mutationCache: new MutationCache({
+          onSettled: async () => {
+            results.push('global-onSettled')
+            await sleep(10)
+            throw newMutationError
+          },
+        }),
+      })
+      queryClient.mount()
+
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+
+      const key = queryKey()
+      const results: Array<string> = []
+
+      let mutationError: Error | undefined
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve('success'),
+          onMutate: async () => {
+            results.push('onMutate-async')
+            await sleep(10)
+            return { backup: 'async-data' }
+          },
+          onSuccess: async () => {
+            results.push('onSuccess-async-start')
+            await sleep(10)
+            results.push('onSuccess-async-end')
+          },
+          onError: async () => {
+            results.push('onError-async-start')
+            await sleep(10)
+            results.push('onError-async-end')
+          },
+          onSettled: () => {
+            results.push('local-onSettled')
+          },
+        },
+        'vars',
+      ).catch((error) => {
+        mutationError = error
+      })
+
+      await vi.advanceTimersByTimeAsync(50)
+
+      expect(results).toEqual([
+        'onMutate-async',
+        'onSuccess-async-start',
+        'onSuccess-async-end',
+        'global-onSettled',
+        'onError-async-start',
+        'onError-async-end',
+        'global-onSettled',
+        'local-onSettled',
+      ])
+
+      expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, newMutationError)
+
+      expect(mutationError).toEqual(newMutationError)
+    })
+
+    test('error by mutations onSettled triggers onError callback, calling both onSettled callbacks twice', async () => {
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+
+      const key = queryKey()
+      const results: Array<string> = []
+
+      const newMutationError = new Error('mutation-error')
+
+      let mutationError: Error | undefined
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve('success'),
+          onMutate: async () => {
+            results.push('onMutate-async')
+            await sleep(10)
+            return { backup: 'async-data' }
+          },
+          onSuccess: async () => {
+            results.push('onSuccess-async-start')
+            await sleep(10)
+            results.push('onSuccess-async-end')
+          },
+          onError: async () => {
+            results.push('onError-async-start')
+            await sleep(10)
+            results.push('onError-async-end')
+          },
+          onSettled: async () => {
+            results.push('onSettled-async-promise')
+            await sleep(10)
+            throw newMutationError
+          },
+        },
+        'vars',
+      ).catch((error) => {
+        mutationError = error
+      })
+
+      await vi.advanceTimersByTimeAsync(50)
+
+      expect(results).toEqual([
+        'onMutate-async',
+        'onSuccess-async-start',
+        'onSuccess-async-end',
+        'onSettled-async-promise',
+        'onError-async-start',
+        'onError-async-end',
+        'onSettled-async-promise',
+      ])
+
+      expect(unhandledRejectionFn).toHaveBeenCalledTimes(1)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, newMutationError)
+
+      expect(mutationError).toEqual(newMutationError)
+    })
+
+    test('errors by onError and consecutive onSettled callbacks are transferred to different execution context where it are reported', async () => {
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+
+      const globalErrorError = new Error('global-error-error')
+      const globalSettledError = new Error('global-settled-error')
+
+      queryClient = new QueryClient({
+        mutationCache: new MutationCache({
+          onError: () => {
+            throw globalErrorError
+          },
+          onSettled: () => {
+            throw globalSettledError
+          },
+        }),
+      })
+      queryClient.mount()
+
+      const key = queryKey()
+      const results: Array<string> = []
+
+      const newMutationError = new Error('mutation-error')
+      const newErrorError = new Error('error-error')
+      const newSettledError = new Error('settled-error')
+
+      let mutationError: Error | undefined
+      executeMutation(
+        queryClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve('success'),
+          onMutate: async () => {
+            results.push('onMutate-async')
+            await sleep(10)
+            throw newMutationError
+          },
+          onSuccess: () => {
+            results.push('onSuccess-async-start')
+          },
+          onError: async () => {
+            results.push('onError-async-start')
+            await sleep(10)
+            throw newErrorError
+          },
+          onSettled: async () => {
+            results.push('onSettled-promise')
+            await sleep(10)
+            throw newSettledError
+          },
+        },
+        'vars',
+      ).catch((error) => {
+        mutationError = error
+      })
+
+      await vi.advanceTimersByTimeAsync(30)
+
+      expect(results).toEqual([
+        'onMutate-async',
+        'onError-async-start',
+        'onSettled-promise',
+      ])
+
+      expect(mutationError).toEqual(newMutationError)
+
+      expect(unhandledRejectionFn).toHaveBeenCalledTimes(4)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, globalErrorError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(2, newErrorError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(
+        3,
+        globalSettledError,
+      )
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(4, newSettledError)
     })
   })
 })

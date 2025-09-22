@@ -1064,7 +1064,14 @@ describe('useMutation', () => {
     })
   })
 
-  it('should go to error state if onError callback errors', async () => {
+  it('should go to error state if onError callback errors', async ({
+    onTestFinished,
+  }) => {
+    onTestFinished(() => {
+      process.removeAllListeners('unhandledRejection')
+    })
+    process.on('unhandledRejection', vi.fn())
+
     const error = new Error('error from onError')
     const mutateFnError = new Error('mutateFnError')
 
@@ -1101,7 +1108,14 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
   })
 
-  it('should go to error state if onSettled callback errors', async () => {
+  it('should go to error state if onSettled callback errors', async ({
+    onTestFinished,
+  }) => {
+    onTestFinished(() => {
+      process.removeAllListeners('unhandledRejection')
+    })
+    process.on('unhandledRejection', vi.fn())
+
     const error = new Error('error from onSettled')
     const mutateFnError = new Error('mutateFnError')
     const onError = vi.fn()
