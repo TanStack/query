@@ -1,9 +1,13 @@
 ## 🎯 Changes
 
-<!-- What changes are made in this PR? Is it a feature or a package submission? -->
+<!-- What changes are made in this PR? Describe the change and its motivation. -->
 
 ## ✅ Checklist
 
-- [ ] I have followed the steps listed in the [Contributing guide](https://github.com/TanStack/config/blob/main/CONTRIBUTING.md).
-- [ ] I have tested and linted this code locally.
-- [ ] I have generated a [changeset](https://github.com/changesets/changesets/blob/main/docs/adding-a-changeset.md) for this PR, or this PR should not release a new version.
+- [ ] I have followed the steps in the [Contributing guide](https://github.com/TanStack/config/blob/main/CONTRIBUTING.md).
+- [ ] I have tested this code locally with `pnpm test:pr`.
+
+## 🚀 Release Impact
+
+- [ ] This change affects published code, and I have generated a [changeset](https://github.com/changesets/changesets/blob/main/docs/adding-a-changeset.md).
+- [ ] This change is docs/CI/dev-only (no release).
