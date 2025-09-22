@@ -1,4 +1,4 @@
-name: pr
+name: PR
 
 on:
   pull_request:
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
         with:
           fetch-depth: 0
       - name: Start Nx Agents
@@ -30,7 +30,7 @@ jobs:
       - name: Setup Tools
         uses: tanstack/config/.github/setup@main
       - name: Get base and head commits for `nx affected`
-        uses: nrwl/nx-set-shas@v4.1.2
+        uses: nrwl/nx-set-shas@v4.3.3
         with:
           main-branch-name: main
       - name: Run Checks
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
         with:
           fetch-depth: 0
       - name: Setup Tools
