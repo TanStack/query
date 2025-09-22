@@ -1,11 +1,6 @@
-name: ci
+name: Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: override release tag
-        required: false
   push:
     branches: [main, alpha, beta, rc, v4]
 
@@ -19,6 +14,7 @@ env:
 permissions:
   contents: write
   id-token: write
+  pull-requests: write
 
 jobs:
   release:
@@ -39,16 +35,16 @@ jobs:
       - name: Stop Nx Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
-      - name: Publish
-        run: |
-          git config --global user.name 'Tanner Linsley'
-          git config --global user.email 'tannerlinsley@users.noreply.github.com'
-          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-          pnpm run cipublish
+      - name: Run Changesets (version or publish)
+        uses: changesets/action@v1.5.3
+        with:
+          version: pnpm run changeset:version
+          publish: pnpm run changeset:publish
+          commit: 'ci: Version Packages'
+          title: 'ci: Version Packages'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          TAG: ${{ inputs.tag }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4.6.0
         with:
