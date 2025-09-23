@@ -385,13 +385,14 @@ describe('mutationObserver', () => {
   })
 
   describe('erroneous mutation callback', () => {
-    afterEach(() => {
-      process.removeAllListeners('unhandledRejection')
-    })
-
-    test('onSuccess and onSettled is transferred to different execution context where it is reported', async () => {
+    test('onSuccess and onSettled is transferred to different execution context where it is reported', async ({
+      onTestFinished,
+    }) => {
       const unhandledRejectionFn = vi.fn()
       process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
 
       const onSuccessError = new Error('onSuccess-error')
       const onSuccess = vi.fn(() => {
@@ -428,9 +429,14 @@ describe('mutationObserver', () => {
       unsubscribe()
     })
 
-    test('onError and onSettled is transferred to different execution context where it is reported', async () => {
+    test('onError and onSettled is transferred to different execution context where it is reported', async ({
+      onTestFinished,
+    }) => {
       const unhandledRejectionFn = vi.fn()
       process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
 
       const onErrorError = new Error('onError-error')
       const onError = vi.fn(() => {
