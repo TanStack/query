@@ -73,7 +73,9 @@ export interface MutationFilters<
  */
 export type NonFunction<T> = T extends (...args: Array<any>) => any ? never : T
 
-export type Updater<TInput, TOutput> = NonFunction<TOutput> | ((input: TInput) => TOutput)
+export type Updater<TInput, TOutput> =
+  | NonFunction<TOutput>
+  | ((input: TInput) => TOutput)
 
 export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
@@ -84,7 +86,6 @@ export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 export function noop(): void
 export function noop(): undefined
 export function noop() {}
-
 
 /**
  * Resolves a value that can either be a direct value or a function that computes the value.
@@ -160,7 +161,6 @@ export function resolveOption<T, TArgs extends Array<any>>(
   // If it's not a function, it must be of type T or undefined.
   return valueOrFn as T | undefined
 }
-
 
 export function isValidTimeout(value: unknown): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
