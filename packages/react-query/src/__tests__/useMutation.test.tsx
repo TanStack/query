@@ -1067,10 +1067,11 @@ describe('useMutation', () => {
   it('should go to error state if onError callback errors', async ({
     onTestFinished,
   }) => {
+    const unhandledRejectionFn = vi.fn()
+    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
     onTestFinished(() => {
-      process.removeAllListeners('unhandledRejection')
+      process.off('unhandledRejection', unhandledRejectionFn)
     })
-    process.on('unhandledRejection', vi.fn())
 
     const error = new Error('error from onError')
     const mutateFnError = new Error('mutateFnError')
@@ -1111,10 +1112,11 @@ describe('useMutation', () => {
   it('should go to error state if onSettled callback errors', async ({
     onTestFinished,
   }) => {
+    const unhandledRejectionFn = vi.fn()
+    process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
     onTestFinished(() => {
-      process.removeAllListeners('unhandledRejection')
+      process.off('unhandledRejection', unhandledRejectionFn)
     })
-    process.on('unhandledRejection', vi.fn())
 
     const error = new Error('error from onSettled')
     const mutateFnError = new Error('mutateFnError')

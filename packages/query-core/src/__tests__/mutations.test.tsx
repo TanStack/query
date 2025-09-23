@@ -844,10 +844,6 @@ describe('mutations', () => {
   })
 
   describe('erroneous mutation callback', () => {
-    afterEach(() => {
-      process.removeAllListeners('unhandledRejection')
-    })
-
     test('error by global onSuccess triggers onError callback', async () => {
       const newMutationError = new Error('mutation-error')
 
@@ -956,7 +952,9 @@ describe('mutations', () => {
       expect(mutationError).toEqual(newMutationError)
     })
 
-    test('error by global onSettled triggers onError callback, calling global onSettled callback twice', async () => {
+    test('error by global onSettled triggers onError callback, calling global onSettled callback twice', async ({
+      onTestFinished,
+    }) => {
       const newMutationError = new Error('mutation-error')
 
       queryClient = new QueryClient({
@@ -972,6 +970,9 @@ describe('mutations', () => {
 
       const unhandledRejectionFn = vi.fn()
       process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
 
       const key = queryKey()
       const results: Array<string> = []
@@ -1025,9 +1026,14 @@ describe('mutations', () => {
       expect(mutationError).toEqual(newMutationError)
     })
 
-    test('error by mutations onSettled triggers onError callback, calling both onSettled callbacks twice', async () => {
+    test('error by mutations onSettled triggers onError callback, calling both onSettled callbacks twice', async ({
+      onTestFinished,
+    }) => {
       const unhandledRejectionFn = vi.fn()
       process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
 
       const key = queryKey()
       const results: Array<string> = []
@@ -1084,9 +1090,14 @@ describe('mutations', () => {
       expect(mutationError).toEqual(newMutationError)
     })
 
-    test('errors by onError and consecutive onSettled callbacks are transferred to different execution context where it are reported', async () => {
+    test('errors by onError and consecutive onSettled callbacks are transferred to different execution context where it are reported', async ({
+      onTestFinished,
+    }) => {
       const unhandledRejectionFn = vi.fn()
       process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
 
       const globalErrorError = new Error('global-error-error')
       const globalSettledError = new Error('global-settled-error')
