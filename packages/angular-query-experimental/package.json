@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.89.0",
+  "version": "5.90.2",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -29,7 +29,7 @@
   "scripts": {
     "clean": "premove ./dist ./coverage ./dist-ts",
     "compile": "tsc --build",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
@@ -94,8 +94,10 @@
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@tanstack/query-test-utils": "workspace:*",
+    "@testing-library/angular": "^18.0.0",
     "eslint-plugin-jsdoc": "^50.5.0",
     "npm-run-all2": "^5.0.0",
+    "rxjs": "^7.8.2",
     "vite-plugin-dts": "4.2.3",
     "vite-plugin-externalize-deps": "^0.9.0",
     "vite-tsconfig-paths": "^5.1.4"

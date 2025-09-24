@@ -1113,11 +1113,11 @@ export interface MutationOptions<
   onMutate?: (
     variables: TVariables,
     context: MutationFunctionContext,
-  ) => Promise<TOnMutateResult | undefined> | TOnMutateResult | undefined
+  ) => Promise<TOnMutateResult> | TOnMutateResult
   onSuccess?: (
     data: TData,
     variables: TVariables,
-    onMutateResult: TOnMutateResult | undefined,
+    onMutateResult: TOnMutateResult,
     context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onError?: (
