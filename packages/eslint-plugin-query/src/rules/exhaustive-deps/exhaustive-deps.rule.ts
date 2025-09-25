@@ -65,25 +65,7 @@ export const rule = createRule({
           return
         }
 
-        let queryKeyNode = queryKey.value
-
-        if (
-          queryKeyNode.type === AST_NODE_TYPES.TSAsExpression &&
-          queryKeyNode.expression.type === AST_NODE_TYPES.ArrayExpression
-        ) {
-          queryKeyNode = queryKeyNode.expression
-        }
-
-        if (queryKeyNode.type === AST_NODE_TYPES.Identifier) {
-          const expression = ASTUtils.getReferencedExpressionByIdentifier({
-            context,
-            node: queryKeyNode,
-          })
-
-          if (expression?.type === AST_NODE_TYPES.ArrayExpression) {
-            queryKeyNode = expression
-          }
-        }
+        const queryKeyNode = dereferenceVariablesAndTypeAssertions(queryKey.value, context)
 
         const externalRefs = ASTUtils.getExternalRefs({
           scopeManager,
@@ -181,4 +163,28 @@ function getQueryFnRelevantNode(queryFn: TSESTree.Property) {
   }
 
   return queryFn.value.consequent
+}
+
+function dereferenceVariablesAndTypeAssertions(queryKeyNode: TSESTree.Node, context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>) {
+  for (let i = 0; i < (1 << 16); ++i) {
+    switch (queryKeyNode.type) {
+      case AST_NODE_TYPES.TSAsExpression:
+        queryKeyNode = queryKeyNode.expression
+        break
+      case AST_NODE_TYPES.Identifier:
+        const expression = ASTUtils.getReferencedExpressionByIdentifier({
+          context,
+          node: queryKeyNode,
+        })
+
+        if (expression == null) {
+          return queryKeyNode
+        }
+        queryKeyNode = expression
+        break
+      default:
+        return queryKeyNode
+    }
+  }
+  throw new Error('Recursion limit reached.')
 }
