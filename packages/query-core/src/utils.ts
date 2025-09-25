@@ -10,12 +10,22 @@ import type {
   QueryOptions,
   StaleTime,
   StaleTimeFunction,
-  TuplePrefixes,
 } from './types'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
 
 // TYPES
+
+type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
+  ...infer R,
+  unknown,
+]
+  ? R
+  : never
+
+type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
+  ? readonly []
+  : TuplePrefixes<DropLast<T>> | T
 
 export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**

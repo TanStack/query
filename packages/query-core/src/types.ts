@@ -36,16 +36,6 @@ export type Override<TTargetA, TTargetB> = {
 
 export type NoInfer<T> = [T][T extends any ? 0 : never]
 
-export type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
-  ...infer R,
-  unknown,
-]
-  ? R
-  : never
-
-export type TuplePrefixes<T extends ReadonlyArray<unknown>> =
-  T extends readonly [] ? readonly [] : TuplePrefixes<DropLast<T>> | T
-
 export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
