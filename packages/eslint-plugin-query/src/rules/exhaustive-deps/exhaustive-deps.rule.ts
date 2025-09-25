@@ -171,7 +171,7 @@ function dereferenceVariablesAndTypeAssertions(queryKeyNode: TSESTree.Node, cont
       case AST_NODE_TYPES.TSAsExpression:
         queryKeyNode = queryKeyNode.expression
         break
-      case AST_NODE_TYPES.Identifier:
+      case AST_NODE_TYPES.Identifier: {
         const expression = ASTUtils.getReferencedExpressionByIdentifier({
           context,
           node: queryKeyNode,
@@ -182,6 +182,7 @@ function dereferenceVariablesAndTypeAssertions(queryKeyNode: TSESTree.Node, cont
         }
         queryKeyNode = expression
         break
+      }
       default:
         return queryKeyNode
     }
