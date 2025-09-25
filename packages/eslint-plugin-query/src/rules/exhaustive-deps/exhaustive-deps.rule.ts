@@ -166,7 +166,14 @@ function getQueryFnRelevantNode(queryFn: TSESTree.Property) {
 }
 
 function dereferenceVariablesAndTypeAssertions(queryKeyNode: TSESTree.Node, context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>) {
-  for (let i = 0; i < (1 << 16); ++i) {
+  const visitedNodes = new Set<TSESTree.Node>()
+
+  for (let i = 0; i < (1 << 8); ++i) {
+    if (visitedNodes.has(queryKeyNode)) {
+      return queryKeyNode
+    }
+    visitedNodes.add(queryKeyNode)
+
     switch (queryKeyNode.type) {
       case AST_NODE_TYPES.TSAsExpression:
         queryKeyNode = queryKeyNode.expression
@@ -187,5 +194,5 @@ function dereferenceVariablesAndTypeAssertions(queryKeyNode: TSESTree.Node, cont
         return queryKeyNode
     }
   }
-  throw new Error('Recursion limit reached.')
+  return queryKeyNode
 }
