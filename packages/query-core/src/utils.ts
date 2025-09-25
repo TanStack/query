@@ -10,6 +10,7 @@ import type {
   QueryOptions,
   StaleTime,
   StaleTimeFunction,
+  TuplePrefixes,
 } from './types'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
@@ -32,7 +33,7 @@ export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Include queries matching this query key
    */
-  queryKey?: TQueryKey
+  queryKey?: TuplePrefixes<TQueryKey>
   /**
    * Include or exclude stale queries
    */
@@ -62,7 +63,7 @@ export interface MutationFilters<
   /**
    * Include mutations matching this mutation key
    */
-  mutationKey?: MutationKey
+  mutationKey?: TuplePrefixes<MutationKey>
   /**
    * Filter by mutation status
    */
