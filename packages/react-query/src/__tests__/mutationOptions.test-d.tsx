@@ -63,9 +63,7 @@ describe('mutationOptions', () => {
         return { name: 'onMutateResult' }
       },
       onSuccess: (_data, _variables, onMutateResult) => {
-        expectTypeOf(onMutateResult).toEqualTypeOf<
-          { name: string } | undefined
-        >()
+        expectTypeOf(onMutateResult).toEqualTypeOf<{ name: string }>()
       },
     })
   })

@@ -216,7 +216,6 @@ export interface InjectQueriesOptions<
 /**
  * @param optionsFn - A function that returns queries' options.
  * @param injector - The Angular injector to use.
- * @public
  */
 export function injectQueries<
   T extends Array<any>,
