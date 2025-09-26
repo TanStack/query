@@ -6,10 +6,10 @@ title: createMutation
 # Function: createMutation()
 
 ```ts
-function createMutation<TData, TError, TVariables, TContext>(
+function createMutation<TData, TError, TVariables, TOnMutateResult>(
   options,
   queryClient?,
-): CreateMutationResult<TData, TError, TVariables, TContext>
+): CreateMutationResult<TData, TError, TVariables, TOnMutateResult>
 ```
 
 ## Type Parameters
@@ -20,18 +20,22 @@ function createMutation<TData, TError, TVariables, TContext>(
 
 • **TVariables** = `void`
 
-• **TContext** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Parameters
 
-• **options**: [`StoreOrVal`](../type-aliases/storeorval.md)\<[`CreateMutationOptions`](../type-aliases/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>\>
+### options
 
-• **queryClient?**: `QueryClient`
+[`StoreOrVal`](../../type-aliases/storeorval.md)\<[`CreateMutationOptions`](../../type-aliases/createmutationoptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>\>
+
+### queryClient?
+
+`QueryClient`
 
 ## Returns
 
-[`CreateMutationResult`](../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TContext`\>
+[`CreateMutationResult`](../../type-aliases/createmutationresult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 ## Defined in
 
-[packages/svelte-query/src/createMutation.ts:13](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/createMutation.ts#L13)
+[packages/svelte-query/src/createMutation.ts:13](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/createMutation.ts#L13)

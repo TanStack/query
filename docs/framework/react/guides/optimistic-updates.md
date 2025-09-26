@@ -60,7 +60,7 @@ If the mutation errors, the item will also disappear. But we could continue to s
 
 ### If the mutation and the query don't live in the same component
 
-This approach works very well if the mutation and the query live in the same component, However, you also get access to all mutations in other components via the dedicated `useMutationState` hook. It is best combined with a `mutationKey`:
+This approach works very well if the mutation and the query live in the same component. However, you also get access to all mutations in other components via the dedicated `useMutationState` hook. It is best combined with a `mutationKey`:
 
 [//]: # 'ExampleUI4'
 
@@ -99,27 +99,28 @@ const queryClient = useQueryClient()
 useMutation({
   mutationFn: updateTodo,
   // When mutate is called:
-  onMutate: async (newTodo) => {
+  onMutate: async (newTodo, context) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
-    await queryClient.cancelQueries({ queryKey: ['todos'] })
+    await context.client.cancelQueries({ queryKey: ['todos'] })
 
     // Snapshot the previous value
-    const previousTodos = queryClient.getQueryData(['todos'])
+    const previousTodos = context.client.getQueryData(['todos'])
 
     // Optimistically update to the new value
-    queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
+    context.client.setQueryData(['todos'], (old) => [...old, newTodo])
 
-    // Return a context object with the snapshotted value
+    // Return a result with the snapshotted value
     return { previousTodos }
   },
   // If the mutation fails,
-  // use the context returned from onMutate to roll back
-  onError: (err, newTodo, context) => {
-    queryClient.setQueryData(['todos'], context.previousTodos)
+  // use the result returned from onMutate to roll back
+  onError: (err, newTodo, onMutateResult, context) => {
+    context.client.setQueryData(['todos'], onMutateResult.previousTodos)
   },
   // Always refetch after error or success:
-  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  onSettled: (data, error, variables, onMutateResult, context) =>
+    context.client.invalidateQueries({ queryKey: ['todos'] }),
 })
 ```
 
@@ -133,30 +134,30 @@ useMutation({
 useMutation({
   mutationFn: updateTodo,
   // When mutate is called:
-  onMutate: async (newTodo) => {
+  onMutate: async (newTodo, context) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
-    await queryClient.cancelQueries({ queryKey: ['todos', newTodo.id] })
+    await context.client.cancelQueries({ queryKey: ['todos', newTodo.id] })
 
     // Snapshot the previous value
-    const previousTodo = queryClient.getQueryData(['todos', newTodo.id])
+    const previousTodo = context.client.getQueryData(['todos', newTodo.id])
 
     // Optimistically update to the new value
-    queryClient.setQueryData(['todos', newTodo.id], newTodo)
+    context.client.setQueryData(['todos', newTodo.id], newTodo)
 
-    // Return a context with the previous and new todo
+    // Return a result with the previous and new todo
     return { previousTodo, newTodo }
   },
-  // If the mutation fails, use the context we returned above
-  onError: (err, newTodo, context) => {
-    queryClient.setQueryData(
-      ['todos', context.newTodo.id],
-      context.previousTodo,
+  // If the mutation fails, use the result we returned above
+  onError: (err, newTodo, onMutateResult, context) => {
+    context.client.setQueryData(
+      ['todos', onMutateResult.newTodo.id],
+      onMutateResult.previousTodo,
     )
   },
   // Always refetch after error or success:
-  onSettled: (newTodo) =>
-    queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
+  onSettled: (newTodo, error, variables, onMutateResult, context) =>
+    context.client.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
 })
 ```
 
@@ -170,7 +171,7 @@ You can also use the `onSettled` function in place of the separate `onError` and
 useMutation({
   mutationFn: updateTodo,
   // ...
-  onSettled: async (newTodo, error, variables, context) => {
+  onSettled: async (newTodo, error, variables, onMutateResult, context) => {
     if (error) {
       // do something
     }
@@ -185,3 +186,11 @@ useMutation({
 If you only have one place where the optimistic result should be shown, using `variables` and updating the UI directly is the approach that requires less code and is generally easier to reason about. For example, you don't need to handle rollbacks at all.
 
 However, if you have multiple places on the screen that would require to know about the update, manipulating the cache directly will take care of this for you automatically.
+
+[//]: # 'Materials'
+
+## Further reading
+
+Have a look at the Community Resources for a guide on [Concurrent Optimistic Updates](../../community/tkdodos-blog.md#29-concurrent-optimistic-updates-in-react-query).
+
+[//]: # 'Materials'

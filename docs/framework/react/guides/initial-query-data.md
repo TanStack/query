@@ -8,8 +8,8 @@ There are many ways to supply initial data for a query to the cache before you n
 - Declaratively:
   - Provide `initialData` to a query to prepopulate its cache if empty
 - Imperatively:
-  - [Prefetch the data using `queryClient.prefetchQuery`](./prefetching.md)
-  - [Manually place the data into the cache using `queryClient.setQueryData`](./prefetching.md)
+  - [Prefetch the data using `queryClient.prefetchQuery`](../prefetching.md)
+  - [Manually place the data into the cache using `queryClient.setQueryData`](../prefetching.md)
 
 ## Using `initialData` to prepopulate a query
 
@@ -170,6 +170,6 @@ const result = useQuery({
 
 ## Further reading
 
-For a comparison between `Initial Data` and `Placeholder Data`, have a look at the [Community Resources](../community/tkdodos-blog.md#9-placeholder-and-initial-data-in-react-query).
+For a comparison between `Initial Data` and `Placeholder Data`, have a look at the [Community Resources](../../community/tkdodos-blog.md#9-placeholder-and-initial-data-in-react-query).
 
 [//]: # 'Materials'

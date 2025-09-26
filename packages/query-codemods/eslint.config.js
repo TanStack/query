@@ -8,7 +8,6 @@ export default [
     rules: {
       'cspell/spellchecker': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
-      '@typescript-eslint/require-await': 'off',
       'import/no-duplicates': 'off',
       'import/no-unresolved': 'off',
       'import/order': 'off',

@@ -33,8 +33,9 @@ bun add @tanstack/query-async-storage-persister @tanstack/react-query-persist-cl
 
 - Import the `createAsyncStoragePersister` function
 - Create a new asyncStoragePersister
-  - you can pass any `storage` to it that adheres to the `AsyncStorage` interface - the example below uses the async-storage from React Native
-- Wrap your app by using [`PersistQueryClientProvider`](./persistQueryClient.md#persistqueryclientprovider) component.
+  - you can pass any `storage` to it that adheres to the `AsyncStorage` interface - the example below uses the async-storage from React Native.
+  - storages that read and write synchronously, like `window.localstorage`, also adhere to the `AsyncStorage` interface and can therefore also be used with `createAsyncStoragePersister`.
+- Wrap your app by using [`PersistQueryClientProvider`](../persistQueryClient.md#persistqueryclientprovider) component.
 
 ```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -68,7 +69,7 @@ export default Root
 
 ## Retries
 
-Retries work the same as for a [SyncStoragePersister](./createSyncStoragePersister.md), except that they can also be asynchronous. You can also use all the predefined retry handlers.
+Retries work the same as for a [SyncStoragePersister](../createSyncStoragePersister.md), except that they can also be asynchronous. You can also use all the predefined retry handlers.
 
 ## API
 
@@ -99,10 +100,11 @@ interface CreateAsyncStoragePersisterOptions {
   retry?: AsyncPersistRetryer
 }
 
-interface AsyncStorage {
-  getItem: (key: string) => Promise<string | null>
-  setItem: (key: string, value: string) => Promise<unknown>
-  removeItem: (key: string) => Promise<void>
+interface AsyncStorage<TStorageValue = string> {
+  getItem: (key: string) => MaybePromise<TStorageValue | undefined | null>
+  setItem: (key: string, value: TStorageValue) => MaybePromise<unknown>
+  removeItem: (key: string) => MaybePromise<void>
+  entries?: () => MaybePromise<Array<[key: string, value: TStorageValue]>>
 }
 ```
 

@@ -130,7 +130,7 @@ if (axios.isAxiosError(error)) {
 
 ### Registering a global Error
 
-TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type:
+TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type. If you want to enforce that call-sides must do explicit type-narrowing, set `defaultError` to `unknown`:
 
 [//]: # 'RegisterErrorType'
 
@@ -139,12 +139,13 @@ import '@tanstack/react-query'
 
 declare module '@tanstack/react-query' {
   interface Register {
-    defaultError: AxiosError
+    // Use unknown so call sites must narrow explicitly.
+    defaultError: unknown
   }
 }
 
 const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
-//      ^? const error: AxiosError | null
+//      ^? const error: unknown | null
 ```
 
 [//]: # 'RegisterErrorType'
@@ -154,7 +155,7 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 ### Registering global Meta
 
-Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](./reference/useQuery.md) and [mutations](./reference/useMutation.md) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
+Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../reference/useQuery.md) and [mutations](../reference/useMutation.md) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
 
 ```ts
 import '@tanstack/react-query'
@@ -236,17 +237,45 @@ Without `queryOptions`, the type of `data` would be `unknown`, unless we'd pass 
 const data = queryClient.getQueryData<Group[]>(['groups'])
 ```
 
+Note that type inference via `queryOptions` does _not_ work for `queryClient.getQueriesData`, because it returns an array of tuples with heterogeneous, `unknown` data. If you are sure of the type of data that your query will return, specify it explicitly:
+
+```ts
+const entries = queryClient.getQueriesData<Group[]>(groupOptions().queryKey)
+//     ^? const entries: Array<[QueryKey, Group[] | undefined]>
+```
+
+## Typing Mutation Options
+
+Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation options into a separate function:
+
+```ts
+function groupMutationOptions() {
+  return mutationOptions({
+    mutationKey: ['addGroup'],
+    mutationFn: addGroup,
+  })
+}
+
+useMutation({
+  ...groupMutationOptions(),
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['groups'] }),
+})
+useIsMutating(groupMutationOptions())
+queryClient.isMutating(groupMutationOptions())
+```
+
 [//]: # 'TypingQueryOptions'
-[//]: # 'Materials'
-
-## Further Reading
-
-For tips and tricks around type inference, have a look at [React Query and TypeScript](./community/tkdodos-blog.md#6-react-query-and-typescript) from
-the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](./community/tkdodos-blog.md#19-type-safe-react-query).
-
-[//]: # 'Materials'
 
 ## Typesafe disabling of queries using `skipToken`
 
 If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
-Read more about it in the [Disabling Queries](./guides/disabling-queries.md) guide.
+Read more about it in the [Disabling Queries](../guides/disabling-queries.md) guide.
+
+[//]: # 'Materials'
+
+## Further Reading
+
+For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog.md#6-react-query-and-typescript) from
+the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](../community/tkdodos-blog.md#19-type-safe-react-query). [The Query Options API](../community/tkdodos-blog.md#24-the-query-options-api) outlines how type inference works with the `queryOptions` helper function.
+
+[//]: # 'Materials'

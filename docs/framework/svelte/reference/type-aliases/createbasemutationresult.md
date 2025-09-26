@@ -3,10 +3,17 @@ id: CreateBaseMutationResult
 title: CreateBaseMutationResult
 ---
 
-# Type Alias: CreateBaseMutationResult\<TData, TError, TVariables, TContext\>
+# Type Alias: CreateBaseMutationResult\<TData, TError, TVariables, TOnMutateResult\>
 
 ```ts
-type CreateBaseMutationResult<TData, TError, TVariables, TContext>: Override<MutationObserverResult<TData, TError, TVariables, TContext>, object> & object;
+type CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult> =
+  Override<
+    MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+    {
+      mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
+    }
+  > &
+    object
 ```
 
 ## Type declaration
@@ -14,7 +21,12 @@ type CreateBaseMutationResult<TData, TError, TVariables, TContext>: Override<Mut
 ### mutateAsync
 
 ```ts
-mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
+mutateAsync: CreateMutateAsyncFunction<
+  TData,
+  TError,
+  TVariables,
+  TOnMutateResult
+>
 ```
 
 ## Type Parameters
@@ -25,8 +37,8 @@ mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
 
 • **TVariables** = `unknown`
 
-• **TContext** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Defined in
 
-[packages/svelte-query/src/types.ts:113](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/types.ts#L113)
+[packages/svelte-query/src/types.ts:114](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L114)

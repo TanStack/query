@@ -133,9 +133,8 @@ export class QueryClient {
   >(queryKey: TTaggedQueryKey): TInferredQueryFnData | undefined {
     const options = this.defaultQueryOptions({ queryKey })
 
-    return this.#queryCache.get(options.queryHash)?.state.data as
-      | TInferredQueryFnData
-      | undefined
+    return this.#queryCache.get<TInferredQueryFnData>(options.queryHash)?.state
+      .data
   }
 
   ensureQueryData<
@@ -324,7 +323,7 @@ export class QueryClient {
     const promises = notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
-        .filter((query) => !query.isDisabled())
+        .filter((query) => !query.isDisabled() && !query.isStatic())
         .map((query) => {
           let promise = query.fetch(undefined, fetchOptions)
           if (!fetchOptions.throwOnError) {
@@ -513,11 +512,11 @@ export class QueryClient {
     TData = unknown,
     TError = DefaultError,
     TVariables = void,
-    TContext = unknown,
+    TOnMutateResult = unknown,
   >(
     mutationKey: MutationKey,
     options: OmitKeyof<
-      MutationObserverOptions<TData, TError, TVariables, TContext>,
+      MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
       'mutationKey'
     >,
   ): void {

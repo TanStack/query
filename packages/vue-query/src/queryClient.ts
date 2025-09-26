@@ -44,7 +44,7 @@ export class QueryClient extends QC {
     super(vueQueryConfig)
   }
 
-  isRestoring: Ref<boolean> = ref(false)
+  isRestoring?: Ref<boolean> = ref(false)
 
   isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
     return super.isFetching(cloneDeepUnref(filters))
@@ -456,11 +456,11 @@ export class QueryClient extends QC {
     TData = unknown,
     TError = DefaultError,
     TVariables = void,
-    TContext = unknown,
+    TOnMutateResult = unknown,
   >(
     mutationKey: MaybeRefDeep<MutationKey>,
     options: MaybeRefDeep<
-      MutationObserverOptions<TData, TError, TVariables, TContext>
+      MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
     >,
   ): void {
     super.setMutationDefaults(

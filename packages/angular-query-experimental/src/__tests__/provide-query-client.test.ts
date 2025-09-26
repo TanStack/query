@@ -1,9 +1,6 @@
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, test } from 'vitest'
-import {
-  InjectionToken,
-  provideExperimentalZonelessChangeDetection,
-} from '@angular/core'
+import { InjectionToken, provideZonelessChangeDetection } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { provideQueryClient } from '../providers'
 
@@ -13,7 +10,7 @@ describe('provideQueryClient', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideQueryClient(queryClient),
       ],
     })
@@ -30,7 +27,7 @@ describe('provideQueryClient', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideQueryClient(CUSTOM_QUERY_CLIENT),
       ],
     })
