@@ -70,7 +70,7 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@vitejs/plugin-vue": "^5.2.4",
     "@vue/composition-api": "1.7.2",
-    "eslint-plugin-vue": "^9.27.0",
+    "eslint-plugin-vue": "^10.5.0",
     "vue": "^3.4.27",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"

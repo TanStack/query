@@ -19,5 +19,5 @@
 
 <div>Data: {$mutation.data?.count ?? 'undefined'}</div>
 <div>Status: {$mutation.status}</div>
-<div>Failure Count: {$mutation.failureCount ?? 'undefined'}</div>
-<div>Failure Reason: {$mutation.failureReason ?? 'null'}</div>
+<div>Failure Count: {$mutation.failureCount}</div>
+<div>Failure Reason: {$mutation.failureReason ?? 'undefined'}</div>

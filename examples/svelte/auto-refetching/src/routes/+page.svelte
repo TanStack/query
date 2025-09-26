@@ -10,7 +10,7 @@
 
   const client = useQueryClient()
 
-  const endpoint = 'http://localhost:5173/api/data'
+  const endpoint = '/api/data'
 
   $: todos = createQuery<{ items: string[] }>({
     queryKey: ['refetch'],
@@ -21,7 +21,9 @@
 
   const addMutation = createMutation({
     mutationFn: (value: string) =>
-      fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
+      fetch(`${endpoint}?add=${encodeURIComponent(value)}`).then((r) =>
+        r.json(),
+      ),
     onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
   })
 
@@ -31,7 +33,7 @@
   })
 </script>
 
-<h1>Auto Refetch with stale-time set to 1s</h1>
+<h1>Auto Refetch with stale-time set to {intervalMs}ms</h1>
 
 <p>
   This example is best experienced on your own machine, where you can open
