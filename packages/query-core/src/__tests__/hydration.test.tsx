@@ -545,6 +545,7 @@ describe('dehydration and rehydration', () => {
       { id: 2, text: 'text' },
       { text: 'text' },
       { optimisticTodo: { id: 1, text: 'text' } },
+      { client: client, meta: undefined, mutationKey: ['addTodo'] },
     )
 
     client.clear()
@@ -1398,8 +1399,5 @@ describe('dehydration and rehydration', () => {
     // Need to await the original promise or else it will get a cancellation
     // error and test will fail
     await originalPromise
-
-    clientQueryClient.clear()
-    serverQueryClient.clear()
   })
 })

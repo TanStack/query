@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
+  CancelledError,
   MutationObserver,
   QueryClient,
   QueryObserver,
@@ -697,11 +698,10 @@ describe('queryClient', () => {
         queryFn: () => sleep(10).then(() => 1),
         gcTime: 0,
       })
-      vi.advanceTimersByTimeAsync(10)
+      await vi.advanceTimersByTimeAsync(10)
       await expect(promise).resolves.toEqual(1)
-      await vi.waitFor(() =>
-        expect(queryClient.getQueryData(key1)).toEqual(undefined),
-      )
+      await vi.advanceTimersByTimeAsync(1)
+      expect(queryClient.getQueryData(key1)).toEqual(undefined)
     })
 
     test('should keep a query in cache if garbage collection time is Infinity', async () => {
@@ -994,53 +994,24 @@ describe('queryClient', () => {
   describe('cancelQueries', () => {
     test('should revert queries to their previous state', async () => {
       const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
-      await queryClient.fetchQuery({
-        queryKey: key1,
-        queryFn: () => 'data',
-      })
-      try {
-        await queryClient.fetchQuery({
-          queryKey: key2,
-          queryFn: async () => {
-            return Promise.reject<unknown>('err')
-          },
-        })
-      } catch {}
-      queryClient.fetchQuery({
+      queryClient.setQueryData(key1, 'data')
+
+      const pending = queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(1000).then(() => 'data2'),
       })
-      try {
-        queryClient.fetchQuery({
-          queryKey: key2,
-          queryFn: () =>
-            sleep(1000).then(() => Promise.reject<unknown>('err2')),
-        })
-      } catch {}
-      queryClient.fetchQuery({
-        queryKey: key3,
-        queryFn: () => sleep(1000).then(() => 'data3'),
-      })
-      await vi.advanceTimersByTime(10)
+
+      await vi.advanceTimersByTimeAsync(10)
+
       await queryClient.cancelQueries()
+
+      // with previous data present, imperative fetch should resolve to that data after cancel
+      await expect(pending).resolves.toBe('data')
+
       const state1 = queryClient.getQueryState(key1)
-      const state2 = queryClient.getQueryState(key2)
-      const state3 = queryClient.getQueryState(key3)
       expect(state1).toMatchObject({
         data: 'data',
         status: 'success',
-      })
-      expect(state2).toMatchObject({
-        data: undefined,
-        error: 'err',
-        status: 'error',
-      })
-      expect(state3).toMatchObject({
-        data: undefined,
-        status: 'pending',
-        fetchStatus: 'idle',
       })
     })
 
@@ -1050,7 +1021,7 @@ describe('queryClient', () => {
         queryKey: key1,
         queryFn: () => 'data',
       })
-      queryClient.fetchQuery({
+      queryClient.prefetchQuery({
         queryKey: key1,
         queryFn: () => sleep(1000).then(() => 'data2'),
       })
@@ -1059,6 +1030,34 @@ describe('queryClient', () => {
       const state1 = queryClient.getQueryState(key1)
       expect(state1).toMatchObject({
         status: 'error',
+      })
+    })
+
+    test('should throw CancelledError for imperative methods when initial fetch is cancelled', async () => {
+      const key = queryKey()
+
+      const promise = queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(50)
+          return 25
+        },
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      await queryClient.cancelQueries({ queryKey: key })
+
+      // we have to reject here because we can't resolve with `undefined`
+      // the alternative would be a never-ending promise
+      await expect(promise).rejects.toBeInstanceOf(CancelledError)
+
+      // however, the query was correctly reverted to pending state
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        status: 'pending',
+        fetchStatus: 'idle',
+        data: undefined,
+        error: null,
       })
     })
   })
@@ -1556,7 +1555,7 @@ describe('queryClient', () => {
       observer.subscribe(() => undefined)
 
       queryClient.refetchQueries()
-      await vi.advanceTimersByTime(10)
+      await vi.advanceTimersByTimeAsync(10)
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(1)
       expect(fetchCount).toBe(2)
@@ -1580,7 +1579,7 @@ describe('queryClient', () => {
       observer.subscribe(() => undefined)
 
       queryClient.refetchQueries(undefined, { cancelRefetch: false })
-      await vi.advanceTimersByTime(10)
+      await vi.advanceTimersByTimeAsync(10)
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(0)
       expect(fetchCount).toBe(1)
@@ -1725,9 +1724,8 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       focusManager.setFocused(true)
-      await vi.waitFor(() =>
-        expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1),
-      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
@@ -1759,9 +1757,8 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       onlineManager.setOnline(true)
-      await vi.waitFor(() =>
-        expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1),
-      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
 
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
@@ -1787,17 +1784,14 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      await vi.waitFor(() => {
-        expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-        expect(observer2.getCurrentResult().isPaused).toBeTruthy()
-      })
+      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
 
       onlineManager.setOnline(true)
 
-      await vi.waitFor(() => {
-        expect(observer1.getCurrentResult().status).toBe('success')
-        expect(observer2.getCurrentResult().status).toBe('success')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(observer1.getCurrentResult().status).toBe('success')
+      expect(observer2.getCurrentResult().status).toBe('success')
     })
 
     test('should resume paused mutations in parallel', async () => {
@@ -1825,17 +1819,14 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      await vi.waitFor(() => {
-        expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-        expect(observer2.getCurrentResult().isPaused).toBeTruthy()
-      })
+      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
 
       onlineManager.setOnline(true)
 
-      await vi.waitFor(() => {
-        expect(observer1.getCurrentResult().status).toBe('success')
-        expect(observer2.getCurrentResult().status).toBe('success')
-      })
+      await vi.advanceTimersByTimeAsync(50)
+      expect(observer1.getCurrentResult().status).toBe('success')
+      expect(observer2.getCurrentResult().status).toBe('success')
 
       expect(orders).toEqual(['1start', '2start', '2end', '1end'])
     })
@@ -1873,18 +1864,15 @@ describe('queryClient', () => {
       void observer1.mutate()
       void observer2.mutate()
 
-      await vi.waitFor(() => {
-        expect(observer1.getCurrentResult().isPaused).toBeTruthy()
-        expect(observer2.getCurrentResult().isPaused).toBeTruthy()
-      })
+      expect(observer1.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
 
       onlineManager.setOnline(true)
       void queryClient.resumePausedMutations()
 
-      await vi.waitFor(() => {
-        expect(observer1.getCurrentResult().status).toBe('success')
-        expect(observer2.getCurrentResult().status).toBe('success')
-      })
+      await vi.advanceTimersByTimeAsync(70)
+      expect(observer1.getCurrentResult().status).toBe('success')
+      expect(observer2.getCurrentResult().status).toBe('success')
 
       expect(orders).toEqual(['1start', '1end', '2start', '2end'])
     })
@@ -1909,9 +1897,8 @@ describe('queryClient', () => {
 
       onlineManager.setOnline(true)
 
-      await vi.waitFor(() => {
-        expect(observer.getCurrentResult().status).toBe('success')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(observer.getCurrentResult().status).toBe('success')
     })
 
     test('should resumePausedMutations when coming online after having restored cache (and resumed) while offline', async () => {
@@ -1950,11 +1937,10 @@ describe('queryClient', () => {
 
       onlineManager.setOnline(true)
 
-      await vi.waitFor(() => {
-        expect(
-          newQueryClient.getMutationCache().getAll()[0]?.state.status,
-        ).toBe('success')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(newQueryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+        'success',
+      )
 
       newQueryClient.unmount()
     })
@@ -1977,9 +1963,8 @@ describe('queryClient', () => {
 
       const unsubscribe = queryObserver.subscribe(() => undefined)
 
-      await vi.waitFor(() => {
-        expect(queryClient.getQueryData(key)).toBe('data1')
-      })
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryData(key)).toBe('data1')
 
       onlineManager.setOnline(false)
 
@@ -2022,21 +2007,13 @@ describe('queryClient', () => {
 
       void observer3.mutate()
 
-      await vi.waitFor(() =>
-        expect(observer.getCurrentResult().isPaused).toBeTruthy(),
-      )
-      await vi.waitFor(() =>
-        expect(observer2.getCurrentResult().isPaused).toBeTruthy(),
-      )
-      await vi.waitFor(() =>
-        expect(observer3.getCurrentResult().isPaused).toBeTruthy(),
-      )
-
+      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer3.getCurrentResult().isPaused).toBeTruthy()
       onlineManager.setOnline(true)
 
-      await vi.waitFor(() => {
-        expect(queryClient.getQueryData(key)).toBe('data2')
-      })
+      await vi.advanceTimersByTimeAsync(110)
+      expect(queryClient.getQueryData(key)).toBe('data2')
 
       // refetch from coming online should happen after mutations have finished
       expect(results).toStrictEqual([
@@ -2074,15 +2051,13 @@ describe('queryClient', () => {
 
       onlineManager.setOnline(false)
       onlineManager.setOnline(true)
-      await vi.waitFor(() =>
-        expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1),
-      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       focusManager.setFocused(true)
-      await vi.waitFor(() =>
-        expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1),
-      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(2)
 
       queryCacheOnFocusSpy.mockRestore()

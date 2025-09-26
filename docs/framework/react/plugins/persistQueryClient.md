@@ -21,7 +21,7 @@ It should be set as the same value or higher than persistQueryClient's `maxAge` 
 
 You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
-Due to a Javascript limitation, the maximum allowed `gcTime` is about 24 days (see [more](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value)).
+Due to a JavaScript limitation, the maximum allowed `gcTime` is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
 
 ```tsx
 const queryClient = new QueryClient({
@@ -184,7 +184,7 @@ For this use-case, you can use the `PersistQueryClientProvider`. It will make su
 
 ```tsx
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -194,7 +194,7 @@ const queryClient = new QueryClient({
   },
 })
 
-const persister = createSyncStoragePersister({
+const persister = createAsyncStoragePersister({
   storage: window.localStorage,
 })
 
@@ -248,7 +248,7 @@ Persisted Client entries have the following interface:
 export interface PersistedClient {
   timestamp: number
   buster: string
-  cacheState: any
+  clientState: DehydratedState
 }
 ```
 

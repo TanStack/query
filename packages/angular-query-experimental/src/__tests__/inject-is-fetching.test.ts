@@ -9,10 +9,6 @@ import {
   provideTanStackQuery,
 } from '..'
 
-const QUERY_DURATION = 100
-
-const resolveQueries = () => vi.advanceTimersByTimeAsync(QUERY_DURATION)
-
 describe('injectIsFetching', () => {
   let queryClient: QueryClient
 
@@ -41,10 +37,10 @@ describe('injectIsFetching', () => {
       return injectIsFetching()
     })
 
-    vi.advanceTimersByTime(1)
-
+    expect(isFetching()).toStrictEqual(0)
+    await vi.advanceTimersByTimeAsync(1)
     expect(isFetching()).toStrictEqual(1)
-    await resolveQueries()
+    await vi.advanceTimersByTimeAsync(100)
     expect(isFetching()).toStrictEqual(0)
   })
 

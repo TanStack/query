@@ -30,6 +30,9 @@ stats-hydration.json
 stats.json
 stats.html
 .vscode/settings.json
+.vscode/mcp.json
+.cursor/rules
+.github/instructions/nx.instructions.md
 
 *.log
 *.tsbuildinfo

@@ -31,13 +31,11 @@ function Todos() {
       <button onClick={() => refetch()}>Fetch Todos</button>
 
       {data ? (
-        <>
-          <ul>
-            {data.map((todo) => (
-              <li key={todo.id}>{todo.title}</li>
-            ))}
-          </ul>
-        </>
+        <ul>
+          {data.map((todo) => (
+            <li key={todo.id}>{todo.title}</li>
+          ))}
+        </ul>
       ) : isError ? (
         <span>Error: {error.message}</span>
       ) : isLoading ? (

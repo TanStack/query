@@ -3,13 +3,14 @@ id: CreateMutationOptions
 title: CreateMutationOptions
 ---
 
-# Type Alias: CreateMutationOptions\<TData, TError, TVariables, TContext\>
+# Type Alias: CreateMutationOptions\<TData, TError, TVariables, TOnMutateResult\>
 
 ```ts
-type CreateMutationOptions<TData, TError, TVariables, TContext> = OmitKeyof<
-  MutationObserverOptions<TData, TError, TVariables, TContext>,
-  '_defaulted'
->
+type CreateMutationOptions<TData, TError, TVariables, TOnMutateResult> =
+  OmitKeyof<
+    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
+    '_defaulted'
+  >
 ```
 
 Options for createMutation
@@ -22,7 +23,7 @@ Options for createMutation
 
 • **TVariables** = `void`
 
-• **TContext** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Defined in
 

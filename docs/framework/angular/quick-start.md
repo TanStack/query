@@ -55,7 +55,6 @@ import {
 } from '@tanstack/angular-query-experimental'
 
 @Component({
-  standalone: true,
   template: `
     <div>
       <button (click)="onAddTodo()">Add Todo</button>

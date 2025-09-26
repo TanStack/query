@@ -70,7 +70,6 @@ import { lastValueFrom } from 'rxjs'
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'simple-example',
-  standalone: true,
   template: `
     @if (query.isPending()) {
       Loading...

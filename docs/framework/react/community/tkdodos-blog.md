@@ -84,3 +84,47 @@ TanStack Query maintainer [TkDodo](https://bsky.app/profile/tkdodo.eu) has a ser
 ## [#19: Type-safe React Query](https://tkdodo.eu/blog/type-safe-react-query)
 
 > There's a big difference between "having types" and "being type-safe". This article tries to outline those differences and shows how you can get the best possible type-safety when using React Query together with TypeScript [Read more...](https://tkdodo.eu/blog/type-safe-react-query)
+
+## [#20: You Might Not Need React Query](https://tkdodo.eu/blog/you-might-not-need-react-query)
+
+> If your application doesn’t rely on client-side data fetching, especially when using frameworks like Next.js or Remix with built-in server components, React Query may be unnecessary. That said, it still shines in hybrid use cases (like infinite scrolling or offline support) where its smart caching and revalidation can be invaluable. [Read more...](https://tkdodo.eu/blog/you-might-not-need-react-query)
+
+## [#21: Thinking in React Query](https://tkdodo.eu/blog/thinking-in-react-query)
+
+> React Query isn’t a data-fetching library - it's an async state manager designed to treat parameters as dependencies, optimize refetch behavior via `staleTime`, and encourage declarative patterns where `queryKey` drives cache and updates. A small shift in mindset can dramatically streamline how you use React Query. [Read more...](https://tkdodo.eu/blog/thinking-in-react-query)
+
+## [#22: React Query and React Context](https://tkdodo.eu/blog/react-query-and-react-context)
+
+> React Query lets components independently manage their own data, making them self-sufficient and resilient, but when shared data (like user info fetched higher up) is needed deeper in the tree, React Context can make that implicit dependency explicit and safer. [Read more...](https://tkdodo.eu/blog/react-query-and-react-context)
+
+## [#23: Why You Want React Query](https://tkdodo.eu/blog/why-you-want-react-query)
+
+> While fetching data with `fetch` inside `useEffect` may seem simple, it quickly gets tangled with bugs like race conditions, missing loading states, stale data, and Strict Mode quirks—making async state management far more complex than it appears. [Read more...](https://tkdodo.eu/blog/why-you-want-react-query)
+
+## [#24: The Query Options API](https://tkdodo.eu/blog/the-query-options-api)
+
+> React Query v5 introduces a unified "Query Options" API - where all functions like `useQuery`, `invalidateQueries`, and imperative calls accept a single object - simplifying the interface and making reuse across different query contexts much easier while at the same time improving type-safety. [Read more...](https://tkdodo.eu/blog/the-query-options-api)
+
+## [#25: Automatic Query Invalidation after Mutations](https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations)
+
+> React Query doesn’t automatically tie mutations to queries - but you can leverage "global cache callbacks" in a central `MutationCache` to define shared behaviors like invalidating queries on every mutation. [Read more...](https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations)
+
+## [#26: How Infinite Queries work](https://tkdodo.eu/blog/how-infinite-queries-work)
+
+> This blog post is a deep dive into how Infinite Queries are designed and work under the hood. Interestingly, there is no distinct InfiniteQuery representation - just a different "behaviour" attached to regular Queries. [Read more...](https://tkdodo.eu/blog/how-infinite-queries-work)
+
+## [#27: React Query API Design - Lessons Learned](https://tkdodo.eu/blog/react-query-api-design-lessons-learned)
+
+> In this talk, Dominik walks us through some of the API design choices that were made in React Query to get to its arguably good developer experience. You'll hear stories about things that went well, but also about tradeoffs and mistakes that were made, and what lessons we can all learn from those. [Read more...](https://tkdodo.eu/blog/react-query-api-design-lessons-learned)
+
+## [#28: React Query - The Bad Parts](https://tkdodo.eu/blog/react-query-the-bad-parts)
+
+> In this talk, Dominik explores the less favorable aspects of React Query and situations where it may not be the best fit. No library is perfect; every choice involves trade-offs. By the end of this talk, you'll have a better understanding of React Query's limitations and why it remains a compelling choice despite them. [Read more...](https://tkdodo.eu/blog/react-query-the-bad-parts)
+
+## [#29: Concurrent Optimistic Updates in React Query](https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query)
+
+> Optimistic updates in React Query can cause race conditions when multiple mutations run at once, leading to inconsistent UI states. Cancelling in-flight queries helps, but overlapping invalidations may still overwrite newer updates. [Read more...](https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query)
+
+## [#30: React Query Selectors, Supercharged](https://tkdodo.eu/blog/react-query-selectors-supercharged)
+
+> React Query’s `select` option enables components to subscribe only to the specific part of a query’s data they care about - so updating one field won’t cause unrelated UI to re-render unnecessarily. This fine-grained approach keeps full responses in the cache while optimizing component updates for performance. [Read more...](https://tkdodo.eu/blog/react-query-selectors-supercharged)

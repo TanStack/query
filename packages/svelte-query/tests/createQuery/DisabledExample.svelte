@@ -13,10 +13,7 @@
 
   const options = derived(count, ($count) => ({
     queryKey: ['test', $count],
-    queryFn: async () => {
-      await sleep(5)
-      return $count
-    },
+    queryFn: () => sleep(10).then(() => $count),
     enabled: $count === 0,
   }))
 

@@ -1,3 +1,7 @@
+cleanupUnusedCatalogs: true
+linkWorkspacePackages: true
+preferWorkspacePackages: true
+
 packages:
   - 'packages/*'
   - 'integrations/*'

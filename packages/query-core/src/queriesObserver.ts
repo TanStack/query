@@ -1,7 +1,7 @@
 import { notifyManager } from './notifyManager'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
-import { replaceEqualDeep } from './utils'
+import { replaceEqualDeep, shallowEqualObjects } from './utils'
 import type {
   DefaultedQueryObserverOptions,
   QueryObserverOptions,
@@ -118,30 +118,39 @@ export class QueriesObserver<
         observer.getCurrentResult(),
       )
 
+      const hasLengthChange = prevObservers.length !== newObservers.length
       const hasIndexChange = newObservers.some(
         (observer, index) => observer !== prevObservers[index],
       )
+      const hasStructuralChange = hasLengthChange || hasIndexChange
 
-      if (prevObservers.length === newObservers.length && !hasIndexChange) {
-        return
+      const hasResultChange = hasStructuralChange
+        ? true
+        : newResult.some((result, index) => {
+            const prev = this.#result[index]
+            return !prev || !shallowEqualObjects(result, prev)
+          })
+
+      if (!hasStructuralChange && !hasResultChange) return
+
+      if (hasStructuralChange) {
+        this.#observers = newObservers
       }
 
-      this.#observers = newObservers
       this.#result = newResult
 
-      if (!this.hasListeners()) {
-        return
-      }
+      if (!this.hasListeners()) return
 
-      difference(prevObservers, newObservers).forEach((observer) => {
-        observer.destroy()
-      })
-
-      difference(newObservers, prevObservers).forEach((observer) => {
-        observer.subscribe((result) => {
-          this.#onUpdate(observer, result)
+      if (hasStructuralChange) {
+        difference(prevObservers, newObservers).forEach((observer) => {
+          observer.destroy()
         })
-      })
+        difference(newObservers, prevObservers).forEach((observer) => {
+          observer.subscribe((result) => {
+            this.#onUpdate(observer, result)
+          })
+        })
+      }
 
       this.#notify()
     })

@@ -20,8 +20,8 @@ type Todos = {
   ts: number
 }
 
-async function fetchTodos(): Promise<Todos> {
-  const response = await fetch('/api/data')
+async function fetchTodos({ signal }: { signal: AbortSignal }): Promise<Todos> {
+  const response = await fetch('/api/data', { signal })
   return await response.json()
 }
 
@@ -45,18 +45,20 @@ function Example() {
       return await response.json()
     },
     // When mutate is called:
-    onMutate: async (newTodo: string) => {
+    onMutate: async (newTodo, context) => {
       setText('')
       // Cancel any outgoing refetch
       // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries(todoListOptions)
+      await context.client.cancelQueries(todoListOptions)
 
       // Snapshot the previous value
-      const previousTodos = queryClient.getQueryData(todoListOptions.queryKey)
+      const previousTodos = context.client.getQueryData(
+        todoListOptions.queryKey,
+      )
 
       // Optimistically update to the new value
       if (previousTodos) {
-        queryClient.setQueryData(todoListOptions.queryKey, {
+        context.client.setQueryData(todoListOptions.queryKey, {
           ...previousTodos,
           items: [
             ...previousTodos.items,
@@ -68,14 +70,18 @@ function Example() {
       return { previousTodos }
     },
     // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, variables, context) => {
-      if (context?.previousTodos) {
-        queryClient.setQueryData<Todos>(['todos'], context.previousTodos)
+    // use the result returned from onMutate to roll back
+    onError: (err, variables, onMutateResult, context) => {
+      if (onMutateResult?.previousTodos) {
+        context.client.setQueryData<Todos>(
+          ['todos'],
+          onMutateResult.previousTodos,
+        )
       }
     },
     // Always refetch after error or success:
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+    onSettled: (data, error, variables, onMutateResult, context) =>
+      context.client.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   return (

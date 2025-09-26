@@ -4,7 +4,7 @@
   import { QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client'
-  import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+  import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -14,7 +14,7 @@
     },
   })
 
-  const persister = createSyncStoragePersister({
+  const persister = createAsyncStoragePersister({
     storage: browser ? window.localStorage : null,
   })
 </script>

@@ -1,8 +1,5 @@
-import type {
-  DefaultError,
-  MutationObserverOptions,
-  OmitKeyof,
-} from '@tanstack/query-core'
+import type { DefaultError, WithRequired } from '@tanstack/query-core'
+import type { CreateMutationOptions } from './types'
 
 /**
  * Allows to share and re-use mutation options in a type-safe way.
@@ -11,7 +8,8 @@ import type {
  *
  * ```ts
  * export class QueriesService {
- *   private http = inject(HttpClient);
+ *   private http = inject(HttpClient)
+ *   private queryClient = inject(QueryClient)
  *
  *   updatePost(id: number) {
  *     return mutationOptions({
@@ -19,42 +17,96 @@ import type {
  *       mutationKey: ["updatePost", id],
  *       onSuccess: (newPost) => {
  *         //           ^? newPost: Post
- *         this.queryClient.setQueryData(["posts", id], newPost);
+ *         this.queryClient.setQueryData(["posts", id], newPost)
  *       },
  *     });
  *   }
  * }
  *
- * queries = inject(QueriesService)
- * idSignal = new Signal(0);
- * mutation = injectMutation(() => this.queries.updatePost(this.idSignal()))
+ * class ComponentOrService {
+ *   queries = inject(QueriesService)
+ *   id = signal(0)
+ *   mutation = injectMutation(() => this.queries.updatePost(this.id()))
  *
- * mutation.mutate({ title: 'New Title' })
+ *   save() {
+ *     this.mutation.mutate({ title: 'New Title' })
+ *   }
+ * }
  * ```
  * @param options - The mutation options.
  * @returns Mutation options.
- * @public
  */
 export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
-  options: MutationObserverOptions<TData, TError, TVariables, TContext>,
-): CreateMutationOptions<TData, TError, TVariables, TContext> {
-  return options
-}
-
-/**
- * @public
- */
-export interface CreateMutationOptions<
+  options: WithRequired<
+    CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    'mutationKey'
+  >,
+): WithRequired<
+  CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  'mutationKey'
+>
+export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted'
-  > {}
+  TOnMutateResult = unknown,
+>(
+  options: Omit<
+    CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    'mutationKey'
+  >,
+): Omit<
+  CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  'mutationKey'
+>
+
+/**
+ * Allows to share and re-use mutation options in a type-safe way.
+ *
+ * **Example**
+ *
+ * ```ts
+ * export class QueriesService {
+ *   private http = inject(HttpClient)
+ *   private queryClient = inject(QueryClient)
+ *
+ *   updatePost(id: number) {
+ *     return mutationOptions({
+ *       mutationFn: (post: Post) => Promise.resolve(post),
+ *       mutationKey: ["updatePost", id],
+ *       onSuccess: (newPost) => {
+ *         //           ^? newPost: Post
+ *         this.queryClient.setQueryData(["posts", id], newPost)
+ *       },
+ *     });
+ *   }
+ * }
+ *
+ * class ComponentOrService {
+ *   queries = inject(QueriesService)
+ *   id = signal(0)
+ *   mutation = injectMutation(() => this.queries.updatePost(this.id()))
+ *
+ *   save() {
+ *     this.mutation.mutate({ title: 'New Title' })
+ *   }
+ * }
+ * ```
+ * @param options - The mutation options.
+ * @returns Mutation options.
+ */
+export function mutationOptions<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+>(
+  options: CreateMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+): CreateMutationOptions<TData, TError, TVariables, TOnMutateResult> {
+  return options
+}

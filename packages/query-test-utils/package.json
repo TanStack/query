@@ -27,7 +27,7 @@
   },
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:tscurrent": "tsc --build",
     "test:lib": "vitest",

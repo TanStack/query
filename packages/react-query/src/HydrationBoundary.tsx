@@ -11,7 +11,7 @@ import type {
 } from '@tanstack/query-core'
 
 export interface HydrationBoundaryProps {
-  state?: unknown
+  state: DehydratedState | null | undefined
   options?: OmitKeyof<HydrateOptions, 'defaultOptions'> & {
     defaultOptions?: OmitKeyof<
       Exclude<HydrateOptions['defaultOptions'], undefined>,
@@ -60,7 +60,7 @@ export const HydrationBoundary = ({
         // gracefully if it has the wrong shape, so while we type `queries`
         // as required, we still provide a fallback.
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const queries = (state as DehydratedState).queries || []
+        const queries = state.queries || []
 
         const newQueries: DehydratedState['queries'] = []
         const existingQueries: DehydratedState['queries'] = []
