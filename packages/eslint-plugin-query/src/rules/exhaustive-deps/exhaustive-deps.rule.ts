@@ -65,7 +65,10 @@ export const rule = createRule({
           return
         }
 
-        const queryKeyNode = dereferenceVariablesAndTypeAssertions(queryKey.value, context)
+        const queryKeyNode = dereferenceVariablesAndTypeAssertions(
+          queryKey.value,
+          context,
+        )
 
         const externalRefs = ASTUtils.getExternalRefs({
           scopeManager,
@@ -165,10 +168,13 @@ function getQueryFnRelevantNode(queryFn: TSESTree.Property) {
   return queryFn.value.consequent
 }
 
-function dereferenceVariablesAndTypeAssertions(queryKeyNode: TSESTree.Node, context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>) {
+function dereferenceVariablesAndTypeAssertions(
+  queryKeyNode: TSESTree.Node,
+  context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
+) {
   const visitedNodes = new Set<TSESTree.Node>()
 
-  for (let i = 0; i < (1 << 8); ++i) {
+  for (let i = 0; i < 1 << 8; ++i) {
     if (visitedNodes.has(queryKeyNode)) {
       return queryKeyNode
     }
