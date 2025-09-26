@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
 import { render } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
 import ParentComponent from './ParentComponent.svelte'
 
 describe('QueryClientProvider', () => {
