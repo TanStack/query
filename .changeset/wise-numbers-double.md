@@ -1,5 +1,5 @@
 ---
-"@tanstack/query-core": patch
+'@tanstack/query-core': patch
 ---
 
 fix: allow partial query keys in `QueryFilters`
