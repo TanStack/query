@@ -57,7 +57,7 @@ export function createBaseQuery<
     createResult(),
   )
 
-  // Avoid effect_orphan error when creating a query inside an event handler instead of during component initialization 
+  // Avoid effect_orphan error when creating a query inside an event handler instead of during component initialization
   $effect.root(() => {
     $effect(() => {
       const unsubscribe = isRestoring.current
@@ -66,7 +66,7 @@ export function createBaseQuery<
       observer.updateResult()
       return unsubscribe
     })
-  
+
     $effect.pre(() => {
       observer.setOptions(resolvedOptions)
       // The only reason this is necessary is because of `isRestoring`.
