@@ -44,8 +44,8 @@
      */
     shadowDOMTarget?: ShadowRoot
     /**
-    * Set this to true to hide disabled queries from the devtools panel.
-    */
+     * Set this to true to hide disabled queries from the devtools panel.
+     */
     hideDisabledQueries?: boolean
   }
 
@@ -57,6 +57,7 @@
     errorTypes = [],
     styleNonce = undefined,
     shadowDOMTarget = undefined,
+    hideDisabledQueries = false,
   }: DevtoolsOptions = $props()
 
   let ref: HTMLDivElement

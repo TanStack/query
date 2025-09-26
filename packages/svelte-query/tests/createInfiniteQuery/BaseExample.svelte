@@ -4,7 +4,6 @@
   import { sleep } from '@tanstack/query-test-utils'
   import { createInfiniteQuery } from '../../src/index.js'
   import type { QueryObserverResult } from '@tanstack/query-core'
-  import { sleep } from '@tanstack/query-test-utils'
 
   let { states }: { states: { value: Array<QueryObserverResult> } } = $props()
 

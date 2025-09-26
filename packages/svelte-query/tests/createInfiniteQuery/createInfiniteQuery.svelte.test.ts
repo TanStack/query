@@ -121,6 +121,7 @@ describe('createInfiniteQuery', () => {
       data: undefined,
       isSuccess: false,
     })
+
     expect(states.value[1]).toMatchObject({
       data: { pages: ['count: 1'] },
       isSuccess: true,
