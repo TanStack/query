@@ -10,6 +10,7 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
   MutationState,
+  OmitKeyof,
   Override,
   QueryClient,
   QueryKey,
@@ -89,7 +90,7 @@ export type CreateMutationOptions<
   TOnMutateResult = unknown,
 > = OmitKeyof<
   MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
-  '_defaulted' | 'variables'
+  '_defaulted'
 >
 
 export type CreateMutateFunction<

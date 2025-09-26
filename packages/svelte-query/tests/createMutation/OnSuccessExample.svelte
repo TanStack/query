@@ -10,7 +10,7 @@
 
   const { onSettledMock, onSuccessMock }: Props = $props()
 
-  const count = $state(0)
+  let count = $state(0)
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
@@ -28,4 +28,4 @@
 
 <button onclick={() => mutation.mutate({ count: ++count })}>Mutate</button>
 
-<div>Count: {$count}</div>
+<div>Count: {count}</div>
