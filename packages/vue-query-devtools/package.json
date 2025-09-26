@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "5.89.0",
+  "version": "5.90.2",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts",
     "compile": "vue-tsc --build",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "vue-tsc --build",
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm run compile && vite build"
@@ -57,7 +57,7 @@
     "@vitejs/plugin-vue": "^5.2.4",
     "eslint-plugin-vue": "^9.27.0",
     "typescript": "5.8.3",
-    "vite": "^6.3.5",
+    "vite": "^6.3.6",
     "vue": "^3.4.27",
     "vue-tsc": "^2.2.8"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.89.0",
+  "version": "5.90.1",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./dist ./coverage ./dist-ts",
     "compile": "tsc --build",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
@@ -59,13 +59,13 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^8.37.0"
+    "@typescript-eslint/utils": "^8.44.0"
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^8.37.0",
-    "@typescript-eslint/rule-tester": "^8.37.0",
+    "@typescript-eslint/parser": "^8.44.0",
+    "@typescript-eslint/rule-tester": "^8.44.0",
     "combinate": "^1.1.11",
-    "eslint": "^9.15.0",
+    "eslint": "^9.36.0",
     "npm-run-all2": "^5.0.0"
   },
   "peerDependencies": {
