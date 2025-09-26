@@ -42,9 +42,6 @@ function getResult<TResult = MutationState>(
     )
 }
 
-/**
- * @public
- */
 export interface InjectMutationStateOptions {
   /**
    * The `Injector` in which to create the mutation state signal.
@@ -59,7 +56,6 @@ export interface InjectMutationStateOptions {
  * @param injectMutationStateFn - A function that returns mutation state options.
  * @param options - The Angular injector to use.
  * @returns The signal that tracks the state of all mutations.
- * @public
  */
 export function injectMutationState<TResult = MutationState>(
   injectMutationStateFn: () => MutationStateOptions<TResult> = () => ({}),

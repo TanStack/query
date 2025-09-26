@@ -237,6 +237,13 @@ Without `queryOptions`, the type of `data` would be `unknown`, unless we'd pass 
 const data = queryClient.getQueryData<Group[]>(['groups'])
 ```
 
+Note that type inference via `queryOptions` does _not_ work for `queryClient.getQueriesData`, because it returns an array of tuples with heterogeneous, `unknown` data. If you are sure of the type of data that your query will return, specify it explicitly:
+
+```ts
+const entries = queryClient.getQueriesData<Group[]>(groupOptions().queryKey)
+//     ^? const entries: Array<[QueryKey, Group[] | undefined]>
+```
+
 ## Typing Mutation Options
 
 Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation options into a separate function:
