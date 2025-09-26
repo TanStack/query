@@ -20,16 +20,16 @@ export function useMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
-  options: UseMutationOptions<TData, TError, TVariables, TContext>,
+  options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   queryClient?: QueryClient,
-): UseMutationResult<TData, TError, TVariables, TContext> {
+): UseMutationResult<TData, TError, TVariables, TOnMutateResult> {
   const client = useQueryClient(queryClient)
 
   const [observer] = React.useState(
     () =>
-      new MutationObserver<TData, TError, TVariables, TContext>(
+      new MutationObserver<TData, TError, TVariables, TOnMutateResult>(
         client,
         options,
       ),
@@ -50,7 +50,7 @@ export function useMutation<
   )
 
   const mutate = React.useCallback<
-    UseMutateFunction<TData, TError, TVariables, TContext>
+    UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(
     (variables, mutateOptions) => {
       observer.mutate(variables, mutateOptions).catch(noop)

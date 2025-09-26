@@ -12,7 +12,7 @@
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
-  const mutation = createMutation(() => ({ mutationFn: mutationFn }))
+  const mutation = createMutation(() => ({ mutationFn }))
 </script>
 
 <button onclick={() => mutation.mutate({ count: ++count })}>Mutate</button>

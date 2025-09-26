@@ -583,7 +583,11 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
 
     expect(onMutate).toHaveBeenCalledTimes(1)
-    expect(onMutate).toHaveBeenCalledWith('todo')
+    expect(onMutate).toHaveBeenCalledWith('todo', {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: undefined,
+    })
 
     onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
@@ -1053,13 +1057,22 @@ describe('useMutation', () => {
     expect(onSuccess).toHaveBeenCalledTimes(2)
     expect(onSettled).toHaveBeenCalledTimes(2)
     expect(onSuccessMutate).toHaveBeenCalledTimes(1)
-    expect(onSuccessMutate).toHaveBeenCalledWith('result2', 'todo', undefined)
+    expect(onSuccessMutate).toHaveBeenCalledWith('result2', 'todo', undefined, {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: undefined,
+    })
     expect(onSettledMutate).toHaveBeenCalledTimes(1)
     expect(onSettledMutate).toHaveBeenCalledWith(
       'result2',
       null,
       'todo',
       undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
     )
   })
 
@@ -1098,7 +1111,11 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(10)
     await rendered.findByText('status: error')
 
-    expect(onError).toHaveBeenCalledWith(error, 'todo', undefined)
+    expect(onError).toHaveBeenCalledWith(error, 'todo', undefined, {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: undefined,
+    })
   })
 
   it('should go to error state if onError callback errors', async () => {
@@ -1183,7 +1200,11 @@ describe('useMutation', () => {
       rendered.getByText('error: mutateFnError, status: error'),
     ).toBeInTheDocument()
 
-    expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
+    expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined, {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: undefined,
+    })
   })
 
   it('should use provided custom queryClient', async () => {
