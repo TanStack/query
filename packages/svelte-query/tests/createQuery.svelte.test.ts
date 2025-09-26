@@ -1892,4 +1892,91 @@ describe('createQuery', () => {
       expect(query.error?.message).toBe('Local Error')
     }),
   )
+
+  it('should return the correct states for a successful query when running without effect root', async () => {
+    const { promise, resolve } = promiseWithResolvers<string>()
+
+    const query = createQuery<string, Error>(
+      () => ({
+        queryKey: ['test'],
+        queryFn: () => promise,
+      }),
+      () => queryClient,
+    )
+
+    if (query.isPending) {
+      expectTypeOf(query.data).toEqualTypeOf<undefined>()
+      expectTypeOf(query.error).toEqualTypeOf<null>()
+    } else if (query.isLoadingError) {
+      expectTypeOf(query.data).toEqualTypeOf<undefined>()
+      expectTypeOf(query.error).toEqualTypeOf<Error>()
+    } else {
+      expectTypeOf(query.data).toEqualTypeOf<string>()
+      expectTypeOf(query.error).toEqualTypeOf<Error | null>()
+    }
+
+    const promise1 = query.promise
+
+    expect(query).toEqual({
+      data: undefined,
+      dataUpdatedAt: 0,
+      error: null,
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      isEnabled: true,
+      isError: false,
+      isFetched: false,
+      isFetchedAfterMount: false,
+      isFetching: true,
+      isPaused: false,
+      isPending: true,
+      isInitialLoading: true,
+      isLoading: true,
+      isLoadingError: false,
+      isPlaceholderData: false,
+      isRefetchError: false,
+      isRefetching: false,
+      isStale: true,
+      isSuccess: false,
+      refetch: expect.any(Function),
+      status: 'pending',
+      fetchStatus: 'fetching',
+      promise: expect.any(Promise),
+    })
+    resolve('resolved')
+    await vi.waitFor(() =>
+      expect(query).toEqual({
+        data: 'resolved',
+        dataUpdatedAt: expect.any(Number),
+        error: null,
+        errorUpdatedAt: 0,
+        failureCount: 0,
+        failureReason: null,
+        errorUpdateCount: 0,
+        isEnabled: true,
+        isError: false,
+        isFetched: true,
+        isFetchedAfterMount: true,
+        isFetching: false,
+        isPaused: false,
+        isPending: false,
+        isInitialLoading: false,
+        isLoading: false,
+        isLoadingError: false,
+        isPlaceholderData: false,
+        isRefetchError: false,
+        isRefetching: false,
+        isStale: true,
+        isSuccess: true,
+        refetch: expect.any(Function),
+        status: 'success',
+        fetchStatus: 'idle',
+        promise: expect.any(Promise),
+      }),
+    )
+
+    expect(promise1).toBe(query.promise)
+  })
 })
