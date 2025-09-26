@@ -33,7 +33,7 @@
   }))
 </script>
 
-<h1>Auto Refetch with stale-time set to {(intervalMs / 1000).toFixed(2)}s</h1>
+<h1>Auto Refetch with stale-time set to {intervalMs}ms</h1>
 
 <p>
   This example is best experienced on your own machine, where you can open

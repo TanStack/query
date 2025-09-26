@@ -28,11 +28,13 @@
   const errorMutation = createMutation(errorMutationOpts)
 
   const mutationState = useMutationState(mutationStateOpts)
-  let statuses = $derived(mutationState.map((state) => state.status))
 </script>
 
-<div data-testid="result">
-  {JSON.stringify(statuses)}
+<button on:click={() => $successMutation.mutate()}>Success</button>
+<button on:click={() => $errorMutation.mutate()}>Error</button>
+
+<div>
+  Data: {JSON.stringify($mutationState.map((state) => state.status))}
 </div>
 
 <button data-testid="success" onclick={() => successMutation.mutate()}>

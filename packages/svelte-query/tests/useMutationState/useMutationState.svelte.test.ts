@@ -33,15 +33,15 @@ describe('useMutationState', () => {
       },
     })
 
-    fireEvent.click(rendered.getByText('success'))
+    fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
     await vi.advanceTimersByTimeAsync(11)
     expect(successMutationFn).toHaveBeenCalledTimes(1)
-    expect(rendered.getByText('["success"]')).toBeInTheDocument()
+    expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('error'))
+    fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
     await vi.advanceTimersByTimeAsync(21)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
-    expect(rendered.getByText('["success","error"]')).toBeInTheDocument()
+    expect(rendered.getByText('Data: ["success","error"]')).toBeInTheDocument()
   })
 
   test('Can select specific type of mutation ( i.e: error only )', async () => {
@@ -68,15 +68,15 @@ describe('useMutationState', () => {
       },
     })
 
-    fireEvent.click(rendered.getByText('success'))
+    fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
     await vi.advanceTimersByTimeAsync(11)
     expect(successMutationFn).toHaveBeenCalledTimes(1)
-    expect(rendered.getByText('[]')).toBeInTheDocument()
+    expect(rendered.getByText('Data: []')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('error'))
+    fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
     await vi.advanceTimersByTimeAsync(21)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
-    expect(rendered.getByText('["error"]')).toBeInTheDocument()
+    expect(rendered.getByText('Data: ["error"]')).toBeInTheDocument()
   })
 
   test('Can select specific mutation using mutation key', async () => {
@@ -103,14 +103,14 @@ describe('useMutationState', () => {
       },
     })
 
-    fireEvent.click(rendered.getByText('success'))
+    fireEvent.click(rendered.getByRole('button', { name: /Success/i }))
     await vi.advanceTimersByTimeAsync(11)
     expect(successMutationFn).toHaveBeenCalledTimes(1)
-    expect(rendered.getByText('["success"]')).toBeInTheDocument()
+    expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('error'))
+    fireEvent.click(rendered.getByRole('button', { name: /Error/i }))
     await vi.advanceTimersByTimeAsync(21)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
-    expect(rendered.getByText('["success"]')).toBeInTheDocument()
+    expect(rendered.getByText('Data: ["success"]')).toBeInTheDocument()
   })
 })
