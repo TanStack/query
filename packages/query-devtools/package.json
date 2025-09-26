@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.74.7",
+  "version": "5.90.1",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts",
     "compile": "tsc --build",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
@@ -73,9 +73,9 @@
     "clsx": "^2.1.1",
     "goober": "^2.1.16",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "^1.9.5",
+    "solid-js": "^1.9.7",
     "solid-transition-group": "^0.2.3",
-    "superjson": "^2.2.1",
+    "superjson": "^2.2.2",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.11.6"
   }

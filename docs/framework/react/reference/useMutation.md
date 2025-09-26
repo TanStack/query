@@ -48,35 +48,36 @@ mutate(variables, {
 
 **Parameter1 (Options)**
 
-- `mutationFn: (variables: TVariables) => Promise<TData>`
+- `mutationFn: (variables: TVariables, context: MutationFunctionContext) => Promise<TData>`
   - **Required, but only if no default mutation function has been defined**
   - A function that performs an asynchronous task and returns a promise.
   - `variables` is an object that `mutate` will pass to your `mutationFn`
+  - `context` is an object that `mutate` will pass to your `mutationFn`. Contains reference to `QueryClient`, `mutationKey` and optional `meta` object.
 - `gcTime: number | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a mutation's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
-  - Note: the maximum allowed time is about 24 days. See [more](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value).
+  - Note: the maximum allowed time is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
 - `mutationKey: unknown[]`
   - Optional
   - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults`.
 - `networkMode: 'online' | 'always' | 'offlineFirst'`
   - Optional
   - defaults to `'online'`
-  - see [Network Mode](../guides/network-mode.md) for more information.
-- `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
+  - see [Network Mode](../../guides/network-mode.md) for more information.
+- `onMutate: (variables: TVariables) => Promise<TOnMutateResult | void> | TOnMutateResult | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
   - Useful to perform optimistic updates to a resource in hopes that the mutation succeeds
   - The value returned from this function will be passed to both the `onError` and `onSettled` functions in the event of a mutation failure and can be useful for rolling back optimistic updates.
-- `onSuccess: (data: TData, variables: TVariables, context: TContext) => Promise<unknown> | unknown`
+- `onSuccess: (data: TData, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onError: (err: TError, variables: TVariables, context?: TContext) => Promise<unknown> | unknown`
+- `onError: (err: TError, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onSettled: (data: TData, error: TError, variables: TVariables, context?: TContext) => Promise<unknown> | unknown`
+- `onSettled: (data: TData, error: TError, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => Promise<unknown> | unknown`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - If a promise is returned, it will be awaited and resolved before proceeding
@@ -103,7 +104,7 @@ mutate(variables, {
 
 **Parameter2 (QueryClient)**
 
-- `queryClient?: QueryClient`,
+- `queryClient?: QueryClient`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
@@ -113,22 +114,22 @@ mutate(variables, {
   - `variables: TVariables`
     - Optional
     - The variables object to pass to the `mutationFn`.
-  - `onSuccess: (data: TData, variables: TVariables, context: TContext) => void`
+  - `onSuccess: (data: TData, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => void`
     - Optional
     - This function will fire when the mutation is successful and will be passed the mutation's result.
     - Void function, the returned value will be ignored
-  - `onError: (err: TError, variables: TVariables, context: TContext | undefined) => void`
+  - `onError: (err: TError, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => void`
     - Optional
     - This function will fire if the mutation encounters an error and will be passed the error.
     - Void function, the returned value will be ignored
-  - `onSettled: (data: TData | undefined, error: TError | null, variables: TVariables, context: TContext | undefined) => void`
+  - `onSettled: (data: TData | undefined, error: TError | null, variables: TVariables, onMutateResult: TOnMutateResult | undefined, context: MutationFunctionContext) => void`
     - Optional
     - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
     - Void function, the returned value will be ignored
   - If you make multiple requests, `onSuccess` will fire only after the latest call you've made.
 - `mutateAsync: (variables: TVariables, { onSuccess, onSettled, onError }) => Promise<TData>`
   - Similar to `mutate` but returns a promise which can be awaited.
-- `status: string`
+- `status: MutationStatus`
   - Will be:
     - `idle` initial status prior to the mutation function executing.
     - `pending` if the mutation is currently executing.
@@ -137,7 +138,7 @@ mutate(variables, {
 - `isIdle`, `isPending`, `isSuccess`, `isError`: boolean variables derived from `status`
 - `isPaused: boolean`
   - will be `true` if the mutation has been `paused`
-  - see [Network Mode](../guides/network-mode.md) for more information.
+  - see [Network Mode](../../guides/network-mode.md) for more information.
 - `data: undefined | unknown`
   - Defaults to `undefined`
   - The last successfully resolved data for the mutation.

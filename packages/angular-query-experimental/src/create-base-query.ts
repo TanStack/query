@@ -14,6 +14,8 @@ import {
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
+import { PENDING_TASKS } from './pending-tasks-compat'
+import type { PendingTaskRef } from './pending-tasks-compat'
 import type {
   QueryKey,
   QueryObserver,
@@ -43,6 +45,7 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ) {
   const ngZone = inject(NgZone)
+  const pendingTasks = inject(PENDING_TASKS)
   const queryClient = inject(QueryClient)
   const isRestoring = injectIsRestoring()
 
@@ -105,13 +108,24 @@ export function createBaseQuery<
   effect((onCleanup) => {
     // observer.trackResult is not used as this optimization is not needed for Angular
     const observer = observerSignal()
+    let pendingTaskRef: PendingTaskRef | null = null
+
     const unsubscribe = isRestoring()
       ? () => undefined
       : untracked(() =>
-          ngZone.runOutsideAngular(() =>
-            observer.subscribe(
+          ngZone.runOutsideAngular(() => {
+            return observer.subscribe(
               notifyManager.batchCalls((state) => {
                 ngZone.run(() => {
+                  if (state.fetchStatus === 'fetching' && !pendingTaskRef) {
+                    pendingTaskRef = pendingTasks.add()
+                  }
+
+                  if (state.fetchStatus === 'idle' && pendingTaskRef) {
+                    pendingTaskRef()
+                    pendingTaskRef = null
+                  }
+
                   if (
                     state.isError &&
                     !state.isFetching &&
@@ -126,17 +140,36 @@ export function createBaseQuery<
                   resultFromSubscriberSignal.set(state)
                 })
               }),
-            ),
-          ),
+            )
+          }),
         )
-    onCleanup(unsubscribe)
+
+    onCleanup(() => {
+      if (pendingTaskRef) {
+        pendingTaskRef()
+        pendingTaskRef = null
+      }
+      unsubscribe()
+    })
   })
 
   return signalProxy(
     computed(() => {
       const subscriberResult = resultFromSubscriberSignal()
       const optimisticResult = optimisticResultSignal()
-      return subscriberResult ?? optimisticResult
+      const result = subscriberResult ?? optimisticResult
+
+      // Wrap methods to ensure observer has latest options before execution
+      const observer = observerSignal()
+
+      const originalRefetch = result.refetch
+      return {
+        ...result,
+        refetch: ((...args: Parameters<typeof originalRefetch>) => {
+          observer.setOptions(defaultedOptionsSignal())
+          return originalRefetch(...args)
+        }) as typeof originalRefetch,
+      }
     }),
   )
 }

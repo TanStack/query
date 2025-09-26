@@ -9,10 +9,7 @@
   const mutation = createMutation(
     () => ({
       mutationKey: ['mutation-1'],
-      mutationFn: async () => {
-        await sleep(5)
-        return 'data'
-      },
+      mutationFn: () => sleep(10).then(() => 'data'),
     }),
     () => queryClient,
   )

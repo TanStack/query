@@ -1,16 +1,9 @@
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import {
-  Injector,
-  provideExperimentalZonelessChangeDetection,
-} from '@angular/core'
+import { Injector, provideZonelessChangeDetection } from '@angular/core'
 import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
 import { expectSignals } from './test-utils'
-
-const QUERY_DURATION = 1000
-
-const resolveQueries = () => vi.advanceTimersByTimeAsync(QUERY_DURATION)
 
 describe('injectInfiniteQuery', () => {
   let queryClient: QueryClient
@@ -20,7 +13,7 @@ describe('injectInfiniteQuery', () => {
     vi.useFakeTimers()
     TestBed.configureTestingModule({
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideTanStackQuery(queryClient),
       ],
     })
@@ -35,7 +28,7 @@ describe('injectInfiniteQuery', () => {
       return injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) =>
-          sleep(0).then(() => 'data on page ' + pageParam),
+          sleep(10).then(() => 'data on page ' + pageParam),
         initialPageParam: 0,
         getNextPageParam: () => 12,
       }))
@@ -46,7 +39,7 @@ describe('injectInfiniteQuery', () => {
       status: 'pending',
     })
 
-    await resolveQueries()
+    await vi.advanceTimersByTimeAsync(11)
 
     expectSignals(query, {
       data: {
@@ -58,7 +51,7 @@ describe('injectInfiniteQuery', () => {
 
     void query.fetchNextPage()
 
-    await resolveQueries()
+    await vi.advanceTimersByTimeAsync(11)
 
     expectSignals(query, {
       data: {

@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    branches: [main, alpha, beta, rc, v4]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    name: Release
+    if: github.repository_owner == 'TanStack'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+      - name: Start Nx Agents
+        run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
+      - name: Setup Tools
+        uses: tanstack/config/.github/setup@main
+      - name: Run Tests
+        run: pnpm run test:ci --parallel=3
+      - name: Stop Nx Agents
+        if: ${{ always() }}
+        run: npx nx-cloud stop-all-agents
+      - name: Version Packages
+        run: pnpm run changeset:version
+      - name: Commit version files
+        run: |
+          git config --global user.name 'Tanner Linsley'
+          git config --global user.email 'tannerlinsley@users.noreply.github.com'            git add -A
+          git commit -m "ci: Version Packages"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Packages
+        run: pnpm run changeset:publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4.6.0
+        with:
+          directory: packages
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

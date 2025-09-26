@@ -5,6 +5,7 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
+  FetchQueryOptions,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -45,6 +46,21 @@ export interface UseBaseQueryOptions<
   subscribed?: boolean
 }
 
+export interface UsePrefetchQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends OmitKeyof<
+    FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryFn'
+  > {
+  queryFn?: Exclude<
+    FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
+    SkipToken
+  >
+}
+
 export type AnyUseQueryOptions = UseQueryOptions<any, any, any, any>
 export interface UseQueryOptions<
   TQueryFnData = unknown,
@@ -82,14 +98,12 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
   any,
   any,
   any,
-  any,
   any
 >
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
@@ -97,7 +111,6 @@ export interface UseInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -111,23 +124,15 @@ export interface UseInfiniteQueryOptions<
 }
 
 export type AnyUseSuspenseInfiniteQueryOptions =
-  UseSuspenseInfiniteQueryOptions<any, any, any, any, any, any>
+  UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
 export interface UseSuspenseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
-    UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey,
-      TPageParam
-    >,
+    UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
     'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
   > {
   queryFn?: Exclude<
@@ -135,7 +140,6 @@ export interface UseSuspenseInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >['queryFn'],
@@ -189,9 +193,9 @@ export interface UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
     '_defaulted'
   > {}
 
@@ -199,31 +203,40 @@ export type UseMutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = (
-  ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
+  ...args: Parameters<
+    MutateFunction<TData, TError, TVariables, TOnMutateResult>
+  >
 ) => void
 
 export type UseMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> = MutateFunction<TData, TError, TVariables, TContext>
+  TOnMutateResult = unknown,
+> = MutateFunction<TData, TError, TVariables, TOnMutateResult>
 
 export type UseBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = Override<
-  MutationObserverResult<TData, TError, TVariables, TContext>,
-  { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
-> & { mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext> }
+  MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+  { mutate: UseMutateFunction<TData, TError, TVariables, TOnMutateResult> }
+> & {
+  mutateAsync: UseMutateAsyncFunction<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >
+}
 
 export type UseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
-> = UseBaseMutationResult<TData, TError, TVariables, TContext>
+  TOnMutateResult = unknown,
+> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>

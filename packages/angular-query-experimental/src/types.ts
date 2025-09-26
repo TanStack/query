@@ -7,6 +7,7 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
+  MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
   Override,
@@ -17,9 +18,6 @@ import type {
 import type { Signal } from '@angular/core'
 import type { MapToSignals } from './signal-proxy'
 
-/**
- * @public
- */
 export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -34,9 +32,6 @@ export interface CreateBaseQueryOptions<
     TQueryKey
   > {}
 
-/**
- * @public
- */
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -53,18 +48,12 @@ export interface CreateQueryOptions<
     'suspense'
   > {}
 
-/**
- * @public
- */
 type CreateStatusBasedQueryResult<
   TStatus extends QueryObserverResult['status'],
   TData = unknown,
   TError = DefaultError,
 > = Extract<QueryObserverResult<TData, TError>, { status: TStatus }>
 
-/**
- * @public
- */
 export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   isSuccess: (
     this: CreateBaseQueryResult<TData, TError>,
@@ -89,14 +78,10 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   >
 }
 
-/**
- * @public
- */
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
@@ -104,16 +89,12 @@ export interface CreateInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
     'suspense'
   > {}
 
-/**
- * @public
- */
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -121,17 +102,11 @@ export type CreateBaseQueryResult<
 > = BaseQueryNarrowing<TData, TError> &
   MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
-/**
- * @public
- */
 export type CreateQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = CreateBaseQueryResult<TData, TError>
 
-/**
- * @public
- */
 export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -139,18 +114,12 @@ export type DefinedCreateQueryResult<
 > = BaseQueryNarrowing<TData, TError> &
   MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
-/**
- * @public
- */
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = BaseQueryNarrowing<TData, TError> &
   MapToSignals<InfiniteQueryObserverResult<TData, TError>>
 
-/**
- * @public
- */
 export type DefinedCreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -160,152 +129,151 @@ export type DefinedCreateInfiniteQueryResult<
   >,
 > = MapToSignals<TDefinedInfiniteQueryObserver>
 
-/**
- * @public
- */
+export interface CreateMutationOptions<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+> extends OmitKeyof<
+    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
+    '_defaulted'
+  > {}
+
 export type CreateMutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = (
-  ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
+  ...args: Parameters<
+    MutateFunction<TData, TError, TVariables, TOnMutateResult>
+  >
 ) => void
 
-/**
- * @public
- */
 export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> = MutateFunction<TData, TError, TVariables, TContext>
+  TOnMutateResult = unknown,
+> = MutateFunction<TData, TError, TVariables, TOnMutateResult>
 
-/**
- * @public
- */
 export type CreateBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = Override<
-  MutationObserverResult<TData, TError, TVariables, TContext>,
-  { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
+  MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+  { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }
 > & {
-  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
+  mutateAsync: CreateMutateAsyncFunction<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >
 }
 
-/**
- * @public
- */
 type CreateStatusBasedMutationResult<
   TStatus extends CreateBaseMutationResult['status'],
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = Extract<
-  CreateBaseMutationResult<TData, TError, TVariables, TContext>,
+  CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>,
   { status: TStatus }
 >
 
 type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>
 
-/**
- * @public
- */
 export interface BaseMutationNarrowing<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > {
   isSuccess: SignalFunction<
     (
-      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+      this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
     ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext,
+      TOnMutateResult,
       CreateStatusBasedMutationResult<
         'success',
         TData,
         TError,
         TVariables,
-        TContext
+        TOnMutateResult
       >
     >
   >
   isError: SignalFunction<
     (
-      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+      this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
     ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext,
+      TOnMutateResult,
       CreateStatusBasedMutationResult<
         'error',
         TData,
         TError,
         TVariables,
-        TContext
+        TOnMutateResult
       >
     >
   >
   isPending: SignalFunction<
     (
-      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+      this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
     ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext,
+      TOnMutateResult,
       CreateStatusBasedMutationResult<
         'pending',
         TData,
         TError,
         TVariables,
-        TContext
+        TOnMutateResult
       >
     >
   >
   isIdle: SignalFunction<
     (
-      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+      this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
     ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext,
+      TOnMutateResult,
       CreateStatusBasedMutationResult<
         'idle',
         TData,
         TError,
         TVariables,
-        TContext
+        TOnMutateResult
       >
     >
   >
 }
 
-/**
- * @public
- */
 export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
   TState = CreateStatusBasedMutationResult<
     CreateBaseMutationResult['status'],
     TData,
     TError,
     TVariables,
-    TContext
+    TOnMutateResult
   >,
-> = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
+> = BaseMutationNarrowing<TData, TError, TVariables, TOnMutateResult> &
   MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>

@@ -3,10 +3,11 @@ id: CreateMutateAsyncFunction
 title: CreateMutateAsyncFunction
 ---
 
-# Type Alias: CreateMutateAsyncFunction\<TData, TError, TVariables, TContext\>
+# Type Alias: CreateMutateAsyncFunction\<TData, TError, TVariables, TOnMutateResult\>
 
 ```ts
-type CreateMutateAsyncFunction<TData, TError, TVariables, TContext>: MutateFunction<TData, TError, TVariables, TContext>;
+type CreateMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> =
+  MutateFunction<TData, TError, TVariables, TOnMutateResult>
 ```
 
 ## Type Parameters
@@ -17,8 +18,8 @@ type CreateMutateAsyncFunction<TData, TError, TVariables, TContext>: MutateFunct
 
 • **TVariables** = `void`
 
-• **TContext** = `unknown`
+• **TOnMutateResult** = `unknown`
 
 ## Defined in
 
-[packages/svelte-query/src/types.ts:106](https://github.com/TanStack/query/blob/dac5da5416b82b0be38a8fb34dde1fc6670f0a59/packages/svelte-query/src/types.ts#L106)
+[packages/svelte-query/src/types.ts:107](https://github.com/TanStack/query/blob/main/packages/svelte-query/src/types.ts#L107)

@@ -1,5 +1,4 @@
 import {
-  DestroyRef,
   Injector,
   NgZone,
   assertInInjectionContext,
@@ -12,14 +11,19 @@ import {
 import {
   MutationObserver,
   QueryClient,
+  noop,
   notifyManager,
   shouldThrowError,
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { noop } from './util'
+import { PENDING_TASKS } from './pending-tasks-compat'
+import type { PendingTaskRef } from './pending-tasks-compat'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
-import type { CreateMutateFunction, CreateMutationResult } from './types'
-import type { CreateMutationOptions } from './mutation-options'
+import type {
+  CreateMutateFunction,
+  CreateMutationOptions,
+  CreateMutationResult,
+} from './types'
 
 export interface InjectMutationOptions {
   /**
@@ -37,26 +41,25 @@ export interface InjectMutationOptions {
  * @param injectMutationFn - A function that returns mutation options.
  * @param options - Additional configuration
  * @returns The mutation.
- * @public
  */
 export function injectMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
   injectMutationFn: () => CreateMutationOptions<
     TData,
     TError,
     TVariables,
-    TContext
+    TOnMutateResult
   >,
   options?: InjectMutationOptions,
-): CreateMutationResult<TData, TError, TVariables, TContext> {
+): CreateMutationResult<TData, TError, TVariables, TOnMutateResult> {
   !options?.injector && assertInInjectionContext(injectMutation)
   const injector = options?.injector ?? inject(Injector)
-  const destroyRef = injector.get(DestroyRef)
   const ngZone = injector.get(NgZone)
+  const pendingTasks = injector.get(PENDING_TASKS)
   const queryClient = injector.get(QueryClient)
 
   /**
@@ -67,8 +70,12 @@ export function injectMutation<
   const optionsSignal = computed(injectMutationFn)
 
   const observerSignal = (() => {
-    let instance: MutationObserver<TData, TError, TVariables, TContext> | null =
-      null
+    let instance: MutationObserver<
+      TData,
+      TError,
+      TVariables,
+      TOnMutateResult
+    > | null = null
 
     return computed(() => {
       return (instance ||= new MutationObserver(queryClient, optionsSignal()))
@@ -76,7 +83,7 @@ export function injectMutation<
   })()
 
   const mutateFnSignal = computed<
-    CreateMutateFunction<TData, TError, TVariables, TContext>
+    CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(() => {
     const observer = observerSignal()
     return (variables, mutateOptions) => {
@@ -99,7 +106,7 @@ export function injectMutation<
     TData,
     TError,
     TVariables,
-    TContext
+    TOnMutateResult
   > | null>(null)
 
   effect(
@@ -117,15 +124,27 @@ export function injectMutation<
   )
 
   effect(
-    () => {
+    (onCleanup) => {
       // observer.trackResult is not used as this optimization is not needed for Angular
       const observer = observerSignal()
+      let pendingTaskRef: PendingTaskRef | null = null
 
       untracked(() => {
         const unsubscribe = ngZone.runOutsideAngular(() =>
           observer.subscribe(
             notifyManager.batchCalls((state) => {
               ngZone.run(() => {
+                // Track pending task when mutation is pending
+                if (state.isPending && !pendingTaskRef) {
+                  pendingTaskRef = pendingTasks.add()
+                }
+
+                // Clear pending task when mutation is no longer pending
+                if (!state.isPending && pendingTaskRef) {
+                  pendingTaskRef()
+                  pendingTaskRef = null
+                }
+
                 if (
                   state.isError &&
                   shouldThrowError(observer.options.throwOnError, [state.error])
@@ -139,7 +158,14 @@ export function injectMutation<
             }),
           ),
         )
-        destroyRef.onDestroy(unsubscribe)
+        onCleanup(() => {
+          // Clean up any pending task on destroy
+          if (pendingTaskRef) {
+            pendingTaskRef()
+            pendingTaskRef = null
+          }
+          unsubscribe()
+        })
       })
     },
     {
@@ -164,6 +190,6 @@ export function injectMutation<
     TData,
     TError,
     TVariables,
-    TContext
+    TOnMutateResult
   >
 }

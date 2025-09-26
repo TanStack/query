@@ -49,9 +49,9 @@ export function useBaseQuery<
     }
   }
 
-  const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
 
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(

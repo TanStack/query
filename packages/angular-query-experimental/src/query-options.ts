@@ -2,6 +2,7 @@ import type {
   DataTag,
   DefaultError,
   InitialDataFunction,
+  NonUndefinedGuard,
   OmitKeyof,
   QueryFunction,
   QueryKey,
@@ -35,8 +36,6 @@ export type UnusedSkipTokenOptions<
     SkipToken | undefined
   >
 }
-
-type NonUndefinedGuard<T> = T extends undefined ? never : T
 
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
@@ -73,7 +72,6 @@ export type DefinedInitialDataOptions<
  * ```
  * @param options - The query options to tag with the type from `queryFn`.
  * @returns The tagged query options.
- * @public
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -106,7 +104,6 @@ export function queryOptions<
  * ```
  * @param options - The query options to tag with the type from `queryFn`.
  * @returns The tagged query options.
- * @public
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -139,7 +136,6 @@ export function queryOptions<
  * ```
  * @param options - The query options to tag with the type from `queryFn`.
  * @returns The tagged query options.
- * @public
  */
 export function queryOptions<
   TQueryFnData = unknown,
@@ -172,7 +168,6 @@ export function queryOptions<
  * ```
  * @param options - The query options to tag with the type from `queryFn`.
  * @returns The tagged query options.
- * @public
  */
 export function queryOptions(options: unknown) {
   return options

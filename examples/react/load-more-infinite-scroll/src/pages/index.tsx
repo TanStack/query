@@ -50,10 +50,10 @@ function Example() {
   })
 
   React.useEffect(() => {
-    if (inView) {
+    if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage()
     }
-  }, [fetchNextPage, inView])
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
 
   return (
     <div>

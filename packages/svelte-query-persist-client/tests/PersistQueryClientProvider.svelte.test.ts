@@ -1,5 +1,6 @@
 import { render, waitFor } from '@testing-library/svelte'
 import { describe, expect, test, vi } from 'vitest'
+import { QueryClient } from '@tanstack/svelte-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { sleep } from '@tanstack/query-test-utils'
 import AwaitOnSuccess from './AwaitOnSuccess/Provider.svelte'
@@ -9,7 +10,7 @@ import InitialData from './InitialData/Provider.svelte'
 import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
-import { StatelessRef, createQueryClient } from './utils.svelte.js'
+import { StatelessRef } from './utils.svelte.js'
 import type {
   PersistedClient,
   Persister,

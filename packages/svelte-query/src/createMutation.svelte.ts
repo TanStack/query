@@ -1,6 +1,6 @@
 import { onDestroy } from 'svelte'
 
-import { MutationObserver, notifyManager } from '@tanstack/query-core'
+import { MutationObserver, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient.js'
 import type {
   Accessor,
@@ -69,5 +69,3 @@ export function createMutation<
     },
   })
 }
-
-function noop() {}

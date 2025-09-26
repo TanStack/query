@@ -9,6 +9,8 @@ import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+export type NonUndefinedGuard<T> = T extends undefined ? never : T
+
 export type DistributiveOmit<
   TObject,
   TKey extends keyof TObject,
@@ -97,12 +99,16 @@ export type QueryFunction<
   TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
-export type StaleTime<
+export type StaleTime = number | 'static'
+
+export type StaleTimeFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = number | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
+> =
+  | StaleTime
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => StaleTime)
 
 export type Enabled<
   TQueryFnData = unknown,
@@ -327,7 +333,7 @@ export interface QueryObserverOptions<
    * If set to a function, the function will be executed with the query to compute a `staleTime`.
    * Defaults to `0`.
    */
-  staleTime?: StaleTime<TQueryFnData, TError, TQueryData, TQueryKey>
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
@@ -453,14 +459,13 @@ export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
-      InfiniteData<TQueryData, TPageParam>,
+      InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey,
       TPageParam
     >,
@@ -470,7 +475,6 @@ export type DefaultedInfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = WithRequired<
@@ -478,7 +482,6 @@ export type DefaultedInfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryData,
     TQueryKey,
     TPageParam
   >,
@@ -500,7 +503,7 @@ export interface FetchQueryOptions<
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
    */
-  staleTime?: StaleTime<TQueryFnData, TError, TData, TQueryKey>
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
 }
 
 export interface EnsureQueryDataOptions<
@@ -714,6 +717,10 @@ export interface QueryObserverBaseResult<
    * - `true` if the query has received a response with no errors and is ready to display its data.
    */
   isSuccess: boolean
+  /**
+   * `true` if this observer is enabled, `false` otherwise.
+   */
+  isEnabled: boolean
   /**
    * A function to manually refetch the query.
    */
@@ -1084,36 +1091,47 @@ export type MutationMeta = Register extends {
     : Record<string, unknown>
   : Record<string, unknown>
 
+export type MutationFunctionContext = {
+  client: QueryClient
+  meta: MutationMeta | undefined
+  mutationKey?: MutationKey
+}
+
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables,
+  context: MutationFunctionContext,
 ) => Promise<TData>
 
 export interface MutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > {
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
   onMutate?: (
     variables: TVariables,
-  ) => Promise<TContext | undefined> | TContext | undefined
+    context: MutationFunctionContext,
+  ) => Promise<TOnMutateResult> | TOnMutateResult
   onSuccess?: (
     data: TData,
     variables: TVariables,
-    context: TContext,
+    onMutateResult: TOnMutateResult,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onError?: (
     error: TError,
     variables: TVariables,
-    context: TContext | undefined,
+    onMutateResult: TOnMutateResult | undefined,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
-    context: TContext | undefined,
+    onMutateResult: TOnMutateResult | undefined,
+    context: MutationFunctionContext,
   ) => Promise<unknown> | unknown
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
@@ -1128,8 +1146,8 @@ export interface MutationObserverOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> extends MutationOptions<TData, TError, TVariables, TContext> {
+  TOnMutateResult = unknown,
+> extends MutationOptions<TData, TError, TVariables, TOnMutateResult> {
   throwOnError?: boolean | ((error: TError) => boolean)
 }
 
@@ -1137,19 +1155,26 @@ export interface MutateOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > {
-  onSuccess?: (data: TData, variables: TVariables, context: TContext) => void
+  onSuccess?: (
+    data: TData,
+    variables: TVariables,
+    onMutateResult: TOnMutateResult | undefined,
+    context: MutationFunctionContext,
+  ) => void
   onError?: (
     error: TError,
     variables: TVariables,
-    context: TContext | undefined,
+    onMutateResult: TOnMutateResult | undefined,
+    context: MutationFunctionContext,
   ) => void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
-    context: TContext | undefined,
+    onMutateResult: TOnMutateResult | undefined,
+    context: MutationFunctionContext,
   ) => void
 }
 
@@ -1157,18 +1182,18 @@ export type MutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = (
   variables: TVariables,
-  options?: MutateOptions<TData, TError, TVariables, TContext>,
+  options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
 ) => Promise<TData>
 
 export interface MutationObserverBaseResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> extends MutationState<TData, TError, TVariables, TContext> {
+  TOnMutateResult = unknown,
+> extends MutationState<TData, TError, TVariables, TOnMutateResult> {
   /**
    * The last successfully resolved data for the mutation.
    */
@@ -1221,7 +1246,7 @@ export interface MutationObserverBaseResult<
    * - If you make multiple requests, `onSuccess` will fire only after the latest call you've made.
    * - All the callback functions (`onSuccess`, `onError`, `onSettled`) are void functions, and the returned value will be ignored.
    */
-  mutate: MutateFunction<TData, TError, TVariables, TContext>
+  mutate: MutateFunction<TData, TError, TVariables, TOnMutateResult>
   /**
    * A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
    */
@@ -1232,8 +1257,13 @@ export interface MutationObserverIdleResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  TOnMutateResult = unknown,
+> extends MutationObserverBaseResult<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  > {
   data: undefined
   variables: undefined
   error: null
@@ -1248,8 +1278,13 @@ export interface MutationObserverLoadingResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  TOnMutateResult = unknown,
+> extends MutationObserverBaseResult<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  > {
   data: undefined
   variables: TVariables
   error: null
@@ -1264,8 +1299,13 @@ export interface MutationObserverErrorResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  TOnMutateResult = unknown,
+> extends MutationObserverBaseResult<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  > {
   data: undefined
   error: TError
   variables: TVariables
@@ -1280,8 +1320,13 @@ export interface MutationObserverSuccessResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  TOnMutateResult = unknown,
+> extends MutationObserverBaseResult<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  > {
   data: TData
   error: null
   variables: TVariables
@@ -1296,12 +1341,12 @@ export type MutationObserverResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > =
-  | MutationObserverIdleResult<TData, TError, TVariables, TContext>
-  | MutationObserverLoadingResult<TData, TError, TVariables, TContext>
-  | MutationObserverErrorResult<TData, TError, TVariables, TContext>
-  | MutationObserverSuccessResult<TData, TError, TVariables, TContext>
+  | MutationObserverIdleResult<TData, TError, TVariables, TOnMutateResult>
+  | MutationObserverLoadingResult<TData, TError, TVariables, TOnMutateResult>
+  | MutationObserverErrorResult<TData, TError, TVariables, TOnMutateResult>
+  | MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>
 
 export interface QueryClientConfig {
   queryCache?: QueryCache
