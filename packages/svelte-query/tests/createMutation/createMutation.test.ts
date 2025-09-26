@@ -93,6 +93,6 @@ describe('createMutation', () => {
     expect(rendered.getByText('Status: success')).toBeInTheDocument()
     expect(rendered.getByText('Data: 2')).toBeInTheDocument()
     expect(rendered.getByText('Failure Count: 0')).toBeInTheDocument()
-    expect(rendered.getByText('Failure Reason: null')).toBeInTheDocument()
+    expect(rendered.getByText('Failure Reason: undefined')).toBeInTheDocument()
   })
 })

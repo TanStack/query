@@ -21,12 +21,11 @@
   const errorMutation = createMutation(errorMutationOpts)
 
   const mutationState = useMutationState(mutationStateOpts)
-  $: statuses = $mutationState.map((state) => state.status)
 </script>
 
-<div data-testid="result">
-  {JSON.stringify(statuses)}
-</div>
+<button on:click={() => $successMutation.mutate()}>Success</button>
+<button on:click={() => $errorMutation.mutate()}>Error</button>
 
-<button on:click={() => $successMutation.mutate()}>success</button>
-<button on:click={() => $errorMutation.mutate()}>error</button>
+<div>
+  Data: {JSON.stringify($mutationState.map((state) => state.status))}
+</div>

@@ -11,13 +11,11 @@ In the below example, the `refetchInterval` option is set from the variable `int
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
-  const endpoint = 'http://localhost:5173/api/data'
-
   let intervalMs = 1000
 
   const query = createQuery({
     queryKey: ['refetch'],
-    queryFn: async () => await fetch(endpoint).then((r) => r.json()),
+    queryFn: async () => await fetch('/api/data').then((r) => r.json()),
     refetchInterval: intervalMs,
   })
 </script>
@@ -32,14 +30,12 @@ To solve this, we can convert `intervalMs` into a writable store. The query opti
   import { derived, writable } from 'svelte/store'
   import { createQuery } from '@tanstack/svelte-query'
 
-  const endpoint = 'http://localhost:5173/api/data'
-
   const intervalMs = writable(1000)
 
   const query = createQuery(
     derived(intervalMs, ($intervalMs) => ({
       queryKey: ['refetch'],
-      queryFn: async () => await fetch(endpoint).then((r) => r.json()),
+      queryFn: async () => await fetch('/api/data').then((r) => r.json()),
       refetchInterval: $intervalMs,
     })),
   )

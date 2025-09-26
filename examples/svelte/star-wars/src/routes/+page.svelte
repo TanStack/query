@@ -2,8 +2,7 @@
   <h2 class="text-4xl">React Query Demo</h2>
   <p>Using the Star Wars API</p>
   <p>
-    (Built by <a href="https://twitter.com/Brent_m_Clark">@Brent_m_Clark</a>
-    )
+    (Built by <a href="https://twitter.com/Brent_m_Clark">@Brent_m_Clark</a>)
   </p>
   <section>
     <h5 class="text-2xl">Why React Query?</h5>
