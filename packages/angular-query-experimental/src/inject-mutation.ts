@@ -1,5 +1,4 @@
 import {
-  DestroyRef,
   Injector,
   NgZone,
   assertInInjectionContext,
@@ -17,6 +16,8 @@ import {
   shouldThrowError,
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
+import { PENDING_TASKS } from './pending-tasks-compat'
+import type { PendingTaskRef } from './pending-tasks-compat'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
@@ -57,8 +58,8 @@ export function injectMutation<
 ): CreateMutationResult<TData, TError, TVariables, TOnMutateResult> {
   !options?.injector && assertInInjectionContext(injectMutation)
   const injector = options?.injector ?? inject(Injector)
-  const destroyRef = injector.get(DestroyRef)
   const ngZone = injector.get(NgZone)
+  const pendingTasks = injector.get(PENDING_TASKS)
   const queryClient = injector.get(QueryClient)
 
   /**
@@ -123,15 +124,27 @@ export function injectMutation<
   )
 
   effect(
-    () => {
+    (onCleanup) => {
       // observer.trackResult is not used as this optimization is not needed for Angular
       const observer = observerSignal()
+      let pendingTaskRef: PendingTaskRef | null = null
 
       untracked(() => {
         const unsubscribe = ngZone.runOutsideAngular(() =>
           observer.subscribe(
             notifyManager.batchCalls((state) => {
               ngZone.run(() => {
+                // Track pending task when mutation is pending
+                if (state.isPending && !pendingTaskRef) {
+                  pendingTaskRef = pendingTasks.add()
+                }
+
+                // Clear pending task when mutation is no longer pending
+                if (!state.isPending && pendingTaskRef) {
+                  pendingTaskRef()
+                  pendingTaskRef = null
+                }
+
                 if (
                   state.isError &&
                   shouldThrowError(observer.options.throwOnError, [state.error])
@@ -145,7 +158,14 @@ export function injectMutation<
             }),
           ),
         )
-        destroyRef.onDestroy(unsubscribe)
+        onCleanup(() => {
+          // Clean up any pending task on destroy
+          if (pendingTaskRef) {
+            pendingTaskRef()
+            pendingTaskRef = null
+          }
+          unsubscribe()
+        })
       })
     },
     {

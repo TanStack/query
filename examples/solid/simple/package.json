@@ -8,14 +8,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.89.0",
-    "@tanstack/solid-query-devtools": "^5.89.0",
+    "@tanstack/solid-query": "^5.90.3",
+    "@tanstack/solid-query-devtools": "^5.90.3",
     "solid-js": "^1.9.7"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.89.0",
+    "@tanstack/eslint-plugin-query": "^5.90.1",
     "typescript": "5.8.3",
-    "vite": "^6.2.4",
+    "vite": "^6.3.6",
     "vite-plugin-solid": "^2.11.6"
   }
 }
