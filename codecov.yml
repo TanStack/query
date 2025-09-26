@@ -19,10 +19,6 @@ comment:
 
 component_management:
   individual_components:
-    - component_id: angular-query-devtools-experimental
-      name: '@tanstack/angular-query-devtools-experimental'
-      paths:
-        - packages/angular-query-devtools-experimental/**
     - component_id: angular-query-experimental
       name: '@tanstack/angular-query-experimental'
       paths:

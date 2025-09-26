@@ -91,7 +91,7 @@ const {
   - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
-- `staleTime: number | 'static' ((query: Query) => number | 'static')`
+- `staleTime: number | 'static' | ((query: Query) => number | 'static')`
   - Optional
   - Defaults to `0`
   - The time in milliseconds after which data is considered stale. This value only applies to the hook it is defined on.
@@ -101,7 +101,7 @@ const {
 - `gcTime: number | Infinity`
   - Defaults to `5 * 60 * 1000` (5 minutes) or `Infinity` during SSR
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used.
-  - Note: the maximum allowed time is about 24 days. See [more](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value).
+  - Note: the maximum allowed time is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
   - If set to `Infinity`, will disable garbage collection
 - `queryKeyHashFn: (queryKey: QueryKey) => string`
   - Optional
@@ -154,12 +154,12 @@ const {
 - `initialDataUpdatedAt: number | (() => number | undefined)`
   - Optional
   - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
-- `placeholderData: TData | (previousValue: TData | undefined; previousQuery: Query | undefined,) => TData`
+- `placeholderData: TData | (previousValue: TData | undefined, previousQuery: Query | undefined) => TData`
   - Optional
   - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` state.
   - `placeholderData` is **not persisted** to the cache
   - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available, and the second argument will be the complete previousQuery instance.
-- `structuralSharing: boolean | (oldData: unknown | undefined, newData: unknown) => unknown)`
+- `structuralSharing: boolean | (oldData: unknown | undefined, newData: unknown) => unknown`
   - Optional
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
@@ -178,7 +178,7 @@ const {
 
 **Parameter2 (QueryClient)**
 
-- `queryClient?: QueryClient`,
+- `queryClient?: QueryClient`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**

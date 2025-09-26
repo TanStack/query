@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-async-storage-persister",
-  "version": "5.85.5",
+  "version": "5.90.2",
   "description": "A persister for asynchronous storages, to be used with TanStack/Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts",
     "compile": "tsc --build",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
@@ -59,6 +59,7 @@
     "!src/__tests__"
   ],
   "dependencies": {
+    "@tanstack/query-core": "workspace:*",
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {

@@ -5,34 +5,37 @@ export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
   options: WithRequired<
-    UseMutationOptions<TData, TError, TVariables, TContext>,
+    UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): WithRequired<
-  UseMutationOptions<TData, TError, TVariables, TContext>,
+  UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
   options: Omit<
-    UseMutationOptions<TData, TError, TVariables, TContext>,
+    UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
-): Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'mutationKey'>
+): Omit<
+  UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  'mutationKey'
+>
 export function mutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
-  options: UseMutationOptions<TData, TError, TVariables, TContext>,
-): UseMutationOptions<TData, TError, TVariables, TContext> {
+  options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+): UseMutationOptions<TData, TError, TVariables, TOnMutateResult> {
   return options
 }

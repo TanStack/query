@@ -1192,4 +1192,116 @@ describe('query', () => {
     expect(initialDataFn).toHaveBeenCalledTimes(1)
     expect(query.state.data).toBe('initial data')
   })
+
+  test('should update initialData when Query exists without data', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(async () => {
+      await sleep(100)
+      return 'data'
+    })
+
+    const promise = queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn,
+      staleTime: 1000,
+    })
+
+    vi.advanceTimersByTime(50)
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      data: undefined,
+      status: 'pending',
+      fetchStatus: 'fetching',
+    })
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: 1000,
+      initialData: 'initialData',
+      initialDataUpdatedAt: 10,
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      data: 'initialData',
+      dataUpdatedAt: 10,
+      status: 'success',
+      fetchStatus: 'fetching',
+    })
+
+    vi.advanceTimersByTime(50)
+
+    await promise
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      data: 'data',
+      status: 'success',
+      fetchStatus: 'idle',
+    })
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    unsubscribe()
+
+    // resetting should get us back ot 'initialData'
+    queryClient.getQueryCache().find({ queryKey: key })!.reset()
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      data: 'initialData',
+      status: 'success',
+      fetchStatus: 'idle',
+    })
+  })
+
+  test('should not override fetching state when revert happens after new observer subscribes', async () => {
+    const key = queryKey()
+    let count = 0
+
+    const queryFn = vi.fn(async ({ signal: _signal }) => {
+      // Destructure `signal` to intentionally consume it so observer-removal uses revert-cancel path
+      await sleep(50)
+      return 'data' + count++
+    })
+
+    const query = new Query({
+      client: queryClient,
+      queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
+      options: { queryFn },
+    })
+
+    const observer1 = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+
+    query.addObserver(observer1)
+    const promise1 = query.fetch()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    query.removeObserver(observer1)
+
+    const observer2 = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+
+    query.addObserver(observer2)
+
+    query.fetch()
+
+    await expect(promise1).rejects.toBeInstanceOf(CancelledError)
+    await vi.waitFor(() => expect(query.state.fetchStatus).toBe('idle'))
+
+    expect(queryFn).toHaveBeenCalledTimes(2)
+
+    expect(query.state).toMatchObject({
+      fetchStatus: 'idle',
+      status: 'success',
+      data: 'data1',
+    })
+  })
 })
