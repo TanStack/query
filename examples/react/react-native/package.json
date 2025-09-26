@@ -16,21 +16,21 @@
     "@react-navigation/stack": "^6.4.1",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-query-devtools": "^5.90.2",
-    "expo": "^52.0.11",
-    "expo-constants": "^17.0.3",
-    "expo-status-bar": "^2.0.0",
+    "expo": "^52.0.47",
+    "expo-constants": "^17.1.7",
+    "expo-status-bar": "^2.2.3",
     "react": "^19.0.0",
-    "react-native": "^0.76.3",
-    "react-native-gesture-handler": "^2.20.2",
-    "react-native-paper": "^5.12.5",
-    "react-native-reanimated": "^3.16.2",
-    "react-native-safe-area-context": "^4.12.0",
-    "react-native-screens": "^4.1.0",
-    "react-native-web": "^0.19.13"
+    "react-native": "^0.81.4",
+    "react-native-gesture-handler": "^2.28.0",
+    "react-native-paper": "^5.14.5",
+    "react-native-reanimated": "^3.19.1",
+    "react-native-safe-area-context": "^4.14.1",
+    "react-native-screens": "^4.16.0",
+    "react-native-web": "^0.21.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.9",
-    "@expo/config": "^10.0.5",
+    "@babel/core": "^7.28.4",
+    "@expo/config": "^10.0.11",
     "typescript": "5.8.3"
   }
 }
