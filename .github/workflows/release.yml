@@ -38,10 +38,13 @@ jobs:
         run: pnpm run changeset:version
       - name: Commit version files
         run: |
-          git config --global user.name 'Tanner Linsley'
-          git config --global user.email 'tannerlinsley@users.noreply.github.com'            git add -A
-          git commit -m "ci: Version Packages"
-          git push
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config --global user.name 'Tanner Linsley'
+            git config --global user.email 'tannerlinsley@users.noreply.github.com'
+            git add -A
+            git commit -m "ci: Version Packages"
+            git push
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish Packages
