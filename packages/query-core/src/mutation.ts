@@ -244,7 +244,7 @@ export class Mutation<
       await this.options.onSuccess?.(
         data,
         variables,
-        this.state.context,
+        this.state.context!,
         mutationFnContext,
       )
 
