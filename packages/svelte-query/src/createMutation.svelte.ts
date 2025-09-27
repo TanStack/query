@@ -53,7 +53,14 @@ export function createMutation<
     observer.mutate(variables, mutateOptions).catch(noop)
   })
 
-  let result = $derived(observer.getCurrentResult())
+  let result = $state(observer.getCurrentResult())
+  watchChanges(
+    () => observer,
+    'pre',
+    () => {
+      result = observer.getCurrentResult()
+    },
+  )
 
   $effect.pre(() => {
     const unsubscribe = observer.subscribe((val) => {
