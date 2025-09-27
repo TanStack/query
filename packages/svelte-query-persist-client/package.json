@@ -54,7 +54,8 @@
     "@testing-library/svelte": "^5.2.8",
     "eslint-plugin-svelte": "^3.11.0",
     "svelte": "^5.39.3",
-    "svelte-check": "^4.3.1"
+    "svelte-check": "^4.3.1",
+    "typescript-eslint": "^8.44.1"
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:^",
