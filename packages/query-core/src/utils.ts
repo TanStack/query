@@ -1,18 +1,15 @@
 import { timeoutManager } from './timeoutManager'
+import type { Mutation } from './mutation'
+import type { FetchOptions, Query } from './query'
 import type {
   DefaultError,
-  Enabled,
   FetchStatus,
   MutationKey,
   MutationStatus,
   QueryFunction,
   QueryKey,
   QueryOptions,
-  StaleTime,
-  StaleTimeFunction,
 } from './types'
-import type { Mutation } from './mutation'
-import type { FetchOptions, Query } from './query'
 
 // TYPES
 
@@ -69,7 +66,16 @@ export interface MutationFilters<
   status?: MutationStatus
 }
 
-export type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput)
+/**
+ * Utility type that excludes function types from T.
+ * If T is a function, it resolves to `never`, effectively removing T
+ * from unions and preventing ambiguity in value-or-function patterns.
+ */
+export type NonFunction<T> = T extends (...args: Array<any>) => any ? never : T
+
+export type Updater<TInput, TOutput> =
+  | NonFunction<TOutput>
+  | ((input: TInput) => TOutput)
 
 export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
@@ -81,13 +87,79 @@ export function noop(): void
 export function noop(): undefined
 export function noop() {}
 
-export function functionalUpdate<TInput, TOutput>(
-  updater: Updater<TInput, TOutput>,
-  input: TInput,
-): TOutput {
-  return typeof updater === 'function'
-    ? (updater as (_: TInput) => TOutput)(input)
-    : updater
+/**
+ * Resolves a value that can either be a direct value or a function that computes the value.
+ *
+ * This utility eliminates the need for repetitive `typeof value === 'function'` checks
+ * throughout the codebase and provides a clean way to handle the common pattern where
+ * options can be static values or dynamic functions.
+ *
+ * The NonFunction<T> constraint eliminates ambiguity by ensuring T can never be a function
+ * type. This makes the value-or-function pattern type-safe and unambiguous.
+ *
+ * The function provides two overloads: one that includes `| undefined` for optional values
+ * (where the value might not be provided), and another without `| undefined` for required
+ * values. This allows proper type inference for both optional config parameters and
+ * required ones while maintaining type safety.
+ *
+ * @template T - The type of the resolved value (constrained to non-function types)
+ * @template TArgs - Array of argument types when resolving function variants
+ * @param value - Either a direct value of type T or a function that returns T
+ * @param args - Arguments to pass to the function if value is a function
+ * @returns The resolved value of type T
+ *
+ * @example
+ * ```ts
+ * // Zero-argument function resolution (like initialData)
+ * const initialData: string | (() => string) = 'hello'
+ * const resolved = resolveOption(initialData) // 'hello'
+ *
+ * const initialDataFn: string | (() => string) = () => 'world'
+ * const resolved2 = resolveOption(initialDataFn) // 'world'
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Function with arguments (like staleTime, retryDelay)
+ * const staleTime: number | ((query: Query) => number) = (query) => query.state.dataUpdatedAt + 5000
+ * const resolved = resolveOption(staleTime, query) // number
+ *
+ * const retryDelay: number | ((failureCount: number, error: Error) => number) = 1000
+ * const resolved2 = resolveOption(retryDelay, 3, new Error()) // 1000
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Replaces verbose patterns like:
+ * // const delay = typeof retryDelay === 'function'
+ * //   ? retryDelay(failureCount, error)
+ * //   : retryDelay
+ *
+ * // With:
+ * const delay = resolveOption(retryDelay, failureCount, error)
+ * ```
+ */
+export function resolveOption<T, TArgs extends Array<any>>(
+  valueOrFn: NonFunction<T> | ((...args: TArgs) => T) | undefined,
+  ...args: TArgs
+): T | undefined
+// Overload for when value is guaranteed to be present
+export function resolveOption<T, TArgs extends Array<any>>(
+  valueOrFn: NonFunction<T> | ((...args: TArgs) => T),
+  ...args: TArgs
+): T
+// Implementation
+export function resolveOption<T, TArgs extends Array<any>>(
+  valueOrFn: NonFunction<T> | ((...args: TArgs) => T) | undefined,
+  ...args: TArgs
+): T | undefined {
+  if (typeof valueOrFn === 'function') {
+    // Because of our NonFunction<T> utility, TypeScript now correctly
+    // infers that if valueOrFn is a function, it must be the producer `(...args: TArgs) => T`.
+    return (valueOrFn as (...args: TArgs) => T)(...args)
+  }
+  // If it's not a function, it must be of type T or undefined.
+  return valueOrFn as T | undefined
 }
 
 export function isValidTimeout(value: unknown): value is number {
@@ -96,32 +168,6 @@ export function isValidTimeout(value: unknown): value is number {
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
-}
-
-export function resolveStaleTime<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  staleTime:
-    | undefined
-    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
-  query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): StaleTime | undefined {
-  return typeof staleTime === 'function' ? staleTime(query) : staleTime
-}
-
-export function resolveEnabled<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  enabled: undefined | Enabled<TQueryFnData, TError, TData, TQueryKey>,
-  query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): boolean | undefined {
-  return typeof enabled === 'function' ? enabled(query) : enabled
 }
 
 export function matchQuery(
