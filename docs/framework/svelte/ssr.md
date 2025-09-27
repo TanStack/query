@@ -58,11 +58,11 @@ export async function load() {
 
   export let data: PageData
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['posts'],
     queryFn: getPosts,
     initialData: data.posts,
-  })
+  }))
 </script>
 ```
 
@@ -136,10 +136,10 @@ export async function load({ parent, fetch }) {
   import { createQuery } from '@tanstack/svelte-query'
 
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['posts'],
     queryFn: async () => (await fetch('/api/posts')).json(),
-  })
+  }))
 </script>
 ```
 
