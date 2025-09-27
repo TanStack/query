@@ -32,7 +32,7 @@ jobs:
         with:
           main-branch-name: main
       - name: Run Checks
-        run: pnpm run test:pr --parallel=3
+        run: pnpm run test:pr
       - name: Verify Links
         run: pnpm run verify-links
       - name: Stop Nx Agents
