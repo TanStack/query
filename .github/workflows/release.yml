@@ -34,27 +34,24 @@ jobs:
       - name: Stop Nx Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
-      - name: Version Packages
-        run: pnpm run changeset:version
+      - name: Run Changesets (version or publish)
+        id: changesets
+        uses: changesets/action@v1.5.3
+        with:
+          version: pnpm run changeset:version
+          publish: pnpm run changeset:publish
+          commit: 'ci: Version Packages'
+          title: 'ci: Version Packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Commit version files
-        run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git config --global user.name 'Tanner Linsley'
-            git config --global user.email 'tannerlinsley@users.noreply.github.com'
-            git add -A
-            git commit -m "ci: Version Packages"
-            git push
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish Packages
-        run: |
-          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-          pnpm run changeset:publish
-        env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Auto-merge Changesets PR
+        if: steps.changesets.outputs.hasChangesets
+        run: gh pr --repo "$REPO" merge --auto --squash "$PR_NUM"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUM: ${{ steps.changesets.outputs.pullRequestNumber }}
+          REPO: ${{ github.repository }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4.6.0
         with:
