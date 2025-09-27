@@ -1,5 +1,27 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Roboto;
+@import 'tailwindcss';
+
+@theme {
+  --font-sans:
+    Roboto, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu,
+    Cantarell, Fira Sans, Droid Sans, Helvetica Neue, Helvetica, Arial,
+    sans-serif;
+  --font-mono:
+    Roboto Mono, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, Helvetica, Arial,
+    sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-mono;
+  }
 }

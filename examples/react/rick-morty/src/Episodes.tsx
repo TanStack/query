@@ -1,13 +1,11 @@
-import React from 'react'
-import { Typography, Link } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import fetch from './fetch'
+import { getEpisodes } from './api'
 
 export default function Episodes() {
   const { data, status } = useQuery({
     queryKey: ['episodes'],
-    queryFn: () => fetch('https://rickandmortyapi.com/api/episode'),
+    queryFn: () => getEpisodes(),
   })
 
   if (status === 'pending') {
@@ -19,14 +17,17 @@ export default function Episodes() {
 
   return (
     <div>
-      <Typography variant="h2">Episodes</Typography>
-      {data.results.map((episode) => (
+      <h2 className="text-4xl">Episodes</h2>
+      {data.results.map((episode: any) => (
         <article key={episode.id}>
-          <Link component={RouterLink} to={`/episodes/${episode.id}`}>
-            <Typography variant="h6">
+          <RouterLink
+            className="text-blue-500 hover:underline"
+            to={`/episodes/${episode.id}`}
+          >
+            <h6 className="text-xl">
               {episode.episode} - {episode.name} <em>{episode.airDate}</em>
-            </Typography>
-          </Link>
+            </h6>
+          </RouterLink>
         </article>
       ))}
     </div>
