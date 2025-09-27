@@ -1,7 +1,6 @@
-import { onDestroy } from 'svelte'
-
 import { MutationObserver, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient.js'
+import { watchChanges } from './utils.svelte.js'
 import type {
   Accessor,
   CreateMutateFunction,
@@ -24,48 +23,69 @@ export function createMutation<
   options: Accessor<CreateMutationOptions<TData, TError, TVariables, TContext>>,
   queryClient?: Accessor<QueryClient>,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
-  const client = useQueryClient(queryClient?.())
+  const client = $derived(useQueryClient(queryClient?.()))
 
-  const observer = $derived(
+  // svelte-ignore state_referenced_locally - intentional, initial value
+  let observer = $state(
+    // svelte-ignore state_referenced_locally - intentional, initial value
     new MutationObserver<TData, TError, TVariables, TContext>(
       client,
       options(),
     ),
   )
 
-  const mutate = $state<
-    CreateMutateFunction<TData, TError, TVariables, TContext>
-  >((variables, mutateOptions) => {
-    observer.mutate(variables, mutateOptions).catch(noop)
-  })
+  watchChanges(
+    () => client,
+    'pre',
+    () => {
+      observer = new MutationObserver(client, options())
+    },
+  )
 
   $effect.pre(() => {
     observer.setOptions(options())
   })
 
-  const result = $state(observer.getCurrentResult())
-
-  const unsubscribe = observer.subscribe((val) => {
-    notifyManager.batchCalls(() => {
-      Object.assign(result, val)
-    })()
+  const mutate = <CreateMutateFunction<TData, TError, TVariables, TContext>>((
+    variables,
+    mutateOptions,
+  ) => {
+    observer.mutate(variables, mutateOptions).catch(noop)
   })
 
-  onDestroy(() => {
-    unsubscribe()
+  let result = $state(observer.getCurrentResult())
+  watchChanges(
+    () => observer,
+    'pre',
+    () => {
+      result = observer.getCurrentResult()
+    },
+  )
+
+  $effect.pre(() => {
+    const unsubscribe = observer.subscribe((val) => {
+      notifyManager.batchCalls(() => {
+        Object.assign(result, val)
+      })()
+    })
+    return unsubscribe
   })
+
+  const resultProxy = $derived(
+    new Proxy(result, {
+      get: (_, prop) => {
+        const r = {
+          ...result,
+          mutate,
+          mutateAsync: result.mutate,
+        }
+        if (prop == 'value') return r
+        // @ts-expect-error
+        return r[prop]
+      },
+    }),
+  )
 
   // @ts-expect-error
-  return new Proxy(result, {
-    get: (_, prop) => {
-      const r = {
-        ...result,
-        mutate,
-        mutateAsync: result.mutate,
-      }
-      if (prop == 'value') return r
-      // @ts-expect-error
-      return r[prop]
-    },
-  })
+  return resultProxy
 }

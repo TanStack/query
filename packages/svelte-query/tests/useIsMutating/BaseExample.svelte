@@ -1,20 +1,11 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
-  import { createMutation, useIsMutating } from '../../src/index.js'
-  import { sleep } from '@tanstack/query-test-utils'
-
-  const queryClient = new QueryClient()
-  const isMutating = useIsMutating(undefined, queryClient)
-
-  const mutation = createMutation(
-    () => ({
-      mutationKey: ['mutation-1'],
-      mutationFn: () => sleep(10).then(() => 'data'),
-    }),
-    () => queryClient,
-  )
+  import ProviderWrapper from '../ProviderWrapper.svelte'
+  import MutatingStatus from './MutatingStatus.svelte'
+  import Query from './Query.svelte'
 </script>
 
-<button onclick={() => mutation.mutate()}>Trigger</button>
+<ProviderWrapper>
+  <MutatingStatus />
 
-<div>isMutating: {isMutating.current}</div>
+  <Query />
+</ProviderWrapper>

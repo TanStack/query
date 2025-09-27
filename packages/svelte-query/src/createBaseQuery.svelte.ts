@@ -1,7 +1,7 @@
-import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
+import { watchChanges } from './utils.svelte.js'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type {
   Accessor,
@@ -39,11 +39,25 @@ export function createBaseQuery<
   })
 
   /** Creates the observer */
-  const observer = $derived(
+  // svelte-ignore state_referenced_locally - intentional, initial value
+  let observer = $state(
     new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
       client,
-      untrack(() => resolvedOptions),
+      resolvedOptions,
     ),
+  )
+  watchChanges(
+    () => client,
+    'pre',
+    () => {
+      observer = new Observer<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >(client, resolvedOptions)
+    },
   )
 
   function createResult() {
@@ -65,19 +79,29 @@ export function createBaseQuery<
     return unsubscribe
   })
 
-  $effect.pre(() => {
-    observer.setOptions(resolvedOptions)
-    // The only reason this is necessary is because of `isRestoring`.
-    // Because we don't subscribe while restoring, the following can occur:
-    // - `isRestoring` is true
-    // - `isRestoring` becomes false
-    // - `observer.subscribe` and `observer.updateResult` is called in the above effect,
-    //   but the subsequent `fetch` has already completed
-    // - `result` misses the intermediate restored-but-not-fetched state
-    //
-    // this could technically be its own effect but that doesn't seem necessary
-    update(createResult())
-  })
+  watchChanges(
+    () => resolvedOptions,
+    'pre',
+    () => {
+      observer.setOptions(resolvedOptions)
+    },
+  )
+  watchChanges(
+    () => [resolvedOptions, observer],
+    'pre',
+    () => {
+      // The only reason this is necessary is because of `isRestoring`.
+      // Because we don't subscribe while restoring, the following can occur:
+      // - `isRestoring` is true
+      // - `isRestoring` becomes false
+      // - `observer.subscribe` and `observer.updateResult` is called in the above effect,
+      //   but the subsequent `fetch` has already completed
+      // - `result` misses the intermediate restored-but-not-fetched state
+      //
+      // this could technically be its own effect but that doesn't seem necessary
+      update(createResult())
+    },
+  )
 
   return query
 }
