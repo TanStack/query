@@ -1,13 +1,11 @@
-import React from 'react'
-import { Typography, Link } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import fetch from './fetch'
+import { getFilms } from './api'
 
-export default function Films(props) {
-  const { data, status, error } = useQuery({
+export default function Films() {
+  const { data, status } = useQuery({
     queryKey: ['films'],
-    queryFn: () => fetch('https://swapi.dev/api/films/'),
+    queryFn: () => getFilms(),
   })
 
   if (status === 'pending') {
@@ -19,20 +17,23 @@ export default function Films(props) {
 
   return (
     <div>
-      <Typography variant="h2">Films</Typography>
-      {data.results.map((film) => {
+      <h2 className="text-4xl">Films</h2>
+      {data.results.map((film: any) => {
         const filmUrlParts = film.url.split('/').filter(Boolean)
         const filmId = filmUrlParts[filmUrlParts.length - 1]
         return (
           <article key={filmId}>
-            <Link component={RouterLink} to={`/films/${filmId}`}>
-              <Typography variant="h6">
+            <RouterLink
+              className="text-blue-500 hover:underline"
+              to={`/films/${filmId}`}
+            >
+              <h6 className="text-xl">
                 {film.episode_id}. {film.title}{' '}
                 <em>
                   ({new Date(Date.parse(film.release_date)).getFullYear()})
                 </em>
-              </Typography>
-            </Link>
+              </h6>
+            </RouterLink>
           </article>
         )
       })}

@@ -1,14 +1,10 @@
 <script lang="ts">
+  import { getFilms } from '$lib/api'
   import { createQuery } from '@tanstack/svelte-query'
-
-  const getFilms = async () => {
-    const res = await fetch('https://swapi.dev/api/films/')
-    return await res.json()
-  }
 
   const query = createQuery({
     queryKey: ['films'],
-    queryFn: getFilms,
+    queryFn: () => getFilms(),
   })
 </script>
 
@@ -27,7 +23,7 @@
       {@const filmUrlParts = film.url.split('/').filter(Boolean)}
       {@const filmId = filmUrlParts[filmUrlParts.length - 1]}
       <article>
-        <a href={`/films/${filmId}`}>
+        <a class="text-blue-500 hover:underline" href={`/films/${filmId}`}>
           <h6 class="text-xl">
             {film.episode_id}. {film.title}{' '}
             <em>
