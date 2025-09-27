@@ -1,20 +1,14 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
   import Character from './Character.svelte'
+  import { getFilm } from '$lib/api'
   import type { PageData } from './$types'
 
   export let data: PageData
 
-  const getFilm = async () => {
-    const res = await fetch(
-      `https://swapi.dev/api/films/${data.params.filmId}/`,
-    )
-    return await res.json()
-  }
-
   const query = createQuery({
     queryKey: ['film', data.params.filmId],
-    queryFn: getFilm,
+    queryFn: () => getFilm(data.params.filmId),
   })
 </script>
 

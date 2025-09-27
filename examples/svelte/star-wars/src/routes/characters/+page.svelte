@@ -1,14 +1,10 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-
-  const getCharacters = async () => {
-    const res = await fetch('https://swapi.dev/api/people/')
-    return await res.json()
-  }
+  import { getCharacters } from '$lib/api'
 
   const query = createQuery({
     queryKey: ['characters'],
-    queryFn: getCharacters,
+    queryFn: () => getCharacters(),
   })
 </script>
 
@@ -27,7 +23,10 @@
       {@const personUrlParts = person.url.split('/').filter(Boolean)}
       {@const personId = personUrlParts[personUrlParts.length - 1]}
       <article>
-        <a href={`/characters/${personId}`}>
+        <a
+          class="text-blue-500 hover:underline"
+          href={`/characters/${personId}`}
+        >
           <h6 class="text-xl">{person.name}</h6>
         </a>
       </article>

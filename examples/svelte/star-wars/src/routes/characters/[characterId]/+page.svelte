@@ -2,20 +2,14 @@
   import { createQuery } from '@tanstack/svelte-query'
   import Homeworld from './Homeworld.svelte'
   import Film from './Film.svelte'
+  import { getCharacter } from '$lib/api'
   import type { PageData } from './$types'
 
   export let data: PageData
 
-  const getCharacter = async () => {
-    const res = await fetch(
-      `https://swapi.dev/api/people/${data.params.characterId}/`,
-    )
-    return await res.json()
-  }
-
   const query = createQuery({
     queryKey: ['character', data.params.characterId],
-    queryFn: getCharacter,
+    queryFn: () => getCharacter(data.params.characterId),
   })
 </script>
 
@@ -30,48 +24,18 @@
 {#if $query.status === 'success'}
   {@const homeworldUrlParts = $query.data.homeworld.split('/').filter(Boolean)}
   {@const homeworldId = homeworldUrlParts[homeworldUrlParts.length - 1]}
-  <div>
-    <h2 class="text-4xl">{$query.data.name}</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Feature</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Born</td>
-          <td>{$query.data.birth_year}</td>
-        </tr>
-        <tr>
-          <td>Eyes</td>
-          <td>{$query.data.eye_color}</td>
-        </tr>
-        <tr>
-          <td>Hair</td>
-          <td>{$query.data.hair_color}</td>
-        </tr>
-        <tr>
-          <td>Height</td>
-          <td>{$query.data.height}</td>
-        </tr>
-        <tr>
-          <td>Mass</td>
-          <td>{$query.data.mass}</td>
-        </tr>
-        <tr>
-          <td>Homeworld</td>
-          <td><Homeworld {homeworldId} /></td>
-        </tr>
-      </tbody>
-    </table>
-    <br />
-    <h4 class="text-2xl">Films</h4>
-    {#each $query.data.films as film}
-      {@const filmUrlParts = film.split('/').filter(Boolean)}
-      {@const filmId = filmUrlParts[filmUrlParts.length - 1]}
-      <Film {filmId} />
-    {/each}
-  </div>
+  <h2 class="text-4xl">{$query.data.name}</h2>
+
+  <p><strong>Born</strong>: {$query.data.birth_year}</p>
+  <p><strong>Eyes</strong>: {$query.data.eye_color}</p>
+  <p><strong>Hair</strong>: {$query.data.hair_color}</p>
+  <p><strong>Height</strong>: {$query.data.height}</p>
+  <p><strong>Mass</strong>: {$query.data.mass}</p>
+  <p><strong>Homeworld</strong>: <Homeworld {homeworldId} /></p>
+  <h4 class="text-2xl pt-4">Films</h4>
+  {#each $query.data.films as film}
+    {@const filmUrlParts = film.split('/').filter(Boolean)}
+    {@const filmId = filmUrlParts[filmUrlParts.length - 1]}
+    <Film {filmId} />
+  {/each}
 {/if}
