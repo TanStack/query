@@ -36,6 +36,8 @@ jobs:
         run: npx nx-cloud stop-all-agents
       - name: Version Packages
         run: pnpm run changeset:version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Commit version files
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
