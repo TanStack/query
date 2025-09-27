@@ -16,6 +16,7 @@ import type {
   Persister,
 } from '@tanstack/query-persist-client-core'
 import type { StatusResult } from './utils.svelte.js'
+import { QueryClient } from '../../query-core/src'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
