@@ -36,6 +36,8 @@ jobs:
         run: npx nx-cloud stop-all-agents
       - name: Version Packages
         run: pnpm run changeset:version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Commit version files
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
@@ -48,7 +50,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish Packages
-        run: pnpm run changeset:publish
+        run: |
+          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+          pnpm run changeset:publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Upload coverage to Codecov
