@@ -225,14 +225,12 @@ describe('createQuery', () => {
     await withEffectRoot(async () => {
       const { promise, resolve } = promiseWithResolvers<string>()
 
-      const query = $derived(
-        createQuery<string, Error>(
-          () => ({
-            queryKey: key,
-            queryFn: () => promise,
-          }),
-          () => queryClient,
-        ),
+      const query = createQuery<string, Error>(
+        () => ({
+          queryKey: key,
+          queryFn: () => promise,
+        }),
+        () => queryClient,
       )
 
       expect(query).toEqual(
