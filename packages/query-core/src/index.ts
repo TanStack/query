@@ -7,7 +7,7 @@ export {
   dehydrate,
   hydrate,
 } from './hydration'
-export { InfiniteQueryObserver } from './infiniteQueryObserver'
+export { InfiniteQueryObserver, doesNotExist } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
 export type { MutationCacheNotifyEvent } from './mutationCache'
 export { MutationObserver } from './mutationObserver'
