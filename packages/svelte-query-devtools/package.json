@@ -48,6 +48,7 @@
     "@sveltejs/package": "^2.4.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tanstack/svelte-query": "workspace:*",
+    "@typescript-eslint/parser": "^8.44.0",
     "eslint-plugin-svelte": "^3.11.0",
     "svelte": "^5.39.3",
     "svelte-check": "^4.3.1"
