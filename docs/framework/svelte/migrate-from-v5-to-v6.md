@@ -4,6 +4,8 @@ While Svelte v5 has legacy compatibility with the stores syntax from Svelte v3/v
 
 ## Installation
 
+Please ensure your project has [Svelte v5.25.0](https://github.com/sveltejs/svelte/releases/tag/svelte%405.25.0) or newer.
+
 Run `pnpm add @tanstack/svelte-query@latest` (or your package manager's equivalent).
 
 > Note that `@tanstack/svelte-query` v6 depends on `@tanstack/query-core` v5.
