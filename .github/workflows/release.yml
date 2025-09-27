@@ -46,7 +46,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Auto-merge Changesets PR
-        if: steps.changesets.outputs.hasChangesets
+        if: steps.changesets.outputs.hasChangesets == 'true'
         run: gh pr --repo "$REPO" merge --squash "$PR_NUM"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
