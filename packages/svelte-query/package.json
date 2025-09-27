@@ -62,6 +62,6 @@
     "svelte-check": "^4.3.1"
   },
   "peerDependencies": {
-    "svelte": "^5.7.0"
+    "svelte": "^5.25.0"
   }
 }

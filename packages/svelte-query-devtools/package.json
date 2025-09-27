@@ -54,6 +54,6 @@
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:^",
-    "svelte": "^5.0.0"
+    "svelte": "^5.25.0"
   }
 }
