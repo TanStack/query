@@ -121,5 +121,5 @@ export function injectInfiniteQuery(
       injectInfiniteQueryFn,
       InfiniteQueryObserver as typeof QueryObserver,
     ),
-  )
+  ) as unknown as CreateInfiniteQueryResult
 }
