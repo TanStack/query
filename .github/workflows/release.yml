@@ -42,7 +42,8 @@ jobs:
         run: |
           echo "found=false" >> $GITHUB_OUTPUT
           regex="(major)"
-          for file in ".changeset/*.md"; do
+          shopt -s nullglob
+          for file in .changeset/*.md; do
             if [[ $(cat $file) =~ $regex ]]; then
               echo "found=true" >> $GITHUB_OUTPUT
             fi

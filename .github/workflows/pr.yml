@@ -84,3 +84,18 @@ jobs:
         uses: danielroe/provenance-action@v0.1.1
         with:
           fail-on-downgrade: true
+      - name: Check for Changesets marked as major
+        id: major
+        run: |
+          echo "found=false" >> $GITHUB_OUTPUT
+          regex="(major)"
+          shopt -s nullglob
+          for file in .changeset/*.md; do
+            if [[ $(cat $file) =~ $regex ]]; then
+              echo "found=true" >> $GITHUB_OUTPUT
+            fi
+          done
+      - name: Echo result
+        run: echo $FOUND
+        env:
+          FOUND: ${{ steps.major.outputs.found }}
