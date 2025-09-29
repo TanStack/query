@@ -42,15 +42,15 @@
   ],
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*",
-    "esm-env": "^1.2.1"
+    "esm-env": "^1.2.2"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.4.0",
+    "@sveltejs/package": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tanstack/svelte-query": "workspace:*",
-    "eslint-plugin-svelte": "^3.11.0",
-    "svelte": "^5.39.3",
-    "svelte-check": "^4.3.1"
+    "eslint-plugin-svelte": "^3.12.4",
+    "svelte": "^5.39.6",
+    "svelte-check": "^4.3.2"
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:^",
