@@ -6,7 +6,7 @@ import BaseExample from './BaseExample.svelte'
 import SelectExample from './SelectExample.svelte'
 import ChangeClient from './ChangeClient.svelte'
 import type { Writable } from 'svelte/store'
-import type {  QueryObserverResult } from '@tanstack/query-core'
+import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('createInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
- it('should return the correct states for a successful query', async () => {
+  it('should return the correct states for a successful query', async () => {
     const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
     const rendered = render(BaseExample, {
@@ -131,7 +131,7 @@ describe('createInfiniteQuery', () => {
     })
   })
 
-it('should be able to set new pages with the query client', async () => {
+  it('should be able to set new pages with the query client', async () => {
     const queryClient = new QueryClient()
 
     const rendered = render(ChangeClient, {
@@ -141,7 +141,7 @@ it('should be able to set new pages with the query client', async () => {
     })
 
     await vi.advanceTimersByTimeAsync(11)
-     expect(
+    expect(
       rendered.getByText('Data: {"pages":[0],"pageParams":[0]}'),
     ).toBeInTheDocument()
 
