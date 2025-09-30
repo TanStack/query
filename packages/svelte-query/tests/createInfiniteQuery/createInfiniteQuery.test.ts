@@ -132,12 +132,10 @@ describe('createInfiniteQuery', () => {
   })
 
 it('should be able to set new pages with the query client', async () => {
-    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
     const queryClient = new QueryClient()
 
     const rendered = render(ChangeClient, {
       props: {
-        states: statesStore,
         queryClient,
       },
     })
