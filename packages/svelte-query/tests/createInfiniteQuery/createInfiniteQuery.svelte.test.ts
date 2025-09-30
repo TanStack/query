@@ -1,8 +1,10 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { render } from '@testing-library/svelte'
-import { ref } from '../utils.svelte.js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
+import { ref } from "../utils.svelte.js"
 import BaseExample from './BaseExample.svelte'
 import SelectExample from './SelectExample.svelte'
+import ChangeClient from './ChangeClient.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
@@ -14,7 +16,7 @@ describe('createInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  test('Return the correct states for a successful query', async () => {
+  it('should return the correct states for a successful query', async () => {
     let states = ref<Array<QueryObserverResult>>([])
 
     const rendered = render(BaseExample, {
@@ -103,7 +105,7 @@ describe('createInfiniteQuery', () => {
     })
   })
 
-  test('Select a part of the data', async () => {
+  it('should be able to select a part of the data', async () => {
     let states = ref<Array<QueryObserverResult>>([])
 
     const rendered = render(SelectExample, {
@@ -126,5 +128,26 @@ describe('createInfiniteQuery', () => {
       data: { pages: ['count: 1'] },
       isSuccess: true,
     })
+  })
+
+  it('should be able to set new pages with the query client', async () => {
+    const queryClient = new QueryClient()
+
+    const rendered = render(ChangeClient, {
+      props: {
+        queryClient,
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(
+      rendered.getByText('Data: {"pages":[0],"pageParams":[0]}'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /setPages/i }))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(
+      rendered.getByText('Data: {"pages":[7,8],"pageParams":[7,8]}'),
+    ).toBeInTheDocument()
   })
 })
