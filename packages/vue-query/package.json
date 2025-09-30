@@ -63,7 +63,7 @@
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/query-core": "workspace:*",
-    "@vue/devtools-api": "^6.6.4",
+    "@vue/devtools-api": "^6.6.3",
     "vue-demi": "^0.14.10"
   },
   "devDependencies": {

@@ -13,11 +13,11 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.1.0",
-    "@sveltejs/kit": "^2.43.5",
+    "@sveltejs/kit": "^2.42.2",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tailwindcss/vite": "^4.1.13",
-    "svelte": "^5.39.6",
-    "svelte-check": "^4.3.2",
+    "svelte": "^5.39.3",
+    "svelte-check": "^4.3.1",
     "tailwindcss": "^4.1.13",
     "typescript": "5.8.3",
     "vite": "^6.3.6"
