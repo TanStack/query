@@ -3,29 +3,29 @@
   import { getPostById } from './data'
   import type { Post } from './types'
 
-  export let postId: number
+  const { postId }: { postId: number } = $props()
 
-  const post = createQuery<Post>({
+  const post = createQuery<Post>(() => ({
     queryKey: ['post', postId],
     queryFn: () => getPostById(postId),
-  })
+  }))
 </script>
 
 <div>
   <div>
     <a class="button" href="/"> Back </a>
   </div>
-  {#if !postId || $post.isPending}
+  {#if !postId || post.isPending}
     <span>Loading...</span>
   {/if}
-  {#if $post.error}
-    <span>Error: {$post.error.message}</span>
+  {#if post.error}
+    <span>Error: {post.error.message}</span>
   {/if}
-  {#if $post.isSuccess}
-    <h1>{$post.data.title}</h1>
+  {#if post.isSuccess}
+    <h1>{post.data.title}</h1>
     <div>
-      <p>{$post.data.body}</p>
+      <p>{post.data.body}</p>
     </div>
-    <div>{$post.isFetching ? 'Background Updating...' : ' '}</div>
+    <div>{post.isFetching ? 'Background Updating...' : ' '}</div>
   {/if}
 </div>

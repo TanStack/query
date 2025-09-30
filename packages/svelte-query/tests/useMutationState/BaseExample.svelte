@@ -6,13 +6,20 @@
     useMutationState,
   } from '../../src/index.js'
   import type {
+    Accessor,
     CreateMutationOptions,
     MutationStateOptions,
-  } from '../../src/types.js'
+  } from '../../src/index.js'
 
-  export let successMutationOpts: CreateMutationOptions
-  export let errorMutationOpts: CreateMutationOptions
-  export let mutationStateOpts: MutationStateOptions | undefined = undefined
+  let {
+    successMutationOpts,
+    errorMutationOpts,
+    mutationStateOpts,
+  }: {
+    successMutationOpts: Accessor<CreateMutationOptions>
+    errorMutationOpts: Accessor<CreateMutationOptions>
+    mutationStateOpts?: MutationStateOptions | undefined
+  } = $props()
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
@@ -23,9 +30,9 @@
   const mutationState = useMutationState(mutationStateOpts)
 </script>
 
-<button on:click={() => $successMutation.mutate()}>Success</button>
-<button on:click={() => $errorMutation.mutate()}>Error</button>
+<button onclick={() => successMutation.mutate()}>Success</button>
+<button onclick={() => errorMutation.mutate()}>Error</button>
 
 <div>
-  Data: {JSON.stringify($mutationState.map((state) => state.status))}
+  Data: {JSON.stringify(mutationState.map((state) => state.status))}
 </div>

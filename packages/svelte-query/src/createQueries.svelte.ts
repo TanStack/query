@@ -1,33 +1,33 @@
-import { QueriesObserver, noop, notifyManager } from '@tanstack/query-core'
-import { derived, get, readable } from 'svelte/store'
+import { QueriesObserver } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring.js'
+import { createRawRef } from './containers.svelte.js'
 import { useQueryClient } from './useQueryClient.js'
-import { isSvelteStore } from './utils.js'
-import type { Readable } from 'svelte/store'
-import type { StoreOrVal } from './types.js'
+import type {
+  Accessor,
+  CreateQueryOptions,
+  CreateQueryResult,
+  DefinedCreateQueryResult,
+} from './types.js'
 import type {
   DefaultError,
-  DefinedQueryObserverResult,
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
-  QueryObserverOptions,
-  QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed
-type QueryObserverOptionsForCreateQueries<
+type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
-  QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
+  CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
@@ -37,60 +37,60 @@ type QueryObserverOptionsForCreateQueries<
 type MAXIMUM_DEPTH = 20
 
 // Widen the type of the symbol to enable type inference even if skipToken is not immutable.
-type SkipTokenForUseQueries = symbol
+type SkipTokenForCreateQueries = symbol
 
-type GetQueryObserverOptionsForCreateQueries<T> =
+type GetCreateQueryOptionsForCreateQueries<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
   T extends {
     queryFnData: infer TQueryFnData
     error?: infer TError
     data: infer TData
   }
-    ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData>
+    ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-      ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError>
+      ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError>
       : T extends { data: infer TData; error?: infer TError }
-        ? QueryObserverOptionsForCreateQueries<unknown, TError, TData>
+        ? CreateQueryOptionsForCreateQueries<unknown, TError, TData>
         : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
           T extends [infer TQueryFnData, infer TError, infer TData]
-          ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData>
+          ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData>
           : T extends [infer TQueryFnData, infer TError]
-            ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError>
+            ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError>
             : T extends [infer TQueryFnData]
-              ? QueryObserverOptionsForCreateQueries<TQueryFnData>
+              ? CreateQueryOptionsForCreateQueries<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                      | SkipTokenForUseQueries
+                      | SkipTokenForCreateQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? QueryObserverOptionsForCreateQueries<
+                ? CreateQueryOptionsForCreateQueries<
                     TQueryFnData,
                     unknown extends TError ? DefaultError : TError,
                     unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
                 : // Fallback
-                  QueryObserverOptionsForCreateQueries
+                  CreateQueryOptionsForCreateQueries
 
-// A defined initialData setting should return a DefinedQueryObserverResult rather than CreateQueryResult
+// A defined initialData setting should return a DefinedCreateQueryResult rather than CreateQueryResult
 type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
   initialData?: infer TInitialData
 }
   ? unknown extends TInitialData
-    ? QueryObserverResult<TData, TError>
+    ? CreateQueryResult<TData, TError>
     : TInitialData extends TData
-      ? DefinedQueryObserverResult<TData, TError>
+      ? DefinedCreateQueryResult<TData, TError>
       : TInitialData extends () => infer TInitialDataResult
         ? unknown extends TInitialDataResult
-          ? QueryObserverResult<TData, TError>
+          ? CreateQueryResult<TData, TError>
           : TInitialDataResult extends TData
-            ? DefinedQueryObserverResult<TData, TError>
-            : QueryObserverResult<TData, TError>
-        : QueryObserverResult<TData, TError>
-  : QueryObserverResult<TData, TError>
+            ? DefinedCreateQueryResult<TData, TError>
+            : CreateQueryResult<TData, TError>
+        : CreateQueryResult<TData, TError>
+  : CreateQueryResult<TData, TError>
 
 type GetCreateQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -111,7 +111,7 @@ type GetCreateQueryResult<T> =
                 T extends {
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
-                      | SkipTokenForUseQueries
+                      | SkipTokenForCreateQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -121,7 +121,7 @@ type GetCreateQueryResult<T> =
                     unknown extends TError ? DefaultError : TError
                   >
                 : // Fallback
-                  QueryObserverResult
+                  CreateQueryResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -131,15 +131,15 @@ export type QueriesOptions<
   TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
-  ? Array<QueryObserverOptionsForCreateQueries>
+  ? Array<CreateQueryOptionsForCreateQueries>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResults, GetQueryObserverOptionsForCreateQueries<Head>]
+      ? [...TResults, GetCreateQueryOptionsForCreateQueries<Head>]
       : T extends [infer Head, ...infer Tails]
         ? QueriesOptions<
             [...Tails],
-            [...TResults, GetQueryObserverOptionsForCreateQueries<Head>],
+            [...TResults, GetCreateQueryOptionsForCreateQueries<Head>],
             [...TDepth, 1]
           >
         : ReadonlyArray<unknown> extends T
@@ -147,7 +147,7 @@ export type QueriesOptions<
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
             T extends Array<
-                QueryObserverOptionsForCreateQueries<
+                CreateQueryOptionsForCreateQueries<
                   infer TQueryFnData,
                   infer TError,
                   infer TData,
@@ -155,7 +155,7 @@ export type QueriesOptions<
                 >
               >
             ? Array<
-                QueryObserverOptionsForCreateQueries<
+                CreateQueryOptionsForCreateQueries<
                   TQueryFnData,
                   TError,
                   TData,
@@ -163,7 +163,7 @@ export type QueriesOptions<
                 >
               >
             : // Fallback
-              Array<QueryObserverOptionsForCreateQueries>
+              Array<CreateQueryOptionsForCreateQueries>
 
 /**
  * QueriesResults reducer recursively maps type param to results
@@ -173,7 +173,7 @@ export type QueriesResults<
   TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
-  ? Array<QueryObserverResult>
+  ? Array<CreateQueryResult>
   : T extends []
     ? []
     : T extends [infer Head]
@@ -190,75 +190,65 @@ export function createQueries<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
 >(
-  {
-    queries,
-    ...options
-  }: {
+  createQueriesOptions: Accessor<{
     queries:
-      | StoreOrVal<[...QueriesOptions<T>]>
-      | StoreOrVal<
-          [...{ [K in keyof T]: GetQueryObserverOptionsForCreateQueries<T[K]> }]
-        >
+      | readonly [...QueriesOptions<T>]
+      | readonly [
+          ...{ [K in keyof T]: GetCreateQueryOptionsForCreateQueries<T[K]> },
+        ]
     combine?: (result: QueriesResults<T>) => TCombinedResult
-  },
-  queryClient?: QueryClient,
-): Readable<TCombinedResult> {
-  const client = useQueryClient(queryClient)
+  }>,
+  queryClient?: Accessor<QueryClient>,
+): TCombinedResult {
+  const client = $derived(useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
-  const queriesStore = isSvelteStore(queries) ? queries : readable(queries)
-
-  const defaultedQueriesStore = derived(
-    [queriesStore, isRestoring],
-    ([$queries, $isRestoring]) => {
-      return $queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(
-          opts as QueryObserverOptions,
-        )
-        // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = $isRestoring
-          ? 'isRestoring'
-          : 'optimistic'
-        return defaultedOptions
-      })
-    },
-  )
-  const observer = new QueriesObserver<TCombinedResult>(
-    client,
-    get(defaultedQueriesStore),
-    options as QueriesObserverOptions<TCombinedResult>,
+  const { queries, combine } = $derived.by(createQueriesOptions)
+  const resolvedQueryOptions = $derived(
+    queries.map((opts) => {
+      const resolvedOptions = client.defaultQueryOptions(opts)
+      // Make sure the results are already in fetching state before subscribing or updating options
+      resolvedOptions._optimisticResults = isRestoring.current
+        ? 'isRestoring'
+        : 'optimistic'
+      return resolvedOptions
+    }),
   )
 
-  defaultedQueriesStore.subscribe(($defaultedQueries) => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setQueries(
-      $defaultedQueries,
-      options as QueriesObserverOptions<TCombinedResult>,
+  // can't do same as createMutation, as QueriesObserver has no `setOptions` method
+  const observer = $derived(
+    new QueriesObserver<TCombinedResult>(
+      client,
+      resolvedQueryOptions,
+      combine as QueriesObserverOptions<TCombinedResult>,
+    ),
+  )
+
+  function createResult() {
+    const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
+      resolvedQueryOptions,
+      combine as QueriesObserverOptions<TCombinedResult>['combine'],
     )
+    return getCombinedResult(trackResult())
+  }
+
+  // @ts-expect-error - the crazy-complex TCombinedResult type doesn't like being called an array
+  // svelte-ignore state_referenced_locally
+  const [results, update] = createRawRef<TCombinedResult>(createResult())
+
+  $effect(() => {
+    const unsubscribe = isRestoring.current
+      ? () => undefined
+      : observer.subscribe(() => update(createResult()))
+    return unsubscribe
   })
 
-  const result = derived([isRestoring], ([$isRestoring], set) => {
-    const unsubscribe = $isRestoring
-      ? noop
-      : observer.subscribe(notifyManager.batchCalls(set))
-
-    return () => unsubscribe()
+  $effect.pre(() => {
+    observer.setQueries(resolvedQueryOptions, {
+      combine,
+    } as QueriesObserverOptions<TCombinedResult>)
+    update(createResult())
   })
 
-  const { subscribe } = derived(
-    [result, defaultedQueriesStore],
-    // @ts-expect-error svelte-check thinks this is unused
-    ([$result, $defaultedQueriesStore]) => {
-      const [rawResult, combineResult, trackResult] =
-        observer.getOptimisticResult(
-          $defaultedQueriesStore,
-          (options as QueriesObserverOptions<TCombinedResult>).combine,
-        )
-      $result = rawResult
-      return combineResult(trackResult())
-    },
-  )
-
-  return { subscribe }
+  return results
 }
