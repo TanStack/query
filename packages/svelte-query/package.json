@@ -17,8 +17,7 @@
   "keywords": [
     "tanstack",
     "query",
-    "svelte",
-    "swr"
+    "svelte"
   ],
   "scripts": {
     "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
