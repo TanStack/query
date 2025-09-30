@@ -1,5 +1,3 @@
-## Overview
-
 While Svelte v5 has legacy compatibility with the stores syntax from Svelte v3/v4, it has been somewhat buggy and unreliable for this adapter. The `@tanstack/svelte-query` v6 adapter fully migrates to the runes syntax, which relies on signals. This rewrite should also simplify the code required to ensure your query inputs remain reactive.
 
 ## Installation
@@ -10,50 +8,50 @@ Run `pnpm add @tanstack/svelte-query@latest` (or your package manager's equivale
 
 > Note that `@tanstack/svelte-query` v6 depends on `@tanstack/query-core` v5.
 
-## Thunks
+## Function Inputs
 
-Like the Solid adapter, most functions for the Svelte adapter now require options to be provided as a "thunk" (`() => options`) to provide reactivity.
+Like the Angular and Solid adapters, most functions for the Svelte adapter now require options to be provided as a "thunk" (`() => options`) to provide reactivity. TypeScript will be your friend here and warn you if you're missing this notation.
 
-```diff
--const query = createQuery({
-+const query = createQuery(() => ({
-  queryKey: ['todos'],
-  queryFn: () => fetchTodos(),
--})
-+}))
+```ts
+- const query = createQuery({  // [!code --]
++ const query = createQuery(() => ({ // [!code ++]
+    queryKey: ['todos'],
+    queryFn: () => fetchTodos(),
+- }) // [!code --]
++ })) // [!code ++]
 ```
 
 ## Accessing Properties
 
 Given the adapter no longer uses stores, it is no longer necessary to prefix with `$`.
 
-```diff
--{#if $todos.isSuccess}
-+{#if todos.isSuccess}
-  <ul>
--    {#each $todos.data.items as item}
-+    {#each todos.data.items as item}
-      <li>{item}</li>
-    {/each}
-  </ul>
-{/if}
+```svelte
+- {#if $todos.isSuccess} // [!code --]
++ {#if todos.isSuccess} // [!code ++]
+    <ul>
+-     {#each $todos.data.items as item} // [!code --]
++     {#each todos.data.items as item} // [!code ++]
+        <li>{item}</li>
+      {/each}
+    </ul>
+  {/if}
 ```
 
 ## Reactivity
 
 You previously needed to do some funky things with stores to achieve reactivity for inputs. This is no longer the case! You don't even need to wrap your query in a `$derived`.
 
-```diff
--const intervalMs = writable(1000)
-+let intervalMs = $state(1000)
+```ts
+- const intervalMs = writable(1000) // [!code --]
++ let intervalMs = $state(1000) // [!code ++]
 
--const query = createQuery(derived(intervalMs, ($intervalMs) => ({
-+const query = createQuery(() => ({
-  queryKey: ['refetch'],
-  queryFn: async () => await fetch('/api/data').then((r) => r.json()),
-  refetchInterval: $intervalMs,
--})))
-+}))
+- const query = createQuery(derived(intervalMs, ($intervalMs) => ({ // [!code --]
++ const query = createQuery(() => ({ // [!code ++]
+    queryKey: ['refetch'],
+    queryFn: async () => await fetch('/api/data').then((r) => r.json()),
+    refetchInterval: $intervalMs,
+- }))) // [!code --]
++ })) // [!code ++]
 ```
 
 ## Disabling Legacy Mode
