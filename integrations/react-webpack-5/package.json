@@ -11,11 +11,11 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.4",
-    "@babel/preset-env": "^7.28.3",
-    "@babel/preset-react": "^7.27.1",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.25.9",
     "babel-loader": "^9.2.1",
-    "html-webpack-plugin": "^5.6.4",
+    "html-webpack-plugin": "^5.6.3",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4"
   }
