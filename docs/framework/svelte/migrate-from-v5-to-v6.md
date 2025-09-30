@@ -1,6 +1,6 @@
 ## Overview
 
-While Svelte v5 has legacy compatibility with the stores syntax from Svelte v3/v4, it has been somewhat buggy and unreliable for this TanStack Query adapter. The `@tanstack/svelte-query` v6 adapter fully migrates to runes syntax.
+While Svelte v5 has legacy compatibility with the stores syntax from Svelte v3/v4, it has been somewhat buggy and unreliable for this adapter. The `@tanstack/svelte-query` v6 adapter fully migrates to the runes syntax, which relies on signals. This rewrite should also simplify the code required to ensure your query inputs remain reactive.
 
 ## Installation
 
@@ -12,7 +12,7 @@ Run `pnpm add @tanstack/svelte-query@latest` (or your package manager's equivale
 
 ## Thunks
 
-Like the Solid adapter, most functions for the Svelte adapter now require options to be provided as a "thunk" (`() => options`) to maintain reactivity.
+Like the Solid adapter, most functions for the Svelte adapter now require options to be provided as a "thunk" (`() => options`) to provide reactivity.
 
 ```diff
 -const query = createQuery({
@@ -37,6 +37,23 @@ Given the adapter no longer uses stores, it is no longer necessary to prefix wit
     {/each}
   </ul>
 {/if}
+```
+
+## Reactivity
+
+You previously needed to do some funky things with stores to achieve reactivity for inputs. This is no longer the case! You don't even need to wrap your query in a `$derived`.
+
+```diff
+-const intervalMs = writable(1000)
++let intervalMs = $state(1000)
+
+-const query = createQuery(derived(intervalMs, ($intervalMs) => ({
++const query = createQuery(() => ({
+  queryKey: ['refetch'],
+  queryFn: async () => await fetch('/api/data').then((r) => r.json()),
+  refetchInterval: $intervalMs,
+-})))
++}))
 ```
 
 ## Disabling Legacy Mode
