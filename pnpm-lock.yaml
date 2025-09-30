@@ -2389,6 +2389,9 @@ importers:
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
+      superjson:
+        specifier: ^2.2.2
+        version: 2.2.2
 
   packages/query-devtools:
     devDependencies:
