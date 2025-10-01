@@ -42,7 +42,26 @@ const baseTestCases = {
             }
           `,
       })),
-    ),
+    ).concat([
+      {
+        name: `should pass when useQueries with combine is passed to ${reactHookAlias} as dependency`,
+        code: `
+            ${reactHookImport}
+            import { useQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const queries = useQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ],
+                combine: (results) => ({ data: results[0]?.data })
+              });
+              const callback = ${reactHookInvocation}(() => { queries.data }, [queries]);
+              return;
+            }
+          `,
+      },
+    ]),
   invalid: ({
     reactHookImport,
     reactHookInvocation,
@@ -88,7 +107,31 @@ const baseTestCases = {
           },
         ],
       })),
-    ),
+    ).concat([
+      {
+        name: `result of useQueries without combine is passed to ${reactHookInvocation} as dependency`,
+        code: `
+            ${reactHookImport}
+            import { useQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const queries = useQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ]
+              });
+              const callback = ${reactHookInvocation}(() => { queries[0]?.data }, [queries]);
+              return;
+            }
+          `,
+        errors: [
+          {
+            messageId: 'noUnstableDeps',
+            data: { reactHook: reactHookAlias, queryHook: 'useQueries' },
+          },
+        ],
+      },
+    ]),
 }
 
 const testCases = (reactHookName: string) => [
