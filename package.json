@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.17.0",
   "type": "module",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
@@ -29,7 +29,9 @@
     "prettier:write": "pnpm run prettier --write",
     "docs:generate": "node scripts/generateDocs.ts",
     "verify-links": "node scripts/verify-links.ts",
-    "cipublish": "node scripts/publish.ts"
+    "changeset": "changeset",
+    "changeset:version": "changeset version && pnpm install --no-frozen-lockfile && pnpm prettier:write",
+    "changeset:publish": "changeset publish"
   },
   "nx": {
     "includedScripts": [
@@ -39,31 +41,32 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
-    "@cspell/eslint-plugin": "^8.17.1",
-    "@eslint-react/eslint-plugin": "^1.52.3",
-    "@tanstack/config": "^0.19.0",
-    "@testing-library/jest-dom": "^6.6.3",
+    "@changesets/cli": "^2.29.5",
+    "@cspell/eslint-plugin": "^9.2.1",
+    "@eslint-react/eslint-plugin": "^2.0.1",
+    "@svitejs/changesets-changelog-github-compact": "^1.2.0",
+    "@tanstack/config": "^0.20.2",
+    "@testing-library/jest-dom": "^6.8.0",
     "@types/node": "^22.15.3",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
-    "@vitest/coverage-istanbul": "3.1.3",
+    "@vitest/coverage-istanbul": "3.2.4",
     "@vitest/eslint-plugin": "^1.1.36",
-    "cpy-cli": "^5.0.0",
     "esbuild-plugin-file-path-extensions": "^2.1.4",
-    "eslint": "^9.15.0",
-    "eslint-plugin-react-hooks": "^6.0.0-rc.1",
-    "jsdom": "^25.0.1",
-    "knip": "^5.50.2",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react-hooks": "^6.0.0-rc.2",
+    "jsdom": "^27.0.0",
+    "knip": "^5.63.1",
     "markdown-link-extractor": "^4.0.2",
-    "nx": "21.3.0",
+    "nx": "21.5.3",
     "premove": "^4.0.0",
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
-    "publint": "^0.3.12",
+    "publint": "^0.3.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sherif": "^1.6.1",
-    "tinyglobby": "^0.2.14",
+    "tinyglobby": "^0.2.15",
     "tsup": "^8.4.0",
     "typescript": "5.8.3",
     "typescript50": "npm:typescript@5.0",
@@ -74,8 +77,8 @@
     "typescript55": "npm:typescript@5.5",
     "typescript56": "npm:typescript@5.6",
     "typescript57": "npm:typescript@5.7",
-    "vite": "^6.3.5",
-    "vitest": "3.1.3"
+    "vite": "^6.3.6",
+    "vitest": "3.2.4"
   },
   "pnpm": {
     "overrides": {

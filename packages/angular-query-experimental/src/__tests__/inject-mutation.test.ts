@@ -1,4 +1,5 @@
 import {
+  ApplicationRef,
   Component,
   Injector,
   input,
@@ -465,6 +466,231 @@ describe('injectMutation', () => {
           },
         )
       }).not.toThrow()
+    })
+
+    test('should complete mutation before whenStable() resolves', async () => {
+      const app = TestBed.inject(ApplicationRef)
+      let mutationStarted = false
+      let mutationCompleted = false
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationKey: ['pendingTasksTest'],
+          mutationFn: async (data: string) => {
+            mutationStarted = true
+            await sleep(50)
+            mutationCompleted = true
+            return `processed: ${data}`
+          },
+        })),
+      )
+
+      // Initial state
+      expect(mutation.data()).toBeUndefined()
+      expect(mutationStarted).toBe(false)
+
+      // Start mutation
+      mutation.mutate('test')
+
+      // Wait for mutation to start and Angular to be "stable"
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(60)
+      await stablePromise
+
+      // After whenStable(), mutation should be complete
+      expect(mutationStarted).toBe(true)
+      expect(mutationCompleted).toBe(true)
+      expect(mutation.isSuccess()).toBe(true)
+      expect(mutation.data()).toBe('processed: test')
+    })
+
+    test('should handle synchronous mutation with retry', async () => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+        ],
+      })
+
+      const app = TestBed.inject(ApplicationRef)
+      let attemptCount = 0
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          retry: 2,
+          retryDelay: 0, // No delay for synchronous retry
+          mutationFn: async (data: string) => {
+            attemptCount++
+            if (attemptCount <= 2) {
+              throw new Error(`Sync attempt ${attemptCount} failed`)
+            }
+            return `processed: ${data}`
+          },
+        })),
+      )
+
+      // Start mutation
+      mutation.mutate('retry-test')
+
+      // Synchronize pending effects for each retry attempt
+      TestBed.tick()
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(10)
+
+      TestBed.tick()
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(10)
+
+      TestBed.tick()
+
+      const stablePromise = app.whenStable()
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(10)
+      await stablePromise
+
+      expect(mutation.isSuccess()).toBe(true)
+      expect(mutation.data()).toBe('processed: retry-test')
+      expect(attemptCount).toBe(3) // Initial + 2 retries
+    })
+
+    test('should handle multiple synchronous mutations on same key', async () => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+        ],
+      })
+
+      const app = TestBed.inject(ApplicationRef)
+      let callCount = 0
+
+      const mutation1 = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationKey: ['sync-mutation-key'],
+          mutationFn: async (data: string) => {
+            callCount++
+            return `mutation1: ${data}`
+          },
+        })),
+      )
+
+      const mutation2 = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationKey: ['sync-mutation-key'],
+          mutationFn: async (data: string) => {
+            callCount++
+            return `mutation2: ${data}`
+          },
+        })),
+      )
+
+      // Start both mutations
+      mutation1.mutate('test1')
+      mutation2.mutate('test2')
+
+      // Synchronize pending effects
+      TestBed.tick()
+
+      const stablePromise = app.whenStable()
+      // Flush microtasks to allow TanStack Query's scheduled notifications to process
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(1)
+      await stablePromise
+
+      expect(mutation1.isSuccess()).toBe(true)
+      expect(mutation1.data()).toBe('mutation1: test1')
+      expect(mutation2.isSuccess()).toBe(true)
+      expect(mutation2.data()).toBe('mutation2: test2')
+      expect(callCount).toBe(2)
+    })
+
+    test('should handle synchronous mutation with optimistic updates', async () => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+        ],
+      })
+
+      const app = TestBed.inject(ApplicationRef)
+      const testQueryKey = ['sync-optimistic']
+      let onMutateCalled = false
+      let onSuccessCalled = false
+
+      // Set initial data
+      queryClient.setQueryData(testQueryKey, 'initial')
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationFn: async (data: string) => `final: ${data}`, // Synchronous resolution
+          onMutate: async (variables) => {
+            onMutateCalled = true
+            const previousData = queryClient.getQueryData(testQueryKey)
+            queryClient.setQueryData(testQueryKey, `optimistic: ${variables}`)
+            return { previousData }
+          },
+          onSuccess: (data) => {
+            onSuccessCalled = true
+            queryClient.setQueryData(testQueryKey, data)
+          },
+        })),
+      )
+
+      // Start mutation
+      mutation.mutate('test')
+
+      // Synchronize pending effects
+      TestBed.tick()
+
+      const stablePromise = app.whenStable()
+      // Flush microtasks to allow TanStack Query's scheduled notifications to process
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(1)
+      await stablePromise
+
+      expect(onMutateCalled).toBe(true)
+      expect(onSuccessCalled).toBe(true)
+      expect(mutation.isSuccess()).toBe(true)
+      expect(mutation.data()).toBe('final: test')
+      expect(queryClient.getQueryData(testQueryKey)).toBe('final: test')
+    })
+
+    test('should handle synchronous mutation cancellation', async () => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+        ],
+      })
+
+      const app = TestBed.inject(ApplicationRef)
+
+      const mutation = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationKey: ['cancel-sync'],
+          mutationFn: async (data: string) => `processed: ${data}`, // Synchronous resolution
+        })),
+      )
+
+      // Start mutation
+      mutation.mutate('test')
+
+      // Synchronize pending effects
+      TestBed.tick()
+
+      const stablePromise = app.whenStable()
+      // Flush microtasks to allow TanStack Query's scheduled notifications to process
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(1)
+      await stablePromise
+
+      // Synchronous mutations complete immediately
+      expect(mutation.isSuccess()).toBe(true)
+      expect(mutation.data()).toBe('processed: test')
     })
   })
 })

@@ -129,8 +129,8 @@
               "to": "framework/svelte/ssr"
             },
             {
-              "label": "Reactivity",
-              "to": "framework/svelte/reactivity"
+              "label": "Migrate from v5 to v6",
+              "to": "framework/svelte/migrate-from-v5-to-v6"
             }
           ]
         },
@@ -706,6 +706,10 @@
             {
               "label": "Default Query Fn",
               "to": "framework/angular/guides/default-query-function"
+            },
+            {
+              "label": "Testing",
+              "to": "framework/angular/guides/testing"
             },
             {
               "label": "Does this replace state managers?",
