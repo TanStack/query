@@ -28,10 +28,11 @@ const baseTestCases = {
             }
               `,
       },
-    ].concat(
-      useQueryHookNames.map((queryHook) => ({
-        name: `should pass result of ${queryHook} is passed to ${reactHookInvocation} as dependency`,
-        code: `
+    ]
+      .concat(
+        useQueryHookNames.map((queryHook) => ({
+          name: `should pass result of ${queryHook} is passed to ${reactHookInvocation} as dependency`,
+          code: `
             ${reactHookImport}
             import { ${queryHook} } from "@tanstack/react-query";
 
@@ -41,11 +42,12 @@ const baseTestCases = {
               return;
             }
           `,
-      })),
-    ).concat([
-      {
-        name: `should pass when useQueries with combine is passed to ${reactHookAlias} as dependency`,
-        code: `
+        })),
+      )
+      .concat([
+        {
+          name: `should pass when useQueries with combine is passed to ${reactHookAlias} as dependency`,
+          code: `
             ${reactHookImport}
             import { useQueries } from "@tanstack/react-query";
 
@@ -60,8 +62,8 @@ const baseTestCases = {
               return;
             }
           `,
-      },
-    ]),
+        },
+      ]),
   invalid: ({
     reactHookImport,
     reactHookInvocation,
@@ -87,10 +89,11 @@ const baseTestCases = {
           },
         ],
       },
-    ].concat(
-      useQueryHookNames.map((queryHook) => ({
-        name: `result of ${queryHook} is passed to ${reactHookInvocation} as dependency`,
-        code: `
+    ]
+      .concat(
+        useQueryHookNames.map((queryHook) => ({
+          name: `result of ${queryHook} is passed to ${reactHookInvocation} as dependency`,
+          code: `
             ${reactHookImport}
             import { ${queryHook} } from "@tanstack/react-query";
 
@@ -100,17 +103,18 @@ const baseTestCases = {
               return;
             }
           `,
-        errors: [
-          {
-            messageId: 'noUnstableDeps',
-            data: { reactHook: reactHookAlias, queryHook },
-          },
-        ],
-      })),
-    ).concat([
-      {
-        name: `result of useQueries without combine is passed to ${reactHookInvocation} as dependency`,
-        code: `
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook },
+            },
+          ],
+        })),
+      )
+      .concat([
+        {
+          name: `result of useQueries without combine is passed to ${reactHookInvocation} as dependency`,
+          code: `
             ${reactHookImport}
             import { useQueries } from "@tanstack/react-query";
 
@@ -124,14 +128,14 @@ const baseTestCases = {
               return;
             }
           `,
-        errors: [
-          {
-            messageId: 'noUnstableDeps',
-            data: { reactHook: reactHookAlias, queryHook: 'useQueries' },
-          },
-        ],
-      },
-    ]),
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useQueries' },
+            },
+          ],
+        },
+      ]),
 }
 
 const testCases = (reactHookName: string) => [

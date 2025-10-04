@@ -67,16 +67,20 @@ export const rule = createRule({
       }
     }
 
-    function hasCombineProperty(callExpression: TSESTree.CallExpression): boolean {
+    function hasCombineProperty(
+      callExpression: TSESTree.CallExpression,
+    ): boolean {
       if (callExpression.arguments.length === 0) return false
 
       const firstArg = callExpression.arguments[0]
-      if (!firstArg || firstArg.type !== AST_NODE_TYPES.ObjectExpression) return false
+      if (!firstArg || firstArg.type !== AST_NODE_TYPES.ObjectExpression)
+        return false
 
-      return firstArg.properties.some(prop =>
-        prop.type === AST_NODE_TYPES.Property &&
-        prop.key.type === AST_NODE_TYPES.Identifier &&
-        prop.key.name === 'combine'
+      return firstArg.properties.some(
+        (prop) =>
+          prop.type === AST_NODE_TYPES.Property &&
+          prop.key.type === AST_NODE_TYPES.Identifier &&
+          prop.key.name === 'combine',
       )
     }
 
@@ -108,7 +112,10 @@ export const rule = createRule({
           allHookNames.includes(node.init.callee.name)
         ) {
           // Special case for useQueries with combine property - it's stable
-          if (node.init.callee.name === 'useQueries' && hasCombineProperty(node.init)) {
+          if (
+            node.init.callee.name === 'useQueries' &&
+            hasCombineProperty(node.init)
+          ) {
             // Don't track useQueries with combine as unstable
             return
           }
