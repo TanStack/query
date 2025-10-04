@@ -6,6 +6,7 @@ import type {
   FetchStatus,
   MutationKey,
   MutationStatus,
+  NonFunctionGuard,
   QueryFunction,
   QueryKey,
   QueryOptions,
@@ -66,15 +67,8 @@ export interface MutationFilters<
   status?: MutationStatus
 }
 
-/**
- * Utility type that excludes function types from T.
- * If T is a function, it resolves to `never`, effectively removing T
- * from unions and preventing ambiguity in value-or-function patterns.
- */
-export type NonFunction<T> = T extends (...args: Array<any>) => any ? never : T
-
 export type Updater<TInput, TOutput> =
-  | NonFunction<TOutput>
+  | NonFunctionGuard<TOutput>
   | ((input: TInput) => TOutput)
 
 export type QueryTypeFilter = 'all' | 'active' | 'inactive'
@@ -94,7 +88,7 @@ export function noop() {}
  * throughout the codebase and provides a clean way to handle the common pattern where
  * options can be static values or dynamic functions.
  *
- * The NonFunction<T> constraint eliminates ambiguity by ensuring T can never be a function
+ * The NonFunctionGuard<T> constraint eliminates ambiguity by ensuring T can never be a function
  * type. This makes the value-or-function pattern type-safe and unambiguous.
  *
  * The function provides two overloads: one that includes `| undefined` for optional values
@@ -140,21 +134,21 @@ export function noop() {}
  * ```
  */
 export function resolveOption<T, TArgs extends Array<any>>(
-  valueOrFn: NonFunction<T> | ((...args: TArgs) => T) | undefined,
+  valueOrFn: NonFunctionGuard<T> | ((...args: TArgs) => T) | undefined,
   ...args: TArgs
 ): T | undefined
 // Overload for when value is guaranteed to be present
 export function resolveOption<T, TArgs extends Array<any>>(
-  valueOrFn: NonFunction<T> | ((...args: TArgs) => T),
+  valueOrFn: NonFunctionGuard<T> | ((...args: TArgs) => T),
   ...args: TArgs
 ): T
 // Implementation
 export function resolveOption<T, TArgs extends Array<any>>(
-  valueOrFn: NonFunction<T> | ((...args: TArgs) => T) | undefined,
+  valueOrFn: NonFunctionGuard<T> | ((...args: TArgs) => T) | undefined,
   ...args: TArgs
 ): T | undefined {
   if (typeof valueOrFn === 'function') {
-    // Because of our NonFunction<T> utility, TypeScript now correctly
+    // Because of our NonFunctionGuard<T> utility, TypeScript now correctly
     // infers that if valueOrFn is a function, it must be the producer `(...args: TArgs) => T`.
     return (valueOrFn as (...args: TArgs) => T)(...args)
   }

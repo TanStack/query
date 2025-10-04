@@ -166,6 +166,14 @@ export type QueryFunctionContext<
 
 export type InitialDataFunction<T> = () => T | undefined
 
+/**
+ * `NonFunctionGuard<T>` ensures T is not a function type.
+ *
+ * If T is a function, it resolves to `never`, effectively removing T
+ * from unions and preventing ambiguity in value-or-function patterns.
+ */
+export type NonFunctionGuard<T> = T extends Function ? never : T
+
 type PlaceholderDataFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -422,8 +430,13 @@ export interface QueryObserverOptions<
    * If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
    */
   placeholderData?:
-    | TQueryData
-    | PlaceholderDataFunction<TQueryData, TError, TQueryData, TQueryKey>
+    | NonFunctionGuard<TQueryData>
+    | PlaceholderDataFunction<
+        NonFunctionGuard<TQueryData>,
+        TError,
+        NonFunctionGuard<TQueryData>,
+        TQueryKey
+      >
 
   _optimisticResults?: 'optimistic' | 'isRestoring'
 
