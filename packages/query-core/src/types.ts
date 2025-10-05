@@ -174,7 +174,7 @@ export type InitialDataFunction<T> = () => T | undefined
  */
 export type NonFunctionGuard<T> = T extends Function ? never : T
 
-type PlaceholderDataFunction<
+export type PlaceholderDataFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
   TQueryData = TQueryFnData,
