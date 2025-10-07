@@ -44,6 +44,7 @@ export default [
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'no-case-declarations': 'off',
+      'prefer-const': 'off',
     },
   },
   {
