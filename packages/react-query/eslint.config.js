@@ -15,6 +15,8 @@ export default [
       '@eslint-react/no-context-provider': 'off', // We need to be React 18 compatible
       '@eslint-react/dom/no-missing-button-type': 'off',
       'react-hooks/exhaustive-deps': 'error',
+      'react-hooks/unsupported-syntax': 'error',
+      'react-hooks/incompatible-library': 'error',
     },
   },
   {
