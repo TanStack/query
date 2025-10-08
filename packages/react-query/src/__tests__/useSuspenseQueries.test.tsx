@@ -258,6 +258,7 @@ describe('useSuspenseQueries 2', () => {
     }
 
     function Page() {
+      // eslint-disable-next-line react-hooks/purity
       const ref = React.useRef(Math.random())
       const result = useSuspenseQueries({
         queries: [
@@ -665,6 +666,7 @@ describe('useSuspenseQueries 2', () => {
           {
             queryKey: key,
             // @ts-expect-error
+            // eslint-disable-next-line react-hooks/purity
             queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
           },
         ],
