@@ -25,6 +25,7 @@ describe('useSuspenseInfiniteQuery', () => {
         initialPageParam: 1,
         getNextPageParam: () => 1,
         // @ts-expect-error
+        // eslint-disable-next-line react-hooks/purity
         queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
       })
 
