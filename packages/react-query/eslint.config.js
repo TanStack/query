@@ -13,8 +13,8 @@ export default [
     ...pluginReact.configs.recommended,
     rules: {
       '@eslint-react/no-context-provider': 'off', // We need to be React 18 compatible
-      '@eslint-react/dom/no-missing-button-type': 'off',
       'react-hooks/exhaustive-deps': 'error',
+      'react-hooks/rules-of-hooks': 'error',
       'react-hooks/unsupported-syntax': 'error',
       'react-hooks/incompatible-library': 'error',
     },
@@ -22,6 +22,7 @@ export default [
   {
     files: ['**/__tests__/**'],
     rules: {
+      '@eslint-react/dom/no-missing-button-type': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
     },
   },
