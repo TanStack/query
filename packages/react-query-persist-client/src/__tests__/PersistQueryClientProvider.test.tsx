@@ -371,7 +371,6 @@ describe('PersistQueryClientProvider', () => {
       const state = useQuery({
         queryKey: key,
         queryFn: async () => {
-          // eslint-disable-next-line react-hooks/react-compiler
           fetched = true
           await sleep(10)
           return 'fetched'
