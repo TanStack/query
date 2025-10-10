@@ -63,6 +63,13 @@ export interface StoragePersisterOptions<TStorageValue = string> {
    */
   prefix?: string
   /**
+   * If set to `true`, the query will refetch on successful query restoration if the data is stale.
+   * If set to `false`, the query will not refetch on successful query restoration.
+   * If set to `'always'`, the query will always refetch on successful query restoration.
+   * Defaults to `true`.
+   */
+  refetchOnRestore?: boolean | 'always'
+  /**
    * Filters to narrow down which Queries should be persisted.
    */
   filters?: QueryFilters
@@ -96,6 +103,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     StoragePersisterOptions<TStorageValue>
   >['deserialize'],
   prefix = PERSISTER_KEY_PREFIX,
+  refetchOnRestore = true,
   filters,
 }: StoragePersisterOptions<TStorageValue>) {
   function isExpiredOrBusted(persistedQuery: PersistedQuery) {
@@ -204,7 +212,10 @@ export function experimental_createQueryPersister<TStorageValue = string>({
             errorUpdatedAt: persistedQuery.state.errorUpdatedAt,
           })
 
-          if (query.isStale()) {
+          if (
+            refetchOnRestore === 'always' ||
+            (refetchOnRestore === true && query.isStale())
+          ) {
             query.fetch()
           }
         },
