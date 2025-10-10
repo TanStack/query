@@ -636,7 +636,9 @@ export class Query<
           const newState = {
             ...state,
             data: action.data,
-            dataUpdateCount: state.dataUpdateCount + 1,
+            dataUpdateCount: action.manual && state.data === undefined
+              ? state.dataUpdateCount  // Don't increment for initial data
+              : state.dataUpdateCount + 1,
             dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
             error: null,
             isInvalidated: false,
