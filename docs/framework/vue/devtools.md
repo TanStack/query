@@ -61,7 +61,7 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 ### Options
 
-- `initialIsOpen: Boolean`
+- `initialIsOpen: boolean`
   - Set this `true` if you want the dev tools to default to being open.
 - `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
   - Defaults to `bottom-right`.

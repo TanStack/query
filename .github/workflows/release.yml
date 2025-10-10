@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  push:
+    branches: [main, alpha, beta, rc, v4]
+  repository_dispatch:
+    types: [release]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Release
+    if: github.repository_owner == 'TanStack'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+      - name: Start Nx Agents
+        run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
+      - name: Setup Tools
+        uses: tanstack/config/.github/setup@main
+      - name: Run Tests
+        run: pnpm run test:ci
+      - name: Stop Nx Agents
+        if: ${{ always() }}
+        run: npx nx-cloud stop-all-agents
+      - name: Check for Changesets marked as major
+        id: major
+        run: |
+          echo "found=false" >> $GITHUB_OUTPUT
+          regex="(major)"
+          shopt -s nullglob
+          for file in .changeset/*.md; do
+            if [[ $(cat $file) =~ $regex ]]; then
+              echo "found=true" >> $GITHUB_OUTPUT
+            fi
+          done
+      - name: Run Changesets (version or publish)
+        id: changesets
+        uses: changesets/action@v1.5.3
+        with:
+          version: pnpm run changeset:version
+          publish: pnpm run changeset:publish
+          commit: 'ci: Version Packages'
+          title: 'ci: Version Packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Auto-merge Changesets PR
+        if: steps.changesets.outputs.hasChangesets == 'true' && steps.major.outputs.found == 'false'
+        run: |
+          gh pr merge --squash "$PR_NUMBER"
+          gh api --method POST /repos/$REPO/dispatches -f 'event_type=release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4.6.0
+        with:
+          directory: packages
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

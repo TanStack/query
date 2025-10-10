@@ -133,9 +133,9 @@ export interface CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
     '_defaulted'
   > {}
 
@@ -143,28 +143,35 @@ export type CreateMutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = (
-  ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
+  ...args: Parameters<
+    MutateFunction<TData, TError, TVariables, TOnMutateResult>
+  >
 ) => void
 
 export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> = MutateFunction<TData, TError, TVariables, TContext>
+  TOnMutateResult = unknown,
+> = MutateFunction<TData, TError, TVariables, TOnMutateResult>
 
 export type CreateBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = Override<
-  MutationObserverResult<TData, TError, TVariables, TContext>,
-  { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
+  MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+  { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }
 > & {
-  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
+  mutateAsync: CreateMutateAsyncFunction<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >
 }
 
 type CreateStatusBasedMutationResult<
@@ -172,9 +179,9 @@ type CreateStatusBasedMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = Extract<
-  CreateBaseMutationResult<TData, TError, TVariables, TContext>,
+  CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>,
   { status: TStatus }
 >
 
@@ -184,73 +191,73 @@ export interface BaseMutationNarrowing<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > {
   isSuccess: SignalFunction<
     (
-      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+      this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
     ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext,
+      TOnMutateResult,
       CreateStatusBasedMutationResult<
         'success',
         TData,
         TError,
         TVariables,
-        TContext
+        TOnMutateResult
       >
     >
   >
   isError: SignalFunction<
     (
-      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+      this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
     ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext,
+      TOnMutateResult,
       CreateStatusBasedMutationResult<
         'error',
         TData,
         TError,
         TVariables,
-        TContext
+        TOnMutateResult
       >
     >
   >
   isPending: SignalFunction<
     (
-      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+      this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
     ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext,
+      TOnMutateResult,
       CreateStatusBasedMutationResult<
         'pending',
         TData,
         TError,
         TVariables,
-        TContext
+        TOnMutateResult
       >
     >
   >
   isIdle: SignalFunction<
     (
-      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+      this: CreateMutationResult<TData, TError, TVariables, TOnMutateResult>,
     ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext,
+      TOnMutateResult,
       CreateStatusBasedMutationResult<
         'idle',
         TData,
         TError,
         TVariables,
-        TContext
+        TOnMutateResult
       >
     >
   >
@@ -260,13 +267,13 @@ export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
   TState = CreateStatusBasedMutationResult<
     CreateBaseMutationResult['status'],
     TData,
     TError,
     TVariables,
-    TContext
+    TOnMutateResult
   >,
-> = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
+> = BaseMutationNarrowing<TData, TError, TVariables, TOnMutateResult> &
   MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>

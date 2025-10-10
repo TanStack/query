@@ -236,7 +236,7 @@ describe('UseSuspenseQueries config object overload', () => {
     )
   })
 
-  it('should not show type error when using spreaded queryOptions', () => {
+  it('should not show type error when using rest queryOptions', () => {
     assertType(
       useSuspenseQueries({
         queries: [
