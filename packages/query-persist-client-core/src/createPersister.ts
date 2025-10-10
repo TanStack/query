@@ -221,7 +221,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
         },
       )
 
-      if (restoredData != null) {
+      if (restoredData !== undefined) {
         return Promise.resolve(restoredData as T)
       }
     }
