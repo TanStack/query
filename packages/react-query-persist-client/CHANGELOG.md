@@ -1,5 +1,13 @@
 # @tanstack/react-query-persist-client
 
+## 5.90.4
+
+### Patch Changes
+
+- Updated dependencies [[`846d53d`](https://github.com/TanStack/query/commit/846d53d98992d50606c40634efa43dea9965b787)]:
+  - @tanstack/query-persist-client-core@5.91.1
+  - @tanstack/react-query@5.90.2
+
 ## 5.90.3
 
 ### Patch Changes
