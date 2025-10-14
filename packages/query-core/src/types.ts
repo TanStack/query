@@ -1072,9 +1072,7 @@ export type MutationKey = Register extends {
 }
   ? TMutationKey extends Array<unknown>
     ? TMutationKey
-    : TMutationKey extends Array<unknown>
-      ? TMutationKey
-      : ReadonlyArray<unknown>
+    : ReadonlyArray<unknown>
   : ReadonlyArray<unknown>
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
