@@ -735,9 +735,8 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when useErrorBoundary is a function that returns true', async () => {
+    let callBoundaryCount = 0
     function Page() {
-      const sendNextToBoundaryRef = React.useRef(false)
-
       const { mutate, error } = useMutation<string, Error>(
         () => {
           const err = new Error('mock error')
@@ -745,12 +744,10 @@ describe('useMutation', () => {
           return Promise.reject(err)
         },
         {
-          onSettled: () => {
-            setTimeout(() => {
-              sendNextToBoundaryRef.current = !sendNextToBoundaryRef.current
-            }, 0)
+          useErrorBoundary: () => {
+            callBoundaryCount++
+            return callBoundaryCount > 1
           },
-          useErrorBoundary: () => sendNextToBoundaryRef.current,
         },
       )
 
