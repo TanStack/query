@@ -6,8 +6,8 @@ import type { ParserServicesWithTypeInformation } from '@typescript-eslint/utils
 import type { ExtraRuleDocs } from '../../types'
 
 const TypeFlags = {
-  Void: 1 << 16, // 65536
-  Undefined: 1 << 17, // 131072
+  Void: 16384,
+  Undefined: 32768,
 } as const
 
 export const name = 'no-void-query-fn'
