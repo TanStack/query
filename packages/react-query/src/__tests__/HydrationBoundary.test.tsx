@@ -451,11 +451,6 @@ describe('React hydration', () => {
 
     const dehydratedState = dehydrate(prefetchQueryClient)
 
-    function ignore() {
-      // Ignore redacted unhandled rejection
-    }
-    process.addListener('unhandledRejection', ignore)
-
     // Mimic what React/our synchronous thenable does for already rejected promises
     // @ts-expect-error
     dehydratedState.queries[0].promise.status = 'failure'
@@ -484,7 +479,6 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('new')).toBeInTheDocument()
 
-    process.removeListener('unhandledRejection', ignore)
     hydrateSpy.mockRestore()
     prefetchQueryClient.clear()
     clientQueryClient.clear()
