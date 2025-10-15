@@ -210,9 +210,11 @@ export class Query<
     if (this.state && this.state.data === undefined) {
       const defaultState = getDefaultState(this.options)
       if (defaultState.data !== undefined) {
-        this.setData(defaultState.data, {
-          updatedAt: defaultState.dataUpdatedAt,
-          manual: true,
+        this.setState({
+          data: defaultState.data,
+          dataUpdatedAt: defaultState.dataUpdatedAt,
+          status: 'success',
+          error: null,
         })
         this.#initialState = defaultState
       }
@@ -636,10 +638,7 @@ export class Query<
           const newState = {
             ...state,
             data: action.data,
-            dataUpdateCount:
-              action.manual && state.data === undefined
-                ? state.dataUpdateCount // Don't increment for initial data
-                : state.dataUpdateCount + 1,
+            dataUpdateCount: state.dataUpdateCount + 1,
             dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
             error: null,
             isInvalidated: false,
