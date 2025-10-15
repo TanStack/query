@@ -3,7 +3,7 @@ import { render } from '@solidjs/testing-library'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import SolidQueryDevtoolsPanel from '../devtoolsPanel'
 
-describe('SolidQueryDevtoolsPanels', () => {
+describe('SolidQueryDevtoolsPanel', () => {
   it('should throw an error if no query client has been set', () => {
     expect(() => render(() => <SolidQueryDevtoolsPanel />)).toThrow(
       'No QueryClient set, use QueryClientProvider to set one',
