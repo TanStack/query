@@ -5,7 +5,15 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { pokemonOptions } from '@/app/pokemon'
 
 export function PokemonInfo() {
-  const { data } = useSuspenseQuery(pokemonOptions)
+  const { data, isLoading, error } = useSuspenseQuery(pokemonOptions)
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>
+  }
 
   return (
     <div>
