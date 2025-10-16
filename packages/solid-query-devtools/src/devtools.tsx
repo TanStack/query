@@ -48,8 +48,8 @@ interface DevtoolsOptions {
 }
 
 export default function SolidQueryDevtools(props: DevtoolsOptions) {
-  const queryClient = useQueryClient()
-  const client = createMemo(() => props.client || queryClient)
+  const queryClient = useQueryClient(props.client)
+  const client = createMemo(() => queryClient)
   let ref!: HTMLDivElement
   const devtools = new TanstackQueryDevtools({
     client: client(),
