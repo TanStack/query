@@ -11,6 +11,7 @@ import {
   QueryClientProvider,
   QueryErrorResetBoundary,
   keepPreviousData,
+  useInfiniteQuery,
   useQuery,
 } from '..'
 import { QueryCache } from '../index'
@@ -1382,5 +1383,52 @@ describe('useQuery().promise', () => {
       queryClient.getQueryCache().find({ queryKey: [key, 'someInput'] })!
         .observers.length,
     ).toBe(2)
+  })
+
+  it('should implicitly observe data when promise is used', async () => {
+    const key = queryKey()
+
+    const renderStream = createRenderStream({ snapshotDOM: true })
+
+    function Page() {
+      useTrackRenders()
+      const query = useInfiniteQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await vi.advanceTimersByTimeAsync(1)
+          return { nextCursor: 1, data: 'test' }
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      })
+
+      React.use(query.promise)
+
+      const hasNextPage = query.hasNextPage
+
+      return (
+        <div>
+          <div>hasNextPage: {String(hasNextPage)}</div>
+        </div>
+      )
+    }
+
+    await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <React.Suspense fallback="loading..">
+          <Page />
+        </React.Suspense>
+      </QueryClientProvider>,
+    )
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      expect(withinDOM().getByText('loading..')).toBeInTheDocument()
+    }
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      expect(withinDOM().getByText('hasNextPage: true')).toBeInTheDocument()
+    }
   })
 })
