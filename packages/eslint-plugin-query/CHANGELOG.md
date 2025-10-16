@@ -1,5 +1,11 @@
 # @tanstack/eslint-plugin-query
 
+## 5.91.2
+
+### Patch Changes
+
+- fix: allow useQueries with combine property in no-unstable-deps rule ([#9720](https://github.com/TanStack/query/pull/9720))
+
 ## 5.91.1
 
 ### Patch Changes

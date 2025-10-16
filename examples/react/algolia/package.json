@@ -15,7 +15,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.91.1",
+    "@tanstack/eslint-plugin-query": "^5.91.2",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.3.4",
