@@ -250,7 +250,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
       '@tanstack/angular-query-persist-client':
-        specifier: ^5.62.10
+        specifier: ^5.62.11
         version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-async-storage-persister':
         specifier: workspace:*
@@ -2618,6 +2618,9 @@ importers:
         specifier: workspace:*
         version: link:../query-devtools
     devDependencies:
+      '@solidjs/testing-library':
+        specifier: ^0.8.10
+        version: 0.8.10(@solidjs/router@0.15.3(solid-js@1.9.7))(solid-js@1.9.7)
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../solid-query

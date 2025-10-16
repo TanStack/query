@@ -1,5 +1,13 @@
 # @tanstack/svelte-query-persist-client
 
+## 6.0.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.91.3
+  - @tanstack/svelte-query@6.0.2
+
 ## 6.0.3
 
 ### Patch Changes
