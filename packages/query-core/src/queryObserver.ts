@@ -269,16 +269,18 @@ export class QueryObserver<
       get: (target, key) => {
         this.trackProp(key as keyof QueryObserverResult)
         onPropTracked?.(key as keyof QueryObserverResult)
-        if (
-          key === 'promise' &&
-          !this.options.experimental_prefetchInRender &&
-          this.#currentThenable.status === 'pending'
-        ) {
-          this.#currentThenable.reject(
-            new Error(
-              'experimental_prefetchInRender feature flag is not enabled',
-            ),
-          )
+        if (key === 'promise') {
+          this.trackProp('data')
+          if (
+            !this.options.experimental_prefetchInRender &&
+            this.#currentThenable.status === 'pending'
+          ) {
+            this.#currentThenable.reject(
+              new Error(
+                'experimental_prefetchInRender feature flag is not enabled',
+              ),
+            )
+          }
         }
         return Reflect.get(target, key)
       },
