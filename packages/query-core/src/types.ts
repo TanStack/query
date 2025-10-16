@@ -1070,7 +1070,7 @@ export type InfiniteQueryObserverResult<
 export type MutationKey = Register extends {
   mutationKey: infer TMutationKey
 }
-  ? TMutationKey extends Array<unknown>
+  ? TMutationKey extends ReadonlyArray<unknown>
     ? TMutationKey
     : TMutationKey extends Array<unknown>
       ? TMutationKey
