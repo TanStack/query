@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@tanstack/react-location": "^3.7.0",
-    "@tanstack/react-query": "^4.41.0",
-    "@tanstack/react-query-devtools": "^4.41.0",
-    "@tanstack/react-query-persist-client": "^4.41.0",
+    "@tanstack/react-query": "^4.42.0",
+    "@tanstack/react-query-devtools": "^4.42.0",
+    "@tanstack/react-query-persist-client": "^4.42.0",
     "@tanstack/query-sync-storage-persister": "^4.41.0",
     "ky": "^0.30.0",
     "msw": "^0.39.2",
