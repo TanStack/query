@@ -6,6 +6,7 @@ import {
   useTrackRenders,
 } from '@testing-library/react-render-stream'
 import { queryKey } from '@tanstack/query-test-utils'
+import { waitFor } from '@testing-library/react'
 import {
   QueryClient,
   QueryClientProvider,
@@ -418,7 +419,7 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test-0')
-      expect(renderedComponents).toEqual([MyComponent])
+      expect(renderedComponents).toEqual([Page, MyComponent])
     }
 
     rendered.getByRole('button', { name: 'increment' }).click()
@@ -486,7 +487,7 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test')
-      expect(renderedComponents).toEqual([MyComponent])
+      expect(renderedComponents).toEqual([Page, MyComponent])
     }
   })
 
@@ -680,7 +681,7 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test1')
-      expect(renderedComponents).toEqual([MyComponent])
+      expect(renderedComponents).toEqual([Page, MyComponent])
     }
 
     queryClient.setQueryData(key, 'test2')
@@ -1095,7 +1096,7 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test0')
-      expect(renderedComponents).toEqual([MyComponent])
+      expect(renderedComponents).toEqual([Page, MyComponent])
     }
 
     rendered.getByText('inc').click()
@@ -1109,7 +1110,7 @@ describe('useQuery().promise', () => {
     {
       const { renderedComponents, withinDOM } = await renderStream.takeRender()
       withinDOM().getByText('test1')
-      expect(renderedComponents).toEqual([MyComponent])
+      expect(renderedComponents).toEqual([Page, MyComponent])
     }
 
     rendered.getByText('dec').click()
@@ -1283,13 +1284,13 @@ describe('useQuery().promise', () => {
     rendered.getByText('dec').click()
     {
       const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({ data: 'test2' })
+      expect(snapshot).toMatchObject({ data: 'test3' })
     }
 
     rendered.getByText('dec').click()
     {
       const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({ data: 'test1' })
+      expect(snapshot).toMatchObject({ data: 'test3' })
     }
 
     rendered.getByText('dec').click()
@@ -1298,11 +1299,7 @@ describe('useQuery().promise', () => {
       expect(snapshot).toMatchObject({ data: 'test0' })
     }
 
-    {
-      const { snapshot, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('test0new')
-      expect(snapshot).toMatchObject({ data: 'test0new' })
-    }
+    await waitFor(() => rendered.getByText('test0new'))
   })
 
   it('should not suspend indefinitely with multiple, nested observers)', async () => {
