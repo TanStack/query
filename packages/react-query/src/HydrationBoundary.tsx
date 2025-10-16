@@ -31,7 +31,9 @@ export const HydrationBoundary = ({
   const client = useQueryClient(queryClient)
 
   const optionsRef = React.useRef(options)
-  optionsRef.current = options
+  React.useEffect(() => {
+    optionsRef.current = options
+  })
 
   // This useMemo is for performance reasons only, everything inside it must
   // be safe to run in every render and code here should be read as "in render".
@@ -89,6 +91,7 @@ export const HydrationBoundary = ({
         if (newQueries.length > 0) {
           // It's actually fine to call this with queries/state that already exists
           // in the cache, or is older. hydrate() is idempotent for queries.
+          // eslint-disable-next-line react-hooks/refs
           hydrate(client, { queries: newQueries }, optionsRef.current)
         }
         if (existingQueries.length > 0) {
