@@ -10,6 +10,7 @@ import {
   expectType,
   expectTypeNotAny,
   queryKey,
+  reactVersion,
   renderWithClient,
   sleep,
 } from './utils'
@@ -281,41 +282,169 @@ describe('useQueries', () => {
     await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
     await waitFor(() => rendered.getByText('isFetching: false'))
 
-    await waitFor(() => expect(states.length).toBe(6))
+    await waitFor(() =>
+      expect(states.length).toBe(reactVersion() === '18' ? 6 : 7),
+    )
 
-    expect(states[0]).toMatchObject([
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[1]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[2]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[3]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[4]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[5]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
+    if (reactVersion() === '18') {
+      expect(states[0]).toMatchObject([
+        {
+          status: 'loading',
+          data: undefined,
+          isPreviousData: false,
+          isFetching: true,
+        },
+        {
+          status: 'loading',
+          data: undefined,
+          isPreviousData: false,
+          isFetching: true,
+        },
+      ])
+      expect(states[1]).toMatchObject([
+        {
+          status: 'success',
+          data: 5,
+          isPreviousData: false,
+          isFetching: false,
+        },
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+      expect(states[2]).toMatchObject([
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+      expect(states[3]).toMatchObject([
+        { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+      expect(states[4]).toMatchObject([
+        { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+      expect(states[5]).toMatchObject([
+        {
+          status: 'success',
+          data: 5,
+          isPreviousData: false,
+          isFetching: false,
+        },
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+    }
+
+    if (reactVersion() === '19') {
+      expect(states[0]).toMatchObject([
+        {
+          status: 'loading',
+          data: undefined,
+          isPreviousData: false,
+          isFetching: true,
+        },
+        {
+          status: 'loading',
+          data: undefined,
+          isPreviousData: false,
+          isFetching: true,
+        },
+      ])
+      expect(states[1]).toMatchObject([
+        {
+          status: 'success',
+          data: 5,
+          isPreviousData: false,
+          isFetching: false,
+        },
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+      expect(states[2]).toMatchObject([
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+      expect(states[3]).toMatchObject([
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+      expect(states[4]).toMatchObject([
+        {
+          status: 'success',
+          data: 5,
+          isPreviousData: false,
+          isFetching: true,
+        },
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+      expect(states[5]).toMatchObject([
+        {
+          status: 'success',
+          data: 5,
+          isPreviousData: false,
+          isFetching: true,
+        },
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+      expect(states[6]).toMatchObject([
+        {
+          status: 'success',
+          data: 5,
+          isPreviousData: false,
+          isFetching: false,
+        },
+        {
+          status: 'success',
+          data: 10,
+          isPreviousData: false,
+          isFetching: false,
+        },
+      ])
+    }
   })
 
   it('handles type parameter - tuple of tuples', async () => {

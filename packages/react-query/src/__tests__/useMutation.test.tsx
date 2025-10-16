@@ -735,7 +735,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when useErrorBoundary is a function that returns true', async () => {
-    let boundary = false
+    let callBoundaryCount = 0
     function Page() {
       const { mutate, error } = useMutation<string, Error>(
         () => {
@@ -745,8 +745,8 @@ describe('useMutation', () => {
         },
         {
           useErrorBoundary: () => {
-            boundary = !boundary
-            return !boundary
+            callBoundaryCount++
+            return callBoundaryCount > 1
           },
         },
       )
