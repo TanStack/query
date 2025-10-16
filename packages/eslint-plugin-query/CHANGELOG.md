@@ -1,5 +1,11 @@
 # @tanstack/eslint-plugin-query
 
+## 5.91.1
+
+### Patch Changes
+
+- avoid typescript import in no-void-query-fn rule ([#9759](https://github.com/TanStack/query/pull/9759))
+
 ## 5.91.0
 
 ### Minor Changes
