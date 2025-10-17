@@ -709,10 +709,7 @@ export function fetchState<
   } as const
 }
 
-function successState<TData>(
-  data: TData | undefined,
-  dataUpdatedAt?: number,
-) {
+function successState<TData>(data: TData | undefined, dataUpdatedAt?: number) {
   return {
     data,
     dataUpdatedAt: dataUpdatedAt ?? Date.now(),
