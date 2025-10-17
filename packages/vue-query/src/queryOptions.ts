@@ -21,9 +21,9 @@ export function queryOptions<
   options: TOptions,
 ): TOptions extends { value: unknown }
   ? DefinedInitialQueryOptionsRef<TQueryFnData, TError, TData, TQueryKey> &
-  TOptions
+      TOptions
   : DefinedInitialQueryOptionsBase<TQueryFnData, TError, TData, TQueryKey> &
-  TOptions
+      TOptions
 
 export function queryOptions<
   TQueryFnData = unknown,
@@ -35,17 +35,15 @@ export function queryOptions<
     TError,
     TData,
     TQueryKey
-  >
+  >,
 >(
   options: TOptions,
 ): TOptions extends { value: unknown }
   ? UndefinedInitialQueryOptionsRef<TQueryFnData, TError, TData, TQueryKey> &
-  TOptions
+      TOptions
   : UndefinedInitialQueryOptionsBase<TQueryFnData, TError, TData, TQueryKey> &
-  TOptions
+      TOptions
 
 export function queryOptions(options: unknown) {
   return options
 }
-
-

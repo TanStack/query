@@ -34,23 +34,23 @@ export type UseQueryOptionsBase<
     TQueryData,
     TQueryKey
   >]: Property extends 'enabled'
-  ?
-  | MaybeRefOrGetter<boolean | undefined>
-  | (() => Enabled<
-    TQueryFnData,
-    TError,
-    TQueryData,
-    DeepUnwrapRef<TQueryKey>
-  >)
-  : MaybeRefDeep<
-    QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      DeepUnwrapRef<TQueryKey>
-    >[Property]
-  >
+    ?
+        | MaybeRefOrGetter<boolean | undefined>
+        | (() => Enabled<
+            TQueryFnData,
+            TError,
+            TQueryData,
+            DeepUnwrapRef<TQueryKey>
+          >)
+    : MaybeRefDeep<
+        QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >[Property]
+      >
 } & ShallowOption
 
 export type UseQueryOptionsRef<
@@ -62,8 +62,8 @@ export type UseQueryOptionsRef<
 > =
   | Ref<UseQueryOptionsBase<TQueryFnData, TError, TData, TQueryData, TQueryKey>>
   | ComputedRef<
-    UseQueryOptionsBase<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-  >
+      UseQueryOptionsBase<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+    >
 
 export type UseQueryOptions<
   TQueryFnData = unknown,
@@ -80,11 +80,17 @@ export type UndefinedInitialQueryOptionsBase<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = UseQueryOptionsBase<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
+> = UseQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryFnData,
+  TQueryKey
+> & {
   initialData?:
-  | undefined
-  | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-  | NonUndefinedGuard<TQueryFnData>
+    | undefined
+    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+    | NonUndefinedGuard<TQueryFnData>
 }
 
 export type UndefinedInitialQueryOptionsRef<
@@ -94,9 +100,9 @@ export type UndefinedInitialQueryOptionsRef<
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptionsRef<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
   initialData?:
-  | undefined
-  | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-  | NonUndefinedGuard<TQueryFnData>
+    | undefined
+    | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+    | NonUndefinedGuard<TQueryFnData>
 }
 
 export type UndefinedInitialQueryOptions<
@@ -104,17 +110,25 @@ export type UndefinedInitialQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = UndefinedInitialQueryOptionsBase<TQueryFnData, TError, TData, TQueryKey> | UndefinedInitialQueryOptionsRef<TQueryFnData, TError, TData, TQueryKey>
+> =
+  | UndefinedInitialQueryOptionsBase<TQueryFnData, TError, TData, TQueryKey>
+  | UndefinedInitialQueryOptionsRef<TQueryFnData, TError, TData, TQueryKey>
 
 export type DefinedInitialQueryOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = UseQueryOptionsBase<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
+> = UseQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryFnData,
+  TQueryKey
+> & {
   initialData:
-  | NonUndefinedGuard<TQueryFnData>
-  | (() => NonUndefinedGuard<TQueryFnData>)
+    | NonUndefinedGuard<TQueryFnData>
+    | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
 export type DefinedInitialQueryOptionsRef<
@@ -123,9 +137,16 @@ export type DefinedInitialQueryOptionsRef<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptionsRef<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
-  value: UseQueryOptionsRef<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>['value'] & {
-    initialData: NonUndefinedGuard<TQueryFnData>
-    | (() => NonUndefinedGuard<TQueryFnData>)
+  value: UseQueryOptionsRef<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey
+  >['value'] & {
+    initialData:
+      | NonUndefinedGuard<TQueryFnData>
+      | (() => NonUndefinedGuard<TQueryFnData>)
   }
 }
 
@@ -134,7 +155,9 @@ export type DefinedInitialQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = DefinedInitialQueryOptionsBase<TQueryFnData, TError, TData, TQueryKey> | DefinedInitialQueryOptionsRef<TQueryFnData, TError, TData, TQueryKey>
+> =
+  | DefinedInitialQueryOptionsBase<TQueryFnData, TError, TData, TQueryKey>
+  | DefinedInitialQueryOptionsRef<TQueryFnData, TError, TData, TQueryKey>
 
 export type UseQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
