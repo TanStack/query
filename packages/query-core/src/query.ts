@@ -211,10 +211,10 @@ export class Query<
       const defaultState = getDefaultState(this.options)
       if (defaultState.data !== undefined) {
         this.setState({
-          data: defaultState.data,
-          dataUpdatedAt: defaultState.dataUpdatedAt,
-          status: 'success',
-          error: null,
+          ...successState(defaultState.data, defaultState.dataUpdatedAt),
+          fetchMeta: null,
+          fetchFailureReason: null,
+          fetchFailureCount: 0,
         })
         this.#initialState = defaultState
       }
@@ -637,16 +637,13 @@ export class Query<
         case 'success':
           const newState = {
             ...state,
-            data: action.data,
+            ...successState(action.data, action.dataUpdatedAt),
             dataUpdateCount: state.dataUpdateCount + 1,
-            dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
-            error: null,
-            isInvalidated: false,
-            status: 'success' as const,
             ...(!action.manual && {
               fetchStatus: 'idle' as const,
               fetchFailureCount: 0,
               fetchFailureReason: null,
+              fetchMeta: null,
             }),
           }
           // If fetching ends successfully, we don't need revertState as a fallback anymore.
@@ -710,6 +707,19 @@ export function fetchState<
         status: 'pending',
       } as const)),
   } as const
+}
+
+function successState<TData>(
+  data: TData | undefined,
+  dataUpdatedAt?: number,
+) {
+  return {
+    data,
+    dataUpdatedAt: dataUpdatedAt ?? Date.now(),
+    error: null,
+    isInvalidated: false,
+    status: 'success' as const,
+  }
 }
 
 function getDefaultState<
