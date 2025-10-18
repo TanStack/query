@@ -52,14 +52,14 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.4.0",
+    "@sveltejs/package": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/svelte": "^5.2.8",
-    "@typescript-eslint/parser": "^8.44.1",
-    "eslint-plugin-svelte": "^3.11.0",
-    "svelte": "^5.39.3",
-    "svelte-check": "^4.3.1"
+    "@typescript-eslint/parser": "^8.46.1",
+    "eslint-plugin-svelte": "^3.12.4",
+    "svelte": "^5.41.0",
+    "svelte-check": "^4.3.3"
   },
   "peerDependencies": {
     "svelte": "^5.25.0"

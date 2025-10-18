@@ -89,17 +89,17 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/compiler": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/platform-browser": "^20.0.0",
+    "@angular/common": "^20.3.6",
+    "@angular/compiler": "^20.3.6",
+    "@angular/core": "^20.3.6",
+    "@angular/platform-browser": "^20.3.6",
     "@tanstack/query-test-utils": "workspace:*",
-    "@testing-library/angular": "^18.0.0",
-    "eslint-plugin-jsdoc": "^50.5.0",
-    "npm-run-all2": "^5.0.0",
+    "@testing-library/angular": "^18.1.0",
+    "eslint-plugin-jsdoc": "^50.8.0",
+    "npm-run-all2": "^5.0.2",
     "rxjs": "^7.8.2",
-    "vite-plugin-dts": "4.2.3",
-    "vite-plugin-externalize-deps": "^0.9.0",
+    "vite-plugin-dts": "4.5.4",
+    "vite-plugin-externalize-deps": "^0.10.0",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "optionalDependencies": {
