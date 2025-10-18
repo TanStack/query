@@ -1,5 +1,12 @@
 # @tanstack/angular-query-experimental
 
+## 5.90.5
+
+### Patch Changes
+
+- Updated dependencies [[`e42ddfe`](https://github.com/TanStack/query/commit/e42ddfe919f34f847ca101aeef162c69845f9a1e)]:
+  - @tanstack/query-core@5.90.5
+
 ## 5.90.4
 
 ### Patch Changes
