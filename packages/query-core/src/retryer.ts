@@ -46,7 +46,7 @@ type RetryDelayFunction<TError = DefaultError> = (
 ) => number
 
 function defaultRetryDelay(failureCount: number) {
-  return Math.min(1000 * 2 ** failureCount, 30000)
+  return Math.floor(Math.random() * (Math.min(1000 * 2 ** failureCount, 30000) - 10 + 1)) + 10
 }
 
 export function canFetch(networkMode: NetworkMode | undefined): boolean {
