@@ -27,7 +27,7 @@ Link: https://blitzjs.com/
 
 ## Connect
 
-A family of libraries for building building browser and gRPC-compatible HTTP APIs.
+A family of libraries for building browser and gRPC-compatible HTTP APIs.
 
 Link: https://connectrpc.com/docs
 
