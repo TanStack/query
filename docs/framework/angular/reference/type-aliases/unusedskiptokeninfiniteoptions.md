@@ -8,23 +8,7 @@ title: UnusedSkipTokenInfiniteOptions
 # Type Alias: UnusedSkipTokenInfiniteOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
 
 ```ts
-type UnusedSkipTokenInfiniteOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam,
-> = OmitKeyof<
-  CreateInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  >,
-  'queryFn'
-> &
-  object
+type UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = OmitKeyof<CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object;
 ```
 
 Defined in: [infinite-query-options.ts:34](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/infinite-query-options.ts#L34)
@@ -45,6 +29,6 @@ optional queryFn: Exclude<CreateInfiniteQueryOptions<TQueryFnData, TError, TData
 
 • **TData** = `InfiniteData`\<`TQueryFnData`\>
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* `QueryKey` = `QueryKey`
 
 • **TPageParam** = `unknown`

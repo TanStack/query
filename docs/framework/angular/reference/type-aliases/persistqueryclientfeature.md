@@ -8,7 +8,7 @@ title: PersistQueryClientFeature
 # Type Alias: PersistQueryClientFeature
 
 ```ts
-type PersistQueryClientFeature = QueryFeature<'PersistQueryClient'>
+type PersistQueryClientFeature = QueryFeature<"PersistQueryClient">;
 ```
 
 Defined in: [providers.ts:164](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L164)

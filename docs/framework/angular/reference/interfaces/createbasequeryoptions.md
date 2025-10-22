@@ -23,4 +23,4 @@ Defined in: [types.ts:21](https://github.com/TanStack/query/blob/main/packages/a
 
 • **TQueryData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* `QueryKey` = `QueryKey`

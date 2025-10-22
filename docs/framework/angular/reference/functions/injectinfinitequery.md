@@ -21,16 +21,7 @@ Additional configuration.
 ## Call Signature
 
 ```ts
-function injectInfiniteQuery<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam,
->(
-  injectInfiniteQueryFn,
-  options?,
-): DefinedCreateInfiniteQueryResult<TData, TError>
+function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): DefinedCreateInfiniteQueryResult<TData, TError>
 ```
 
 Defined in: [inject-infinite-query.ts:41](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L41)
@@ -46,7 +37,7 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 
@@ -83,13 +74,7 @@ Additional configuration.
 ## Call Signature
 
 ```ts
-function injectInfiniteQuery<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam,
->(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
+function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
 ```
 
 Defined in: [inject-infinite-query.ts:65](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L65)
@@ -105,7 +90,7 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 
@@ -142,13 +127,7 @@ Additional configuration.
 ## Call Signature
 
 ```ts
-function injectInfiniteQuery<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam,
->(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
+function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>
 ```
 
 Defined in: [inject-infinite-query.ts:89](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L89)
@@ -164,7 +143,7 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** _extends_ readonly `unknown`[] = readonly `unknown`[]
+• **TQueryKey** *extends* readonly `unknown`[] = readonly `unknown`[]
 
 • **TPageParam** = `unknown`
 
