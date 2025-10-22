@@ -13,6 +13,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { QueryObserver } from './queryObserver'
 import type {
   CancelOptions,
   DefaultError,
@@ -362,11 +363,19 @@ export class QueryClient {
 
     const query = this.#queryCache.build(this, defaultedOptions)
 
-    return query.isStaleByTime(
+    const isDataStale = query.isStaleByTime(
       resolveStaleTime(defaultedOptions.staleTime, query),
-    )
-      ? query.fetch(defaultedOptions)
-      : Promise.resolve(query.state.data as TData)
+    );
+
+    if (!isDataStale) {
+      return Promise.resolve(query.state.data as TData)
+    }
+
+
+    const observer = new QueryObserver(this,defaultedOptions)
+    query.addObserver(observer);
+
+    return query.fetch(defaultedOptions).finally(() => query.removeObserver(observer))
   }
 
   prefetchQuery<

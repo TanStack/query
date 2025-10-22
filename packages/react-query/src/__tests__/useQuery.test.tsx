@@ -13,6 +13,7 @@ import {
   dehydrate,
   hydrate,
   keepPreviousData,
+  queryOptions,
   skipToken,
   useQuery,
 } from '..'
@@ -6774,5 +6775,72 @@ describe('useQuery', () => {
     )
 
     consoleErrorMock.mockRestore()
+  })
+
+  it('should not cancel a running fetchQuery call when unmounting useQuery', async () => {
+    const key = queryKey()
+
+    let abortSignal: AbortSignal | undefined
+
+    const options = queryOptions({
+      queryKey: key,
+      queryFn: async ({ signal }) => {
+        abortSignal = signal
+        if (signal) await sleep(20)
+        return 'data'
+      },
+    })
+
+    function UseQuery() {
+      const { data } = useQuery(options)
+      return <div>useQuery data: {data}</div>
+    }
+    function FetchQuery() {
+      const [data, setData] = React.useState<string>('loading')
+      const firstRender = React.useRef(true)
+      React.useEffect(() => {
+        if (firstRender.current) {
+          firstRender.current = false
+
+          queryClient.fetchQuery(options).then((result) => {
+            setData(result)
+          })
+        }
+      }, [setData])
+
+      return <div>fetchQuery data: {data}</div>
+    }
+
+    function Page() {
+      const [renderUseQuery, setRenderUseQuery] = React.useState(true)
+      React.useEffect(() => {
+        const timer = setTimeout(() => {
+          setRenderUseQuery(false)
+        }, 10)
+        return () => clearTimeout(timer)
+      }, [])
+      return (
+        <>
+          {renderUseQuery && <UseQuery />}
+          <FetchQuery />
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    // This unmounts useQuery after 2 seconds, fetchQuery should continue running
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(11)
+    })
+
+    expect(abortSignal?.aborted).toBeFalsy()
+
+    // Advance time enough for fetchQuery to resolve
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(11)
+    })
+
+    expect(rendered.getByText('fetchQuery data: data')).toBeInTheDocument()
   })
 })
