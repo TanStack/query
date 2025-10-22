@@ -1,5 +1,11 @@
 # @tanstack/angular-query-experimental
 
+## 5.90.6
+
+### Patch Changes
+
+- Rename `DeveloperToolsFeature` to `DevtoolsFeature` for consistency with internal naming conventions and ecosystem ([#9794](https://github.com/TanStack/query/pull/9794))
+
 ## 5.90.5
 
 ### Patch Changes
