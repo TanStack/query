@@ -31,7 +31,7 @@ export default defineComponent({
       data: post,
       error,
     } = useQuery({
-      queryKey: ['post', props.postId],
+      queryKey: ['post', () => props.postId],
       queryFn: () => fetchPost(props.postId),
     })
 
