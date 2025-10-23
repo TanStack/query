@@ -4,7 +4,12 @@ import { expect } from 'vitest'
 import type { InputSignal, Signal } from '@angular/core'
 import type { ComponentFixture } from '@angular/core/testing'
 
-// Evaluate all signals on an object and return the result
+/**
+ * Evaluate all signal-valued properties of an object and return their current values.
+ *
+ * @param obj - The object whose own properties may be signals; only own properties that are signals are evaluated.
+ * @returns An object with the same keys where keys that held signals contain those signals' current values; other keys are left undefined.
+ */
 function evaluateSignals<T extends Record<string, any>>(
   obj: T,
 ): { [K in keyof T]: ReturnType<T[K]> } {
