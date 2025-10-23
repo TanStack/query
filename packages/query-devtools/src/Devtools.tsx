@@ -2372,12 +2372,7 @@ const MutationDetails = () => {
           aria-live="polite"
           aria-atomic="true"
         >
-          <div
-            class="tsqd-query-details-summary"
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          >
+          <div class="tsqd-query-details-summary">
             <pre>
               <code>
                 <Show
