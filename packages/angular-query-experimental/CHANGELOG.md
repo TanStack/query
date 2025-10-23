@@ -1,5 +1,11 @@
 # @tanstack/angular-query-experimental
 
+## 5.90.7
+
+### Patch Changes
+
+- Make `injectIsMutating` signal read-only to prevent external modifications to the internal state ([#9801](https://github.com/TanStack/query/pull/9801))
+
 ## 5.90.6
 
 ### Patch Changes
