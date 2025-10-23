@@ -1072,7 +1072,6 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           >
                             <DropdownMenu.RadioItem
                               value="top"
-                              role="menuitemradio"
                               class={cx(
                                 styles().settingsSubButton,
                                 'tsqd-settings-menu-position-btn',
@@ -1084,7 +1083,6 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                             </DropdownMenu.RadioItem>
                             <DropdownMenu.RadioItem
                               value="bottom"
-                              role="menuitemradio"
                               class={cx(
                                 styles().settingsSubButton,
                                 'tsqd-settings-menu-position-btn',
@@ -1096,7 +1094,6 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                             </DropdownMenu.RadioItem>
                             <DropdownMenu.RadioItem
                               value="left"
-                              role="menuitemradio"
                               class={cx(
                                 styles().settingsSubButton,
                                 'tsqd-settings-menu-position-btn',
@@ -1242,7 +1239,6 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           </DropdownMenu.RadioItem>
                           <DropdownMenu.RadioItem
                             value="true"
-                            role="menuitemradio"
                             class={cx(
                               styles().settingsSubButton,
                               'tsqd-settings-menu-position-btn',
