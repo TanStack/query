@@ -332,6 +332,7 @@ export default function Explorer(props: ExplorerProps) {
           <button
             class={styles().expanderButton}
             onClick={() => toggleExpanded()}
+            aria-expanded={expanded() ? 'true' : 'false'}
           >
             <Expander expanded={expanded()} /> <span>{props.label}</span>{' '}
             <span class={styles().info}>

@@ -1000,7 +1000,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                   'tsqd-action-open-pip',
                 )}
                 aria-label="Open in picture-in-picture mode"
-                title={`Open in picture-in-picture mode`}
+                title="Open in picture-in-picture mode"
               >
                 <PiPIcon />
               </button>
@@ -1013,6 +1013,8 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                   'tsqd-actions-btn',
                   'tsqd-action-settings',
                 )}
+                aria-label="Open settings menu"
+                title="Open settings menu"
               >
                 <Settings />
               </DropdownMenu.Trigger>
@@ -1061,62 +1063,55 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                             'tsqd-settings-submenu',
                           )}
                         >
-                          <DropdownMenu.Item
-                            onSelect={() => {
-                              setDevtoolsPosition('top')
-                            }}
-                            as="button"
-                            class={cx(
-                              styles().settingsSubButton,
-                              'tsqd-settings-menu-position-btn',
-                              'tsqd-settings-menu-position-btn-top',
-                            )}
-                          >
-                            <span>Top</span>
-                            <ArrowUp />
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item
-                            onSelect={() => {
-                              setDevtoolsPosition('bottom')
-                            }}
-                            as="button"
-                            class={cx(
-                              styles().settingsSubButton,
-                              'tsqd-settings-menu-position-btn',
-                              'tsqd-settings-menu-position-btn-bottom',
-                            )}
-                          >
-                            <span>Bottom</span>
-                            <ArrowDown />
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item
-                            onSelect={() => {
-                              setDevtoolsPosition('left')
-                            }}
-                            as="button"
-                            class={cx(
-                              styles().settingsSubButton,
-                              'tsqd-settings-menu-position-btn',
-                              'tsqd-settings-menu-position-btn-left',
-                            )}
-                          >
-                            <span>Left</span>
-                            <ArrowLeft />
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item
-                            onSelect={() => {
-                              setDevtoolsPosition('right')
-                            }}
-                            as="button"
-                            class={cx(
-                              styles().settingsSubButton,
-                              'tsqd-settings-menu-position-btn',
-                              'tsqd-settings-menu-position-btn-right',
-                            )}
-                          >
-                            <span>Right</span>
-                            <ArrowRight />
-                          </DropdownMenu.Item>
+                          <DropdownMenu.RadioGroup aria-label="Position settings" value={props.localStore.position} onChange={value => setDevtoolsPosition(value as DevtoolsPosition)}>
+                            <DropdownMenu.RadioItem
+                              value="top"
+                              role="menuitemradio"
+                              class={cx(
+                                styles().settingsSubButton,
+                                'tsqd-settings-menu-position-btn',
+                                'tsqd-settings-menu-position-btn-top',
+                              )}
+                            >
+                              <span>Top</span>
+                              <ArrowUp />
+                            </DropdownMenu.RadioItem>
+                            <DropdownMenu.RadioItem
+                              value="bottom"
+                              role="menuitemradio"
+                              class={cx(
+                                styles().settingsSubButton,
+                                'tsqd-settings-menu-position-btn',
+                                'tsqd-settings-menu-position-btn-bottom',
+                              )}
+                            >
+                              <span>Bottom</span>
+                              <ArrowDown />
+                            </DropdownMenu.RadioItem>
+                            <DropdownMenu.RadioItem
+                              value="left"
+                              role="menuitemradio"
+                              class={cx(
+                                styles().settingsSubButton,
+                                'tsqd-settings-menu-position-btn',
+                                'tsqd-settings-menu-position-btn-left',
+                              )}
+                            >
+                              <span>Left</span>
+                              <ArrowLeft />
+                            </DropdownMenu.RadioItem>
+                            <DropdownMenu.RadioItem
+                              value="right"
+                              class={cx(
+                                styles().settingsSubButton,
+                                'tsqd-settings-menu-position-btn',
+                                'tsqd-settings-menu-position-btn-right',
+                              )}
+                            >
+                              <span>Right</span>
+                              <ArrowRight />
+                            </DropdownMenu.RadioItem>
+                          </DropdownMenu.RadioGroup>
                         </DropdownMenu.SubContent>
                       </DropdownMenu.Portal>
                     </DropdownMenu.Sub>
@@ -1146,54 +1141,47 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           'tsqd-settings-submenu',
                         )}
                       >
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            props.setLocalStore('theme_preference', 'light')
+                        <DropdownMenu.RadioGroup 
+                          value={props.localStore.theme_preference} 
+                          onChange={(value) => {
+                            props.setLocalStore('theme_preference', value)
                           }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            props.localStore.theme_preference === 'light' &&
-                              styles().themeSelectedButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-top',
-                          )}
+                          aria-label="Theme preference"
                         >
-                          <span>Light</span>
-                          <Sun />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            props.setLocalStore('theme_preference', 'dark')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            props.localStore.theme_preference === 'dark' &&
-                              styles().themeSelectedButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-bottom',
-                          )}
-                        >
-                          <span>Dark</span>
-                          <Moon />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            props.setLocalStore('theme_preference', 'system')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            props.localStore.theme_preference === 'system' &&
-                              styles().themeSelectedButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-left',
-                          )}
-                        >
-                          <span>System</span>
-                          <Monitor />
-                        </DropdownMenu.Item>
+                          <DropdownMenu.RadioItem
+                            value='light'
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-top',
+                            )}
+                          >
+                            <span>Light</span>
+                            <Sun />
+                          </DropdownMenu.RadioItem>
+                          <DropdownMenu.RadioItem
+                            value="dark"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-bottom',
+                            )}
+                          >
+                            <span>Dark</span>
+                            <Moon />
+                          </DropdownMenu.RadioItem>
+                          <DropdownMenu.RadioItem
+                            value="system"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-left',
+                            )}
+                          >
+                            <span>System</span>
+                            <Monitor />
+                          </DropdownMenu.RadioItem>
+                        </DropdownMenu.RadioGroup>
                       </DropdownMenu.SubContent>
                     </DropdownMenu.Portal>
                   </DropdownMenu.Sub>
@@ -1221,51 +1209,48 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           styles().settingsMenu,
                           'tsqd-settings-submenu',
                         )}
+                        aria-label="Hide disabled queries setting"
                       >
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            props.setLocalStore('hideDisabledQueries', 'false')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            props.localStore.hideDisabledQueries !== 'true' &&
-                              styles().themeSelectedButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-show',
-                          )}
+                        <DropdownMenu.RadioGroup
+                          value={props.localStore.hideDisabledQueries}
+                          onChange={value => props.setLocalStore('hideDisabledQueries', value) }
                         >
-                          <span>Show</span>
-                          <Show
-                            when={
-                              props.localStore.hideDisabledQueries !== 'true'
-                            }
+                          <DropdownMenu.RadioItem
+                            value="false"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-show',
+                            )}
                           >
-                            <CheckCircle />
-                          </Show>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            props.setLocalStore('hideDisabledQueries', 'true')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            props.localStore.hideDisabledQueries === 'true' &&
-                              styles().themeSelectedButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-hide',
-                          )}
-                        >
-                          <span>Hide</span>
-                          <Show
-                            when={
-                              props.localStore.hideDisabledQueries === 'true'
-                            }
+                            <span>Show</span>
+                            <Show
+                              when={
+                                props.localStore.hideDisabledQueries !== 'true'
+                              }
+                            >
+                              <CheckCircle />
+                            </Show>
+                          </DropdownMenu.RadioItem>
+                          <DropdownMenu.RadioItem
+                            value="true"
+                            role="menuitemradio"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-hide',
+                            )}
                           >
-                            <CheckCircle />
-                          </Show>
-                        </DropdownMenu.Item>
+                            <span>Hide</span>
+                            <Show
+                              when={
+                                props.localStore.hideDisabledQueries === 'true'
+                              }
+                            >
+                              <CheckCircle />
+                            </Show>
+                          </DropdownMenu.RadioItem>
+                        </DropdownMenu.RadioGroup>
                       </DropdownMenu.SubContent>
                     </DropdownMenu.Portal>
                   </DropdownMenu.Sub>
@@ -1961,6 +1946,9 @@ const QueryDetails = () => {
             styles().detailsBody,
             'tsqd-query-details-summary-container',
           )}
+          role="status"  
+          aria-live="polite"
+          aria-atomic="true"
         >
           <div class="tsqd-query-details-summary">
             <pre>
@@ -2372,8 +2360,16 @@ const MutationDetails = () => {
             styles().detailsBody,
             'tsqd-query-details-summary-container',
           )}
+          role="status"  
+          aria-live="polite"
+          aria-atomic="true"
         >
-          <div class="tsqd-query-details-summary">
+          <div 
+            class="tsqd-query-details-summary" 
+            role="status"  
+            aria-live="polite"
+            aria-atomic="true"
+          >
             <pre>
               <code>
                 <Show
@@ -3521,15 +3517,15 @@ const stylesFactory = (
         outline-offset: 2px;
         outline: 2px solid ${colors.blue[800]};
       }
-    `,
-    themeSelectedButton: css`
-      background-color: ${t(colors.purple[100], colors.purple[900])};
-      color: ${t(colors.purple[700], colors.purple[300])};
-      & svg {
-        color: ${t(colors.purple[700], colors.purple[300])};
-      }
-      &:hover {
+      &[data-checked] {
         background-color: ${t(colors.purple[100], colors.purple[900])};
+        color: ${t(colors.purple[700], colors.purple[300])};
+        & svg {
+          color: ${t(colors.purple[700], colors.purple[300])};
+        }
+        &:hover {
+          background-color: ${t(colors.purple[100], colors.purple[900])};
+        }
       }
     `,
     viewToggle: css`
