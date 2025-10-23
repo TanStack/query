@@ -1,6 +1,14 @@
 import { serialize, stringify } from 'superjson'
 import { clsx as cx } from 'clsx'
-import { Index, Match, Show, Switch, createMemo, createSignal, createUniqueId} from 'solid-js'
+import {
+  Index,
+  Match,
+  Show,
+  Switch,
+  createMemo,
+  createSignal,
+  createUniqueId,
+} from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import * as goober from 'goober'
 import { tokens } from './theme'
@@ -326,7 +334,7 @@ export default function Explorer(props: ExplorerProps) {
   const currentDataPath = props.dataPath ?? []
 
   const inputId = createUniqueId()
-  
+
   return (
     <div class={styles().entry}>
       <Show when={subEntryPages().length}>
@@ -449,7 +457,9 @@ export default function Explorer(props: ExplorerProps) {
       </Show>
       <Show when={subEntryPages().length === 0}>
         <div class={styles().row}>
-          <label for={inputId} class={styles().label}>{props.label}:</label>
+          <label for={inputId} class={styles().label}>
+            {props.label}:
+          </label>
           <Show
             when={
               props.editable &&
