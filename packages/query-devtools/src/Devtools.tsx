@@ -1063,7 +1063,13 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                             'tsqd-settings-submenu',
                           )}
                         >
-                          <DropdownMenu.RadioGroup aria-label="Position settings" value={props.localStore.position} onChange={value => setDevtoolsPosition(value as DevtoolsPosition)}>
+                          <DropdownMenu.RadioGroup
+                            aria-label="Position settings"
+                            value={props.localStore.position}
+                            onChange={(value) =>
+                              setDevtoolsPosition(value as DevtoolsPosition)
+                            }
+                          >
                             <DropdownMenu.RadioItem
                               value="top"
                               role="menuitemradio"
@@ -1141,15 +1147,15 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           'tsqd-settings-submenu',
                         )}
                       >
-                        <DropdownMenu.RadioGroup 
-                          value={props.localStore.theme_preference} 
+                        <DropdownMenu.RadioGroup
+                          value={props.localStore.theme_preference}
                           onChange={(value) => {
                             props.setLocalStore('theme_preference', value)
                           }}
                           aria-label="Theme preference"
                         >
                           <DropdownMenu.RadioItem
-                            value='light'
+                            value="light"
                             class={cx(
                               styles().settingsSubButton,
                               'tsqd-settings-menu-position-btn',
@@ -1213,7 +1219,9 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                       >
                         <DropdownMenu.RadioGroup
                           value={props.localStore.hideDisabledQueries}
-                          onChange={value => props.setLocalStore('hideDisabledQueries', value) }
+                          onChange={(value) =>
+                            props.setLocalStore('hideDisabledQueries', value)
+                          }
                         >
                           <DropdownMenu.RadioItem
                             value="false"
@@ -1946,7 +1954,7 @@ const QueryDetails = () => {
             styles().detailsBody,
             'tsqd-query-details-summary-container',
           )}
-          role="status"  
+          role="status"
           aria-live="polite"
           aria-atomic="true"
         >
@@ -2360,13 +2368,13 @@ const MutationDetails = () => {
             styles().detailsBody,
             'tsqd-query-details-summary-container',
           )}
-          role="status"  
+          role="status"
           aria-live="polite"
           aria-atomic="true"
         >
-          <div 
-            class="tsqd-query-details-summary" 
-            role="status"  
+          <div
+            class="tsqd-query-details-summary"
+            role="status"
             aria-live="polite"
             aria-atomic="true"
           >
