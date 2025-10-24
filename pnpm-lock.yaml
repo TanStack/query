@@ -2251,9 +2251,6 @@ importers:
       '@testing-library/angular':
         specifier: ^18.0.0
         version: 18.0.0(b638270d50b9f611fb362719c9f1adf5)
-      eslint-plugin-jsdoc:
-        specifier: ^50.5.0
-        version: 50.5.0(eslint@9.36.0(jiti@2.5.1))
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2

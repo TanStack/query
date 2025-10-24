@@ -7,6 +7,13 @@
     "useDefineForClassFields": false,
     "target": "ES2022"
   },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictStandalone": true,
+    "strictTemplates": true
+  },
   "include": ["src", "scripts", "test-setup.ts", "*.config.*", "package.json"],
   "references": [{ "path": "../query-core" }, { "path": "../query-devtools" }]
 }

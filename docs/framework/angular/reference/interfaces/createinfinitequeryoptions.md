@@ -21,6 +21,6 @@ Defined in: [types.ts:81](https://github.com/TanStack/query/blob/main/packages/a
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
+• **TQueryKey** *extends* `QueryKey` = `QueryKey`
 
 • **TPageParam** = `unknown`

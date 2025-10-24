@@ -4,8 +4,6 @@ import { expect } from 'vitest'
 import type { InputSignal, Signal } from '@angular/core'
 import type { ComponentFixture } from '@angular/core/testing'
 
-/* eslint jsdoc/require-jsdoc: 0, jsdoc/require-param: 0 */
-
 // Evaluate all signals on an object and return the result
 function evaluateSignals<T extends Record<string, any>>(
   obj: T,

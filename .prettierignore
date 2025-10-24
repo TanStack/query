@@ -9,3 +9,4 @@
 pnpm-lock.yaml
 packages/**/tsup.config.bundled*.mjs
 **/tsconfig.vitest-temp.json
+docs/framework/*/reference
