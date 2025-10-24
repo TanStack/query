@@ -22,7 +22,7 @@ export default defineComponent({
   emits: ['setPostId'],
   setup(props) {
     const { isPending, isError, isFetching, data, error } = useQuery({
-      queryKey: ['post', props.postId] as const,
+      queryKey: ['post', () => props.postId] as const,
       queryFn: () => fetcher(props.postId),
       persister: experimental_createQueryPersister({
         storage: {
