@@ -1,3 +1,4 @@
+import { onDestroy } from 'svelte'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
 import { createRawRef } from './containers.svelte.js'
@@ -8,7 +9,6 @@ import type {
   CreateBaseQueryOptions,
   CreateBaseQueryResult,
 } from './types.js'
-import { onDestroy } from 'svelte'
 
 /**
  * Base implementation for `createQuery` and `createInfiniteQuery`
