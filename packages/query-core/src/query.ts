@@ -455,6 +455,7 @@ export class Query<
         > = {
           client: this.#client,
           queryKey: this.queryKey,
+          queryHash: this.queryHash,
           meta: this.meta,
         }
         addSignalProperty(queryFnContext)

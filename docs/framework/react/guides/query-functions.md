@@ -100,6 +100,7 @@ function fetchTodoList({ queryKey }) {
 The `QueryFunctionContext` is the object passed to each query function. It consists of:
 
 - `queryKey: QueryKey`: [Query Keys](../query-keys.md)
+- `queryHash: string`: The hash of the query key, used as a unique identifier for the query
 - `client: QueryClient`: [QueryClient](../../../../reference/QueryClient.md)
 - `signal?: AbortSignal`
   - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by TanStack Query

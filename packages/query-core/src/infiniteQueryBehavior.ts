@@ -61,6 +61,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             > = {
               client: context.client,
               queryKey: context.queryKey,
+              queryHash: query.queryHash,
               pageParam: param,
               direction: previous ? 'backward' : 'forward',
               meta: context.options.meta,
@@ -119,6 +120,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             {
               client: context.client,
               queryKey: context.queryKey,
+              queryHash: query.queryHash,
               meta: context.options.meta,
               signal: context.signal,
             },
