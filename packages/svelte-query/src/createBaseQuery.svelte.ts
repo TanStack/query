@@ -93,9 +93,13 @@ export function createBaseQuery<
     },
   )
   // ...and finally also cleanup via onDestroy because that one runs on the server whereas $effect.pre does not.
-  onDestroy(() => {
-    unsubscribe()
-  })
+  // (in a try-catch because it theoretically can be called in a non-component context - that should not happen
+  // but it would be a breaking change technically to error out here. SSR-safe because this wouldn't be called during SSR if it was not in a component)
+  try {
+    onDestroy(() => {
+      unsubscribe()
+    })
+  } catch (e) {}
 
   watchChanges(
     () => resolvedOptions,
