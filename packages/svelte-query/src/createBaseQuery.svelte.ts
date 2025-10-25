@@ -8,6 +8,7 @@ import type {
   CreateBaseQueryOptions,
   CreateBaseQueryResult,
 } from './types.js'
+import { onDestroy } from 'svelte'
 
 /**
  * Base implementation for `createQuery` and `createInfiniteQuery`
@@ -71,12 +72,29 @@ export function createBaseQuery<
     createResult(),
   )
 
-  $effect(() => {
-    const unsubscribe = isRestoring.current
+  // The following is convoluted but necessary:
+  // Call eagerly so subscription happens on the server and on suspended branches in the client...
+  let unsubscribe =
+    isRestoring.current && typeof window !== 'undefined'
       ? () => undefined
       : observer.subscribe(() => update(createResult()))
-    observer.updateResult()
-    return unsubscribe
+  // ...but also watch for state changes to resubscribe, and because Svelte right now doesn't
+  // run onDestroy on components with pending work that are destroyed again before they are resolved...
+  watchChanges(
+    () => [isRestoring.current, observer] as const,
+    'pre',
+    () => {
+      unsubscribe()
+      unsubscribe = isRestoring.current
+        ? () => undefined
+        : observer.subscribe(() => update(createResult()))
+      observer.updateResult()
+      return unsubscribe
+    },
+  )
+  // ...and finally also cleanup via onDestroy because that one runs on the server whereas $effect.pre does not.
+  onDestroy(() => {
+    unsubscribe()
   })
 
   watchChanges(
