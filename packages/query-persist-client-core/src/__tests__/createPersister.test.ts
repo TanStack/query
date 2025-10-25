@@ -30,14 +30,15 @@ function setupPersister(
   persisterOptions: StoragePersisterOptions,
 ) {
   const client = new QueryClient()
+  const queryHash = hashKey(queryKey)
   const context = {
     meta: { foo: 'bar' },
     client,
     queryKey,
+    queryHash,
     // @ts-expect-error
     signal: undefined as AbortSignal,
   } satisfies QueryFunctionContext
-  const queryHash = hashKey(queryKey)
   const storageKey = `${PERSISTER_KEY_PREFIX}-${queryHash}`
 
   const queryFn = vi.fn()
