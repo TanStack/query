@@ -217,7 +217,8 @@ describe('query', () => {
       queryKey: key,
       queryFn: async ({ signal }) => {
         await sleep(100)
-        return 'data2' + String(signal)
+        signal.throwIfAborted()
+        return 'data2'
       },
     })
 
@@ -231,9 +232,9 @@ describe('query', () => {
     await vi.advanceTimersByTimeAsync(90)
 
     // Fetch should complete successfully without throwing a CancelledError
-    await expect(promise).resolves.toBe('data')
+    await expect(promise).resolves.toBe('data2')
 
-    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data2')
   })
 
   test('should provide context to queryFn', () => {
@@ -290,7 +291,7 @@ describe('query', () => {
   test('should not continue when last observer unsubscribed if the signal was consumed', async () => {
     const key = queryKey()
 
-    queryClient.prefetchQuery({
+    const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: async ({ signal }) => {
         await sleep(100)
@@ -298,14 +299,9 @@ describe('query', () => {
       },
     })
 
-    await vi.advanceTimersByTimeAsync(10)
-
     // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      enabled: false,
-    })
     const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(10)
     unsubscribe()
 
     await vi.advanceTimersByTimeAsync(90)
