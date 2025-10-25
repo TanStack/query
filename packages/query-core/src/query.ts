@@ -210,10 +210,9 @@ export class Query<
     if (this.state && this.state.data === undefined) {
       const defaultState = getDefaultState(this.options)
       if (defaultState.data !== undefined) {
-        this.setData(defaultState.data, {
-          updatedAt: defaultState.dataUpdatedAt,
-          manual: true,
-        })
+        this.setState(
+          successState(defaultState.data, defaultState.dataUpdatedAt),
+        )
         this.#initialState = defaultState
       }
     }
@@ -635,12 +634,8 @@ export class Query<
         case 'success':
           const newState = {
             ...state,
-            data: action.data,
+            ...successState(action.data, action.dataUpdatedAt),
             dataUpdateCount: state.dataUpdateCount + 1,
-            dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
-            error: null,
-            isInvalidated: false,
-            status: 'success' as const,
             ...(!action.manual && {
               fetchStatus: 'idle' as const,
               fetchFailureCount: 0,
@@ -708,6 +703,16 @@ export function fetchState<
         status: 'pending',
       } as const)),
   } as const
+}
+
+function successState<TData>(data: TData | undefined, dataUpdatedAt?: number) {
+  return {
+    data,
+    dataUpdatedAt: dataUpdatedAt ?? Date.now(),
+    error: null,
+    isInvalidated: false,
+    status: 'success' as const,
+  }
 }
 
 function getDefaultState<
