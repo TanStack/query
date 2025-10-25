@@ -166,7 +166,13 @@ export type QueryFunctionContext<
 
 export type InitialDataFunction<T> = () => T | undefined
 
-type NonFunctionGuard<T> = T extends Function ? never : T
+/**
+ * `NonFunctionGuard<T>` ensures T is not a function type.
+ *
+ * If T is a function, it resolves to `never`, effectively removing T
+ * from unions and preventing ambiguity in value-or-function patterns.
+ */
+export type NonFunctionGuard<T> = T extends Function ? never : T
 
 export type PlaceholderDataFunction<
   TQueryFnData = unknown,
