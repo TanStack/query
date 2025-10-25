@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, it, vi } from 'vitest'
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   Match,
@@ -37,6 +37,10 @@ import type { JSX } from 'solid-js'
 describe('useQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -3900,6 +3904,7 @@ describe('useQuery', () => {
   })
 
   it('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
+    vi.useFakeTimers()
     const key = queryKey()
 
     function Page() {
@@ -3918,21 +3923,24 @@ describe('useQuery', () => {
     ))
 
     await waitFor(() => rendered.getByText('fetched data'))
-    const setTimeoutSpy = vi.spyOn(window, 'setTimeout')
 
     rendered.unmount()
 
-    expect(setTimeoutSpy).not.toHaveBeenCalled()
+    const item = queryClient.getQueryCache().find({ queryKey: key })
+    expect(item!.gcMarkedAt).toBeNull()
   })
 
   it('should schedule garbage collection, if gcTimeout is not set to `Infinity`', async () => {
+    vi.useFakeTimers()
     const key = queryKey()
+    const gcTime = 1000 * 60 * 10 // 10 Minutes
+    const systemTime = new Date(1970, 0, 1, 0, 0, 0, 0)
 
     function Page() {
       const query = useQuery(() => ({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, // 10 Minutes
+        gcTime,
       }))
       return <div>{query.data}</div>
     }
@@ -3944,14 +3952,22 @@ describe('useQuery', () => {
     ))
 
     await waitFor(() => rendered.getByText('fetched data'))
-    const setTimeoutSpy = vi.spyOn(window, 'setTimeout')
+
+    const query = queryClient.getQueryCache().find({ queryKey: key })
+
+    expect(query).toBeDefined()
+    expect(query!.gcMarkedAt).toBeNull()
+
+    vi.setSystemTime(systemTime)
 
     rendered.unmount()
 
-    expect(setTimeoutSpy).toHaveBeenLastCalledWith(
-      expect.any(Function),
-      1000 * 60 * 10,
-    )
+    expect(query!.gcMarkedAt).not.toBeNull()
+    expect(query!.gcMarkedAt).toBe(systemTime.getTime())
+
+    await vi.advanceTimersByTimeAsync(gcTime)
+
+    expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
   })
 
   it('should not cause memo churn when data does not change', async () => {

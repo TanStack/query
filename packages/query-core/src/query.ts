@@ -28,6 +28,7 @@ import type {
 } from './types'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
+import type { GCManager } from './gcManager'
 
 // TYPES
 
@@ -172,6 +173,7 @@ export class Query<
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
+  #gcManager: GCManager
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
@@ -179,24 +181,31 @@ export class Query<
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
+    this.#client = config.client
+    this.#gcManager = config.client.getGcManager()
+    this.#cache = this.#client.getQueryCache()
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.setOptions(config.options)
     this.observers = []
-    this.#client = config.client
-    this.#cache = this.#client.getQueryCache()
+    this.setOptions(config.options)
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
-    this.scheduleGc()
+
+    this.markForGc()
   }
+
   get meta(): QueryMeta | undefined {
     return this.options.meta
   }
 
   get promise(): Promise<TData> | undefined {
     return this.#retryer?.promise
+  }
+
+  protected getGcManager(): GCManager {
+    return this.#gcManager
   }
 
   setOptions(
@@ -219,10 +228,18 @@ export class Query<
     }
   }
 
-  protected optionalRemove() {
-    if (!this.observers.length && this.state.fetchStatus === 'idle') {
+  optionalRemove(): boolean {
+    if (this.isSafeToRemove()) {
       this.#cache.remove(this)
+      return true
+    } else {
+      this.clearGcMark()
     }
+    return false
+  }
+
+  private isSafeToRemove(): boolean {
+    return this.observers.length === 0 && this.state.fetchStatus === 'idle'
   }
 
   setData(
@@ -346,7 +363,7 @@ export class Query<
       this.observers.push(observer)
 
       // Stop the query from being garbage collected
-      this.clearGcTimeout()
+      this.clearGcMark()
 
       this.#cache.notify({ type: 'observerAdded', query: this, observer })
     }
@@ -367,7 +384,9 @@ export class Query<
           }
         }
 
-        this.scheduleGc()
+        if (this.isSafeToRemove()) {
+          this.markForGc()
+        }
       }
 
       this.#cache.notify({ type: 'observerRemoved', query: this, observer })
@@ -390,7 +409,7 @@ export class Query<
   ): Promise<TData> {
     if (
       this.state.fetchStatus !== 'idle' &&
-      // If the promise in the retyer is already rejected, we have to definitely
+      // If the promise in the retryer is already rejected, we have to definitely
       // re-start the fetch; there is a chance that the query is still in a
       // pending state when that happens
       this.#retryer?.status() !== 'rejected'
@@ -600,8 +619,10 @@ export class Query<
 
       throw error // rethrow the error for further handling
     } finally {
-      // Schedule query gc after fetching
-      this.scheduleGc()
+      if (this.isSafeToRemove()) {
+        // Schedule query gc after fetching
+        this.markForGc()
+      }
     }
   }
 

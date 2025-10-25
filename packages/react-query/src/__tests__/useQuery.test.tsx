@@ -4018,21 +4018,24 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
     rendered.getByText('fetched data')
-    const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
 
     rendered.unmount()
 
-    expect(setTimeoutSpy).not.toHaveBeenCalled()
+    await vi.advanceTimersByTimeAsync(0)
+
+    const item = queryClient.getQueryCache().find({ queryKey: key })
+    expect(item!.gcMarkedAt).toBeNull()
   })
 
   test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
     const key = queryKey()
+    const gcTime = 1000 * 60 * 10 // 10 Minutes
 
     function Page() {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, // 10 Minutes
+        gcTime,
       })
       return <div>{query.data}</div>
     }
@@ -4042,14 +4045,21 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     rendered.getByText('fetched data')
 
-    const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
+    const query = queryClient.getQueryCache().find({ queryKey: key })
+
+    expect(query).toBeDefined()
+    expect(query!.gcMarkedAt).toBeNull()
+
+    vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 0))
 
     rendered.unmount()
 
-    expect(setTimeoutSpy).toHaveBeenLastCalledWith(
-      expect.any(Function),
-      1000 * 60 * 10,
-    )
+    expect(query!.gcMarkedAt).not.toBeNull()
+    expect(query!.gcMarkedAt).toBe(new Date(1970, 0, 1, 0, 0, 0, 0).getTime())
+
+    await vi.advanceTimersByTimeAsync(gcTime)
+
+    expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
   })
 
   it('should not cause memo churn when data does not change', async () => {

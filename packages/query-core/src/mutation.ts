@@ -12,6 +12,7 @@ import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import type { Retryer } from './retryer'
 import type { QueryClient } from './queryClient'
+import type { GCManager } from './gcManager'
 
 // TYPES
 
@@ -108,9 +109,8 @@ export class Mutation<
     this.#mutationCache = config.mutationCache
     this.#observers = []
     this.state = config.state || getDefaultState()
-
     this.setOptions(config.options)
-    this.scheduleGc()
+    this.markForGc()
   }
 
   setOptions(
@@ -125,12 +125,16 @@ export class Mutation<
     return this.options.meta
   }
 
+  protected getGcManager(): GCManager {
+    return this.#client.getGcManager()
+  }
+
   addObserver(observer: MutationObserver<any, any, any, any>): void {
     if (!this.#observers.includes(observer)) {
       this.#observers.push(observer)
 
       // Stop the mutation from being garbage collected
-      this.clearGcTimeout()
+      this.clearGcMark()
 
       this.#mutationCache.notify({
         type: 'observerAdded',
@@ -143,7 +147,9 @@ export class Mutation<
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.#observers = this.#observers.filter((x) => x !== observer)
 
-    this.scheduleGc()
+    if (this.isSafeToRemove()) {
+      this.markForGc()
+    }
 
     this.#mutationCache.notify({
       type: 'observerRemoved',
@@ -152,14 +158,21 @@ export class Mutation<
     })
   }
 
-  protected optionalRemove() {
+  private isSafeToRemove(): boolean {
+    return this.state.status !== 'pending' && this.#observers.length === 0
+  }
+
+  optionalRemove(): boolean {
     if (!this.#observers.length) {
       if (this.state.status === 'pending') {
-        this.scheduleGc()
+        this.markForGc()
       } else {
         this.#mutationCache.remove(this)
+        return true
       }
     }
+
+    return false
   }
 
   continue(): Promise<unknown> {
@@ -369,6 +382,10 @@ export class Mutation<
       }
     }
     this.state = reducer(this.state)
+
+    if (this.isSafeToRemove()) {
+      this.markForGc()
+    }
 
     notifyManager.batch(() => {
       this.#observers.forEach((observer) => {

@@ -2,6 +2,7 @@ import {
   functionalUpdate,
   hashKey,
   hashQueryKeyByOptions,
+  isServer,
   noop,
   partialMatchKey,
   resolveStaleTime,
@@ -12,6 +13,7 @@ import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
+import { GCManager } from './gcManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type {
   CancelOptions,
@@ -59,6 +61,7 @@ interface MutationDefaults {
 // CLASS
 
 export class QueryClient {
+  #gcManager: GCManager
   #queryCache: QueryCache
   #mutationCache: MutationCache
   #defaultOptions: DefaultOptions
@@ -72,6 +75,7 @@ export class QueryClient {
     this.#queryCache = config.queryCache || new QueryCache()
     this.#mutationCache = config.mutationCache || new MutationCache()
     this.#defaultOptions = config.defaultOptions || {}
+    this.#gcManager = new GCManager({ forceDisable: isServer })
     this.#queryDefaults = new Map()
     this.#mutationDefaults = new Map()
     this.#mountCount = 0
@@ -454,6 +458,10 @@ export class QueryClient {
     return Promise.resolve()
   }
 
+  getGcManager(): GCManager {
+    return this.#gcManager
+  }
+
   getQueryCache(): QueryCache {
     return this.#queryCache
   }
@@ -632,6 +640,7 @@ export class QueryClient {
     if (options?._defaulted) {
       return options
     }
+
     return {
       ...this.#defaultOptions.mutations,
       ...(options?.mutationKey &&
@@ -644,5 +653,6 @@ export class QueryClient {
   clear(): void {
     this.#queryCache.clear()
     this.#mutationCache.clear()
+    this.#gcManager.clear()
   }
 }
