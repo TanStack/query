@@ -12,6 +12,7 @@ import type {
 import type { QueryClient } from './queryClient'
 import type { Action, MutationState } from './mutation'
 import type { MutationFilters } from './utils'
+import type { GarbageCollectable } from './gcManager'
 
 // TYPES
 
@@ -90,7 +91,10 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 
 // CLASS
 
-export class MutationCache extends Subscribable<MutationCacheListener> {
+export class MutationCache
+  extends Subscribable<MutationCacheListener>
+  implements GarbageCollectable
+{
   #mutations: Set<Mutation<any, any, any, any>>
   #scopes: Map<string, Array<Mutation<any, any, any, any>>>
   #mutationId: number
@@ -236,6 +240,30 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
         pausedMutations.map((mutation) => mutation.continue().catch(noop)),
       ),
     )
+  }
+
+  /**
+   * Perform garbage collection on eligible mutations.
+   * Called periodically by GCManager.
+   *
+   * Iterates through all mutations and attempts to remove
+   * those that are eligible for garbage collection.
+   */
+  performGarbageCollection(): void {
+    for (const mutation of this.#mutations) {
+      // Check if mutation is eligible based on its gcEligibleAt timestamp
+      if (mutation.isEligibleForGc()) {
+        mutation.optionalRemove()
+      }
+    }
+  }
+
+  /**
+   * Destroy the cache and clean up resources
+   */
+  destroy(): void {
+    // Clean up all mutations
+    this.clear()
   }
 }
 

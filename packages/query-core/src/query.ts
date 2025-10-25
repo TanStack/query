@@ -189,7 +189,7 @@ export class Query<
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
-    this.scheduleGc()
+    this.markForGc()
   }
   get meta(): QueryMeta | undefined {
     return this.options.meta
@@ -219,8 +219,8 @@ export class Query<
     }
   }
 
-  protected optionalRemove() {
-    if (!this.observers.length && this.state.fetchStatus === 'idle') {
+  optionalRemove(): void {
+    if (this.observers.length === 0 && this.state.fetchStatus === 'idle') {
       this.#cache.remove(this)
     }
   }
@@ -346,7 +346,7 @@ export class Query<
       this.observers.push(observer)
 
       // Stop the query from being garbage collected
-      this.clearGcTimeout()
+      this.clearGcMark()
 
       this.#cache.notify({ type: 'observerAdded', query: this, observer })
     }
@@ -367,7 +367,12 @@ export class Query<
           }
         }
 
-        this.scheduleGc()
+        // Check for immediate removal if gcTime is 0 and idle
+        if (this.isSafeToRemove() && this.options.gcTime === 0) {
+          this.#cache.remove(this)
+        } else {
+          this.markForGc()
+        }
       }
 
       this.#cache.notify({ type: 'observerRemoved', query: this, observer })
@@ -390,7 +395,7 @@ export class Query<
   ): Promise<TData> {
     if (
       this.state.fetchStatus !== 'idle' &&
-      // If the promise in the retyer is already rejected, we have to definitely
+      // If the promise in the retryer is already rejected, we have to definitely
       // re-start the fetch; there is a chance that the query is still in a
       // pending state when that happens
       this.#retryer?.status() !== 'rejected'
@@ -600,8 +605,8 @@ export class Query<
 
       throw error // rethrow the error for further handling
     } finally {
-      // Schedule query gc after fetching
-      this.scheduleGc()
+      // Mark query for gc after fetching
+      this.markForGc()
     }
   }
 
@@ -679,6 +684,11 @@ export class Query<
 
     this.state = reducer(this.state)
 
+    // Check for immediate removal after state change
+    if (this.isSafeToRemove() && this.options.gcTime === 0) {
+      this.#cache.remove(this)
+    }
+
     notifyManager.batch(() => {
       this.observers.forEach((observer) => {
         observer.onQueryUpdate()
@@ -686,6 +696,10 @@ export class Query<
 
       this.#cache.notify({ query: this, type: 'updated', action })
     })
+  }
+
+  isSafeToRemove(): boolean {
+    return this.observers.length === 0 && this.state.fetchStatus === 'idle'
   }
 }
 

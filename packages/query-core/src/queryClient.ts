@@ -12,6 +12,7 @@ import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
+import { GCManager } from './gcManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type {
   CancelOptions,
@@ -59,6 +60,7 @@ interface MutationDefaults {
 // CLASS
 
 export class QueryClient {
+  #gcManager: GCManager
   #queryCache: QueryCache
   #mutationCache: MutationCache
   #defaultOptions: DefaultOptions
@@ -71,10 +73,15 @@ export class QueryClient {
   constructor(config: QueryClientConfig = {}) {
     this.#queryCache = config.queryCache || new QueryCache()
     this.#mutationCache = config.mutationCache || new MutationCache()
+    this.#gcManager = config.gcManager || new GCManager()
     this.#defaultOptions = config.defaultOptions || {}
     this.#queryDefaults = new Map()
     this.#mutationDefaults = new Map()
     this.#mountCount = 0
+
+    this.#gcManager.registerCache(this.#queryCache)
+    this.#gcManager.registerCache(this.#mutationCache)
+    this.#gcManager.startScanning()
   }
 
   mount(): void {
@@ -104,6 +111,8 @@ export class QueryClient {
 
     this.#unsubscribeOnline?.()
     this.#unsubscribeOnline = undefined
+
+    this.#gcManager.stopScanning()
   }
 
   isFetching<TQueryFilters extends QueryFilters<any> = QueryFilters>(
@@ -529,16 +538,14 @@ export class QueryClient {
   getMutationDefaults(
     mutationKey: MutationKey,
   ): OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'> {
-    const defaults = [...this.#mutationDefaults.values()]
-
     const result: OmitKeyof<
       MutationObserverOptions<any, any, any, any>,
       'mutationKey'
     > = {}
 
-    defaults.forEach((queryDefault) => {
-      if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
-        Object.assign(result, queryDefault.defaultOptions)
+    this.#mutationDefaults.forEach((mutationDefault) => {
+      if (partialMatchKey(mutationKey, mutationDefault.mutationKey)) {
+        Object.assign(result, mutationDefault.defaultOptions)
       }
     })
 
@@ -632,13 +639,24 @@ export class QueryClient {
     if (options?._defaulted) {
       return options
     }
-    return {
-      ...this.#defaultOptions.mutations,
-      ...(options?.mutationKey &&
-        this.getMutationDefaults(options.mutationKey)),
-      ...options,
-      _defaulted: true,
-    } as T
+
+    let result: T = options ?? ({} as T)
+
+    for (const key in this.#defaultOptions.mutations) {
+      if (key in result) {
+        continue
+      }
+      // @ts-ignore - for testing purposes
+      result[key] = this.#defaultOptions.mutations[key]
+    }
+
+    if (options?.mutationKey) {
+      Object.assign(result, this.getMutationDefaults(options.mutationKey))
+    }
+
+    result._defaulted = true
+
+    return result
   }
 
   clear(): void {

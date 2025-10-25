@@ -110,7 +110,7 @@ export class Mutation<
     this.state = config.state || getDefaultState()
 
     this.setOptions(config.options)
-    this.scheduleGc()
+    this.markForGc()
   }
 
   setOptions(
@@ -130,7 +130,7 @@ export class Mutation<
       this.#observers.push(observer)
 
       // Stop the mutation from being garbage collected
-      this.clearGcTimeout()
+      this.clearGcMark()
 
       this.#mutationCache.notify({
         type: 'observerAdded',
@@ -143,7 +143,12 @@ export class Mutation<
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.#observers = this.#observers.filter((x) => x !== observer)
 
-    this.scheduleGc()
+    // Check for immediate removal if gcTime is 0 and not pending
+    if (this.isSafeToRemove() && this.options.gcTime === 0) {
+      this.#mutationCache.remove(this)
+    } else {
+      this.markForGc()
+    }
 
     this.#mutationCache.notify({
       type: 'observerRemoved',
@@ -152,10 +157,10 @@ export class Mutation<
     })
   }
 
-  protected optionalRemove() {
+  optionalRemove(): void {
     if (!this.#observers.length) {
       if (this.state.status === 'pending') {
-        this.scheduleGc()
+        this.markForGc()
       } else {
         this.#mutationCache.remove(this)
       }
@@ -370,6 +375,12 @@ export class Mutation<
     }
     this.state = reducer(this.state)
 
+    // Check for immediate removal after state change
+    if (this.isSafeToRemove() && this.options.gcTime === 0) {
+      this.#mutationCache.remove(this)
+      return
+    }
+
     notifyManager.batch(() => {
       this.#observers.forEach((observer) => {
         observer.onMutationUpdate(action)
@@ -380,6 +391,10 @@ export class Mutation<
         action,
       })
     })
+  }
+
+  isSafeToRemove(): boolean {
+    return this.state.status !== 'pending' && this.#observers.length === 0
   }
 }
 

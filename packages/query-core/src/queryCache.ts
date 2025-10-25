@@ -13,6 +13,7 @@ import type {
 } from './types'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
+import type { GarbageCollectable } from './gcManager'
 
 // TYPES
 
@@ -89,7 +90,10 @@ export interface QueryStore {
 
 // CLASS
 
-export class QueryCache extends Subscribable<QueryCacheListener> {
+export class QueryCache
+  extends Subscribable<QueryCacheListener>
+  implements GarbageCollectable
+{
   #queries: QueryStore
 
   constructor(public config: QueryCacheConfig = {}) {
@@ -219,5 +223,29 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         query.onOnline()
       })
     })
+  }
+
+  /**
+   * Perform garbage collection on eligible queries.
+   * Called periodically by GCManager.
+   *
+   * Iterates through all queries and attempts to remove
+   * those that are eligible for garbage collection.
+   */
+  performGarbageCollection(): void {
+    for (const query of this.#queries.values()) {
+      // Check if query is eligible based on its gcEligibleAt timestamp
+      if (query.isEligibleForGc()) {
+        query.optionalRemove()
+      }
+    }
+  }
+
+  /**
+   * Destroy the cache and clean up resources
+   */
+  destroy(): void {
+    // Clean up all queries
+    this.clear()
   }
 }
