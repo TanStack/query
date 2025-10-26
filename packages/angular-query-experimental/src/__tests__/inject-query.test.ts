@@ -659,18 +659,15 @@ describe('injectQuery', () => {
         })),
       )
 
-      // Synchronize pending effects
-      TestBed.tick()
+      await vi.runAllTimersAsync()
 
-      const stablePromise = app.whenStable()
-      await stablePromise
+      await app.whenStable()
 
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
       expect(callCount).toBe(1)
 
       await query.refetch()
-      await Promise.resolve()
       await vi.runAllTimersAsync()
       await app.whenStable()
 
@@ -703,18 +700,18 @@ describe('injectQuery', () => {
         })),
       )
 
-      // Initially disabled
       TestBed.tick()
       await app.whenStable()
+
       expect(query.status()).toBe('pending')
       expect(query.data()).toBeUndefined()
       expect(callCount).toBe(0)
 
       // Enable the query
       enabledSignal.set(true)
-      TestBed.tick()
-
+      await vi.runOnlyPendingTimersAsync()
       await app.whenStable()
+
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
       expect(callCount).toBe(1)
@@ -743,9 +740,7 @@ describe('injectQuery', () => {
         })),
       )
 
-      // Synchronize pending effects
-      TestBed.tick()
-
+      await vi.runAllTimersAsync()
       await app.whenStable()
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
@@ -753,14 +748,9 @@ describe('injectQuery', () => {
 
       // Invalidate the query
       queryClient.invalidateQueries({ queryKey: testKey })
-      TestBed.tick()
-
-      // Wait for the invalidation to trigger a refetch
-      await Promise.resolve()
       await vi.advanceTimersByTimeAsync(10)
-      TestBed.tick()
-
       await app.whenStable()
+
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-2')
       expect(callCount).toBe(2)
