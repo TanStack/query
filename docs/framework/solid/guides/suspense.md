@@ -18,7 +18,6 @@ You can use async `suspense` function that is provided by `solid-query`.
 
 ```tsx
 import { useQuery } from '@tanstack/solid-query'
-import { createEffect } from 'solid-js'
 
 const todoFetcher = async () =>
   await fetch('https://jsonplaceholder.cypress.io/todos').then((response) =>
@@ -31,12 +30,8 @@ function SuspendableComponent() {
     queryFn: todoFetcher,
   }))
 
-  createEffect(async () => {
-    if (query.suspense) {
-      await query.suspense()
-    }
-  })
-
+  // Accessing query.data directly inside a <Suspense> boundary
+  // automatically triggers suspension until data is ready
   return <div>Data: {JSON.stringify(query.data)}</div>
 }
 ```
