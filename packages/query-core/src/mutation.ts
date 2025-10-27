@@ -12,6 +12,7 @@ import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import type { Retryer } from './retryer'
 import type { QueryClient } from './queryClient'
+import type { GCManager } from './gcManager'
 
 // TYPES
 
@@ -97,6 +98,7 @@ export class Mutation<
   >
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>
+  #gcManager: GCManager
 
   constructor(
     config: MutationConfig<TData, TError, TVariables, TOnMutateResult>,
@@ -104,6 +106,7 @@ export class Mutation<
     super()
 
     this.#client = config.client
+    this.#gcManager = config.client.getGcManager()
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
     this.#observers = []
@@ -143,11 +146,13 @@ export class Mutation<
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.#observers = this.#observers.filter((x) => x !== observer)
 
-    // Check for immediate removal if gcTime is 0 and not pending
-    if (this.isSafeToRemove() && this.options.gcTime === 0) {
-      this.#mutationCache.remove(this)
-    } else {
+    if (this.#observers.length === 0) {
       this.markForGc()
+
+      if (this.options.gcTime === 0) {
+        // Check for immediate removal if gcTime is 0 and not pending
+        this.#gcManager.scheduleImmediateScan()
+      }
     }
 
     this.#mutationCache.notify({
@@ -377,7 +382,7 @@ export class Mutation<
 
     // Check for immediate removal after state change
     if (this.isSafeToRemove() && this.options.gcTime === 0) {
-      this.#mutationCache.remove(this)
+      this.#gcManager.scheduleImmediateScan()
       return
     }
 

@@ -67,7 +67,12 @@ export abstract class Removable {
    * @returns true if eligible for GC
    */
   isEligibleForGc(): boolean {
-    return this.gcEligibleAt !== null && Date.now() >= this.gcEligibleAt
+    if (this.gcEligibleAt === null) {
+      return false
+    }
+    const now = Date.now()
+    const isElapsed = now >= this.gcEligibleAt
+    return isElapsed
   }
 
   /**

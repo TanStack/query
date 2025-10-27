@@ -111,8 +111,6 @@ export class QueryClient {
 
     this.#unsubscribeOnline?.()
     this.#unsubscribeOnline = undefined
-
-    this.#gcManager.stopScanning()
   }
 
   isFetching<TQueryFilters extends QueryFilters<any> = QueryFilters>(
@@ -463,6 +461,10 @@ export class QueryClient {
     return Promise.resolve()
   }
 
+  getGcManager(): GCManager {
+    return this.#gcManager
+  }
+
   getQueryCache(): QueryCache {
     return this.#queryCache
   }
@@ -538,14 +540,16 @@ export class QueryClient {
   getMutationDefaults(
     mutationKey: MutationKey,
   ): OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'> {
+    const defaults = [...this.#mutationDefaults.values()]
+
     const result: OmitKeyof<
       MutationObserverOptions<any, any, any, any>,
       'mutationKey'
     > = {}
 
-    this.#mutationDefaults.forEach((mutationDefault) => {
-      if (partialMatchKey(mutationKey, mutationDefault.mutationKey)) {
-        Object.assign(result, mutationDefault.defaultOptions)
+    defaults.forEach((queryDefault) => {
+      if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
+        Object.assign(result, queryDefault.defaultOptions)
       }
     })
 
@@ -640,23 +644,13 @@ export class QueryClient {
       return options
     }
 
-    let result: T = options ?? ({} as T)
-
-    for (const key in this.#defaultOptions.mutations) {
-      if (key in result) {
-        continue
-      }
-      // @ts-ignore - for testing purposes
-      result[key] = this.#defaultOptions.mutations[key]
-    }
-
-    if (options?.mutationKey) {
-      Object.assign(result, this.getMutationDefaults(options.mutationKey))
-    }
-
-    result._defaulted = true
-
-    return result
+    return {
+      ...this.#defaultOptions.mutations,
+      ...(options?.mutationKey &&
+        this.getMutationDefaults(options.mutationKey)),
+      ...options,
+      _defaulted: true,
+    } as T
   }
 
   clear(): void {

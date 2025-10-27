@@ -1,4 +1,4 @@
-import { timeoutManager } from './timeoutManager'
+import { systemSetTimeoutZero, timeoutManager } from './timeoutManager'
 import { isServer } from './utils'
 import type { ManagedTimerId } from './timeoutManager'
 
@@ -65,6 +65,7 @@ export class GCManager {
   #intervalId: ManagedTimerId | null = null
   #isScanning = false
   #isPaused = false
+  #isScheduledImmediateScan = false
 
   constructor(config: GCManagerConfig = {}) {
     this.#minScanInterval = config.minScanInterval ?? 1
@@ -92,6 +93,21 @@ export class GCManager {
    */
   getScanInterval(): number {
     return this.#scanInterval
+  }
+
+  scheduleImmediateScan(): void {
+    if (this.#isScheduledImmediateScan) {
+      return
+    }
+
+    this.#isScheduledImmediateScan = true
+
+    systemSetTimeoutZero(() => {
+      if (!this.#isPaused) {
+        this.#performScan()
+      }
+      this.#isScheduledImmediateScan = false
+    })
   }
 
   /**

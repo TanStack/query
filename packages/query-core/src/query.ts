@@ -28,6 +28,7 @@ import type {
 } from './types'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
+import type { GCManager } from './gcManager'
 
 // TYPES
 
@@ -172,6 +173,7 @@ export class Query<
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
+  #gcManager: GCManager
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
@@ -185,12 +187,14 @@ export class Query<
     this.observers = []
     this.#client = config.client
     this.#cache = this.#client.getQueryCache()
+    this.#gcManager = this.#client.getGcManager()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
     this.markForGc()
   }
+
   get meta(): QueryMeta | undefined {
     return this.options.meta
   }
@@ -367,11 +371,11 @@ export class Query<
           }
         }
 
+        this.markForGc()
+
         // Check for immediate removal if gcTime is 0 and idle
         if (this.isSafeToRemove() && this.options.gcTime === 0) {
-          this.#cache.remove(this)
-        } else {
-          this.markForGc()
+          this.#gcManager.scheduleImmediateScan()
         }
       }
 
@@ -393,6 +397,8 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
+    this.clearGcMark()
+
     if (
       this.state.fetchStatus !== 'idle' &&
       // If the promise in the retryer is already rejected, we have to definitely
@@ -605,8 +611,10 @@ export class Query<
 
       throw error // rethrow the error for further handling
     } finally {
-      // Mark query for gc after fetching
-      this.markForGc()
+      if (this.isSafeToRemove()) {
+        // Mark query for gc after fetching
+        this.markForGc()
+      }
     }
   }
 
@@ -686,7 +694,7 @@ export class Query<
 
     // Check for immediate removal after state change
     if (this.isSafeToRemove() && this.options.gcTime === 0) {
-      this.#cache.remove(this)
+      this.#gcManager.scheduleImmediateScan()
     }
 
     notifyManager.batch(() => {

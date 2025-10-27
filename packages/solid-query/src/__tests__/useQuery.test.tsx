@@ -3927,12 +3927,13 @@ describe('useQuery', () => {
 
   it('should schedule garbage collection, if gcTimeout is not set to `Infinity`', async () => {
     const key = queryKey()
+    const gcTime = 1000 * 60 * 10 // 10 Minutes
 
     function Page() {
       const query = useQuery(() => ({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, // 10 Minutes
+        gcTime,
       }))
       return <div>{query.data}</div>
     }
@@ -3944,14 +3945,25 @@ describe('useQuery', () => {
     ))
 
     await waitFor(() => rendered.getByText('fetched data'))
-    const setTimeoutSpy = vi.spyOn(window, 'setTimeout')
+    const query = queryClient.getQueryCache().find({ queryKey: key })
+
+    expect(query).toBeDefined()
+    expect(query!.gcEligibleAt).toBeNull()
+
+    vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 0))
 
     rendered.unmount()
 
-    expect(setTimeoutSpy).toHaveBeenLastCalledWith(
-      expect.any(Function),
-      1000 * 60 * 10,
+    expect(query!.gcEligibleAt).not.toBeNull()
+    expect(query!.gcEligibleAt).toBe(
+      new Date(1970, 0, 1, 0, 0, 0, gcTime).getTime(),
     )
+
+    vi.useRealTimers()
+
+    await vi.waitFor(() => {
+      return queryClient.getQueryCache().find({ queryKey: key }) === undefined
+    })
   })
 
   it('should not cause memo churn when data does not change', async () => {

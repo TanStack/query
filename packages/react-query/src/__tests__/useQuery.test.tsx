@@ -470,6 +470,7 @@ describe('useQuery', () => {
         gcTime: 0,
         notifyOnChangeProps: 'all',
       })
+      console.log('state', state)
       states.push(state)
       return (
         <div>
@@ -4016,40 +4017,57 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await vi.advanceTimersByTimeAsync(0)
-    rendered.getByText('fetched data')
-    const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
+    await vi.waitFor(() => {
+      return rendered.getByText('fetched data')
+    })
 
     rendered.unmount()
 
-    expect(setTimeoutSpy).not.toHaveBeenCalled()
+    const query = queryClient.getQueryCache().find({ queryKey: key })
+
+    expect(query).toBeDefined()
+    expect(query!.gcEligibleAt).toBeNull()
   })
 
   test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
     const key = queryKey()
+    const gcTime = 1000 * 60 * 10 // 10 Minutes
 
     function Page() {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, // 10 Minutes
+        gcTime,
       })
+
       return <div>{query.data}</div>
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await vi.advanceTimersByTimeAsync(0)
-    rendered.getByText('fetched data')
+    await vi.waitFor(() => {
+      rendered.getByText('fetched data')
+    })
 
-    const setTimeoutSpy = vi.spyOn(globalThis.window, 'setTimeout')
+    const query = queryClient.getQueryCache().find({ queryKey: key })
+
+    expect(query).toBeDefined()
+    expect(query!.gcEligibleAt).toBeNull()
+
+    vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 0))
 
     rendered.unmount()
 
-    expect(setTimeoutSpy).toHaveBeenLastCalledWith(
-      expect.any(Function),
-      1000 * 60 * 10,
+    expect(query!.gcEligibleAt).not.toBeNull()
+    expect(query!.gcEligibleAt).toBe(
+      new Date(1970, 0, 1, 0, 0, 0, gcTime).getTime(),
     )
+
+    vi.useRealTimers()
+
+    await vi.waitFor(() => {
+      return queryClient.getQueryCache().find({ queryKey: key }) === undefined
+    })
   })
 
   it('should not cause memo churn when data does not change', async () => {
