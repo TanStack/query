@@ -149,7 +149,7 @@ export class Mutation<
     if (this.#observers.length === 0) {
       this.markForGc()
 
-      if (this.options.gcTime === 0) {
+      if (this.options.gcTime === 0 && this.isSafeToRemove()) {
         // Check for immediate removal if gcTime is 0 and not pending
         this.#gcManager.scheduleImmediateScan()
       }
@@ -383,7 +383,6 @@ export class Mutation<
     // Check for immediate removal after state change
     if (this.isSafeToRemove() && this.options.gcTime === 0) {
       this.#gcManager.scheduleImmediateScan()
-      return
     }
 
     notifyManager.batch(() => {
