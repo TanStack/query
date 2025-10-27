@@ -470,7 +470,6 @@ describe('useQuery', () => {
         gcTime: 0,
         notifyOnChangeProps: 'all',
       })
-      console.log('state', state)
       states.push(state)
       return (
         <div>
@@ -4065,9 +4064,9 @@ describe('useQuery', () => {
 
     vi.useRealTimers()
 
-    await vi.waitFor(() => {
-      return queryClient.getQueryCache().find({ queryKey: key }) === undefined
-    })
+    await sleep(10)
+
+    expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
   })
 
   it('should not cause memo churn when data does not change', async () => {
