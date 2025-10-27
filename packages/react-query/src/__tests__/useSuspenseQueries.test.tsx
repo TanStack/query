@@ -643,6 +643,8 @@ describe('useSuspenseQueries 2', () => {
 
       expect(rendered.getByText('loading')).toBeInTheDocument()
 
+      vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 0))
+
       fireEvent.click(rendered.getByText('hide'))
       expect(rendered.getByText('page2')).toBeInTheDocument()
       // wait for query to be resolved
@@ -653,6 +655,9 @@ describe('useSuspenseQueries 2', () => {
       await vi.advanceTimersByTimeAsync(1000)
       // advance by 10ms to ensure the query is removed
       await vi.advanceTimersByTimeAsync(10)
+
+      vi.useRealTimers()
+      await sleep(10)
 
       expect(
         queryClient.getQueryCache().find({ queryKey: key }),
