@@ -649,7 +649,10 @@ describe('useSuspenseQueries 2', () => {
       await act(() => vi.advanceTimersByTimeAsync(3000))
       expect(queryClient.getQueryData(key)).toBe('data')
 
-      await act(() => vi.advanceTimersByTimeAsync(1010))
+      // advance by gcTime
+      await vi.advanceTimersByTimeAsync(1000)
+      // advance by 10ms to ensure the query is removed
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(
         queryClient.getQueryCache().find({ queryKey: key }),

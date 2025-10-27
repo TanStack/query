@@ -413,10 +413,13 @@ describe('mutationCache', () => {
       const unsubscribe = observer.subscribe(() => undefined)
 
       observer.mutate(1)
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
 
       unsubscribe()
 
       await vi.advanceTimersByTimeAsync(10)
+
       expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
