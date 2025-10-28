@@ -84,6 +84,11 @@ export class QueryObserver<
     this.#client = client
     this.#selectError = null
     this.#currentThenable = pendingThenable()
+    if (!this.options.experimental_prefetchInRender) {
+      this.#currentThenable.reject(
+        new Error('experimental_prefetchInRender feature flag is not enabled'),
+      )
+    }
 
     this.bindMethods()
     this.setOptions(options)
