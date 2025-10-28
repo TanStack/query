@@ -1,16 +1,6 @@
 import { systemSetTimeoutZero, timeoutManager } from './timeoutManager'
-import { isServer } from './utils'
+import type { Removable } from './removable'
 import type { ManagedTimerId } from './timeoutManager'
-
-/**
- * Interface for objects that can perform garbage collection
- */
-export interface GarbageCollectable {
-  /**
-   * Perform garbage collection on eligible items
-   */
-  performGarbageCollection: () => void
-}
 
 /**
  * Configuration for the GC manager
@@ -58,7 +48,6 @@ export interface GCManagerConfig {
  * ```
  */
 export class GCManager {
-  #caches = new Set<GarbageCollectable>()
   #scanInterval: number
   #minScanInterval: number
   #maxScanInterval: number
@@ -66,6 +55,7 @@ export class GCManager {
   #isScanning = false
   #isPaused = false
   #isScheduledImmediateScan = false
+  #eligibleItems = new Set<Removable>()
 
   constructor(config: GCManagerConfig = {}) {
     this.#minScanInterval = config.minScanInterval ?? 1
@@ -111,28 +101,10 @@ export class GCManager {
   }
 
   /**
-   * Register a cache for garbage collection
-   *
-   * @param cache - Cache that implements GarbageCollectable
-   */
-  registerCache(cache: GarbageCollectable): void {
-    this.#caches.add(cache)
-  }
-
-  /**
-   * Unregister a cache from garbage collection
-   *
-   * @param cache - Cache to unregister
-   */
-  unregisterCache(cache: GarbageCollectable): void {
-    this.#caches.delete(cache)
-  }
-
-  /**
    * Start periodic scanning. Safe to call multiple times.
    */
   startScanning(): void {
-    if (this.#isScanning || isServer) {
+    if (this.#isScanning) {
       return
     }
 
@@ -194,24 +166,60 @@ export class GCManager {
   }
 
   /**
-   * Get number of registered caches
+   * Track an item that has been marked for garbage collection.
+   * Automatically starts scanning if not already running.
+   *
+   * @param item - The query or mutation marked for GC
    */
-  getCacheCount(): number {
-    return this.#caches.size
+  trackEligibleItem(item: Removable): void {
+    this.#eligibleItems.add(item)
+
+    // Start scanning if we have eligible items and aren't already scanning
+    if (!this.#isScanning) {
+      this.startScanning()
+    }
+  }
+
+  /**
+   * Untrack an item that is no longer eligible for garbage collection.
+   * Automatically stops scanning if no items remain eligible.
+   *
+   * @param item - The query or mutation no longer eligible for GC
+   */
+  untrackEligibleItem(item: Removable): void {
+    this.#eligibleItems.delete(item)
+
+    // Stop scanning if no items are eligible
+    if (this.getEligibleItemCount() === 0 && this.#isScanning) {
+      this.stopScanning()
+    }
+  }
+
+  /**
+   * Get the number of items currently eligible for garbage collection.
+   */
+  getEligibleItemCount(): number {
+    return this.#eligibleItems.size
   }
 
   #performScan(): void {
-    // Iterate through all registered caches and trigger GC
-    this.#caches.forEach((cache) => {
+    // Iterate through all eligible items and attempt to collect them
+    for (const item of this.#eligibleItems) {
       try {
-        cache.performGarbageCollection()
+        if (item.isEligibleForGc()) {
+          const wasCollected = item.optionalRemove()
+
+          if (wasCollected) {
+            this.untrackEligibleItem(item)
+          }
+        }
       } catch (error) {
         // Log but don't throw - one cache error shouldn't stop others
         if (process.env.NODE_ENV !== 'production') {
           console.error('[GCManager] Error during garbage collection:', error)
         }
       }
-    })
+    }
   }
 
   #validateInterval(ms: number): number {

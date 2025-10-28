@@ -73,15 +73,11 @@ export class QueryClient {
   constructor(config: QueryClientConfig = {}) {
     this.#queryCache = config.queryCache || new QueryCache()
     this.#mutationCache = config.mutationCache || new MutationCache()
-    this.#gcManager = config.gcManager || new GCManager()
     this.#defaultOptions = config.defaultOptions || {}
+    this.#gcManager = new GCManager()
     this.#queryDefaults = new Map()
     this.#mutationDefaults = new Map()
     this.#mountCount = 0
-
-    this.#gcManager.registerCache(this.#queryCache)
-    this.#gcManager.registerCache(this.#mutationCache)
-    this.#gcManager.startScanning()
   }
 
   mount(): void {

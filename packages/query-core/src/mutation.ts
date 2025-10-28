@@ -128,6 +128,10 @@ export class Mutation<
     return this.options.meta
   }
 
+  protected getGcManager(): GCManager {
+    return this.#gcManager
+  }
+
   addObserver(observer: MutationObserver<any, any, any, any>): void {
     if (!this.#observers.includes(observer)) {
       this.#observers.push(observer)
@@ -162,14 +166,17 @@ export class Mutation<
     })
   }
 
-  optionalRemove(): void {
+  optionalRemove(): boolean {
     if (!this.#observers.length) {
       if (this.state.status === 'pending') {
         this.markForGc()
       } else {
         this.#mutationCache.remove(this)
+        return true
       }
     }
+
+    return false
   }
 
   continue(): Promise<unknown> {

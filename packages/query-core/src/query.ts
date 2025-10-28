@@ -223,10 +223,16 @@ export class Query<
     }
   }
 
-  optionalRemove(): void {
+  protected getGcManager(): GCManager {
+    return this.#gcManager
+  }
+
+  optionalRemove(): boolean {
     if (this.observers.length === 0 && this.state.fetchStatus === 'idle') {
       this.#cache.remove(this)
+      return true
     }
+    return false
   }
 
   setData(
@@ -371,11 +377,13 @@ export class Query<
           }
         }
 
-        this.markForGc()
-
         // Check for immediate removal if gcTime is 0 and idle
-        if (this.isSafeToRemove() && this.options.gcTime === 0) {
-          this.#gcManager.scheduleImmediateScan()
+        if (this.isSafeToRemove()) {
+          this.markForGc()
+
+          if (this.options.gcTime === 0) {
+            this.#gcManager.scheduleImmediateScan()
+          }
         }
       }
 

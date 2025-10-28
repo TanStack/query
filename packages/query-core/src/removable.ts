@@ -1,4 +1,5 @@
 import { isServer, isValidTimeout } from './utils'
+import type { GCManager } from './gcManager'
 
 /**
  * Base class for objects that can be garbage collected.
@@ -15,10 +16,10 @@ export abstract class Removable {
   gcTime!: number
 
   /**
-   * Timestamp when this item becomes eligible for garbage collection.
+   * Timestamp when this item was marked for garbage collection.
    * null means the item is active and should not be collected.
    */
-  gcEligibleAt: number | null = null
+  gcMarkedAt: number | null = null
 
   /**
    * Clean up resources when destroyed
@@ -29,7 +30,7 @@ export abstract class Removable {
 
   /**
    * Mark this item as eligible for garbage collection.
-   * Sets gcEligibleAt to the current time plus gcTime.
+   * Sets gcMarkedAt to the current time.
    *
    * Called when:
    * - Last observer unsubscribes
@@ -39,12 +40,14 @@ export abstract class Removable {
   protected markForGc(): void {
     // Only mark if gcTime is valid (not Infinity, not negative)
     if (isValidTimeout(this.gcTime)) {
-      this.gcEligibleAt = Date.now() + this.gcTime
+      this.gcMarkedAt = Date.now()
+      this.getGcManager().trackEligibleItem(this)
     } else {
-      // If gcTime is Infinity or invalid, never mark for GC
-      this.gcEligibleAt = null
+      this.clearGcMark()
     }
   }
+
+  protected abstract getGcManager(): GCManager
 
   /**
    * Clear the GC mark, making this item ineligible for collection.
@@ -54,25 +57,38 @@ export abstract class Removable {
    * - Item becomes active again
    */
   protected clearGcMark(): void {
-    this.gcEligibleAt = null
+    this.gcMarkedAt = null
+    this.getGcManager().untrackEligibleItem(this)
   }
 
   /**
    * Check if this item is eligible for garbage collection.
    *
    * An item is eligible if:
-   * 1. It has been marked (gcEligibleAt is not null)
-   * 2. Current time has passed the eligible time
+   * 1. It has been marked (gcMarkedAt is not null)
+   * 2. Current time has passed the marked time plus gcTime
    *
    * @returns true if eligible for GC
    */
   isEligibleForGc(): boolean {
-    if (this.gcEligibleAt === null) {
+    if (this.gcMarkedAt === null) {
       return false
     }
     const now = Date.now()
-    const isElapsed = now >= this.gcEligibleAt
+    const isElapsed = now >= this.gcMarkedAt + this.gcTime
     return isElapsed
+  }
+
+  getGcAtTimestamp(): number | null {
+    if (this.gcMarkedAt === null) {
+      return null
+    }
+
+    if (this.gcTime === Infinity) {
+      return Infinity
+    }
+
+    return this.gcMarkedAt + this.gcTime
   }
 
   /**
@@ -81,11 +97,14 @@ export abstract class Removable {
    * @returns milliseconds until eligible, or null if not marked
    */
   getTimeUntilGc(): number | null {
-    if (this.gcEligibleAt === null) {
+    const now = Date.now()
+    const gcAt = this.getGcAtTimestamp()
+
+    if (gcAt === null) {
       return null
     }
-    const remaining = this.gcEligibleAt - Date.now()
-    return Math.max(0, remaining)
+
+    return Math.max(0, gcAt - now)
   }
 
   /**
@@ -113,5 +132,5 @@ export abstract class Removable {
    * - Not currently fetching/pending
    * - Any other subclass-specific criteria
    */
-  abstract optionalRemove(): void
+  abstract optionalRemove(): boolean
 }

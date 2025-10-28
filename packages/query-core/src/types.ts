@@ -3,7 +3,6 @@
 import type { QueryClient } from './queryClient'
 import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
-import type { GCManager } from './gcManager'
 import type { FetchDirection, Query, QueryBehavior } from './query'
 import type { RetryDelayValue, RetryValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
@@ -1352,7 +1351,6 @@ export type MutationObserverResult<
 export interface QueryClientConfig {
   queryCache?: QueryCache
   mutationCache?: MutationCache
-  gcManager?: GCManager
   defaultOptions?: DefaultOptions
 }
 

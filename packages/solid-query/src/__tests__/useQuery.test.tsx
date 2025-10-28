@@ -3926,6 +3926,7 @@ describe('useQuery', () => {
   })
 
   it('should schedule garbage collection, if gcTimeout is not set to `Infinity`', async () => {
+    vi.useFakeTimers()
     const key = queryKey()
     const gcTime = 1000 * 60 * 10 // 10 Minutes
 
@@ -3948,22 +3949,18 @@ describe('useQuery', () => {
     const query = queryClient.getQueryCache().find({ queryKey: key })
 
     expect(query).toBeDefined()
-    expect(query!.gcEligibleAt).toBeNull()
+    expect(query!.gcMarkedAt).toBeNull()
 
     vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 0))
 
     rendered.unmount()
 
-    expect(query!.gcEligibleAt).not.toBeNull()
-    expect(query!.gcEligibleAt).toBe(
-      new Date(1970, 0, 1, 0, 0, 0, gcTime).getTime(),
-    )
+    expect(query!.gcMarkedAt).not.toBeNull()
+    expect(query!.gcMarkedAt).toBe(new Date(1970, 0, 1, 0, 0, 0, 0).getTime())
 
-    vi.useRealTimers()
+    await vi.advanceTimersByTimeAsync(gcTime + 10)
 
-    await vi.waitFor(() => {
-      return queryClient.getQueryCache().find({ queryKey: key }) === undefined
-    })
+    expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
   })
 
   it('should not cause memo churn when data does not change', async () => {

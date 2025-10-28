@@ -4025,7 +4025,7 @@ describe('useQuery', () => {
     const query = queryClient.getQueryCache().find({ queryKey: key })
 
     expect(query).toBeDefined()
-    expect(query!.gcEligibleAt).toBeNull()
+    expect(query!.gcMarkedAt).toBeNull()
   })
 
   test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
@@ -4051,20 +4051,16 @@ describe('useQuery', () => {
     const query = queryClient.getQueryCache().find({ queryKey: key })
 
     expect(query).toBeDefined()
-    expect(query!.gcEligibleAt).toBeNull()
+    expect(query!.gcMarkedAt).toBeNull()
 
     vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 0))
 
     rendered.unmount()
 
-    expect(query!.gcEligibleAt).not.toBeNull()
-    expect(query!.gcEligibleAt).toBe(
-      new Date(1970, 0, 1, 0, 0, 0, gcTime).getTime(),
-    )
+    expect(query!.gcMarkedAt).not.toBeNull()
+    expect(query!.gcMarkedAt).toBe(new Date(1970, 0, 1, 0, 0, 0, 0).getTime())
 
-    vi.useRealTimers()
-
-    await sleep(10)
+    await vi.advanceTimersByTimeAsync(gcTime + 10)
 
     expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
   })
