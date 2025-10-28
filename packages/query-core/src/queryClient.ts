@@ -2,6 +2,7 @@ import {
   functionalUpdate,
   hashKey,
   hashQueryKeyByOptions,
+  isServer,
   noop,
   partialMatchKey,
   resolveStaleTime,
@@ -74,7 +75,7 @@ export class QueryClient {
     this.#queryCache = config.queryCache || new QueryCache()
     this.#mutationCache = config.mutationCache || new MutationCache()
     this.#defaultOptions = config.defaultOptions || {}
-    this.#gcManager = new GCManager()
+    this.#gcManager = new GCManager({ forceDisable: isServer })
     this.#queryDefaults = new Map()
     this.#mutationDefaults = new Map()
     this.#mountCount = 0

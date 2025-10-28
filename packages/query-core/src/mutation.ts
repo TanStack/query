@@ -150,13 +150,8 @@ export class Mutation<
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.#observers = this.#observers.filter((x) => x !== observer)
 
-    if (this.#observers.length === 0) {
+    if (this.isSafeToRemove()) {
       this.markForGc()
-
-      if (this.options.gcTime === 0 && this.isSafeToRemove()) {
-        // Check for immediate removal if gcTime is 0 and not pending
-        this.#gcManager.scheduleImmediateScan()
-      }
     }
 
     this.#mutationCache.notify({
@@ -167,16 +162,12 @@ export class Mutation<
   }
 
   optionalRemove(): boolean {
-    if (!this.#observers.length) {
-      if (this.state.status === 'pending') {
-        this.markForGc()
-      } else {
-        this.#mutationCache.remove(this)
-        return true
-      }
+    if (!this.isSafeToRemove()) {
+      return false
     }
 
-    return false
+    this.#mutationCache.remove(this)
+    return true
   }
 
   continue(): Promise<unknown> {
@@ -388,8 +379,8 @@ export class Mutation<
     this.state = reducer(this.state)
 
     // Check for immediate removal after state change
-    if (this.isSafeToRemove() && this.options.gcTime === 0) {
-      this.#gcManager.scheduleImmediateScan()
+    if (this.isSafeToRemove()) {
+      this.markForGc()
     }
 
     notifyManager.batch(() => {

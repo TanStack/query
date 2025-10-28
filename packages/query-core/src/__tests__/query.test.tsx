@@ -557,7 +557,7 @@ describe('query', () => {
     const unsubscribe1 = observer.subscribe(() => undefined)
     unsubscribe1()
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(1)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
     const unsubscribe2 = observer.subscribe(() => undefined)
     unsubscribe2()
@@ -579,7 +579,7 @@ describe('query', () => {
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     unsubscribe()
 
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(1)
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
   })
 

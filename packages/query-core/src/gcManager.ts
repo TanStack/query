@@ -1,4 +1,4 @@
-import { systemSetTimeoutZero, timeoutManager } from './timeoutManager'
+import { timeoutManager } from './timeoutManager'
 import type { Removable } from './removable'
 import type { ManagedTimerId } from './timeoutManager'
 
@@ -7,22 +7,10 @@ import type { ManagedTimerId } from './timeoutManager'
  */
 export interface GCManagerConfig {
   /**
-   * How often to scan for garbage collection (in milliseconds)
-   * @default 10 (10 milliseconds)
+   * Force disable garbage collection.
+   * @default false
    */
-  scanInterval?: number
-
-  /**
-   * Minimum allowed scan interval (safety limit)
-   * @default 1 (1 millisecond)
-   */
-  minScanInterval?: number
-
-  /**
-   * Maximum allowed scan interval
-   * @default 300000 (5 minutes)
-   */
-  maxScanInterval?: number
+  forceDisable?: boolean
 }
 
 /**
@@ -48,121 +36,106 @@ export interface GCManagerConfig {
  * ```
  */
 export class GCManager {
-  #scanInterval: number
-  #minScanInterval: number
-  #maxScanInterval: number
-  #intervalId: ManagedTimerId | null = null
   #isScanning = false
-  #isPaused = false
-  #isScheduledImmediateScan = false
+  #forceDisable = false
   #eligibleItems = new Set<Removable>()
+  #scheduledScanTimeoutId: ManagedTimerId | null = null
+  #scheduledScanTimeout: number | null = null
+  #scheduledScanIdleCallbackId: ManagedTimerId | null = null
 
   constructor(config: GCManagerConfig = {}) {
-    this.#minScanInterval = config.minScanInterval ?? 1
-    this.#maxScanInterval = config.maxScanInterval ?? 300000
-    this.#scanInterval = this.#validateInterval(config.scanInterval ?? 10)
+    this.#forceDisable = config.forceDisable ?? false
   }
 
-  /**
-   * Set the scan interval. Takes effect on next start/resume.
-   *
-   * @param ms - Interval in milliseconds
-   */
-  setScanInterval(ms: number): void {
-    this.#scanInterval = this.#validateInterval(ms)
-
-    // Restart scanning if currently active
-    if (this.#isScanning && !this.#isPaused) {
-      this.stopScanning()
-      this.startScanning()
-    }
-  }
-
-  /**
-   * Get the current scan interval
-   */
-  getScanInterval(): number {
-    return this.#scanInterval
-  }
-
-  scheduleImmediateScan(): void {
-    if (this.#isScheduledImmediateScan) {
+  #scheduleScan(): void {
+    if (this.#forceDisable) {
       return
     }
 
-    this.#isScheduledImmediateScan = true
-
-    systemSetTimeoutZero(() => {
-      if (!this.#isPaused) {
-        this.#performScan()
-      }
-      this.#isScheduledImmediateScan = false
-    })
-  }
-
-  /**
-   * Start periodic scanning. Safe to call multiple times.
-   */
-  startScanning(): void {
-    if (this.#isScanning) {
+    if (this.#scheduledScanIdleCallbackId !== null) {
       return
     }
 
-    this.#isScanning = true
-    this.#isPaused = false
+    if (this.#isScanning && this.#scheduledScanTimeoutId !== null) {
+      timeoutManager.clearTimeout(this.#scheduledScanTimeoutId)
+      this.#isScanning = false
+      this.#scheduledScanTimeoutId = null
+      this.#scheduledScanTimeout = null
+      this.#scheduledScanIdleCallbackId = null
+    }
 
-    this.#intervalId = timeoutManager.setInterval(() => {
-      if (!this.#isPaused) {
-        this.#performScan()
+    this.#scheduledScanIdleCallbackId = timeoutManager.setTimeout(() => {
+      this.#scheduledScanIdleCallbackId = null
+
+      const now = Date.now()
+
+      let minTimeUntilGc = Infinity
+
+      for (const item of this.#eligibleItems) {
+        const gcAt = item.getGcAtTimestamp()
+        if (gcAt === null) {
+          continue
+        }
+        const timeUntilGc = Math.max(0, gcAt - now)
+
+        if (timeUntilGc < minTimeUntilGc) {
+          minTimeUntilGc = timeUntilGc
+        }
       }
-    }, this.#scanInterval)
+
+      if (minTimeUntilGc === Infinity) {
+        return
+      }
+
+      if (this.#scheduledScanTimeout === minTimeUntilGc) {
+        return
+      }
+
+      if (this.#scheduledScanTimeoutId !== null) {
+        timeoutManager.clearTimeout(this.#scheduledScanTimeoutId)
+        this.#scheduledScanTimeoutId = null
+      }
+
+      this.#scheduledScanTimeoutId = timeoutManager.setTimeout(() => {
+        this.#isScanning = false
+        this.#scheduledScanTimeoutId = null
+        this.#scheduledScanTimeout = null
+        this.#scheduledScanIdleCallbackId = null
+
+        this.#performScan()
+
+        // If there are still eligible items, schedule the next scan
+        if (this.#eligibleItems.size > 0) {
+          this.#scheduleScan()
+        }
+      }, minTimeUntilGc)
+
+      this.#isScanning = true
+      this.#scheduledScanTimeout = minTimeUntilGc
+    }, 0)
   }
 
   /**
    * Stop periodic scanning. Safe to call multiple times.
    */
   stopScanning(): void {
-    if (!this.#isScanning) {
+    if (this.#scheduledScanTimeoutId === null) {
       return
     }
 
+    timeoutManager.clearTimeout(this.#scheduledScanTimeoutId)
+
     this.#isScanning = false
-    this.#isPaused = false
-
-    if (this.#intervalId !== null) {
-      timeoutManager.clearInterval(this.#intervalId)
-      this.#intervalId = null
-    }
-  }
-
-  /**
-   * Pause scanning without stopping it.
-   * Useful for tests that need to control when GC occurs.
-   */
-  pauseScanning(): void {
-    this.#isPaused = true
-  }
-
-  /**
-   * Resume scanning after pause
-   */
-  resumeScanning(): void {
-    this.#isPaused = false
-  }
-
-  /**
-   * Manually trigger a scan immediately.
-   * Useful for tests or forcing immediate cleanup.
-   */
-  triggerScan(): void {
-    this.#performScan()
+    this.#scheduledScanTimeoutId = null
+    this.#scheduledScanTimeout = null
+    this.#scheduledScanIdleCallbackId = null
   }
 
   /**
    * Check if scanning is active
    */
   isScanning(): boolean {
-    return this.#isScanning && !this.#isPaused
+    return this.#isScanning
   }
 
   /**
@@ -176,7 +149,7 @@ export class GCManager {
 
     // Start scanning if we have eligible items and aren't already scanning
     if (!this.#isScanning) {
-      this.startScanning()
+      this.#scheduleScan()
     }
   }
 
@@ -220,36 +193,5 @@ export class GCManager {
         }
       }
     }
-  }
-
-  #validateInterval(ms: number): number {
-    if (typeof ms !== 'number' || !Number.isFinite(ms)) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(
-          `[GCManager] Invalid scan interval: ${ms}. Using default 30000ms.`,
-        )
-      }
-      return 30000
-    }
-
-    if (ms < this.#minScanInterval) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(
-          `[GCManager] Scan interval ${ms}ms is below minimum ${this.#minScanInterval}ms. Using minimum.`,
-        )
-      }
-      return this.#minScanInterval
-    }
-
-    if (ms > this.#maxScanInterval) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(
-          `[GCManager] Scan interval ${ms}ms exceeds maximum ${this.#maxScanInterval}ms. Using maximum.`,
-        )
-      }
-      return this.#maxScanInterval
-    }
-
-    return ms
   }
 }

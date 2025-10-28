@@ -990,12 +990,13 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
-    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(20)
     await vi.advanceTimersByTimeAsync(10)
 
     expect(
       queryClient.getMutationCache().findAll({ mutationKey: mutationKey }),
     ).toHaveLength(0)
+
     expect(count).toBe(1)
 
     expect(onSuccess).toHaveBeenCalledTimes(1)

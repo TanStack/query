@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, it, vi } from 'vitest'
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   Match,
@@ -37,6 +37,10 @@ import type { JSX } from 'solid-js'
 describe('useQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -3955,10 +3959,10 @@ describe('useQuery', () => {
 
     rendered.unmount()
 
-    expect(query!.gcMarkedAt).not.toBeNull()
     expect(query!.gcMarkedAt).toBe(new Date(1970, 0, 1, 0, 0, 0, 0).getTime())
 
-    await vi.advanceTimersByTimeAsync(gcTime + 10)
+    await vi.advanceTimersByTimeAsync(gcTime)
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
   })
@@ -4054,6 +4058,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch in an interval depending on function result', async () => {
+    vi.useFakeTimers()
     const key = queryKey()
     let count = 0
     const states: Array<UseQueryResult<number>> = []
@@ -4063,9 +4068,13 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
+          console.log('DEBUG: count', count)
           return count++
         },
-        refetchInterval: ({ state: { data = 0 } }) => (data < 2 ? 10 : false),
+        refetchInterval: ({ state: { data = 0 } }) => {
+          console.log('DEBUG: data', data)
+          return data < 2 ? 10 : false
+        },
       }))
 
       createRenderEffect(() => {
@@ -4088,7 +4097,8 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('count: 2'))
+    await vi.advanceTimersByTimeAsync(51)
+    rendered.getByText('count: 2')
 
     expect(states.length).toEqual(6)
 

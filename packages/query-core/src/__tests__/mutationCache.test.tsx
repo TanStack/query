@@ -342,6 +342,7 @@ describe('mutationCache', () => {
         },
         1,
       )
+
       await vi.advanceTimersByTimeAsync(10)
 
       expect(testCache.getAll()).toHaveLength(1)

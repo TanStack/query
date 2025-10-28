@@ -1269,23 +1269,19 @@ describe('useQuery().promise', () => {
 
     {
       const { snapshot, withinDOM } = await renderStream.takeRender()
-      await waitFor(() => withinDOM().getByText('loading..'))
+      withinDOM().getByText('loading..')
       expect(snapshot).toMatchObject({ data: 'test0' })
     }
 
     {
       const { snapshot, withinDOM } = await renderStream.takeRender()
-      await waitFor(() => withinDOM().getByText('test3'))
+      withinDOM().getByText('test3')
       expect(snapshot).toMatchObject({ data: 'test3' })
     }
 
     modifier = 'new'
 
-    rendered.getByText('dec').click()
-    {
-      const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({ data: 'test3' })
-    }
+    await waitFor(() => expect(rendered.queryByText('loading..')).toBeNull())
 
     rendered.getByText('dec').click()
     {
@@ -1295,8 +1291,13 @@ describe('useQuery().promise', () => {
 
     rendered.getByText('dec').click()
     {
-      const { snapshot, withinDOM } = await renderStream.takeRender()
-      await waitFor(() => withinDOM().getByText('test0'))
+      const { snapshot } = await renderStream.takeRender()
+      expect(snapshot).toMatchObject({ data: 'test3' })
+    }
+
+    rendered.getByText('dec').click()
+    {
+      const { snapshot } = await renderStream.takeRender()
       expect(snapshot).toMatchObject({ data: 'test0' })
     }
 

@@ -50,7 +50,6 @@ export type {
 } from './hydration'
 export { Mutation } from './mutation'
 export type { MutationState } from './mutation'
-export type { GCManagerConfig } from './gcManager'
 export type { QueriesObserverOptions } from './queriesObserver'
 export { Query } from './query'
 export type { QueryState } from './query'

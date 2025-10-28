@@ -66,6 +66,7 @@ describe('gcManager', () => {
 
     // Unsubscribe and wait for GC
     unsubscribe()
+    await vi.advanceTimersByTimeAsync(0)
     expect(gcManager.isScanning()).toBe(true)
     expect(gcManager.getEligibleItemCount()).toBe(1)
 
@@ -152,6 +153,8 @@ describe('gcManager', () => {
     unsubscribe2()
     unsubscribe3()
 
+    await vi.advanceTimersByTimeAsync(0)
+
     expect(gcManager.isScanning()).toBe(true)
     expect(gcManager.getEligibleItemCount()).toBe(3)
 
@@ -187,6 +190,8 @@ describe('gcManager', () => {
     const unsubscribe1 = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe1()
+
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(gcManager.isScanning()).toBe(true)
     expect(gcManager.getEligibleItemCount()).toBe(1)

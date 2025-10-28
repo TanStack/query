@@ -228,10 +228,11 @@ export class Query<
   }
 
   optionalRemove(): boolean {
-    if (this.observers.length === 0 && this.state.fetchStatus === 'idle') {
+    if (this.isSafeToRemove()) {
       this.#cache.remove(this)
       return true
     }
+
     return false
   }
 
@@ -380,10 +381,6 @@ export class Query<
         // Check for immediate removal if gcTime is 0 and idle
         if (this.isSafeToRemove()) {
           this.markForGc()
-
-          if (this.options.gcTime === 0) {
-            this.#gcManager.scheduleImmediateScan()
-          }
         }
       }
 
@@ -701,8 +698,8 @@ export class Query<
     this.state = reducer(this.state)
 
     // Check for immediate removal after state change
-    if (this.isSafeToRemove() && this.options.gcTime === 0) {
-      this.#gcManager.scheduleImmediateScan()
+    if (this.isSafeToRemove()) {
+      this.markForGc()
     }
 
     notifyManager.batch(() => {
