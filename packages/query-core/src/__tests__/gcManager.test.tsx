@@ -439,6 +439,46 @@ describe('gcManager', () => {
 
       unsubscribe1Again()
     })
+
+    test('should stop scanning and clear timers when untracking eligible item', async () => {
+      const gcManager = queryClient.getGcManager()
+
+      // Create a mock Removable item with a future GC timestamp
+      const gcTime = 100
+      const mockItem = {
+        isEligibleForGc: vi.fn(() => false), // Not eligible yet, to prevent immediate removal
+        optionalRemove: vi.fn(() => true),
+        getGcAtTimestamp: vi.fn(() => Date.now() + gcTime),
+      }
+
+      // Track the item - this should schedule a scan
+      gcManager.trackEligibleItem(mockItem as any)
+
+      // Wait for microtask to complete so the scan timeout is scheduled
+      // The timeout callback sets isScanning=true immediately, then waits gcTime before calling performScan
+      await vi.advanceTimersByTimeAsync(0)
+
+      // Verify item is tracked and scanning is active
+      expect(gcManager.getEligibleItemCount()).toBe(1)
+      expect(gcManager.isScanning()).toBe(true)
+
+      // Untrack the item - this should stop scanning and clear timers
+      gcManager.untrackEligibleItem(mockItem as any)
+
+      // Verify scanning stopped immediately after untracking
+      expect(gcManager.isScanning()).toBe(false)
+      expect(gcManager.getEligibleItemCount()).toBe(0)
+
+      // Verify timers are cleared by advancing time significantly past the original gcTime
+      // If the scan timeout was still scheduled, it would fire and call performScan,
+      // which would call isEligibleForGc on eligible items
+      await vi.advanceTimersByTimeAsync(gcTime + 100)
+
+      // Verify the scan callback never fired (isEligibleForGc was never called)
+      // This proves the scheduled timeout was cleared
+      expect(mockItem.isEligibleForGc).not.toHaveBeenCalled()
+      expect(mockItem.optionalRemove).not.toHaveBeenCalled()
+    })
   })
 
   describe('edge cases', () => {
