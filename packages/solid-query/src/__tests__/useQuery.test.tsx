@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, it, vi } from 'vitest'
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   Match,
@@ -37,6 +37,10 @@ import type { JSX } from 'solid-js'
 describe('useQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -3964,7 +3968,6 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(gcTime)
 
     expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
-    vi.useRealTimers()
   })
 
   it('should not cause memo churn when data does not change', async () => {
