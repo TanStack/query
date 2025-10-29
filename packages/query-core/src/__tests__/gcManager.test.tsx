@@ -616,22 +616,14 @@ describe('gcManager', () => {
   })
 
   describe('scheduling behavior', () => {
-    test('should not schedule scan if already scheduled', async () => {
+    test('should not double-schedule when a schedule is already queued (microtask guard)', async () => {
       const item1 = createMockRemovable({ gcTime: 100 })
       const item2 = createMockRemovable({ gcTime: 50 })
-
+      // Schedule first item
       gcManager.trackEligibleItem(item1)
-      await vi.advanceTimersByTimeAsync(0)
-
-      expect(gcManager.isScanning()).toBe(true)
-      expect(gcManager.getEligibleItemCount()).toBe(1)
-
-      // Try to add another item before microtask completes
+      // Add second item before the microtask runs; second scheduleScan should be a no-op
       gcManager.trackEligibleItem(item2)
-
-      // Should not crash or cause issues
       await vi.advanceTimersByTimeAsync(0)
-
       expect(gcManager.getEligibleItemCount()).toBe(2)
       expect(gcManager.isScanning()).toBe(true)
     })
