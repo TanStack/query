@@ -4016,16 +4016,15 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await vi.waitFor(() => {
-      return rendered.getByText('fetched data')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('fetched data')
 
     rendered.unmount()
 
-    const query = queryClient.getQueryCache().find({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(0)
 
-    expect(query).toBeDefined()
-    expect(query!.gcMarkedAt).toBeNull()
+    const item = queryClient.getQueryCache().find({ queryKey: key })
+    expect(item!.gcMarkedAt).toBeNull()
   })
 
   test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
@@ -4038,15 +4037,13 @@ describe('useQuery', () => {
         queryFn: () => 'fetched data',
         gcTime,
       })
-
       return <div>{query.data}</div>
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await vi.waitFor(() => {
-      rendered.getByText('fetched data')
-    })
+    await vi.advanceTimersByTimeAsync(0)
+    rendered.getByText('fetched data')
 
     const query = queryClient.getQueryCache().find({ queryKey: key })
 
@@ -4060,7 +4057,7 @@ describe('useQuery', () => {
     expect(query!.gcMarkedAt).not.toBeNull()
     expect(query!.gcMarkedAt).toBe(new Date(1970, 0, 1, 0, 0, 0, 0).getTime())
 
-    await vi.advanceTimersByTimeAsync(gcTime + 10)
+    await vi.advanceTimersByTimeAsync(gcTime)
 
     expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
   })

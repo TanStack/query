@@ -40,43 +40,30 @@ export class GCManager {
   #forceDisable = false
   #eligibleItems = new Set<Removable>()
   #scheduledScanTimeoutId: ManagedTimerId | null = null
-  #scheduledScanTimeout: number | null = null
-  #scheduledScanIdleCallbackId: ManagedTimerId | null = null
+  #isScheduledScan = false
 
   constructor(config: GCManagerConfig = {}) {
     this.#forceDisable = config.forceDisable ?? false
   }
 
   #scheduleScan(): void {
-    if (this.#forceDisable) {
+    if (this.#forceDisable || this.#isScheduledScan) {
       return
     }
 
-    if (this.#scheduledScanIdleCallbackId !== null) {
-      return
-    }
+    this.#isScheduledScan = true
 
-    if (this.#isScanning && this.#scheduledScanTimeoutId !== null) {
-      timeoutManager.clearTimeout(this.#scheduledScanTimeoutId)
-      this.#isScanning = false
-      this.#scheduledScanTimeoutId = null
-      this.#scheduledScanTimeout = null
-      this.#scheduledScanIdleCallbackId = null
-    }
+    queueMicrotask(() => {
+      if (!this.#isScheduledScan) {
+        return
+      }
 
-    this.#scheduledScanIdleCallbackId = timeoutManager.setTimeout(() => {
-      this.#scheduledScanIdleCallbackId = null
-
-      const now = Date.now()
+      this.#isScheduledScan = false
 
       let minTimeUntilGc = Infinity
 
       for (const item of this.#eligibleItems) {
-        const gcAt = item.getGcAtTimestamp()
-        if (gcAt === null) {
-          continue
-        }
-        const timeUntilGc = Math.max(0, gcAt - now)
+        const timeUntilGc = getTimeUntilGc(item)
 
         if (timeUntilGc < minTimeUntilGc) {
           minTimeUntilGc = timeUntilGc
@@ -87,20 +74,14 @@ export class GCManager {
         return
       }
 
-      if (this.#scheduledScanTimeout === minTimeUntilGc) {
-        return
-      }
-
       if (this.#scheduledScanTimeoutId !== null) {
         timeoutManager.clearTimeout(this.#scheduledScanTimeoutId)
-        this.#scheduledScanTimeoutId = null
       }
 
+      this.#isScanning = true
       this.#scheduledScanTimeoutId = timeoutManager.setTimeout(() => {
         this.#isScanning = false
         this.#scheduledScanTimeoutId = null
-        this.#scheduledScanTimeout = null
-        this.#scheduledScanIdleCallbackId = null
 
         this.#performScan()
 
@@ -109,26 +90,23 @@ export class GCManager {
           this.#scheduleScan()
         }
       }, minTimeUntilGc)
-
-      this.#isScanning = true
-      this.#scheduledScanTimeout = minTimeUntilGc
-    }, 0)
+    })
   }
 
   /**
    * Stop periodic scanning. Safe to call multiple times.
    */
   stopScanning(): void {
+    this.#isScanning = false
+    this.#isScheduledScan = false
+
     if (this.#scheduledScanTimeoutId === null) {
       return
     }
 
     timeoutManager.clearTimeout(this.#scheduledScanTimeoutId)
 
-    this.#isScanning = false
     this.#scheduledScanTimeoutId = null
-    this.#scheduledScanTimeout = null
-    this.#scheduledScanIdleCallbackId = null
   }
 
   /**
@@ -145,12 +123,17 @@ export class GCManager {
    * @param item - The query or mutation marked for GC
    */
   trackEligibleItem(item: Removable): void {
+    if (this.#forceDisable) {
+      return
+    }
+
+    if (this.#eligibleItems.has(item)) {
+      return
+    }
+
     this.#eligibleItems.add(item)
 
-    // Start scanning if we have eligible items and aren't already scanning
-    if (!this.#isScanning) {
-      this.#scheduleScan()
-    }
+    this.#scheduleScan()
   }
 
   /**
@@ -160,11 +143,22 @@ export class GCManager {
    * @param item - The query or mutation no longer eligible for GC
    */
   untrackEligibleItem(item: Removable): void {
+    if (this.#forceDisable) {
+      return
+    }
+
+    if (!this.#eligibleItems.has(item)) {
+      return
+    }
+
     this.#eligibleItems.delete(item)
 
-    // Stop scanning if no items are eligible
-    if (this.getEligibleItemCount() === 0 && this.#isScanning) {
-      this.stopScanning()
+    if (this.isScanning()) {
+      if (this.getEligibleItemCount() === 0) {
+        this.stopScanning()
+      } else {
+        this.#scheduleScan()
+      }
     }
   }
 
@@ -183,7 +177,7 @@ export class GCManager {
           const wasCollected = item.optionalRemove()
 
           if (wasCollected) {
-            this.untrackEligibleItem(item)
+            this.#eligibleItems.delete(item)
           }
         }
       } catch (error) {
@@ -194,4 +188,17 @@ export class GCManager {
       }
     }
   }
+
+  clear(): void {
+    this.#eligibleItems.clear()
+    this.stopScanning()
+  }
+}
+
+function getTimeUntilGc(item: Removable): number {
+  const gcAt = item.getGcAtTimestamp()
+  if (gcAt === null) {
+    return Infinity
+  }
+  return Math.max(0, gcAt - Date.now())
 }

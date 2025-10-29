@@ -653,5 +653,6 @@ export class QueryClient {
   clear(): void {
     this.#queryCache.clear()
     this.#mutationCache.clear()
+    this.#gcManager.clear()
   }
 }

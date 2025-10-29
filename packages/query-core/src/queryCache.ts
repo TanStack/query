@@ -220,12 +220,4 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       })
     })
   }
-
-  /**
-   * Destroy the cache and clean up resources
-   */
-  destroy(): void {
-    // Clean up all queries
-    this.clear()
-  }
 }

@@ -181,17 +181,18 @@ export class Query<
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
+    this.#client = config.client
+    this.#gcManager = config.client.getGcManager()
+    this.#cache = this.#client.getQueryCache()
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.setOptions(config.options)
     this.observers = []
-    this.#client = config.client
-    this.#cache = this.#client.getQueryCache()
-    this.#gcManager = this.#client.getGcManager()
+    this.setOptions(config.options)
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
+
     this.markForGc()
   }
 
@@ -201,6 +202,10 @@ export class Query<
 
   get promise(): Promise<TData> | undefined {
     return this.#retryer?.promise
+  }
+
+  protected getGcManager(): GCManager {
+    return this.#gcManager
   }
 
   setOptions(
@@ -223,17 +228,18 @@ export class Query<
     }
   }
 
-  protected getGcManager(): GCManager {
-    return this.#gcManager
-  }
-
   optionalRemove(): boolean {
     if (this.isSafeToRemove()) {
       this.#cache.remove(this)
       return true
+    } else {
+      this.clearGcMark()
     }
-
     return false
+  }
+
+  private isSafeToRemove(): boolean {
+    return this.observers.length === 0 && this.state.fetchStatus === 'idle'
   }
 
   setData(
@@ -378,7 +384,6 @@ export class Query<
           }
         }
 
-        // Check for immediate removal if gcTime is 0 and idle
         if (this.isSafeToRemove()) {
           this.markForGc()
         }
@@ -402,8 +407,6 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
-    this.clearGcMark()
-
     if (
       this.state.fetchStatus !== 'idle' &&
       // If the promise in the retryer is already rejected, we have to definitely
@@ -617,7 +620,7 @@ export class Query<
       throw error // rethrow the error for further handling
     } finally {
       if (this.isSafeToRemove()) {
-        // Mark query for gc after fetching
+        // Schedule query gc after fetching
         this.markForGc()
       }
     }
@@ -697,11 +700,6 @@ export class Query<
 
     this.state = reducer(this.state)
 
-    // Check for immediate removal after state change
-    if (this.isSafeToRemove()) {
-      this.markForGc()
-    }
-
     notifyManager.batch(() => {
       this.observers.forEach((observer) => {
         observer.onQueryUpdate()
@@ -709,10 +707,6 @@ export class Query<
 
       this.#cache.notify({ query: this, type: 'updated', action })
     })
-  }
-
-  isSafeToRemove(): boolean {
-    return this.observers.length === 0 && this.state.fetchStatus === 'idle'
   }
 }
 

@@ -237,14 +237,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       ),
     )
   }
-
-  /**
-   * Destroy the cache and clean up resources
-   */
-  destroy(): void {
-    // Clean up all mutations
-    this.clear()
-  }
 }
 
 function scopeFor(mutation: Mutation<any, any, any, any>) {

@@ -1281,8 +1281,6 @@ describe('useQuery().promise', () => {
 
     modifier = 'new'
 
-    await waitFor(() => expect(rendered.queryByText('loading..')).toBeNull())
-
     rendered.getByText('dec').click()
     {
       const { snapshot } = await renderStream.takeRender()

@@ -700,7 +700,7 @@ describe('queryClient', () => {
       })
       await vi.advanceTimersByTimeAsync(10)
       await expect(promise).resolves.toEqual(1)
-      await vi.advanceTimersByTimeAsync(10)
+      await vi.advanceTimersByTimeAsync(1)
       expect(queryClient.getQueryData(key1)).toEqual(undefined)
     })
 

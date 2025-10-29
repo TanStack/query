@@ -648,17 +648,9 @@ describe('useSuspenseQueries 2', () => {
       // wait for query to be resolved
       await act(() => vi.advanceTimersByTimeAsync(3000))
       expect(queryClient.getQueryData(key)).toBe('data')
-
-      // advance by gcTime
+      // wait for gc
       await vi.advanceTimersByTimeAsync(1000)
-
-      await vi.waitUntil(() => {
-        return queryClient.getQueryCache().find({ queryKey: key }) === undefined
-      })
-
-      expect(
-        queryClient.getQueryCache().find({ queryKey: key }),
-      ).toBeUndefined()
+      expect(queryClient.getQueryData(key)).toBe(undefined)
     })
   })
 

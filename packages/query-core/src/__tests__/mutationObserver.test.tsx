@@ -58,8 +58,7 @@ describe('mutationObserver', () => {
 
     unsubscribe()
 
-    await vi.advanceTimersByTimeAsync(20)
-
+    await vi.advanceTimersByTimeAsync(10)
     expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
   })
 
@@ -80,7 +79,7 @@ describe('mutationObserver', () => {
 
     mutation.reset()
 
-    await vi.advanceTimersByTimeAsync(20)
+    await vi.advanceTimersByTimeAsync(10)
     expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
 
     unsubscribe()

@@ -74,9 +74,11 @@ export abstract class Removable {
     if (this.gcMarkedAt === null) {
       return false
     }
-    const now = Date.now()
-    const isElapsed = now >= this.gcMarkedAt + this.gcTime
-    return isElapsed
+    if (this.gcTime === Infinity) {
+      return false
+    }
+
+    return Date.now() >= this.gcMarkedAt + this.gcTime
   }
 
   getGcAtTimestamp(): number | null {
@@ -89,22 +91,6 @@ export abstract class Removable {
     }
 
     return this.gcMarkedAt + this.gcTime
-  }
-
-  /**
-   * Get time remaining until eligible for GC.
-   *
-   * @returns milliseconds until eligible, or null if not marked
-   */
-  getTimeUntilGc(): number | null {
-    const now = Date.now()
-    const gcAt = this.getGcAtTimestamp()
-
-    if (gcAt === null) {
-      return null
-    }
-
-    return Math.max(0, gcAt - now)
   }
 
   /**

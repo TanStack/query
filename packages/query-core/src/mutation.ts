@@ -98,7 +98,6 @@ export class Mutation<
   >
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>
-  #gcManager: GCManager
 
   constructor(
     config: MutationConfig<TData, TError, TVariables, TOnMutateResult>,
@@ -106,12 +105,10 @@ export class Mutation<
     super()
 
     this.#client = config.client
-    this.#gcManager = config.client.getGcManager()
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
     this.#observers = []
     this.state = config.state || getDefaultState()
-
     this.setOptions(config.options)
     this.markForGc()
   }
@@ -129,7 +126,7 @@ export class Mutation<
   }
 
   protected getGcManager(): GCManager {
-    return this.#gcManager
+    return this.#client.getGcManager()
   }
 
   addObserver(observer: MutationObserver<any, any, any, any>): void {
@@ -161,13 +158,21 @@ export class Mutation<
     })
   }
 
+  private isSafeToRemove(): boolean {
+    return this.state.status !== 'pending' && this.#observers.length === 0
+  }
+
   optionalRemove(): boolean {
-    if (!this.isSafeToRemove()) {
-      return false
+    if (!this.#observers.length) {
+      if (this.state.status === 'pending') {
+        this.markForGc()
+      } else {
+        this.#mutationCache.remove(this)
+        return true
+      }
     }
 
-    this.#mutationCache.remove(this)
-    return true
+    return false
   }
 
   continue(): Promise<unknown> {
@@ -378,7 +383,6 @@ export class Mutation<
     }
     this.state = reducer(this.state)
 
-    // Check for immediate removal after state change
     if (this.isSafeToRemove()) {
       this.markForGc()
     }
@@ -393,10 +397,6 @@ export class Mutation<
         action,
       })
     })
-  }
-
-  isSafeToRemove(): boolean {
-    return this.state.status !== 'pending' && this.#observers.length === 0
   }
 }
 

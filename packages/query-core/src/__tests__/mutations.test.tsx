@@ -781,6 +781,7 @@ describe('mutations', () => {
 
       // Verify mutation returns its own result, not callback returns
       expect(mutationResult).toBe('actual-result')
+      console.log(results)
       expect(results).toEqual([
         'sync-onMutate',
         'async-onSuccess',

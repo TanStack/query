@@ -40,6 +40,10 @@ describe('gcManager', () => {
 
     // Query exists and GC should not be running yet (query is active)
     expect(queryClient.getQueryCache().find({ queryKey: key })).toBeDefined()
+    console.log(
+      'gcManager.getEligibleItemCount()',
+      gcManager.getEligibleItemCount(),
+    )
     expect(gcManager.getEligibleItemCount()).toBe(0)
 
     // Unsubscribe - this should mark the query for GC
