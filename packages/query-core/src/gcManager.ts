@@ -14,26 +14,12 @@ export interface GCManagerConfig {
 }
 
 /**
- * Manages periodic garbage collection across all caches.
+ * Manages garbage collection across all caches.
  *
  * Instead of each query/mutation having its own timeout,
- * the GCManager runs a single interval that scans all
- * registered caches for items eligible for removal.
- *
- * @example
- * ```typescript
- * // Register a cache for GC
- * gcManager.registerCache(queryCache)
- *
- * // Start scanning
- * gcManager.startScanning()
- *
- * // Change scan interval
- * gcManager.setScanInterval(60000) // 1 minute
- *
- * // Stop scanning
- * gcManager.stopScanning()
- * ```
+ * the GCManager schedules a single timeout for when the nearest
+ * item becomes eligible for removal. After scanning, it reschedules
+ * for the next nearest item.
  */
 export class GCManager {
   #isScanning = false
@@ -94,7 +80,7 @@ export class GCManager {
   }
 
   /**
-   * Stop periodic scanning. Safe to call multiple times.
+   * Stop scanning by clearing the scheduled timeout. Safe to call multiple times.
    */
   stopScanning(): void {
     this.#isScanning = false
@@ -110,7 +96,9 @@ export class GCManager {
   }
 
   /**
-   * Check if scanning is active
+   * Check if a scan is scheduled (timeout is pending).
+   *
+   * @returns true if a timeout is scheduled to perform a scan
    */
   isScanning(): boolean {
     return this.#isScanning
@@ -118,7 +106,8 @@ export class GCManager {
 
   /**
    * Track an item that has been marked for garbage collection.
-   * Automatically starts scanning if not already running.
+   * Schedules a timeout to scan when the item becomes eligible (or reschedules
+   * if a timeout is already pending and this item will be ready sooner).
    *
    * @param item - The query or mutation marked for GC
    */
@@ -138,7 +127,8 @@ export class GCManager {
 
   /**
    * Untrack an item that is no longer eligible for garbage collection.
-   * Automatically stops scanning if no items remain eligible.
+   * If a timeout is scheduled and no items remain eligible, stops scanning.
+   * If a timeout is scheduled and items remain, reschedules for the next nearest item.
    *
    * @param item - The query or mutation no longer eligible for GC
    */
@@ -189,6 +179,9 @@ export class GCManager {
     }
   }
 
+  /**
+   * Clear all eligible items and stop any scheduled scans.
+   */
   clear(): void {
     this.#eligibleItems.clear()
     this.stopScanning()

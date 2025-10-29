@@ -6,7 +6,8 @@ import type { GCManager } from './gcManager'
  *
  * Instead of scheduling individual timeouts, this class
  * marks objects as eligible for GC with a timestamp.
- * The GCManager periodically scans and removes eligible items.
+ * The GCManager schedules timeouts to scan and remove eligible items
+ * when they become ready for collection.
  */
 export abstract class Removable {
   /**
@@ -81,6 +82,12 @@ export abstract class Removable {
     return Date.now() >= this.gcMarkedAt + this.gcTime
   }
 
+  /**
+   * Get the timestamp when this item will be eligible for garbage collection.
+   *
+   * @returns The timestamp (gcMarkedAt + gcTime), or null if not marked,
+   *          or Infinity if gcTime is Infinity
+   */
   getGcAtTimestamp(): number | null {
     if (this.gcMarkedAt === null) {
       return null
