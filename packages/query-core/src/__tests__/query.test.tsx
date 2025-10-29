@@ -558,7 +558,6 @@ describe('query', () => {
     unsubscribe1()
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(queryCache.find({ queryKey: key })).toBeUndefined()
     const unsubscribe2 = observer.subscribe(() => undefined)
     unsubscribe2()
