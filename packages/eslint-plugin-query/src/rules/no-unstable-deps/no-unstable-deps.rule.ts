@@ -34,7 +34,7 @@ export const rule = createRule({
   },
   defaultOptions: [],
 
-  create: detectTanstackQueryImports((context) => {
+  create: detectTanstackQueryImports((context, _options, helpers) => {
     const trackedVariables: Record<string, string> = {}
     const hookAliasMap: Record<string, string> = {}
 
@@ -109,7 +109,8 @@ export const rule = createRule({
           node.init !== null &&
           node.init.type === AST_NODE_TYPES.CallExpression &&
           node.init.callee.type === AST_NODE_TYPES.Identifier &&
-          allHookNames.includes(node.init.callee.name)
+          allHookNames.includes(node.init.callee.name) &&
+          helpers.isTanstackQueryImport(node.init.callee)
         ) {
           // Special case for useQueries with combine property - it's stable
           if (
