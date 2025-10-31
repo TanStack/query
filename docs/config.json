@@ -7,6 +7,11 @@
   },
   "sections": [
     {
+      "label": "Community Resources",
+      "children": [],
+      "frameworks": []
+    },
+    {
       "label": "Getting Started",
       "children": [],
       "frameworks": [
@@ -28,10 +33,6 @@
             {
               "label": "Devtools",
               "to": "framework/react/devtools"
-            },
-            {
-              "label": "Videos & Talks",
-              "to": "framework/react/videos"
             },
             {
               "label": "Comparison",
@@ -1012,51 +1013,7 @@
         }
       ]
     },
-    {
-      "label": "Community Resources",
-      "children": [],
-      "frameworks": [
-        {
-          "label": "react",
-          "children": [
-            {
-              "label": "TkDodo's Blog",
-              "to": "framework/react/community/tkdodos-blog"
-            },
-            {
-              "label": "Community Projects",
-              "to": "framework/react/community/community-projects"
-            }
-          ]
-        },
-        {
-          "label": "solid",
-          "children": [
-            {
-              "label": "TkDodo's Blog",
-              "to": "framework/solid/community/tkdodos-blog"
-            },
-            {
-              "label": "Community Projects",
-              "to": "framework/solid/community/community-projects"
-            }
-          ]
-        },
-        {
-          "label": "vue",
-          "children": [
-            {
-              "label": "TkDodo's Blog",
-              "to": "framework/vue/community/tkdodos-blog"
-            },
-            {
-              "label": "Community Projects",
-              "to": "framework/vue/community/community-projects"
-            }
-          ]
-        }
-      ]
-    },
+
     {
       "label": "Examples",
       "children": [],
