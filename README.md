@@ -7,13 +7,13 @@
 <br />
 
 <div align="center">
-<a href="https://www.npmjs.com/package/@tanstack/query-core" target="\_parent">
+<a href="https://www.npmjs.com/package/@tanstack/query-core" target="_parent">
   <img alt="" src="https://img.shields.io/npm/dm/@tanstack/query-core.svg" alt="npm downloads" />
 </a>
- <a href="https://github.com/TanStack/query/" target="\_parent">
+ <a href="https://github.com/TanStack/query/" target="_parent">
   <img alt="" src="https://img.shields.io/github/stars/TanStack/query.svg?style=social&label=Star" alt="GitHub stars" />
 </a>
-<a href="https://bundlejs.com/?q=%40tanstack%2Freact-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="\_parent">
+<a href="https://bundlejs.com/?q=%40tanstack%2Freact-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="_parent">
   <img alt="" src="https://deno.bundlejs.com/?q=@tanstack/react-query&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-dom%22]}}&badge=detailed" alt="Bundle size" />
 </a>
 </div>
