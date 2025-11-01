@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 5.90.7
+
+### Patch Changes
+
+- fix(solid-query): enable experimental_prefetchInRender by default for… ([#9822](https://github.com/TanStack/query/pull/9822))
+
 ## 5.90.6
 
 ### Patch Changes
