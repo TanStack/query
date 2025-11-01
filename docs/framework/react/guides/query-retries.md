@@ -78,3 +78,28 @@ const result = useQuery({
 ```
 
 [//]: # 'Example3'
+
+## Background Retry Behavior
+
+When using `refetchInterval` with `refetchIntervalInBackground: true`, retries will pause when the browser tab is inactive. This happens because retries respect the same focus behavior as regular refetches.
+
+If you need continuous retries in the background, consider disabling retries and implementing a custom refetch strategy:
+
+[//]: # 'Example4'
+
+```tsx
+const result = useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+  refetchInterval: (query) => {
+    // Refetch more frequently when in error state
+    return query.state.status === 'error' ? 5000 : 30000
+  },
+  refetchIntervalInBackground: true,
+  retry: false, // Disable built-in retries
+})
+```
+
+[//]: # 'Example4'
+
+This approach lets you control retry timing manually while keeping refetches active in the background.
