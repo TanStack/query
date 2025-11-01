@@ -132,6 +132,9 @@ export function useBaseQuery<
     if (isServer) {
       defaultOptions.retry = false
       defaultOptions.throwOnError = true
+      // Enable prefetch during render for SSR - required for createResource to work
+      // Without this, queries wait for effects which never run on the server
+      defaultOptions.experimental_prefetchInRender = true
     }
     return defaultOptions
   })
