@@ -44,6 +44,8 @@ bun add @tanstack/vue-query-devtools
 
 By default, Vue Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
 
+## Floating Mode
+
 Devtools will be mounted as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
 
 Place the following code as high in your Vue app as you can. The closer it is to the root of the page, the better it will work!
@@ -73,6 +75,47 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}`
   - Use this to predefine some errors that can be triggered on your queries. The initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
+- `styleNonce?: string`
+  - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+- `shadowDOMTarget?: ShadowRoot`
+  - Default behavior will apply the devtool's styles to the head tag within the DOM.
+  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+
+## Embedded Mode
+
+Embedded mode will show the development tools as a fixed element in your application, so you can use our panel in your own development tools.
+
+Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
+
+```vue
+<script setup>
+import { VueQueryDevtoolsPanel } from '@tanstack/vue-query-devtools'
+const isDevtoolsOpen = ref(false)
+function toggleDevtools() {
+  isDevtoolsOpen.value = !isDevtoolsOpen.value
+}
+</script>
+
+<template>
+  <h1>The app!</h1>
+  <button @click="toggleDevtools">Open Devtools</button>
+  <VueQueryDevtoolsPanel v-if="isDevtoolsOpen" :onClose="toggleDevtools" />
+</template>
+```
+
+### Options
+
+- `style?: React.CSSProperties`
+  - Custom styles for the devtools panel
+  - Default: `{ height: '500px' }`
+  - Example: `{ height: '100%' }`
+  - Example: `{ height: '100%', width: '100%' }`
+- `onClose?: () => unknown`
+  - Callback function that is called when the devtools panel is closed
+- `client?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
+  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 - `styleNonce?: string`
   - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
 - `shadowDOMTarget?: ShadowRoot`

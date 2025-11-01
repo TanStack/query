@@ -250,7 +250,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
       '@tanstack/angular-query-persist-client':
-        specifier: ^5.62.12
+        specifier: ^5.62.13
         version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-async-storage-persister':
         specifier: workspace:*
@@ -2251,9 +2251,6 @@ importers:
       '@testing-library/angular':
         specifier: ^18.0.0
         version: 18.0.0(b638270d50b9f611fb362719c9f1adf5)
-      eslint-plugin-jsdoc:
-        specifier: ^50.5.0
-        version: 50.5.0(eslint@9.36.0(jiti@2.5.1))
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
