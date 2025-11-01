@@ -3,4 +3,4 @@
 '@tanstack/vue-query': minor
 ---
 
-renamed imperitive methods
+renamed imperative methods
