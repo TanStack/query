@@ -253,6 +253,98 @@ export class QueryClient extends QC {
     )
   }
 
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: FetchQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+    >,
+  ): Promise<TData> {
+    return super.query(cloneDeepUnref(options))
+  }
+
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: FetchInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<InfiniteData<TData, TPageParam>>
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      FetchInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<InfiniteData<TData, TPageParam>>
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      FetchInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<InfiniteData<TData, TPageParam>> {
+    return super.infiniteQuery(cloneDeepUnref(options))
+  }
+
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,

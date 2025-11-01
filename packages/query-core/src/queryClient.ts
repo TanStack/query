@@ -147,20 +147,15 @@ export class QueryClient {
   ): Promise<TData> {
     const defaultedOptions = this.defaultQueryOptions(options)
     const query = this.#queryCache.build(this, defaultedOptions)
-    const cachedData = query.state.data
-
-    if (cachedData === undefined) {
-      return this.fetchQuery(options)
-    }
 
     if (
       options.revalidateIfStale &&
       query.isStaleByTime(resolveStaleTime(defaultedOptions.staleTime, query))
     ) {
-      void this.prefetchQuery(defaultedOptions)
+      void this.query(options).catch(noop)
     }
 
-    return Promise.resolve(cachedData)
+    return this.query({ ...options, staleTime: 'static' })
   }
 
   getQueriesData<
@@ -338,7 +333,7 @@ export class QueryClient {
     return Promise.all(promises).then(noop)
   }
 
-  fetchQuery<
+  query<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -369,6 +364,23 @@ export class QueryClient {
       : Promise.resolve(query.state.data as TData)
   }
 
+  fetchQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: FetchQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData> {
+    return this.query(options)
+  }
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -377,10 +389,10 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void> {
-    return this.fetchQuery(options).then(noop).catch(noop)
+    return this.query(options).then(noop).catch(noop)
   }
 
-  fetchInfiniteQuery<
+  infiniteQuery<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -401,7 +413,24 @@ export class QueryClient {
       TData,
       TPageParam
     >(options.pages)
-    return this.fetchQuery(options as any)
+    return this.query(options as any)
+  }
+  fetchInfiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: FetchInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<InfiniteData<TData, TPageParam>> {
+    return this.infiniteQuery(options)
   }
 
   prefetchInfiniteQuery<
@@ -419,7 +448,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<void> {
-    return this.fetchInfiniteQuery(options).then(noop).catch(noop)
+    return this.infiniteQuery(options).then(noop).catch(noop)
   }
 
   ensureInfiniteQueryData<
