@@ -13,9 +13,9 @@
     "@angular/compiler": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
-    "@tanstack/angular-query-experimental": "^5.90.7",
-    "@tanstack/angular-query-persist-client": "^5.62.12",
-    "@tanstack/query-async-storage-persister": "^5.90.7",
+    "@tanstack/angular-query-experimental": "^5.90.8",
+    "@tanstack/angular-query-persist-client": "^5.62.13",
+    "@tanstack/query-async-storage-persister": "^5.90.8",
     "rxjs": "^7.8.2",
     "tslib": "^2.8.1",
     "zone.js": "0.15.0"
