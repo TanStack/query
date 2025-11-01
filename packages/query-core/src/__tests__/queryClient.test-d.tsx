@@ -310,9 +310,19 @@ describe('fully typed usage', () => {
     const fetchedQuery = await queryClient.fetchQuery(queryOptions)
     expectTypeOf(fetchedQuery).toEqualTypeOf<TData>()
 
+    const queriedData = await queryClient.query(queryOptions)
+    expectTypeOf(queriedData).toEqualTypeOf<TData>()
+
     queryClient.prefetchQuery(queryOptions)
 
-    const infiniteQuery = await queryClient.fetchInfiniteQuery(
+    const fetchInfiniteQueryResult = await queryClient.fetchInfiniteQuery(
+      fetchInfiniteQueryOptions,
+    )
+    expectTypeOf(fetchInfiniteQueryResult).toEqualTypeOf<
+      InfiniteData<TData, unknown>
+    >()
+
+    const infiniteQuery = await queryClient.infiniteQuery(
       fetchInfiniteQueryOptions,
     )
     expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
@@ -449,9 +459,19 @@ describe('fully typed usage', () => {
     const fetchedQuery = await queryClient.fetchQuery(queryOptions)
     expectTypeOf(fetchedQuery).toEqualTypeOf<unknown>()
 
+    const queriedData = await queryClient.query(queryOptions)
+    expectTypeOf(queriedData).toEqualTypeOf<unknown>()
+
     queryClient.prefetchQuery(queryOptions)
 
-    const infiniteQuery = await queryClient.fetchInfiniteQuery(
+    const fetchInfiniteQueryResult = await queryClient.fetchInfiniteQuery(
+      fetchInfiniteQueryOptions,
+    )
+    expectTypeOf(fetchInfiniteQueryResult).toEqualTypeOf<
+      InfiniteData<unknown, unknown>
+    >()
+
+    const infiniteQuery = await queryClient.infiniteQuery(
       fetchInfiniteQueryOptions,
     )
     expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<unknown, unknown>>()

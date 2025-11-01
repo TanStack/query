@@ -8,6 +8,7 @@ import {
   dehydrate,
   focusManager,
   hydrate,
+  noop,
   onlineManager,
   skipToken,
 } from '..'
@@ -449,6 +450,7 @@ describe('queryClient', () => {
     })
   })
 
+  /** @deprecated */
   describe('ensureQueryData', () => {
     test('should return the cached query data if the query is found', async () => {
       const key = queryKey()
@@ -524,6 +526,100 @@ describe('queryClient', () => {
     })
   })
 
+  describe('query with static staleTime', () => {
+    test('should return the cached query data if the query is found', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      queryClient.setQueryData([key, 'id'], 'bar')
+
+      await expect(
+        queryClient.query({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+        }),
+      ).resolves.toEqual('bar')
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    test('should return the cached query data if the query is found and cached query data is falsy', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve(0))
+
+      queryClient.setQueryData([key, 'id'], null)
+
+      await expect(
+        queryClient.query({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+        }),
+      ).resolves.toEqual(null)
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    test('should call queryFn and return its results if the query is not found', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.query({
+          queryKey: [key],
+          queryFn,
+          staleTime: 'static',
+        }),
+      ).resolves.toEqual('data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    test('should not fetch when initialData is provided', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.query({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+          initialData: 'initial',
+        }),
+      ).resolves.toEqual('initial')
+
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    test('supports manual background revalidation via a second query call', async () => {
+      const key = queryKey()
+      let value = 'data-1'
+      const queryFn = vi.fn(() => Promise.resolve(value))
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn,
+          staleTime: 'static',
+        }),
+      ).resolves.toEqual('data-1')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      value = 'data-2'
+      void queryClient
+        .query({
+          queryKey: key,
+          queryFn,
+          staleTime: 0,
+        })
+        .catch(noop)
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(key)).toBe('data-2')
+    })
+  })
+
+  /** @deprecated */
   describe('ensureInfiniteQueryData', () => {
     test('should return the cached query data if the query is found', async () => {
       const key = queryKey()
@@ -584,6 +680,45 @@ describe('queryClient', () => {
     })
   })
 
+  describe('infiniteQuery with static staleTime', () => {
+    test('should return the cached query data if the query is found', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      queryClient.setQueryData([key, 'id'], {
+        pages: ['bar'],
+        pageParams: [0],
+      })
+
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+        }),
+      ).resolves.toEqual({ pages: ['bar'], pageParams: [0] })
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    test('should fetch the query and return its results if the query is not found', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: [key, 'id'],
+          queryFn,
+          staleTime: 'static',
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+        }),
+      ).resolves.toEqual({ pages: ['data'], pageParams: [1] })
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('getQueriesData', () => {
     test('should return the query data for all matched queries', () => {
       const key1 = queryKey()
@@ -615,6 +750,7 @@ describe('queryClient', () => {
     })
   })
 
+  /** @deprecated */
   describe('fetchQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
@@ -789,6 +925,181 @@ describe('queryClient', () => {
     })
   })
 
+  describe('query', () => {
+    test('should not type-error with strict query key', async () => {
+      type StrictData = 'data'
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
+        Promise.resolve('data')
+
+      await expect(
+        queryClient.query<StrictData, any, StrictData, StrictQueryKey>({
+          queryKey: key,
+          queryFn: fetchFn,
+        }),
+      ).resolves.toEqual('data')
+    })
+
+    // https://github.com/tannerlinsley/react-query/issues/652
+    test('should not retry by default', async () => {
+      const key = queryKey()
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn: (): Promise<unknown> => {
+            throw new Error('error')
+          },
+        }),
+      ).rejects.toEqual(new Error('error'))
+    })
+
+    test('should return the cached data on cache hit', async () => {
+      const key = queryKey()
+
+      const fetchFn = () => Promise.resolve('data')
+      const first = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+      })
+      const second = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+      })
+
+      expect(second).toBe(first)
+    })
+
+    test('should read from cache with static staleTime even if invalidated', async () => {
+      const key = queryKey()
+
+      const fetchFn = vi.fn(() => Promise.resolve({ data: 'data' }))
+      const first = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+        staleTime: 'static',
+      })
+
+      expect(first.data).toBe('data')
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+
+      await queryClient.invalidateQueries({
+        queryKey: key,
+        refetchType: 'none',
+      })
+
+      const second = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+        staleTime: 'static',
+      })
+
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+
+      expect(second).toBe(first)
+    })
+
+    test('should be able to fetch when garbage collection time is set to 0 and then be removed', async () => {
+      const key1 = queryKey()
+      const promise = queryClient.query({
+        queryKey: key1,
+        queryFn: () => sleep(10).then(() => 1),
+        gcTime: 0,
+      })
+      await vi.advanceTimersByTimeAsync(10)
+      await expect(promise).resolves.toEqual(1)
+      await vi.advanceTimersByTimeAsync(1)
+      expect(queryClient.getQueryData(key1)).toEqual(undefined)
+    })
+
+    test('should keep a query in cache if garbage collection time is Infinity', async () => {
+      const key1 = queryKey()
+      const promise = queryClient.query({
+        queryKey: key1,
+        queryFn: () => sleep(10).then(() => 1),
+        gcTime: Infinity,
+      })
+      await vi.advanceTimersByTimeAsync(10)
+      const result2 = queryClient.getQueryData(key1)
+      await expect(promise).resolves.toEqual(1)
+      expect(result2).toEqual(1)
+    })
+
+    test('should not force fetch', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, 'og')
+      const fetchFn = () => Promise.resolve('new')
+      const first = await queryClient.query({
+        queryKey: key,
+        queryFn: fetchFn,
+        initialData: 'initial',
+        staleTime: 100,
+      })
+      expect(first).toBe('og')
+    })
+
+    test('should only fetch if the data is older then the given stale time', async () => {
+      const key = queryKey()
+
+      let count = 0
+      const queryFn = () => ++count
+
+      queryClient.setQueryData(key, count)
+      const firstPromise = queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: 100,
+      })
+      await expect(firstPromise).resolves.toBe(0)
+      await vi.advanceTimersByTimeAsync(10)
+      const secondPromise = queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: 10,
+      })
+      await expect(secondPromise).resolves.toBe(1)
+      const thirdPromise = queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: 10,
+      })
+      await expect(thirdPromise).resolves.toBe(1)
+      await vi.advanceTimersByTimeAsync(10)
+      const fourthPromise = queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: 10,
+      })
+      await expect(fourthPromise).resolves.toBe(2)
+    })
+
+    test('should allow new meta', async () => {
+      const key = queryKey()
+
+      const first = await queryClient.query({
+        queryKey: key,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: true,
+        },
+      })
+      expect(first).toStrictEqual({ foo: true })
+
+      const second = await queryClient.query({
+        queryKey: key,
+        queryFn: ({ meta }) => Promise.resolve(meta),
+        meta: {
+          foo: false,
+        },
+      })
+      expect(second).toStrictEqual({ foo: false })
+    })
+  })
+
+  /** @deprecated */
   describe('fetchInfiniteQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = string
@@ -833,6 +1144,51 @@ describe('queryClient', () => {
     })
   })
 
+  describe('infiniteQuery', () => {
+    test('should not type-error with strict query key', async () => {
+      type StrictData = string
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
+
+      const data = {
+        pages: ['data'],
+        pageParams: [0],
+      } as const
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
+        Promise.resolve(data.pages[0])
+
+      await expect(
+        queryClient.infiniteQuery<
+          StrictData,
+          any,
+          StrictData,
+          StrictQueryKey,
+          number
+        >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
+      ).resolves.toEqual(data)
+    })
+
+    test('should return infinite query data', async () => {
+      const key = queryKey()
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        initialPageParam: 10,
+        queryFn: ({ pageParam }) => Number(pageParam),
+      })
+      const result2 = queryClient.getQueryData(key)
+
+      const expected = {
+        pages: [10],
+        pageParams: [10],
+      }
+
+      expect(result).toEqual(expected)
+      expect(result2).toEqual(expected)
+    })
+  })
+
+  /** @deprecated */
   describe('prefetchInfiniteQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
@@ -922,6 +1278,102 @@ describe('queryClient', () => {
     })
   })
 
+  describe('infiniteQuery used for prefetching', () => {
+    test('should not type-error with strict query key', async () => {
+      type StrictData = 'data'
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
+        Promise.resolve('data')
+
+      await queryClient
+        .infiniteQuery<StrictData, any, StrictData, StrictQueryKey, number>({
+          queryKey: key,
+          queryFn: fetchFn,
+          initialPageParam: 0,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: ['data'],
+        pageParams: [0],
+      })
+    })
+
+    test('should return infinite query data', async () => {
+      const key = queryKey()
+
+      await queryClient
+        .infiniteQuery({
+          queryKey: key,
+          queryFn: ({ pageParam }) => Number(pageParam),
+          initialPageParam: 10,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: [10],
+        pageParams: [10],
+      })
+    })
+
+    test('should prefetch multiple pages', async () => {
+      const key = queryKey()
+
+      await queryClient
+        .infiniteQuery({
+          queryKey: key,
+          queryFn: ({ pageParam }) => String(pageParam),
+          getNextPageParam: (_lastPage, _pages, lastPageParam) =>
+            lastPageParam + 5,
+          initialPageParam: 10,
+          pages: 3,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: ['10', '15', '20'],
+        pageParams: [10, 15, 20],
+      })
+    })
+
+    test('should stop prefetching if getNextPageParam returns undefined', async () => {
+      const key = queryKey()
+      let count = 0
+
+      await queryClient
+        .infiniteQuery({
+          queryKey: key,
+          queryFn: ({ pageParam }) => String(pageParam),
+          getNextPageParam: (_lastPage, _pages, lastPageParam) => {
+            count++
+            return lastPageParam >= 20 ? undefined : lastPageParam + 5
+          },
+          initialPageParam: 10,
+          pages: 5,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: ['10', '15', '20'],
+        pageParams: [10, 15, 20],
+      })
+
+      // this check ensures we're exiting the fetch loop early
+      expect(count).toBe(3)
+    })
+  })
+
+  /** @deprecated */
   describe('prefetchQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
@@ -965,6 +1417,59 @@ describe('queryClient', () => {
         queryFn: () => 'data',
         gcTime: 10,
       })
+      expect(queryCache.find({ queryKey: key })).toBeDefined()
+      await vi.advanceTimersByTimeAsync(15)
+      expect(queryCache.find({ queryKey: key })).not.toBeDefined()
+    })
+  })
+
+  describe('query used for prefetching', () => {
+    test('should not type-error with strict query key', async () => {
+      type StrictData = 'data'
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
+        Promise.resolve('data')
+
+      await queryClient
+        .query<StrictData, any, StrictData, StrictQueryKey>({
+          queryKey: key,
+          queryFn: fetchFn,
+        })
+        .catch(noop)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual('data')
+    })
+
+    test('should resolve undefined when an error is thrown', async () => {
+      const key = queryKey()
+
+      const result = await queryClient
+        .query({
+          queryKey: key,
+          queryFn: (): Promise<unknown> => {
+            throw new Error('error')
+          },
+          retry: false,
+        })
+        .catch(noop)
+
+      expect(result).toBeUndefined()
+    })
+
+    test('should be garbage collected after gcTime if unused', async () => {
+      const key = queryKey()
+
+      await queryClient
+        .query({
+          queryKey: key,
+          queryFn: () => 'data',
+          gcTime: 10,
+        })
+        .catch(noop)
       expect(queryCache.find({ queryKey: key })).toBeDefined()
       await vi.advanceTimersByTimeAsync(15)
       expect(queryCache.find({ queryKey: key })).not.toBeDefined()
