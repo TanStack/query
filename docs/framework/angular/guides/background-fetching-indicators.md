@@ -6,7 +6,7 @@ replace:
   {
     'useIsFetching': 'injectIsFetching',
     'hook': 'function',
-    '@tanstack/react-query': '@tanstack/angular-query-experimental'
+    '@tanstack/react-query': '@tanstack/angular-query-experimental',
   }
 ---
 
