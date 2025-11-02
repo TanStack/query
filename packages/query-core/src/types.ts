@@ -515,7 +515,14 @@ export interface FetchQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends Omit<
-    QueryExecuteOptions<TQueryFnData, TError, TData, TData, TQueryKey, TPageParam>,
+    QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
     'select'
   > {}
 
@@ -584,17 +591,16 @@ export type FetchInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> =
-  Omit<
-    FetchQueryOptions<
-      TQueryFnData,
-      TError,
-      InfiniteData<TData, TPageParam>,
-      TQueryKey,
-      TPageParam
-    >,
-    'initialPageParam'
-  > &
+> = Omit<
+  FetchQueryOptions<
+    TQueryFnData,
+    TError,
+    InfiniteData<TData, TPageParam>,
+    TQueryKey,
+    TPageParam
+  >,
+  'initialPageParam'
+> &
   InitialPageParam<TPageParam> &
   InfiniteQueryPages<TQueryFnData, TPageParam>
 
