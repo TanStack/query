@@ -1,5 +1,6 @@
 import { Subscribable } from './subscribable'
 import { isServer } from './utils'
+import { notifyManager } from './notifyManager'
 
 type Listener = (focused: boolean) => void
 
@@ -38,7 +39,7 @@ export class FocusManager extends Subscribable<Listener> {
     }
   }
 
-  protected onUnsubscribe() {
+  protected onUnsubscribe(): void {
     if (!this.hasListeners()) {
       this.#cleanup?.()
       this.#cleanup = undefined
@@ -67,8 +68,15 @@ export class FocusManager extends Subscribable<Listener> {
 
   onFocus(): void {
     const isFocused = this.isFocused()
-    this.listeners.forEach((listener) => {
-      listener(isFocused)
+    notifyManager.batch(() => {
+      this.listeners.forEach((listener) => {
+        try {
+          listener(isFocused)
+        } catch (error) {
+          // Log the error but don't stop other listeners
+          console.error(error)
+        }
+      })
     })
   }
 
