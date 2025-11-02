@@ -488,23 +488,36 @@ export type DefaultedInfiniteQueryObserverOptions<
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 >
 
+export interface QueryExecuteOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
+> extends WithRequired<
+    QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey, TPageParam>,
+    'queryKey'
+  > {
+  initialPageParam?: never
+  select?: (data: TQueryData) => TData
+  /**
+   * The time in milliseconds after data is considered stale.
+   * If the data is fresh it will be returned from the cache.
+   */
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
+}
+
 export interface FetchQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> extends WithRequired<
-    QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
-    'queryKey'
-  > {
-  initialPageParam?: never
-  /**
-   * The time in milliseconds after data is considered stale.
-   * If the data is fresh it will be returned from the cache.
-   */
-  staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
-}
+> extends Omit<
+    QueryExecuteOptions<TQueryFnData, TError, TData, TData, TQueryKey, TPageParam>,
+    'select'
+  > {}
 
 export interface EnsureQueryDataOptions<
   TQueryFnData = unknown,
@@ -538,23 +551,24 @@ export type EnsureInfiniteQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
-type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
+type InfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
   | { pages?: never }
   | {
       pages: number
       getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
     }
 
-export type FetchInfiniteQueryOptions<
+export type InfiniteQueryExecuteOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = Omit<
-  FetchQueryOptions<
+  QueryExecuteOptions<
     TQueryFnData,
     TError,
+    TData,
     InfiniteData<TData, TPageParam>,
     TQueryKey,
     TPageParam
@@ -562,7 +576,27 @@ export type FetchInfiniteQueryOptions<
   'initialPageParam'
 > &
   InitialPageParam<TPageParam> &
-  FetchInfiniteQueryPages<TQueryFnData, TPageParam>
+  InfiniteQueryPages<TQueryFnData, TPageParam>
+
+export type FetchInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> =
+  Omit<
+    FetchQueryOptions<
+      TQueryFnData,
+      TError,
+      InfiniteData<TData, TPageParam>,
+      TQueryKey,
+      TPageParam
+    >,
+    'initialPageParam'
+  > &
+  InitialPageParam<TPageParam> &
+  InfiniteQueryPages<TQueryFnData, TPageParam>
 
 export interface ResultOptions {
   throwOnError?: boolean
