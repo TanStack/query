@@ -4,7 +4,7 @@ articles:
   [
     {
       title: "TkDodo's Blog Posts",
-      url: 'https://tkdodo.eu/blog/tags/react-query',
+      url: 'https://tkdodo.eu/blog/practical-react-query',
       description: 'TkDodo, a maintainer of TanStack Query, writes a series of blog posts about the library. These articles offer general best practices and often present opinionated perspectives on using TanStack Query.',
     },
   ]
