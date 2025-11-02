@@ -4,4 +4,4 @@
 '@tanstack/vue-query': minor
 ---
 
-updated tests, respect select in imperitive methods
+renamed imperative methods
