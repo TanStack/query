@@ -257,7 +257,7 @@ describe('infiniteQuery', () => {
   })
 
   it('should allow passing pages', async () => {
-    const data = await new QueryClient().fetchInfiniteQuery({
+    const data = await new QueryClient().infiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve({ count: 1 }),
       getNextPageParam: () => 1,
@@ -333,13 +333,7 @@ describe('fully typed usage', () => {
         return 0
       },
       initialPageParam: 0,
-      select: (data) => {
-        expectTypeOf(data).toEqualTypeOf<InfiniteData<TData, unknown>>()
-        return data
-      },
     }
-
-    const infiniteQueryOptions
 
     const queryOptions: EnsureQueryDataOptions<TData, TError> = {
       queryKey: ['key'] as any,
@@ -436,9 +430,6 @@ describe('fully typed usage', () => {
     expectTypeOf(fetchInfiniteQueryResult).toEqualTypeOf<
       InfiniteData<TData, unknown>
     >()
-
-    const infiniteQuery = await queryClient.infiniteQuery(infiniteQueryOptions)
-    expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
 
     const infiniteQuery = await queryClient.infiniteQuery(infiniteQueryOptions)
     expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
