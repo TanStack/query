@@ -70,12 +70,7 @@ export class FocusManager extends Subscribable<Listener> {
     const isFocused = this.isFocused()
     notifyManager.batch(() => {
       this.listeners.forEach((listener) => {
-        try {
-          listener(isFocused)
-        } catch (error) {
-          // Log the error but don't stop other listeners
-          console.error(error)
-        }
+        listener(isFocused)
       })
     })
   }
