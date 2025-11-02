@@ -10,6 +10,7 @@ import type {
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   InfiniteData,
+  InfiniteQueryExecuteOptions,
   MutationOptions,
   OmitKeyof,
   QueryKey,
@@ -157,24 +158,55 @@ describe('getQueryState', () => {
   })
 })
 
+describe('fetchQuery', () => {
+  it('should not allow passing select option', () => {
+    assertType<Parameters<QueryClient['fetchQuery']>>([
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        // @ts-expect-error `select` is not supported on fetchQuery options
+        select: (data: string) => data.length,
+      },
+    ])
+  })
+})
+
 describe('fetchInfiniteQuery', () => {
+  it('should not allow passing select option', () => {
+    assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve({ count: 1 }),
+        initialPageParam: 1,
+        getNextPageParam: () => 2,
+        // @ts-expect-error `select` is not supported on fetchInfiniteQuery options
+        select: (data) => ({
+          pages: data.pages.map(
+            (x: unknown) => `count: ${(x as { count: number }).count}`,
+          ),
+          pageParams: data.pageParams,
+        }),
+      },
+    ])
+  })
+
   it('should allow passing pages', async () => {
     const data = await new QueryClient().fetchInfiniteQuery({
       queryKey: ['key'],
-      queryFn: () => Promise.resolve('string'),
+      queryFn: () => Promise.resolve({ count: 1 }),
       getNextPageParam: () => 1,
       initialPageParam: 1,
       pages: 5,
     })
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ count: number }, number>>()
   })
 
   it('should not allow passing getNextPageParam without pages', () => {
     assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
       {
         queryKey: ['key'],
-        queryFn: () => Promise.resolve('string'),
+        queryFn: () => Promise.resolve({ count: 1 }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
       },
@@ -183,6 +215,72 @@ describe('fetchInfiniteQuery', () => {
 
   it('should not allow passing pages without getNextPageParam', () => {
     assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
+      // @ts-expect-error Property 'getNextPageParam' is missing
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve({ count: 1 }),
+        initialPageParam: 1,
+        pages: 5,
+      },
+    ])
+  })
+})
+
+describe('query', () => {
+  it('should allow passing select option', () => {
+    assertType<Parameters<QueryClient['query']>>([
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        select: (data) => (data as string).length,
+      },
+    ])
+  })
+})
+
+describe('infiniteQuery', () => {
+  it('should not allow passing select option', () => {
+    assertType<Parameters<QueryClient['infiniteQuery']>>([
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve({ count: 1 }),
+        initialPageParam: 1,
+        getNextPageParam: () => 2,
+        select: (data) => ({
+          pages: data.pages.map(
+            (x) => `count: ${(x as { count: number }).count}`,
+          ),
+          pageParams: data.pageParams,
+        }),
+      },
+    ])
+  })
+
+  it('should allow passing pages', async () => {
+    const data = await new QueryClient().fetchInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve({ count: 1 }),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      pages: 5,
+    })
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ count: number }, number>>()
+  })
+
+  it('should not allow passing getNextPageParam without pages', () => {
+    assertType<Parameters<QueryClient['infiniteQuery']>>([
+      {
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve({ count: 1 }),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+      },
+    ])
+  })
+
+  it('should not allow passing pages without getNextPageParam', () => {
+    assertType<Parameters<QueryClient['infiniteQuery']>>([
       // @ts-expect-error Property 'getNextPageParam' is missing
       {
         queryKey: ['key'],
@@ -227,6 +325,22 @@ describe('fully typed usage', () => {
     // Construct typed arguments
     //
 
+    const infiniteQueryOptions: InfiniteQueryExecuteOptions<TData, TError> = {
+      queryKey: ['key'] as any,
+      pages: 5,
+      getNextPageParam: (lastPage) => {
+        expectTypeOf(lastPage).toEqualTypeOf<TData>()
+        return 0
+      },
+      initialPageParam: 0,
+      select: (data) => {
+        expectTypeOf(data).toEqualTypeOf<InfiniteData<TData, unknown>>()
+        return data
+      },
+    }
+
+    const infiniteQueryOptions
+
     const queryOptions: EnsureQueryDataOptions<TData, TError> = {
       queryKey: ['key'] as any,
     }
@@ -240,6 +354,7 @@ describe('fully typed usage', () => {
         },
         initialPageParam: 0,
       }
+
     const mutationOptions: MutationOptions<TData, TError> = {}
 
     const queryFilters: QueryFilters<DataTag<QueryKey, TData, TError>> = {
@@ -323,7 +438,12 @@ describe('fully typed usage', () => {
     >()
 
     const infiniteQuery = await queryClient.infiniteQuery(
-      fetchInfiniteQueryOptions,
+      infiniteQueryOptions,
+    )
+    expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
+
+    const infiniteQuery = await queryClient.infiniteQuery(
+      infiniteQueryOptions,
     )
     expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
 

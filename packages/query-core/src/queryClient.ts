@@ -25,6 +25,7 @@ import type {
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
+  InfiniteQueryExecuteOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationKey,
@@ -33,6 +34,7 @@ import type {
   NoInfer,
   OmitKeyof,
   QueryClientConfig,
+  QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
   QueryOptions,
@@ -333,17 +335,19 @@ export class QueryClient {
     return Promise.all(promises).then(noop)
   }
 
-  query<
+  async query<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: FetchQueryOptions<
+    options: QueryExecuteOptions<
       TQueryFnData,
       TError,
       TData,
+      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -357,11 +361,21 @@ export class QueryClient {
 
     const query = this.#queryCache.build(this, defaultedOptions)
 
-    return query.isStaleByTime(
+    const isStale = query.isStaleByTime(
       resolveStaleTime(defaultedOptions.staleTime, query),
     )
+
+    const basePromise = isStale
       ? query.fetch(defaultedOptions)
-      : Promise.resolve(query.state.data as TData)
+      : Promise.resolve(query.state.data as TQueryData)
+
+    const select = defaultedOptions.select
+
+    if (select) {
+      return basePromise.then((data) => select(data))
+    }
+
+    return basePromise.then((data) => data as unknown as TData)
   }
 
   fetchQuery<
@@ -399,7 +413,7 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
-    options: FetchInfiniteQueryOptions<
+    options: InfiniteQueryExecuteOptions<
       TQueryFnData,
       TError,
       TData,
@@ -415,6 +429,7 @@ export class QueryClient {
     >(options.pages)
     return this.query(options as any)
   }
+
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,

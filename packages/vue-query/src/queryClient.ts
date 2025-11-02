@@ -16,6 +16,7 @@ import type {
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
+  InfiniteQueryExecuteOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationFilters,
@@ -23,6 +24,7 @@ import type {
   MutationObserverOptions,
   NoInfer,
   OmitKeyof,
+  QueryExecuteOptions,
   QueryFilters,
   QueryKey,
   QueryObserverOptions,
@@ -257,13 +259,15 @@ export class QueryClient extends QC {
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: FetchQueryOptions<
+    options: QueryExecuteOptions<
       TQueryFnData,
       TError,
       TData,
+      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -272,22 +276,38 @@ export class QueryClient extends QC {
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
     options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
     >,
   ): Promise<TData>
   query<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
+    TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
     options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
     >,
   ): Promise<TData> {
     return super.query(cloneDeepUnref(options))
@@ -300,7 +320,7 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
-    options: FetchInfiniteQueryOptions<
+    options: InfiniteQueryExecuteOptions<
       TQueryFnData,
       TError,
       TData,
@@ -316,7 +336,7 @@ export class QueryClient extends QC {
     TPageParam = unknown,
   >(
     options: MaybeRefDeep<
-      FetchInfiniteQueryOptions<
+      InfiniteQueryExecuteOptions<
         TQueryFnData,
         TError,
         TData,
@@ -333,7 +353,7 @@ export class QueryClient extends QC {
     TPageParam = unknown,
   >(
     options: MaybeRefDeep<
-      FetchInfiniteQueryOptions<
+      InfiniteQueryExecuteOptions<
         TQueryFnData,
         TError,
         TData,

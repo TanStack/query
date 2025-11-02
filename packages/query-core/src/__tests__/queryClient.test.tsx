@@ -935,7 +935,7 @@ describe('queryClient', () => {
         Promise.resolve('data')
 
       await expect(
-        queryClient.query<StrictData, any, StrictData, StrictQueryKey>({
+        queryClient.query<StrictData, any, StrictData, StrictData, StrictQueryKey>({
           queryKey: key,
           queryFn: fetchFn,
         }),
@@ -1433,7 +1433,7 @@ describe('queryClient', () => {
         Promise.resolve('data')
 
       await queryClient
-        .query<StrictData, any, StrictData, StrictQueryKey>({
+        .query<StrictData, any, StrictData, StrictData, StrictQueryKey>({
           queryKey: key,
           queryFn: fetchFn,
         })
