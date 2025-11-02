@@ -97,7 +97,7 @@ Note that query keys act as dependencies for your query functions. Adding depend
 
 ## Further reading
 
-For tips on organizing Query Keys in larger applications, have a look at [Effective React Query Keys](../../community/tkdodos-blog.md#8-effective-react-query-keys) and check the [Query Key Factory Package](../../community/community-projects.md#query-key-factory) from
-the Community Resources.
+For tips on organizing Query Keys in larger applications, have a look at [Effective React Query Keys](https://tkdodo.eu/blog/effective-react-query-keys) and check the [Query Key Factory Package](https://github.com/lukemorales/query-key-factory) from
+the [Community Resources](../community-resources.md).
 
 [//]: # 'Materials'
