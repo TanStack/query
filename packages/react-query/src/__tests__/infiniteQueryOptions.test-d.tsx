@@ -111,11 +111,9 @@ describe('infiniteQueryOptions', () => {
       select: (data) => data.pages,
     })
 
-    options.select
-
     const data = await new QueryClient().infiniteQuery(options)
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+    expectTypeOf(data).toEqualTypeOf<Array<string>>()
   })
   it('should work when passed to fetchInfiniteQuery', async () => {
     const options = infiniteQueryOptions({
