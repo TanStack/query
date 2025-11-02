@@ -437,14 +437,10 @@ describe('fully typed usage', () => {
       InfiniteData<TData, unknown>
     >()
 
-    const infiniteQuery = await queryClient.infiniteQuery(
-      infiniteQueryOptions,
-    )
+    const infiniteQuery = await queryClient.infiniteQuery(infiniteQueryOptions)
     expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
 
-    const infiniteQuery = await queryClient.infiniteQuery(
-      infiniteQueryOptions,
-    )
+    const infiniteQuery = await queryClient.infiniteQuery(infiniteQueryOptions)
     expectTypeOf(infiniteQuery).toEqualTypeOf<InfiniteData<TData, unknown>>()
 
     const infiniteQueryData = await queryClient.ensureInfiniteQueryData(
