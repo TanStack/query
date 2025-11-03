@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 5.90.9
+
+### Patch Changes
+
+- Skip errors if returned data is undefined ([#9841](https://github.com/TanStack/query/pull/9841))
+
 ## 5.90.8
 
 ### Patch Changes
