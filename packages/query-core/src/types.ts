@@ -576,7 +576,7 @@ export type InfiniteQueryExecuteOptions<
     TQueryFnData,
     TError,
     TData,
-    InfiniteData<TData, TPageParam>,
+    InfiniteData<TQueryFnData, TPageParam>,
     TQueryKey,
     TPageParam
   >,
