@@ -47,9 +47,9 @@ function reconcileFn<TData, TError>(
         if (error instanceof Error) {
           console.warn(
             `Unable to correctly reconcile data for query key: ${queryHash}. ` +
-              `Possibly because the query data contains data structures that aren't supported ` +
-              `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
-              `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
+            `Possibly because the query data contains data structures that aren't supported ` +
+            `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
+            `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
           )
         }
       }
@@ -156,7 +156,7 @@ export function useBaseQuery<
         const query = observer().getCurrentQuery()
         const unwrappedResult = hydratableObserverResult(query, result)
 
-        if (unwrappedResult.isError) {
+        if (result.data !== undefined && unwrappedResult.isError) {
           reject(unwrappedResult.error)
           unsubscribeIfQueued()
         } else {
