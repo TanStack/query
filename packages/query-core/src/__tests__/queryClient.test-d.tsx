@@ -239,7 +239,7 @@ describe('query', () => {
 })
 
 describe('infiniteQuery', () => {
-  it('should not passing select option', () => {
+  it('should allow passing select option', () => {
     assertType<Parameters<QueryClient['infiniteQuery']>>([
       {
         queryKey: ['key'],
