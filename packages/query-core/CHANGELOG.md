@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.6
+
+### Patch Changes
+
+- Fixed isFetchedAfterMount in cases where initialData is applied ([#9743](https://github.com/TanStack/query/pull/9743))
+
 ## 5.90.5
 
 ### Patch Changes
