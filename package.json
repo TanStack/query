@@ -45,13 +45,13 @@
     "@cspell/eslint-plugin": "^9.2.1",
     "@eslint-react/eslint-plugin": "^2.0.1",
     "@svitejs/changesets-changelog-github-compact": "^1.2.0",
-    "@tanstack/config": "^0.20.2",
+    "@tanstack/config": "^0.22.0",
     "@testing-library/jest-dom": "^6.8.0",
-    "@types/node": "^22.15.3",
+    "@types/node": "^24.10.0",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
-    "@vitest/coverage-istanbul": "3.2.4",
-    "@vitest/eslint-plugin": "^1.1.36",
+    "@vitest/coverage-istanbul": "4.0.6",
+    "@vitest/eslint-plugin": "^1.4.0",
     "esbuild-plugin-file-path-extensions": "^2.1.4",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^6.1.1",
@@ -77,8 +77,8 @@
     "typescript55": "npm:typescript@5.5",
     "typescript56": "npm:typescript@5.6",
     "typescript57": "npm:typescript@5.7",
-    "vite": "^6.3.6",
-    "vitest": "3.2.4"
+    "vite": "^6.4.1",
+    "vitest": "4.0.6"
   },
   "pnpm": {
     "overrides": {
@@ -105,7 +105,9 @@
       "@tanstack/vue-query": "workspace:*",
       "@tanstack/vue-query-devtools": "workspace:*",
       "@types/react": "^19.0.1",
-      "@types/react-dom": "^19.0.2"
+      "@types/react-dom": "^19.0.2",
+      "@types/node": "^24.10.0",
+      "vite": "^6.4.1"
     }
   }
 }
