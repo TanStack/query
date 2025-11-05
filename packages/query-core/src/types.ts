@@ -514,17 +514,17 @@ export interface FetchQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> extends Omit<
-    QueryExecuteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-    'select'
-  > {}
+> extends WithRequired<
+    QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
+    'queryKey'
+  > {
+  initialPageParam?: never
+  /**
+   * The time in milliseconds after data is considered stale.
+   * If the data is fresh it will be returned from the cache.
+   */
+  staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
+}
 
 export interface EnsureQueryDataOptions<
   TQueryFnData = unknown,

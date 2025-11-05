@@ -149,15 +149,20 @@ export class QueryClient {
   ): Promise<TData> {
     const defaultedOptions = this.defaultQueryOptions(options)
     const query = this.#queryCache.build(this, defaultedOptions)
+    const cachedData = query.state.data
+
+    if (cachedData === undefined) {
+      return this.fetchQuery(options)
+    }
 
     if (
       options.revalidateIfStale &&
       query.isStaleByTime(resolveStaleTime(defaultedOptions.staleTime, query))
     ) {
-      void this.query(options).catch(noop)
+      void this.prefetchQuery(options)
     }
 
-    return this.query({ ...options, staleTime: 'static' })
+    return Promise.resolve(cachedData)
   }
 
   getQueriesData<
@@ -393,8 +398,22 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<TData> {
-    return this.query(options)
+    const defaultedOptions = this.defaultQueryOptions(options)
+
+    // https://github.com/tannerlinsley/react-query/issues/652
+    if (defaultedOptions.retry === undefined) {
+      defaultedOptions.retry = false
+    }
+
+    const query = this.#queryCache.build(this, defaultedOptions)
+
+    return query.isStaleByTime(
+      resolveStaleTime(defaultedOptions.staleTime, query),
+    )
+      ? query.fetch(defaultedOptions)
+      : Promise.resolve(query.state.data as TData)
   }
+
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -403,7 +422,7 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void> {
-    return this.query(options).then(noop).catch(noop)
+    return this.fetchQuery(options).then(noop).catch(noop)
   }
 
   infiniteQuery<
@@ -445,7 +464,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    return this.infiniteQuery(options)
+    return this.fetchQuery(options as any)
   }
 
   prefetchInfiniteQuery<
@@ -463,7 +482,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<void> {
-    return this.infiniteQuery(options).then(noop).catch(noop)
+    return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
   ensureInfiniteQueryData<
