@@ -11,5 +11,7 @@ replace:
     'useQuery[(]': 'useQuery(() => ',
     'useQueries[(]': 'useQueries(() => ',
     'useInfiniteQuery[(]': 'useInfiniteQuery(() => ',
+    'useSuspenseQuery': 'useQuery',
+    'useSuspenseQueries': 'useQueries',
   }
 ---

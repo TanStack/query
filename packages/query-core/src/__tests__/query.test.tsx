@@ -1305,4 +1305,47 @@ describe('query', () => {
       data: 'data1',
     })
   })
+
+  test('should not increment dataUpdateCount when setting initialData on prefetched query', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn().mockImplementation(() => 'fetched-data')
+
+    // First prefetch the query (creates query without data)
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn,
+    })
+
+    const query = queryCache.find({ queryKey: key })!
+    expect(query.state.data).toBeUndefined()
+    expect(query.state.dataUpdateCount).toBe(0)
+
+    // Now create an observer with initialData
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      initialData: 'initial-data',
+    })
+
+    // The query should now have the initial data but dataUpdateCount should still be 0
+    // since this was not fetched data but initial data
+    expect(query.state.data).toBe('initial-data')
+    expect(query.state.dataUpdateCount).toBe(0)
+
+    // Get the initial state as captured by the observer
+    const result = observer.getCurrentResult()
+    expect(result.data).toBe('initial-data')
+    expect(result.isFetchedAfterMount).toBe(false) // This should be false since no actual fetch occurred
+
+    // Now trigger a refetch through the observer to simulate real-world usage
+    await observer.refetch()
+
+    // After actual fetch, dataUpdateCount should increment
+    expect(query.state.dataUpdateCount).toBe(1)
+    expect(query.state.data).toBe('fetched-data')
+
+    // And isFetchedAfterMount should now be true
+    const updatedResult = observer.getCurrentResult()
+    expect(updatedResult.isFetchedAfterMount).toBe(true)
+  })
 })
