@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.7
+
+### Patch Changes
+
+- fix(core): only attach .then and .catch onto a promise if it gets dehydrated ([#9847](https://github.com/TanStack/query/pull/9847))
+
 ## 5.90.6
 
 ### Patch Changes
