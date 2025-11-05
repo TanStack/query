@@ -159,7 +159,7 @@ export class QueryClient {
       options.revalidateIfStale &&
       query.isStaleByTime(resolveStaleTime(defaultedOptions.staleTime, query))
     ) {
-      void this.prefetchQuery(options)
+      void this.prefetchQuery(defaultedOptions)
     }
 
     return Promise.resolve(cachedData)
