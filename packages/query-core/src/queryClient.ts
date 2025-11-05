@@ -370,17 +370,17 @@ export class QueryClient {
       resolveStaleTime(defaultedOptions.staleTime, query),
     )
 
-    const basePromise = isStale
-      ? query.fetch(defaultedOptions)
-      : Promise.resolve(query.state.data as TQueryData)
+    const queryData = isStale
+      ? await query.fetch(defaultedOptions)
+      : (query.state.data as TQueryData)
 
     const select = defaultedOptions.select
 
     if (select) {
-      return basePromise.then((data) => select(data))
+      return select(queryData)
     }
 
-    return basePromise.then((data) => data as unknown as TData)
+    return queryData as unknown as TData
   }
 
   fetchQuery<
