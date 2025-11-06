@@ -137,7 +137,7 @@ If you want to run an example without installing dependencies for the whole repo
 
 ## Online one-click setup
 
-You can use Gitpod (An Online Open Source VS Code like IDE that is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
+You can use Gitpod (An Online open-source VS Code-like IDE that is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
 
 - clone the `TanStack/query` repo.
 - install all the dependencies in `/` and `/docs`.
