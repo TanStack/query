@@ -626,6 +626,6 @@ Similarly, it would be impossible to teach all the intricacies of this new parad
 
 ## Further reading
 
-To understand if your application can benefit from React Query when also using Server Components, have a look at [You Might Not Need React Query](../../community/tkdodos-blog.md#20-you-might-not-need-react-query) from the Community Resources.
+To understand if your application can benefit from React Query when also using Server Components, see the article [You Might Not Need React Query](https://tkdodo.eu/blog/you-might-not-need-react-query).
 
 [//]: # 'Materials'
