@@ -140,6 +140,6 @@ So keep in mind that a query can be in `pending` state without actually fetching
 
 ## Further Reading
 
-For an alternative way of performing status checks, have a look at the [Community Resources](../../community/tkdodos-blog.md#4-status-checks-in-react-query).
+For an alternative way of performing status checks, have a look at [this article by TkDodo](https://tkdodo.eu/blog/status-checks-in-react-query).
 
 [//]: # 'Materials'
