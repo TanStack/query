@@ -133,11 +133,11 @@ https://github.com/fulopkovacs/form/assets/43729152/9d35a3c3-8153-4e74-9cb2-af27
 
 #### Note on standalone execution
 
-If you want to run an example without installing dependencies for the whole repo, just follow instructions from the example's README.md file. It will be then run against the latest TanStack Query release.
+If you want to run an example without installing dependencies for the whole repo, just follow the instructions from the example's README.md file. It will then be run against the latest TanStack Query release.
 
 ## Online one-click setup
 
-You can use Gitpod (An Online Open Source VS Code like IDE which is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
+You can use Gitpod (An Online Open Source VS Code like IDE that is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
 
 - clone the `TanStack/query` repo.
 - install all the dependencies in `/` and `/docs`.
