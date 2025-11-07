@@ -96,6 +96,6 @@ function Todo({ blogPostId }) {
 
 ## Further reading
 
-For a comparison between `Placeholder Data` and `Initial Data`, have a look at the [Community Resources](../../community/tkdodos-blog.md#9-placeholder-and-initial-data-in-react-query).
+For a comparison between `Placeholder Data` and `Initial Data`, see the [article by TkDodo](https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query).
 
 [//]: # 'Materials'

@@ -63,6 +63,34 @@ const baseTestCases = {
             }
           `,
         },
+      ])
+      .concat([
+        {
+          name: `should pass when useQuery is imported from non-TanStack source and used with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "./router";
+
+            function Component() {
+              const query = useQuery();
+              const callback = ${reactHookInvocation}(() => { query.refetch() }, [query]);
+              return;
+            }
+          `,
+        },
+        {
+          name: `should pass when useMutation is imported from non-TanStack source and used with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useMutation } from "./api";
+
+            function Component() {
+              const mutation = useMutation();
+              const callback = ${reactHookInvocation}(() => { mutation.mutate() }, [mutation]);
+              return;
+            }
+          `,
+        },
       ]),
   invalid: ({
     reactHookImport,

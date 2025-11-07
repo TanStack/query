@@ -132,6 +132,9 @@ export function useBaseQuery<
     if (isServer) {
       defaultOptions.retry = false
       defaultOptions.throwOnError = true
+      // Enable prefetch during render for SSR - required for createResource to work
+      // Without this, queries wait for effects which never run on the server
+      defaultOptions.experimental_prefetchInRender = true
     }
     return defaultOptions
   })
@@ -156,7 +159,7 @@ export function useBaseQuery<
         const query = observer().getCurrentQuery()
         const unwrappedResult = hydratableObserverResult(query, result)
 
-        if (unwrappedResult.isError) {
+        if (result.data !== undefined && unwrappedResult.isError) {
           reject(unwrappedResult.error)
           unsubscribeIfQueued()
         } else {
