@@ -109,7 +109,7 @@ mutate(variables, {
 
 **Returns**
 
-- `mutate: (variables: TVariables, { onSuccess, onSettled, onError }) => void`
+- `mutate: (variables: TVariables, { onSuccess, onSettled, onError, scope }) => void`
   - The mutation function you can call with variables to trigger the mutation and optionally hooks on additional callback options.
   - `variables: TVariables`
     - Optional
@@ -126,8 +126,12 @@ mutate(variables, {
     - Optional
     - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
     - Void function, the returned value will be ignored
+  - `scope: { id: string }`
+    - Optional
+    - Allows you to override the mutation scope for this specific mutation call
+    - See [Mutation Scopes](../guides/mutations.md#mutation-scopes) for more information
   - If you make multiple requests, `onSuccess` will fire only after the latest call you've made.
-- `mutateAsync: (variables: TVariables, { onSuccess, onSettled, onError }) => Promise<TData>`
+- `mutateAsync: (variables: TVariables, { onSuccess, onSettled, onError, scope }) => Promise<TData>`
   - Similar to `mutate` but returns a promise which can be awaited.
 - `status: MutationStatus`
   - Will be:

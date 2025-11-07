@@ -1176,6 +1176,7 @@ export interface MutateOptions<
     onMutateResult: TOnMutateResult | undefined,
     context: MutationFunctionContext,
   ) => void
+  scope?: MutationScope
 }
 
 export type MutateFunction<

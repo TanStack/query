@@ -131,13 +131,24 @@ export class MutationObserver<
   ): Promise<TData> {
     this.#mutateOptions = options
 
-    this.#currentMutation?.removeObserver(this)
+    // Merge scope from mutate options if provided
+    const mutationOptions = options?.scope
+      ? { ...this.options, scope: options.scope }
+      : this.options
 
+    // Store reference to previous mutation before creating new one
+    const previousMutation = this.#currentMutation
+    
     this.#currentMutation = this.#client
       .getMutationCache()
-      .build(this.#client, this.options)
+      .build(this.#client, mutationOptions)
 
     this.#currentMutation.addObserver(this)
+
+    // Remove observer from previous mutation AFTER setting up the new one
+    // This ensures the previous mutation stays alive long enough to trigger
+    // the next mutation in the scope via runNext()
+    previousMutation?.removeObserver(this)
 
     return this.#currentMutation.execute(variables)
   }

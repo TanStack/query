@@ -383,4 +383,180 @@ describe('mutationObserver', () => {
 
     unsubscribe()
   })
+
+  test('should allow overriding scope in mutate call', async () => {
+    const results: Array<string> = []
+
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: async (text: string) => {
+        results.push(`start-${text}`)
+        await sleep(10)
+        results.push(`finish-${text}`)
+        return text
+      },
+      scope: {
+        id: 'default-scope',
+      },
+    })
+
+    const subscriptionHandler = vi.fn()
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    // First mutation with default scope
+    mutationObserver.mutate('A')
+
+    // Second mutation with overridden scope - should run in parallel
+    mutationObserver.mutate('B', {
+      scope: {
+        id: 'override-scope',
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Both should start at the same time since they have different scopes
+    expect(results).toEqual([
+      'start-A',
+      'start-B',
+      'finish-A',
+      'finish-B',
+    ])
+
+    unsubscribe()
+  })
+
+  test('should use default scope when no override is provided', async () => {
+    const results: Array<string> = []
+
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: async (text: string) => {
+        results.push(`start-${text}`)
+        await sleep(10)
+        results.push(`finish-${text}`)
+        return text
+      },
+      scope: {
+        id: 'default-scope',
+      },
+    })
+
+    const subscriptionHandler = vi.fn()
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    // Both mutations use the default scope
+    mutationObserver.mutate('A')
+    mutationObserver.mutate('B')
+
+    await vi.advanceTimersByTimeAsync(20)
+
+    // They should run serially since they share the same scope
+    expect(results).toEqual([
+      'start-A',
+      'finish-A',
+      'start-B',
+      'finish-B',
+    ])
+
+    unsubscribe()
+  })
+
+  test('should override to the same scope to force serial execution', async () => {
+    const results: Array<string> = []
+
+    // Create two separate observers without scope
+    const mutationObserver1 = new MutationObserver(queryClient, {
+      mutationFn: async (text: string) => {
+        results.push(`start-${text}`)
+        await sleep(10)
+        results.push(`finish-${text}`)
+        return text
+      },
+    })
+
+    const mutationObserver2 = new MutationObserver(queryClient, {
+      mutationFn: async (text: string) => {
+        results.push(`start-${text}`)
+        await sleep(10)
+        results.push(`finish-${text}`)
+        return text
+      },
+    })
+
+    const subscriptionHandler1 = vi.fn()
+    const subscriptionHandler2 = vi.fn()
+    const unsubscribe1 = mutationObserver1.subscribe(subscriptionHandler1)
+    const unsubscribe2 = mutationObserver2.subscribe(subscriptionHandler2)
+
+    // Both mutations override to use the same scope
+    mutationObserver1.mutate('A', {
+      scope: {
+        id: 'shared-scope',
+      },
+    })
+
+    mutationObserver2.mutate('B', {
+      scope: {
+        id: 'shared-scope',
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(20)
+
+    // They should run serially since they share the same scope
+    expect(results).toEqual([
+      'start-A',
+      'finish-A',
+      'start-B',
+      'finish-B',
+    ])
+
+    unsubscribe1()
+    unsubscribe2()
+  })
+
+  test('mutate returns a promise that can be awaited (mutateAsync behavior)', async () => {
+    const results: Array<string> = []
+
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: async (text: string) => {
+        results.push(`start-${text}`)
+        await sleep(10)
+        results.push(`finish-${text}`)
+        return text.toUpperCase()
+      },
+      scope: {
+        id: 'default-scope',
+      },
+    })
+
+    const subscriptionHandler = vi.fn()
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    // mutate returns a promise, so it can be used like mutateAsync
+    const promise1 = mutationObserver.mutate('first')
+    const promise2 = mutationObserver.mutate('second', {
+      scope: {
+        id: 'override-scope',
+      },
+    })
+
+    // Advance timers to let mutations complete
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Both promises should resolve
+    const [result1, result2] = await Promise.all([promise1, promise2])
+
+    expect(result1).toBe('FIRST')
+    expect(result2).toBe('SECOND')
+
+    // Both should have started at the same time due to different scopes
+    expect(results).toEqual([
+      'start-first',
+      'start-second',
+      'finish-first',
+      'finish-second',
+    ])
+
+    unsubscribe()
+  })
 })

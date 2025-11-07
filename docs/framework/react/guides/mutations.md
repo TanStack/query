@@ -404,6 +404,46 @@ const mutation = useMutation({
 ```
 
 [//]: # 'ExampleScopes'
+
+### Overriding Scope Per Mutation Call
+
+You can override the scope for individual mutation calls by passing a `scope` option to the `mutate` or `mutateAsync` function. This is useful when you want to dynamically control whether mutations run in parallel or serial:
+
+[//]: # 'ExampleScopeOverride'
+
+```tsx
+const mutation = useMutation({
+  mutationFn: addTodo,
+  scope: {
+    id: 'todo',
+  },
+})
+
+// This mutation will use the default 'todo' scope
+mutation.mutate(todo1)
+
+// This mutation will use a different scope and run in parallel
+mutation.mutate(todo2, {
+  scope: {
+    id: 'todo-urgent',
+  },
+})
+
+// Works the same with mutateAsync
+await mutation.mutateAsync(todo3, {
+  scope: {
+    id: 'todo-background',
+  },
+})
+```
+
+[//]: # 'ExampleScopeOverride'
+
+This allows you to have fine-grained control over mutation execution. For example, you could:
+- Run certain mutations in parallel while keeping others serial
+- Dynamically assign scopes based on user actions or data properties
+- Force multiple different mutations to run serially by giving them the same scope
+
 [//]: # 'Materials'
 
 ## Further reading
