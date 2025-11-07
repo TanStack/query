@@ -525,7 +525,11 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
 
     expect(onMutate).toHaveBeenCalledTimes(1)
-    expect(onMutate).toHaveBeenCalledWith('todo')
+    expect(onMutate).toHaveBeenCalledWith('todo', {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: undefined,
+    })
 
     onlineMock.mockReturnValue(true)
     queryClient.getMutationCache().resumePausedMutations()
@@ -979,12 +983,22 @@ describe('useMutation', () => {
       'result-todo1',
       'todo1',
       undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
     )
     expect(onSuccess).toHaveBeenNthCalledWith(
       2,
       'result-todo2',
       'todo2',
       undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
     )
     expect(onSettled).toHaveBeenCalledTimes(2)
     expect(onSuccessMutate).toHaveBeenCalledTimes(1)
@@ -992,6 +1006,11 @@ describe('useMutation', () => {
       'result-todo2',
       'todo2',
       undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
     )
     expect(onSettledMutate).toHaveBeenCalledTimes(1)
     expect(onSettledMutate).toHaveBeenCalledWith(
@@ -999,6 +1018,11 @@ describe('useMutation', () => {
       null,
       'todo2',
       undefined,
+      {
+        client: queryClient,
+        meta: undefined,
+        mutationKey: undefined,
+      },
     )
   })
 
@@ -1033,7 +1057,11 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('status: error')).toBeInTheDocument()
 
-    expect(onError).toHaveBeenCalledWith(error, 'todo', undefined)
+    expect(onError).toHaveBeenCalledWith(error, 'todo', undefined, {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: undefined,
+    })
   })
 
   it('should go to error state if onError callback errors', async () => {
@@ -1110,7 +1138,11 @@ describe('useMutation', () => {
     expect(
       rendered.getByText('error: mutateFnError, status: error'),
     ).toBeInTheDocument()
-    expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
+    expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined, {
+      client: queryClient,
+      meta: undefined,
+      mutationKey: undefined,
+    })
   })
 
   it('should use provided custom queryClient', async () => {

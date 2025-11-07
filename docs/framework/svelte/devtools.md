@@ -61,7 +61,7 @@ Place the following code as high in your Svelte app as you can. The closer it is
 
 ### Options
 
-- `initialIsOpen: Boolean`
+- `initialIsOpen: boolean`
   - Set this `true` if you want the dev tools to default to being open
 - `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
   - Defaults to `bottom-right`

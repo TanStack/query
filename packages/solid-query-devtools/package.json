@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.87.4",
+  "version": "5.90.4",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts",
     "compile": "tsc --build",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm run compile && npm-run-all --serial test:types:*",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
@@ -28,6 +28,8 @@
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
     "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
     "test:build": "publint --strict && attw --pack",
+    "test:lib": "vitest --retry=3",
+    "test:lib:dev": "pnpm run test:lib --watch",
     "build": "tsup --tsconfig tsconfig.prod.json",
     "build:dev": "tsup --watch"
   },
@@ -96,6 +98,7 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
+    "@solidjs/testing-library": "^0.8.10",
     "@tanstack/solid-query": "workspace:*",
     "npm-run-all2": "^5.0.0",
     "solid-js": "^1.9.7",

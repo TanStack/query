@@ -5,8 +5,6 @@ title: Installation
 
 You can install Svelte Query via [NPM](https://npmjs.com).
 
-> v5 is currently available as a release-candidate. We don't anticipate any major API changes from here on out. We encourage you to try it out and report any issues you find.
-
 ### NPM
 
 ```bash

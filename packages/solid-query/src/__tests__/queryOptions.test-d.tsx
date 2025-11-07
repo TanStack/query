@@ -1,5 +1,10 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
+import {
+  QueryClient,
+  dataTagErrorSymbol,
+  dataTagSymbol,
+  skipToken,
+} from '@tanstack/query-core'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
 
@@ -73,6 +78,14 @@ describe('queryOptions', () => {
     })
 
     expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<number>()
+  })
+  it('should tag the queryKey with the default error type', () => {
+    const { queryKey } = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(1),
+    })
+
+    expectTypeOf(queryKey[dataTagErrorSymbol]).toEqualTypeOf<Error>()
   })
   it('should return the proper type when passed to getQueryData', () => {
     const { queryKey } = queryOptions({

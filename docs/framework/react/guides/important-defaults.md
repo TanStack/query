@@ -40,10 +40,10 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
 ## Further Reading
 
-Have a look at the following articles from our Community Resources for further explanations of the defaults:
+Have a look at the following articles from our [Community Resources](../../../../community-resources) for further explanations of the defaults:
 
-- [Practical React Query](../../community/tkdodos-blog.md#1-practical-react-query)
-- [React Query as a State Manager](../../community/tkdodos-blog.md#10-react-query-as-a-state-manager)
-- [Thinking in React Query](../../community/tkdodos-blog.md#21-thinking-in-react-query)
+- [Practical React Query](https://tkdodo.eu/blog/practical-react-query)
+- [React Query as a State Manager](https://tkdodo.eu/blog/react-query-as-a-state-manager)
+- [Thinking in React Query](https://tkdodo.eu/blog/thinking-in-react-query)
 
 [//]: # 'Materials'

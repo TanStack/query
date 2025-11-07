@@ -237,6 +237,13 @@ Without `queryOptions`, the type of `data` would be `unknown`, unless we'd pass 
 const data = queryClient.getQueryData<Group[]>(['groups'])
 ```
 
+Note that type inference via `queryOptions` does _not_ work for `queryClient.getQueriesData`, because it returns an array of tuples with heterogeneous, `unknown` data. If you are sure of the type of data that your query will return, specify it explicitly:
+
+```ts
+const entries = queryClient.getQueriesData<Group[]>(groupOptions().queryKey)
+//     ^? const entries: Array<[QueryKey, Group[] | undefined]>
+```
+
 ## Typing Mutation Options
 
 Similarly to `queryOptions`, you can use `mutationOptions` to extract mutation options into a separate function:
@@ -268,7 +275,6 @@ Read more about it in the [Disabling Queries](../guides/disabling-queries.md) gu
 
 ## Further Reading
 
-For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog.md#6-react-query-and-typescript) from
-the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](../community/tkdodos-blog.md#19-type-safe-react-query). [The Query Options API](../community/tkdodos-blog.md#24-the-query-options-api) outlines how type inference works with the `queryOptions` helper function.
+For tips and tricks around type inference, see the article [React Query and TypeScript](https://tkdodo.eu/blog/react-query-and-type-script). To find out how to get the best possible type-safety, you can read [Type-safe React Query](https://tkdodo.eu/blog/type-safe-react-query). [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) outlines how type inference works with the `queryOptions` helper function.
 
 [//]: # 'Materials'

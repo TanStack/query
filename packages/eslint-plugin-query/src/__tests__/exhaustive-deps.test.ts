@@ -227,6 +227,39 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'should pass with queryKeyFactory result assigned to a variable',
+      code: `
+        function fooQueryKeyFactory(dep: string) {
+            return ["foo", dep];
+        }
+
+        const useFoo = (dep: string) => {
+          const queryKey = fooQueryKeyFactory(dep);
+          return useQuery({
+              queryKey,
+              queryFn: () => Promise.resolve(dep),
+            })
+          }
+      `,
+    },
+    {
+      name: 'should pass with queryKeyFactory result assigned to a variable 2',
+      code: `
+        function fooQueryKeyFactory(dep: string) {
+            const x = ["foo", dep] as const;
+            return x as const;
+        }
+
+        const useFoo = (dep: string) => {
+          const queryKey = fooQueryKeyFactory(dep);
+          return useQuery({
+              queryKey,
+              queryFn: () => Promise.resolve(dep),
+            })
+          }
+      `,
+    },
+    {
       name: 'should not treat new Error as missing dependency',
       code: normalizeIndent`
         useQuery({
@@ -241,6 +274,30 @@ ruleTester.run('exhaustive-deps', rule, {
         const useX = (id: number) => {
           return useQuery({
             queryKey: ['foo', id] as const,
+            queryFn: async () => id,
+          })
+        }
+      `,
+    },
+    {
+      name: 'should see id when there is a const assertion of a variable dereference',
+      code: normalizeIndent`
+        const useX = (id: number) => {
+          const queryKey = ['foo', id]
+          return useQuery({
+            queryKey: queryKey as const,
+            queryFn: async () => id,
+          })
+        }
+      `,
+    },
+    {
+      name: 'should see id when there is a const assertion assigned to a variable',
+      code: normalizeIndent`
+        const useX = (id: number) => {
+          const queryKey = ['foo', id] as const
+          return useQuery({
+            queryKey,
             queryFn: async () => id,
           })
         }

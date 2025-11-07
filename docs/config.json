@@ -7,6 +7,11 @@
   },
   "sections": [
     {
+      "label": "Community Resources",
+      "children": [],
+      "frameworks": []
+    },
+    {
       "label": "Getting Started",
       "children": [],
       "frameworks": [
@@ -28,10 +33,6 @@
             {
               "label": "Devtools",
               "to": "framework/react/devtools"
-            },
-            {
-              "label": "Videos & Talks",
-              "to": "framework/react/videos"
             },
             {
               "label": "Comparison",
@@ -129,8 +130,8 @@
               "to": "framework/svelte/ssr"
             },
             {
-              "label": "Reactivity",
-              "to": "framework/svelte/reactivity"
+              "label": "Migrate from v5 to v6",
+              "to": "framework/svelte/migrate-from-v5-to-v6"
             }
           ]
         },
@@ -708,6 +709,10 @@
               "to": "framework/angular/guides/default-query-function"
             },
             {
+              "label": "Testing",
+              "to": "framework/angular/guides/testing"
+            },
+            {
               "label": "Does this replace state managers?",
               "to": "framework/angular/guides/does-this-replace-client-state"
             }
@@ -1008,51 +1013,7 @@
         }
       ]
     },
-    {
-      "label": "Community Resources",
-      "children": [],
-      "frameworks": [
-        {
-          "label": "react",
-          "children": [
-            {
-              "label": "TkDodo's Blog",
-              "to": "framework/react/community/tkdodos-blog"
-            },
-            {
-              "label": "Community Projects",
-              "to": "framework/react/community/community-projects"
-            }
-          ]
-        },
-        {
-          "label": "solid",
-          "children": [
-            {
-              "label": "TkDodo's Blog",
-              "to": "framework/solid/community/tkdodos-blog"
-            },
-            {
-              "label": "Community Projects",
-              "to": "framework/solid/community/community-projects"
-            }
-          ]
-        },
-        {
-          "label": "vue",
-          "children": [
-            {
-              "label": "TkDodo's Blog",
-              "to": "framework/vue/community/tkdodos-blog"
-            },
-            {
-              "label": "Community Projects",
-              "to": "framework/vue/community/community-projects"
-            }
-          ]
-        }
-      ]
-    },
+
     {
       "label": "Examples",
       "children": [],
