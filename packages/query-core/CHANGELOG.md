@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.8
+
+### Patch Changes
+
+- fix: allow partial query keys in `QueryFilters` ([#9686](https://github.com/TanStack/query/pull/9686))
+
 ## 5.90.7
 
 ### Patch Changes

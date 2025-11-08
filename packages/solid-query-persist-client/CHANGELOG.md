@@ -1,5 +1,13 @@
 # @tanstack/solid-query-persist-client
 
+## 5.90.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.91.7
+  - @tanstack/solid-query@5.90.11
+
 ## 5.90.10
 
 ### Patch Changes

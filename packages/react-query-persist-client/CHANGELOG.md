@@ -1,5 +1,13 @@
 # @tanstack/react-query-persist-client
 
+## 5.90.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.91.7
+  - @tanstack/react-query@5.90.8
+
 ## 5.90.9
 
 ### Patch Changes
