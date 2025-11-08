@@ -97,6 +97,6 @@ function Example() {
 
 - Consider taking the official [TanStack Query Course](https://query.gg?s=tanstack) (or buying it for your whole team!)
 - Learn TanStack Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation.md) and [API Reference](../reference/useQuery.md)
-- Have a read at [Why You Want React Query](../community/tkdodos-blog.md#23-why-you-want-react-query) from the Community Resources.
+- See the Article [Why You Want React Query](https://tkdodo.eu/blog/why-you-want-react-query).
 
 [//]: # 'Materials'
