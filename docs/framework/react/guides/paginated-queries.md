@@ -10,7 +10,7 @@ Rendering paginated data is a very common UI pattern and in TanStack Query, it "
 ```tsx
 const result = useQuery({
   queryKey: ['projects', page],
-  queryFn: fetchProjects,
+  queryFn: () => fetchProjects(page),
 })
 ```
 

@@ -191,6 +191,6 @@ However, if you have multiple places on the screen that would require to know ab
 
 ## Further reading
 
-Have a look at the Community Resources for a guide on [Concurrent Optimistic Updates](../../community/tkdodos-blog.md#29-concurrent-optimistic-updates-in-react-query).
+Have a look at the guide by TkDodo on [Concurrent Optimistic Updates](https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query).
 
 [//]: # 'Materials'

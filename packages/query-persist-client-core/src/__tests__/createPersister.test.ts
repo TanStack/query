@@ -260,6 +260,62 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
 
+  test('should restore item from the storage and refetch when `refetchOnRestore` is set to `always`', async () => {
+    const storage = getFreshStorage()
+    const { context, persister, query, queryFn, storageKey } = setupPersister(
+      ['foo'],
+      {
+        storage,
+        refetchOnRestore: 'always',
+      },
+    )
+
+    await storage.setItem(
+      storageKey,
+      JSON.stringify({
+        buster: '',
+        state: { dataUpdatedAt: Date.now() + 1000, data: '' },
+      }),
+    )
+
+    await persister.persisterFn(queryFn, context, query)
+    query.state.isInvalidated = true
+    query.fetch = vi.fn()
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(query.fetch).toHaveBeenCalledTimes(1)
+  })
+
+  test('should restore item from the storage and NOT refetch when `refetchOnRestore` is set to false', async () => {
+    const storage = getFreshStorage()
+    const { context, persister, query, queryFn, storageKey } = setupPersister(
+      ['foo'],
+      {
+        storage,
+        refetchOnRestore: false,
+      },
+    )
+
+    await storage.setItem(
+      storageKey,
+      JSON.stringify({
+        buster: '',
+        state: { dataUpdatedAt: Date.now(), data: '' },
+      }),
+    )
+
+    await persister.persisterFn(queryFn, context, query)
+    query.state.isInvalidated = true
+    query.fetch = vi.fn()
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(query.fetch).toHaveBeenCalledTimes(0)
+  })
+
   test('should store item after successful fetch', async () => {
     const storage = getFreshStorage()
     const {

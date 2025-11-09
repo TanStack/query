@@ -4684,6 +4684,7 @@ describe('useQuery', () => {
 
     function Page(props: { limit: number }) {
       const state = useQuery({ queryKey: [key, props.limit], queryFn })
+      // eslint-disable-next-line react-hooks/immutability
       states[props.limit] = state
       return (
         <div>
@@ -6155,7 +6156,6 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const mounted = React.useRef<boolean>(false)
       const { data, status } = useQuery({
         enabled: false,
         queryKey: key,
@@ -6165,9 +6165,10 @@ describe('useQuery', () => {
         },
       })
 
+      const mounted = React.useRef<boolean>(null)
       // this simulates a synchronous update between the time the query is created
       // and the time it is subscribed to that could be missed otherwise
-      if (!mounted.current) {
+      if (mounted.current === null) {
         mounted.current = true
         queryClient.setQueryData(key, 1)
       }

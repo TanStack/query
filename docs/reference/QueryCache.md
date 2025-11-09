@@ -27,10 +27,11 @@ const query = queryCache.find(['posts'])
 
 Its available methods are:
 
-- [`find`](#querycachefind)
-- [`findAll`](#querycachefindall)
-- [`subscribe`](#querycachesubscribe)
-- [`clear`](#querycacheclear)
+- [`queryCache.find`](#querycachefind)
+- [`queryCache.findAll`](#querycachefindall)
+- [`queryCache.subscribe`](#querycachesubscribe)
+- [`queryCache.clear`](#querycacheclear)
+- [Further reading](#further-reading)
 
 **Options**
 
@@ -117,7 +118,6 @@ queryCache.clear()
 
 ## Further reading
 
-To get a better understanding how the QueryCache works internally, have a look at [#18: Inside React Query
-](../../framework/react/community/tkdodos-blog.md#18-inside-react-query) from the Community Resources.
+To get a better understanding how the QueryCache works internally, have a look at [the Inside React Query article by TkDodo](https://tkdodo.eu/blog/inside-react-query).
 
 [//]: # 'Materials'

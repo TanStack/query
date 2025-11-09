@@ -28,10 +28,11 @@ const baseTestCases = {
             }
               `,
       },
-    ].concat(
-      useQueryHookNames.map((queryHook) => ({
-        name: `should pass result of ${queryHook} is passed to ${reactHookInvocation} as dependency`,
-        code: `
+    ]
+      .concat(
+        useQueryHookNames.map((queryHook) => ({
+          name: `should pass result of ${queryHook} is passed to ${reactHookInvocation} as dependency`,
+          code: `
             ${reactHookImport}
             import { ${queryHook} } from "@tanstack/react-query";
 
@@ -41,8 +42,56 @@ const baseTestCases = {
               return;
             }
           `,
-      })),
-    ),
+        })),
+      )
+      .concat([
+        {
+          name: `should pass when useQueries with combine is passed to ${reactHookAlias} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const queries = useQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ],
+                combine: (results) => ({ data: results[0]?.data })
+              });
+              const callback = ${reactHookInvocation}(() => { queries.data }, [queries]);
+              return;
+            }
+          `,
+        },
+      ])
+      .concat([
+        {
+          name: `should pass when useQuery is imported from non-TanStack source and used with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useQuery } from "./router";
+
+            function Component() {
+              const query = useQuery();
+              const callback = ${reactHookInvocation}(() => { query.refetch() }, [query]);
+              return;
+            }
+          `,
+        },
+        {
+          name: `should pass when useMutation is imported from non-TanStack source and used with ${reactHookAlias}`,
+          code: `
+            ${reactHookImport}
+            import { useMutation } from "./api";
+
+            function Component() {
+              const mutation = useMutation();
+              const callback = ${reactHookInvocation}(() => { mutation.mutate() }, [mutation]);
+              return;
+            }
+          `,
+        },
+      ]),
   invalid: ({
     reactHookImport,
     reactHookInvocation,
@@ -68,10 +117,11 @@ const baseTestCases = {
           },
         ],
       },
-    ].concat(
-      useQueryHookNames.map((queryHook) => ({
-        name: `result of ${queryHook} is passed to ${reactHookInvocation} as dependency`,
-        code: `
+    ]
+      .concat(
+        useQueryHookNames.map((queryHook) => ({
+          name: `result of ${queryHook} is passed to ${reactHookInvocation} as dependency`,
+          code: `
             ${reactHookImport}
             import { ${queryHook} } from "@tanstack/react-query";
 
@@ -81,14 +131,39 @@ const baseTestCases = {
               return;
             }
           `,
-        errors: [
-          {
-            messageId: 'noUnstableDeps',
-            data: { reactHook: reactHookAlias, queryHook },
-          },
-        ],
-      })),
-    ),
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook },
+            },
+          ],
+        })),
+      )
+      .concat([
+        {
+          name: `result of useQueries without combine is passed to ${reactHookInvocation} as dependency`,
+          code: `
+            ${reactHookImport}
+            import { useQueries } from "@tanstack/react-query";
+
+            function Component() {
+              const queries = useQueries({
+                queries: [
+                  { queryKey: ['test'], queryFn: () => 'test' }
+                ]
+              });
+              const callback = ${reactHookInvocation}(() => { queries[0]?.data }, [queries]);
+              return;
+            }
+          `,
+          errors: [
+            {
+              messageId: 'noUnstableDeps',
+              data: { reactHook: reactHookAlias, queryHook: 'useQueries' },
+            },
+          ],
+        },
+      ]),
 }
 
 const testCases = (reactHookName: string) => [

@@ -1,4 +1,5 @@
 import { tryResolveSync } from './thenable'
+import { noop } from './utils'
 import type {
   DefaultError,
   MutationKey,
@@ -78,6 +79,30 @@ function dehydrateQuery(
   serializeData: TransformerFn,
   shouldRedactErrors: (error: unknown) => boolean,
 ): DehydratedQuery {
+  const dehydratePromise = () => {
+    const promise = query.promise?.then(serializeData).catch((error) => {
+      if (!shouldRedactErrors(error)) {
+        // Reject original error if it should not be redacted
+        return Promise.reject(error)
+      }
+      // If not in production, log original error before rejecting redacted error
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(
+          `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
+        )
+      }
+      return Promise.reject(new Error('redacted'))
+    })
+
+    // Avoid unhandled promise rejections
+    // We need the promise we dehydrate to reject to get the correct result into
+    // the query cache, but we also want to avoid unhandled promise rejections
+    // in whatever environment the prefetches are happening in.
+    promise?.catch(noop)
+
+    return promise
+  }
+
   return {
     dehydratedAt: Date.now(),
     state: {
@@ -89,19 +114,7 @@ function dehydrateQuery(
     queryKey: query.queryKey,
     queryHash: query.queryHash,
     ...(query.state.status === 'pending' && {
-      promise: query.promise?.then(serializeData).catch((error) => {
-        if (!shouldRedactErrors(error)) {
-          // Reject original error if it should not be redacted
-          return Promise.reject(error)
-        }
-        // If not in production, log original error before rejecting redacted error
-        if (process.env.NODE_ENV !== 'production') {
-          console.error(
-            `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
-          )
-        }
-        return Promise.reject(new Error('redacted'))
-      }),
+      promise: dehydratePromise(),
     }),
     ...(query.meta && { meta: query.meta }),
   }
@@ -259,10 +272,13 @@ export function hydrate(
         // which will re-use the passed `initialPromise`
         // Note that we need to call these even when data was synchronously
         // available, as we still need to set up the retryer
-        void query.fetch(undefined, {
-          // RSC transformed promises are not thenable
-          initialPromise: Promise.resolve(promise).then(deserializeData),
-        })
+        query
+          .fetch(undefined, {
+            // RSC transformed promises are not thenable
+            initialPromise: Promise.resolve(promise).then(deserializeData),
+          })
+          // Avoid unhandled promise rejections
+          .catch(noop)
       }
     },
   )
