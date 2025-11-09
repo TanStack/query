@@ -10,7 +10,7 @@ vi.mock('../useQueryClient')
 
 describe('useQueries', () => {
   beforeEach(() => {
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
     vi.useFakeTimers()
   })
 

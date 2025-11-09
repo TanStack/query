@@ -4,7 +4,27 @@ import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 
-vi.mock('@tanstack/query-core')
+vi.mock('@tanstack/query-core', async () => {
+  const actual = await vi.importActual<{ QueryClient: typeof QueryClientOrigin }>('@tanstack/query-core')
+
+  // Get the prototype methods dynamically
+  const prototypeMethods = Object.getOwnPropertyNames(
+    actual.QueryClient.prototype,
+  ).filter((prop): prop is keyof typeof actual.QueryClient.prototype => {
+    const descriptor = Object.getOwnPropertyDescriptor(
+      actual.QueryClient.prototype,
+      prop,
+    )
+    return typeof descriptor?.value === 'function' && prop !== 'constructor'
+  })
+
+  // Spy on all methods in the prototype
+  prototypeMethods.forEach((method) => {
+    vi.spyOn(actual.QueryClient.prototype, method)
+  })
+
+  return actual
+})
 
 const queryKeyRef = ['foo', ref('bar')]
 const queryKeyUnref = ['foo', 'bar']
@@ -14,6 +34,7 @@ const fn = () => 'mock'
 describe('QueryCache', () => {
   beforeEach(() => {
     vi.useFakeTimers()
+    vi.clearAllMocks()
   })
 
   afterEach(() => {
@@ -321,10 +342,12 @@ describe('QueryCache', () => {
         initialPageParam: 0,
       })
 
-      expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith({
-        initialPageParam: 0,
-        queryKey: queryKeyUnref,
-      })
+      expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith(
+        expect.objectContaining({
+          initialPageParam: 0,
+          queryKey: queryKeyUnref,
+        }),
+      )
     })
     test('should properly unwrap parameter using infiniteQueryOptions with unref', () => {
       const queryClient = new QueryClient()
@@ -337,10 +360,12 @@ describe('QueryCache', () => {
 
       queryClient.fetchInfiniteQuery(options)
 
-      expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith({
-        initialPageParam: 0,
-        queryKey: queryKeyUnref,
-      })
+      expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith(
+        expect.objectContaining({
+          initialPageParam: 0,
+          queryKey: queryKeyUnref,
+        }),
+      )
     })
   })
 
