@@ -30,7 +30,11 @@ const mockDevtoolsInstance = {
   setInitialIsOpen: vi.fn(),
 }
 
-const mockTanstackQueryDevtools = vi.fn(() => mockDevtoolsInstance)
+function MockTanstackQueryDevtools() {
+  return mockDevtoolsInstance
+}
+
+const mockTanstackQueryDevtools = vi.fn(MockTanstackQueryDevtools)
 
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: mockTanstackQueryDevtools,
@@ -187,6 +191,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
 
@@ -248,6 +253,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -288,6 +294,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -320,6 +327,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -351,6 +359,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -384,6 +393,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -414,6 +424,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)
