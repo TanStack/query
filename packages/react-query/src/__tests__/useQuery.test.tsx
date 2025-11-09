@@ -6810,26 +6810,20 @@ describe('useQuery', () => {
       )
     }
 
-    const { unmount, getByTestId } = renderWithClient(
-      queryClient,
-      <Component />,
+    const rendered1 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(rendered1.getByTestId('error')).toHaveTextContent(
+      'Simulated 500 error',
     )
-
-    await vi.waitFor(() =>
-      expect(getByTestId('status')).toHaveTextContent('error'),
-    )
-    expect(getByTestId('error')).toHaveTextContent('Simulated 500 error')
     expect(fetchCount).toBe(1)
-
-    unmount()
+    rendered1.unmount()
 
     const initialFetchCount = fetchCount
 
-    renderWithClient(queryClient, <Component />)
-
-    await vi.waitFor(() =>
-      expect(getByTestId('status')).toHaveTextContent('error'),
-    )
+    const rendered2 = renderWithClient(queryClient, <Component />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
 
     expect(fetchCount).toBe(initialFetchCount + 1)
     expect(queryFn).toHaveBeenCalledTimes(2)
@@ -6862,7 +6856,7 @@ describe('useQuery', () => {
       )
     }
 
-    const { unmount, getByTestId } = renderWithClient(
+    const rendered1 = renderWithClient(
       queryClient,
       <ErrorBoundary
         fallbackRender={({ error }) => (
@@ -6875,18 +6869,18 @@ describe('useQuery', () => {
         <Component />
       </ErrorBoundary>,
     )
-
-    await vi.waitFor(() =>
-      expect(getByTestId('status')).toHaveTextContent('error'),
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(rendered1.getByTestId('error')).toHaveTextContent(
+      'Simulated 500 error',
     )
-    expect(getByTestId('error')).toHaveTextContent('Simulated 500 error')
     expect(fetchCount).toBe(1)
 
-    unmount()
+    rendered1.unmount()
 
     const initialFetchCount = fetchCount
 
-    renderWithClient(
+    const rendered2 = renderWithClient(
       queryClient,
       <ErrorBoundary
         fallbackRender={({ error }) => (
@@ -6899,10 +6893,8 @@ describe('useQuery', () => {
         <Component />
       </ErrorBoundary>,
     )
-
-    await vi.waitFor(() =>
-      expect(getByTestId('status')).toHaveTextContent('error'),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
 
     // Should not retry because throwOnError returns true
     expect(fetchCount).toBe(initialFetchCount)
@@ -6936,26 +6928,23 @@ describe('useQuery', () => {
       )
     }
 
-    const { unmount, getByTestId } = renderWithClient(
-      queryClient,
-      <Component />,
-    )
+    const rendered1 = renderWithClient(queryClient, <Component />)
 
-    await vi.waitFor(() =>
-      expect(getByTestId('status')).toHaveTextContent('error'),
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered1.getByTestId('status')).toHaveTextContent('error')
+    expect(rendered1.getByTestId('error')).toHaveTextContent(
+      'Simulated 500 error',
     )
-    expect(getByTestId('error')).toHaveTextContent('Simulated 500 error')
     expect(fetchCount).toBe(1)
 
-    unmount()
+    rendered1.unmount()
 
     const initialFetchCount = fetchCount
 
-    renderWithClient(queryClient, <Component />)
+    const rendered2 = renderWithClient(queryClient, <Component />)
 
-    await vi.waitFor(() =>
-      expect(getByTestId('status')).toHaveTextContent('error'),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered2.getByTestId('status')).toHaveTextContent('error')
 
     // Should retry because throwOnError returns false (500 error doesn't include '404')
     expect(fetchCount).toBe(initialFetchCount + 1)
