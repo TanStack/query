@@ -75,7 +75,7 @@ In some circumstances, you may be able to provide the placeholder data for a que
 [//]: # 'ExampleCache'
 
 ```tsx
-function Todo({ blogPostId }) {
+function BlogPost({ blogPostId }) {
   const queryClient = useQueryClient()
   const result = useQuery({
     queryKey: ['blogPost', blogPostId],
