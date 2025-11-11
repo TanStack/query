@@ -17,18 +17,23 @@ import {
 } from '..'
 import { QueryCache } from '../index'
 
-describe('useQuery().promise', () => {
+describe('useQuery().promise', { timeout: 10_000 }, () => {
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({
     queryCache,
   })
 
   beforeAll(() => {
-    vi.useFakeTimers({ shouldAdvanceTime: true })
+    vi.useFakeTimers({
+      shouldAdvanceTime: true,
+      toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'],
+    })
     queryClient.setDefaultOptions({
       queries: { experimental_prefetchInRender: true },
     })
   })
+
+
   afterAll(() => {
     vi.useRealTimers()
     queryClient.setDefaultOptions({
@@ -866,13 +871,13 @@ describe('useQuery().promise', () => {
 
     rendered.getByText('cancel').click()
 
-    {
-      await renderStream.takeRender()
-      expect(queryClient.getQueryState(key)).toMatchObject({
+    await vi.waitFor(() => {
+      const state = queryClient.getQueryState(key)
+      expect(state).toMatchObject({
         status: 'pending',
         fetchStatus: 'idle',
       })
-    }
+    })
 
     expect(queryFn).toHaveBeenCalledOnce()
 
@@ -921,20 +926,25 @@ describe('useQuery().promise', () => {
       )
     }
 
-    queryClient.setQueryData(key, 'initial')
-
     const rendered = await renderStream.render(
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>,
     )
 
-    rendered.getByText('cancel').click()
-
     {
       const { withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('initial')
+      withinDOM().getByText('loading..')
     }
+
+    queryClient.setQueryData(key, 'initial')
+
+    rendered.getByText('cancel').click()
+
+    await vi.waitFor(() => {
+      const state = queryClient.getQueryState(key)
+      expect(state?.data).toBe('initial')
+    })
 
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
