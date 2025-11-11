@@ -16,6 +16,17 @@ import type { FetchOptions, Query } from './query'
 
 // TYPES
 
+type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
+  ...infer R,
+  unknown,
+]
+  ? R
+  : never
+
+type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
+  ? readonly []
+  : TuplePrefixes<DropLast<T>> | T
+
 export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
@@ -32,7 +43,7 @@ export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Include queries matching this query key
    */
-  queryKey?: TQueryKey
+  queryKey?: TuplePrefixes<TQueryKey>
   /**
    * Include or exclude stale queries
    */
@@ -62,7 +73,7 @@ export interface MutationFilters<
   /**
    * Include mutations matching this mutation key
    */
-  mutationKey?: MutationKey
+  mutationKey?: TuplePrefixes<MutationKey>
   /**
    * Filter by mutation status
    */
