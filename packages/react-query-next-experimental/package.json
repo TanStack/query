@@ -65,7 +65,7 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "workspace:^",
-    "next": "^13 || ^14 || ^15",
+    "next": "^13 || ^14 || ^15 || ^16",
     "react": "^18 || ^19"
   }
 }
