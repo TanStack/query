@@ -114,12 +114,8 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
+  options: MaybeRefOrGetter<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
   >,
   queryClient?: QueryClient,
 ): UseQueryReturnType<TData, TError>
@@ -130,12 +126,8 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
+  options: MaybeRefOrGetter<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
   >,
   queryClient?: QueryClient,
 ):

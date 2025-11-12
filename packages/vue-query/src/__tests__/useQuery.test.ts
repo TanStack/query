@@ -44,6 +44,24 @@ describe('useQuery', () => {
     )
   })
 
+  test('should work with options getter', async () => {
+    const query = useQuery(() => ({
+      queryKey: ['key01'],
+      queryFn: () => sleep(0).then(() => 'result01'),
+    }))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'result01' },
+      isPending: { value: false },
+      isFetching: { value: false },
+      isFetched: { value: true },
+      isSuccess: { value: true },
+    })
+  })
+
   test('should return pending status initially', () => {
     const query = useQuery({
       queryKey: ['key1'],
