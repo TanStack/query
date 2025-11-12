@@ -1,5 +1,11 @@
 # @tanstack/vue-query
 
+## 5.91.0
+
+### Minor Changes
+
+- feat(vue-query): support useQuery options getter ([#9866](https://github.com/TanStack/query/pull/9866))
+
 ## 5.90.8
 
 ### Patch Changes
