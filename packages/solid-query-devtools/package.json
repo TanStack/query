@@ -34,28 +34,60 @@
     "build:dev": "tsup --watch"
   },
   "type": "module",
-  "main": "./build/index.cjs",
-  "module": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "./build/index/index.cjs",
+  "module": "./build/index/index.js",
+  "types": "./build/index/index.d.ts",
   "browser": {},
   "exports": {
-    "@tanstack/custom-condition": "./src/index.ts",
-    "solid": {
-      "development": "./build/dev.jsx",
-      "import": "./build/index.jsx"
-    },
-    "development": {
-      "import": {
-        "types": "./build/index.d.ts",
-        "default": "./build/dev.js"
+    ".": {
+      "@tanstack/custom-condition": "./src/index.tsx",
+      "solid": {
+        "development": "./build/index/dev.jsx",
+        "import": "./build/index/index.jsx"
       },
-      "require": "./build/dev.cjs"
+      "development": {
+        "import": {
+          "types": "./build/index/index.d.ts",
+          "default": "./build/index/dev.js"
+        },
+        "require": "./build/index/dev.cjs"
+      },
+      "import": {
+        "types": "./build/index/index.d.ts",
+        "default": "./build/index/index.js"
+      },
+      "require": "./build/index/index.cjs"
     },
-    "import": {
-      "types": "./build/index.d.ts",
-      "default": "./build/index.js"
+    "./production": {
+      "@tanstack/custom-condition": "./src/production.tsx",
+      "solid": {
+        "development": "./build/production/dev.jsx",
+        "import": "./build/production/index.jsx"
+      },
+      "development": {
+        "import": {
+          "types": "./build/production/index.d.ts",
+          "default": "./build/production/dev.js"
+        },
+        "require": "./build/production/dev.cjs"
+      },
+      "import": {
+        "types": "./build/production/index.d.ts",
+        "default": "./build/production/index.js"
+      },
+      "require": "./build/production/index.cjs"
     },
-    "require": "./build/index.cjs"
+    "./build/production/index.js": {
+      "import": {
+        "types": "./build/production/index.d.ts",
+        "default": "./build/production/index.js"
+      },
+      "require": {
+        "types": "./build/production/index.d.cts",
+        "default": "./build/production/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "build",
