@@ -12,8 +12,8 @@
     "@tanstack/react-query-devtools": "^5.90.2",
     "@tanstack/react-query-next-experimental": "^5.90.2",
     "next": "^16.0.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.3",
