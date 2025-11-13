@@ -59,14 +59,14 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^8.44.1"
+    "@typescript-eslint/utils": "^8.46.4"
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^8.44.1",
-    "@typescript-eslint/rule-tester": "^8.44.1",
+    "@typescript-eslint/parser": "^8.46.4",
+    "@typescript-eslint/rule-tester": "^8.46.4",
     "combinate": "^1.1.11",
-    "eslint": "^9.36.0",
-    "npm-run-all2": "^5.0.0"
+    "eslint": "^9.39.1",
+    "npm-run-all2": "^5.0.2"
   },
   "peerDependencies": {
     "eslint": "^8.57.0 || ^9.0.0"

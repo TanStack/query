@@ -12,13 +12,13 @@
     "@tanstack/svelte-query-devtools": "^6.0.0"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^6.1.0",
-    "@sveltejs/kit": "^2.42.2",
+    "@sveltejs/adapter-auto": "^6.1.1",
+    "@sveltejs/kit": "^2.48.4",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
-    "@tailwindcss/vite": "^4.1.13",
-    "svelte": "^5.39.3",
-    "svelte-check": "^4.3.1",
-    "tailwindcss": "^4.1.13",
+    "@tailwindcss/vite": "^4.1.17",
+    "svelte": "^5.43.6",
+    "svelte-check": "^4.3.4",
+    "tailwindcss": "^4.1.17",
     "typescript": "5.8.3",
     "vite": "^6.3.6"
   }
