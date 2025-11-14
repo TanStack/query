@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.9
+
+### Patch Changes
+
+- fix(types): do not drop readonly for partial QueryFilter matching ([#9872](https://github.com/TanStack/query/pull/9872))
+
 ## 5.90.8
 
 ### Patch Changes
