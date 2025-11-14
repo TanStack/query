@@ -343,6 +343,7 @@ describe('injectQuery', () => {
       client: queryClient,
       meta: undefined,
       queryKey: ['key8'],
+      queryHash: '["key8"]',
       signal: expect.anything(),
     })
   })

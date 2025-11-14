@@ -254,6 +254,7 @@ describe('query', () => {
     expect(args).toBeDefined()
     expect(args.pageParam).toBeUndefined()
     expect(args.queryKey).toEqual(key)
+    expect(args.queryHash).toBe(hashQueryKeyByOptions(key))
     expect(args.signal).toBeInstanceOf(AbortSignal)
     expect(args.client).toEqual(queryClient)
   })
