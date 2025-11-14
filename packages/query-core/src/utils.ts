@@ -20,7 +20,7 @@ type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
   ...infer R,
   unknown,
 ]
-  ? R
+  ? readonly [...R]
   : never
 
 type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []

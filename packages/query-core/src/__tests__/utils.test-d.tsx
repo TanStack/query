@@ -50,7 +50,7 @@ describe('QueryFilters', () => {
     expectTypeOf(filters.queryKey).toEqualTypeOf<
       | undefined
       | readonly []
-      | ['key']
+      | readonly ['key']
       | readonly [
           'key',
           {
@@ -58,6 +58,18 @@ describe('QueryFilters', () => {
             b: string
           },
         ]
+    >()
+  })
+
+  it('should work with readonly union types', () => {
+    const filters: QueryFilters<
+      readonly ['key'] | readonly ['key', 'something']
+    > = {
+      queryKey: ['key'],
+    }
+
+    expectTypeOf(filters.queryKey).toEqualTypeOf<
+      undefined | readonly [] | readonly ['key'] | readonly ['key', 'something']
     >()
   })
 
