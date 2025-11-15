@@ -41,7 +41,7 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
  * Set to `'replace'` to write all data to the cache once the stream ends.
  * @param reducer - A function to reduce the streamed chunks into the final data.
  * Defaults to a function that appends chunks to the end of the array.
- * @param initialValue - Initial value to be used while the first chunk is being fetched.
+ * @param initialValue - Initial value to be used while the first chunk is being fetched, and returned if the stream yields no values.
  */
 export function streamedQuery<
   TQueryFnData = unknown,

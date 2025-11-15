@@ -129,13 +129,12 @@ describe('streamedQuery', () => {
   })
 
   test('should handle empty streams', async () => {
-
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        streamFn: () => { return {async *[Symbol.asyncIterator]() {}}},
+        streamFn: async function* () {},
       }),
     })
 
@@ -156,7 +155,6 @@ describe('streamedQuery', () => {
     })
 
     unsubscribe()
-
   })
 
   test('should replace on refetch', async () => {
