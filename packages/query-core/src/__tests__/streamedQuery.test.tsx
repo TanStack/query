@@ -128,6 +128,37 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
+  test('should handle empty streams', async () => {
+
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        streamFn: () => { return {async *[Symbol.asyncIterator]() {}}},
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [],
+    })
+
+    unsubscribe()
+
+  })
+
   test('should replace on refetch', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {

@@ -94,6 +94,6 @@ export function streamedQuery<
       context.client.setQueryData<TData>(context.queryKey, result)
     }
 
-    return context.client.getQueryData(context.queryKey)!
+    return context.client.getQueryData(context.queryKey) ?? initialValue
   }
 }
