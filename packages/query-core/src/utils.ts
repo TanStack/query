@@ -43,7 +43,7 @@ export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Include queries matching this query key
    */
-  queryKey?: TuplePrefixes<TQueryKey>
+  queryKey?: TQueryKey | TuplePrefixes<TQueryKey>
   /**
    * Include or exclude stale queries
    */
