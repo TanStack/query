@@ -40,6 +40,6 @@ const query = queryOptions({
   - If `TData` is not an array, you must provide a custom `reducer`.
 - `initialValue?: TData = TQueryFnData`
   - Optional
-  - Defines the initial data to be used while the first chunk is being fetched.
+  - Defines the initial data to be used while the first chunk is being fetched, and it is also returned when the stream yields no values.
   - It is mandatory when custom `reducer` is provided.
   - Defaults to an empty array.
