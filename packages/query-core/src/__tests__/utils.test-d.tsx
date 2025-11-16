@@ -73,6 +73,19 @@ describe('QueryFilters', () => {
     >()
   })
 
+  // we test that there are not type errors here
+  // eslint-disable-next-line vitest/expect-expect
+  it('should work with unions of different lengths', () => {
+    type Key =
+      | readonly ['foo']
+      | readonly ['foo', 'bar']
+      | readonly ['foo', 'bar', 'baz']
+
+    const queryKey: Key = ['foo', 'bar'] as any as Key
+
+    new QueryClient().invalidateQueries({ queryKey })
+  })
+
   it('should error on invalid query keys', () => {
     assertType<QueryFilters<readonly ['key', { a: number; b: string }]>>({
       // @ts-expect-error cannot pass invalid query key
