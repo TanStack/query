@@ -1,5 +1,12 @@
 # @tanstack/react-query
 
+## 5.90.10
+
+### Patch Changes
+
+- Updated dependencies [[`8e2e174`](https://github.com/TanStack/query/commit/8e2e174e9fd2e7b94cd232041e49c9d014d74e26), [`eb559a6`](https://github.com/TanStack/query/commit/eb559a66dc0d77dd46435f624fa64fc068bef9ae)]:
+  - @tanstack/query-core@5.90.10
+
 ## 5.90.9
 
 ### Patch Changes
