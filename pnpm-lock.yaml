@@ -250,7 +250,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/angular-query-experimental
       '@tanstack/angular-query-persist-client':
-        specifier: ^5.62.16
+        specifier: ^5.62.17
         version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-async-storage-persister':
         specifier: workspace:*
