@@ -12,7 +12,6 @@ const result = useSuspenseQuery(options)
 The same as for [useQuery](../useQuery.md), except for:
 
 - `throwOnError`
-- `enabled`
 - `placeholderData`
 
 **Returns**
