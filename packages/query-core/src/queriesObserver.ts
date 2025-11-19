@@ -236,26 +236,32 @@ export class QueriesObserver<
     queries: Array<QueryObserverOptions>,
   ): Array<QueryObserverMatch> {
     const prevObserversMap = new Map<string, Array<QueryObserver>>()
+    
+    const observers: Array<QueryObserverMatch> = []
 
     this.#observers.forEach((observer) => {
       const key = observer.options.queryHash!
-      const observers = prevObserversMap.get(key)
-      if (observers) {
-        observers.push(observer)
+      const previousObservers = prevObserversMap.get(key)
+
+      if (previousObservers) {
+        previousObservers.push(observer)
       } else {
         prevObserversMap.set(key, [observer])
       }
     })
 
-    return queries.map((options) => {
+    queries.forEach((options) => {
       const defaultedOptions = this.#client.defaultQueryOptions(options)
       const match = prevObserversMap.get(defaultedOptions.queryHash)?.shift()
       const observer = match ?? new QueryObserver(this.#client, defaultedOptions)
-      return {
+      
+      observers.push({
         defaultedQueryOptions: defaultedOptions,
         observer,
-      }
+      })
     })
+
+    return observers
   }
 
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
