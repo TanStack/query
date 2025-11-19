@@ -182,6 +182,79 @@ describe('useSuspenseQueries', () => {
 
     expect(spy).toHaveBeenCalled()
   })
+
+  it('should handle duplicate query keys without infinite loops', async () => {
+    const key = queryKey()
+    const localDuration = 10
+    let renderCount = 0
+
+    function getUserData() {
+      return {
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(localDuration)
+          return { name: 'John Doe', age: 50 }
+        },
+      }
+    }
+
+    function getName() {
+      return {
+        ...getUserData(),
+        select: (data: any) => data.name,
+      }
+    }
+
+    function getAge() {
+      return {
+        ...getUserData(),
+        select: (data: any) => data.age,
+      }
+    }
+
+    function App() {
+      renderCount++
+      const [{ data }, { data: data2 }] = useSuspenseQueries({
+        queries: [getName(), getAge()],
+      })
+
+      React.useEffect(() => {
+        onQueriesResolution({ data, data2 })
+      }, [data, data2])
+
+      return (
+        <div>
+          <h1>Data</h1>
+          {JSON.stringify({ data }, null, 2)}
+          {JSON.stringify({ data2 }, null, 2)}
+        </div>
+      )
+    }
+
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback={<SuspenseFallback />}>
+        <App />
+      </React.Suspense>,
+    )
+
+    await act(() => vi.advanceTimersByTimeAsync(localDuration))
+
+    expect(onSuspend).toHaveBeenCalledTimes(1)
+    expect(onQueriesResolution).toHaveBeenCalledTimes(1)
+
+    await act(() => vi.advanceTimersByTimeAsync(100))
+
+    expect(onQueriesResolution).toHaveBeenCalledTimes(1)
+    expect(onQueriesResolution).toHaveBeenLastCalledWith({
+      data: 'John Doe',
+      data2: 50,
+    })
+    
+    // With the infinite loop bug, renderCount would be very high (e.g. > 100)
+    // Without bug, it should be small (initial suspend + resolution = 2-3)
+    expect(renderCount).toBeLessThan(10)
+  })
 })
 
 describe('useSuspenseQueries 2', () => {
