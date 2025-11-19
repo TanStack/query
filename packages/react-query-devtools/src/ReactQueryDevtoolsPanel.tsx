@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
-import type { DevtoolsErrorType } from '@tanstack/query-devtools'
+import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
 export interface DevtoolsPanelOptions {
@@ -40,9 +40,10 @@ export interface DevtoolsPanelOptions {
    */
   hideDisabledQueries?: boolean
   /**
-   * Set this to 'light' or 'dark' to change the theme of the devtools panel.
+   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Defaults to 'system'.
    */
-  theme?: 'light' | 'dark' | 'system'
+  theme?: Theme
 }
 
 export function ReactQueryDevtoolsPanel(

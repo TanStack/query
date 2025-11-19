@@ -15,8 +15,8 @@ const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
   const colorScheme = getPreferredColorScheme()
 
   const theme = createMemo(() => {
-    const preference = (localStore.theme_preference ||
-      props.theme ||
+    const preference = (props.theme ||
+      localStore.theme_preference ||
       THEME_PREFERENCE) as Theme
     if (preference !== 'system') return preference
     return colorScheme()
