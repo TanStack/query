@@ -238,7 +238,9 @@ export class QueriesObserver<
     const prevObserversMap = new Map<string, Array<QueryObserver>>()
     
     this.#observers.forEach((observer) => {
-      const key = observer.options.queryHash!
+      const key = observer.options.queryHash
+      if (!key) return
+
       const previousObservers = prevObserversMap.get(key)
 
       if (previousObservers) {
