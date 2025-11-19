@@ -250,7 +250,7 @@ export class QueriesObserver<
     })
     
     const observers: Array<QueryObserverMatch> = []
-    
+
     queries.forEach((options) => {
       const defaultedOptions = this.#client.defaultQueryOptions(options)
       const match = prevObserversMap.get(defaultedOptions.queryHash)?.shift()
