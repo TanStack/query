@@ -237,19 +237,20 @@ export class QueriesObserver<
   ): Array<QueryObserverMatch> {
     const prevObserversMap = new Map<string, Array<QueryObserver>>()
     
-    const observers: Array<QueryObserverMatch> = []
-
+    
     this.#observers.forEach((observer) => {
       const key = observer.options.queryHash!
       const previousObservers = prevObserversMap.get(key)
-
+      
       if (previousObservers) {
         previousObservers.push(observer)
       } else {
         prevObserversMap.set(key, [observer])
       }
     })
-
+    
+    const observers: Array<QueryObserverMatch> = []
+    
     queries.forEach((options) => {
       const defaultedOptions = this.#client.defaultQueryOptions(options)
       const match = prevObserversMap.get(defaultedOptions.queryHash)?.shift()
