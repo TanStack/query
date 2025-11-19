@@ -241,7 +241,7 @@ export class QueriesObserver<
     this.#observers.forEach((observer) => {
       const key = observer.options.queryHash!
       const previousObservers = prevObserversMap.get(key)
-      
+
       if (previousObservers) {
         previousObservers.push(observer)
       } else {
