@@ -4,6 +4,7 @@ import { Devtools } from './Devtools'
 import { getPreferredColorScheme } from './utils'
 import { THEME_PREFERENCE } from './constants'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from './contexts'
+import type { Theme } from './contexts'
 import type { DevtoolsComponentType } from './Devtools'
 
 const DevtoolsComponent: DevtoolsComponentType = (props) => {
@@ -14,10 +15,9 @@ const DevtoolsComponent: DevtoolsComponentType = (props) => {
   const colorScheme = getPreferredColorScheme()
 
   const theme = createMemo(() => {
-    const preference = (localStore.theme_preference || THEME_PREFERENCE) as
-      | 'system'
-      | 'dark'
-      | 'light'
+    const preference = (localStore.theme_preference ||
+      props.theme ||
+      THEME_PREFERENCE) as Theme
     if (preference !== 'system') return preference
     return colorScheme()
   })

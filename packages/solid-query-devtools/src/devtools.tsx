@@ -45,6 +45,10 @@ interface DevtoolsOptions {
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light' or 'dark' to change the theme of the devtools panel.
+   */
+  theme?: 'light' | 'dark' | 'system'
 }
 
 export default function SolidQueryDevtools(props: DevtoolsOptions) {
@@ -63,6 +67,7 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     styleNonce: props.styleNonce,
     shadowDOMTarget: props.shadowDOMTarget,
     hideDisabledQueries: props.hideDisabledQueries,
+    theme: props.theme,
   })
 
   createEffect(() => {
@@ -89,6 +94,10 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
 
   createEffect(() => {
     devtools.setErrorTypes(props.errorTypes || [])
+  })
+
+  createEffect(() => {
+    devtools.setTheme(props.theme || 'system')
   })
 
   onMount(() => {

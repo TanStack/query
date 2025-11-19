@@ -42,6 +42,10 @@ export interface DevtoolsOptions {
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light' or 'dark' to change the theme of the devtools panel.
+   */
+  theme?: 'light' | 'dark' | 'system'
 }
 
 export interface DevtoolsPanelOptions {
@@ -78,4 +82,8 @@ export interface DevtoolsPanelOptions {
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light' or 'dark' to change the theme of the devtools panel.
+   */
+  theme?: 'light' | 'dark' | 'system'
 }
