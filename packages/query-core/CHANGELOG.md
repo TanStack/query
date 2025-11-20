@@ -1,5 +1,19 @@
 # @tanstack/query-core
 
+## 5.90.10
+
+### Patch Changes
+
+- fix(types): allow QueryFilters union with different lengths ([#9878](https://github.com/TanStack/query/pull/9878))
+
+- Fix streamedQuery to avoid returning undefined when the stream yields no values ([#9876](https://github.com/TanStack/query/pull/9876))
+
+## 5.90.9
+
+### Patch Changes
+
+- fix(types): do not drop readonly for partial QueryFilter matching ([#9872](https://github.com/TanStack/query/pull/9872))
+
 ## 5.90.8
 
 ### Patch Changes
