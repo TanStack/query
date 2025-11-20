@@ -50,7 +50,7 @@ describe('QueryFilters', () => {
     expectTypeOf(filters.queryKey).toEqualTypeOf<
       | undefined
       | readonly []
-      | ['key']
+      | readonly ['key']
       | readonly [
           'key',
           {
@@ -59,6 +59,31 @@ describe('QueryFilters', () => {
           },
         ]
     >()
+  })
+
+  it('should work with readonly union types', () => {
+    const filters: QueryFilters<
+      readonly ['key'] | readonly ['key', 'something']
+    > = {
+      queryKey: ['key'],
+    }
+
+    expectTypeOf(filters.queryKey).toEqualTypeOf<
+      undefined | readonly [] | readonly ['key'] | readonly ['key', 'something']
+    >()
+  })
+
+  // we test that there are not type errors here
+  // eslint-disable-next-line vitest/expect-expect
+  it('should work with unions of different lengths', () => {
+    type Key =
+      | readonly ['foo']
+      | readonly ['foo', 'bar']
+      | readonly ['foo', 'bar', 'baz']
+
+    const queryKey: Key = ['foo', 'bar'] as any as Key
+
+    new QueryClient().invalidateQueries({ queryKey })
   })
 
   it('should error on invalid query keys', () => {
