@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query-devtools",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Developer tools to interact with and visualize the TanStack/svelte-query cache",
   "author": "Lachlan Collins",
   "license": "MIT",
