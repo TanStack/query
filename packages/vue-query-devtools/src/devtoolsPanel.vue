@@ -28,11 +28,13 @@ const devtools = new TanstackQueryDevtoolsPanel({
   shadowDOMTarget: props.shadowDOMTarget,
   hideDisabledQueries: props.hideDisabledQueries,
   onClose: props.onClose,
+  theme: props.theme,
 })
 
 watchEffect(() => {
   devtools.setOnClose(props.onClose ?? (() => {}))
   devtools.setErrorTypes(props.errorTypes || [])
+  devtools.setTheme(props.theme)
 })
 
 onMounted(() => {
