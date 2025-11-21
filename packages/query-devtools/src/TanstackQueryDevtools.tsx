@@ -86,7 +86,7 @@ class TanstackQueryDevtools {
     this.#client[1](client)
   }
 
-  setTheme(theme: Theme) {
+  setTheme(theme?: Theme) {
     this.#theme[1](theme)
   }
 

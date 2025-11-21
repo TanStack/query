@@ -34,7 +34,7 @@ const devtools = new TanstackQueryDevtoolsPanel({
 watchEffect(() => {
   devtools.setOnClose(props.onClose ?? (() => {}))
   devtools.setErrorTypes(props.errorTypes || [])
-  devtools.setTheme(props.theme || 'system')
+  devtools.setTheme(props.theme)
 })
 
 onMounted(() => {

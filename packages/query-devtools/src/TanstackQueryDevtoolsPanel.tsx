@@ -94,7 +94,7 @@ class TanstackQueryDevtoolsPanel {
     this.#onClose[1](() => onClose)
   }
 
-  setTheme(theme: Theme) {
+  setTheme(theme?: Theme) {
     this.#theme[1](theme)
   }
 

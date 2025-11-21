@@ -111,7 +111,7 @@ export function ReactQueryDevtools(
   }, [errorTypes, devtools])
 
   React.useEffect(() => {
-    devtools.setTheme(theme || 'system')
+    devtools.setTheme(theme)
   }, [theme, devtools])
 
   React.useEffect(() => {
