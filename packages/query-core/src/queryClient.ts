@@ -25,6 +25,7 @@ import type {
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
+  InfiniteQueryExecuteOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationKey,
@@ -33,6 +34,7 @@ import type {
   NoInfer,
   OmitKeyof,
   QueryClientConfig,
+  QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
   QueryOptions,
@@ -338,6 +340,49 @@ export class QueryClient {
     return Promise.all(promises).then(noop)
   }
 
+  async query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData> {
+    const defaultedOptions = this.defaultQueryOptions(options)
+
+    // https://github.com/tannerlinsley/react-query/issues/652
+    if (defaultedOptions.retry === undefined) {
+      defaultedOptions.retry = false
+    }
+
+    const query = this.#queryCache.build(this, defaultedOptions)
+
+    const isStale = query.isStaleByTime(
+      resolveStaleTime(defaultedOptions.staleTime, query),
+    )
+
+    const queryData = isStale
+      ? await query.fetch(defaultedOptions)
+      : (query.state.data as TQueryData)
+
+    const select = defaultedOptions.select
+
+    if (select) {
+      return select(queryData)
+    }
+
+    return queryData as unknown as TData
+  }
+
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -380,6 +425,30 @@ export class QueryClient {
     return this.fetchQuery(options).then(noop).catch(noop)
   }
 
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<InfiniteData<TData, TPageParam>> {
+    options.behavior = infiniteQueryBehavior<
+      TQueryFnData,
+      TError,
+      TData,
+      TPageParam
+    >(options.pages)
+    return this.query(options as any)
+  }
+
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -395,12 +464,6 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    options.behavior = infiniteQueryBehavior<
-      TQueryFnData,
-      TError,
-      TData,
-      TPageParam
-    >(options.pages)
     return this.fetchQuery(options as any)
   }
 
