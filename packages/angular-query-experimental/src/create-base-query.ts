@@ -2,7 +2,12 @@ import { DestroyRef, NgZone, PendingTasks, computed, effect, inject, linkedSigna
 import { QueryClient, notifyManager, shouldThrowError, } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
-import type { DefaultedQueryObserverOptions, QueryKey, QueryObserver, } from '@tanstack/query-core'
+import type {
+  DefaultedQueryObserverOptions,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { CreateBaseQueryOptions } from './types'
 
 /**
@@ -54,6 +59,43 @@ export function createBaseQuery<
     return defaultedOptions
   })
 
+  const trackObserverResult = (
+    result: QueryObserverResult<TData, TError>,
+    notifyOnChangeProps?: DefaultedQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >['notifyOnChangeProps'],
+  ) => {
+    if (!observer) {
+      throw new Error('Observer is not initialized')
+    }
+
+    const trackedResult = observer.trackResult(result)
+
+    if (!notifyOnChangeProps) {
+      autoTrackResultProperties(trackedResult)
+    }
+
+    return trackedResult
+  }
+
+  const autoTrackResultProperties = (
+    result: QueryObserverResult<TData, TError>,
+  ) => {
+    for (const key of Object.keys(result) as Array<
+      keyof QueryObserverResult<TData, TError>
+    >) {
+      if (key === 'promise') continue
+      const value = result[key]
+      if (typeof value === 'function') continue
+      // Access value once so QueryObserver knows this prop is tracked.
+      void value
+    }
+  }
+
   const createOrUpdateObserver = (
     options: DefaultedQueryObserverOptions<
       TQueryFnData,
@@ -94,7 +136,11 @@ export function createBaseQuery<
             ngZone.onError.emit(state.error)
             throw state.error
           }
-          resultSignal.set(state)
+          const trackedState = trackObserverResult(
+            state,
+            observer!.options.notifyOnChangeProps,
+          )
+          resultSignal.set(trackedState)
         })
       }),
     )
@@ -108,7 +154,9 @@ export function createBaseQuery<
     source: defaultedOptionsSignal,
     computation: () => {
       if (!observer) throw new Error('Observer is not initialized')
-      return observer.getOptimisticResult(defaultedOptionsSignal())
+      const defaultedOptions = defaultedOptionsSignal()
+      const result = observer.getOptimisticResult(defaultedOptions)
+      return trackObserverResult(result, defaultedOptions.notifyOnChangeProps)
     },
   })
 

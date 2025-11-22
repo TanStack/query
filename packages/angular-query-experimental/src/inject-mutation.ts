@@ -125,7 +125,6 @@ export function injectMutation<
 
   effect(
     (onCleanup) => {
-      // observer.trackResult is not used as this optimization is not needed for Angular
       const observer = observerSignal()
       let pendingTaskRef: PendingTaskRef | null = null
 
