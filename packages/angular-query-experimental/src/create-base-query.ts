@@ -1,26 +1,8 @@
-import {
-  NgZone,
-  VERSION,
-  computed,
-  effect,
-  inject,
-  signal,
-  untracked,
-} from '@angular/core'
-import {
-  QueryClient,
-  notifyManager,
-  shouldThrowError,
-} from '@tanstack/query-core'
+import { DestroyRef, NgZone, PendingTasks, computed, effect, inject, linkedSignal, untracked, } from '@angular/core'
+import { QueryClient, notifyManager, shouldThrowError, } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
-import { PENDING_TASKS } from './pending-tasks-compat'
-import type { PendingTaskRef } from './pending-tasks-compat'
-import type {
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
+import type { DefaultedQueryObserverOptions, QueryKey, QueryObserver, } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions } from './types'
 
 /**
@@ -45,9 +27,18 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ) {
   const ngZone = inject(NgZone)
-  const pendingTasks = inject(PENDING_TASKS)
+  const pendingTasks = inject(PendingTasks)
   const queryClient = inject(QueryClient)
   const isRestoring = injectIsRestoring()
+  const destroyRef = inject(DestroyRef)
+
+  let observer: QueryObserver<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > | null = null
 
   /**
    * Signal that has the default options from query client applied
@@ -63,113 +54,73 @@ export function createBaseQuery<
     return defaultedOptions
   })
 
-  const observerSignal = (() => {
-    let instance: QueryObserver<
+  const createOrUpdateObserver = (
+    options: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
       TQueryData,
       TQueryKey
-    > | null = null
+    >,
+  ) => {
+    if (observer) {
+      observer.setOptions(options)
+      return
+    }
 
-    return computed(() => {
-      return (instance ||= new Observer(queryClient, defaultedOptionsSignal()))
-    })
-  })()
+    observer = new Observer(queryClient, options)
+    let taskCleanupRef: (() => void) | null = null
 
-  const optimisticResultSignal = computed(() =>
-    observerSignal().getOptimisticResult(defaultedOptionsSignal()),
-  )
+    const unsubscribe = observer.subscribe(
+      notifyManager.batchCalls((state) => {
+        ngZone.run(() => {
+          if (state.fetchStatus === 'fetching' && !taskCleanupRef) {
+            taskCleanupRef = pendingTasks.add()
+          }
 
-  const resultFromSubscriberSignal = signal<QueryObserverResult<
-    TData,
-    TError
-  > | null>(null)
+          if (state.fetchStatus === 'idle' && taskCleanupRef) {
+            taskCleanupRef()
+            taskCleanupRef = null
+          }
 
-  effect(
-    (onCleanup) => {
-      const observer = observerSignal()
-      const defaultedOptions = defaultedOptionsSignal()
-
-      untracked(() => {
-        observer.setOptions(defaultedOptions)
-      })
-      onCleanup(() => {
-        ngZone.run(() => resultFromSubscriberSignal.set(null))
-      })
-    },
-    {
-      // Set allowSignalWrites to support Angular < v19
-      // Set to undefined to avoid warning on newer versions
-      allowSignalWrites: VERSION.major < '19' || undefined,
-    },
-  )
-
-  effect((onCleanup) => {
-    // observer.trackResult is not used as this optimization is not needed for Angular
-    const observer = observerSignal()
-    let pendingTaskRef: PendingTaskRef | null = null
-
-    const unsubscribe = isRestoring()
-      ? () => undefined
-      : untracked(() =>
-          ngZone.runOutsideAngular(() => {
-            return observer.subscribe(
-              notifyManager.batchCalls((state) => {
-                ngZone.run(() => {
-                  if (state.fetchStatus === 'fetching' && !pendingTaskRef) {
-                    pendingTaskRef = pendingTasks.add()
-                  }
-
-                  if (state.fetchStatus === 'idle' && pendingTaskRef) {
-                    pendingTaskRef()
-                    pendingTaskRef = null
-                  }
-
-                  if (
-                    state.isError &&
-                    !state.isFetching &&
-                    shouldThrowError(observer.options.throwOnError, [
-                      state.error,
-                      observer.getCurrentQuery(),
-                    ])
-                  ) {
-                    ngZone.onError.emit(state.error)
-                    throw state.error
-                  }
-                  resultFromSubscriberSignal.set(state)
-                })
-              }),
-            )
-          }),
-        )
-
-    onCleanup(() => {
-      if (pendingTaskRef) {
-        pendingTaskRef()
-        pendingTaskRef = null
-      }
+          if (
+            state.isError &&
+            !state.isFetching &&
+            shouldThrowError(observer!.options.throwOnError, [
+              state.error,
+              observer!.getCurrentQuery(),
+            ])
+          ) {
+            ngZone.onError.emit(state.error)
+            throw state.error
+          }
+          resultSignal.set(state)
+        })
+      }),
+    )
+    destroyRef.onDestroy(() => {
       unsubscribe()
+      taskCleanupRef?.()
+    })
+  }
+
+  const resultSignal = linkedSignal({
+    source: defaultedOptionsSignal,
+    computation: () => {
+      if (!observer) throw new Error('Observer is not initialized')
+      return observer.getOptimisticResult(defaultedOptionsSignal())
+    },
+  })
+
+  // Effect to initialize the observer and set options when options change
+  effect(() => {
+    const defaultedOptions = defaultedOptionsSignal()
+    if (isRestoring()) return
+
+    untracked(() => {
+      createOrUpdateObserver(defaultedOptions)
     })
   })
 
-  return signalProxy(
-    computed(() => {
-      const subscriberResult = resultFromSubscriberSignal()
-      const optimisticResult = optimisticResultSignal()
-      const result = subscriberResult ?? optimisticResult
-
-      // Wrap methods to ensure observer has latest options before execution
-      const observer = observerSignal()
-
-      const originalRefetch = result.refetch
-      return {
-        ...result,
-        refetch: ((...args: Parameters<typeof originalRefetch>) => {
-          observer.setOptions(defaultedOptionsSignal())
-          return originalRefetch(...args)
-        }) as typeof originalRefetch,
-      }
-    }),
-  )
+  return signalProxy(resultSignal.asReadonly())
 }
