@@ -1,6 +1,6 @@
 import {
   NgZone,
-  VERSION,
+  PendingTasks,
   computed,
   effect,
   inject,
@@ -14,8 +14,6 @@ import {
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
-import { PENDING_TASKS } from './pending-tasks-compat'
-import type { PendingTaskRef } from './pending-tasks-compat'
 import type {
   QueryKey,
   QueryObserver,
@@ -45,7 +43,7 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ) {
   const ngZone = inject(NgZone)
-  const pendingTasks = inject(PENDING_TASKS)
+  const pendingTasks = inject(PendingTasks)
   const queryClient = inject(QueryClient)
   const isRestoring = injectIsRestoring()
 
@@ -86,29 +84,22 @@ export function createBaseQuery<
     TError
   > | null>(null)
 
-  effect(
-    (onCleanup) => {
-      const observer = observerSignal()
-      const defaultedOptions = defaultedOptionsSignal()
+  effect((onCleanup) => {
+    const observer = observerSignal()
+    const defaultedOptions = defaultedOptionsSignal()
 
-      untracked(() => {
-        observer.setOptions(defaultedOptions)
-      })
-      onCleanup(() => {
-        ngZone.run(() => resultFromSubscriberSignal.set(null))
-      })
-    },
-    {
-      // Set allowSignalWrites to support Angular < v19
-      // Set to undefined to avoid warning on newer versions
-      allowSignalWrites: VERSION.major < '19' || undefined,
-    },
-  )
+    untracked(() => {
+      observer.setOptions(defaultedOptions)
+    })
+    onCleanup(() => {
+      ngZone.run(() => resultFromSubscriberSignal.set(null))
+    })
+  })
 
   effect((onCleanup) => {
     // observer.trackResult is not used as this optimization is not needed for Angular
     const observer = observerSignal()
-    let pendingTaskRef: PendingTaskRef | null = null
+    let taskCleanupRef: (() => void) | null = null
 
     const unsubscribe = isRestoring()
       ? () => undefined
@@ -117,13 +108,13 @@ export function createBaseQuery<
             return observer.subscribe(
               notifyManager.batchCalls((state) => {
                 ngZone.run(() => {
-                  if (state.fetchStatus === 'fetching' && !pendingTaskRef) {
-                    pendingTaskRef = pendingTasks.add()
+                  if (state.fetchStatus === 'fetching' && !taskCleanupRef) {
+                    taskCleanupRef = pendingTasks.add()
                   }
 
-                  if (state.fetchStatus === 'idle' && pendingTaskRef) {
-                    pendingTaskRef()
-                    pendingTaskRef = null
+                  if (state.fetchStatus === 'idle' && taskCleanupRef) {
+                    taskCleanupRef()
+                    taskCleanupRef = null
                   }
 
                   if (
@@ -145,9 +136,9 @@ export function createBaseQuery<
         )
 
     onCleanup(() => {
-      if (pendingTaskRef) {
-        pendingTaskRef()
-        pendingTaskRef = null
+      if (taskCleanupRef) {
+        taskCleanupRef()
+        taskCleanupRef = null
       }
       unsubscribe()
     })
