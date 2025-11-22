@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { render } from '@testing-library/angular'
 import {
+  ChangeDetectionStrategy,
   Component,
   effect,
   provideZonelessChangeDetection,
@@ -37,6 +38,7 @@ describe('injectQueries', () => {
           </div>
         </div>
       `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class Page {
       toString(val: any) {
