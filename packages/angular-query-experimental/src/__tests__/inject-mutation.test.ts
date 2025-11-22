@@ -1,5 +1,6 @@
 import {
   ApplicationRef,
+  ChangeDetectionStrategy,
   Component,
   Injector,
   input,
@@ -307,6 +308,7 @@ describe('injectMutation', () => {
         <button (click)="mutate()"></button>
         <span>{{ mutation.data() }}</span>
       `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class FakeComponent {
       name = input.required<string>()
@@ -347,6 +349,7 @@ describe('injectMutation', () => {
         <button (click)="mutate()"></button>
         <span>{{ mutation.data() }}</span>
       `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class FakeComponent {
       name = input.required<string>()

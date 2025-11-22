@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Injector,
   input,
@@ -145,6 +146,7 @@ describe('injectMutationState', () => {
             <span>{{ mutation.status }}</span>
           }
         `,
+        changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class FakeComponent {
         name = input.required<string>()

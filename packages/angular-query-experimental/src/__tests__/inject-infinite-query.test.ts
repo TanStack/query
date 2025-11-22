@@ -1,8 +1,13 @@
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { Injector, provideZonelessChangeDetection } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  provideZonelessChangeDetection,
+} from '@angular/core'
 import { sleep } from '@tanstack/query-test-utils'
-import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
+import { injectInfiniteQuery, provideTanStackQuery, QueryClient } from '..'
 import { expectSignals } from './test-utils'
 
 describe('injectInfiniteQuery', () => {
@@ -24,15 +29,25 @@ describe('injectInfiniteQuery', () => {
   })
 
   test('should properly execute infinite query', async () => {
-    const query = TestBed.runInInjectionContext(() => {
-      return injectInfiniteQuery(() => ({
+    @Component({
+      selector: 'app-test',
+      template: '',
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+    })
+    class TestComponent {
+      query = injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) =>
           sleep(10).then(() => 'data on page ' + pageParam),
         initialPageParam: 0,
         getNextPageParam: () => 12,
       }))
-    })
+    }
+
+    const fixture = TestBed.createComponent(TestComponent)
+    fixture.detectChanges()
+    const query = fixture.componentInstance.query
 
     expectSignals(query, {
       data: undefined,
@@ -76,18 +91,32 @@ describe('injectInfiniteQuery', () => {
     })
 
     test('can be used outside injection context when passing an injector', () => {
-      const query = injectInfiniteQuery(
-        () => ({
-          queryKey: ['manualInjector'],
-          queryFn: ({ pageParam }) =>
-            sleep(0).then(() => 'data on page ' + pageParam),
-          initialPageParam: 0,
-          getNextPageParam: () => 12,
-        }),
-        {
-          injector: TestBed.inject(Injector),
-        },
-      )
+      const injector = TestBed.inject(Injector)
+
+      @Component({
+        selector: 'app-test',
+        template: '',
+        standalone: true,
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        query = injectInfiniteQuery(
+          () => ({
+            queryKey: ['manualInjector'],
+            queryFn: ({ pageParam }) =>
+              sleep(0).then(() => 'data on page ' + pageParam),
+            initialPageParam: 0,
+            getNextPageParam: () => 12,
+          }),
+          {
+            injector: injector,
+          },
+        )
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const query = fixture.componentInstance.query
 
       expect(query.status()).toBe('pending')
     })
