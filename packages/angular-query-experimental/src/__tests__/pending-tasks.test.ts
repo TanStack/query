@@ -230,6 +230,54 @@ describe('PendingTasks Integration', () => {
       expect(query.data()).toMatch(/^data-\d+$/)
     })
 
+    test('should keep PendingTasks active when query starts offline (never reaches fetching)', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      onlineManager.setOnline(false)
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['start-offline'],
+          networkMode: 'online', // Default: won't fetch while offline
+          queryFn: async () => {
+            await sleep(10)
+            return 'online-data'
+          },
+        })),
+      )
+
+      // Allow query to initialize
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
+
+      // Query should initialize directly to 'paused' (never goes through 'fetching')
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('paused')
+
+      const stablePromise = app.whenStable()
+      let stableResolved = false
+      void stablePromise.then(() => {
+        stableResolved = true
+      })
+
+      await Promise.resolve()
+
+      // PendingTasks should block stability even though we never hit 'fetching'
+      expect(stableResolved).toBe(false)
+
+      // Bring the app back online so the query can fetch
+      onlineManager.setOnline(true)
+
+      await vi.advanceTimersByTimeAsync(20)
+      await Promise.resolve()
+
+      await stablePromise
+
+      expect(stableResolved).toBe(true)
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('online-data')
+    })
+
     test('should keep PendingTasks active while query retry is paused offline', async () => {
       const app = TestBed.inject(ApplicationRef)
       let attempt = 0

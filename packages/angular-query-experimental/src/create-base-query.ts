@@ -45,6 +45,21 @@ export function createBaseQuery<
     TQueryKey
   > | null = null
 
+  let taskCleanupRef: (() => void) | null = null
+
+  const startPendingTask = () => {
+    if (!taskCleanupRef) {
+      taskCleanupRef = pendingTasks.add()
+    }
+  }
+
+  const stopPendingTask = () => {
+    if (taskCleanupRef) {
+      taskCleanupRef()
+      taskCleanupRef = null
+    }
+  }
+
   /**
    * Signal that has the default options from query client applied
    * computed() is used so signals can be inserted into the options
@@ -111,18 +126,14 @@ export function createBaseQuery<
     }
 
     observer = new Observer(queryClient, options)
-    let taskCleanupRef: (() => void) | null = null
 
     const unsubscribe = observer.subscribe(
       notifyManager.batchCalls((state) => {
         ngZone.run(() => {
-          if (state.fetchStatus === 'fetching' && !taskCleanupRef) {
-            taskCleanupRef = pendingTasks.add()
-          }
-
-          if (state.fetchStatus === 'idle' && taskCleanupRef) {
-            taskCleanupRef()
-            taskCleanupRef = null
+          if (state.fetchStatus !== 'idle') {
+            startPendingTask()
+          } else {
+            stopPendingTask()
           }
 
           if (
@@ -146,7 +157,7 @@ export function createBaseQuery<
     )
     destroyRef.onDestroy(() => {
       unsubscribe()
-      taskCleanupRef?.()
+      stopPendingTask()
     })
   }
 
