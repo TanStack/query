@@ -1,5 +1,18 @@
-import { DestroyRef, NgZone, PendingTasks, computed, effect, inject, linkedSignal, untracked, } from '@angular/core'
-import { QueryClient, notifyManager, shouldThrowError, } from '@tanstack/query-core'
+import {
+  DestroyRef,
+  NgZone,
+  PendingTasks,
+  computed,
+  effect,
+  inject,
+  linkedSignal,
+  untracked,
+} from '@angular/core'
+import {
+  QueryClient,
+  notifyManager,
+  shouldThrowError,
+} from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
 import type {
@@ -45,6 +58,7 @@ export function createBaseQuery<
     TQueryKey
   > | null = null
 
+  let destroyed = false
   let taskCleanupRef: (() => void) | null = null
 
   const startPendingTask = () => {
@@ -127,35 +141,39 @@ export function createBaseQuery<
 
     observer = new Observer(queryClient, options)
 
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls((state) => {
-        ngZone.run(() => {
-          if (state.fetchStatus !== 'idle') {
-            startPendingTask()
-          } else {
-            stopPendingTask()
-          }
+    const unsubscribe = observer.subscribe((state) => {
+      if (state.fetchStatus !== 'idle') {
+        startPendingTask()
+      } else {
+        stopPendingTask()
+      }
 
-          if (
-            state.isError &&
-            !state.isFetching &&
-            shouldThrowError(observer!.options.throwOnError, [
-              state.error,
-              observer!.getCurrentQuery(),
-            ])
-          ) {
-            ngZone.onError.emit(state.error)
-            throw state.error
-          }
-          const trackedState = trackObserverResult(
-            state,
-            observer!.options.notifyOnChangeProps,
-          )
-          resultSignal.set(trackedState)
+      queueMicrotask(() => {
+        if (destroyed) return
+        notifyManager.batch(() => {
+          ngZone.run(() => {
+            if (
+              state.isError &&
+              !state.isFetching &&
+              shouldThrowError(observer!.options.throwOnError, [
+                state.error,
+                observer!.getCurrentQuery(),
+              ])
+            ) {
+              ngZone.onError.emit(state.error)
+              throw state.error
+            }
+            const trackedState = trackObserverResult(
+              state,
+              observer!.options.notifyOnChangeProps,
+            )
+            resultSignal.set(trackedState)
+          })
         })
-      }),
-    )
+      })
+    })
     destroyRef.onDestroy(() => {
+      destroyed = true
       unsubscribe()
       stopPendingTask()
     })
@@ -164,7 +182,10 @@ export function createBaseQuery<
   const resultSignal = linkedSignal({
     source: defaultedOptionsSignal,
     computation: () => {
-      if (!observer) throw new Error('Observer is not initialized')
+      if (!observer)
+        throw new Error(
+          'injectQuery: QueryObserver not initialized yet. Avoid reading the query result during construction',
+        )
       const defaultedOptions = defaultedOptionsSignal()
       const result = observer.getOptimisticResult(defaultedOptions)
       return trackObserverResult(result, defaultedOptions.notifyOnChangeProps)
