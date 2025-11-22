@@ -1,25 +1,8 @@
-import {
-  DestroyRef,
-  NgZone,
-  PendingTasks,
-  computed,
-  effect,
-  inject,
-  linkedSignal,
-  untracked,
-} from '@angular/core'
-import {
-  QueryClient,
-  notifyManager,
-  shouldThrowError,
-} from '@tanstack/query-core'
+import { DestroyRef, NgZone, PendingTasks, computed, effect, inject, linkedSignal, untracked, } from '@angular/core'
+import { QueryClient, notifyManager, shouldThrowError, } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
-import type {
-  DefaultedQueryObserverOptions,
-  QueryKey,
-  QueryObserver,
-} from '@tanstack/query-core'
+import type { DefaultedQueryObserverOptions, QueryKey, QueryObserver, } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions } from './types'
 
 /**
@@ -115,40 +98,29 @@ export function createBaseQuery<
         })
       }),
     )
-    destroyRef.onDestroy(unsubscribe)
+    destroyRef.onDestroy(() => {
+      unsubscribe()
+      taskCleanupRef?.()
+    })
   }
 
   const resultSignal = linkedSignal({
     source: defaultedOptionsSignal,
     computation: () => {
       if (!observer) throw new Error('Observer is not initialized')
-      const result = observer.getOptimisticResult(defaultedOptionsSignal())
-      return result
+      return observer.getOptimisticResult(defaultedOptionsSignal())
     },
   })
 
   // Effect to initialize the observer and set options when options change
   effect(() => {
     const defaultedOptions = defaultedOptionsSignal()
+    if (isRestoring()) return
+
     untracked(() => {
       createOrUpdateObserver(defaultedOptions)
     })
   })
-
-  // Effect to subscribe to the observer and update the result signal
-  //   effect((onCleanup) => {
-  //     let taskCleanupRef: (() => void) | null = null
-
-  //     const unsubscribe = isRestoring()
-  //       ? () => undefined
-  //       : untracked(() =>
-  //           ngZone.runOutsideAngular(() => {
-  //             return tryGetObserver().subscribe(
-  // )
-  //               }),
-  //             )
-  //           }),
-  //         )
 
   return signalProxy(resultSignal.asReadonly())
 }
