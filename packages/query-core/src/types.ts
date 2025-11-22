@@ -142,6 +142,7 @@ export type QueryFunctionContext<
   ? {
       client: QueryClient
       queryKey: TQueryKey
+      queryHash: string
       signal: AbortSignal
       meta: QueryMeta | undefined
       pageParam?: unknown
@@ -154,6 +155,7 @@ export type QueryFunctionContext<
   : {
       client: QueryClient
       queryKey: TQueryKey
+      queryHash: string
       signal: AbortSignal
       pageParam: TPageParam
       /**

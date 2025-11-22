@@ -203,6 +203,7 @@ describe('defaultOptions', () => {
             expectTypeOf(context).toEqualTypeOf<{
               client: QueryClient
               queryKey: QueryKey
+              queryHash: string
               meta: Record<string, unknown> | undefined
               signal: AbortSignal
               pageParam?: unknown

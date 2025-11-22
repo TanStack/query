@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
+import { hashQueryKeyByOptions } from '../utils'
 import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
 
 describe('InfiniteQueryBehavior', () => {
@@ -82,6 +83,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
       client: queryClient,
       pageParam: 1,
       meta: undefined,
@@ -96,6 +98,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
       client: queryClient,
       pageParam: 2,
       direction: 'forward',
@@ -115,6 +118,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
       client: queryClient,
       pageParam: 0,
       direction: 'backward',
@@ -135,6 +139,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
       client: queryClient,
       pageParam: -1,
       meta: undefined,
@@ -154,6 +159,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
       client: queryClient,
       pageParam: 1,
       meta: undefined,
@@ -176,6 +182,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
       client: queryClient,
       pageParam: 0,
       meta: undefined,
@@ -185,6 +192,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(2, {
       queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
       client: queryClient,
       pageParam: 1,
       meta: undefined,
@@ -237,6 +245,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
       client: queryClient,
       pageParam: 1,
       meta: undefined,
@@ -293,6 +302,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
+      queryHash: hashQueryKeyByOptions(key),
       client: queryClient,
       pageParam: 2,
       meta: undefined,
