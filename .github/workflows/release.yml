@@ -58,7 +58,6 @@ jobs:
           title: 'ci: Version Packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Auto-merge Changesets PR
         if: steps.changesets.outputs.hasChangesets == 'true' && steps.major.outputs.found == 'false'
         run: |
