@@ -7,7 +7,7 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { sleep } from '@tanstack/query-test-utils'
-import { injectInfiniteQuery, provideTanStackQuery, QueryClient } from '..'
+import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
 import { expectSignals } from './test-utils'
 
 describe('injectInfiniteQuery', () => {
