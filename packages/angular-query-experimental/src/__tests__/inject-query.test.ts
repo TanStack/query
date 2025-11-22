@@ -1,12 +1,13 @@
 import {
   ApplicationRef,
+  ChangeDetectionStrategy,
   Component,
   Injector,
+  NgZone,
   computed,
   input,
   provideZonelessChangeDetection,
   signal,
-  ChangeDetectionStrategy,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { HttpClient, provideHttpClient } from '@angular/common/http'
@@ -552,6 +553,14 @@ describe('injectQuery', () => {
     })
 
     test('should throw when throwOnError is true', async () => {
+      const zone = TestBed.inject(NgZone)
+      const errorPromise = new Promise<Error>((resolve) => {
+        const sub = zone.onError.subscribe((error) => {
+          sub.unsubscribe()
+          resolve(error as Error)
+        })
+      })
+
       @Component({
         selector: 'app-test',
         template: '',
@@ -569,10 +578,19 @@ describe('injectQuery', () => {
 
       TestBed.createComponent(TestComponent).detectChanges()
 
-      await expect(vi.runAllTimersAsync()).rejects.toThrow('Some error')
+      await vi.runAllTimersAsync()
+      await expect(errorPromise).resolves.toEqual(Error('Some error'))
     })
 
     test('should throw when throwOnError function returns true', async () => {
+      const zone = TestBed.inject(NgZone)
+      const errorPromise = new Promise<Error>((resolve) => {
+        const sub = zone.onError.subscribe((error) => {
+          sub.unsubscribe()
+          resolve(error as Error)
+        })
+      })
+
       @Component({
         selector: 'app-test',
         template: '',
@@ -590,7 +608,8 @@ describe('injectQuery', () => {
 
       TestBed.createComponent(TestComponent).detectChanges()
 
-      await expect(vi.runAllTimersAsync()).rejects.toThrow('Some error')
+      await vi.runAllTimersAsync()
+      await expect(errorPromise).resolves.toEqual(Error('Some error'))
     })
   })
 
@@ -713,9 +732,8 @@ describe('injectQuery', () => {
       expect(query.status()).toBe('pending')
       expect(query.data()).toBeUndefined()
 
-      const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(60)
-      await stablePromise
+      await app.whenStable()
 
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('test data')
@@ -765,9 +783,8 @@ describe('injectQuery', () => {
       expect(query.status()).toBe('pending')
 
       // Advance timers and wait for Angular to be "stable"
-      const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(20)
-      await stablePromise
+      await app.whenStable()
 
       // Query should be complete after whenStable() thanks to PendingTasks integration
       expect(query.status()).toBe('success')
@@ -863,6 +880,7 @@ describe('injectQuery', () => {
       const query = component.query
 
       // Initially disabled
+      await vi.advanceTimersByTimeAsync(0)
       await app.whenStable()
       expect(query.status()).toBe('pending')
       expect(query.data()).toBeUndefined()
@@ -872,6 +890,7 @@ describe('injectQuery', () => {
       enabledSignal.set(true)
       fixture.detectChanges()
 
+      await vi.advanceTimersByTimeAsync(0)
       await app.whenStable()
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
