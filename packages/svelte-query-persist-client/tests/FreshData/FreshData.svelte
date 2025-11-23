@@ -10,8 +10,7 @@
 
   const query = createQuery(() => ({
     queryKey: ['test'],
-    queryFn: () => Promise.resolve('fetched'),
-
+    // queryFn is provided by queryClient.setQueryDefaults in test
     staleTime: Infinity,
   }))
 
@@ -22,5 +21,5 @@
   })
 </script>
 
-<div>data: {query.data ?? 'undefined'}</div>
+<div>data: {query.data ?? 'null'}</div>
 <div>fetchStatus: {query.fetchStatus}</div>
