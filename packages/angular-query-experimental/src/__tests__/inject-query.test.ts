@@ -27,7 +27,7 @@ import {
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
 import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
-import { setSignalInputs } from './test-utils'
+import { registerSignalInput } from './test-utils'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
 
 describe('injectQuery', () => {
@@ -55,7 +55,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-test',
       template: '',
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
@@ -162,10 +161,7 @@ describe('injectQuery', () => {
           TData = TQueryFnData,
         >(
           qk: TQueryKey,
-          fetcher: (
-            obj: TQueryKey[1],
-            token: string,
-          ) => Promise<TQueryFnData>,
+          fetcher: (obj: TQueryKey[1], token: string) => Promise<TQueryFnData>,
           options?: OmitKeyof<
             CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
             'queryKey' | 'queryFn' | 'initialData',
@@ -242,7 +238,9 @@ describe('injectQuery', () => {
     expectTypeOf(fromGenericOptionsQueryFn.data()).toEqualTypeOf<
       string | undefined
     >()
-    expectTypeOf(fromGenericOptionsQueryFn.error()).toEqualTypeOf<Error | null>()
+    expectTypeOf(
+      fromGenericOptionsQueryFn.error(),
+    ).toEqualTypeOf<Error | null>()
 
     expectTypeOf(fromMyDataArrayKeyQueryFn.data()).toEqualTypeOf<
       number | undefined
@@ -262,7 +260,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-test',
       template: '',
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
@@ -287,7 +284,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-test',
       template: '',
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
@@ -314,7 +310,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-test',
       template: '',
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
@@ -348,7 +343,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-test',
       template: '',
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
@@ -390,7 +384,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-test',
       template: '',
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
@@ -425,7 +418,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-test',
       template: '',
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
@@ -473,7 +465,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-test',
       template: '',
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
@@ -525,7 +516,6 @@ describe('injectQuery', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -572,7 +562,6 @@ describe('injectQuery', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -617,7 +606,6 @@ describe('injectQuery', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -647,7 +635,6 @@ describe('injectQuery', () => {
     @Component({
       selector: 'app-test',
       template: '',
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
@@ -685,17 +672,22 @@ describe('injectQuery', () => {
       }))
     }
 
-    const fixture = TestBed.createComponent(FakeComponent)
-    setSignalInputs(fixture.componentInstance, {
-      name: 'signal-input-required-test',
-    })
+    registerSignalInput(FakeComponent, 'name')
 
+    @Component({
+      template: `<app-fake [name]="name()" />`,
+      imports: [FakeComponent],
+    })
+    class HostComponent {
+      protected readonly name = signal('signal-input-required-test')
+    }
+
+    const fixture = TestBed.createComponent(HostComponent)
     fixture.detectChanges()
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(fixture.componentInstance.query.data()).toEqual(
-      'signal-input-required-test',
-    )
+    const result = fixture.nativeElement.querySelector('app-fake').textContent
+    expect(result).toEqual('signal-input-required-test')
   })
 
   describe('injection context', () => {
@@ -714,7 +706,6 @@ describe('injectQuery', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -742,7 +733,6 @@ describe('injectQuery', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -787,7 +777,6 @@ describe('injectQuery', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -795,7 +784,9 @@ describe('injectQuery', () => {
         query = injectQuery(() => ({
           queryKey: ['httpClientTest'],
           queryFn: () =>
-            lastValueFrom(this.httpClient.get<{ message: string }>('/api/test')),
+            lastValueFrom(
+              this.httpClient.get<{ message: string }>('/api/test'),
+            ),
         }))
       }
 
@@ -837,7 +828,6 @@ describe('injectQuery', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -888,7 +878,6 @@ describe('injectQuery', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -942,7 +931,6 @@ describe('injectQuery', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
