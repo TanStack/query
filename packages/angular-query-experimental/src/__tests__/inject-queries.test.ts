@@ -1,18 +1,19 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { render } from '@testing-library/angular'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   Component,
   effect,
   provideZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { queryKey } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/angular'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, provideTanStackQuery } from '..'
 import { injectQueries } from '../inject-queries'
 
 let queryClient: QueryClient
 
 beforeEach(() => {
+  vi.useFakeTimers()
   queryClient = new QueryClient()
   TestBed.configureTestingModule({
     providers: [
@@ -20,6 +21,10 @@ beforeEach(() => {
       provideTanStackQuery(queryClient),
     ],
   })
+})
+
+afterEach(() => {
+  vi.useRealTimers()
 })
 
 describe('injectQueries', () => {
@@ -39,37 +44,36 @@ describe('injectQueries', () => {
       `,
     })
     class Page {
-      toString(val: any) {
-        return String(val)
-      }
       result = injectQueries(() => ({
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await new Promise((r) => setTimeout(r, 10))
-              return 1
-            },
+            queryFn: () => sleep(10).then(() => 1),
           },
           {
             queryKey: key2,
-            queryFn: async () => {
-              await new Promise((r) => setTimeout(r, 100))
-              return 2
-            },
+            queryFn: () => sleep(100).then(() => 2),
           },
         ],
       }))
 
-      _pushResults = effect(() => {
+      _ = effect(() => {
         const snapshot = this.result().map((q) => ({ data: q.data() }))
         results.push(snapshot)
       })
     }
 
-    const rendered = await render(Page)
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
+    })
 
-    await rendered.findByText('data1: 1, data2: 2')
+    await vi.advanceTimersByTimeAsync(101)
+    rendered.fixture.detectChanges()
+
+    expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
