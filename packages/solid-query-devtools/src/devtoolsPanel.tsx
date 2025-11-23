@@ -1,7 +1,7 @@
 import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
 import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
-import type { DevtoolsErrorType } from '@tanstack/query-devtools'
+import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
 
@@ -39,6 +39,11 @@ export interface DevtoolsPanelOptions {
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Defaults to 'system'.
+   */
+  theme?: Theme
 }
 
 export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
@@ -59,6 +64,7 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
     shadowDOMTarget,
     onClose: props.onClose,
     hideDisabledQueries,
+    theme: props.theme,
   })
   createEffect(() => {
     devtools.setClient(client())
@@ -69,6 +75,10 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
 
   createEffect(() => {
     devtools.setErrorTypes(props.errorTypes || [])
+  })
+
+  createEffect(() => {
+    devtools.setTheme(props.theme || 'system')
   })
 
   onMount(() => {
