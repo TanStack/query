@@ -99,7 +99,7 @@ export function createBaseQuery<
     >['notifyOnChangeProps'],
   ) => {
     if (!observer) {
-      throw new Error('Observer is not initialized')
+      throw new Error(OBSERVER_NOT_READY_ERROR)
     }
 
     const trackedResult = observer.trackResult(result)
@@ -125,7 +125,7 @@ export function createBaseQuery<
     }
   }
 
-  const createOrUpdateObserver = (
+  const setObserverOptions = (
     options: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -134,14 +134,23 @@ export function createBaseQuery<
       TQueryKey
     >,
   ) => {
-    if (observer) {
+    if (!observer) {
+      observer = new Observer(queryClient, options)
+      destroyRef.onDestroy(() => {
+        destroyed = true
+        stopPendingTask()
+      })
+    } else {
       observer.setOptions(options)
-      return
+    }
+  }
+
+  const subscribeToObserver = () => {
+    if (!observer) {
+      throw new Error(OBSERVER_NOT_READY_ERROR)
     }
 
-    observer = new Observer(queryClient, options)
-
-    const unsubscribe = observer.subscribe((state) => {
+    return observer.subscribe((state) => {
       if (state.fetchStatus !== 'idle') {
         startPendingTask()
       } else {
@@ -172,35 +181,37 @@ export function createBaseQuery<
         })
       })
     })
-    destroyRef.onDestroy(() => {
-      destroyed = true
-      unsubscribe()
-      stopPendingTask()
-    })
   }
 
   const resultSignal = linkedSignal({
     source: defaultedOptionsSignal,
     computation: () => {
-      if (!observer)
-        throw new Error(
-          'injectQuery: QueryObserver not initialized yet. Avoid reading the query result during construction',
-        )
+      if (!observer) throw new Error(OBSERVER_NOT_READY_ERROR)
       const defaultedOptions = defaultedOptionsSignal()
       const result = observer.getOptimisticResult(defaultedOptions)
       return trackObserverResult(result, defaultedOptions.notifyOnChangeProps)
     },
   })
 
-  // Effect to initialize the observer and set options when options change
   effect(() => {
     const defaultedOptions = defaultedOptionsSignal()
-    if (isRestoring()) return
-
     untracked(() => {
-      createOrUpdateObserver(defaultedOptions)
+      setObserverOptions(defaultedOptions)
+    })
+  })
+
+  effect((onCleanup) => {
+    if (isRestoring()) {
+      return
+    }
+    const unsubscribe = untracked(() => subscribeToObserver())
+    onCleanup(() => {
+      unsubscribe()
+      stopPendingTask()
     })
   })
 
   return signalProxy(resultSignal.asReadonly())
 }
+const OBSERVER_NOT_READY_ERROR =
+  'injectQuery: QueryObserver not initialized yet. Avoid reading the query result during construction'
