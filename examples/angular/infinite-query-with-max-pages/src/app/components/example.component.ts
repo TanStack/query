@@ -42,7 +42,7 @@ export class ExampleComponent {
   )
 
   readonly previousButtonDisabled = computed(
-    () => !this.query.hasPreviousPage() || this.query.isFetchingNextPage(),
+    () => !this.query.hasPreviousPage() || this.query.isFetchingPreviousPage(),
   )
   readonly previousButtonText = computed(() =>
     this.query.isFetchingPreviousPage()

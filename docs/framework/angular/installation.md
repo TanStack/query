@@ -7,7 +7,7 @@ title: Installation
 
 ### NPM
 
-_Angular Query is compatible with Angular v16 and higher_
+_Angular Query is compatible with Angular v19 and higher_
 
 ```bash
 npm i @tanstack/angular-query-experimental
