@@ -41,8 +41,9 @@ const createMockErrorPersister = (
         // noop
       },
       async restoreClient() {
-        await sleep(10)
-        throw error
+        return sleep(10).then(() => {
+          throw error
+        })
       },
       removeClient,
     },
@@ -414,6 +415,8 @@ describe('PersistQueryClientProvider', () => {
 
     expect(rendered.getByText('data: null')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: hydrated')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('data: hydrated')).toBeInTheDocument()
 
     expect(states).toHaveLength(2)
