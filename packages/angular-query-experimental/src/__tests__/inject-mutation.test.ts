@@ -9,10 +9,9 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { By } from '@angular/platform-browser'
 import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
-import { expectSignals, setFixtureSignalInputs } from './test-utils'
+import { expectSignals, registerSignalInput } from './test-utils'
 
 describe('injectMutation', () => {
   let queryClient: QueryClient
@@ -323,19 +322,32 @@ describe('injectMutation', () => {
       }
     }
 
-    const fixture = TestBed.createComponent(FakeComponent)
-    const { debugElement } = fixture
-    setFixtureSignalInputs(fixture, { name: 'value' })
+    registerSignalInput(FakeComponent, 'name')
 
-    const button = debugElement.query(By.css('button'))
-    button.triggerEventHandler('click')
+    @Component({
+      template: `<app-fake [name]="name()" />`,
+      imports: [FakeComponent],
+    })
+    class HostComponent {
+      protected readonly name = signal('value')
+    }
+
+    const fixture = TestBed.createComponent(HostComponent)
+    fixture.detectChanges()
+
+    const hostButton = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement
+    hostButton.click()
 
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    const text = debugElement.query(By.css('span')).nativeElement.textContent
-    expect(text).toEqual('value')
-    const mutation = mutationCache.find({ mutationKey: ['fake', 'value'] })
+    const span = fixture.nativeElement.querySelector('span') as HTMLSpanElement
+    expect(span.textContent).toEqual('value')
+    const mutation = mutationCache.find({
+      mutationKey: ['fake', 'value'],
+    })
     expect(mutation).toBeDefined()
     expect(mutation!.options.mutationKey).toStrictEqual(['fake', 'value'])
   })
@@ -364,26 +376,43 @@ describe('injectMutation', () => {
       }
     }
 
-    const fixture = TestBed.createComponent(FakeComponent)
-    const { debugElement } = fixture
-    setFixtureSignalInputs(fixture, { name: 'value' })
+    registerSignalInput(FakeComponent, 'name')
 
-    const button = debugElement.query(By.css('button'))
-    const span = debugElement.query(By.css('span'))
+    @Component({
+      template: `<app-fake [name]="name()" />`,
+      imports: [FakeComponent],
+    })
+    class HostComponent {
+      protected readonly name = signal('value')
 
-    button.triggerEventHandler('click')
+      updateName(value: string): void {
+        this.name.set(value)
+      }
+    }
+
+    const fixture = TestBed.createComponent(HostComponent)
+    fixture.detectChanges()
+
+    let button = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement
+    button.click()
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    expect(span.nativeElement.textContent).toEqual('value')
+    let span = fixture.nativeElement.querySelector('span') as HTMLSpanElement
+    expect(span.textContent).toEqual('value')
 
-    setFixtureSignalInputs(fixture, { name: 'updatedValue' })
+    fixture.componentInstance.updateName('updatedValue')
+    fixture.detectChanges()
 
-    button.triggerEventHandler('click')
+    button = fixture.nativeElement.querySelector('button') as HTMLButtonElement
+    button.click()
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    expect(span.nativeElement.textContent).toEqual('updatedValue')
+    span = fixture.nativeElement.querySelector('span') as HTMLSpanElement
+    expect(span.textContent).toEqual('updatedValue')
 
     const mutations = mutationCache.findAll()
     expect(mutations.length).toBe(2)

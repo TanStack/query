@@ -2,7 +2,6 @@ import {
   ApplicationRef,
   ChangeDetectionStrategy,
   Component,
-  provideZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { HttpClient, provideHttpClient } from '@angular/common/http'
@@ -13,13 +12,8 @@ import {
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
-import {
-  QueryClient,
-  injectMutation,
-  injectQuery,
-  onlineManager,
-  provideTanStackQuery,
-} from '..'
+import { QueryClient, injectMutation, injectQuery, onlineManager } from '..'
+import { flushQueryUpdates, setupTanStackQueryTestBed } from './test-utils'
 
 describe('PendingTasks Integration', () => {
   let queryClient: QueryClient
@@ -38,12 +32,7 @@ describe('PendingTasks Integration', () => {
       },
     })
 
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
+    setupTanStackQueryTestBed(queryClient)
   })
 
   afterEach(() => {
@@ -59,7 +48,6 @@ describe('PendingTasks Integration', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -198,7 +186,6 @@ describe('PendingTasks Integration', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -248,7 +235,7 @@ describe('PendingTasks Integration', () => {
 
       // Allow query to initialize
       await Promise.resolve()
-      await vi.advanceTimersByTimeAsync(0)
+      await flushQueryUpdates()
 
       // Query should initialize directly to 'paused' (never goes through 'fetching')
       expect(query.status()).toBe('pending')
@@ -299,7 +286,7 @@ describe('PendingTasks Integration', () => {
       )
 
       // Allow the initial attempt to start and fail
-      await vi.advanceTimersByTimeAsync(0)
+      await flushQueryUpdates()
       await Promise.resolve()
 
       // Wait for the first attempt to complete and start retry delay
@@ -410,7 +397,6 @@ describe('PendingTasks Integration', () => {
       @Component({
         selector: 'app-test',
         template: '',
-        standalone: true,
         changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class TestComponent {
@@ -547,14 +533,8 @@ describe('PendingTasks Integration', () => {
 
   describe('HttpClient Integration', () => {
     beforeEach(() => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-          provideHttpClient(),
-          provideHttpClientTesting(),
-        ],
+      setupTanStackQueryTestBed(queryClient, {
+        providers: [provideHttpClient(), provideHttpClientTesting()],
       })
     })
 

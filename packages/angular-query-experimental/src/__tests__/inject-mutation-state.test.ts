@@ -8,7 +8,6 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { By } from '@angular/platform-browser'
 import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
@@ -16,7 +15,7 @@ import {
   injectMutationState,
   provideTanStackQuery,
 } from '..'
-import { setFixtureSignalInputs } from './test-utils'
+import { registerSignalInput } from './test-utils'
 
 describe('injectMutationState', () => {
   let queryClient: QueryClient
@@ -159,23 +158,35 @@ describe('injectMutationState', () => {
         }))
       }
 
-      const fixture = TestBed.createComponent(FakeComponent)
-      const { debugElement } = fixture
-      setFixtureSignalInputs(fixture, { name: fakeName })
+      registerSignalInput(FakeComponent, 'name')
+
+      @Component({
+        template: `<app-fake [name]="name()" />`,
+        imports: [FakeComponent],
+      })
+      class HostComponent {
+        protected readonly name = signal(fakeName)
+      }
+
+      const fixture = TestBed.createComponent(HostComponent)
+      fixture.detectChanges()
       await vi.advanceTimersByTimeAsync(0)
 
-      let spans = debugElement
-        .queryAll(By.css('span'))
-        .map((span) => span.nativeNode.textContent)
+      const readSpans = () =>
+        Array.from(
+          fixture.nativeElement.querySelectorAll(
+            'span',
+          ) as NodeListOf<HTMLSpanElement>,
+        ).map((span) => span.textContent)
+
+      let spans = readSpans()
 
       expect(spans).toEqual(['pending', 'pending'])
 
       await vi.advanceTimersByTimeAsync(11)
       fixture.detectChanges()
 
-      spans = debugElement
-        .queryAll(By.css('span'))
-        .map((span) => span.nativeNode.textContent)
+      spans = readSpans()
 
       expect(spans).toEqual(['success', 'error'])
     })
