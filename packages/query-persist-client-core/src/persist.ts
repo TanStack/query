@@ -93,15 +93,18 @@ export async function persistQueryClientRestore({
           return persister.removeClient()
         } else {
           hydrate(queryClient, persistedClient.clientState, hydrateOptions)
-
           // Refetch queries if refetchOnRestore is enabled
           if (refetchOnRestore) {
-            queryClient.getQueryCache().getAll().forEach((query) => {
-              const isStale = query.isStale()
-              if (refetchOnRestore === 'always' || isStale) {
-                query.fetch()
-              }
-            })
+            if (refetchOnRestore === 'always') {
+              // Refetch all active queries unconditionally
+              await queryClient.refetchQueries({ type: 'active' })
+            } else {
+              // Refetch only active queries that are stale (time-based staleness included)
+              await queryClient.refetchQueries({
+                predicate: (query) =>
+                  query.getObserversCount() > 0 && query.isStaleByTime(),
+              })
+            }
           }
         }
       } else {
