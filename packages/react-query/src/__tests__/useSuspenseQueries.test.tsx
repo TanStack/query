@@ -250,7 +250,7 @@ describe('useSuspenseQueries', () => {
       data: 'John Doe',
       data2: 50,
     })
-    
+
     // With the infinite loop bug, renderCount would be very high (e.g. > 100)
     // Without bug, it should be small (initial suspend + resolution = 2-3)
     expect(renderCount).toBeLessThan(10)
