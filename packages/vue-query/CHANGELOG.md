@@ -1,5 +1,11 @@
 # @tanstack/vue-query
 
+## 5.91.3
+
+### Patch Changes
+
+- Include TPageParam in enabled of InfiniteQueryObserverOptions ([#9898](https://github.com/TanStack/query/pull/9898))
+
 ## 5.91.2
 
 ### Patch Changes
