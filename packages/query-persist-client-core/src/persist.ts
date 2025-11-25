@@ -40,6 +40,11 @@ export interface PersistedQueryClientRestoreOptions
   maxAge?: number
   /** The options passed to the hydrate function */
   hydrateOptions?: HydrateOptions
+  /** If set to `true`, the query will refetch on successful query restoration if the data is stale.
+   * If set to `false`, the query will not refetch on successful query restoration.
+   * If set to `'always'`, the query will always refetch on successful query restoration.
+   * Defaults to `true`. */
+  refetchOnRestore?: boolean | 'always'
 }
 
 export interface PersistedQueryClientSaveOptions
@@ -75,6 +80,7 @@ export async function persistQueryClientRestore({
   maxAge = 1000 * 60 * 60 * 24,
   buster = '',
   hydrateOptions,
+  refetchOnRestore = true,
 }: PersistedQueryClientRestoreOptions) {
   try {
     const persistedClient = await persister.restoreClient()
@@ -87,6 +93,16 @@ export async function persistQueryClientRestore({
           return persister.removeClient()
         } else {
           hydrate(queryClient, persistedClient.clientState, hydrateOptions)
+
+          // Refetch queries if refetchOnRestore is enabled
+          if (refetchOnRestore) {
+            queryClient.getQueryCache().getAll().forEach((query) => {
+              const isStale = query.isStale()
+              if (refetchOnRestore === 'always' || isStale) {
+                query.fetch()
+              }
+            })
+          }
         }
       } else {
         return persister.removeClient()
