@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.10",
-    "@tanstack/react-query-devtools": "^5.90.2",
+    "@tanstack/react-query-devtools": "^5.91.1",
     "@tanstack/react-query-next-experimental": "^5.91.0",
     "next": "^16.0.1",
     "react": "^19.0.0",
