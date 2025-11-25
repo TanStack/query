@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.11
+
+### Patch Changes
+
+- Prevent infinite render loops when useSuspenseQueries has duplicate queryKeys ([#9886](https://github.com/TanStack/query/pull/9886))
+
 ## 5.90.10
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @tanstack/query-persist-client-core
 
+## 5.91.10
+
+### Patch Changes
+
+- Updated dependencies [[`c01b150`](https://github.com/TanStack/query/commit/c01b150e3673e11d6533768529a5e6fe3ebee68c)]:
+  - @tanstack/query-core@5.90.11
+
 ## 5.91.9
 
 ### Patch Changes
