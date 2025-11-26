@@ -1,16 +1,23 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
+  import { sleep } from '@tanstack/query-test-utils'
   import type { StatelessRef, StatusResult } from '../utils.svelte.js'
 
   let {
     states,
+    onFetch,
   }: {
     states: StatelessRef<Array<StatusResult<string>>>
+    onFetch: () => void
   } = $props()
 
   const query = createQuery(() => ({
     queryKey: ['test'],
-    // queryFn is provided by queryClient.setQueryDefaults in test
+    queryFn: () =>
+      sleep(10).then(() => {
+        onFetch()
+        return 'fetched'
+      }),
     staleTime: Infinity,
   }))
 

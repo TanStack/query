@@ -235,19 +235,14 @@ describe('PersistQueryClientProvider', () => {
 
     let fetched = false
 
-    queryClient.setQueryDefaults(['test'], {
-      queryFn: () =>
-        sleep(10).then(() => {
-          fetched = true
-          return 'fetched'
-        }),
-    })
-
     const rendered = render(FreshData, {
       props: {
         queryClient,
         persistOptions: { persister },
         states,
+        onFetch: () => {
+          fetched = true
+        },
       },
     })
 
