@@ -2,10 +2,17 @@ import { defineConfig } from 'tsup'
 import { generateTsupOptions, parsePresetOptions } from 'tsup-preset-solid'
 
 const preset_options = {
-  entries: {
-    entry: 'src/index.tsx',
-    dev_entry: true,
-  },
+  entries: [
+    {
+      entry: 'src/index.tsx',
+      dev_entry: true,
+    },
+    {
+      name: 'production',
+      entry: 'src/production.tsx',
+      dev_entry: true,
+    },
+  ],
   cjs: true,
   drop_console: true,
 }
