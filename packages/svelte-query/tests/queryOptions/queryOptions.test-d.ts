@@ -9,6 +9,7 @@ import { createQueries, queryOptions } from '../../src/index.js'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('queryOptions', () => {
+  // eslint-disable-next-line vitest/expect-expect
   test('Should not allow excess properties', () => {
     queryOptions({
       queryKey: ['key'],
@@ -176,6 +177,7 @@ describe('queryOptions', () => {
     >()
   })
 
+  // eslint-disable-next-line vitest/expect-expect
   test('Should allow undefined response in initialData', () => {
     return (id: string | null) =>
       queryOptions({
