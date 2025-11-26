@@ -1,5 +1,11 @@
 # @tanstack/vue-query
 
+## 5.92.0
+
+### Minor Changes
+
+- feat(vue-query): allow options getters in additional composables ([#9914](https://github.com/TanStack/query/pull/9914))
+
 ## 5.91.4
 
 ### Patch Changes
