@@ -1,6 +1,6 @@
 # @tanstack/vue-query-devtools
 
-## 7.0.0
+## 6.1.2
 
 ### Patch Changes
 
