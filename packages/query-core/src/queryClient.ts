@@ -428,7 +428,7 @@ export class QueryClient {
   infiniteQuery<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TData = InfiniteData<TQueryFnData>,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
@@ -439,11 +439,15 @@ export class QueryClient {
       TQueryKey,
       TPageParam
     >,
-  ): Promise<InfiniteData<TData, TPageParam>> {
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  > {
     options.behavior = infiniteQueryBehavior<
       TQueryFnData,
       TError,
-      TData,
+      TQueryFnData,
       TPageParam
     >(options.pages)
     return this.query(options as any)
@@ -464,6 +468,12 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
+    options.behavior = infiniteQueryBehavior<
+      TQueryFnData,
+      TError,
+      TData,
+      TPageParam
+    >(options.pages)
     return this.fetchQuery(options as any)
   }
 

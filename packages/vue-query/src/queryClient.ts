@@ -316,7 +316,7 @@ export class QueryClient extends QC {
   infiniteQuery<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TData = InfiniteData<TQueryFnData>,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
@@ -327,11 +327,15 @@ export class QueryClient extends QC {
       TQueryKey,
       TPageParam
     >,
-  ): Promise<InfiniteData<TData, TPageParam>>
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
   infiniteQuery<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TData = InfiniteData<TQueryFnData>,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
@@ -344,11 +348,15 @@ export class QueryClient extends QC {
         TPageParam
       >
     >,
-  ): Promise<InfiniteData<TData, TPageParam>>
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
   infiniteQuery<
     TQueryFnData,
     TError = DefaultError,
-    TData = TQueryFnData,
+    TData = InfiniteData<TQueryFnData>,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
@@ -361,7 +369,11 @@ export class QueryClient extends QC {
         TPageParam
       >
     >,
-  ): Promise<InfiniteData<TData, TPageParam>> {
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  > {
     return super.infiniteQuery(cloneDeepUnref(options))
   }
 

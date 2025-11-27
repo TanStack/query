@@ -568,7 +568,7 @@ type InfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
 export type InfiniteQueryExecuteOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = Omit<
