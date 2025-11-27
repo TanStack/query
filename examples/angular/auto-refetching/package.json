@@ -10,18 +10,18 @@
   "private": true,
   "dependencies": {
     "@angular/common": "^20.0.0",
-    "@angular/compiler": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/platform-browser": "^20.0.0",
+    "@angular/compiler": "^20.3.14",
+    "@angular/core": "^20.3.14",
+    "@angular/platform-browser": "^20.3.14",
     "@tanstack/angular-query-experimental": "^5.90.15",
     "rxjs": "^7.8.2",
     "tslib": "^2.8.1",
-    "zone.js": "0.15.0"
+    "zone.js": "0.16.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.0.0",
-    "@angular/cli": "^20.0.0",
-    "@angular/compiler-cli": "^20.0.0",
+    "@angular/build": "^20.3.12",
+    "@angular/cli": "^20.3.12",
+    "@angular/compiler-cli": "^20.3.14",
     "typescript": "5.8.3"
   }
 }
