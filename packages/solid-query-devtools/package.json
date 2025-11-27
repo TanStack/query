@@ -39,7 +39,7 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
-    "@tanstack/custom-condition": "./src/index.ts",
+    "@tanstack/custom-condition": "./src/index.tsx",
     "solid": {
       "development": "./build/dev.jsx",
       "import": "./build/index.jsx"
