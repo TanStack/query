@@ -781,7 +781,11 @@ function shouldFetchOn(
   ) {
     const value = typeof field === 'function' ? field(query) : field
 
-    return value === 'always' || (value !== false && isStale(query, options))
+    return (
+      value === 'always' ||
+      (value !== false &&
+        (isStale(query, options) || query.state.status === 'error'))
+    )
   }
   return false
 }
