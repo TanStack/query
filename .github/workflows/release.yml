@@ -76,6 +76,6 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Comment on PRs about release
         if: steps.changesets.outputs.published == 'true'
-        uses: ./.github/comment-on-release
+        uses: tanstack/config/.github/comment-on-release@main
         with:
           published-packages: ${{ steps.changesets.outputs.publishedPackages }}
