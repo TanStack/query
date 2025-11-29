@@ -8,11 +8,7 @@
 
   const query = createQuery(() => ({
     queryKey: ['test'],
-    queryFn: async () => {
-      await sleep(5)
-      return 'fetched'
-    },
-
+    queryFn: () => sleep(10).then(() => 'fetched'),
     initialData: 'initial',
     // make sure that initial data is older than the hydration data
     // otherwise initialData would be newer and takes precedence
