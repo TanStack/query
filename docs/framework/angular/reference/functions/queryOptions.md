@@ -75,13 +75,13 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 #### options
 
-[`DefinedInitialDataOptions`](../../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+[`DefinedInitialDataOptions`](../../../../../../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 The query options to tag with the type from `queryFn`.
 
 ### Returns
 
-`Omit`\<[`CreateQueryOptions`](../../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
+`Omit`\<[`CreateQueryOptions`](../../../../../../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
 
 The tagged query options.
 
@@ -133,13 +133,13 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 #### options
 
-[`UnusedSkipTokenOptions`](../../type-aliases/UnusedSkipTokenOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+[`UnusedSkipTokenOptions`](../../../../../../type-aliases/UnusedSkipTokenOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 The query options to tag with the type from `queryFn`.
 
 ### Returns
 
-`OmitKeyof`\<[`CreateQueryOptions`](../../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
+`OmitKeyof`\<[`CreateQueryOptions`](../../../../../../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
 
 The tagged query options.
 
@@ -191,12 +191,12 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 #### options
 
-[`UndefinedInitialDataOptions`](../../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+[`UndefinedInitialDataOptions`](../../../../../../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 The query options to tag with the type from `queryFn`.
 
 ### Returns
 
-[`CreateQueryOptions`](../../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
+[`CreateQueryOptions`](../../../../../../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
 
 The tagged query options.

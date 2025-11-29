@@ -9,28 +9,12 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 await generateReferenceDocs({
   packages: [
     {
-      name: 'angular-query-experimental',
+      name: 'query-core',
       entryPoints: [
-        resolve(
-          __dirname,
-          '../packages/angular-query-experimental/src/index.ts',
-        ),
+        resolve(__dirname, '../packages/query-core/src/index.ts'),
       ],
-      tsconfig: resolve(
-        __dirname,
-        '../packages/angular-query-experimental/tsconfig.json',
-      ),
-      outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
-      exclude: ['./packages/query-core/**/*'],
-    },
-    {
-      name: 'svelte-query',
-      entryPoints: [
-        resolve(__dirname, '../packages/svelte-query/src/index.ts'),
-      ],
-      tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.json'),
-      outputDir: resolve(__dirname, '../docs/framework/svelte/reference'),
-      exclude: ['./packages/query-core/**/*'],
+      tsconfig: resolve(__dirname, '../packages/query-core/tsconfig.json'),
+      outputDir: resolve(__dirname, '../docs/reference-new'),
     },
   ],
 })

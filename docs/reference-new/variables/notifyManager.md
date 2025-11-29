@@ -1,7 +1,15 @@
 ---
-id: NotifyManager
-title: NotifyManager
+id: notifyManager
+title: notifyManager
 ---
+
+# Variable: notifyManager
+
+```ts
+const notifyManager: object;
+```
+
+Defined in: [packages/query-core/src/notifyManager.ts:188](https://github.com/TanStack/query/blob/main/packages/query-core/src/notifyManager.ts#L188)
 
 The `notifyManager` handles scheduling and batching callbacks in Tanstack Query.
 
@@ -91,3 +99,121 @@ notifyManager.setScheduler(requestAnimationFrame)
 // Schedule batches some time in the future
 notifyManager.setScheduler((cb) => setTimeout(cb, 10))
 ```
+
+## Type Declaration
+
+### batch()
+
+```ts
+readonly batch: <T>(callback) => T;
+```
+
+#### Type Parameters
+
+##### T
+
+`T`
+
+#### Parameters
+
+##### callback
+
+() => `T`
+
+#### Returns
+
+`T`
+
+### batchCalls()
+
+```ts
+readonly batchCalls: <T>(callback) => BatchCallsCallback<T>;
+```
+
+All calls to the wrapped function will be batched.
+
+#### Type Parameters
+
+##### T
+
+`T` *extends* `unknown`[]
+
+#### Parameters
+
+##### callback
+
+`BatchCallsCallback`\<`T`\>
+
+#### Returns
+
+`BatchCallsCallback`\<`T`\>
+
+### schedule()
+
+```ts
+schedule: (callback) => void;
+```
+
+#### Parameters
+
+##### callback
+
+`NotifyCallback`
+
+#### Returns
+
+`void`
+
+### setBatchNotifyFunction()
+
+```ts
+readonly setBatchNotifyFunction: (fn) => void;
+```
+
+Use this method to set a custom function to batch notifications together into a single tick.
+By default React Query will use the batch function provided by ReactDOM or React Native.
+
+#### Parameters
+
+##### fn
+
+`BatchNotifyFunction`
+
+#### Returns
+
+`void`
+
+### setNotifyFunction()
+
+```ts
+readonly setNotifyFunction: (fn) => void;
+```
+
+Use this method to set a custom notify function.
+This can be used to for example wrap notifications with `React.act` while running tests.
+
+#### Parameters
+
+##### fn
+
+`NotifyFunction`
+
+#### Returns
+
+`void`
+
+### setScheduler()
+
+```ts
+readonly setScheduler: (fn) => void;
+```
+
+#### Parameters
+
+##### fn
+
+`ScheduleFunction`
+
+#### Returns
+
+`void`

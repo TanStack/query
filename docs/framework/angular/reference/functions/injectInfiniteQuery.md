@@ -53,19 +53,19 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 #### injectInfiniteQueryFn
 
-() => [`DefinedInitialDataInfiniteOptions`](../../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+() => [`DefinedInitialDataInfiniteOptions`](../../../../../../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 A function that returns infinite query options.
 
 #### options?
 
-[`InjectInfiniteQueryOptions`](../../interfaces/InjectInfiniteQueryOptions.md)
+[`InjectInfiniteQueryOptions`](../../../../../../interfaces/InjectInfiniteQueryOptions.md)
 
 Additional configuration.
 
 ### Returns
 
-[`DefinedCreateInfiniteQueryResult`](../../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>
+[`DefinedCreateInfiniteQueryResult`](../../../../../../type-aliases/DefinedCreateInfiniteQueryResult.md)\<`TData`, `TError`\>
 
 The infinite query result.
 
@@ -106,19 +106,19 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 #### injectInfiniteQueryFn
 
-() => [`UndefinedInitialDataInfiniteOptions`](../../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+() => [`UndefinedInitialDataInfiniteOptions`](../../../../../../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 A function that returns infinite query options.
 
 #### options?
 
-[`InjectInfiniteQueryOptions`](../../interfaces/InjectInfiniteQueryOptions.md)
+[`InjectInfiniteQueryOptions`](../../../../../../interfaces/InjectInfiniteQueryOptions.md)
 
 Additional configuration.
 
 ### Returns
 
-[`CreateInfiniteQueryResult`](../../type-aliases/CreateInfiniteQueryResult.md)\<`TData`, `TError`\>
+[`CreateInfiniteQueryResult`](../../../../../../type-aliases/CreateInfiniteQueryResult.md)\<`TData`, `TError`\>
 
 The infinite query result.
 
@@ -159,18 +159,18 @@ Infinite queries can additively "load more" data onto an existing set of data or
 
 #### injectInfiniteQueryFn
 
-() => [`CreateInfiniteQueryOptions`](../../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+() => [`CreateInfiniteQueryOptions`](../../../../../../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 A function that returns infinite query options.
 
 #### options?
 
-[`InjectInfiniteQueryOptions`](../../interfaces/InjectInfiniteQueryOptions.md)
+[`InjectInfiniteQueryOptions`](../../../../../../interfaces/InjectInfiniteQueryOptions.md)
 
 Additional configuration.
 
 ### Returns
 
-[`CreateInfiniteQueryResult`](../../type-aliases/CreateInfiniteQueryResult.md)\<`TData`, `TError`\>
+[`CreateInfiniteQueryResult`](../../../../../../type-aliases/CreateInfiniteQueryResult.md)\<`TData`, `TError`\>
 
 The infinite query result.

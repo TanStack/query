@@ -88,7 +88,7 @@ A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
 
 ### features
 
-...[`QueryFeatures`](../../type-aliases/QueryFeatures.md)[]
+...[`QueryFeatures`](../../../../../../type-aliases/QueryFeatures.md)[]
 
 Optional features to configure additional Query functionality.
 

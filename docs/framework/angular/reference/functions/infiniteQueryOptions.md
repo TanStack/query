@@ -51,13 +51,13 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 #### options
 
-[`DefinedInitialDataInfiniteOptions`](../../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+[`DefinedInitialDataInfiniteOptions`](../../../../../../type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 The infinite query options to tag with the type from `queryFn`.
 
 ### Returns
 
-[`CreateInfiniteQueryOptions`](../../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & `object`
+[`CreateInfiniteQueryOptions`](../../../../../../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & `object`
 
 The tagged infinite query options.
 
@@ -99,13 +99,13 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 #### options
 
-[`UnusedSkipTokenInfiniteOptions`](../../type-aliases/UnusedSkipTokenInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+[`UnusedSkipTokenInfiniteOptions`](../../../../../../type-aliases/UnusedSkipTokenInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 The infinite query options to tag with the type from `queryFn`.
 
 ### Returns
 
-`OmitKeyof`\<[`CreateInfiniteQueryOptions`](../../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>, `"queryFn"`\> & `object` & `object`
+`OmitKeyof`\<[`CreateInfiniteQueryOptions`](../../../../../../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>, `"queryFn"`\> & `object` & `object`
 
 The tagged infinite query options.
 
@@ -147,12 +147,12 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 #### options
 
-[`UndefinedInitialDataInfiniteOptions`](../../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+[`UndefinedInitialDataInfiniteOptions`](../../../../../../type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
 
 The infinite query options to tag with the type from `queryFn`.
 
 ### Returns
 
-[`CreateInfiniteQueryOptions`](../../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & `object`
+[`CreateInfiniteQueryOptions`](../../../../../../interfaces/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & `object` & `object`
 
 The tagged infinite query options.

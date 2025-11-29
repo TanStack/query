@@ -35,11 +35,11 @@ Defined in: [packages/svelte-query/src/queryOptions.ts:30](https://github.com/Ta
 
 #### options
 
-[`DefinedInitialDataOptions`](../../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+[`DefinedInitialDataOptions`](../../../../../../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 ### Returns
 
-[`CreateQueryOptions`](../../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
+[`CreateQueryOptions`](../../../../../../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
 
 ## Call Signature
 
@@ -71,8 +71,8 @@ Defined in: [packages/svelte-query/src/queryOptions.ts:41](https://github.com/Ta
 
 #### options
 
-[`UndefinedInitialDataOptions`](../../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+[`UndefinedInitialDataOptions`](../../../../../../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 ### Returns
 
-[`CreateQueryOptions`](../../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
+[`CreateQueryOptions`](../../../../../../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`

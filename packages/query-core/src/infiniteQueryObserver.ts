@@ -19,10 +19,33 @@ import type {
 import type { QueryClient } from './queryClient'
 import type { Query } from './query'
 
+
 type InfiniteQueryObserverListener<TData, TError> = (
   result: InfiniteQueryObserverResult<TData, TError>,
 ) => void
 
+/**
+ * The `InfiniteQueryObserver` can be used to observe and switch between infinite queries.
+ * 
+ * ```tsx
+ * const observer = new InfiniteQueryObserver(queryClient, {
+ *   queryKey: ['posts'],
+ *   queryFn: fetchPosts,
+ *   getNextPageParam: (lastPage, allPages) => lastPage.nextCursor,
+ *   getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
+ * })
+ * 
+ * const unsubscribe = observer.subscribe((result) => {
+ *   console.log(result)
+ *   unsubscribe()
+ * })
+ * ```
+ * 
+ * **Options**
+ *
+ * The options for the `InfiniteQueryObserver` are exactly the same as those of [`useInfiniteQuery`](../../framework/react/reference/useInfiniteQuery).
+ *
+ */
 export class InfiniteQueryObserver<
   TQueryFnData = unknown,
   TError = DefaultError,

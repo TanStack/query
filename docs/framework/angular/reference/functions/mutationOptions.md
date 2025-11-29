@@ -103,13 +103,13 @@ class ComponentOrService {
 
 #### options
 
-`WithRequired`\<[`CreateMutationOptions`](../../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+`WithRequired`\<[`CreateMutationOptions`](../../../../../../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The mutation options.
 
 ### Returns
 
-`WithRequired`\<[`CreateMutationOptions`](../../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+`WithRequired`\<[`CreateMutationOptions`](../../../../../../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 Mutation options.
 
@@ -175,12 +175,12 @@ class ComponentOrService {
 
 #### options
 
-`Omit`\<[`CreateMutationOptions`](../../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+`Omit`\<[`CreateMutationOptions`](../../../../../../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 The mutation options.
 
 ### Returns
 
-`Omit`\<[`CreateMutationOptions`](../../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+`Omit`\<[`CreateMutationOptions`](../../../../../../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
 
 Mutation options.

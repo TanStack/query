@@ -25,7 +25,7 @@ Defined in: [packages/svelte-query/src/createQueries.svelte.ts:189](https://gith
 
 ### createQueriesOptions
 
-[`Accessor`](../../type-aliases/Accessor.md)\<\{
+[`Accessor`](../../../../../../type-aliases/Accessor.md)\<\{
   `combine?`: (`result`) => `TCombinedResult`;
   `queries`:   \| readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetCreateQueryOptionsForCreateQueries`\<...\>, `GetCreateQueryOptionsForCreateQueries`\<...\>\] : \[`...(...)[]`\] *extends* \[..., `...(...)[]`\] ? ... *extends* ... ? ... : ... : ... *extends* ... ? ... : ... : readonly `unknown`[] *extends* `T` ? `T` : `T` *extends* `CreateQueryOptionsForCreateQueries`\<..., ..., ..., ...\>[] ? `CreateQueryOptionsForCreateQueries`\<..., ..., ..., ...\>[] : `CreateQueryOptionsForCreateQueries`\<..., ..., ..., ...\>[]\]
      \| readonly \[\{ \[K in string \| number \| symbol\]: GetCreateQueryOptionsForCreateQueries\<T\[K\<K\>\]\> \}\];
@@ -33,7 +33,7 @@ Defined in: [packages/svelte-query/src/createQueries.svelte.ts:189](https://gith
 
 ### queryClient?
 
-[`Accessor`](../../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../../../../../../type-aliases/Accessor.md)\<`QueryClient`\>
 
 ## Returns
 

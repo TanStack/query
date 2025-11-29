@@ -1,7 +1,15 @@
 ---
-id: FocusManager
-title: FocusManager
+id: focusManager
+title: focusManager
 ---
+
+# Variable: focusManager
+
+```ts
+const focusManager: FocusManager;
+```
+
+Defined in: [packages/query-core/src/focusManager.ts:159](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L159)
 
 The `FocusManager` manages the focus state within TanStack Query.
 

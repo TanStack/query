@@ -31,7 +31,7 @@ Defined in: [types.ts:65](https://github.com/TanStack/query/blob/main/packages/a
 
 ##### this
 
-[`CreateBaseQueryResult`](../../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>
+[`CreateBaseQueryResult`](../../../../../../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>
 
 #### Returns
 
@@ -51,7 +51,7 @@ Defined in: [types.ts:72](https://github.com/TanStack/query/blob/main/packages/a
 
 ##### this
 
-[`CreateBaseQueryResult`](../../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>
+[`CreateBaseQueryResult`](../../../../../../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>
 
 #### Returns
 
@@ -71,7 +71,7 @@ Defined in: [types.ts:58](https://github.com/TanStack/query/blob/main/packages/a
 
 ##### this
 
-[`CreateBaseQueryResult`](../../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>
+[`CreateBaseQueryResult`](../../../../../../type-aliases/CreateBaseQueryResult.md)\<`TData`, `TError`\>
 
 #### Returns
 
