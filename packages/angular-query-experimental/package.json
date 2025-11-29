@@ -105,8 +105,8 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "peerDependencies": {
-    "@angular/common": ">=16.0.0",
-    "@angular/core": ">=16.0.0"
+    "@angular/common": ">=19.0.0",
+    "@angular/core": ">=19.0.0"
   },
   "publishConfig": {
     "directory": "dist",
