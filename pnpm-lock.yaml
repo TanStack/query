@@ -53,11 +53,11 @@ importers:
         specifier: 0.3.2
         version: 0.3.2(@typescript-eslint/utils@8.48.0(eslint@9.36.0(jiti@2.5.1))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint@9.36.0(jiti@2.5.1))(typescript@5.8.3)
       '@tanstack/typedoc-config':
-        specifier: 0.2.1
-        version: 0.2.1(typescript@5.8.3)
+        specifier: 0.3.1
+        version: 0.3.1(typescript@5.8.3)
       '@tanstack/vite-config':
-        specifier: 0.2.1
-        version: 0.2.1(@types/node@22.15.3)(rollup@4.40.2)(typescript@5.8.3)(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
+        specifier: 0.4.1
+        version: 0.4.1(@types/node@22.15.3)(rollup@4.40.2)(typescript@5.8.3)(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
       '@testing-library/jest-dom':
         specifier: ^6.8.0
         version: 6.8.0
@@ -4801,8 +4801,8 @@ packages:
   '@floating-ui/utils@0.2.5':
     resolution: {integrity: sha512-sTcG+QZ6fdEUObICavU+aB3Mp8HY4n14wYHdxK4fXjPmv3PXZZeY5RaguJmGyeH/CJQhX3fqKUtS4qc1LoHwhQ==}
 
-  '@gerrit0/mini-shiki@1.24.4':
-    resolution: {integrity: sha512-YEHW1QeAg6UmxEmswiQbOVEg1CW22b1XUD/lNTliOsu0LD0wqoyleFMnmbTp697QE0pcadQiR5cVtbbAPncvpw==}
+  '@gerrit0/mini-shiki@3.17.0':
+    resolution: {integrity: sha512-Bpf6WuFar20ZXL6qU6VpVl4bVQfyyYiX+6O4xrns4nkU3Mr8paeupDbS1HENpcLOYj7pN4Rkd/yCaPA0vQwKww==}
 
   '@graphql-typed-document-node/core@3.2.0':
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
@@ -6400,11 +6400,17 @@ packages:
   '@shikijs/engine-oniguruma@1.29.2':
     resolution: {integrity: sha512-7iiOx3SG8+g1MnlzZVDYiaeHe7Ez2Kf2HrJzdmGwkRisT7r4rak0e655AcM/tF9JG/kg5fMNYlLLKglbN7gBqA==}
 
+  '@shikijs/engine-oniguruma@3.17.0':
+    resolution: {integrity: sha512-flSbHZAiOZDNTrEbULY8DLWavu/TyVu/E7RChpLB4WvKX4iHMfj80C6Hi3TjIWaQtHOW0KC6kzMcuB5TO1hZ8Q==}
+
   '@shikijs/engine-oniguruma@3.2.1':
     resolution: {integrity: sha512-wZZAkayEn6qu2+YjenEoFqj0OyQI64EWsNR6/71d1EkG4sxEOFooowKivsWPpaWNBu3sxAG+zPz5kzBL/SsreQ==}
 
   '@shikijs/langs@1.29.2':
     resolution: {integrity: sha512-FIBA7N3LZ+223U7cJDUYd5shmciFQlYkFXlkKVaHsCPgfVLiO+e12FmQE6Tf9vuyEsFe3dIl8qGWKXgEHL9wmQ==}
+
+  '@shikijs/langs@3.17.0':
+    resolution: {integrity: sha512-icmur2n5Ojb+HAiQu6NEcIIJ8oWDFGGEpiqSCe43539Sabpx7Y829WR3QuUW2zjTM4l6V8Sazgb3rrHO2orEAw==}
 
   '@shikijs/langs@3.2.1':
     resolution: {integrity: sha512-If0iDHYRSGbihiA8+7uRsgb1er1Yj11pwpX1c6HLYnizDsKAw5iaT3JXj5ZpaimXSWky/IhxTm7C6nkiYVym+A==}
@@ -6412,20 +6418,23 @@ packages:
   '@shikijs/themes@1.29.2':
     resolution: {integrity: sha512-i9TNZlsq4uoyqSbluIcZkmPL9Bfi3djVxRnofUHwvx/h6SRW3cwgBC5SML7vsDcWyukY0eCzVN980rqP6qNl9g==}
 
+  '@shikijs/themes@3.17.0':
+    resolution: {integrity: sha512-/xEizMHLBmMHwtx4JuOkRf3zwhWD2bmG5BRr0IPjpcWpaq4C3mYEuTk/USAEglN0qPrTwEHwKVpSu/y2jhferA==}
+
   '@shikijs/themes@3.2.1':
     resolution: {integrity: sha512-k5DKJUT8IldBvAm8WcrDT5+7GA7se6lLksR+2E3SvyqGTyFMzU2F9Gb7rmD+t+Pga1MKrYFxDIeyWjMZWM6uBQ==}
 
   '@shikijs/types@1.29.2':
     resolution: {integrity: sha512-VJjK0eIijTZf0QSTODEXCqinjBn0joAHQ+aPSBzrv4O2d/QSbsMw+ZeSRx03kV34Hy7NzUvV/7NqfYGRLrASmw==}
 
+  '@shikijs/types@3.17.0':
+    resolution: {integrity: sha512-wjLVfutYWVUnxAjsWEob98xgyaGv0dTEnMZDruU5mRjVN7szcGOfgO+997W2yR6odp+1PtSBNeSITRRTfUzK/g==}
+
   '@shikijs/types@3.2.1':
     resolution: {integrity: sha512-/NTWAk4KE2M8uac0RhOsIhYQf4pdU0OywQuYDGIGAJ6Mjunxl2cGiuLkvu4HLCMn+OTTLRWkjZITp+aYJv60yA==}
 
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
-
-  '@shikijs/vscode-textmate@9.3.1':
-    resolution: {integrity: sha512-79QfK1393x9Ho60QFyLti+QfdJzRQCVLFb97kOIV7Eo9vQU/roINgk7m24uv0a7AUvN//RDH36FLjjK48v0s9g==}
 
   '@sigstore/bundle@3.0.0':
     resolution: {integrity: sha512-XDUYX56iMPAn/cdgh/DTJxz5RWmqKV4pwvUAEKEWJl+HzKdCd/24wUa9JYNMlDSCb7SUHAdtksxYX779Nne/Zg==}
@@ -6752,12 +6761,12 @@ packages:
     resolution: {integrity: sha512-l4RonnJM8gOLeyzThSEd/ZTDhrMGQGm9ZdXtmoLPF17L6Z6neJkNmfYSvVXPPUpL9aQOVncAR0OWDgZgsxIjFw==}
     engines: {node: '>=12'}
 
-  '@tanstack/typedoc-config@0.2.1':
-    resolution: {integrity: sha512-3miLBNiyWX54bQKBNnh7Fj6otWX8ZDiU6/ffOsNnikwBdKjFkA7ddrBtC5/JQkLCE6CBIqcJvtNIwI+DZu4y1Q==}
+  '@tanstack/typedoc-config@0.3.1':
+    resolution: {integrity: sha512-frgA1vjzxbdU5/xn/Z/UqyOd1yuegEfAnx9QNbcX+1XQ3TCzD+x89cMZH9iyxdTC1Tasx2gq7DCNCvX962X9WA==}
     engines: {node: '>=18'}
 
-  '@tanstack/vite-config@0.2.1':
-    resolution: {integrity: sha512-werDRwJSqzY28fbOBQ+wP7pQ6jl6Y+EJ8mA/dABOJEq2iBbGLXAzGPywRji7x4zULhjBDS3chQrR3nE7NVcoDw==}
+  '@tanstack/vite-config@0.4.1':
+    resolution: {integrity: sha512-FOl8EF6SAcljanKSm5aBeJaflFcxQAytTbxtNW8HC6D4x+UBW68IC4tBcrlrsI0wXHBmC/Gz4Ovvv8qCtiXSgQ==}
     engines: {node: '>=18'}
 
   '@testing-library/angular@18.0.0':
@@ -14493,23 +14502,23 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  typedoc-plugin-frontmatter@1.2.1:
-    resolution: {integrity: sha512-TKiOOQCxC1uUYldokAegap2oAtDy9QpsUoVDRohcB6Dm45T91qMgkWqHVS8qbCpDc4SJoGqmGTULGfrqeRqXtA==}
+  typedoc-plugin-frontmatter@1.3.0:
+    resolution: {integrity: sha512-xYQFMAecMlsRUjmf9oM/Sq2FVz4zlgcbIeVFNLdO118CHTN06gIKJNSlyExh9+Xl8sK0YhIvoQwViUURxritWA==}
     peerDependencies:
-      typedoc-plugin-markdown: '>=4.4.2'
+      typedoc-plugin-markdown: '>=4.5.0'
 
-  typedoc-plugin-markdown@4.4.2:
-    resolution: {integrity: sha512-kJVkU2Wd+AXQpyL6DlYXXRrfNrHrEIUgiABWH8Z+2Lz5Sq6an4dQ/hfvP75bbokjNDUskOdFlEEm/0fSVyC7eg==}
+  typedoc-plugin-markdown@4.9.0:
+    resolution: {integrity: sha512-9Uu4WR9L7ZBgAl60N/h+jqmPxxvnC9nQAlnnO/OujtG2ubjnKTVUFY1XDhcMY+pCqlX3N2HsQM2QTYZIU9tJuw==}
     engines: {node: '>= 18'}
     peerDependencies:
-      typedoc: 0.27.x
+      typedoc: 0.28.x
 
-  typedoc@0.27.9:
-    resolution: {integrity: sha512-/z585740YHURLl9DN2jCWe6OW7zKYm6VoQ93H0sxZ1cwHQEQrUn5BJrEnkWhfzUdyO+BLGjnKUZ9iz9hKloFDw==}
-    engines: {node: '>= 18'}
+  typedoc@0.28.14:
+    resolution: {integrity: sha512-ftJYPvpVfQvFzpkoSfHLkJybdA/geDJ8BGQt/ZnkkhnBYoYW6lBgPQXu6vqLxO4X75dA55hX8Af847H5KXlEFA==}
+    engines: {node: '>= 18', pnpm: '>= 10'}
     hasBin: true
     peerDependencies:
-      typescript: 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x || 5.7.x || 5.8.x
+      typescript: 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x || 5.7.x || 5.8.x || 5.9.x
 
   typesafe-path@0.2.2:
     resolution: {integrity: sha512-OJabfkAg1WLZSqJAJ0Z6Sdt3utnbzr/jh+NAHoyWHJe8CMSy79Gm085094M9nvTPy22KzTVn5Zq5mbapCI/hPA==}
@@ -14935,6 +14944,11 @@ packages:
     peerDependenciesMeta:
       vite:
         optional: true
+
+  vite-plugin-externalize-deps@0.10.0:
+    resolution: {integrity: sha512-eQrtpT/Do7AvDn76l1yL6ZHyXJ+UWH2LaHVqhAes9go54qaAnPZuMbgxcroQ/7WY3ZyetZzYW2quQnDF0DV5qg==}
+    peerDependencies:
+      vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
   vite-plugin-externalize-deps@0.9.0:
     resolution: {integrity: sha512-wg3qb5gCy2d1KpPKyD9wkXMcYJ84yjgziHrStq9/8R7chhUC73mhQz+tVtvhFiICQHsBn1pnkY4IBbPqF9JHNw==}
@@ -18146,11 +18160,13 @@ snapshots:
 
   '@floating-ui/utils@0.2.5': {}
 
-  '@gerrit0/mini-shiki@1.24.4':
+  '@gerrit0/mini-shiki@3.17.0':
     dependencies:
-      '@shikijs/engine-oniguruma': 1.29.2
-      '@shikijs/types': 1.29.2
-      '@shikijs/vscode-textmate': 9.3.1
+      '@shikijs/engine-oniguruma': 3.17.0
+      '@shikijs/langs': 3.17.0
+      '@shikijs/themes': 3.17.0
+      '@shikijs/types': 3.17.0
+      '@shikijs/vscode-textmate': 10.0.2
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.9.0)':
     dependencies:
@@ -19726,6 +19742,11 @@ snapshots:
       '@shikijs/types': 1.29.2
       '@shikijs/vscode-textmate': 10.0.2
 
+  '@shikijs/engine-oniguruma@3.17.0':
+    dependencies:
+      '@shikijs/types': 3.17.0
+      '@shikijs/vscode-textmate': 10.0.2
+
   '@shikijs/engine-oniguruma@3.2.1':
     dependencies:
       '@shikijs/types': 3.2.1
@@ -19735,6 +19756,10 @@ snapshots:
     dependencies:
       '@shikijs/types': 1.29.2
 
+  '@shikijs/langs@3.17.0':
+    dependencies:
+      '@shikijs/types': 3.17.0
+
   '@shikijs/langs@3.2.1':
     dependencies:
       '@shikijs/types': 3.2.1
@@ -19742,6 +19767,10 @@ snapshots:
   '@shikijs/themes@1.29.2':
     dependencies:
       '@shikijs/types': 1.29.2
+
+  '@shikijs/themes@3.17.0':
+    dependencies:
+      '@shikijs/types': 3.17.0
 
   '@shikijs/themes@3.2.1':
     dependencies:
@@ -19752,14 +19781,17 @@ snapshots:
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
 
+  '@shikijs/types@3.17.0':
+    dependencies:
+      '@shikijs/vscode-textmate': 10.0.2
+      '@types/hast': 3.0.4
+
   '@shikijs/types@3.2.1':
     dependencies:
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
 
   '@shikijs/vscode-textmate@10.0.2': {}
-
-  '@shikijs/vscode-textmate@9.3.1': {}
 
   '@sigstore/bundle@3.0.0':
     dependencies:
@@ -20183,19 +20215,19 @@ snapshots:
       - tsx
       - yaml
 
-  '@tanstack/typedoc-config@0.2.1(typescript@5.8.3)':
+  '@tanstack/typedoc-config@0.3.1(typescript@5.8.3)':
     dependencies:
-      typedoc: 0.27.9(typescript@5.8.3)
-      typedoc-plugin-frontmatter: 1.2.1(typedoc-plugin-markdown@4.4.2(typedoc@0.27.9(typescript@5.8.3)))
-      typedoc-plugin-markdown: 4.4.2(typedoc@0.27.9(typescript@5.8.3))
+      typedoc: 0.28.14(typescript@5.8.3)
+      typedoc-plugin-frontmatter: 1.3.0(typedoc-plugin-markdown@4.9.0(typedoc@0.28.14(typescript@5.8.3)))
+      typedoc-plugin-markdown: 4.9.0(typedoc@0.28.14(typescript@5.8.3))
     transitivePeerDependencies:
       - typescript
 
-  '@tanstack/vite-config@0.2.1(@types/node@22.15.3)(rollup@4.40.2)(typescript@5.8.3)(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))':
+  '@tanstack/vite-config@0.4.1(@types/node@22.15.3)(rollup@4.40.2)(typescript@5.8.3)(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))':
     dependencies:
       rollup-plugin-preserve-directives: 0.4.0(rollup@4.40.2)
       vite-plugin-dts: 4.2.3(@types/node@22.15.3)(rollup@4.40.2)(typescript@5.8.3)(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
-      vite-plugin-externalize-deps: 0.9.0(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
+      vite-plugin-externalize-deps: 0.10.0(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
       vite-tsconfig-paths: 5.1.4(typescript@5.8.3)(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
     transitivePeerDependencies:
       - '@types/node'
@@ -29846,18 +29878,18 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typedoc-plugin-frontmatter@1.2.1(typedoc-plugin-markdown@4.4.2(typedoc@0.27.9(typescript@5.8.3))):
+  typedoc-plugin-frontmatter@1.3.0(typedoc-plugin-markdown@4.9.0(typedoc@0.28.14(typescript@5.8.3))):
     dependencies:
-      typedoc-plugin-markdown: 4.4.2(typedoc@0.27.9(typescript@5.8.3))
+      typedoc-plugin-markdown: 4.9.0(typedoc@0.28.14(typescript@5.8.3))
       yaml: 2.8.1
 
-  typedoc-plugin-markdown@4.4.2(typedoc@0.27.9(typescript@5.8.3)):
+  typedoc-plugin-markdown@4.9.0(typedoc@0.28.14(typescript@5.8.3)):
     dependencies:
-      typedoc: 0.27.9(typescript@5.8.3)
+      typedoc: 0.28.14(typescript@5.8.3)
 
-  typedoc@0.27.9(typescript@5.8.3):
+  typedoc@0.28.14(typescript@5.8.3):
     dependencies:
-      '@gerrit0/mini-shiki': 1.24.4
+      '@gerrit0/mini-shiki': 3.17.0
       lunr: 2.3.9
       markdown-it: 14.1.0
       minimatch: 9.0.5
@@ -30378,6 +30410,10 @@ snapshots:
       - '@types/node'
       - rollup
       - supports-color
+
+  vite-plugin-externalize-deps@0.10.0(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1)):
+    dependencies:
+      vite: 6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1)
 
   vite-plugin-externalize-deps@0.9.0(vite@6.3.6(@types/node@22.15.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1)):
     dependencies:
