@@ -1,4 +1,4 @@
-import { tanstackConfig } from '@tanstack/config/eslint'
+import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginQuery from '@tanstack/eslint-plugin-query'
 import pluginReact from '@eslint-react/eslint-plugin'
 
