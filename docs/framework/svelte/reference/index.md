@@ -1,58 +1,59 @@
 ---
-id: '@tanstack/svelte-query'
-title: '@tanstack/svelte-query'
+id: "@tanstack/svelte-query"
+title: "@tanstack/svelte-query"
 ---
 
 # @tanstack/svelte-query
+
+## Type Aliases
+
+- [Accessor](../type-aliases/Accessor.md)
+- [CreateBaseMutationResult](../type-aliases/CreateBaseMutationResult.md)
+- [CreateBaseQueryOptions](../type-aliases/CreateBaseQueryOptions.md)
+- [CreateBaseQueryResult](../type-aliases/CreateBaseQueryResult.md)
+- [CreateInfiniteQueryOptions](../type-aliases/CreateInfiniteQueryOptions.md)
+- [CreateInfiniteQueryResult](../type-aliases/CreateInfiniteQueryResult.md)
+- [CreateMutateAsyncFunction](../type-aliases/CreateMutateAsyncFunction.md)
+- [CreateMutateFunction](../type-aliases/CreateMutateFunction.md)
+- [CreateMutationOptions](../type-aliases/CreateMutationOptions.md)
+- [CreateMutationResult](../type-aliases/CreateMutationResult.md)
+- [CreateQueryOptions](../type-aliases/CreateQueryOptions.md)
+- [CreateQueryResult](../type-aliases/CreateQueryResult.md)
+- [DefinedCreateBaseQueryResult](../type-aliases/DefinedCreateBaseQueryResult.md)
+- [DefinedCreateQueryResult](../type-aliases/DefinedCreateQueryResult.md)
+- [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md)
+- [HydrationBoundary](../type-aliases/HydrationBoundary.md)
+- [MutationStateOptions](../type-aliases/MutationStateOptions.md)
+- [QueriesOptions](../type-aliases/QueriesOptions.md)
+- [QueriesResults](../type-aliases/QueriesResults.md)
+- [QueryClientProviderProps](../type-aliases/QueryClientProviderProps.md)
+- [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md)
+
+## Variables
+
+- [HydrationBoundary](../variables/HydrationBoundary.md)
+
+## Functions
+
+- [createInfiniteQuery](../functions/createInfiniteQuery.md)
+- [createMutation](../functions/createMutation.md)
+- [createQueries](../functions/createQueries.md)
+- [createQuery](../functions/createQuery.md)
+- [getIsRestoringContext](../functions/getIsRestoringContext.md)
+- [getQueryClientContext](../functions/getQueryClientContext.md)
+- [infiniteQueryOptions](../functions/infiniteQueryOptions.md)
+- [queryOptions](../functions/queryOptions.md)
+- [setIsRestoringContext](../functions/setIsRestoringContext.md)
+- [setQueryClientContext](../functions/setQueryClientContext.md)
+- [useHydrate](../functions/useHydrate.md)
+- [useIsFetching](../functions/useIsFetching.md)
+- [useIsMutating](../functions/useIsMutating.md)
+- [useIsRestoring](../functions/useIsRestoring.md)
+- [useMutationState](../functions/useMutationState.md)
+- [useQueryClient](../functions/useQueryClient.md)
 
 ## References
 
 ### QueryClientProvider
 
-Renames and re-exports [HydrationBoundary](../variables/hydrationboundary.md)
-
-## Type Aliases
-
-- [CreateBaseMutationResult](../type-aliases/createbasemutationresult.md)
-- [CreateBaseQueryOptions](../type-aliases/createbasequeryoptions.md)
-- [CreateBaseQueryResult](../type-aliases/createbasequeryresult.md)
-- [CreateInfiniteQueryOptions](../type-aliases/createinfinitequeryoptions.md)
-- [CreateInfiniteQueryResult](../type-aliases/createinfinitequeryresult.md)
-- [CreateMutateAsyncFunction](../type-aliases/createmutateasyncfunction.md)
-- [CreateMutateFunction](../type-aliases/createmutatefunction.md)
-- [CreateMutationOptions](../type-aliases/createmutationoptions.md)
-- [CreateMutationResult](../type-aliases/createmutationresult.md)
-- [CreateQueryOptions](../type-aliases/createqueryoptions.md)
-- [CreateQueryResult](../type-aliases/createqueryresult.md)
-- [DefinedCreateBaseQueryResult](../type-aliases/definedcreatebasequeryresult.md)
-- [DefinedCreateQueryResult](../type-aliases/definedcreatequeryresult.md)
-- [DefinedInitialDataOptions](../type-aliases/definedinitialdataoptions.md)
-- [HydrationBoundary](../type-aliases/hydrationboundary.md)
-- [MutationStateOptions](../type-aliases/mutationstateoptions.md)
-- [QueriesOptions](../type-aliases/queriesoptions.md)
-- [QueriesResults](../type-aliases/queriesresults.md)
-- [StoreOrVal](../type-aliases/storeorval.md)
-- [UndefinedInitialDataOptions](../type-aliases/undefinedinitialdataoptions.md)
-
-## Variables
-
-- [HydrationBoundary](../variables/hydrationboundary.md)
-
-## Functions
-
-- [createInfiniteQuery](../functions/createinfinitequery.md)
-- [createMutation](../functions/createmutation.md)
-- [createQueries](../functions/createqueries.md)
-- [createQuery](../functions/createquery.md)
-- [getIsRestoringContext](../functions/getisrestoringcontext.md)
-- [getQueryClientContext](../functions/getqueryclientcontext.md)
-- [infiniteQueryOptions](../functions/infinitequeryoptions.md)
-- [queryOptions](../functions/queryoptions.md)
-- [setIsRestoringContext](../functions/setisrestoringcontext.md)
-- [setQueryClientContext](../functions/setqueryclientcontext.md)
-- [useHydrate](../functions/usehydrate.md)
-- [useIsFetching](../functions/useisfetching.md)
-- [useIsMutating](../functions/useismutating.md)
-- [useIsRestoring](../functions/useisrestoring.md)
-- [useMutationState](../functions/usemutationstate.md)
-- [useQueryClient](../functions/usequeryclient.md)
+Renames and re-exports [HydrationBoundary](../variables/HydrationBoundary.md)
