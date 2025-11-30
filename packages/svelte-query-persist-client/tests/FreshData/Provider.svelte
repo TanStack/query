@@ -9,11 +9,12 @@
     queryClient: QueryClient
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
     states: StatelessRef<Array<StatusResult<string>>>
+    onFetch: () => void
   }
 
-  let { queryClient, persistOptions, states }: Props = $props()
+  let { queryClient, persistOptions, states, onFetch }: Props = $props()
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>
-  <FreshData {states} />
+  <FreshData {states} {onFetch} />
 </PersistQueryClientProvider>
