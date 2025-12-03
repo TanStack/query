@@ -934,6 +934,62 @@ describe('queryObserver', () => {
     expect(observer.getCurrentResult().data).toBe(selectedData2)
   })
 
+  test('observer callbacks should be called in correct order with correct arguments for success case', async () => {
+    const onSuccess = vi.fn()
+    const onSettled = vi.fn()
+
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.resolve('SUCCESS'),
+      onSuccess,
+      onSettled,
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(onSuccess).toHaveBeenCalled()
+    expect(onSuccess).toHaveBeenLastCalledWith('SUCCESS')
+
+    expect(onSettled).toHaveBeenCalled()
+    expect(onSettled).toHaveBeenLastCalledWith('SUCCESS', null)
+
+    unsubscribe()
+  })
+
+  test('observer callbacks should be called in correct order with correct arguments for error case', async () => {
+    const onError = vi.fn()
+    const onSettled = vi.fn()
+
+    const err = new Error('err')
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.reject(err),
+      retry: false,
+      onError,
+      onSettled,
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(onError).toHaveBeenCalled()
+    const onErrorLast = onError.mock.calls.at(-1)![0]
+    expect(onErrorLast).toEqual(expect.any(Error))
+    expect(onErrorLast.message).toBe('err')
+
+    expect(onSettled).toHaveBeenCalled()
+    expect(onSettled).toHaveBeenLastCalledWith(undefined, expect.any(Error))
+
+    unsubscribe()
+  })
+
   test('should pass the correct previous queryKey (from prevQuery) to placeholderData function params with select', async () => {
     const results: Array<QueryObserverResult> = []
     const keys: Array<ReadonlyArray<unknown> | null> = []

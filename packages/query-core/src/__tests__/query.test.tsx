@@ -1305,6 +1305,49 @@ describe('query', () => {
     })
   })
 
+  test('query options callbacks should be called in correct order with correct arguments for success case', async () => {
+    const onSuccess = vi.fn()
+    const onSettled = vi.fn()
+
+    const key = queryKey()
+
+    await queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('SUCCESS'),
+      onSuccess,
+      onSettled,
+    })
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('SUCCESS')
+
+    expect(onSettled).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledWith('SUCCESS', null)
+  })
+
+  test('query options callbacks should be called in correct order with correct arguments for error case', async () => {
+    const onError = vi.fn()
+    const onSettled = vi.fn()
+
+    const key = queryKey()
+
+    await expect(
+      queryClient.fetchQuery({
+        queryKey: key,
+        queryFn: () => Promise.reject(new Error('error')),
+        retry: false,
+        onError,
+        onSettled,
+      }),
+    ).rejects.toBeDefined()
+
+    expect(onError).toHaveBeenCalledTimes(1)
+    expect(onError.mock.calls[0]![0]).toEqual(expect.any(Error))
+
+    expect(onSettled).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledWith(undefined, expect.any(Error))
+  })
+
   test('should not increment dataUpdateCount when setting initialData on prefetched query', async () => {
     const key = queryKey()
     const queryFn = vi.fn().mockImplementation(() => 'fetched-data')
