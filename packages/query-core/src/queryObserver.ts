@@ -155,7 +155,7 @@ export class QueryObserver<
       typeof this.options.enabled !== 'boolean' &&
       typeof this.options.enabled !== 'function' &&
       typeof resolveEnabled(this.options.enabled, this.#currentQuery) !==
-        'boolean'
+      'boolean'
     ) {
       throw new Error(
         'Expected enabled to be a boolean or a callback that returns a boolean',
@@ -199,9 +199,9 @@ export class QueryObserver<
       mounted &&
       (this.#currentQuery !== prevQuery ||
         resolveEnabled(this.options.enabled, this.#currentQuery) !==
-          resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
+        resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
         resolveStaleTime(this.options.staleTime, this.#currentQuery) !==
-          resolveStaleTime(prevOptions.staleTime, this.#currentQuery))
+        resolveStaleTime(prevOptions.staleTime, this.#currentQuery))
     ) {
       this.#updateStaleTimeout()
     }
@@ -213,7 +213,7 @@ export class QueryObserver<
       mounted &&
       (this.#currentQuery !== prevQuery ||
         resolveEnabled(this.options.enabled, this.#currentQuery) !==
-          resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
+        resolveEnabled(prevOptions.enabled, this.#currentQuery) ||
         nextRefetchInterval !== this.#currentRefetchInterval)
     ) {
       this.#updateRefetchInterval(nextRefetchInterval)
@@ -502,11 +502,11 @@ export class QueryObserver<
         placeholderData =
           typeof options.placeholderData === 'function'
             ? (
-                options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
-              )(
-                this.#lastQueryWithDefinedData?.state.data,
-                this.#lastQueryWithDefinedData as any,
-              )
+              options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
+            )(
+              this.#lastQueryWithDefinedData?.state.data,
+              this.#lastQueryWithDefinedData as any,
+            )
             : options.placeholderData
       }
 
@@ -606,7 +606,7 @@ export class QueryObserver<
       const recreateThenable = () => {
         const pending =
           (this.#currentThenable =
-          nextResult.promise =
+            nextResult.promise =
             pendingThenable())
 
         finalizeThenableIfPossible(pending)
@@ -662,7 +662,7 @@ export class QueryObserver<
       return
     }
 
-    this.#currentResult = nextResult
+    this.#currentResult = nextResult 
 
     const shouldNotifyListeners = (): boolean => {
       if (!prevResult) {
@@ -698,7 +698,7 @@ export class QueryObserver<
       })
     }
 
-    this.#notify({ listeners: shouldNotifyListeners() })
+    this.#notify({ query: this.#currentQuery, listeners: shouldNotifyListeners() })
   }
 
   #updateQuery(): void {
@@ -728,9 +728,31 @@ export class QueryObserver<
     }
   }
 
-  #notify(notifyOptions: { listeners: boolean }): void {
+  #notify(notifyOptions: { query: Query<TQueryFnData, TError, TQueryData, TQueryKey>, listeners: boolean }): void {
     notifyManager.batch(() => {
-      // First, trigger the listeners
+      // First trigger the mutate callbacks
+      if (this.hasListeners()) {
+
+        if (notifyOptions.query.state.status === 'success') {
+          this.options.onSuccess?.(
+            notifyOptions.query.state.data
+          )
+          this.options.onSettled?.(
+            notifyOptions.query.state.data,
+            null,
+          )
+        } else if (notifyOptions.query.state.status === 'error') {
+          this.options.onError?.(
+            notifyOptions.query.state.error,
+          )
+          this.options.onSettled?.(
+            undefined,
+            notifyOptions.query.state.error,
+          )
+        }
+      }
+
+      // Then trigger the listeners
       if (notifyOptions.listeners) {
         this.listeners.forEach((listener) => {
           listener(this.#currentResult)

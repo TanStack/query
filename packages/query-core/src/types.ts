@@ -257,6 +257,16 @@ export interface QueryOptions<
   initialData?: TData | InitialDataFunction<TData>
   initialDataUpdatedAt?: number | (() => number | undefined)
   behavior?: QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
+  onSuccess?: (
+    data: TData | undefined,
+  ) => Promise<unknown> | unknown
+  onError?: (
+    error: TError | null,
+  ) => Promise<unknown> | unknown
+  onSettled?: (
+    data: TData | undefined,
+    error: TError | null,
+  ) => Promise<unknown> | unknown
   /**
    * Set this to `false` to disable structural sharing between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.

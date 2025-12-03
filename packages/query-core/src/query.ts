@@ -557,6 +557,13 @@ export class Query<
 
       this.setData(data)
 
+      // Notify per-query callback
+      await this.options.onSuccess?.(data)
+      await this.options.onSettled?.(
+        data,
+        this.state.error as any,
+      )
+
       // Notify cache callback
       this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
       this.#cache.config.onSettled?.(
@@ -585,6 +592,13 @@ export class Query<
         type: 'error',
         error: error as TError,
       })
+
+      // Notify per-query callback
+      await this.options.onError?.(error as any)
+      await this.options.onSettled?.(
+        this.state.data,
+        error as any,
+      )
 
       // Notify cache callback
       this.#cache.config.onError?.(
