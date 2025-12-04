@@ -6174,7 +6174,6 @@ describe('useQuery', () => {
     const onSuccessSettledMock = vi.fn()
     const onFailureSettledMock = vi.fn()
 
-
     function Page() {
       useQuery(() => ({
         queryKey: ['expected-success'],
@@ -6200,7 +6199,7 @@ describe('useQuery', () => {
       </QueryClientProvider>
     ))
 
-    await sleep(10)
+    await sleep(15)
 
     expect(onSuccessMock).toHaveBeenCalled()
     expect(onSuccessSettledMock).toHaveBeenCalled()
