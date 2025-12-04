@@ -57,11 +57,11 @@
   ],
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
-    "@types/react": "^19.0.1",
+    "@types/react": "^19.2.7",
     "@vitejs/plugin-react": "^4.3.4",
     "next": "^16.0.1",
     "npm-run-all2": "^5.0.0",
-    "react": "^19.0.0"
+    "react": "^19.2.1"
   },
   "peerDependencies": {
     "@tanstack/react-query": "workspace:^",
