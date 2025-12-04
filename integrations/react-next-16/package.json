@@ -1,5 +1,5 @@
 {
-  "name": "react-next-15",
+  "name": "react-next-16",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,7 @@
     "@js-temporal/polyfill": "^0.4.4",
     "@tanstack/react-query": "workspace:*",
     "@tanstack/react-query-devtools": "workspace:*",
-    "next": "^15.4.8",
+    "next": "^16.0.7",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "tupleson": "0.23.1"
