@@ -1919,7 +1919,7 @@ describe('createQuery', () => {
   )
 
   it(
-    'callbacks `onSuccess` and `onSettled` should be called',
+    'callbacks `onSuccess`, `onError` and `onSettled` should be called',
     withEffectRoot(async () => {
       const onSuccessMock = vi.fn()
       const onFailureMock = vi.fn()

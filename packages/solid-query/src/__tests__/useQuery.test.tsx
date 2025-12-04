@@ -6168,7 +6168,7 @@ describe('useQuery', () => {
     )
   })
 
-  it('callbacks `onSuccess` and `onSettled` should be called', async () => {
+  it('callbacks `onSuccess`, `onError` and `onSettled` should be called', async () => {
     const onSuccessMock = vi.fn()
     const onFailureMock = vi.fn()
     const onSuccessSettledMock = vi.fn()
