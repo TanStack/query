@@ -1097,13 +1097,13 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
-        version: 16.0.7(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@19.2.1))(react@19.2.1)(sass@1.88.0)
+        version: 16.0.7(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.88.0)
       react:
         specifier: ^19.2.1
         version: 19.2.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.3.1(react@19.2.1)
+        specifier: ^19.2.1
+        version: 19.2.1(react@19.2.1)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -26897,31 +26897,6 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@16.0.7(babel-plugin-react-compiler@0.0.0)(react-dom@18.3.1(react@19.2.1))(react@19.2.1)(sass@1.88.0):
-    dependencies:
-      '@next/env': 16.0.7
-      '@swc/helpers': 0.5.15
-      caniuse-lite: 1.0.30001707
-      postcss: 8.4.31
-      react: 19.2.1
-      react-dom: 18.3.1(react@19.2.1)
-      styled-jsx: 5.1.6(react@19.2.1)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 16.0.7
-      '@next/swc-darwin-x64': 16.0.7
-      '@next/swc-linux-arm64-gnu': 16.0.7
-      '@next/swc-linux-arm64-musl': 16.0.7
-      '@next/swc-linux-x64-gnu': 16.0.7
-      '@next/swc-linux-x64-musl': 16.0.7
-      '@next/swc-win32-arm64-msvc': 16.0.7
-      '@next/swc-win32-x64-msvc': 16.0.7
-      babel-plugin-react-compiler: 0.0.0
-      sass: 1.88.0
-      sharp: 0.34.5
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-
   next@16.0.7(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.88.0):
     dependencies:
       '@next/env': 16.0.7
@@ -28150,12 +28125,6 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
       react: 18.3.1
-      scheduler: 0.23.2
-
-  react-dom@18.3.1(react@19.2.1):
-    dependencies:
-      loose-envify: 1.4.0
-      react: 19.2.1
       scheduler: 0.23.2
 
   react-dom@19.0.0(react@19.0.0):

@@ -12,11 +12,11 @@
     "@tanstack/react-query-devtools": "^5.91.1",
     "next": "^16.0.7",
     "react": "^19.2.1",
-    "react-dom": "^18.2.0"
+    "react-dom": "^19.2.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.79",
-    "@types/react-dom": "^18.2.25",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "typescript": "5.8.3"
   }
 }
