@@ -766,4 +766,37 @@ describe('injectQuery', () => {
       expect(callCount).toBe(2)
     })
   })
+
+
+  test('callbacks `onSuccess` and `onSettled` should be called after a successful fetch', async () => {
+    const onSuccessMock = vi.fn()
+    const onFailureMock = vi.fn()
+    const onSuccessSettledMock = vi.fn()
+    const onFailureSettledMock = vi.fn()
+
+
+    TestBed.runInInjectionContext(() => {
+      injectQuery(() => ({
+        queryKey: ['expected-success'],
+        queryFn: () => 'fetched',
+        onSuccess: (data) => onSuccessMock(data),
+        onSettled: (data, _) => onSuccessSettledMock(data),
+      }));
+
+      injectQuery(() => ({
+        queryKey: ['expected-failure'],
+        queryFn: () => Promise.reject(new Error('error')),
+        onError: (error) => onFailureMock(error),
+        onSettled: (_, error) => onFailureSettledMock(error),
+        retry: false,
+      }));
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(onSuccessMock).toHaveBeenCalled()
+    expect(onSuccessSettledMock).toHaveBeenCalled()
+    expect(onFailureMock).toHaveBeenCalled()
+    expect(onFailureSettledMock).toHaveBeenCalled()
+  })
 })

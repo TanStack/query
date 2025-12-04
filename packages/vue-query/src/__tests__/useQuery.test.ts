@@ -570,4 +570,33 @@ describe('useQuery', () => {
       )
     })
   })
+
+  test('callbacks `onSuccess` and `onSettled` should be called', async () => {
+    const onSuccessMock = vi.fn()
+    const onFailureMock = vi.fn()
+    const onSuccessSettledMock = vi.fn()
+    const onFailureSettledMock = vi.fn()
+
+    useQuery({
+      queryKey: ['expected-success'],
+      queryFn: () => 'fetched',
+      onSuccess: (data) => onSuccessMock(data),
+      onSettled: (data, _) => onSuccessSettledMock(data),
+    })
+
+    useQuery({
+      queryKey: ['expected-failure'],
+      queryFn: () => Promise.reject(new Error('error')),
+      onError: (error) => onFailureMock(error),
+      onSettled: (_, error) => onFailureSettledMock(error),
+      retry: false,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(onSuccessMock).toHaveBeenCalled()
+    expect(onSuccessSettledMock).toHaveBeenCalled()
+    expect(onFailureMock).toHaveBeenCalled()
+    expect(onFailureSettledMock).toHaveBeenCalled()
+  })
 })

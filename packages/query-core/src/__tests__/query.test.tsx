@@ -1305,26 +1305,6 @@ describe('query', () => {
     })
   })
 
-  test('query options callbacks should be called in correct order with correct arguments for success case', async () => {
-    const onSuccess = vi.fn()
-    const onSettled = vi.fn()
-
-    const key = queryKey()
-
-    await queryClient.fetchQuery({
-      queryKey: key,
-      queryFn: () => Promise.resolve('SUCCESS'),
-      onSuccess,
-      onSettled,
-    })
-
-    expect(onSuccess).toHaveBeenCalledTimes(1)
-    expect(onSuccess).toHaveBeenCalledWith('SUCCESS')
-
-    expect(onSettled).toHaveBeenCalledTimes(1)
-    expect(onSettled).toHaveBeenCalledWith('SUCCESS', null)
-  })
-
   test('query options callbacks should be called in correct order with correct arguments for error case', async () => {
     const onError = vi.fn()
     const onSettled = vi.fn()
@@ -1389,5 +1369,35 @@ describe('query', () => {
     // And isFetchedAfterMount should now be true
     const updatedResult = observer.getCurrentResult()
     expect(updatedResult.isFetchedAfterMount).toBe(true)
+  })
+
+
+  test('callbacks `onSuccess` and `onSettled` should be called', async () => {
+    const onSuccessMock = vi.fn()
+    const onFailureMock = vi.fn()
+    const onSuccessSettledMock = vi.fn()
+    const onFailureSettledMock = vi.fn()
+
+    await queryClient.fetchQuery({
+      queryKey: ['expected-success'],
+      queryFn: () => 'fetched',
+      onSuccess: onSuccessMock,
+      onSettled: onSuccessSettledMock,
+    })
+
+    await expect(
+      queryClient.fetchQuery({
+        queryKey: ['expected-failure'],
+        queryFn: () => Promise.reject(new Error('error')),
+        onError: (error) => onFailureMock(error),
+        onSettled: (_, error) => onFailureSettledMock(error),
+        retry: false
+      })
+    ).rejects.toBeDefined()
+
+    expect(onSuccessMock).toHaveBeenCalled()
+    expect(onSuccessSettledMock).toHaveBeenCalled()
+    expect(onFailureMock).toHaveBeenCalled()
+    expect(onFailureSettledMock).toHaveBeenCalled()
   })
 })

@@ -6468,10 +6468,10 @@ describe('useQuery', () => {
         queryKey: [key],
         queryFn: enabled
           ? async () => {
-              await sleep(10)
+            await sleep(10)
 
-              return Promise.resolve('data')
-            }
+            return Promise.resolve('data')
+          }
           : skipToken,
         retry: false,
         retryOnMount: false,
@@ -6774,5 +6774,39 @@ describe('useQuery', () => {
     )
 
     consoleErrorMock.mockRestore()
+  })
+  it('callbacks `onSuccess` and `onSettled` should be called', async () => {
+    const onSuccessMock = vi.fn()
+    const onFailureMock = vi.fn()
+    const onSuccessSettledMock = vi.fn()
+    const onFailureSettledMock = vi.fn()
+
+    function Page() {
+      useQuery({
+        queryKey: ['expected-success'],
+        queryFn: () => 'fetched',
+        onSuccess: (data) => onSuccessMock(data),
+        onSettled: (data, _) => onSuccessSettledMock(data),
+      })
+
+      useQuery({
+        queryKey: ['expected-failure'],
+        queryFn: () => Promise.reject(new Error('error')),
+        onError: (error) => onFailureMock(error),
+        onSettled: (_, error) => onFailureSettledMock(error),
+        retry: false,
+      })
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(onSuccessMock).toHaveBeenCalled()
+    expect(onSuccessSettledMock).toHaveBeenCalled()
+    expect(onFailureMock).toHaveBeenCalled()
+    expect(onFailureSettledMock).toHaveBeenCalled()
   })
 })

@@ -1600,7 +1600,7 @@ describe('createQuery', () => {
       const query = createQuery<string>(
         () => ({
           queryKey: key,
-          queryFn: () => new Promise(() => {}),
+          queryFn: () => new Promise(() => { }),
         }),
         () => queryClient,
       )
@@ -1915,6 +1915,44 @@ describe('createQuery', () => {
       flushSync()
 
       expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
+    }),
+  )
+
+  it(
+    'callbacks `onSuccess` and `onSettled` should be called',
+    withEffectRoot(async () => {
+      const onSuccessMock = vi.fn()
+      const onFailureMock = vi.fn()
+      const onSuccessSettledMock = vi.fn()
+      const onFailureSettledMock = vi.fn()
+
+      createQuery<string, Error>(
+        () => ({
+          queryKey: ['expected-success'],
+          queryFn: () => 'fetched',
+          onSuccess: (data) => onSuccessMock(data),
+          onSettled: (data, _) => onSuccessSettledMock(data),
+        }),
+        () => queryClient,
+      )
+
+      createQuery<string, Error>(
+        () => ({
+          queryKey: ['expected-failure'],
+          queryFn: () => Promise.reject(new Error('error')),
+          onError: (error) => onFailureMock(error),
+          onSettled: (_, error) => onFailureSettledMock(error),
+          retry: false,
+        }),
+        () => queryClient,
+      )
+
+      await sleep(10)
+
+      expect(onSuccessMock).toHaveBeenCalled()
+      expect(onSuccessSettledMock).toHaveBeenCalled()
+      expect(onFailureMock).toHaveBeenCalled()
+      expect(onFailureSettledMock).toHaveBeenCalled()
     }),
   )
 })
