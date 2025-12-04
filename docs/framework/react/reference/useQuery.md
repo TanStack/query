@@ -43,6 +43,9 @@ const {
     notifyOnChangeProps,
     placeholderData,
     queryKeyHashFn,
+    onSuccess,
+    onError,
+    onSettled,
     refetchInterval,
     refetchIntervalInBackground,
     refetchOnMount,
@@ -106,6 +109,18 @@ const {
 - `queryKeyHashFn: (queryKey: QueryKey) => string`
   - Optional
   - If specified, this function is used to hash the `queryKey` to a string.
+- `onSuccess: (data: TData | undefined) => Promise<unknown> | unknown`
+  - Optional
+  - This function will fire when the `queryFn` is successful and will be passed the `data`.
+  - Void function, the returned value will be ignored
+- `onError: (error: TError | null) => Promise<unknown> | unknown`
+  - Optional
+  - This function will fire if the `queryFn` encounters an error and will be passed the `error`
+  - Void function, the returned value will be ignored
+- `onSettled: (data: TData | undefined, error: TError | null) => Promise<unknown> | unknown`
+  - Optional
+  - This function will fire when the `queryFn` is either successfully fetched or encounters an error and be passed either the `data` or `error`
+  - Void function, the returned value will be ignored
 - `refetchInterval: number | false | ((query: Query) => number | false | undefined)`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
