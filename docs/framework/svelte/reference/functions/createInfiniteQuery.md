@@ -37,12 +37,12 @@ Defined in: [packages/svelte-query/src/createInfiniteQuery.ts:16](https://github
 
 ### options
 
-[`Accessor`](../../type-aliases/Accessor.md)\<[`CreateInfiniteQueryOptions`](../../type-aliases/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`CreateInfiniteQueryOptions`](../type-aliases/CreateInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>\>
 
 ### queryClient?
 
-[`Accessor`](../../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
 
 ## Returns
 
-[`CreateInfiniteQueryResult`](../../type-aliases/CreateInfiniteQueryResult.md)\<`TData`, `TError`\>
+[`CreateInfiniteQueryResult`](../type-aliases/CreateInfiniteQueryResult.md)\<`TData`, `TError`\>

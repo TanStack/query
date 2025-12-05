@@ -35,15 +35,15 @@ Defined in: [packages/svelte-query/src/createQuery.ts:15](https://github.com/Tan
 
 #### options
 
-[`Accessor`](../../type-aliases/Accessor.md)\<[`UndefinedInitialDataOptions`](../../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
 
 #### queryClient?
 
-[`Accessor`](../../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
 
 ### Returns
 
-[`CreateQueryResult`](../../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
+[`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
 ## Call Signature
 
@@ -75,15 +75,15 @@ Defined in: [packages/svelte-query/src/createQuery.ts:27](https://github.com/Tan
 
 #### options
 
-[`Accessor`](../../type-aliases/Accessor.md)\<[`DefinedInitialDataOptions`](../../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
 
 #### queryClient?
 
-[`Accessor`](../../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
 
 ### Returns
 
-[`DefinedCreateQueryResult`](../../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
+[`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
 
 ## Call Signature
 
@@ -115,12 +115,12 @@ Defined in: [packages/svelte-query/src/createQuery.ts:39](https://github.com/Tan
 
 #### options
 
-[`Accessor`](../../type-aliases/Accessor.md)\<[`CreateQueryOptions`](../../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>\>
 
 #### queryClient?
 
-[`Accessor`](../../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
 
 ### Returns
 
-[`CreateQueryResult`](../../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
+[`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>

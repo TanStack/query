@@ -31,6 +31,6 @@ Helper function to create an object that represents a Query feature.
 
 ## Returns
 
-[`QueryFeature`](../../interfaces/QueryFeature.md)\<`TFeatureKind`\>
+[`QueryFeature`](../interfaces/QueryFeature.md)\<`TFeatureKind`\>
 
 A Query feature.

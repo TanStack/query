@@ -25,7 +25,7 @@ The filters to apply to the query.
 
 ### options?
 
-[`InjectIsMutatingOptions`](../../interfaces/InjectIsMutatingOptions.md)
+[`InjectIsMutatingOptions`](../interfaces/InjectIsMutatingOptions.md)
 
 Additional configuration
 

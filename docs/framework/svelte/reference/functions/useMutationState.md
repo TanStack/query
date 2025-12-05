@@ -21,7 +21,7 @@ Defined in: [packages/svelte-query/src/useMutationState.svelte.ts:22](https://gi
 
 ### options
 
-[`MutationStateOptions`](../../type-aliases/MutationStateOptions.md)\<`TResult`\> = `{}`
+[`MutationStateOptions`](../type-aliases/MutationStateOptions.md)\<`TResult`\> = `{}`
 
 ### queryClient?
 

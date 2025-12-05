@@ -31,4 +31,4 @@ Defined in: [types.ts:266](https://github.com/TanStack/query/blob/main/packages/
 
 ### TState
 
-`TState` = `CreateStatusBasedMutationResult`\<[`CreateBaseMutationResult`](../CreateBaseMutationResult.md)\[`"status"`\], `TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+`TState` = `CreateStatusBasedMutationResult`\<[`CreateBaseMutationResult`](CreateBaseMutationResult.md)\[`"status"`\], `TData`, `TError`, `TVariables`, `TOnMutateResult`\>
