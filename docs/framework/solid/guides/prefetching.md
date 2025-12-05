@@ -11,6 +11,6 @@ replace:
     'useQuery[(]': 'useQuery(() => ',
     'useQueries[(]': 'useQueries(() => ',
     'useInfiniteQuery[(]': 'useInfiniteQuery(() => ',
-    '../examples/basic-react-query-file-based': '../examples/basic-solid-query-file-based',
+    '/docs/framework/react/examples/basic-react-query-file-based': '/docs/framework/solid/examples/basic-solid-query-file-based',
   }
 ---

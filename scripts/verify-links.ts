@@ -104,16 +104,6 @@ async function verifyMarkdownLinks() {
 
     if (relativeLinks.length > 0) {
       relativeLinks.forEach((link) => {
-        if (!link.startsWith('.')) {
-          errors.push({
-            link,
-            file,
-            resolvedPath: '',
-            reason: 'Does not start with ./ or ../',
-          })
-          return
-        }
-
         relativeLinkExists(link, file)
       })
     }

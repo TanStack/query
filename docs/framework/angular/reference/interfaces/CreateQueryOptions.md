@@ -9,7 +9,7 @@ Defined in: [types.ts:35](https://github.com/TanStack/query/blob/main/packages/a
 
 ## Extends
 
-- `OmitKeyof`\<[`CreateBaseQueryOptions`](./CreateBaseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`\>, `"suspense"`\>
+- `OmitKeyof`\<[`CreateBaseQueryOptions`](CreateBaseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryFnData`, `TQueryKey`\>, `"suspense"`\>
 
 ## Type Parameters
 
