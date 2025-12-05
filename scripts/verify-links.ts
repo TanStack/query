@@ -13,7 +13,7 @@ const errors: Array<{
 
 function isRelativeLink(link: string) {
   return (
-    !link.startsWith(`/`) &&
+    !link.startsWith('/') &&
     !link.startsWith('http://') &&
     !link.startsWith('https://') &&
     !link.startsWith('//') &&
