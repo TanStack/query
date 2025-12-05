@@ -154,7 +154,7 @@ query.error
 
 ## Registering global `Meta`
 
-Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../reference/useQuery.md) and [mutations](../reference/useMutation.md) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
+Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](./reference/useQuery.md) and [mutations](./reference/useMutation.md) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
 
 ```ts
 import '@tanstack/solid-query'
@@ -215,4 +215,4 @@ const data = queryClient.getQueryData<Group[]>(['groups'])
 
 If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
 
-Read more about it in the [Disabling Queries](../guides/disabling-queries.md) guide.
+Read more about it in the [Disabling Queries](./guides/disabling-queries.md) guide.

@@ -37,18 +37,18 @@ Unlike queries, mutations are not run automatically.
 
 ### injectMutationFn
 
-() => [`CreateMutationOptions`](../../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+() => [`CreateMutationOptions`](../interfaces/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 A function that returns mutation options.
 
 ### options?
 
-[`InjectMutationOptions`](../../interfaces/InjectMutationOptions.md)
+[`InjectMutationOptions`](../interfaces/InjectMutationOptions.md)
 
 Additional configuration
 
 ## Returns
 
-[`CreateMutationResult`](../../type-aliases/CreateMutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
+[`CreateMutationResult`](../type-aliases/CreateMutationResult.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>
 
 The mutation.

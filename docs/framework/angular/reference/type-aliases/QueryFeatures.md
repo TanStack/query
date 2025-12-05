@@ -20,4 +20,4 @@ documentation on how to use those functions.
 
 ## See
 
-[provideTanStackQuery](../../functions/provideTanStackQuery.md)
+[provideTanStackQuery](../functions/provideTanStackQuery.md)

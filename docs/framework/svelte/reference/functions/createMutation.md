@@ -33,16 +33,16 @@ Defined in: [packages/svelte-query/src/createMutation.svelte.ts:17](https://gith
 
 ### options
 
-[`Accessor`](../../type-aliases/Accessor.md)\<[`CreateMutationOptions`](../../type-aliases/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>\>
+[`Accessor`](../type-aliases/Accessor.md)\<[`CreateMutationOptions`](../type-aliases/CreateMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TContext`\>\>
 
 A function that returns mutation options
 
 ### queryClient?
 
-[`Accessor`](../../type-aliases/Accessor.md)\<`QueryClient`\>
+[`Accessor`](../type-aliases/Accessor.md)\<`QueryClient`\>
 
 Custom query client which overrides provider
 
 ## Returns
 
-[`CreateMutationResult`](../../type-aliases/CreateMutationResult.md)\<`TData`, `TError`, `TVariables`, `TContext`\>
+[`CreateMutationResult`](../type-aliases/CreateMutationResult.md)\<`TData`, `TError`, `TVariables`, `TContext`\>
