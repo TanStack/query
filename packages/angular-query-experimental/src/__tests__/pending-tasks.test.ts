@@ -1,7 +1,7 @@
 import {
   ApplicationRef,
+  ChangeDetectionStrategy,
   Component,
-  provideZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { HttpClient, provideHttpClient } from '@angular/common/http'
@@ -12,13 +12,8 @@ import {
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
-import {
-  QueryClient,
-  injectMutation,
-  injectQuery,
-  onlineManager,
-  provideTanStackQuery,
-} from '..'
+import { QueryClient, injectMutation, injectQuery, onlineManager } from '..'
+import { flushQueryUpdates, setupTanStackQueryTestBed } from './test-utils'
 
 describe('PendingTasks Integration', () => {
   let queryClient: QueryClient
@@ -37,12 +32,7 @@ describe('PendingTasks Integration', () => {
       },
     })
 
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
+    setupTanStackQueryTestBed(queryClient)
   })
 
   afterEach(() => {
@@ -55,12 +45,21 @@ describe('PendingTasks Integration', () => {
     test('should handle synchronous queryFn with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
-      const query = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
+      @Component({
+        selector: 'app-test',
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        query = injectQuery(() => ({
           queryKey: ['sync'],
           queryFn: () => 'instant-data', // Resolves synchronously
-        })),
-      )
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const query = fixture.componentInstance.query
 
       // Should start as pending even with synchronous data
       expect(query.status()).toBe('pending')
@@ -183,18 +182,27 @@ describe('PendingTasks Integration', () => {
 
     test('should handle rapid refetches without task leaks', async () => {
       const app = TestBed.inject(ApplicationRef)
-      let callCount = 0
 
-      const query = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
+      @Component({
+        selector: 'app-test',
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        callCount = 0
+        query = injectQuery(() => ({
           queryKey: ['rapid-refetch'],
           queryFn: async () => {
-            callCount++
+            this.callCount++
             await sleep(10)
-            return `data-${callCount}`
+            return `data-${this.callCount}`
           },
-        })),
-      )
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const query = fixture.componentInstance.query
 
       // Trigger multiple rapid refetches
       query.refetch()
@@ -207,6 +215,54 @@ describe('PendingTasks Integration', () => {
 
       expect(query.status()).toBe('success')
       expect(query.data()).toMatch(/^data-\d+$/)
+    })
+
+    test('should keep PendingTasks active when query starts offline (never reaches fetching)', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      onlineManager.setOnline(false)
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['start-offline'],
+          networkMode: 'online', // Default: won't fetch while offline
+          queryFn: async () => {
+            await sleep(10)
+            return 'online-data'
+          },
+        })),
+      )
+
+      // Allow query to initialize
+      await Promise.resolve()
+      await flushQueryUpdates()
+
+      // Query should initialize directly to 'paused' (never goes through 'fetching')
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('paused')
+
+      const stablePromise = app.whenStable()
+      let stableResolved = false
+      void stablePromise.then(() => {
+        stableResolved = true
+      })
+
+      await Promise.resolve()
+
+      // PendingTasks should block stability even though we never hit 'fetching'
+      expect(stableResolved).toBe(false)
+
+      // Bring the app back online so the query can fetch
+      onlineManager.setOnline(true)
+
+      await vi.advanceTimersByTimeAsync(20)
+      await Promise.resolve()
+
+      await stablePromise
+
+      expect(stableResolved).toBe(true)
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('online-data')
     })
 
     test('should keep PendingTasks active while query retry is paused offline', async () => {
@@ -230,7 +286,7 @@ describe('PendingTasks Integration', () => {
       )
 
       // Allow the initial attempt to start and fail
-      await vi.advanceTimersByTimeAsync(0)
+      await flushQueryUpdates()
       await Promise.resolve()
 
       // Wait for the first attempt to complete and start retry delay
@@ -279,6 +335,7 @@ describe('PendingTasks Integration', () => {
   describe('Component Destruction', () => {
     @Component({
       template: '',
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
       query = injectQuery(() => ({
@@ -300,6 +357,7 @@ describe('PendingTasks Integration', () => {
     test('should cleanup pending tasks when component with active query is destroyed', async () => {
       const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
 
       // Start the query
       expect(fixture.componentInstance.query.status()).toBe('pending')
@@ -317,6 +375,7 @@ describe('PendingTasks Integration', () => {
     test('should cleanup pending tasks when component with active mutation is destroyed', async () => {
       const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
 
       fixture.componentInstance.mutation.mutate('test')
 
@@ -335,32 +394,37 @@ describe('PendingTasks Integration', () => {
     test('should handle multiple queries running simultaneously', async () => {
       const app = TestBed.inject(ApplicationRef)
 
-      const query1 = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
+      @Component({
+        selector: 'app-test',
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        query1 = injectQuery(() => ({
           queryKey: ['concurrent-1'],
           queryFn: async () => {
             await sleep(30)
             return 'data-1'
           },
-        })),
-      )
+        }))
 
-      const query2 = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
+        query2 = injectQuery(() => ({
           queryKey: ['concurrent-2'],
           queryFn: async () => {
             await sleep(50)
             return 'data-2'
           },
-        })),
-      )
+        }))
 
-      const query3 = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
+        query3 = injectQuery(() => ({
           queryKey: ['concurrent-3'],
           queryFn: () => 'instant-data', // Synchronous
-        })),
-      )
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const { query1, query2, query3 } = fixture.componentInstance
 
       // All queries should start
       expect(query1.status()).toBe('pending')
@@ -469,14 +533,8 @@ describe('PendingTasks Integration', () => {
 
   describe('HttpClient Integration', () => {
     beforeEach(() => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-          provideHttpClient(),
-          provideHttpClientTesting(),
-        ],
+      setupTanStackQueryTestBed(queryClient, {
+        providers: [provideHttpClient(), provideHttpClientTesting()],
       })
     })
 
