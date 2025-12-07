@@ -43,6 +43,7 @@ export class QueriesObserver<
   #combinedResult?: TCombinedResult
   #lastCombine?: CombineFn<TCombinedResult>
   #lastResult?: Array<QueryObserverResult>
+  #lastQueryHashes?: Array<string>
   #observerMatches: Array<QueryObserverMatch> = []
 
   constructor(
@@ -180,11 +181,14 @@ export class QueriesObserver<
     const result = matches.map((match) =>
       match.observer.getOptimisticResult(match.defaultedQueryOptions),
     )
+    const queryHashes = matches.map(
+      (match) => match.defaultedQueryOptions.queryHash,
+    )
 
     return [
       result,
       (r?: Array<QueryObserverResult>) => {
-        return this.#combineResult(r ?? result, combine)
+        return this.#combineResult(r ?? result, combine, queryHashes)
       },
       () => {
         return this.#trackResult(result, matches)
@@ -212,15 +216,28 @@ export class QueriesObserver<
   #combineResult(
     input: Array<QueryObserverResult>,
     combine: CombineFn<TCombinedResult> | undefined,
+    queryHashes?: Array<string>,
   ): TCombinedResult {
     if (combine) {
+      const lastHashes = this.#lastQueryHashes
+      const queryHashesChanged =
+        queryHashes !== undefined &&
+        lastHashes !== undefined &&
+        (lastHashes.length !== queryHashes.length ||
+          queryHashes.some((hash, i) => hash !== lastHashes[i]))
+
       if (
         !this.#combinedResult ||
         this.#result !== this.#lastResult ||
+        queryHashesChanged ||
         combine !== this.#lastCombine
       ) {
         this.#lastCombine = combine
         this.#lastResult = this.#result
+
+        if (queryHashes !== undefined) {
+          this.#lastQueryHashes = queryHashes
+        }
         this.#combinedResult = replaceEqualDeep(
           this.#combinedResult,
           combine(input),
