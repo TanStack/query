@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
+  import { sleep } from '@tanstack/query-test-utils'
   import type { StatelessRef, StatusResult } from '../utils.svelte.js'
 
   let { states }: { states: StatelessRef<Array<StatusResult<string>>> } =
@@ -7,7 +8,7 @@
 
   const query = createQuery(() => ({
     queryKey: ['test'],
-    queryFn: async () => Promise.resolve('fetched'),
+    queryFn: () => sleep(10).then(() => 'fetched'),
   }))
 
   $effect(() => {
