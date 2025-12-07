@@ -394,4 +394,120 @@ describe('queriesObserver', () => {
       { status: 'success', data: 102 },
     ])
   })
+
+  test('should update combined result when queries are added with stable combine reference', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+      results,
+    }))
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    const observer = new QueriesObserver<{
+      count: number
+      results: Array<QueryObserverResult>
+    }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], { combine })
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    expect(initialCombined.count).toBe(1)
+
+    const newQueries = [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ]
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      newQueries,
+      combine,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    expect(newCombined.count).toBe(2)
+  })
+
+  test('should handle queries being removed with stable combine reference', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+      results,
+    }))
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    const observer = new QueriesObserver<{
+      count: number
+      results: Array<QueryObserverResult>
+    }>(
+      queryClient,
+      [
+        { queryKey: key1, queryFn: queryFn1 },
+        { queryKey: key2, queryFn: queryFn2 },
+      ],
+      { combine },
+    )
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [
+        { queryKey: key1, queryFn: queryFn1 },
+        { queryKey: key2, queryFn: queryFn2 },
+      ],
+      combine,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    expect(initialCombined.count).toBe(2)
+
+    const newQueries = [{ queryKey: key1, queryFn: queryFn1 }]
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      newQueries,
+      combine,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    expect(newCombined.count).toBe(1)
+  })
+
+  test('should update combined result when queries are replaced with different ones (same length)', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      keys: results.map((r) => r.status),
+      results,
+    }))
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    queryClient.setQueryData(key1, 'cached-1')
+
+    const observer = new QueriesObserver<{
+      keys: Array<string>
+      results: Array<QueryObserverResult>
+    }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], { combine })
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    expect(initialCombined.keys).toEqual(['success'])
+
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      [{ queryKey: key2, queryFn: queryFn2 }],
+      combine,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    expect(newCombined.keys).toEqual(['pending'])
+  })
 })

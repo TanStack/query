@@ -1811,4 +1811,56 @@ describe('useQueries', () => {
     expect(renderCount).toBeLessThan(10)
     expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
   })
+
+  it('should return correct results when queries count changes with stable combine reference', async () => {
+    const combine = (results: Array<QueryObserverResult>) => results
+
+    const results: Array<{ n: number; length: number }> = []
+
+    function Page() {
+      const [n, setN] = React.useState(0)
+
+      const queries = useQueries(
+        {
+          queries: [...Array(n).keys()].map((i) => ({
+            queryKey: ['dynamic', i],
+            queryFn: () => i,
+          })),
+          combine,
+        },
+        queryClient,
+      )
+
+      results.push({ n, length: queries.length })
+
+      return (
+        <div>
+          <span data-testid="n">{n}</span>
+          <span data-testid="length">{queries.length}</span>
+          <button onClick={() => setN(n + 1)}>Increase</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    expect(rendered.getByTestId('n').textContent).toBe('0')
+    expect(rendered.getByTestId('length').textContent).toBe('0')
+
+    fireEvent.click(rendered.getByRole('button', { name: /increase/i }))
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('n').textContent).toBe('1')
+    expect(rendered.getByTestId('length').textContent).toBe('1')
+
+    fireEvent.click(rendered.getByRole('button', { name: /increase/i }))
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('n').textContent).toBe('2')
+    expect(rendered.getByTestId('length').textContent).toBe('2')
+
+    results.forEach((result) => {
+      expect(result.length).toBe(result.n)
+    })
+  })
 })
