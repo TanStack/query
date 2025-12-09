@@ -492,28 +492,18 @@ describe('InfiniteQueryBehavior', () => {
 
   test('should not register duplicate abort event listeners when signal is accessed multiple times', async () => {
     const key = queryKey()
-    let signalAccessCount = 0
-    const listenerCounts: Array<number> = []
 
-    const queryFnSpy = vi.fn().mockImplementation(({ signal }) => {
-      signalAccessCount++
+    // Track addEventListener calls before the query starts
+    const addEventListenerSpy = vi.spyOn(AbortSignal.prototype, 'addEventListener')
 
-      const originalAddEventListener = signal.addEventListener
-      let currentListenerCount = 0
-      signal.addEventListener = vi.fn((...args) => {
-        currentListenerCount++
-        return originalAddEventListener.apply(signal, args)
-      })
+    const queryFnSpy = vi.fn().mockImplementation((context) => {
+      // Access signal multiple times to trigger the getter repeatedly
+      // This simulates code that might reference the signal property multiple times
+      context.signal
+      context.signal
+      context.signal
 
-      // Access signal multiple times to trigger getter
-      signal
-      signal
-      signal
-
-      listenerCounts.push(currentListenerCount)
-      signal.addEventListener = originalAddEventListener
-
-      return `page-${signalAccessCount}`
+      return 'page'
     })
 
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -527,13 +517,29 @@ describe('InfiniteQueryBehavior', () => {
 
     const unsubscribe = observer.subscribe(() => {})
 
-    await vi.advanceTimersByTimeAsync(0)
+    try {
+      // Wait for initial page
+      await vi.advanceTimersByTimeAsync(0)
 
-    await observer.fetchNextPage()
-    await observer.fetchNextPage()
+      // Fetch additional pages
+      await observer.fetchNextPage()
+      await observer.fetchNextPage()
 
-    expect(listenerCounts.every((count) => count <= 1)).toBe(true)
+      // Sanity check: we fetched 3 pages (initial + 2 next pages)
+      expect(queryFnSpy).toHaveBeenCalledTimes(3)
 
-    unsubscribe()
+      // Count total abort listeners registered
+      const totalAbortListeners = addEventListenerSpy.mock.calls.filter(
+        (call) => call[0] === 'abort'
+      ).length
+
+      // With the fix: Each page registers exactly 1 abort listener despite signal being accessed 3 times
+      // We fetch 3 pages, so exactly 3 abort listeners
+      // Without the fix: Each signal access registers a listener = 3 accesses × 3 pages = 9 listeners
+      expect(totalAbortListeners).toBe(3)
+    } finally {
+      addEventListenerSpy.mockRestore()
+      unsubscribe()
+    }
   })
 })
