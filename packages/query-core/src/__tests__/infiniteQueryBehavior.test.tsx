@@ -489,4 +489,51 @@ describe('InfiniteQueryBehavior', () => {
 
     unsubscribe()
   })
+
+  test('should not register duplicate abort event listeners when signal is accessed multiple times', async () => {
+    const key = queryKey()
+    let signalAccessCount = 0
+    const listenerCounts: Array<number> = []
+
+    const queryFnSpy = vi.fn().mockImplementation(({ signal }) => {
+      signalAccessCount++
+
+      const originalAddEventListener = signal.addEventListener
+      let currentListenerCount = 0
+      signal.addEventListener = vi.fn((...args) => {
+        currentListenerCount++
+        return originalAddEventListener.apply(signal, args)
+      })
+
+      // Access signal multiple times to trigger getter
+      signal
+      signal
+      signal
+
+      listenerCounts.push(currentListenerCount)
+      signal.addEventListener = originalAddEventListener
+
+      return `page-${signalAccessCount}`
+    })
+
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: queryFnSpy,
+      getNextPageParam: (_lastPage, pages) => {
+        return pages.length < 3 ? pages.length + 1 : undefined
+      },
+      initialPageParam: 1,
+    })
+
+    const unsubscribe = observer.subscribe(() => {})
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    await observer.fetchNextPage()
+    await observer.fetchNextPage()
+
+    expect(listenerCounts.every((count) => count <= 1)).toBe(true)
+
+    unsubscribe()
+  })
 })

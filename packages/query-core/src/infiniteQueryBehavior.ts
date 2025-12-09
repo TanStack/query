@@ -22,16 +22,22 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 
       const fetchFn = async () => {
         let cancelled = false
+        let listenerAttached = false
         const addSignalProperty = (object: unknown) => {
           Object.defineProperty(object, 'signal', {
             enumerable: true,
             get: () => {
               if (context.signal.aborted) {
                 cancelled = true
-              } else {
-                context.signal.addEventListener('abort', () => {
-                  cancelled = true
-                })
+              } else if (!listenerAttached) {
+                listenerAttached = true
+                context.signal.addEventListener(
+                  'abort',
+                  () => {
+                    cancelled = true
+                  },
+                  { once: true },
+                )
               }
               return context.signal
             },
