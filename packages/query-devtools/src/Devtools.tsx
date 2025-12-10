@@ -2022,9 +2022,6 @@ const QueryDetails = () => {
             styles().detailsBody,
             'tsqd-query-details-summary-container',
           )}
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
         >
           <div class="tsqd-query-details-summary">
             <pre>
@@ -2032,6 +2029,8 @@ const QueryDetails = () => {
             </pre>
             <span
               class={cx(styles().queryDetailsStatus, getQueryStatusColors())}
+              role="status"
+              aria-live="polite"
             >
               {statusLabel()}
             </span>
@@ -2454,9 +2453,6 @@ const MutationDetails = () => {
             styles().detailsBody,
             'tsqd-query-details-summary-container',
           )}
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
         >
           <div class="tsqd-query-details-summary">
             <pre>
@@ -2471,6 +2467,8 @@ const MutationDetails = () => {
             </pre>
             <span
               class={cx(styles().queryDetailsStatus, getQueryStatusColors())}
+              role="status"
+              aria-live="polite"
             >
               <Show when={color() === 'purple'}>pending</Show>
               <Show when={color() !== 'purple'}>{status()}</Show>
