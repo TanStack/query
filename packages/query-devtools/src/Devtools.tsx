@@ -1783,6 +1783,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
       }}
       disabled={showLabel()}
       ref={tagRef}
+      aria-label={`${props.label}: ${props.count}`}
       class={cx(
         styles().queryStatusTag,
         !showLabel() &&
@@ -1814,6 +1815,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
         </div>
       </Show>
       <span
+        aria-hidden="true"
         class={cx(
           css`
             width: ${tokens.size[1.5]};
@@ -2076,6 +2078,7 @@ const QueryDetails = () => {
             disabled={statusLabel() === 'fetching'}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.blue[600], colors.blue[400])};
               `}
@@ -2100,6 +2103,7 @@ const QueryDetails = () => {
             disabled={queryStatus() === 'pending'}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.yellow[600], colors.yellow[400])};
               `}
@@ -2124,6 +2128,7 @@ const QueryDetails = () => {
             disabled={queryStatus() === 'pending'}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.gray[600], colors.gray[400])};
               `}
@@ -2149,6 +2154,7 @@ const QueryDetails = () => {
             disabled={statusLabel() === 'fetching'}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.pink[500], colors.pink[400])};
               `}
@@ -2198,6 +2204,7 @@ const QueryDetails = () => {
             }}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.cyan[500], colors.cyan[400])};
               `}
@@ -2227,6 +2234,7 @@ const QueryDetails = () => {
               disabled={queryStatus() === 'pending'}
             >
               <span
+                aria-hidden="true"
                 class={css`
                   background-color: ${t(colors.red[500], colors.red[400])};
                 `}
@@ -2245,6 +2253,7 @@ const QueryDetails = () => {
               )}
             >
               <span
+                aria-hidden="true"
                 class={css`
                   background-color: ${tokens.colors.red[400]};
                 `}
