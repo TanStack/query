@@ -417,6 +417,13 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
+  let closeBtnRef!: HTMLButtonElement
+
+  // Focus the close button when the panel opens for screen reader accessibility
+  onMount(() => {
+    closeBtnRef.focus()
+  })
+
   const [isResizing, setIsResizing] = createSignal(false)
 
   const position = createMemo(
@@ -583,14 +590,68 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
       aria-label="Tanstack query devtools"
     >
       <div
+        role="separator"
+        aria-orientation={
+          position() === 'top' || position() === 'bottom'
+            ? 'horizontal'
+            : 'vertical'
+        }
+        aria-label="Resize devtools panel"
+        aria-valuenow={
+          position() === 'top' || position() === 'bottom'
+            ? Number(props.localStore.height || DEFAULT_HEIGHT)
+            : Number(props.localStore.width || DEFAULT_WIDTH)
+        }
+        tabindex="0"
         class={cx(
           styles().dragHandle,
           styles()[`dragHandle-position-${position()}`],
           'tsqd-drag-handle',
         )}
         onMouseDown={handleDragStart}
+        onKeyDown={(e) => {
+          const step = 10
+          const minHeight = convertRemToPixels(3.5)
+          const minWidth = convertRemToPixels(12)
+          if (position() === 'top' || position() === 'bottom') {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+              e.preventDefault()
+              const currentHeight = Number(
+                props.localStore.height || DEFAULT_HEIGHT,
+              )
+              const delta =
+                position() === 'bottom'
+                  ? e.key === 'ArrowUp'
+                    ? step
+                    : -step
+                  : e.key === 'ArrowDown'
+                    ? step
+                    : -step
+              const newHeight = Math.max(minHeight, currentHeight + delta)
+              props.setLocalStore('height', String(newHeight))
+            }
+          } else {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+              e.preventDefault()
+              const currentWidth = Number(
+                props.localStore.width || DEFAULT_WIDTH,
+              )
+              const delta =
+                position() === 'right'
+                  ? e.key === 'ArrowLeft'
+                    ? step
+                    : -step
+                  : e.key === 'ArrowRight'
+                    ? step
+                    : -step
+              const newWidth = Math.max(minWidth, currentWidth + delta)
+              props.setLocalStore('width', String(newWidth))
+            }
+          }
+        }}
       ></div>
       <button
+        ref={closeBtnRef}
         aria-label="Close tanstack query devtools"
         class={cx(
           styles().closeBtn,
@@ -796,6 +857,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             <RadioGroup.Root
               class={cx(styles().viewToggle)}
               value={selectedView()}
+              aria-label="Toggle between queries and mutations view"
               onChange={(value) => {
                 setSelectedView(value as 'queries' | 'mutations')
                 setSelectedQueryHash(null)
@@ -869,6 +931,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                 <select
                   value={sort()}
                   name="tsqd-queries-filter-sort"
+                  aria-label="Sort queries by"
                   onChange={(e) => {
                     props.setLocalStore('sort', e.currentTarget.value)
                   }}
@@ -882,6 +945,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                 <select
                   value={mutationSort()}
                   name="tsqd-mutations-filter-sort"
+                  aria-label="Sort mutations by"
                   onChange={(e) => {
                     props.setLocalStore('mutationSort', e.currentTarget.value)
                   }}
@@ -1212,10 +1276,10 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                           styles().settingsMenu,
                           'tsqd-settings-submenu',
                         )}
-                        aria-label="Hide disabled queries setting"
                       >
                         <DropdownMenu.RadioGroup
                           value={props.localStore.hideDisabledQueries}
+                          aria-label="Hide disabled queries setting"
                           onChange={(value) =>
                             props.setLocalStore('hideDisabledQueries', value)
                           }
@@ -1409,7 +1473,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
             styles().selectedQueryRow,
           'tsqd-query-row',
         )}
-        aria-label={`Query key ${props.query.queryHash}`}
+        aria-label={`Query key ${props.query.queryHash}${isDisabled() ? ', disabled' : ''}${isStatic() ? ', static' : ''}`}
       >
         <div
           class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
@@ -1418,10 +1482,10 @@ const QueryRow: Component<{ query: Query }> = (props) => {
         </div>
         <code class="tsqd-query-hash">{props.query.queryHash}</code>
         <Show when={isDisabled()}>
-          <div class="tsqd-query-disabled-indicator">disabled</div>
+          <div class="tsqd-query-disabled-indicator" aria-hidden="true">disabled</div>
         </Show>
         <Show when={isStatic()}>
-          <div class="tsqd-query-static-indicator">static</div>
+          <div class="tsqd-query-static-indicator" aria-hidden="true">static</div>
         </Show>
       </button>
     </Show>
@@ -1942,7 +2006,7 @@ const QueryDetails = () => {
       <div
         class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
       >
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Query Details
         </div>
         <div
@@ -1975,7 +2039,7 @@ const QueryDetails = () => {
             </span>
           </div>
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Actions
         </div>
         <div
@@ -2172,6 +2236,7 @@ const QueryDetails = () => {
               Trigger Error
               <select
                 disabled={queryStatus() === 'pending'}
+                aria-label="Select error type to trigger"
                 onChange={(e) => {
                   const errorType = errorTypes().find(
                     (et) => et.name === e.currentTarget.value,
@@ -2191,7 +2256,7 @@ const QueryDetails = () => {
             </div>
           </Show>
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Data {dataMode() === 'view' ? 'Explorer' : 'Editor'}
         </div>
         <Show when={dataMode() === 'view'}>
@@ -2235,6 +2300,7 @@ const QueryDetails = () => {
           >
             <textarea
               name="data"
+              aria-label="Edit query data as JSON"
               class={styles().devtoolsEditTextarea}
               onFocus={() => setDataEditError(false)}
               data-error={dataEditError()}
@@ -2271,7 +2337,7 @@ const QueryDetails = () => {
             </div>
           </form>
         </Show>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Query Explorer
         </div>
         <div
@@ -2356,7 +2422,7 @@ const MutationDetails = () => {
       <div
         class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
       >
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Mutation Details
         </div>
         <div
@@ -2395,7 +2461,7 @@ const MutationDetails = () => {
             </span>
           </div>
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Variables Details
         </div>
         <div
@@ -2410,7 +2476,7 @@ const MutationDetails = () => {
             value={activeMutation()!.state.variables}
           />
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Context Details
         </div>
         <div
@@ -2425,7 +2491,7 @@ const MutationDetails = () => {
             value={activeMutation()!.state.context}
           />
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Data Explorer
         </div>
         <div
@@ -2440,7 +2506,7 @@ const MutationDetails = () => {
             value={activeMutation()!.state.data}
           />
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Mutations Explorer
         </div>
         <div
@@ -2895,6 +2961,15 @@ const stylesFactory = (
       position: absolute;
       transition: background-color 0.125s ease;
       &:hover {
+        background-color: ${colors.purple[400]}${t('', alpha[90])};
+      }
+      &:focus {
+        outline: none;
+        background-color: ${colors.purple[400]}${t('', alpha[90])};
+      }
+      &:focus-visible {
+        outline: 2px solid ${colors.blue[800]};
+        outline-offset: -2px;
         background-color: ${colors.purple[400]}${t('', alpha[90])};
       }
       z-index: 4;
