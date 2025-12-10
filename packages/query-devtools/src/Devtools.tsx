@@ -1482,10 +1482,14 @@ const QueryRow: Component<{ query: Query }> = (props) => {
         </div>
         <code class="tsqd-query-hash">{props.query.queryHash}</code>
         <Show when={isDisabled()}>
-          <div class="tsqd-query-disabled-indicator" aria-hidden="true">disabled</div>
+          <div class="tsqd-query-disabled-indicator" aria-hidden="true">
+            disabled
+          </div>
         </Show>
         <Show when={isStatic()}>
-          <div class="tsqd-query-static-indicator" aria-hidden="true">static</div>
+          <div class="tsqd-query-static-indicator" aria-hidden="true">
+            static
+          </div>
         </Show>
       </button>
     </Show>
@@ -2006,7 +2010,11 @@ const QueryDetails = () => {
       <div
         class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
       >
-        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Query Details
         </div>
         <div
@@ -2039,7 +2047,11 @@ const QueryDetails = () => {
             </span>
           </div>
         </div>
-        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Actions
         </div>
         <div
@@ -2256,7 +2268,11 @@ const QueryDetails = () => {
             </div>
           </Show>
         </div>
-        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Data {dataMode() === 'view' ? 'Explorer' : 'Editor'}
         </div>
         <Show when={dataMode() === 'view'}>
@@ -2337,7 +2353,11 @@ const QueryDetails = () => {
             </div>
           </form>
         </Show>
-        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Query Explorer
         </div>
         <div
@@ -2422,7 +2442,11 @@ const MutationDetails = () => {
       <div
         class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
       >
-        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Mutation Details
         </div>
         <div
@@ -2461,7 +2485,11 @@ const MutationDetails = () => {
             </span>
           </div>
         </div>
-        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Variables Details
         </div>
         <div
@@ -2476,7 +2504,11 @@ const MutationDetails = () => {
             value={activeMutation()!.state.variables}
           />
         </div>
-        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Context Details
         </div>
         <div
@@ -2491,7 +2523,11 @@ const MutationDetails = () => {
             value={activeMutation()!.state.context}
           />
         </div>
-        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Data Explorer
         </div>
         <div
@@ -2506,7 +2542,11 @@ const MutationDetails = () => {
             value={activeMutation()!.state.data}
           />
         </div>
-        <div role="heading" aria-level="2" class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Mutations Explorer
         </div>
         <div
