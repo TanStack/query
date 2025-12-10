@@ -597,6 +597,11 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
             : 'vertical'
         }
         aria-label="Resize devtools panel"
+        aria-valuemin={
+          position() === 'top' || position() === 'bottom'
+            ? convertRemToPixels(3.5)
+            : convertRemToPixels(12)
+        }
         aria-valuenow={
           position() === 'top' || position() === 'bottom'
             ? Number(props.localStore.height || DEFAULT_HEIGHT)
