@@ -487,7 +487,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
         setIsResizing(false)
       }
       document.removeEventListener('mousemove', runDrag, false)
-      document.removeEventListener('mouseUp', unsubscribe, false)
+      document.removeEventListener('mouseup', unsubscribe, false)
     }
 
     document.addEventListener('mousemove', runDrag, false)
