@@ -10,8 +10,8 @@
   "dependencies": {
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.91.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.0.2",
+    "react-dom": "^19.0.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.14",

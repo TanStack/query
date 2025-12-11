@@ -14,8 +14,8 @@
     "@tanstack/react-query-devtools": "^5.91.1",
     "@tanstack/react-query-persist-client": "^5.90.14",
     "msw": "^2.6.6",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.0.2",
+    "react-dom": "^19.0.2",
     "react-hot-toast": "^2.5.2"
   },
   "devDependencies": {

@@ -10,9 +10,9 @@
   "dependencies": {
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.91.1",
-    "next": "^16.0.7",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
+    "next": "^16.0.9",
+   "react": "^19.2.2",
+    "react-dom": "^19.2.2",
     "react-intersection-observer": "^9.16.0"
   },
   "devDependencies": {
