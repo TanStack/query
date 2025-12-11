@@ -1,5 +1,10 @@
 import { addConsumeAwareSignal, addToEnd } from './utils'
-import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
+import type {
+  OmitKeyof,
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+} from './types'
 
 type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
   streamFn: (
@@ -74,10 +79,17 @@ export function streamedQuery<
     let result = initialValue
 
     let cancelled = false
-    const streamFnContext = { ...context }
-    addConsumeAwareSignal(
-      streamFnContext,
-      context.signal,
+    const streamFnContext = addConsumeAwareSignal<
+      OmitKeyof<typeof context, 'signal'>
+    >(
+      {
+        client: context.client,
+        meta: context.meta,
+        queryKey: context.queryKey,
+        pageParam: context.pageParam,
+        direction: context.direction,
+      },
+      () => context.signal,
       () => (cancelled = true),
     )
 

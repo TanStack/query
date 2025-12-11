@@ -456,7 +456,7 @@ describe('streamedQuery', () => {
 
     expect(queryClient.getQueryState(key)).toMatchObject({
       status: 'success',
-      fetchStatus: 'idle',
+      fetchStatus: 'fetching',
       data: [0, 1],
     })
   })

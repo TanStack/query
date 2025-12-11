@@ -30,7 +30,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
         const addSignalProperty = (object: unknown) => {
           addConsumeAwareSignal(
             object,
-            context.signal,
+            () => context.signal,
             () => (cancelled = true),
           )
         }
