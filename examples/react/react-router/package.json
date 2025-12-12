@@ -20,8 +20,8 @@
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.79",
-    "@types/react-dom": "^18.2.25",
+    "@types/react": "^19.0.3",
+    "@types/react-dom": "^19.0.3",
     "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "5.8.3",
