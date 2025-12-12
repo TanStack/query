@@ -329,7 +329,12 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        streamFn: () => createAsyncNumberGenerator(3),
+        streamFn: (context) => {
+          // just consume the signal
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          const numbers = context.signal ? 3 : 0
+          return createAsyncNumberGenerator(numbers)
+        },
         refetchMode: 'append',
       }),
     })
@@ -417,6 +422,42 @@ describe('streamedQuery', () => {
       status: 'success',
       fetchStatus: 'idle',
       data: [0],
+    })
+  })
+
+  test('should not abort when signal not consumed', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        streamFn: () => createAsyncNumberGenerator(3),
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(60)
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0],
+    })
+
+    unsubscribe()
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0, 1],
     })
   })
 
