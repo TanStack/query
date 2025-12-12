@@ -12,8 +12,8 @@
     "@tanstack/react-query-devtools": "^5.91.1",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
-    "react": "^19.0.2",
-    "react-dom": "^19.0.2"
+    "react": "^19.0.3",
+    "react-dom": "^19.0.3"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

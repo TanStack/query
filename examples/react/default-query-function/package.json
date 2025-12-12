@@ -10,8 +10,8 @@
   "dependencies": {
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.91.1",
-     "react": "^19.0.2",
-    "react-dom": "^19.0.2"
+    "react": "^19.0.3",
+    "react-dom": "^19.0.3"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
