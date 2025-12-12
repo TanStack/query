@@ -472,11 +472,12 @@ export function addConsumeAwareSignal<T>(
   onCancelled: VoidFunction,
 ): T & { signal: AbortSignal } {
   let consumed = false
+  let signal: AbortSignal | undefined
 
   Object.defineProperty(object, 'signal', {
     enumerable: true,
     get: () => {
-      const signal = getSignal()
+      signal ??= getSignal()
       if (consumed) {
         return signal
       }
