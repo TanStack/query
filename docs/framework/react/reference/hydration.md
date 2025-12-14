@@ -114,6 +114,8 @@ function App() {
 
 > Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
 
+> Note: `HydrationBoundary` automatically prevents unnecessary refetching during hydration. Queries being hydrated will not trigger a refetch on mount, unless `refetchOnMount` is explicitly set to `'always'`.
+
 **Options**
 
 - `state: DehydratedState`

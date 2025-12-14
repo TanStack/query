@@ -14,6 +14,11 @@ import type { QueryClient } from './queryClient'
 import type { Query, QueryState } from './query'
 import type { Mutation, MutationState } from './mutation'
 
+// WeakSet to track queries that are pending hydration
+// Used to prevent double-fetching when HydrationBoundary defers hydration to useEffect
+export const pendingHydrationQueries: WeakSet<Query<any, any, any, any>> =
+  new WeakSet()
+
 // TYPES
 type TransformerFn = (data: any) => any
 function defaultTransformerFn(data: any): any {
