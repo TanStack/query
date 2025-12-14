@@ -480,4 +480,62 @@ describe('React hydration', () => {
     prefetchQueryClient.clear()
     clientQueryClient.clear()
   })
+
+  test('should not refetch when query has enabled set to false', async () => {
+    const queryFn = vi.fn()
+    const queryClient = new QueryClient()
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['string'],
+        queryFn,
+        enabled: false,
+      })
+      return <div>{JSON.stringify(data)}</div>
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={JSON.parse(stringifiedState)}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
+
+    queryClient.clear()
+  })
+
+  test('should not refetch when query has staleTime set to Infinity', async () => {
+    const queryFn = vi.fn()
+    const queryClient = new QueryClient()
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['string'],
+        queryFn,
+        staleTime: Infinity,
+      })
+      return <div>{JSON.stringify(data)}</div>
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={JSON.parse(stringifiedState)}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
+
+    queryClient.clear()
+  })
 })
