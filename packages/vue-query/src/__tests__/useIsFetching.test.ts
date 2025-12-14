@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { onScopeDispose, reactive } from 'vue-demi'
+import { onScopeDispose, reactive, ref } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
@@ -65,21 +65,35 @@ describe('useIsFetching', () => {
   })
 
   test('should properly update filters', async () => {
-    const filter = reactive({ stale: false })
+    const filter = reactive({ stale: false, queryKey: ['isFetchingFilter'] })
     useQuery({
-      queryKey: ['isFetching'],
-      queryFn: () =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            return resolve('Some data')
-          }, 100)
-        }),
+      queryKey: ['isFetchingFilter'],
+      queryFn: () => sleep(10).then(() => 'Some data'),
     })
     const isFetching = useIsFetching(filter)
 
     expect(isFetching.value).toStrictEqual(0)
 
     filter.stale = true
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(isFetching.value).toStrictEqual(1)
+  })
+
+  test('should work with options getter and be reactive', async () => {
+    const staleRef = ref(false)
+    useQuery({
+      queryKey: ['isFetchingGetter'],
+      queryFn: () => sleep(10).then(() => 'Some data'),
+    })
+    const isFetching = useIsFetching(() => ({
+      stale: staleRef.value,
+      queryKey: ['isFetchingGetter'],
+    }))
+
+    expect(isFetching.value).toStrictEqual(0)
+
+    staleRef.value = true
     await vi.advanceTimersByTimeAsync(0)
 
     expect(isFetching.value).toStrictEqual(1)
