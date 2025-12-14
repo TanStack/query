@@ -502,8 +502,9 @@ describe('React hydration', () => {
       </QueryClientProvider>,
     )
 
-    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
 
+    await vi.advanceTimersByTimeAsync(11)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
 
@@ -531,8 +532,9 @@ describe('React hydration', () => {
       </QueryClientProvider>,
     )
 
-    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
 
+    await vi.advanceTimersByTimeAsync(11)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
 
