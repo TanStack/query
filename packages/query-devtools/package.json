@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.91.0",
+  "version": "5.91.1",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/query-devtools"
   },
   "homepage": "https://tanstack.com/query",

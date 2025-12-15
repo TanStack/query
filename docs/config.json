@@ -957,11 +957,39 @@
             },
             {
               "label": "Functions / createQuery",
-              "to": "framework/svelte/reference/functions/createquery"
+              "to": "framework/svelte/reference/functions/createQuery"
+            },
+            {
+              "label": "Functions / createQueries",
+              "to": "framework/svelte/reference/functions/createQueries"
+            },
+            {
+              "label": "Functions / createInfiniteQuery",
+              "to": "framework/svelte/reference/functions/createInfiniteQuery"
             },
             {
               "label": "Functions / createMutation",
-              "to": "framework/svelte/reference/functions/createmutation"
+              "to": "framework/svelte/reference/functions/createMutation"
+            },
+            {
+              "label": "Functions / useIsFetching",
+              "to": "framework/svelte/reference/functions/useIsFetching"
+            },
+            {
+              "label": "Functions / useIsMutating",
+              "to": "framework/svelte/reference/functions/useIsMutating"
+            },
+            {
+              "label": "Functions / useMutationState",
+              "to": "framework/svelte/reference/functions/useMutationState"
+            },
+            {
+              "label": "Functions / queryOptions",
+              "to": "framework/svelte/reference/functions/queryOptions"
+            },
+            {
+              "label": "Functions / infiniteQueryOptions",
+              "to": "framework/svelte/reference/functions/infiniteQueryOptions"
             }
           ]
         },
@@ -974,11 +1002,11 @@
             },
             {
               "label": "Functions / injectQuery",
-              "to": "framework/angular/reference/functions/injectquery"
+              "to": "framework/angular/reference/functions/injectQuery"
             },
             {
               "label": "Functions / injectMutation",
-              "to": "framework/angular/reference/functions/injectmutation"
+              "to": "framework/angular/reference/functions/injectMutation"
             }
           ]
         }

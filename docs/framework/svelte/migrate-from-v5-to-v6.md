@@ -49,7 +49,8 @@ You previously needed to do some funky things with stores to achieve reactivity 
 + const query = createQuery(() => ({ // [!code ++]
     queryKey: ['refetch'],
     queryFn: async () => await fetch('/api/data').then((r) => r.json()),
-    refetchInterval: $intervalMs,
+-   refetchInterval: $intervalMs, // [!code --]
++   refetchInterval: intervalMs, // [!code ++]
 - }))) // [!code --]
 + })) // [!code ++]
 ```
