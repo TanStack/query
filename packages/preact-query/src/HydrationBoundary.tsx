@@ -9,6 +9,7 @@ import type {
   QueryClient,
 } from '@tanstack/query-core'
 import { useEffect, useMemo, useRef } from 'preact/hooks'
+import { ComponentChildren } from 'preact'
 
 export interface HydrationBoundaryProps {
   state: DehydratedState | null | undefined
@@ -18,7 +19,7 @@ export interface HydrationBoundaryProps {
       'mutations'
     >
   }
-  children?: React.ReactNode
+  children?: ComponentChildren
   queryClient?: QueryClient
 }
 
@@ -107,5 +108,5 @@ export const HydrationBoundary = ({
     }
   }, [client, hydrationQueue])
 
-  return children as React.ReactElement
+  return children as ComponentChildren
 }
