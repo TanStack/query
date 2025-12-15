@@ -510,7 +510,6 @@ describe('streamedQuery', () => {
           yield* v
         },
         reducer: (oldStream, newChunk) => {
-          console.log('reducer', oldStream, newChunk)
           arr.push(newChunk)
           return [...oldStream, newChunk]
         },
@@ -523,14 +522,14 @@ describe('streamedQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(arr).toEqual([1, 1, 2, 2, 3, 3])
+    expect(arr).toEqual([1, 2, 3 ])
     expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
 
     void observer.refetch()
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(arr).toEqual([1, 1, 2, 2, 3, 3, 1, 1, 2, 2, 3, 3])
+    expect(arr).toEqual([1, 2, 3, 1, 2, 3])
     expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
 
     unsubscribe()
