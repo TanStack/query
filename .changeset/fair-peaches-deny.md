@@ -1,5 +1,5 @@
 ---
-'@tanstack/query-core': major
+'@tanstack/query-core': patch
 ---
 
 Fix streamedQuery reducer being called twice
