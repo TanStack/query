@@ -522,7 +522,7 @@ describe('streamedQuery', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(arr).toEqual([1, 2, 3 ])
+    expect(arr).toEqual([1, 2, 3])
     expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
 
     void observer.refetch()
