@@ -609,11 +609,11 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.91.2
@@ -643,14 +643,14 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -677,11 +677,11 @@ importers:
         specifier: ^5.90.14
         version: link:../../../packages/react-query-persist-client
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.91.2
@@ -717,11 +717,11 @@ importers:
         specifier: ^7.1.2
         version: 7.1.2(graphql@16.9.0)
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
@@ -739,11 +739,11 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.0.14
@@ -770,11 +770,11 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
@@ -795,11 +795,11 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
@@ -826,11 +826,11 @@ importers:
         specifier: ^5.90.14
         version: link:../../../packages/react-query-persist-client
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.91.2
@@ -860,14 +860,14 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -888,17 +888,17 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
       react-intersection-observer:
         specifier: ^9.16.0
-        version: 9.16.0(react-dom@19.2.2(react@19.2.2))(react@19.2.2)
+        version: 9.16.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -919,14 +919,14 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -947,14 +947,14 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -978,14 +978,14 @@ importers:
         specifier: ^5.91.0
         version: link:../../../packages/react-query-next-experimental
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -1004,7 +1004,7 @@ importers:
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
-        version: 3.7.4(react-dom@19.2.2(react@19.2.2))(react@19.2.2)
+        version: 3.7.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@tanstack/react-query':
         specifier: ^5.90.12
         version: link:../../../packages/react-query
@@ -1018,14 +1018,14 @@ importers:
         specifier: ^2.6.6
         version: 2.6.6(@types/node@22.15.3)(typescript@5.8.3)
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
       react-hot-toast:
         specifier: ^2.5.2
-        version: 2.5.2(react-dom@19.2.2(react@19.2.2))(react@19.2.2)
+        version: 2.5.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
@@ -1046,14 +1046,14 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -1074,14 +1074,14 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -1102,14 +1102,14 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -1130,11 +1130,11 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
@@ -1155,14 +1155,14 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       next:
-        specifier: ^16.0.9
-        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0)
+        specifier: ^16.0.10
+        version: 16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       react:
-        specifier: ^19.2.2
-        version: 19.2.2
+        specifier: ^19.2.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.2.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -1178,13 +1178,13 @@ importers:
     dependencies:
       '@react-native-community/netinfo':
         specifier: ^11.4.1
-        version: 11.4.1(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))
+        version: 11.4.1(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))
       '@react-navigation/native':
         specifier: ^6.1.18
-        version: 6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+        version: 6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       '@react-navigation/stack':
         specifier: ^6.4.1
-        version: 6.4.1(b57ace11787a882a3a9950e2e2462a74)
+        version: 6.4.1(abea15034c49897ea04d949d1e424fa0)
       '@tanstack/react-query':
         specifier: ^5.90.12
         version: link:../../../packages/react-query
@@ -1193,37 +1193,37 @@ importers:
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^52.0.11
-        version: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+        version: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       expo-constants:
         specifier: ^17.0.3
-        version: 17.0.3(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))
+        version: 17.0.3(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))
       expo-status-bar:
         specifier: ^2.0.0
-        version: 2.0.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+        version: 2.0.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-native:
         specifier: ^0.76.3
-        version: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+        version: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
       react-native-gesture-handler:
         specifier: ^2.20.2
-        version: 2.20.2(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+        version: 2.20.2(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       react-native-paper:
         specifier: ^5.12.5
-        version: 5.12.5(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native-vector-icons@10.1.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+        version: 5.12.5(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native-vector-icons@10.1.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       react-native-reanimated:
         specifier: ^3.16.2
-        version: 3.16.2(@babel/core@7.27.1)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+        version: 3.16.2(@babel/core@7.27.1)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       react-native-safe-area-context:
         specifier: ^4.12.0
-        version: 4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+        version: 4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       react-native-screens:
         specifier: ^4.1.0
-        version: 4.1.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+        version: 4.1.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       react-native-web:
         specifier: ^0.19.13
-        version: 0.19.13(encoding@0.1.13)(react-dom@19.2.3(react@19.2.2))(react@19.2.2)
+        version: 0.19.13(encoding@0.1.13)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@babel/core':
         specifier: ^7.24.9
@@ -1250,20 +1250,20 @@ importers:
         specifier: ^6.3.4
         version: 6.3.4
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
       react-router:
         specifier: ^6.25.1
-        version: 6.25.1(react@19.2.2)
+        version: 6.25.1(react@19.2.3)
       react-router-dom:
         specifier: ^6.25.1
-        version: 6.25.1(react-dom@19.2.2(react@19.2.2))(react@19.2.2)
+        version: 6.25.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       rooks:
         specifier: ^8.0.0
-        version: 8.0.0(react-dom@19.2.2(react@19.2.2))(react@19.2.2)
+        version: 8.0.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       sort-by:
         specifier: ^1.2.0
         version: 1.2.0
@@ -1296,17 +1296,17 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
       react-router:
         specifier: ^6.25.1
-        version: 6.25.1(react@19.2.2)
+        version: 6.25.1(react@19.2.3)
       react-router-dom:
         specifier: ^6.25.1
-        version: 6.25.1(react-dom@19.2.2(react@19.2.2))(react@19.2.2)
+        version: 6.25.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.13
@@ -1333,11 +1333,11 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@types/react':
         specifier: ^19.0.1
@@ -1364,11 +1364,11 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
@@ -1389,17 +1389,17 @@ importers:
         specifier: ^5.91.1
         version: link:../../../packages/react-query-devtools
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
       react-router:
         specifier: ^6.25.1
-        version: 6.25.1(react@19.2.2)
+        version: 6.25.1(react@19.2.3)
       react-router-dom:
         specifier: ^6.25.1
-        version: 6.25.1(react-dom@19.2.2(react@19.2.2))(react@19.2.2)
+        version: 6.25.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.13
@@ -1429,14 +1429,14 @@ importers:
         specifier: ^4.7.0
         version: 4.7.0
       react:
-        specifier: ^19.0.2
-        version: 19.2.2
+        specifier: ^19.0.3
+        version: 19.2.3
       react-dom:
-        specifier: ^19.0.2
-        version: 19.2.2(react@19.2.2)
+        specifier: ^19.0.3
+        version: 19.2.3(react@19.2.3)
       react-error-boundary:
         specifier: ^4.1.2
-        version: 4.1.2(react@19.2.2)
+        version: 4.1.2(react@19.2.3)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
@@ -13141,11 +13141,6 @@ packages:
     peerDependencies:
       react: ^19.2.1
 
-  react-dom@19.2.2:
-    resolution: {integrity: sha512-fhyD2BLrew6qYf4NNtHff1rLXvzR25rq49p+FeqByOazc6TcSi2n8EYulo5C1PbH+1uBW++5S1SG7FcUU6mlDg==}
-    peerDependencies:
-      react: ^19.2.2
-
   react-dom@19.2.3:
     resolution: {integrity: sha512-yELu4WmLPw5Mr/lmeEpox5rw3RETacE++JgHqQzd2dg+YbJuat3jH4ingc+WPZhxaoFzdv9y33G+F7Nl5O0GBg==}
     peerDependencies:
@@ -13269,10 +13264,6 @@ packages:
 
   react@19.2.1:
     resolution: {integrity: sha512-DGrYcCWK7tvYMnWh79yrPHt+vdx9tY+1gPZa7nJQtO/p8bLTDaHp4dzwEhQB7pZ4Xe3ok4XKuEPrVuc+wlpkmw==}
-    engines: {node: '>=0.10.0'}
-
-  react@19.2.2:
-    resolution: {integrity: sha512-BdOGOY8OKRBcgoDkwqA8Q5XvOIhoNx/Sh6BnGJlet2Abt0X5BK0BDrqGyQgLhAVjD2nAg5f6o01u/OPUhG022Q==}
     engines: {node: '>=0.10.0'}
 
   react@19.2.3:
@@ -17271,11 +17262,11 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
 
-  '@callstack/react-theme-provider@3.0.9(react@19.2.2)':
+  '@callstack/react-theme-provider@3.0.9(react@19.2.3)':
     dependencies:
       deepmerge: 3.3.0
       hoist-non-react-statics: 3.3.2
-      react: 19.2.2
+      react: 19.2.3
 
   '@changesets/apply-release-plan@7.0.14':
     dependencies:
@@ -19605,9 +19596,9 @@ snapshots:
       - encoding
     optional: true
 
-  '@react-native-community/netinfo@11.4.1(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))':
+  '@react-native-community/netinfo@11.4.1(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))':
     dependencies:
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
 
   '@react-native/assets-registry@0.76.3': {}
 
@@ -19744,55 +19735,55 @@ snapshots:
 
   '@react-native/normalize-colors@0.76.3': {}
 
-  '@react-native/virtualized-lists@0.76.3(@types/react@19.0.1)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)':
+  '@react-native/virtualized-lists@0.76.3(@types/react@19.0.1)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)':
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
     optionalDependencies:
       '@types/react': 19.0.1
 
-  '@react-navigation/core@6.4.17(react@19.2.2)':
+  '@react-navigation/core@6.4.17(react@19.2.3)':
     dependencies:
       '@react-navigation/routers': 6.1.9
       escape-string-regexp: 4.0.0
       nanoid: 3.3.11
       query-string: 7.1.3
-      react: 19.2.2
+      react: 19.2.3
       react-is: 16.13.1
-      use-latest-callback: 0.2.1(react@19.2.2)
+      use-latest-callback: 0.2.1(react@19.2.3)
 
-  '@react-navigation/elements@1.3.31(@react-navigation/native@6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)':
+  '@react-navigation/elements@1.3.31(@react-navigation/native@6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@react-navigation/native': 6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
-      react-native-safe-area-context: 4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+      '@react-navigation/native': 6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
+      react-native-safe-area-context: 4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
 
-  '@react-navigation/native@6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)':
+  '@react-navigation/native@6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@react-navigation/core': 6.4.17(react@19.2.2)
+      '@react-navigation/core': 6.4.17(react@19.2.3)
       escape-string-regexp: 4.0.0
       fast-deep-equal: 3.1.3
       nanoid: 3.3.11
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
 
   '@react-navigation/routers@6.1.9':
     dependencies:
       nanoid: 3.3.11
 
-  '@react-navigation/stack@6.4.1(b57ace11787a882a3a9950e2e2462a74)':
+  '@react-navigation/stack@6.4.1(abea15034c49897ea04d949d1e424fa0)':
     dependencies:
-      '@react-navigation/elements': 1.3.31(@react-navigation/native@6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
-      '@react-navigation/native': 6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+      '@react-navigation/elements': 1.3.31(@react-navigation/native@6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
+      '@react-navigation/native': 6.1.18(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       color: 4.2.3
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
-      react-native-gesture-handler: 2.20.2(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
-      react-native-safe-area-context: 4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
-      react-native-screens: 4.1.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
+      react-native-gesture-handler: 2.20.2(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
+      react-native-safe-area-context: 4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
+      react-native-screens: 4.1.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       warn-once: 0.1.1
 
   '@remix-run/router@1.18.0': {}
@@ -20463,12 +20454,12 @@ snapshots:
     dependencies:
       remove-accents: 0.5.0
 
-  '@tanstack/react-location@3.7.4(react-dom@19.2.2(react@19.2.2))(react@19.2.2)':
+  '@tanstack/react-location@3.7.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@babel/runtime': 7.26.10
       history: 5.3.0
-      react: 19.2.2
-      react-dom: 19.2.2(react@19.2.2)
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
 
   '@tanstack/router-utils@1.114.29':
     dependencies:
@@ -24084,43 +24075,43 @@ snapshots:
       jest-message-util: 29.7.0
       jest-util: 29.7.0
 
-  expo-asset@11.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2):
+  expo-asset@11.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3):
     dependencies:
       '@expo/image-utils': 0.6.3
-      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
-      expo-constants: 17.0.3(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))
+      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
+      expo-constants: 17.0.3(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))
       invariant: 2.2.4
       md5-file: 3.2.3
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
     transitivePeerDependencies:
       - supports-color
 
-  expo-constants@17.0.3(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)):
+  expo-constants@17.0.3(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)):
     dependencies:
       '@expo/config': 10.0.5
       '@expo/env': 0.4.0
-      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
     transitivePeerDependencies:
       - supports-color
 
-  expo-file-system@18.0.4(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)):
+  expo-file-system@18.0.4(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)):
     dependencies:
-      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
       web-streams-polyfill: 3.3.3
 
-  expo-font@13.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react@19.2.2):
+  expo-font@13.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react@19.2.3):
     dependencies:
-      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       fontfaceobserver: 2.3.0
-      react: 19.2.2
+      react: 19.2.3
 
-  expo-keep-awake@14.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react@19.2.2):
+  expo-keep-awake@14.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react@19.2.3):
     dependencies:
-      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
-      react: 19.2.2
+      expo: 52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
+      react: 19.2.3
 
   expo-modules-autolinking@2.0.2:
     dependencies:
@@ -24137,12 +24128,12 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  expo-status-bar@2.0.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2):
+  expo-status-bar@2.0.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3):
     dependencies:
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
 
-  expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2):
+  expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3):
     dependencies:
       '@babel/runtime': 7.26.10
       '@expo/cli': 0.21.8(encoding@0.1.13)(graphql@16.9.0)
@@ -24152,16 +24143,16 @@ snapshots:
       '@expo/metro-config': 0.19.4
       '@expo/vector-icons': 14.0.2
       babel-preset-expo: 12.0.2(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))
-      expo-asset: 11.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
-      expo-constants: 17.0.3(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))
-      expo-file-system: 18.0.4(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))
-      expo-font: 13.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react@19.2.2)
-      expo-keep-awake: 14.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react@19.2.2)
+      expo-asset: 11.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
+      expo-constants: 17.0.3(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))
+      expo-file-system: 18.0.4(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))
+      expo-font: 13.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react@19.2.3)
+      expo-keep-awake: 14.0.1(expo@52.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(encoding@0.1.13)(graphql@16.9.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react@19.2.3)
       expo-modules-autolinking: 2.0.2
       expo-modules-core: 2.0.6
       fbemitter: 3.0.0(encoding@0.1.13)
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
       web-streams-polyfill: 3.3.3
       whatwg-url-without-unicode: 8.0.0-3
     transitivePeerDependencies:
@@ -27099,31 +27090,6 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.2(react@19.2.2))(react@19.2.2)(sass@1.88.0):
-    dependencies:
-      '@next/env': 16.0.10
-      '@swc/helpers': 0.5.15
-      caniuse-lite: 1.0.30001707
-      postcss: 8.4.31
-      react: 19.2.2
-      react-dom: 19.2.2(react@19.2.2)
-      styled-jsx: 5.1.6(react@19.2.2)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 16.0.10
-      '@next/swc-darwin-x64': 16.0.10
-      '@next/swc-linux-arm64-gnu': 16.0.10
-      '@next/swc-linux-arm64-musl': 16.0.10
-      '@next/swc-linux-x64-gnu': 16.0.10
-      '@next/swc-linux-x64-musl': 16.0.10
-      '@next/swc-win32-arm64-msvc': 16.0.10
-      '@next/swc-win32-x64-msvc': 16.0.10
-      babel-plugin-react-compiler: 0.0.0
-      sass: 1.88.0
-      sharp: 0.34.5
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-
   next@16.0.10(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0):
     dependencies:
       '@next/env': 16.0.10
@@ -27148,7 +27114,6 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
-    optional: true
 
   next@16.0.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.1))(react@19.2.1)(sass@1.88.0):
     dependencies:
@@ -28415,19 +28380,9 @@ snapshots:
       react: 19.2.1
       scheduler: 0.27.0
 
-  react-dom@19.2.2(react@19.2.2):
-    dependencies:
-      react: 19.2.2
-      scheduler: 0.27.0
-
   react-dom@19.2.3(react@19.2.1):
     dependencies:
       react: 19.2.1
-      scheduler: 0.27.0
-
-  react-dom@19.2.3(react@19.2.2):
-    dependencies:
-      react: 19.2.2
       scheduler: 0.27.0
 
   react-dom@19.2.3(react@19.2.3):
@@ -28440,27 +28395,27 @@ snapshots:
       '@babel/runtime': 7.26.10
       react: 19.2.1
 
-  react-error-boundary@4.1.2(react@19.2.2):
+  react-error-boundary@4.1.2(react@19.2.3):
     dependencies:
       '@babel/runtime': 7.26.10
-      react: 19.2.2
+      react: 19.2.3
 
-  react-freeze@1.0.4(react@19.2.2):
+  react-freeze@1.0.4(react@19.2.3):
     dependencies:
-      react: 19.2.2
+      react: 19.2.3
 
-  react-hot-toast@2.5.2(react-dom@19.2.2(react@19.2.2))(react@19.2.2):
+  react-hot-toast@2.5.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       csstype: 3.1.3
       goober: 2.1.16(csstype@3.1.3)
-      react: 19.2.2
-      react-dom: 19.2.2(react@19.2.2)
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
 
-  react-intersection-observer@9.16.0(react-dom@19.2.2(react@19.2.2))(react@19.2.2):
+  react-intersection-observer@9.16.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
-      react: 19.2.2
+      react: 19.2.3
     optionalDependencies:
-      react-dom: 19.2.2(react@19.2.2)
+      react-dom: 19.2.3(react@19.2.3)
 
   react-is@16.13.1: {}
 
@@ -28468,26 +28423,26 @@ snapshots:
 
   react-is@18.3.1: {}
 
-  react-native-gesture-handler@2.20.2(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2):
+  react-native-gesture-handler@2.20.2(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3):
     dependencies:
       '@egjs/hammerjs': 2.0.17
       hoist-non-react-statics: 3.3.2
       invariant: 2.2.4
       prop-types: 15.8.1
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
 
-  react-native-paper@5.12.5(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2))(react-native-vector-icons@10.1.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2):
+  react-native-paper@5.12.5(react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3))(react-native-vector-icons@10.1.0)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3):
     dependencies:
-      '@callstack/react-theme-provider': 3.0.9(react@19.2.2)
+      '@callstack/react-theme-provider': 3.0.9(react@19.2.3)
       color: 3.2.1
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
-      react-native-safe-area-context: 4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
+      react-native-safe-area-context: 4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       react-native-vector-icons: 10.1.0
-      use-latest-callback: 0.1.11(react@19.2.2)
+      use-latest-callback: 0.1.11(react@19.2.3)
 
-  react-native-reanimated@3.16.2(@babel/core@7.27.1)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2):
+  react-native-reanimated@3.16.2(@babel/core@7.27.1)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3):
     dependencies:
       '@babel/core': 7.27.1
       '@babel/plugin-transform-arrow-functions': 7.27.1(@babel/core@7.27.1)
@@ -28501,21 +28456,21 @@ snapshots:
       '@babel/preset-typescript': 7.24.7(@babel/core@7.27.1)
       convert-source-map: 2.0.0
       invariant: 2.2.4
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
     transitivePeerDependencies:
       - supports-color
 
-  react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2):
+  react-native-safe-area-context@4.12.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3):
     dependencies:
-      react: 19.2.2
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react: 19.2.3
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
 
-  react-native-screens@4.1.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2):
+  react-native-screens@4.1.0(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3):
     dependencies:
-      react: 19.2.2
-      react-freeze: 1.0.4(react@19.2.2)
-      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2)
+      react: 19.2.3
+      react-freeze: 1.0.4(react@19.2.3)
+      react-native: 0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3)
       warn-once: 0.1.1
 
   react-native-vector-icons@10.1.0:
@@ -28523,7 +28478,7 @@ snapshots:
       prop-types: 15.8.1
       yargs: 16.2.0
 
-  react-native-web@0.19.13(encoding@0.1.13)(react-dom@19.2.3(react@19.2.2))(react@19.2.2):
+  react-native-web@0.19.13(encoding@0.1.13)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       '@babel/runtime': 7.26.10
       '@react-native/normalize-colors': 0.74.86
@@ -28532,13 +28487,13 @@ snapshots:
       memoize-one: 6.0.0
       nullthrows: 1.1.1
       postcss-value-parser: 4.2.0
-      react: 19.2.2
-      react-dom: 19.2.3(react@19.2.2)
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
       styleq: 0.1.3
     transitivePeerDependencies:
       - encoding
 
-  react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2):
+  react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3):
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.76.3
@@ -28547,7 +28502,7 @@ snapshots:
       '@react-native/gradle-plugin': 0.76.3
       '@react-native/js-polyfills': 0.76.3
       '@react-native/normalize-colors': 0.76.3
-      '@react-native/virtualized-lists': 0.76.3(@types/react@19.0.1)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.2))(react@19.2.2)
+      '@react-native/virtualized-lists': 0.76.3(@types/react@19.0.1)(react-native@0.76.3(@babel/core@7.27.1)(@babel/preset-env@7.27.2(@babel/core@7.27.1))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@19.0.1)(encoding@0.1.13)(react@19.2.3))(react@19.2.3)
       abort-controller: 3.0.0
       anser: 1.4.10
       ansi-regex: 5.0.1
@@ -28569,7 +28524,7 @@ snapshots:
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
-      react: 19.2.2
+      react: 19.2.3
       react-devtools-core: 5.3.1
       react-refresh: 0.14.2
       regenerator-runtime: 0.13.11
@@ -28592,17 +28547,17 @@ snapshots:
 
   react-refresh@0.14.2: {}
 
-  react-router-dom@6.25.1(react-dom@19.2.2(react@19.2.2))(react@19.2.2):
+  react-router-dom@6.25.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       '@remix-run/router': 1.18.0
-      react: 19.2.2
-      react-dom: 19.2.2(react@19.2.2)
-      react-router: 6.25.1(react@19.2.2)
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+      react-router: 6.25.1(react@19.2.3)
 
-  react-router@6.25.1(react@19.2.2):
+  react-router@6.25.1(react@19.2.3):
     dependencies:
       '@remix-run/router': 1.18.0
-      react: 19.2.2
+      react: 19.2.3
 
   react@18.3.1:
     dependencies:
@@ -28611,8 +28566,6 @@ snapshots:
   react@19.0.0: {}
 
   react@19.2.1: {}
-
-  react@19.2.2: {}
 
   react@19.2.3: {}
 
@@ -29034,14 +28987,14 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.40.2
       fsevents: 2.3.3
 
-  rooks@8.0.0(react-dom@19.2.2(react@19.2.2))(react@19.2.2):
+  rooks@8.0.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       fast-deep-equal: 3.1.3
       lodash.debounce: 4.0.8
       raf: 3.4.1
-      react: 19.2.2
-      react-dom: 19.2.2(react@19.2.2)
-      use-sync-external-store: 1.5.0(react@19.2.2)
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+      use-sync-external-store: 1.5.0(react@19.2.3)
 
   rrweb-cssom@0.7.1: {}
 
@@ -29793,16 +29746,10 @@ snapshots:
       client-only: 0.0.1
       react: 19.2.1
 
-  styled-jsx@5.1.6(react@19.2.2):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.2.2
-
   styled-jsx@5.1.6(react@19.2.3):
     dependencies:
       client-only: 0.0.1
       react: 19.2.3
-    optional: true
 
   styleq@0.1.3: {}
 
@@ -30680,17 +30627,17 @@ snapshots:
       punycode: 1.4.1
       qs: 6.13.0
 
-  use-latest-callback@0.1.11(react@19.2.2):
+  use-latest-callback@0.1.11(react@19.2.3):
     dependencies:
-      react: 19.2.2
+      react: 19.2.3
 
-  use-latest-callback@0.2.1(react@19.2.2):
+  use-latest-callback@0.2.1(react@19.2.3):
     dependencies:
-      react: 19.2.2
+      react: 19.2.3
 
-  use-sync-external-store@1.5.0(react@19.2.2):
+  use-sync-external-store@1.5.0(react@19.2.3):
     dependencies:
-      react: 19.2.2
+      react: 19.2.3
 
   use@3.1.1: {}
 
