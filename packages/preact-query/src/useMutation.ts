@@ -1,5 +1,4 @@
 'use client'
-import * as React from 'react'
 import {
   MutationObserver,
   noop,
@@ -13,6 +12,11 @@ import type {
   UseMutationResult,
 } from './types'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
+import { useCallback, useEffect, useState } from 'preact/hooks'
+
+// TODO: We might need to use the useSyncExternalStore abstraction created in Preact/store
+// Since preact/compat adds additional overhead to the bundle and is not ideal
+import { useSyncExternalStore } from 'preact/compat'
 
 // HOOK
 
@@ -27,7 +31,7 @@ export function useMutation<
 ): UseMutationResult<TData, TError, TVariables, TOnMutateResult> {
   const client = useQueryClient(queryClient)
 
-  const [observer] = React.useState(
+  const [observer] = useState(
     () =>
       new MutationObserver<TData, TError, TVariables, TOnMutateResult>(
         client,
@@ -35,21 +39,20 @@ export function useMutation<
       ),
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     observer.setOptions(options)
   }, [observer, options])
 
-  const result = React.useSyncExternalStore(
-    React.useCallback(
+  const result = useSyncExternalStore(
+    useCallback(
       (onStoreChange) =>
         observer.subscribe(notifyManager.batchCalls(onStoreChange)),
       [observer],
     ),
     () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
   )
 
-  const mutate = React.useCallback<
+  const mutate = useCallback<
     UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(
     (variables, mutateOptions) => {

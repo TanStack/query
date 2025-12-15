@@ -1,5 +1,4 @@
 'use client'
-import * as React from 'react'
 
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
@@ -10,6 +9,11 @@ import type {
   MutationState,
   QueryClient,
 } from '@tanstack/query-core'
+import { useCallback, useEffect, useRef } from 'preact/hooks'
+
+// TODO: We might need to use the useSyncExternalStore abstraction created in Preact/store
+// since preact/compat adds additional overhead to the bundle and is not ideal
+import { useSyncExternalStore } from 'preact/compat'
 
 export function useIsMutating(
   filters?: MutationFilters,
@@ -44,18 +48,18 @@ export function useMutationState<TResult = MutationState>(
   queryClient?: QueryClient,
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
-  const optionsRef = React.useRef(options)
-  const result = React.useRef<Array<TResult>>(null)
+  const optionsRef = useRef(options)
+  const result = useRef<Array<TResult>>(null)
   if (result.current === null) {
     result.current = getResult(mutationCache, options)
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     optionsRef.current = options
   })
 
-  return React.useSyncExternalStore(
-    React.useCallback(
+  return useSyncExternalStore(
+    useCallback(
       (onStoreChange) =>
         mutationCache.subscribe(() => {
           const nextResult = replaceEqualDeep(
@@ -69,7 +73,6 @@ export function useMutationState<TResult = MutationState>(
         }),
       [mutationCache],
     ),
-    () => result.current,
     () => result.current,
   )!
 }

@@ -1,5 +1,4 @@
 'use client'
-import * as React from 'react'
 
 import { hydrate } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
@@ -9,6 +8,7 @@ import type {
   OmitKeyof,
   QueryClient,
 } from '@tanstack/query-core'
+import { useEffect, useMemo, useRef } from 'preact/hooks'
 
 export interface HydrationBoundaryProps {
   state: DehydratedState | null | undefined
@@ -30,8 +30,8 @@ export const HydrationBoundary = ({
 }: HydrationBoundaryProps) => {
   const client = useQueryClient(queryClient)
 
-  const optionsRef = React.useRef(options)
-  React.useEffect(() => {
+  const optionsRef = useRef(options)
+  useEffect(() => {
     optionsRef.current = options
   })
 
@@ -51,7 +51,7 @@ export const HydrationBoundary = ({
   // we throw away the fresh data for any existing ones to avoid unexpectedly
   // updating the UI.
   const hydrationQueue: DehydratedState['queries'] | undefined =
-    React.useMemo(() => {
+    useMemo(() => {
       if (state) {
         if (typeof state !== 'object') {
           return
@@ -101,7 +101,7 @@ export const HydrationBoundary = ({
       return undefined
     }, [client, state])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (hydrationQueue) {
       hydrate(client, { queries: hydrationQueue }, optionsRef.current)
     }

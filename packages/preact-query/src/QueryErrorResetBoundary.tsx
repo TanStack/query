@@ -1,5 +1,7 @@
 'use client'
-import * as React from 'react'
+
+import { ComponentChildren, createContext } from 'preact'
+import { useContext, useState } from 'preact/hooks'
 
 // CONTEXT
 export type QueryErrorResetFunction = () => void
@@ -27,27 +29,27 @@ function createValue(): QueryErrorResetBoundaryValue {
   }
 }
 
-const QueryErrorResetBoundaryContext = React.createContext(createValue())
+const QueryErrorResetBoundaryContext = createContext(createValue())
 
 // HOOK
 
 export const useQueryErrorResetBoundary = () =>
-  React.useContext(QueryErrorResetBoundaryContext)
+  useContext(QueryErrorResetBoundaryContext)
 
 // COMPONENT
 
 export type QueryErrorResetBoundaryFunction = (
   value: QueryErrorResetBoundaryValue,
-) => React.ReactNode
+) => ComponentChildren
 
 export interface QueryErrorResetBoundaryProps {
-  children: QueryErrorResetBoundaryFunction | React.ReactNode
+  children: QueryErrorResetBoundaryFunction | ComponentChildren
 }
 
 export const QueryErrorResetBoundary = ({
   children,
 }: QueryErrorResetBoundaryProps) => {
-  const [value] = React.useState(() => createValue())
+  const [value] = useState(() => createValue())
   return (
     <QueryErrorResetBoundaryContext.Provider value={value}>
       {typeof children === 'function' ? children(value) : children}

@@ -1,7 +1,9 @@
 'use client'
-import * as React from 'react'
 
-const IsRestoringContext = React.createContext(false)
+import { createContext } from 'preact'
+import { useContext } from 'preact/hooks'
 
-export const useIsRestoring = () => React.useContext(IsRestoringContext)
+const IsRestoringContext = createContext(false)
+
+export const useIsRestoring = () => useContext(IsRestoringContext)
 export const IsRestoringProvider = IsRestoringContext.Provider

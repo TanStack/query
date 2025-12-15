@@ -1,5 +1,4 @@
 'use client'
-import * as React from 'react'
 
 import { isServer, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
@@ -23,6 +22,11 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { UseBaseQueryOptions } from './types'
+import { useCallback, useEffect, useState } from 'preact/hooks'
+
+// TODO: We might need to use the useSyncExternalStore abstraction created in Preact/store
+// Since preact/compat adds additional overhead to the bundle and is not ideal
+import { useSyncExternalStore } from 'preact/compat'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -81,7 +85,7 @@ export function useBaseQuery<
     .getQueryCache()
     .get(defaultedOptions.queryHash)
 
-  const [observer] = React.useState(
+  const [observer] = useState(
     () =>
       new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
         client,
@@ -93,8 +97,8 @@ export function useBaseQuery<
   const result = observer.getOptimisticResult(defaultedOptions)
 
   const shouldSubscribe = !isRestoring && options.subscribed !== false
-  React.useSyncExternalStore(
-    React.useCallback(
+  useSyncExternalStore(
+    useCallback(
       (onStoreChange) => {
         const unsubscribe = shouldSubscribe
           ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
@@ -109,10 +113,9 @@ export function useBaseQuery<
       [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     observer.setOptions(defaultedOptions)
   }, [defaultedOptions, observer])
 

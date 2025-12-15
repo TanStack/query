@@ -3,7 +3,7 @@
 // Re-export core
 export * from '@tanstack/query-core'
 
-// React Query
+// Preact Query
 export * from './types'
 export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'

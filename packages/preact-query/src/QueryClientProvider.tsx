@@ -1,14 +1,15 @@
 'use client'
-import * as React from 'react'
 
 import type { QueryClient } from '@tanstack/query-core'
+import { ComponentChildren, createContext, VNode } from 'preact'
+import { useContext, useEffect } from 'preact/hooks'
 
-export const QueryClientContext = React.createContext<QueryClient | undefined>(
+export const QueryClientContext = createContext<QueryClient | undefined>(
   undefined,
 )
 
 export const useQueryClient = (queryClient?: QueryClient) => {
-  const client = React.useContext(QueryClientContext)
+  const client = useContext(QueryClientContext)
 
   if (queryClient) {
     return queryClient
@@ -23,14 +24,14 @@ export const useQueryClient = (queryClient?: QueryClient) => {
 
 export type QueryClientProviderProps = {
   client: QueryClient
-  children?: React.ReactNode
+  children?: ComponentChildren
 }
 
 export const QueryClientProvider = ({
   client,
   children,
-}: QueryClientProviderProps): React.JSX.Element => {
-  React.useEffect(() => {
+}: QueryClientProviderProps): VNode => {
+  useEffect(() => {
     client.mount()
     return () => {
       client.unmount()

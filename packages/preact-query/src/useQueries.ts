@@ -1,6 +1,6 @@
 'use client'
-import * as React from 'react'
 
+import { useMemo, useState, useEffect, useCallback } from 'preact/hooks'
 import {
   QueriesObserver,
   QueryObserver,
@@ -37,6 +37,10 @@ import type {
   QueryObserverOptions,
   ThrowOnError,
 } from '@tanstack/query-core'
+
+// TODO: We might need to use the useSyncExternalStore abstraction created in Preact/store
+// Since preact/compat adds additional overhead to the bundle and is not ideal
+import { useSyncExternalStore } from 'preact/compat'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed
@@ -225,7 +229,7 @@ export function useQueries<
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
 
-  const defaultedQueries = React.useMemo(
+  const defaultedQueries = useMemo(
     () =>
       queries.map((opts) => {
         const defaultedOptions = client.defaultQueryOptions(
@@ -249,7 +253,7 @@ export function useQueries<
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const [observer] = React.useState(
+  const [observer] = useState(
     () =>
       new QueriesObserver<TCombinedResult>(
         client,
@@ -266,8 +270,8 @@ export function useQueries<
     )
 
   const shouldSubscribe = !isRestoring && options.subscribed !== false
-  React.useSyncExternalStore(
-    React.useCallback(
+  useSyncExternalStore(
+    useCallback(
       (onStoreChange) =>
         shouldSubscribe
           ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
@@ -275,10 +279,9 @@ export function useQueries<
       [observer, shouldSubscribe],
     ),
     () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     observer.setQueries(
       defaultedQueries,
       options as QueriesObserverOptions<TCombinedResult>,
