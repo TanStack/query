@@ -63,7 +63,7 @@ Its available methods are:
 - `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
-  - You can also define defaults to be used for [hydration](../../framework/react/reference/hydration.md)
+  - You can also define defaults to be used for [hydration](../framework/react/reference/hydration.md)
 
 ## `queryClient.fetchQuery`
 
@@ -95,7 +95,7 @@ try {
 
 **Options**
 
-The options for `fetchQuery` are exactly the same as those of [`useQuery`](../../framework/react/reference/useQuery.md), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, refetchOnMount, notifyOnChangeProps, throwOnError, select, suspense, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/TanStack/query/blob/7cd2d192e6da3df0b08e334ea1cf04cd70478827/packages/query-core/src/types.ts#L119) for more clarity.
+The options for `fetchQuery` are exactly the same as those of [`useQuery`](../framework/react/reference/useQuery.md), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, refetchOnMount, notifyOnChangeProps, throwOnError, select, suspense, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/TanStack/query/blob/7cd2d192e6da3df0b08e334ea1cf04cd70478827/packages/query-core/src/types.ts#L119) for more clarity.
 
 **Returns**
 
@@ -172,7 +172,7 @@ const data = queryClient.getQueryData(queryKey)
 
 **Options**
 
-- `queryKey: QueryKey`: [Query Keys](../../framework/react/guides/query-keys.md)
+- `queryKey: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
 
 **Returns**
 
@@ -234,7 +234,7 @@ const data = queryClient.getQueriesData(filters)
 
 **Options**
 
-- `filters: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
+- `filters: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
   - if a filter is passed, the data with queryKeys matching the filter will be returned
 
 **Returns**
@@ -260,7 +260,7 @@ queryClient.setQueryData(queryKey, updater)
 
 **Options**
 
-- `queryKey: QueryKey`: [Query Keys](../../framework/react/guides/query-keys.md)
+- `queryKey: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
 - `updater: TQueryFnData | undefined | ((oldData: TQueryFnData | undefined) => TQueryFnData | undefined)`
   - If non-function is passed, the data will be updated to this value
   - If a function is passed, it will receive the old data value and be expected to return a new one.
@@ -298,7 +298,7 @@ console.log(state.dataUpdatedAt)
 
 **Options**
 
-- `queryKey: QueryKey`: [Query Keys](../../framework/react/guides/query-keys.md)
+- `queryKey: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
 
 ## `queryClient.setQueriesData`
 
@@ -310,7 +310,7 @@ queryClient.setQueriesData(filters, updater)
 
 **Options**
 
-- `filters: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
+- `filters: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
   - if a filter is passed, queryKeys matching the filter will be updated
 - `updater: TQueryFnData | (oldData: TQueryFnData | undefined) => TQueryFnData`
   - the [setQueryData](#queryclientsetquerydata) updater function or new data, will be called for each matching queryKey
@@ -336,8 +336,8 @@ await queryClient.invalidateQueries(
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
-  - `queryKey?: QueryKey`: [Query Keys](../../framework/react/guides/query-keys.md)
+- `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
+  - `queryKey?: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
   - `refetchType?: 'active' | 'inactive' | 'all' | 'none'`
     - Defaults to `'active'`
     - When set to `active`, only queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will be refetched in the background.
@@ -378,7 +378,7 @@ await queryClient.refetchQueries({
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
+- `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
 - `options?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -411,8 +411,8 @@ await queryClient.cancelQueries(
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
-- `cancelOptions?: CancelOptions`: [Cancel Options](../../framework/react/guides/query-cancellation.md#cancel-options)
+- `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
+- `cancelOptions?: CancelOptions`: [Cancel Options](../framework/react/guides/query-cancellation.md#cancel-options)
 
 **Returns**
 
@@ -428,7 +428,7 @@ queryClient.removeQueries({ queryKey, exact: true })
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
+- `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
 
 **Returns**
 
@@ -451,7 +451,7 @@ queryClient.resetQueries({ queryKey, exact: true })
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
+- `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
 - `options?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -474,11 +474,11 @@ if (queryClient.isFetching()) {
 }
 ```
 
-TanStack Query also exports a handy [`useIsFetching`](../../framework/react/reference/useIsFetching.md) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
+TanStack Query also exports a handy [`useIsFetching`](../framework/react/reference/useIsFetching.md) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
+- `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
 
 **Returns**
 
@@ -494,11 +494,11 @@ if (queryClient.isMutating()) {
 }
 ```
 
-TanStack Query also exports a handy [`useIsMutating`](../../framework/react/reference/useIsMutating.md) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
+TanStack Query also exports a handy [`useIsMutating`](../framework/react/reference/useIsMutating.md) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
 
 **Options**
 
-- `filters: MutationFilters`: [Mutation Filters](../../framework/react/guides/filters.md#mutation-filters)
+- `filters: MutationFilters`: [Mutation Filters](../framework/react/guides/filters.md#mutation-filters)
 
 **Returns**
 
@@ -549,7 +549,7 @@ function Component() {
 
 **Options**
 
-- `queryKey: QueryKey`: [Query Keys](../../framework/react/guides/query-keys.md)
+- `queryKey: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
 - `options: QueryOptions`
 
 > As stated in [`getQueryDefaults`](#queryclientgetquerydefaults), the order of registration of query defaults does matter.

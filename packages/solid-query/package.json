@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.90.11",
+  "version": "5.90.15",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/solid-query"
   },
   "homepage": "https://tanstack.com/query",

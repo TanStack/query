@@ -11,6 +11,7 @@ import type {
   DevtoolsErrorType,
   DevtoolsPosition,
   QueryDevtoolsProps,
+  Theme,
 } from './contexts'
 import type { Signal } from 'solid-js'
 
@@ -33,6 +34,7 @@ class TanstackQueryDevtools {
   #errorTypes: Signal<Array<DevtoolsErrorType> | undefined>
   #hideDisabledQueries: Signal<boolean | undefined>
   #Component: DevtoolsComponentType | undefined
+  #theme: Signal<Theme | undefined>
   #dispose?: () => void
 
   constructor(config: TanstackQueryDevtoolsConfig) {
@@ -48,6 +50,7 @@ class TanstackQueryDevtools {
       styleNonce,
       shadowDOMTarget,
       hideDisabledQueries,
+      theme,
     } = config
     this.#client = createSignal(client)
     this.#queryFlavor = queryFlavor
@@ -60,6 +63,7 @@ class TanstackQueryDevtools {
     this.#initialIsOpen = createSignal(initialIsOpen)
     this.#errorTypes = createSignal(errorTypes)
     this.#hideDisabledQueries = createSignal(hideDisabledQueries)
+    this.#theme = createSignal(theme)
   }
 
   setButtonPosition(position: DevtoolsButtonPosition) {
@@ -82,6 +86,10 @@ class TanstackQueryDevtools {
     this.#client[1](client)
   }
 
+  setTheme(theme?: Theme) {
+    this.#theme[1](theme)
+  }
+
   mount<T extends HTMLElement>(el: T) {
     if (this.#isMounted) {
       throw new Error('Devtools is already mounted')
@@ -93,6 +101,7 @@ class TanstackQueryDevtools {
       const [errors] = this.#errorTypes
       const [hideDisabledQueries] = this.#hideDisabledQueries
       const [queryClient] = this.#client
+      const [theme] = this.#theme
       let Devtools: DevtoolsComponentType
 
       if (this.#Component) {
@@ -127,6 +136,9 @@ class TanstackQueryDevtools {
             },
             get hideDisabledQueries() {
               return hideDisabledQueries()
+            },
+            get theme() {
+              return theme()
             },
           }}
         />

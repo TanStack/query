@@ -20,6 +20,7 @@ const devtools = new TanstackQueryDevtools({
   styleNonce: props.styleNonce,
   shadowDOMTarget: props.shadowDOMTarget,
   hideDisabledQueries: props.hideDisabledQueries,
+  theme: props.theme,
 })
 
 watchEffect(() => {
@@ -27,6 +28,7 @@ watchEffect(() => {
   devtools.setPosition(props.position || 'bottom')
   devtools.setInitialIsOpen(props.initialIsOpen)
   devtools.setErrorTypes(props.errorTypes || [])
+  devtools.setTheme(props.theme || 'system')
 })
 
 onMounted(() => {

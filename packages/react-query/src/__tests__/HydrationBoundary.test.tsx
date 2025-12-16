@@ -211,13 +211,10 @@ describe('React hydration', () => {
       const newDehydratedState = dehydrate(intermediateClient)
       intermediateClient.clear()
 
-      function Thrower() {
+      function Thrower(): never {
         throw new Promise(() => {
           // Never resolve
         })
-
-        // @ts-expect-error
-        return null
       }
 
       React.startTransition(() => {

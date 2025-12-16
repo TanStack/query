@@ -20,7 +20,7 @@ type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
   ...infer R,
   unknown,
 ]
-  ? R
+  ? readonly [...R]
   : never
 
 type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
@@ -43,7 +43,7 @@ export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Include queries matching this query key
    */
-  queryKey?: TuplePrefixes<TQueryKey>
+  queryKey?: TQueryKey | TuplePrefixes<TQueryKey>
   /**
    * Include or exclude stale queries
    */
