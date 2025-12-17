@@ -144,13 +144,12 @@ describe('withDevtools feature', () => {
       TestBed.tick()
       await vi.dynamicImportSettled()
 
-      if (expectedCalled) {
-        expect(mockTanstackQueryDevtools).toHaveBeenCalled()
-        expect(mockDevtoolsInstance.mount).toHaveBeenCalled()
-      } else {
-        expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
-        expect(mockDevtoolsInstance.mount).not.toHaveBeenCalled()
-      }
+      expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(
+        expectedCalled ? 1 : 0,
+      )
+      expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(
+        expectedCalled ? 1 : 0,
+      )
     },
   )
 
