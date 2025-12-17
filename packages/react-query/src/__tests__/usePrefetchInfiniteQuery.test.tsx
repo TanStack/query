@@ -46,7 +46,6 @@ describe('usePrefetchInfiniteQuery', () => {
 
   afterEach(() => {
     vi.useRealTimers()
-    Fallback.mockClear()
   })
 
   const queryCache = new QueryCache()
