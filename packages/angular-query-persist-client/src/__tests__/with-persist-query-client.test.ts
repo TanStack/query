@@ -53,9 +53,8 @@ const createMockErrorPersister = (
         // noop
       },
       async restoreClient() {
-        return sleep(10).then(() => {
-          throw error
-        })
+        await sleep(10)
+        throw error
       },
       removeClient,
     },
@@ -274,11 +273,11 @@ describe('withPersistQueryClient', () => {
     class Page {
       state = injectQuery(() => ({
         queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => {
-            fetched = true
-            return 'fetched'
-          }),
+        queryFn: async () => {
+          await sleep(10)
+          fetched = true
+          return 'fetched'
+        },
         staleTime: Infinity,
       }))
       _ = effect(() => {
