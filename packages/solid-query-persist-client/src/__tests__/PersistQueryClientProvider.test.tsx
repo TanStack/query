@@ -328,11 +328,11 @@ describe('PersistQueryClientProvider', () => {
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => {
-            fetched = true
-            return 'fetched'
-          }),
+        queryFn: async () => {
+          await sleep(10)
+          fetched = true
+          return 'fetched'
+        },
         staleTime: Infinity,
       }))
 
