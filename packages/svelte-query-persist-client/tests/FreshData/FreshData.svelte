@@ -13,11 +13,11 @@
 
   const query = createQuery(() => ({
     queryKey: ['test'],
-    queryFn: () =>
-      sleep(10).then(() => {
-        onFetch()
-        return 'fetched'
-      }),
+    queryFn: async () => {
+      await sleep(10)
+      onFetch()
+      return 'fetched'
+    },
     staleTime: Infinity,
   }))
 
