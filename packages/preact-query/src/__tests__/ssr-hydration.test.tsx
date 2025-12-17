@@ -1,7 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { renderToString } from 'preact-render-to-string'
 import { hydrate as preactHydrate, VNode } from 'preact'
-import { act } from 'react'
 import {
   QueryCache,
   QueryClient,
@@ -11,6 +10,7 @@ import {
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
+import { act } from '@testing-library/preact'
 
 const ReactHydrate = (element: VNode, container: Element) => {
   let root: any

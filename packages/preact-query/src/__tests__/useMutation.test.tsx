@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/preact'
-import * as React from 'react'
 import { ErrorBoundary } from './utils'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
@@ -10,6 +9,7 @@ import {
   setActTimeout,
 } from './utils'
 import type { UseMutationResult } from '../types'
+import { useEffect, useState } from 'preact/hooks'
 
 describe('useMutation', () => {
   let queryCache: QueryCache
@@ -279,7 +279,7 @@ describe('useMutation', () => {
         },
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(async () => {
           try {
             const result = await mutateAsync('todo', {
@@ -329,7 +329,7 @@ describe('useMutation', () => {
         },
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(async () => {
           try {
             await mutateAsync('todo', {
@@ -383,7 +383,7 @@ describe('useMutation', () => {
 
       const { mutate } = state
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           mutate('todo')
         }, 10)
@@ -415,7 +415,7 @@ describe('useMutation', () => {
         retryDelay: 5,
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           mutate('todo')
         }, 10)
@@ -675,7 +675,7 @@ describe('useMutation', () => {
       return <button onClick={() => mutate()}>mutate</button>
     }
     function Page() {
-      const [mounted, setMounted] = React.useState(true)
+      const [mounted, setMounted] = useState(true)
       return (
         <div>
           <button onClick={() => setMounted(false)}>unmount</button>
@@ -852,7 +852,7 @@ describe('useMutation', () => {
     let count = 0
 
     function Page() {
-      const [show, setShow] = React.useState(true)
+      const [show, setShow] = useState(true)
       return (
         <div>
           <button onClick={() => setShow(false)}>hide</button>
