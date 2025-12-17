@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/react'
-import * as React from 'react'
+import { fireEvent, render } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, useIsFetching, useQuery } from '..'
 import { renderWithClient, setActTimeout } from './utils'
+import { useEffect, useState } from 'preact/hooks'
 
 describe('useIsFetching', () => {
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('useIsFetching', () => {
     }
 
     function Query() {
-      const [ready, setReady] = React.useState(false)
+      const [ready, setReady] = useState(false)
 
       useQuery({
         queryKey: key,
@@ -92,9 +92,9 @@ describe('useIsFetching', () => {
     }
 
     function Page() {
-      const [renderSecond, setRenderSecond] = React.useState(false)
+      const [renderSecond, setRenderSecond] = useState(false)
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           setRenderSecond(true)
         }, 50)
@@ -152,7 +152,7 @@ describe('useIsFetching', () => {
     }
 
     function Page() {
-      const [started, setStarted] = React.useState(false)
+      const [started, setStarted] = useState(false)
       const isFetching = useIsFetching({ queryKey: key1 })
 
       isFetchingArray.push(isFetching)

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { render } from '@testing-library/react'
+import { render } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,

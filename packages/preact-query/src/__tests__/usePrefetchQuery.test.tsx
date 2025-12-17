@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import React from 'react'
-import { act, fireEvent } from '@testing-library/react'
-import { ErrorBoundary } from 'react-error-boundary'
+import { act, fireEvent } from '@testing-library/preact'
+import { ErrorBoundary } from './utils'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -13,6 +12,8 @@ import {
 import { renderWithClient } from './utils'
 
 import type { UseSuspenseQueryOptions } from '..'
+import { Suspense } from 'preact/compat'
+import { VNode } from 'preact'
 
 const generateQueryFn = (data: string) =>
   vi
@@ -37,7 +38,7 @@ describe('usePrefetchQuery', () => {
 
   function Suspended<TData = unknown>(props: {
     queryOpts: UseSuspenseQueryOptions<TData, Error, TData, Array<string>>
-    children?: React.ReactNode
+    children?: VNode
   }) {
     const state = useSuspenseQuery(props.queryOpts)
 
@@ -64,15 +65,15 @@ describe('usePrefetchQuery', () => {
       usePrefetchQuery(queryOpts)
 
       return (
-        <React.Suspense fallback="Loading...">
+        <Suspense fallback="Loading...">
           <Suspended queryOpts={componentQueryOpts} />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: prefetchQuery')).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
   })
@@ -87,9 +88,9 @@ describe('usePrefetchQuery', () => {
       usePrefetchQuery(queryOpts)
 
       return (
-        <React.Suspense fallback="Loading...">
+        <Suspense fallback="Loading...">
           <Suspended queryOpts={queryOpts} />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -126,9 +127,9 @@ describe('usePrefetchQuery', () => {
 
       return (
         <ErrorBoundary fallbackRender={() => <div>Oops!</div>}>
-          <React.Suspense fallback="Loading...">
+          <Suspense fallback="Loading...">
             <Suspended queryOpts={queryOpts} />
-          </React.Suspense>
+          </Suspense>
         </ErrorBoundary>
       )
     }
@@ -153,23 +154,23 @@ describe('usePrefetchQuery', () => {
       queryFn,
     }
 
-    function Prefetch({ children }: { children: React.ReactNode }) {
+    function Prefetch({ children }: { children: VNode }) {
       usePrefetchQuery(queryOpts)
       return <>{children}</>
     }
 
     function App() {
       return (
-        <React.Suspense>
+        <Suspense fallback={<></>}>
           <Prefetch>
             <Suspended queryOpts={queryOpts} />
           </Prefetch>
-        </React.Suspense>
+        </Suspense>
       )
     }
 
     const rendered = renderWithClient(queryClient, <App />)
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: prefetchedQuery')).toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
   })
@@ -204,9 +205,9 @@ describe('usePrefetchQuery', () => {
             </div>
           )}
         >
-          <React.Suspense fallback="Loading...">
+          <Suspense fallback="Loading...">
             <Suspended queryOpts={queryOpts} />
-          </React.Suspense>
+          </Suspense>
         </ErrorBoundary>
       )
     }
@@ -219,7 +220,7 @@ describe('usePrefetchQuery', () => {
 
     expect(rendered.getByText('Oops!')).toBeInTheDocument()
     fireEvent.click(rendered.getByText('Try again'))
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(
       rendered.getByText('data: This is fine :dog: :fire:'),
     ).toBeInTheDocument()
@@ -251,13 +252,13 @@ describe('usePrefetchQuery', () => {
       usePrefetchQuery(thirdQueryOpts)
 
       return (
-        <React.Suspense fallback={<Fallback />}>
+        <Suspense fallback={<Fallback />}>
           <Suspended queryOpts={firstQueryOpts}>
             <Suspended queryOpts={secondQueryOpts}>
               <Suspended queryOpts={thirdQueryOpts} />
             </Suspended>
           </Suspended>
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -272,7 +273,7 @@ describe('usePrefetchQuery', () => {
       queryClient.getQueryState(thirdQueryOpts.queryKey)?.fetchStatus,
     ).toBe('fetching')
     expect(rendered.getByText('Loading...')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: Prefetch is nice!')).toBeInTheDocument()
     expect(
       rendered.getByText('data: Prefetch is really nice!!'),

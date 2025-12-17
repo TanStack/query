@@ -77,7 +77,8 @@
     "eslint-config-preact": "^2.0.0",
     "npm-run-all2": "^5.0.0",
     "preact": "^10.28.0",
-    "react-error-boundary": "^4.1.2",
+    "preact-iso": "^2.11.0",
+    "preact-render-to-string": "^6.6.4",
     "typescript-eslint": "^8.50.0"
   },
   "peerDependencies": {

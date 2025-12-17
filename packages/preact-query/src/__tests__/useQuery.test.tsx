@@ -1,7 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { act, fireEvent, render } from '@testing-library/react'
-import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
+import { act, fireEvent, render } from '@testing-library/preact'
 import {
   mockVisibilityState,
   queryKey,
@@ -21,9 +19,18 @@ import {
   mockOnlineManagerIsOnline,
   renderWithClient,
   setActTimeout,
+  ErrorBoundary,
 } from './utils'
 import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import type { Mock } from 'vitest'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'preact/hooks'
 
 describe('useQuery', () => {
   let queryCache: QueryCache
@@ -332,7 +339,7 @@ describe('useQuery', () => {
         initialData: 'initialData',
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           refetch()
         }, 5)
@@ -367,7 +374,7 @@ describe('useQuery', () => {
         initialData: 'initialData',
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           refetch()
         }, 5)
@@ -401,7 +408,7 @@ describe('useQuery', () => {
         enabled: false,
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           refetch()
         }, 5)
@@ -445,7 +452,7 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
-      const [toggle, setToggle] = React.useState(false)
+      const [toggle, setToggle] = useState(false)
 
       return (
         <div>
@@ -520,7 +527,7 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
-      const [, rerender] = React.useState({})
+      const [, rerender] = useState({})
 
       const state = useQuery({
         queryKey: key,
@@ -717,12 +724,12 @@ describe('useQuery', () => {
     let runs = 0
 
     function Page() {
-      const [, rerender] = React.useReducer(() => ({}), {})
+      const [, rerender] = useReducer(() => ({}), {})
       const state = useQuery<string, Error>({
         queryKey: key,
         queryFn: () => (runs === 0 ? 'test' : 'test2'),
 
-        select: React.useCallback(() => {
+        select: useCallback(() => {
           runs++
           throw error
         }, []),
@@ -800,7 +807,7 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      React.useEffect(() => {
+      useEffect(() => {
         renderCount++
       }, [state])
 
@@ -826,7 +833,7 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const [, rerender] = React.useState({})
+      const [, rerender] = useState({})
       const state = useQuery({
         queryKey: key,
         queryFn: () => ++count,
@@ -1085,7 +1092,7 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           queryClient.refetchQueries({ queryKey: key })
         }, 20)
@@ -1125,7 +1132,7 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           queryClient.invalidateQueries({ queryKey: key })
         }, 10)
@@ -1150,7 +1157,7 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
 
       const state = useQuery({
         queryKey: [key, count],
@@ -1210,7 +1217,7 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
 
       const state = useQuery({
         queryKey: [key, count],
@@ -1276,7 +1283,7 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
 
       const state = useQuery({
         queryKey: [key, count],
@@ -1348,7 +1355,7 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
 
       const state = useQuery({
         queryKey: [key, count],
@@ -1403,7 +1410,7 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
 
       const state = useQuery({
         queryKey: [key, count],
@@ -1580,7 +1587,7 @@ describe('useQuery', () => {
     const states: Array<DefinedUseQueryResult<number>> = []
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
 
       const state = useQuery({
         queryKey: [key, count],
@@ -1652,7 +1659,7 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<number>> = []
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
 
       const state = useQuery({
         queryKey: [key, count],
@@ -1750,7 +1757,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
-      const [count, setCount] = React.useState(10)
+      const [count, setCount] = useState(10)
 
       const state = useQuery({
         queryKey: [key, count],
@@ -1767,7 +1774,7 @@ describe('useQuery', () => {
 
       const { refetch } = state
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           setCount(11)
         }, 20)
@@ -2034,7 +2041,7 @@ describe('useQuery', () => {
     }
 
     const Page = () => {
-      const [id, setId] = React.useState<number | null>(null)
+      const [id, setId] = useState<number | null>(null)
 
       const searchQuery = useUserInfoQuery({ id, enabled: false })
 
@@ -2230,10 +2237,10 @@ describe('useQuery', () => {
         const states: Array<UseQueryResult<string>> = []
 
         function Page() {
-          const fetchCounterRef = React.useRef(0)
-          const trackChangesRef = React.useRef(true)
+          const fetchCounterRef = useRef(0)
+          const trackChangesRef = useRef(true)
 
-          const notifyOnChangeProps = React.useCallback(() => {
+          const notifyOnChangeProps = useCallback(() => {
             return trackChangesRef.current ? 'all' : []
           }, [])
 
@@ -2421,9 +2428,9 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const [, setNewState] = React.useState('state')
+      const [, setNewState] = useState('state')
       const state = useQuery({ queryKey: key, queryFn: () => 'data' })
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           queryClient.setQueryData(key, 'new')
           // Update with same state to make react discard the next render
@@ -2881,7 +2888,7 @@ describe('useQuery', () => {
         throwOnError: true,
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         result = query
       })
 
@@ -2999,7 +3006,7 @@ describe('useQuery', () => {
     }
 
     function App() {
-      const [show, toggle] = React.useReducer((x) => !x, true)
+      const [show, toggle] = useReducer((x) => !x, true)
 
       return (
         <div>
@@ -3054,7 +3061,7 @@ describe('useQuery', () => {
     }
 
     function App() {
-      const [show, toggle] = React.useReducer((x) => !x, true)
+      const [show, toggle] = useReducer((x) => !x, true)
 
       return (
         <div>
@@ -3278,7 +3285,7 @@ describe('useQuery', () => {
     const states: Array<DefinedUseQueryResult<{ count: number }>> = []
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
       const state = useQuery({
         queryKey: [key, count],
         queryFn: () => ({ count: 10 }),
@@ -3287,7 +3294,7 @@ describe('useQuery', () => {
       })
       states.push(state)
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           setCount(1)
         }, 10)
@@ -3708,8 +3715,8 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const [enabled, setEnabled] = React.useState(false)
-      const [isPrefetched, setPrefetched] = React.useState(false)
+      const [enabled, setEnabled] = useState(false)
+      const [isPrefetched, setPrefetched] = useState(false)
 
       const query = useQuery({
         queryKey: key,
@@ -3722,7 +3729,7 @@ describe('useQuery', () => {
         enabled,
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         async function prefetch() {
           await queryClient.prefetchQuery({
             queryKey: key,
@@ -3758,7 +3765,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const [shouldFetch, setShouldFetch] = React.useState(false)
+      const [shouldFetch, setShouldFetch] = useState(false)
 
       const query = useQuery({
         queryKey: key,
@@ -3856,7 +3863,7 @@ describe('useQuery', () => {
     const initialTodos = ALL_TODOS
 
     function Page() {
-      const [filter, setFilter] = React.useState('')
+      const [filter, setFilter] = useState('')
       const { data: todos } = useQuery({
         queryKey: [...key, filter],
         queryFn: () => {
@@ -3910,7 +3917,7 @@ describe('useQuery', () => {
     const results: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
-      const [shouldFetch, setShouldFetch] = React.useState(true)
+      const [shouldFetch, setShouldFetch] = useState(true)
 
       const result = useQuery({
         queryKey: key,
@@ -4074,7 +4081,7 @@ describe('useQuery', () => {
         },
       })
 
-      React.useMemo(() => {
+      useMemo(() => {
         memoFn()
         return result.data
       }, [result.data])
@@ -4108,14 +4115,14 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const [int, setInt] = React.useState(200)
+      const [int, setInt] = useState(200)
       const { data } = useQuery({
         queryKey: key,
         queryFn: () => count++,
         refetchInterval: int,
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         if (data === 2) {
           setInt(0)
         }
@@ -4270,7 +4277,7 @@ describe('useQuery', () => {
     }
 
     function Page() {
-      const [enabled, setEnabled] = React.useState(false)
+      const [enabled, setEnabled] = useState(false)
       const result = useQuery({ queryKey: key, queryFn, enabled })
       return (
         <>
@@ -4335,7 +4342,7 @@ describe('useQuery', () => {
     const states: Array<{ state: UseQueryResult<string>; count: number }> = []
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
 
       const state = useQuery({
         queryKey: key1,
@@ -4346,7 +4353,7 @@ describe('useQuery', () => {
 
       states.push({ state, count })
 
-      React.useEffect(() => {
+      useEffect(() => {
         setCount(1)
       }, [])
 
@@ -4491,7 +4498,7 @@ describe('useQuery', () => {
     let selectRun = 0
 
     function Page() {
-      const [count, inc] = React.useReducer((prev) => prev + 1, 2)
+      const [count, inc] = useReducer((prev) => prev + 1, 2)
 
       const state = useQuery({
         queryKey: key1,
@@ -4499,7 +4506,7 @@ describe('useQuery', () => {
           await sleep(10)
           return 0
         },
-        select: React.useCallback(
+        select: useCallback(
           (data: number) => {
             selectRun++
             return `selected ${data + count}`
@@ -4536,8 +4543,8 @@ describe('useQuery', () => {
     const key1 = queryKey()
 
     function Page() {
-      const [count, inc] = React.useReducer((prev) => prev + 1, 2)
-      const [forceValue, forceUpdate] = React.useReducer((prev) => prev + 1, 1)
+      const [count, inc] = useReducer((prev) => prev + 1, 2)
+      const [forceValue, forceUpdate] = useReducer((prev) => prev + 1, 1)
 
       const state = useQuery({
         queryKey: key1,
@@ -4546,7 +4553,7 @@ describe('useQuery', () => {
           return 0
         },
 
-        select: React.useCallback(
+        select: useCallback(
           (data: number) => {
             return `selected ${data + count}`
           },
@@ -4590,7 +4597,7 @@ describe('useQuery', () => {
     const states: Array<Array<number>> = []
 
     function Page() {
-      const [forceValue, forceUpdate] = React.useReducer((prev) => prev + 1, 1)
+      const [forceValue, forceUpdate] = useReducer((prev) => prev + 1, 1)
 
       const state = useQuery({
         queryKey: key1,
@@ -4602,7 +4609,7 @@ describe('useQuery', () => {
         select: (res) => res.map((x) => x + 1),
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         if (state.data) {
           states.push(state.data)
         }
@@ -4745,14 +4752,14 @@ describe('useQuery', () => {
     }
 
     function Page() {
-      const [id, setId] = React.useState(1)
-      const [hasChanged, setHasChanged] = React.useState(false)
+      const [id, setId] = useState(1)
+      const [hasChanged, setHasChanged] = useState(false)
 
       const state = useQuery({ queryKey: [key, id], queryFn })
 
       states.push(state)
 
-      React.useEffect(() => {
+      useEffect(() => {
         setId((prevId) => (prevId === 1 ? 2 : 1))
         setHasChanged(true)
       }, [hasChanged])
@@ -4947,7 +4954,7 @@ describe('useQuery', () => {
     }
 
     function Page() {
-      React.useEffect(() => {
+      useEffect(() => {
         renders++
       })
 
@@ -5013,7 +5020,7 @@ describe('useQuery', () => {
     }
 
     function App() {
-      const [enabled, toggle] = React.useReducer((x) => !x, true)
+      const [enabled, toggle] = useReducer((x) => !x, true)
 
       return (
         <div>
@@ -5074,7 +5081,7 @@ describe('useQuery', () => {
     }
 
     function App() {
-      const [id, changeId] = React.useReducer((x) => x + 1, 1)
+      const [id, changeId] = useReducer((x) => x + 1, 1)
 
       return (
         <div>
@@ -5130,7 +5137,7 @@ describe('useQuery', () => {
     }
 
     function App() {
-      const [value, toggle] = React.useReducer((x) => !x, true)
+      const [value, toggle] = useReducer((x) => !x, true)
 
       return (
         <div>
@@ -5253,7 +5260,7 @@ describe('useQuery', () => {
           },
         })
 
-        React.useEffect(() => {
+        useEffect(() => {
           states.push(state.fetchStatus)
         })
 
@@ -5626,7 +5633,7 @@ describe('useQuery', () => {
       }
 
       function Page() {
-        const [show, setShow] = React.useState(true)
+        const [show, setShow] = useState(true)
 
         return (
           <div>
@@ -5739,7 +5746,7 @@ describe('useQuery', () => {
       }
 
       function Page() {
-        const [show, setShow] = React.useState(true)
+        const [show, setShow] = useState(true)
 
         return (
           <div>
@@ -5922,7 +5929,7 @@ describe('useQuery', () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('data'))
       function Page() {
-        const [subscribed, setSubscribed] = React.useState(true)
+        const [subscribed, setSubscribed] = useState(true)
         const { data } = useQuery({
           queryKey: key,
           queryFn,
@@ -6162,7 +6169,7 @@ describe('useQuery', () => {
         },
       })
 
-      const mounted = React.useRef<boolean>(null)
+      const mounted = useRef<boolean>(null)
       // this simulates a synchronous update between the time the query is created
       // and the time it is subscribed to that could be missed otherwise
       if (mounted.current === null) {
@@ -6193,7 +6200,7 @@ describe('useQuery', () => {
       return { numbers: { current: { id } } }
     }
     function Test() {
-      const [id, setId] = React.useState(1)
+      const [id, setId] = useState(1)
 
       const { data } = useQuery({
         select: selector,
@@ -6201,7 +6208,7 @@ describe('useQuery', () => {
         queryFn: () => fetchNumber(id),
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         spy(data)
       }, [data])
 
@@ -6258,7 +6265,7 @@ describe('useQuery', () => {
       return { numbers: { current: { id } } }
     }
     function Test() {
-      const [id, setId] = React.useState(1)
+      const [id, setId] = useState(1)
 
       const { data } = useQuery({
         select: selector,
@@ -6267,7 +6274,7 @@ describe('useQuery', () => {
         placeholderData: { numbers: { current: { id: 99 } } },
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         spy(data)
       }, [data])
 
@@ -6321,7 +6328,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_, setRef] = useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: [key],
@@ -6346,7 +6353,7 @@ describe('useQuery', () => {
     const steps = [0, 1, 0, 2]
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
 
       const state = useQuery({
         staleTime: Infinity,
@@ -6488,7 +6495,7 @@ describe('useQuery', () => {
     }
 
     function App() {
-      const [enabled, toggle] = React.useReducer((x) => !x, false)
+      const [enabled, toggle] = useReducer((x) => !x, false)
 
       return (
         <div>
@@ -6569,7 +6576,7 @@ describe('useQuery', () => {
     }
 
     function App() {
-      const [enabled, setEnabled] = React.useState(true)
+      const [enabled, setEnabled] = useState(true)
 
       return (
         <div>

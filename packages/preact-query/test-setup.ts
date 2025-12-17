@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest'
-import { act, cleanup as cleanupRTL } from '@testing-library/react'
+import { act, cleanup as cleanupRTL } from '@testing-library/preact'
 import { cleanup as cleanupRRS } from '@testing-library/react-render-stream'
 import { afterEach } from 'vitest'
 import { notifyManager } from '@tanstack/query-core'

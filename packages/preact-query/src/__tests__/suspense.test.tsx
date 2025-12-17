@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, render } from '@testing-library/react'
-import { Suspense } from 'react'
+import { act, render } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
 import type { QueryKey } from '..'
+import { Suspense } from 'preact/compat'
 
 function renderWithSuspense(client: QueryClient, ui: React.ReactNode) {
   return render(
@@ -62,7 +62,7 @@ describe('Suspense Timer Tests', () => {
     const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: data')).toBeInTheDocument()
 
     rendered.rerender(
@@ -73,7 +73,7 @@ describe('Suspense Timer Tests', () => {
       </QueryClientProvider>,
     )
 
-    await act(() => vi.advanceTimersByTimeAsync(100))
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(fetchCount.count).toBe(1)
   })
@@ -88,7 +88,7 @@ describe('Suspense Timer Tests', () => {
     const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: data')).toBeInTheDocument()
 
     rendered.rerender(
@@ -99,7 +99,7 @@ describe('Suspense Timer Tests', () => {
       </QueryClientProvider>,
     )
 
-    await act(() => vi.advanceTimersByTimeAsync(100))
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(fetchCount.count).toBe(1)
   })
@@ -114,7 +114,7 @@ describe('Suspense Timer Tests', () => {
     const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: data')).toBeInTheDocument()
 
     rendered.rerender(
@@ -125,7 +125,7 @@ describe('Suspense Timer Tests', () => {
       </QueryClientProvider>,
     )
 
-    await act(() => vi.advanceTimersByTimeAsync(1500))
+    await vi.advanceTimersByTimeAsync(1500)
 
     expect(fetchCount.count).toBe(1)
   })
@@ -140,7 +140,7 @@ describe('Suspense Timer Tests', () => {
     const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: data')).toBeInTheDocument()
 
     rendered.rerender(
@@ -151,7 +151,7 @@ describe('Suspense Timer Tests', () => {
       </QueryClientProvider>,
     )
 
-    await act(() => vi.advanceTimersByTimeAsync(500))
+    await vi.advanceTimersByTimeAsync(500)
 
     expect(fetchCount.count).toBe(1)
   })
@@ -166,7 +166,7 @@ describe('Suspense Timer Tests', () => {
     const rendered = renderWithSuspense(queryClient, <TestComponent />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: data')).toBeInTheDocument()
 
     rendered.rerender(
@@ -177,7 +177,7 @@ describe('Suspense Timer Tests', () => {
       </QueryClientProvider>,
     )
 
-    await act(() => vi.advanceTimersByTimeAsync(2000))
+    await vi.advanceTimersByTimeAsync(2000)
 
     expect(fetchCount.count).toBe(1)
   })

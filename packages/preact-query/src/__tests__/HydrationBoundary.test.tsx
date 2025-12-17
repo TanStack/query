@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import * as React from 'react'
-import { render } from '@testing-library/react'
+import { render } from '@testing-library/preact'
 import * as coreModule from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import {
@@ -11,6 +10,7 @@ import {
   useQuery,
 } from '..'
 import type { hydrate } from '@tanstack/query-core'
+import { startTransition, Suspense } from 'preact/compat'
 
 describe('React hydration', () => {
   let stringifiedState: string
@@ -217,9 +217,9 @@ describe('React hydration', () => {
         })
       }
 
-      React.startTransition(() => {
+      startTransition(() => {
         rendered.rerender(
-          <React.Suspense fallback="loading">
+          <Suspense fallback="loading">
             <QueryClientProvider client={queryClient}>
               <HydrationBoundary state={newDehydratedState}>
                 <Page queryKey={['string']} />
@@ -227,13 +227,13 @@ describe('React hydration', () => {
                 <Thrower />
               </HydrationBoundary>
             </QueryClientProvider>
-          </React.Suspense>,
+          </Suspense>,
         )
 
         expect(rendered.getByText('loading')).toBeInTheDocument()
       })
 
-      React.startTransition(() => {
+      startTransition(() => {
         rendered.rerender(
           <QueryClientProvider client={queryClient}>
             <HydrationBoundary state={initialDehydratedState}>

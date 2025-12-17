@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createQueryPersister,
@@ -7,6 +6,7 @@ import {
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, hashKey, useQuery } from '..'
 import { renderWithClient } from './utils'
+import { useState } from 'preact/hooks'
 
 describe('fine grained persister', () => {
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('fine grained persister', () => {
     )
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_, setRef] = useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: key,
@@ -109,7 +109,7 @@ describe('fine grained persister', () => {
     )
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_, setRef] = useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: key,
@@ -150,7 +150,7 @@ describe('fine grained persister', () => {
     }
 
     function Test() {
-      const [_, setRef] = React.useState<HTMLDivElement | null>()
+      const [_, setRef] = useState<HTMLDivElement | null>()
 
       const { data } = useQuery({
         queryKey: key,

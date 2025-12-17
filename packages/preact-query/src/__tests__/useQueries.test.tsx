@@ -7,9 +7,8 @@ import {
   it,
   vi,
 } from 'vitest'
-import { fireEvent, render } from '@testing-library/react'
-import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
+import { fireEvent, render } from '@testing-library/preact'
+import { ErrorBoundary } from './utils'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -27,6 +26,7 @@ import type {
   UseQueryResult,
 } from '..'
 import type { QueryFunctionContext } from '@tanstack/query-core'
+import { useCallback, useEffect, useState } from 'preact/hooks'
 
 describe('useQueries', () => {
   beforeEach(() => {
@@ -1013,7 +1013,7 @@ describe('useQueries', () => {
     let resultChanged = 0
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
       const result = useQueries({
         queries: ids.map((id) => {
           return {
@@ -1031,7 +1031,7 @@ describe('useQueries', () => {
         combine: () => ({ empty: 'object' }),
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         resultChanged++
       }, [result])
 
@@ -1068,7 +1068,7 @@ describe('useQueries', () => {
         queries: [],
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         renderCount++
       })
 
@@ -1270,7 +1270,7 @@ describe('useQueries', () => {
     const key = queryKey()
 
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
       const queries = useQueries(
         {
           queries: [
@@ -1320,7 +1320,7 @@ describe('useQueries', () => {
     let value = 0
 
     function Page() {
-      const [state, setState] = React.useState(0)
+      const [state, setState] = useState(0)
       const queries = useQueries(
         {
           queries: [
@@ -1339,7 +1339,7 @@ describe('useQueries', () => {
               },
             },
           ],
-          combine: React.useCallback((results: Array<QueryObserverResult>) => {
+          combine: useCallback((results: Array<QueryObserverResult>) => {
             const result = {
               combined: true,
               res: results.map((res) => res.data).join(','),
@@ -1404,7 +1404,7 @@ describe('useQueries', () => {
     const spy = vi.fn()
 
     function Page() {
-      const [state, setState] = React.useState(0)
+      const [state, setState] = useState(0)
       const queries = useQueries(
         {
           queries: [
@@ -1423,7 +1423,7 @@ describe('useQueries', () => {
               },
             },
           ],
-          combine: React.useCallback(
+          combine: useCallback(
             (results: Array<QueryObserverResult>) => {
               const result = {
                 combined: true,
@@ -1668,7 +1668,7 @@ describe('useQueries', () => {
     const spy = vi.fn()
 
     function Page() {
-      const [unrelatedState, setUnrelatedState] = React.useState(0)
+      const [unrelatedState, setUnrelatedState] = useState(0)
 
       const queries = useQueries(
         {
@@ -1688,7 +1688,7 @@ describe('useQueries', () => {
               },
             },
           ],
-          combine: React.useCallback((results: Array<QueryObserverResult>) => {
+          combine: useCallback((results: Array<QueryObserverResult>) => {
             const result = {
               combined: true,
               res: results.map((res) => res.data).join(','),
@@ -1746,7 +1746,7 @@ describe('useQueries', () => {
     let renderCount = 0
 
     function Page() {
-      const [queries, setQueries] = React.useState([
+      const [queries, setQueries] = useState([
         {
           queryKey: ['query1'],
           queryFn: () => 'data1',

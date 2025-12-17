@@ -1,21 +1,23 @@
 import { vi } from 'vitest'
-import * as React from 'react'
-import { act, render } from '@testing-library/react'
+import { act, render } from '@testing-library/preact'
 import * as utils from '@tanstack/query-core'
 import { QueryClientProvider, onlineManager } from '..'
 import type { QueryClient } from '..'
 import type { MockInstance } from 'vitest'
+import { useEffect, useState } from 'preact/hooks'
+import { ComponentChildren, VNode } from 'preact'
+import { ErrorBoundary as ErrorBoundaryPreactIso } from 'preact-iso'
 
 export function renderWithClient(
   client: QueryClient,
-  ui: React.ReactElement,
+  ui: VNode,
 ): ReturnType<typeof render> {
   const { rerender, ...result } = render(
     <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
   )
   return {
     ...result,
-    rerender: (rerenderUi: React.ReactElement) =>
+    rerender: (rerenderUi: VNode) =>
       rerender(
         <QueryClientProvider client={client}>{rerenderUi}</QueryClientProvider>,
       ),
@@ -27,11 +29,11 @@ export function Blink({
   children,
 }: {
   duration: number
-  children: React.ReactNode
+  children: ComponentChildren
 }) {
-  const [shouldShow, setShouldShow] = React.useState<boolean>(true)
+  const [shouldShow, setShouldShow] = useState<boolean>(true)
 
-  React.useEffect(() => {
+  useEffect(() => {
     setShouldShow(true)
     const timeout = setActTimeout(() => setShouldShow(false), duration)
     return () => {
@@ -69,4 +71,44 @@ export function setIsServer(isServer: boolean) {
       get: () => original,
     })
   }
+}
+
+/**
+ * Custom Error Boundary port for 'react-error-boundary'
+ * Inspired by https://github.com/bvaughn/react-error-boundary/blob/master/src/ErrorBoundary.ts
+ */
+export const ErrorBoundary = ({
+  children,
+  fallbackRender,
+  onReset,
+}: {
+  children: ComponentChildren
+  fallbackRender: (props: {
+    error: Error
+    resetErrorBoundary: (...args: any[]) => void
+  }) => VNode
+  onReset?: (error: Error) => void
+}) => {
+  const [error, setError] = useState<Error | null>()
+
+  const resetErrorBoundary = () => {
+    if (error && onReset) {
+      onReset(error)
+    }
+    setError(null)
+  }
+
+  if (error) {
+    return fallbackRender({ error, resetErrorBoundary })
+  }
+
+  return (
+    <ErrorBoundaryPreactIso
+      onError={(e) => {
+        setError(e)
+      }}
+    >
+      {children}
+    </ErrorBoundaryPreactIso>
+  )
 }

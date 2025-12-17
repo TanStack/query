@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import { hydrateRoot } from 'react-dom/client'
+import { renderToString } from 'preact-render-to-string'
+import { hydrate as preactHydrate, VNode } from 'preact'
 import { act } from 'react'
-import * as ReactDOMServer from 'react-dom/server'
 import {
   QueryCache,
   QueryClient,
@@ -12,10 +12,10 @@ import {
 } from '..'
 import { setIsServer } from './utils'
 
-const ReactHydrate = (element: React.ReactElement, container: Element) => {
+const ReactHydrate = (element: VNode, container: Element) => {
   let root: any
   act(() => {
-    root = hydrateRoot(container, element)
+    root = preactHydrate(element, container)
   })
   return () => {
     root.unmount()
@@ -79,7 +79,7 @@ describe('Server side rendering with de/rehydration', () => {
       queryCache: renderCache,
     })
     hydrate(renderClient, dehydratedStateServer)
-    const markup = ReactDOMServer.renderToString(
+    const markup = renderToString(
       <QueryClientProvider client={renderClient}>
         <SuccessComponent />
       </QueryClientProvider>,
@@ -156,7 +156,7 @@ describe('Server side rendering with de/rehydration', () => {
       queryCache: renderCache,
     })
     hydrate(renderClient, dehydratedStateServer)
-    const markup = ReactDOMServer.renderToString(
+    const markup = renderToString(
       <QueryClientProvider client={renderClient}>
         <ErrorComponent />
       </QueryClientProvider>,
@@ -223,7 +223,7 @@ describe('Server side rendering with de/rehydration', () => {
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderClient = new QueryClient()
     hydrate(renderClient, dehydratedStateServer)
-    const markup = ReactDOMServer.renderToString(
+    const markup = renderToString(
       <QueryClientProvider client={renderClient}>
         <SuccessComponent />
       </QueryClientProvider>,

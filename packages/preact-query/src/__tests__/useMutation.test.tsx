@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/preact'
 import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
+import { ErrorBoundary } from './utils'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
 import {

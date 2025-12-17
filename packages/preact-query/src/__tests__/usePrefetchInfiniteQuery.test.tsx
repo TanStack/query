@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import React from 'react'
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -11,6 +10,8 @@ import {
 import { renderWithClient } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryOptions } from '..'
 import type { Mock } from 'vitest'
+import { Suspense } from 'preact/compat'
+import { VNode } from 'preact'
 
 const generateInfiniteQueryOptions = (
   data: Array<{ data: string; currentPage: number; totalPages: number }>,
@@ -61,7 +62,7 @@ describe('usePrefetchInfiniteQuery', () => {
       Array<string>,
       any
     >
-    renderPage: (page: T) => React.JSX.Element
+    renderPage: (page: T) => VNode
   }) {
     const state = useSuspenseInfiniteQuery(props.queryOpts)
 
@@ -95,18 +96,18 @@ describe('usePrefetchInfiniteQuery', () => {
       usePrefetchInfiniteQuery({ ...queryOpts, pages: data.length })
 
       return (
-        <React.Suspense fallback={<Fallback />}>
+        <Suspense fallback={<Fallback />}>
           <Suspended
             queryOpts={queryOpts}
             renderPage={(page) => <div>data: {page.data}</div>}
           />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await act(() => vi.advanceTimersByTimeAsync(30))
+    await vi.advanceTimersByTimeAsync(30)
     rendered.getByText('data: Do you fetch on render?')
     fireEvent.click(rendered.getByText('Next Page'))
     expect(
@@ -138,12 +139,12 @@ describe('usePrefetchInfiniteQuery', () => {
       usePrefetchInfiniteQuery(queryOpts)
 
       return (
-        <React.Suspense fallback={<Fallback />}>
+        <Suspense fallback={<Fallback />}>
           <Suspended
             queryOpts={queryOpts}
             renderPage={(page) => <div>data: {page.data}</div>}
           />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -168,27 +169,27 @@ describe('usePrefetchInfiniteQuery', () => {
       ]),
     }
 
-    function Prefetch({ children }: { children: React.ReactNode }) {
+    function Prefetch({ children }: { children: VNode }) {
       usePrefetchInfiniteQuery(queryOpts)
       return <>{children}</>
     }
 
     function App() {
       return (
-        <React.Suspense>
+        <Suspense fallback={<></>}>
           <Prefetch>
             <Suspended
               queryOpts={queryOpts}
               renderPage={(page) => <div>data: {page.data}</div>}
             />
           </Prefetch>
-        </React.Suspense>
+        </Suspense>
       )
     }
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     rendered.getByText('data: Infinite Page 1')
     fireEvent.click(rendered.getByText('Next Page'))
     await vi.advanceTimersByTimeAsync(11)

@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
 import { queryKey } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -8,6 +7,7 @@ import {
   useSuspenseInfiniteQuery,
 } from '..'
 import { renderWithClient } from './utils'
+import { Suspense } from 'preact/compat'
 
 describe('useSuspenseInfiniteQuery', () => {
   const queryCache = new QueryCache()
@@ -34,9 +34,9 @@ describe('useSuspenseInfiniteQuery', () => {
 
     function App() {
       return (
-        <React.Suspense fallback="Loading...">
+        <Suspense fallback="Loading...">
           <Page />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -70,9 +70,9 @@ describe('useSuspenseInfiniteQuery', () => {
 
     renderWithClient(
       queryClient,
-      <React.Suspense fallback="Loading...">
+      <Suspense fallback="Loading...">
         <Page />
-      </React.Suspense>,
+      </Suspense>,
     )
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -105,9 +105,9 @@ describe('useSuspenseInfiniteQuery', () => {
 
     renderWithClient(
       queryClient,
-      <React.Suspense fallback="Loading...">
+      <Suspense fallback="Loading...">
         <Page />
-      </React.Suspense>,
+      </Suspense>,
     )
 
     expect(consoleErrorSpy).not.toHaveBeenCalled()

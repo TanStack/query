@@ -1,11 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/react'
-import * as React from 'react'
-import {
-  createRenderStream,
-  useTrackRenders,
-} from '@testing-library/react-render-stream'
+import { fireEvent, render } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import {
   QueryCache,
   QueryClient,
@@ -20,6 +16,7 @@ import type {
   UseInfiniteQueryResult,
 } from '..'
 import type { Mock } from 'vitest'
+import { Suspense } from 'preact/compat'
 
 interface Result {
   items: Array<number>
@@ -179,7 +176,7 @@ describe('useInfiniteQuery', () => {
 
       const { fetchNextPage } = state
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           fetchNextPage()
             .then(() => {
@@ -203,7 +200,7 @@ describe('useInfiniteQuery', () => {
     const states: Array<UseInfiniteQueryResult<InfiniteData<string>>> = []
 
     function Page() {
-      const [order, setOrder] = React.useState('desc')
+      const [order, setOrder] = useState('desc')
 
       const state = useInfiniteQuery({
         queryKey: [key, order],
@@ -334,7 +331,7 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        select: React.useCallback((data: InfiniteData<{ count: number }>) => {
+        select: useCallback((data: InfiniteData<{ count: number }>) => {
           selectCalled++
           return {
             pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
@@ -957,7 +954,7 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: (lastPage) => lastPage + 1,
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           fetchNextPage()
         }, 100)
@@ -1032,7 +1029,7 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: (lastPage) => lastPage + 1,
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           fetchNextPage()
         }, 100)
@@ -1090,7 +1087,7 @@ describe('useInfiniteQuery', () => {
 
       const { fetchNextPage } = state
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           fetchNextPage()
         }, 10)
@@ -1145,9 +1142,9 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
-      const [show, setShow] = React.useState(true)
+      const [show, setShow] = useState(true)
 
-      React.useEffect(() => {
+      useEffect(() => {
         setActTimeout(() => {
           setShow(false)
         }, 75)
@@ -1174,7 +1171,7 @@ describe('useInfiniteQuery', () => {
     let multiplier = 1
 
     function Page() {
-      const [firstPage, setFirstPage] = React.useState(0)
+      const [firstPage, setFirstPage] = useState(0)
 
       const state = useInfiniteQuery({
         queryKey: key,
@@ -1476,7 +1473,7 @@ describe('useInfiniteQuery', () => {
       }))
 
     function Page() {
-      const fetchCountRef = React.useRef(0)
+      const fetchCountRef = useRef(0)
       const {
         status,
         data,
@@ -1600,9 +1597,8 @@ describe('useInfiniteQuery', () => {
     const MAX = 2
 
     function Page() {
-      const fetchCountRef = React.useRef(0)
-      const [isRemovedLastPage, setIsRemovedLastPage] =
-        React.useState<boolean>(false)
+      const fetchCountRef = useRef(0)
+      const [isRemovedLastPage, setIsRemovedLastPage] = useState<boolean>(false)
       const {
         status,
         data,
@@ -1739,7 +1735,7 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
-      const [isVisible, setIsVisible] = React.useState(true)
+      const [isVisible, setIsVisible] = useState(true)
 
       return (
         <>
@@ -1784,7 +1780,7 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
 
-  it('should work with React.use()', async () => {
+  it('should work with use()', async () => {
     vi.useRealTimers()
 
     const key = queryKey()
@@ -1798,7 +1794,7 @@ describe('useInfiniteQuery', () => {
 
     function MyComponent() {
       useTrackRenders()
-      const fetchCountRef = React.useRef(0)
+      const fetchCountRef = useRef(0)
       const query = useInfiniteQuery({
         queryFn: ({ pageParam }) =>
           fetchItems(pageParam, fetchCountRef.current++),
@@ -1806,18 +1802,18 @@ describe('useInfiniteQuery', () => {
         initialPageParam: 0,
         queryKey: key,
       })
-      const data = React.use(query.promise)
+      const data = use(query.promise)
       return (
         <>
           {data.pages.map((page, index) => (
-            <React.Fragment key={page.ts}>
+            <Fragment key={page.ts}>
               <div>
                 <div>Page: {index + 1}</div>
               </div>
               {page.items.map((item) => (
                 <p key={item}>Item: {item}</p>
               ))}
-            </React.Fragment>
+            </Fragment>
           ))}
           <button onClick={() => query.fetchNextPage()}>fetchNextPage</button>
         </>
@@ -1827,9 +1823,9 @@ describe('useInfiniteQuery', () => {
     function Page() {
       useTrackRenders()
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <MyComponent />
-        </React.Suspense>
+        </Suspense>
       )
     }
 

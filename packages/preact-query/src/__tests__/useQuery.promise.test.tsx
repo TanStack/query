@@ -1,12 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
+import { ErrorBoundary } from './utils'
 import {
   createRenderStream,
   useTrackRenders,
 } from '@testing-library/react-render-stream'
 import { queryKey } from '@tanstack/query-test-utils'
-import { waitFor } from '@testing-library/react'
+import { waitFor } from '@testing-library/preact'
 import {
   QueryClient,
   QueryClientProvider,
@@ -16,6 +15,7 @@ import {
   useQuery,
 } from '..'
 import { QueryCache } from '../index'
+import { Suspense } from 'preact/compat'
 
 describe('useQuery().promise', () => {
   const queryCache = new QueryCache()
@@ -42,7 +42,7 @@ describe('useQuery().promise', () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
 
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
       useTrackRenders()
       return <>{data}</>
     }
@@ -63,12 +63,12 @@ describe('useQuery().promise', () => {
       })
 
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <div>
             <MyComponent promise={query.promise} />
           </div>
           <div>status:{query.status}</div>
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -108,7 +108,7 @@ describe('useQuery().promise', () => {
         },
         staleTime: 1000,
       })
-      const data = React.use(query.promise)
+      const data = use(query.promise)
 
       return <>{data}</>
     }
@@ -120,9 +120,9 @@ describe('useQuery().promise', () => {
     function Page() {
       useTrackRenders()
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <MyComponent />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -162,7 +162,7 @@ describe('useQuery().promise', () => {
         },
         staleTime: 1000,
       })
-      const data = React.use(query.promise)
+      const data = use(query.promise)
 
       return <>{data}</>
     }
@@ -175,15 +175,15 @@ describe('useQuery().promise', () => {
       useTrackRenders()
       return (
         <>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent />
             <MyComponent />
             <MyComponent />
-          </React.Suspense>
-          <React.Suspense fallback={null}>
+          </Suspense>
+          <Suspense fallback={null}>
             <MyComponent />
             <MyComponent />
-          </React.Suspense>
+          </Suspense>
         </>
       )
     }
@@ -221,7 +221,7 @@ describe('useQuery().promise', () => {
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -242,9 +242,9 @@ describe('useQuery().promise', () => {
       })
 
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <MyComponent promise={query.promise} />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -277,7 +277,7 @@ describe('useQuery().promise', () => {
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -295,9 +295,9 @@ describe('useQuery().promise', () => {
       })
 
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <MyComponent promise={query.promise} />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -323,7 +323,7 @@ describe('useQuery().promise', () => {
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -344,9 +344,9 @@ describe('useQuery().promise', () => {
       useTrackRenders()
 
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <MyComponent promise={query.promise} />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -374,7 +374,7 @@ describe('useQuery().promise', () => {
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -385,7 +385,7 @@ describe('useQuery().promise', () => {
     }
     function Page() {
       useTrackRenders()
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
       const query = useQuery({
         queryKey: [...key, count],
         queryFn: async () => {
@@ -397,9 +397,9 @@ describe('useQuery().promise', () => {
 
       return (
         <div>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
-          </React.Suspense>
+          </Suspense>
           <button onClick={() => setCount((c) => c + 1)}>increment</button>
         </div>
       )
@@ -445,7 +445,7 @@ describe('useQuery().promise', () => {
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
-      const data = React.use(props.promise)
+      const data = use(props.promise)
       return <>{data}</>
     }
 
@@ -466,9 +466,9 @@ describe('useQuery().promise', () => {
 
       useTrackRenders()
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <MyComponent promise={query.promise} />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -499,7 +499,7 @@ describe('useQuery().promise', () => {
 
     const key = queryKey()
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -524,9 +524,9 @@ describe('useQuery().promise', () => {
       })
 
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <MyComponent promise={query.promise} />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -600,16 +600,16 @@ describe('useQuery().promise', () => {
         },
         retry: false,
       })
-      const data = React.use(query.promise)
+      const data = use(query.promise)
 
       return <>{data}</>
     }
 
     function Page() {
       return (
-        <React.Suspense fallback="loading..">
+        <Suspense fallback="loading..">
           <MyComponent />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -640,7 +640,7 @@ describe('useQuery().promise', () => {
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -660,9 +660,9 @@ describe('useQuery().promise', () => {
 
       useTrackRenders()
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <MyComponent promise={query.promise} />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -707,7 +707,7 @@ describe('useQuery().promise', () => {
     }
 
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -720,9 +720,9 @@ describe('useQuery().promise', () => {
 
       return (
         <div>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
-          </React.Suspense>
+          </Suspense>
           <button onClick={() => queryClient.fetchQuery(options)}>fetch</button>
         </div>
       )
@@ -764,7 +764,7 @@ describe('useQuery().promise', () => {
     }
 
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -777,9 +777,9 @@ describe('useQuery().promise', () => {
 
       return (
         <div>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
-          </React.Suspense>
+          </Suspense>
           <button onClick={() => queryClient.refetchQueries(options)}>
             refetch
           </button>
@@ -823,7 +823,7 @@ describe('useQuery().promise', () => {
     }
 
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -836,9 +836,9 @@ describe('useQuery().promise', () => {
 
       return (
         <div>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
-          </React.Suspense>
+          </Suspense>
           <button onClick={() => queryClient.cancelQueries(options)}>
             cancel
           </button>
@@ -898,7 +898,7 @@ describe('useQuery().promise', () => {
     }
 
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -911,9 +911,9 @@ describe('useQuery().promise', () => {
 
       return (
         <div>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
-          </React.Suspense>
+          </Suspense>
           <button onClick={() => queryClient.cancelQueries(options)}>
             cancel
           </button>
@@ -952,7 +952,7 @@ describe('useQuery().promise', () => {
     })
 
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -961,14 +961,14 @@ describe('useQuery().promise', () => {
       return <>loading..</>
     }
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
       const query = useQuery({ ...options(count), enabled: count > 0 })
 
       return (
         <div>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
-          </React.Suspense>
+          </Suspense>
           <button onClick={() => setCount(1)}>enable</button>
         </div>
       )
@@ -1007,7 +1007,7 @@ describe('useQuery().promise', () => {
     })
 
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -1023,9 +1023,9 @@ describe('useQuery().promise', () => {
       })
 
       return (
-        <React.Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <MyComponent promise={query.promise} />
-        </React.Suspense>
+        </Suspense>
       )
     }
 
@@ -1049,7 +1049,7 @@ describe('useQuery().promise', () => {
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       return <>{data}</>
     }
@@ -1060,7 +1060,7 @@ describe('useQuery().promise', () => {
     }
     function Page() {
       useTrackRenders()
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
       const query = useQuery({
         queryKey: [key, count],
         queryFn: async () => {
@@ -1072,9 +1072,9 @@ describe('useQuery().promise', () => {
 
       return (
         <div>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
-          </React.Suspense>
+          </Suspense>
           <button onClick={() => setCount(count + 1)}>inc</button>
           <button onClick={() => setCount(count - 1)}>dec</button>
         </div>
@@ -1129,7 +1129,7 @@ describe('useQuery().promise', () => {
     })
 
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       renderStream.replaceSnapshot({ data })
 
@@ -1140,7 +1140,7 @@ describe('useQuery().promise', () => {
       return <>loading..</>
     }
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
       const query = useQuery({
         queryKey: [key, count],
         queryFn: async () => {
@@ -1152,9 +1152,9 @@ describe('useQuery().promise', () => {
 
       return (
         <div>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
-          </React.Suspense>
+          </Suspense>
           <button onClick={() => setCount(count + 1)}>inc</button>
         </div>
       )
@@ -1205,7 +1205,7 @@ describe('useQuery().promise', () => {
     let modifier = ''
 
     function MyComponent(props: { promise: Promise<string> }) {
-      const data = React.use(props.promise)
+      const data = use(props.promise)
 
       renderStream.replaceSnapshot({ data })
 
@@ -1216,7 +1216,7 @@ describe('useQuery().promise', () => {
       return <>loading..</>
     }
     function Page() {
-      const [count, setCount] = React.useState(0)
+      const [count, setCount] = useState(0)
       const query = useQuery({
         queryKey: [key, count],
         queryFn: async () => {
@@ -1227,9 +1227,9 @@ describe('useQuery().promise', () => {
 
       return (
         <div>
-          <React.Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
-          </React.Suspense>
+          </Suspense>
           <button onClick={() => setCount(count + 1)}>inc</button>
           <button onClick={() => setCount(count - 1)}>dec</button>
         </div>
@@ -1308,7 +1308,7 @@ describe('useQuery().promise', () => {
 
     function MyComponent({ input }: { input: string }) {
       const query = useTheQuery(input)
-      const data = React.use(query.promise)
+      const data = use(query.promise)
 
       return <>{data}</>
     }
@@ -1325,15 +1325,15 @@ describe('useQuery().promise', () => {
     }
 
     function Page() {
-      const [input, setInput] = React.useState('defaultInput')
+      const [input, setInput] = useState('defaultInput')
       useTheQuery(input)
 
       return (
         <div>
           <button onClick={() => setInput('someInput')}>setInput</button>
-          <React.Suspense fallback="loading..">
+          <Suspense fallback="loading..">
             <MyComponent input={input} />
-          </React.Suspense>
+          </Suspense>
         </div>
       )
     }
@@ -1399,7 +1399,7 @@ describe('useQuery().promise', () => {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       })
 
-      React.use(query.promise)
+      use(query.promise)
 
       const hasNextPage = query.hasNextPage
 
@@ -1412,9 +1412,9 @@ describe('useQuery().promise', () => {
 
     await renderStream.render(
       <QueryClientProvider client={queryClient}>
-        <React.Suspense fallback="loading..">
+        <Suspense fallback="loading..">
           <Page />
-        </React.Suspense>
+        </Suspense>
       </QueryClientProvider>,
     )
 

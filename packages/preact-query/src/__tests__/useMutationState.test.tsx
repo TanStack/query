@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/react'
-import * as React from 'react'
+import { fireEvent, render } from '@testing-library/preact'
 import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useIsMutating, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
+import { useEffect } from 'preact/hooks'
 
 describe('useIsMutating', () => {
   beforeEach(() => {
@@ -95,7 +95,7 @@ describe('useIsMutating', () => {
         mutationFn: () => sleep(100).then(() => 'data'),
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         mutate1()
         mutate2()
       }, [mutate1, mutate2])
@@ -132,7 +132,7 @@ describe('useIsMutating', () => {
         mutationFn: () => sleep(100).then(() => 'data'),
       })
 
-      React.useEffect(() => {
+      useEffect(() => {
         mutate1()
         mutate2()
       }, [mutate1, mutate2])
@@ -159,7 +159,7 @@ describe('useIsMutating', () => {
         queryClient,
       )
 
-      React.useEffect(() => {
+      useEffect(() => {
         mutate()
       }, [mutate])
 

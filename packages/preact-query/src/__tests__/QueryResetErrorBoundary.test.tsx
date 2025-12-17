@@ -1,7 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, fireEvent } from '@testing-library/react'
-import { ErrorBoundary } from 'react-error-boundary'
-import * as React from 'react'
+import { act, fireEvent } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -13,6 +11,9 @@ import {
   useSuspenseQuery,
 } from '..'
 import { renderWithClient } from './utils'
+import { useEffect, useState } from 'preact/hooks'
+import { Suspense } from 'preact/compat'
+import { ErrorBoundary } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
   beforeEach(() => {
@@ -165,7 +166,7 @@ describe('QueryErrorResetBoundary', () => {
       let succeed = false
 
       function Page() {
-        const [enabled, setEnabled] = React.useState(false)
+        const [enabled, setEnabled] = useState(false)
         const { data } = useQuery({
           queryKey: key,
           queryFn: () =>
@@ -178,7 +179,7 @@ describe('QueryErrorResetBoundary', () => {
           throwOnError: true,
         })
 
-        React.useEffect(() => {
+        useEffect(() => {
           setEnabled(true)
         }, [])
 
@@ -609,28 +610,28 @@ describe('QueryErrorResetBoundary', () => {
                 </div>
               )}
             >
-              <React.Suspense fallback={<div>loading</div>}>
+              <Suspense fallback={<div>loading</div>}>
                 <Page />
-              </React.Suspense>
+              </Suspense>
             </ErrorBoundary>
           )}
         </QueryErrorResetBoundary>,
       )
 
       expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
+      await vi.advanceTimersByTimeAsync(10)
       expect(rendered.getByText('error boundary')).toBeInTheDocument()
       expect(rendered.getByText('retry')).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('retry'))
       expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
+      await vi.advanceTimersByTimeAsync(10)
       expect(rendered.getByText('error boundary')).toBeInTheDocument()
       expect(rendered.getByText('retry')).toBeInTheDocument()
 
       fireEvent.click(rendered.getByText('retry'))
       expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
+      await vi.advanceTimersByTimeAsync(10)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
       expect(fetchCount).toBe(3)
@@ -840,16 +841,16 @@ describe('QueryErrorResetBoundary', () => {
                 </div>
               )}
             >
-              <React.Suspense fallback="loading">
+              <Suspense fallback="loading">
                 <Page />
-              </React.Suspense>
+              </Suspense>
             </ErrorBoundary>
           )}
         </QueryErrorResetBoundary>,
       )
 
       expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
+      await vi.advanceTimersByTimeAsync(10)
       expect(rendered.getByText('error boundary')).toBeInTheDocument()
       expect(rendered.getByText('retry')).toBeInTheDocument()
 
@@ -857,7 +858,7 @@ describe('QueryErrorResetBoundary', () => {
 
       fireEvent.click(rendered.getByText('retry'))
       expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
+      await vi.advanceTimersByTimeAsync(10)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
       consoleMock.mockRestore()

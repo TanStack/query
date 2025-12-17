@@ -1,5 +1,3 @@
-import * as React from 'react'
-import { renderToString } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
@@ -10,6 +8,8 @@ import {
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
+import { renderToString } from 'preact-render-to-string'
+import { useState } from 'preact/hooks'
 
 describe('Server Side Rendering', () => {
   setIsServer(true)
@@ -107,7 +107,7 @@ describe('Server Side Rendering', () => {
     const key = queryKey()
 
     function Page() {
-      const [page, setPage] = React.useState(1)
+      const [page, setPage] = useState(1)
       const { data } = useQuery({
         queryKey: [key, page],
         queryFn: () => sleep(10).then(() => page),
