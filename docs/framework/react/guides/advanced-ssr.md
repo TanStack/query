@@ -532,6 +532,25 @@ Now, your `getPosts` function can return e.g. `Temporal` datetime objects and th
 
 For more information, check out the [Next.js App with Prefetching Example](../examples/nextjs-app-prefetching).
 
+### Using the Persist Adapter with Streaming
+
+If you're using the persist adapter with streaming Server Components, you need to be careful not to save promises to storage. Since pending queries can be dehydrated and streamed to the client, you should configure the persister to only persist settled queries:
+
+```tsx
+<PersistQueryClientProvider
+  client={queryClient}
+  persistOptions={{
+    persister,
+    // We don't want to save promises into the storage, so we only persist settled queries
+    dehydrateOptions: { shouldDehydrateQuery: defaultShouldDehydrateQuery },
+  }}
+>
+  {children}
+</PersistQueryClientProvider>
+```
+
+This ensures that only successfully resolved or errored queries are persisted to storage, preventing serialization issues with pending promises.
+
 ## Experimental streaming without prefetching in Next.js
 
 While we recommend the prefetching solution detailed above because it flattens request waterfalls both on the initial page load **and** any subsequent page navigation, there is an experimental way to skip prefetching altogether and still have streaming SSR work: `@tanstack/react-query-next-experimental`
