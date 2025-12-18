@@ -16,7 +16,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
-import type { MapToSignals } from './signal-proxy'
+import type { MapToSignals, MethodKeys } from './signal-proxy'
 
 export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
@@ -25,12 +25,12 @@ export interface CreateBaseQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends QueryObserverOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey
-> {}
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > {}
 
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
@@ -38,9 +38,15 @@ export interface CreateQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
-  CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-  'suspense'
-> {}
+    CreateBaseQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
+    >,
+    'suspense'
+  > {}
 
 type CreateStatusBasedQueryResult<
   TStatus extends QueryObserverResult['status'],
@@ -79,22 +85,25 @@ export interface CreateInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
-  InfiniteQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  >,
-  'suspense'
-> {}
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+    'suspense'
+  > {}
 
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
   TState = QueryObserverResult<TData, TError>,
 > = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
+  MapToSignals<
+    OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>,
+    MethodKeys<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
+  >
 
 export type CreateQueryResult<
   TData = unknown,
@@ -106,13 +115,19 @@ export type DefinedCreateQueryResult<
   TError = DefaultError,
   TState = DefinedQueryObserverResult<TData, TError>,
 > = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
+  MapToSignals<
+    OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>,
+    MethodKeys<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
+  >
 
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+  MapToSignals<
+    InfiniteQueryObserverResult<TData, TError>,
+    MethodKeys<InfiniteQueryObserverResult<TData, TError>>
+  >
 
 export type DefinedCreateInfiniteQueryResult<
   TData = unknown,
@@ -121,7 +136,10 @@ export type DefinedCreateInfiniteQueryResult<
     TData,
     TError
   >,
-> = MapToSignals<TDefinedInfiniteQueryObserver>
+> = MapToSignals<
+  TDefinedInfiniteQueryObserver,
+  MethodKeys<TDefinedInfiniteQueryObserver>
+>
 
 export interface CreateMutationOptions<
   TData = unknown,
@@ -129,9 +147,9 @@ export interface CreateMutationOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 > extends OmitKeyof<
-  MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
-  '_defaulted'
-> {}
+    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
+    '_defaulted'
+  > {}
 
 export type CreateMutateFunction<
   TData = unknown,
@@ -270,4 +288,7 @@ export type CreateMutationResult<
     TOnMutateResult
   >,
 > = BaseMutationNarrowing<TData, TError, TVariables, TOnMutateResult> &
-  MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
+  MapToSignals<
+    OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>,
+    MethodKeys<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
+  >

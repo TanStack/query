@@ -13,7 +13,7 @@ import {
   notifyManager,
   shouldThrowError,
 } from '@tanstack/query-core'
-import { signalProxy } from './signal-proxy'
+import { MethodKeys, signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
 import type {
   DefaultedQueryObserverOptions,
@@ -27,6 +27,7 @@ import type { CreateBaseQueryOptions } from './types'
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
  * @param optionsFn
  * @param Observer
+ * @param excludeFunctions
  */
 export function createBaseQuery<
   TQueryFnData,
@@ -43,6 +44,7 @@ export function createBaseQuery<
     TQueryKey
   >,
   Observer: typeof QueryObserver,
+  excludeFunctions: ReadonlyArray<string>,
 ) {
   const ngZone = inject(NgZone)
   const pendingTasks = inject(PendingTasks)
@@ -211,7 +213,10 @@ export function createBaseQuery<
     })
   })
 
-  return signalProxy(resultSignal.asReadonly())
+  return signalProxy(
+    resultSignal.asReadonly(),
+    excludeFunctions as MethodKeys<QueryObserverResult<TData, TError>>[],
+  )
 }
 const OBSERVER_NOT_READY_ERROR =
   'injectQuery: QueryObserver not initialized yet. Avoid reading the query result during construction'

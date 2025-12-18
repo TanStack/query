@@ -25,6 +25,7 @@ import type {
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
+  QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
 import type {
@@ -322,8 +323,8 @@ export function injectQueries<
 
       return combine
         ? result
-        : (result as QueriesResults<T>).map((query) =>
-            signalProxy(signal(query)),
+        : (result as QueryObserverResult<T>[]).map((query) =>
+            signalProxy(signal(query), ['refetch']),
           )
     })
   }) as unknown as Signal<TCombinedResult>

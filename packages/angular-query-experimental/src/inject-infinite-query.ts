@@ -9,6 +9,7 @@ import { createBaseQuery } from './create-base-query'
 import type {
   DefaultError,
   InfiniteData,
+  InfiniteQueryObserverResult,
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
@@ -21,6 +22,7 @@ import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infinite-query-options'
+import { MethodKeys } from './signal-proxy'
 
 export interface InjectInfiniteQueryOptions {
   /**
@@ -110,8 +112,20 @@ export function injectInfiniteQuery<
  * @param options - Additional configuration.
  * @returns The infinite query result.
  */
-export function injectInfiniteQuery(
-  injectInfiniteQueryFn: () => CreateInfiniteQueryOptions,
+export function injectInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  injectInfiniteQueryFn: () => CreateInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
   options?: InjectInfiniteQueryOptions,
 ) {
   !options?.injector && assertInInjectionContext(injectInfiniteQuery)
@@ -120,6 +134,13 @@ export function injectInfiniteQuery(
     createBaseQuery(
       injectInfiniteQueryFn,
       InfiniteQueryObserver as typeof QueryObserver,
+      methodsToExclude,
     ),
   )
 }
+
+const methodsToExclude: Array<MethodKeys<InfiniteQueryObserverResult>> = [
+  'fetchNextPage',
+  'fetchPreviousPage',
+  'refetch',
+]
