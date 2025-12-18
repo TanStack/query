@@ -6,7 +6,11 @@ import {
   runInInjectionContext,
 } from '@angular/core'
 import { createBaseQuery } from './create-base-query'
-import type { DefaultError, QueryKey } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  QueryKey,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -16,6 +20,7 @@ import type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
 } from './query-options'
+import { MethodKeys } from './signal-proxy'
 
 export interface InjectQueryOptions {
   /**
@@ -212,6 +217,7 @@ export function injectQuery<
  * ```
  * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
+ * @param excludeFunctions - Array of function property names to exclude from signal conversion
  * @returns The query result.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */
@@ -221,6 +227,8 @@ export function injectQuery(
 ) {
   !options?.injector && assertInInjectionContext(injectQuery)
   return runInInjectionContext(options?.injector ?? inject(Injector), () =>
-    createBaseQuery(injectQueryFn, QueryObserver),
+    createBaseQuery(injectQueryFn, QueryObserver, methodsToExclude),
   ) as unknown as CreateQueryResult
 }
+
+const methodsToExclude: Array<MethodKeys<QueryObserverResult>> = ['refetch']

@@ -185,10 +185,9 @@ export function injectMutation<
     }
   })
 
-  return signalProxy(resultSignal) as CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  >
+  return signalProxy(resultSignal, [
+    'mutate',
+    'mutateAsync',
+    'reset',
+  ]) as CreateMutationResult<TData, TError, TVariables, TOnMutateResult>
 }
