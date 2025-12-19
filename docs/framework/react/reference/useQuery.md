@@ -66,20 +66,20 @@ const {
 - `queryKey: unknown[]`
   - **Required**
   - The query key to use for this query.
-  - The query key will be hashed into a stable hash. See [Query Keys](../../guides/query-keys.md) for more information.
+  - The query key will be hashed into a stable hash. See [Query Keys](../guides/query-keys.md) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
-  - **Required, but only if no default query function has been defined** See [Default Query Function](../../guides/default-query-function.md) for more information.
+  - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function.md) for more information.
   - The function that the query will use to request data.
-  - Receives a [QueryFunctionContext](../../guides/query-functions.md#queryfunctioncontext)
+  - Receives a [QueryFunctionContext](../guides/query-functions.md#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
 - `enabled: boolean | (query: Query) => boolean`
   - Set this to `false` to disable this query from automatically running.
-  - Can be used for [Dependent Queries](../../guides/dependent-queries.md).
+  - Can be used for [Dependent Queries](../guides/dependent-queries.md).
 - `networkMode: 'online' | 'always' | 'offlineFirst'`
   - optional
   - defaults to `'online'`
-  - see [Network Mode](../../guides/network-mode.md) for more information.
+  - see [Network Mode](../guides/network-mode.md) for more information.
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
@@ -101,7 +101,7 @@ const {
 - `gcTime: number | Infinity`
   - Defaults to `5 * 60 * 1000` (5 minutes) or `Infinity` during SSR
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used.
-  - Note: the maximum allowed time is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
+  - Note: the maximum allowed time is about [24 days](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value), although it is possible to work around this limit using [timeoutManager.setTimeoutProvider](../../../reference/timeoutManager.md#timeoutmanagersettimeoutprovider).
   - If set to `Infinity`, will disable garbage collection
 - `queryKeyHashFn: (queryKey: QueryKey) => string`
   - Optional
@@ -221,7 +221,7 @@ const {
   - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetches.
   - `paused`: The query wanted to fetch, but has been `paused`.
   - `idle`: The query is not fetching.
-  - see [Network Mode](../../guides/network-mode.md) for more information.
+  - see [Network Mode](../guides/network-mode.md) for more information.
 - `isFetching: boolean`
   - A derived boolean from the `fetchStatus` variable above, provided for convenience.
 - `isPaused: boolean`

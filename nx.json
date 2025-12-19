@@ -30,6 +30,10 @@
       "inputs": ["default", "^production"],
       "outputs": ["{projectRoot}/dist-ts"]
     },
+    "test:docs": {
+      "cache": true,
+      "inputs": ["{workspaceRoot}/docs/**/*"]
+    },
     "test:knip": {
       "cache": true,
       "inputs": ["{workspaceRoot}/**/*"]
