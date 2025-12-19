@@ -57,7 +57,7 @@ const query = queryCache.find(queryKey)
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters#query-filters)
+- `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters#query-filters)
 
 **Returns**
 
@@ -76,8 +76,8 @@ const queries = queryCache.findAll(queryKey)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../../framework/react/guides/query-keys.md)
-- `filters?: QueryFilters`: [Query Filters](../../framework/react/guides/filters.md#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../framework/react/guides/query-keys.md)
+- `filters?: QueryFilters`: [Query Filters](../framework/react/guides/filters.md#query-filters)
 
 **Returns**
 
