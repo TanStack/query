@@ -5,7 +5,7 @@ import { infiniteQueryOptions } from '../infiniteQueryOptions'
 
 vi.mock('../useQueryClient')
 
-describe('useQuery', () => {
+describe('useInfiniteQuery', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })

@@ -62,6 +62,39 @@ describe('useQuery', () => {
     })
   })
 
+  test('should work with options getter and be reactive', async () => {
+    const keyRef = ref('key011')
+    const resultRef = ref('result02')
+    const query = useQuery(() => ({
+      queryKey: [keyRef.value],
+      queryFn: () => sleep(0).then(() => resultRef.value),
+    }))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'result02' },
+      isPending: { value: false },
+      isFetching: { value: false },
+      isFetched: { value: true },
+      isSuccess: { value: true },
+    })
+
+    resultRef.value = 'result021'
+    keyRef.value = 'key012'
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(query).toMatchObject({
+      status: { value: 'success' },
+      data: { value: 'result021' },
+      isPending: { value: false },
+      isFetching: { value: false },
+      isFetched: { value: true },
+      isSuccess: { value: true },
+    })
+  })
+
   test('should return pending status initially', () => {
     const query = useQuery({
       queryKey: ['key1'],
@@ -274,7 +307,7 @@ describe('useQuery', () => {
   })
 
   test('should use the current value for the queryKey when refetch is called', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const keyRef = ref('key11')
     const query = useQuery({
       queryKey: ['key10', keyRef],
@@ -302,7 +335,7 @@ describe('useQuery', () => {
   })
 
   test('should be `enabled` to accept getter function', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const checked = ref(false)
 
     useQuery({
@@ -321,7 +354,7 @@ describe('useQuery', () => {
   })
 
   test('should allow getters for query keys', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
 
@@ -346,7 +379,7 @@ describe('useQuery', () => {
   })
 
   test('should allow arbitrarily nested getters for query keys', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')
