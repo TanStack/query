@@ -39,9 +39,13 @@ export type UseMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TOnMutateResult = unknown,
-> = MaybeRefDeep<
-  UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult>
->
+> =
+  | MaybeRefDeep<
+      UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult>
+    >
+  | (() => MaybeRefDeep<
+      UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult>
+    >)
 
 type MutateSyncFunction<
   TData = unknown,
@@ -77,8 +81,11 @@ export function useMutation<
   TVariables = void,
   TOnMutateResult = unknown,
 >(
-  mutationOptions: MaybeRefDeep<
-    UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult>
+  mutationOptions: UseMutationOptions<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
   >,
   queryClient?: QueryClient,
 ): UseMutationReturnType<TData, TError, TVariables, TOnMutateResult> {
@@ -92,7 +99,11 @@ export function useMutation<
 
   const client = queryClient || useQueryClient()
   const options = computed(() => {
-    return client.defaultMutationOptions(cloneDeepUnref(mutationOptions))
+    const resolvedOptions =
+      typeof mutationOptions === 'function'
+        ? mutationOptions()
+        : mutationOptions
+    return client.defaultMutationOptions(cloneDeepUnref(resolvedOptions))
   })
   const observer = new MutationObserver(client, options.value)
   const state = options.value.shallow
