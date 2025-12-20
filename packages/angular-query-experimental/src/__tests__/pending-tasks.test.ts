@@ -139,7 +139,6 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate()
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
@@ -355,38 +354,42 @@ describe('PendingTasks Integration', () => {
     }
 
     test('should cleanup pending tasks when component with active query is destroyed', async () => {
-      const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
       fixture.detectChanges()
 
       // Start the query
       expect(fixture.componentInstance.query.status()).toBe('pending')
+      expect(fixture.isStable()).toBe(false)
 
       // Destroy component while query is running
       fixture.destroy()
 
       // Angular should become stable even though component was destroyed
-      const stablePromise = app.whenStable()
+      const stablePromise = fixture.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-
-      await expect(stablePromise).resolves.toEqual(undefined)
+      await stablePromise
+      expect(fixture.isStable()).toBe(true)
     })
 
     test('should cleanup pending tasks when component with active mutation is destroyed', async () => {
-      const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
       fixture.detectChanges()
 
       fixture.componentInstance.mutation.mutate('test')
+      fixture.detectChanges()
+      expect(fixture.isStable()).toBe(false)
 
       // Destroy component while mutation is running
       fixture.destroy()
+      fixture.detectChanges()
+      expect(fixture.isStable()).toBe(true)
 
       // Angular should become stable even though component was destroyed
-      const stablePromise = app.whenStable()
-      await vi.advanceTimersByTimeAsync(150)
+      const stablePromise = fixture.whenStable()
+      await vi.advanceTimersByTimeAsync(200)
+      await stablePromise
 
-      await expect(stablePromise).resolves.toEqual(undefined)
+      expect(fixture.isStable()).toBe(true)
     })
   })
 

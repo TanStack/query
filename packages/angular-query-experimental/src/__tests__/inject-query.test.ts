@@ -847,7 +847,9 @@ describe('injectQuery', () => {
       const component = fixture.componentInstance
       const query = component.query
 
-      await app.whenStable()
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersToNextTimerAsync()
+      await stablePromise
 
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
@@ -909,8 +911,10 @@ describe('injectQuery', () => {
       enabledSignal.set(true)
       fixture.detectChanges()
 
-      await vi.advanceTimersByTimeAsync(0)
-      await app.whenStable()
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersToNextTimerAsync()
+      await stablePromise
+
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
       expect(component.callCount).toBe(1)
@@ -949,7 +953,10 @@ describe('injectQuery', () => {
       const component = fixture.componentInstance
       const query = component.query
 
-      await app.whenStable()
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersToNextTimerAsync()
+      await stablePromise
+
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-1')
       expect(component.callCount).toBe(1)
