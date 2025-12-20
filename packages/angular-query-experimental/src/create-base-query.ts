@@ -64,7 +64,7 @@ export function createBaseQuery<
   let taskCleanupRef: (() => void) | null = null
 
   const startPendingTask = () => {
-    if (!taskCleanupRef) {
+    if (!taskCleanupRef && !destroyed) {
       taskCleanupRef = pendingTasks.add()
     }
   }
@@ -152,6 +152,11 @@ export function createBaseQuery<
       throw new Error(OBSERVER_NOT_READY_ERROR)
     }
 
+    const initialState = observer.getCurrentResult()
+    if (initialState.fetchStatus !== 'idle') {
+      startPendingTask()
+    }
+
     return observer.subscribe((state) => {
       if (state.fetchStatus !== 'idle') {
         startPendingTask()
@@ -219,4 +224,4 @@ export function createBaseQuery<
   )
 }
 const OBSERVER_NOT_READY_ERROR =
-  'injectQuery: QueryObserver not initialized yet. Avoid reading the query result during construction'
+  'injectQuery: QueryObserver not initialized yet. Avoid reading the query result or running methods during construction'

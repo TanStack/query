@@ -17,7 +17,6 @@ import {
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { PENDING_TASKS } from './pending-tasks-compat'
-import type { PendingTaskRef } from './pending-tasks-compat'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
@@ -82,6 +81,22 @@ export function injectMutation<
     })
   })()
 
+  let destroyed = false
+  let taskCleanupRef: (() => void) | null = null
+
+  const startPendingTask = () => {
+    if (!taskCleanupRef && !destroyed) {
+      taskCleanupRef = pendingTasks.add()
+    }
+  }
+
+  const stopPendingTask = () => {
+    if (taskCleanupRef) {
+      taskCleanupRef()
+      taskCleanupRef = null
+    }
+  }
+
   const mutateFnSignal = computed<
     CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(() => {
@@ -126,22 +141,18 @@ export function injectMutation<
   effect(
     (onCleanup) => {
       const observer = observerSignal()
-      let pendingTaskRef: PendingTaskRef | null = null
 
       untracked(() => {
         const unsubscribe = ngZone.runOutsideAngular(() =>
           observer.subscribe(
             notifyManager.batchCalls((state) => {
               ngZone.run(() => {
-                // Track pending task when mutation is pending
-                if (state.isPending && !pendingTaskRef) {
-                  pendingTaskRef = pendingTasks.add()
-                }
+                if (destroyed) return
 
-                // Clear pending task when mutation is no longer pending
-                if (!state.isPending && pendingTaskRef) {
-                  pendingTaskRef()
-                  pendingTaskRef = null
+                if (state.isPending) {
+                  startPendingTask()
+                } else {
+                  stopPendingTask()
                 }
 
                 if (
@@ -158,11 +169,8 @@ export function injectMutation<
           ),
         )
         onCleanup(() => {
-          // Clean up any pending task on destroy
-          if (pendingTaskRef) {
-            pendingTaskRef()
-            pendingTaskRef = null
-          }
+          destroyed = true
+          stopPendingTask()
           unsubscribe()
         })
       })
