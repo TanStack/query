@@ -19,6 +19,7 @@ import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
 import type {
   DefaultError,
+  DefinedQueryObserverResult,
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
@@ -91,39 +92,42 @@ type GetCreateQueryOptionsForCreateQueries<T> =
                 : // Fallback
                   QueryObserverOptionsForCreateQueries
 
-// A defined initialData setting should return a DefinedCreateQueryResult rather than CreateQueryResult
-type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
-  initialData?: infer TInitialData
-}
-  ? unknown extends TInitialData
-    ? CreateQueryResult<TData, TError>
-    : TInitialData extends TData
-      ? DefinedCreateQueryResult<TData, TError>
-      : TInitialData extends () => infer TInitialDataResult
-        ? unknown extends TInitialDataResult
-          ? CreateQueryResult<TData, TError>
-          : TInitialDataResult extends TData
-            ? DefinedCreateQueryResult<TData, TError>
-            : CreateQueryResult<TData, TError>
-        : CreateQueryResult<TData, TError>
-  : CreateQueryResult<TData, TError>
+// Generic wrapper that handles initialData logic for any result type pair
+type GenericGetDefinedOrUndefinedQueryResult<T, TData, TUndefined, TDefined> =
+  T extends {
+    initialData?: infer TInitialData
+  }
+    ? unknown extends TInitialData
+      ? TUndefined
+      : TInitialData extends TData
+        ? TDefined
+        : TInitialData extends () => infer TInitialDataResult
+          ? unknown extends TInitialDataResult
+            ? TUndefined
+            : TInitialDataResult extends TData
+              ? TDefined
+              : TUndefined
+          : TUndefined
+    : TUndefined
 
-type GetCreateQueryResult<T> =
-  // Part 1: responsible for mapping explicit type parameter to function result, if object
+// Infer TData and TError from query options
+// Shared type between the results with and without the combine function
+type InferDataAndError<T> =
+  // Part 1: explicit type parameter as object { queryFnData, error, data }
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
-    ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
+    ? { data: TData; error: TError }
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-      ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
+      ? { data: TQueryFnData; error: TError }
       : T extends { data: infer TData; error?: infer TError }
-        ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
-        : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
+        ? { data: TData; error: TError }
+        : // Part 2: explicit type parameter as tuple [TQueryFnData, TError, TData]
           T extends [any, infer TError, infer TData]
-          ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
+          ? { data: TData; error: TError }
           : T extends [infer TQueryFnData, infer TError]
-            ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
+            ? { data: TQueryFnData; error: TError }
             : T extends [infer TQueryFnData]
-              ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
-              : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
+              ? { data: TQueryFnData; error: unknown }
+              : // Part 3: infer from queryFn, select, throwOnError
                 T extends {
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
@@ -131,13 +135,40 @@ type GetCreateQueryResult<T> =
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? GetDefinedOrUndefinedQueryResult<
-                    T,
-                    unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
-                  >
+                ? {
+                    data: unknown extends TData ? TQueryFnData : TData
+                    error: unknown extends TError ? DefaultError : TError
+                  }
                 : // Fallback
-                  CreateQueryResult
+                  { data: unknown; error: DefaultError }
+
+// Maps query options to Angular's signal-wrapped CreateQueryResult
+type GetCreateQueryResult<T> = GenericGetDefinedOrUndefinedQueryResult<
+  T,
+  InferDataAndError<T>['data'],
+  CreateQueryResult<
+    InferDataAndError<T>['data'],
+    InferDataAndError<T>['error']
+  >,
+  DefinedCreateQueryResult<
+    InferDataAndError<T>['data'],
+    InferDataAndError<T>['error']
+  >
+>
+
+// Maps query options to plain QueryObserverResult for combine function
+type GetQueryObserverResult<T> = GenericGetDefinedOrUndefinedQueryResult<
+  T,
+  InferDataAndError<T>['data'],
+  QueryObserverResult<
+    InferDataAndError<T>['data'],
+    InferDataAndError<T>['error']
+  >,
+  DefinedQueryObserverResult<
+    InferDataAndError<T>['data'],
+    InferDataAndError<T>['error']
+  >
+>
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -202,6 +233,25 @@ export type QueriesResults<
           >
         : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 
+// Maps query options array to plain QueryObserverResult types for combine function
+type RawQueriesResults<
+  T extends Array<any>,
+  TResults extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
+  ? Array<QueryObserverResult>
+  : T extends []
+    ? []
+    : T extends [infer Head]
+      ? [...TResults, GetQueryObserverResult<Head>]
+      : T extends [infer Head, ...infer Tails]
+        ? RawQueriesResults<
+            [...Tails],
+            [...TResults, GetQueryObserverResult<Head>],
+            [...TDepth, 1]
+          >
+        : { [K in keyof T]: GetQueryObserverResult<T[K]> }
+
 export interface InjectQueriesOptions<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
@@ -211,7 +261,7 @@ export interface InjectQueriesOptions<
     | readonly [
         ...{ [K in keyof T]: GetCreateQueryOptionsForCreateQueries<T[K]> },
       ]
-  combine?: (result: QueriesResults<T>) => TCombinedResult
+  combine?: (result: RawQueriesResults<T>) => TCombinedResult
 }
 
 /**

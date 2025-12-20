@@ -25,12 +25,12 @@ export interface CreateBaseQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  > {}
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey
+> {}
 
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
@@ -38,15 +38,9 @@ export interface CreateQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
-    CreateBaseQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >,
-    'suspense'
-  > {}
+  CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
+  'suspense'
+> {}
 
 type CreateStatusBasedQueryResult<
   TStatus extends QueryObserverResult['status'],
@@ -85,15 +79,15 @@ export interface CreateInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
-    InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-    'suspense'
-  > {}
+  InfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  'suspense'
+> {}
 
 export type CreateBaseQueryResult<
   TData = unknown,
@@ -147,9 +141,9 @@ export interface CreateMutationOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 > extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
-    '_defaulted'
-  > {}
+  MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
+  '_defaulted'
+> {}
 
 export type CreateMutateFunction<
   TData = unknown,
