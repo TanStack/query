@@ -18,29 +18,23 @@ import type {
 import type { Signal } from '@angular/core'
 import type { MapToSignals, MethodKeys } from './signal-proxy'
 
-export interface CreateBaseQueryOptions<
+export type CreateBaseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends QueryObserverOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey
-> {}
+> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
 
-export interface CreateQueryOptions<
+export type CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends OmitKeyof<
+> = OmitKeyof<
   CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'suspense'
-> {}
+>
 
 type CreateStatusBasedQueryResult<
   TStatus extends QueryObserverResult['status'],
