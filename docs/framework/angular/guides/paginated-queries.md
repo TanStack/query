@@ -68,6 +68,10 @@ const result = injectQuery(() => ({
     </div>
   `,
 })
+
+@Component({
+  // ...
+})
 export class PaginationExampleComponent {
   page = signal(0)
   queryClient = inject(QueryClient)
@@ -83,7 +87,7 @@ export class PaginationExampleComponent {
     effect(() => {
       // Prefetch the next page!
       if (!this.query.isPlaceholderData() && this.query.data()?.hasMore) {
-        this.#queryClient.prefetchQuery({
+        this.queryClient.prefetchQuery({
           queryKey: ['projects', this.page() + 1],
           queryFn: () => lastValueFrom(fetchProjects(this.page() + 1)),
         })

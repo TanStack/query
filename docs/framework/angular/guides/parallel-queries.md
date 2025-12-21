@@ -17,6 +17,9 @@ replace:
 [//]: # 'Example'
 
 ```ts
+@Component({
+  // ...
+})
 export class AppComponent {
   // The following queries will execute in parallel
   usersQuery = injectQuery(() => ({ queryKey: ['users'], queryFn: fetchUsers }))
@@ -38,11 +41,15 @@ TanStack Query provides `injectQueries`, which you can use to dynamically execut
 [//]: # 'DynamicParallelIntro'
 [//]: # 'Example2'
 
+> IMPORTANT: `injectQueries` is experimental and is provided in it's own entry point
+
 ```ts
+@Component({
+  // ...
+})
 export class AppComponent {
   users = signal<Array<User>>([])
 
-  // Please note injectQueries is under development and this code does not work yet
   userQueries = injectQueries(() => ({
     queries: users().map((user) => {
       return {
