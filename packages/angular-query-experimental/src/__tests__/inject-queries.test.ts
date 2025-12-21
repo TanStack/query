@@ -1,25 +1,16 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { render } from '@testing-library/angular'
-import {
-  Component,
-  effect,
-  provideZonelessChangeDetection,
-} from '@angular/core'
-import { TestBed } from '@angular/core/testing'
+import { ChangeDetectionStrategy, Component, effect } from '@angular/core'
 import { queryKey } from '@tanstack/query-test-utils'
-import { QueryClient, provideTanStackQuery } from '..'
+import { QueryClient } from '..'
 import { injectQueries } from '../inject-queries'
+import { setupTanStackQueryTestBed } from './test-utils'
 
 let queryClient: QueryClient
 
 beforeEach(() => {
   queryClient = new QueryClient()
-  TestBed.configureTestingModule({
-    providers: [
-      provideZonelessChangeDetection(),
-      provideTanStackQuery(queryClient),
-    ],
-  })
+  setupTanStackQueryTestBed(queryClient)
 })
 
 describe('injectQueries', () => {
@@ -37,6 +28,7 @@ describe('injectQueries', () => {
           </div>
         </div>
       `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class Page {
       toString(val: any) {

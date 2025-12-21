@@ -1,6 +1,7 @@
 import {
   Injector,
   NgZone,
+  PendingTasks,
   assertInInjectionContext,
   computed,
   effect,
@@ -16,8 +17,6 @@ import {
   shouldThrowError,
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { PENDING_TASKS } from './pending-tasks-compat'
-import type { PendingTaskRef } from './pending-tasks-compat'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
@@ -59,7 +58,7 @@ export function injectMutation<
   !options?.injector && assertInInjectionContext(injectMutation)
   const injector = options?.injector ?? inject(Injector)
   const ngZone = injector.get(NgZone)
-  const pendingTasks = injector.get(PENDING_TASKS)
+  const pendingTasks = injector.get(PendingTasks)
   const queryClient = injector.get(QueryClient)
 
   /**
@@ -125,9 +124,8 @@ export function injectMutation<
 
   effect(
     (onCleanup) => {
-      // observer.trackResult is not used as this optimization is not needed for Angular
       const observer = observerSignal()
-      let pendingTaskRef: PendingTaskRef | null = null
+      let taskCleanupRef: (() => void) | null = null
 
       untracked(() => {
         const unsubscribe = ngZone.runOutsideAngular(() =>
@@ -135,14 +133,14 @@ export function injectMutation<
             notifyManager.batchCalls((state) => {
               ngZone.run(() => {
                 // Track pending task when mutation is pending
-                if (state.isPending && !pendingTaskRef) {
-                  pendingTaskRef = pendingTasks.add()
+                if (state.isPending && !taskCleanupRef) {
+                  taskCleanupRef = pendingTasks.add()
                 }
 
                 // Clear pending task when mutation is no longer pending
-                if (!state.isPending && pendingTaskRef) {
-                  pendingTaskRef()
-                  pendingTaskRef = null
+                if (!state.isPending && taskCleanupRef) {
+                  taskCleanupRef()
+                  taskCleanupRef = null
                 }
 
                 if (
@@ -160,9 +158,9 @@ export function injectMutation<
         )
         onCleanup(() => {
           // Clean up any pending task on destroy
-          if (pendingTaskRef) {
-            pendingTaskRef()
-            pendingTaskRef = null
+          if (taskCleanupRef) {
+            taskCleanupRef()
+            taskCleanupRef = null
           }
           unsubscribe()
         })
