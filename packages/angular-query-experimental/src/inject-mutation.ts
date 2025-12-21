@@ -1,6 +1,7 @@
 import {
   Injector,
   NgZone,
+  PendingTasks,
   assertInInjectionContext,
   computed,
   effect,
@@ -16,7 +17,6 @@ import {
   shouldThrowError,
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { PENDING_TASKS } from './pending-tasks-compat'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
@@ -58,7 +58,7 @@ export function injectMutation<
   !options?.injector && assertInInjectionContext(injectMutation)
   const injector = options?.injector ?? inject(Injector)
   const ngZone = injector.get(NgZone)
-  const pendingTasks = injector.get(PENDING_TASKS)
+  const pendingTasks = injector.get(PendingTasks)
   const queryClient = injector.get(QueryClient)
 
   /**
