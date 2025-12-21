@@ -76,7 +76,7 @@ todoListQuery = injectQuery(() => ({
 }))
 
 // However, the following query below will NOT be invalidated
-const todoListQuery = injectQuery(() => ({
+todoListQuery = injectQuery(() => ({
   queryKey: ['todos', { type: 'done' }],
   queryFn: fetchTodoList,
 }))

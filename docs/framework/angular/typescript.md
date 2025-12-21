@@ -53,7 +53,7 @@ class MyComponent {
 [//]: # 'TypeInference2'
 [//]: # 'TypeInference3'
 
-In this example we pass Group[] to the type parameter of HttpClient's `get` method.
+In this example we pass `Group[]` to the type parameter of HttpClient's `get` method.
 
 ```angular-ts
 @Component({
@@ -92,7 +92,7 @@ class MyComponent {
 }
 ```
 
-> TypeScript currently does not support discriminated unions on object methods. Narrowing on signal fields on objects such as query results only works on signals returning a boolean. Prefer using `isSuccess()` and similar boolean status signals over `status() === 'success'`.
+> TypeScript currently does not support discriminated unions on object methods. Narrowing on signal fields on objects such as query results only works on signals returning a boolean. Prefer using `isSuccess()`, `isError()` and `isPending()` over `status() === 'success'`.
 
 [//]: # 'TypeInference4'
 [//]: # 'TypeNarrowing'

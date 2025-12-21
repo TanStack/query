@@ -9,18 +9,18 @@ ref: docs/framework/react/guides/query-functions.md
 ```ts
 injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchAllTodos }))
 injectQuery(() => ({
-  queryKey: ['todos', todoId],
-  queryFn: () => fetchTodoById(todoId),
+  queryKey: ['todos', todoId()],
+  queryFn: () => fetchTodoById(todoId()),
 }))
 injectQuery(() => ({
-  queryKey: ['todos', todoId],
+  queryKey: ['todos', todoId()],
   queryFn: async () => {
-    const data = await fetchTodoById(todoId)
+    const data = await fetchTodoById(todoId())
     return data
   },
 }))
 injectQuery(() => ({
-  queryKey: ['todos', todoId],
+  queryKey: ['todos', todoId()],
   queryFn: ({ queryKey }) => fetchTodoById(queryKey[1]),
 }))
 ```
