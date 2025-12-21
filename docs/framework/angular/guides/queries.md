@@ -19,6 +19,9 @@ replace:
 ```ts
 import { injectQuery } from '@tanstack/angular-query-experimental'
 
+@Component({
+  // ...
+})
 export class TodosComponent {
   info = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
 }

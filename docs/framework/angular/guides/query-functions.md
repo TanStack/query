@@ -8,7 +8,10 @@ ref: docs/framework/react/guides/query-functions.md
 
 ```ts
 injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchAllTodos }))
-injectQuery(() => ({ queryKey: ['todos', todoId], queryFn: () => fetchTodoById(todoId) })
+injectQuery(() => ({
+  queryKey: ['todos', todoId],
+  queryFn: () => fetchTodoById(todoId),
+}))
 injectQuery(() => ({
   queryKey: ['todos', todoId],
   queryFn: async () => {
@@ -26,8 +29,10 @@ injectQuery(() => ({
 [//]: # 'Example2'
 
 ```ts
+todoId = signal(1)
+
 todos = injectQuery(() => ({
-  queryKey: ['todos', todoId()],
+  queryKey: ['todos', this.todoId()],
   queryFn: async () => {
     if (somethingGoesWrong) {
       throw new Error('Oh no!')
@@ -45,10 +50,12 @@ todos = injectQuery(() => ({
 [//]: # 'Example3'
 
 ```ts
+todoId = signal(1)
+
 todos = injectQuery(() => ({
-  queryKey: ['todos', todoId()],
+  queryKey: ['todos', this.todoId()],
   queryFn: async () => {
-    const response = await fetch('/todos/' + todoId)
+    const response = await fetch('/todos/' + this.todoId())
     if (!response.ok) {
       throw new Error('Network response was not ok')
     }
@@ -61,8 +68,11 @@ todos = injectQuery(() => ({
 [//]: # 'Example4'
 
 ```ts
+status = signal('active')
+page = signal(1)
+
 result = injectQuery(() => ({
-  queryKey: ['todos', { status: status(), page: page() }],
+  queryKey: ['todos', { status: this.status(), page: this.page() }],
   queryFn: fetchTodoList,
 }))
 
