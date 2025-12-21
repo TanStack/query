@@ -6,6 +6,7 @@ import {
   runInInjectionContext,
 } from '@angular/core'
 import { createBaseQuery } from './create-base-query'
+import type { MethodKeys } from './signal-proxy'
 import type {
   DefaultError,
   QueryKey,
@@ -20,7 +21,6 @@ import type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
 } from './query-options'
-import { MethodKeys } from './signal-proxy'
 
 export interface InjectQueryOptions {
   /**

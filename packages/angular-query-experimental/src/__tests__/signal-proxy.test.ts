@@ -5,13 +5,13 @@ import {
   input,
   isSignal,
   provideZonelessChangeDetection,
-  untracked,
   signal,
+  untracked,
 } from '@angular/core'
 import { beforeEach, describe, expect, test } from 'vitest'
+import { TestBed } from '@angular/core/testing'
 import { signalProxy } from '../signal-proxy'
 import { registerSignalInput } from './test-utils'
-import { TestBed } from '@angular/core/testing'
 
 describe('signalProxy', () => {
   const inputSignal = signal({ fn: () => 'bar', baz: 'qux' })

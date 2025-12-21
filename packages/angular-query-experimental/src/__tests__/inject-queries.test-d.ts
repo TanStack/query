@@ -246,7 +246,7 @@ describe('InjectQueries combine', () => {
     >()
   })
 
-  it('should provide the correct types on the combined result with initial data', () => {
+  it('should provide the correct types on the result with initial data', () => {
     const queryResults = injectQueries(() => ({
       queries: [
         {

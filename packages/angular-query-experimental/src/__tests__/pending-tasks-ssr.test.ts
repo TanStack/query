@@ -12,10 +12,10 @@ import {
 } from '@angular/platform-server'
 import { bootstrapApplication } from '@angular/platform-browser'
 
-import { injectQuery } from '../inject-query'
 import { sleep } from '@tanstack/query-test-utils'
-import { provideTanStackQuery } from '../providers'
 import { QueryClient } from '@tanstack/query-core'
+import { injectQuery } from '../inject-query'
+import { provideTanStackQuery } from '../providers'
 
 describe('PendingTasks SSR', () => {
   beforeEach(() => {

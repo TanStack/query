@@ -4,7 +4,7 @@ import { noop } from '@tanstack/query-core'
 
 type PendingTasksCompat = { add: () => PendingTaskRef }
 
-export type PendingTaskRef = () => void
+type PendingTaskRef = () => void
 
 export const PENDING_TASKS = new InjectionToken<PendingTasksCompat>(
   'PENDING_TASKS',

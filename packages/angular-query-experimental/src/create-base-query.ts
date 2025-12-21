@@ -13,8 +13,9 @@ import {
   notifyManager,
   shouldThrowError,
 } from '@tanstack/query-core'
-import { MethodKeys, signalProxy } from './signal-proxy'
+import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
+import type { MethodKeys} from './signal-proxy';
 import type {
   DefaultedQueryObserverOptions,
   QueryKey,
@@ -220,7 +221,7 @@ export function createBaseQuery<
 
   return signalProxy(
     resultSignal.asReadonly(),
-    excludeFunctions as MethodKeys<QueryObserverResult<TData, TError>>[],
+    excludeFunctions as Array<MethodKeys<QueryObserverResult<TData, TError>>>,
   )
 }
 const OBSERVER_NOT_READY_ERROR =

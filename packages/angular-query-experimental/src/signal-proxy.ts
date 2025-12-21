@@ -2,11 +2,11 @@ import { computed, untracked } from '@angular/core'
 import type { Signal } from '@angular/core'
 
 export type MethodKeys<T> = {
-  [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never
+  [K in keyof T]: T[K] extends (...args: Array<any>) => any ? K : never
 }[keyof T]
 
-export type MapToSignals<T, ExcludeFields extends MethodKeys<T> = never> = {
-  [K in keyof T]: K extends ExcludeFields ? T[K] : Signal<T[K]>
+export type MapToSignals<T, TExcludeFields extends MethodKeys<T> = never> = {
+  [K in keyof T]: K extends TExcludeFields ? T[K] : Signal<T[K]>
 }
 
 /**
@@ -18,41 +18,44 @@ export type MapToSignals<T, ExcludeFields extends MethodKeys<T> = never> = {
  */
 export function signalProxy<
   TInput extends Record<string | symbol, any>,
-  const ExcludeFields extends ReadonlyArray<MethodKeys<TInput>> = [],
->(inputSignal: Signal<TInput>, excludeFields: ExcludeFields) {
-  const internalState = {} as MapToSignals<TInput, ExcludeFields[number]>
+  const TExcludeFields extends ReadonlyArray<MethodKeys<TInput>> = [],
+>(inputSignal: Signal<TInput>, excludeFields: TExcludeFields) {
+  const internalState = {} as MapToSignals<TInput, TExcludeFields[number]>
   const excludeFieldsArray = excludeFields as ReadonlyArray<string>
 
-  return new Proxy<MapToSignals<TInput, ExcludeFields[number]>>(internalState, {
-    get(target, prop) {
-      // first check if we have it in our internal state and return it
-      const computedField = target[prop]
-      if (computedField) return computedField
+  return new Proxy<MapToSignals<TInput, TExcludeFields[number]>>(
+    internalState,
+    {
+      get(target, prop) {
+        // first check if we have it in our internal state and return it
+        const computedField = target[prop]
+        if (computedField) return computedField
 
-      // if it is an expluded function, return it without tracking
-      if (excludeFieldsArray.includes(prop as string)) {
-        const fn = (...args: Parameters<TInput[typeof prop]>) =>
-          untracked(inputSignal)[prop](...args)
+        // if it is an excluded function, return it without tracking
+        if (excludeFieldsArray.includes(prop as string)) {
+          const fn = (...args: Parameters<TInput[typeof prop]>) =>
+            untracked(inputSignal)[prop](...args)
+          // @ts-expect-error
+          target[prop] = fn
+          return fn
+        }
+
+        // otherwise, make a computed field
         // @ts-expect-error
-        target[prop] = fn
-        return fn
-      }
-
-      // otherwise, make a computed field
-      // @ts-expect-error
-      return (target[prop] = computed(() => inputSignal()[prop]))
+        return (target[prop] = computed(() => inputSignal()[prop]))
+      },
+      has(_, prop) {
+        return !!untracked(inputSignal)[prop]
+      },
+      ownKeys() {
+        return Reflect.ownKeys(untracked(inputSignal))
+      },
+      getOwnPropertyDescriptor() {
+        return {
+          enumerable: true,
+          configurable: true,
+        }
+      },
     },
-    has(_, prop) {
-      return !!untracked(inputSignal)[prop]
-    },
-    ownKeys() {
-      return Reflect.ownKeys(untracked(inputSignal))
-    },
-    getOwnPropertyDescriptor() {
-      return {
-        enumerable: true,
-        configurable: true,
-      }
-    },
-  })
+  )
 }
