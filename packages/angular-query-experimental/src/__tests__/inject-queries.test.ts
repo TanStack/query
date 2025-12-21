@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, vi, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/angular'
 import {
   ChangeDetectionStrategy,
@@ -34,8 +34,8 @@ describe('injectQueries', () => {
       template: `
         <div>
           <div>
-            data1: {{ result()[0].data() ?? 'null' }}, data2:
-            {{ result()[1].data() ?? 'null' }}
+            data1: {{ queries()[0].data() ?? 'null' }}, data2:
+            {{ queries()[1].data() ?? 'null' }}
           </div>
         </div>
       `,
@@ -45,7 +45,7 @@ describe('injectQueries', () => {
       toString(val: any) {
         return String(val)
       }
-      result = injectQueries(() => ({
+      queries = injectQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -65,7 +65,7 @@ describe('injectQueries', () => {
       }))
 
       _pushResults = effect(() => {
-        const snapshot = this.result().map((q) => ({ data: q.data() }))
+        const snapshot = this.queries().map((q) => ({ data: q.data() }))
         results.push(snapshot)
       })
     }
@@ -88,11 +88,11 @@ describe('injectQueries', () => {
     const results: Array<{ data: string; refetch: () => void }> = []
 
     @Component({
-      template: ` <div>data: {{ result().data }}</div> `,
+      template: ` <div>data: {{ queries().data }}</div> `,
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class Page {
-      result = injectQueries(() => ({
+      queries = injectQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -120,19 +120,19 @@ describe('injectQueries', () => {
       }))
 
       _pushResults = effect(() => {
-        results.push(this.result())
+        results.push(this.queries())
       })
     }
 
     const rendered = await render(Page)
     const instance = rendered.fixture.componentInstance
     await rendered.findByText('data: 1,2')
-    expect(instance.result().data).toBe('1,2')
+    expect(instance.queries().data).toBe('1,2')
 
-    instance.result().refetch()
+    instance.queries().refetch()
 
     await rendered.findByText('data: 3,4')
-    expect(instance.result().data).toBe('3,4')
+    expect(instance.queries().data).toBe('3,4')
 
     expect(results).toHaveLength(5)
     expect(results[0]).toMatchObject({
@@ -165,7 +165,7 @@ describe('injectQueries', () => {
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class Page {
-      result = injectQueries(() => ({
+      queries = injectQueries(() => ({
         queries: queries().map((q) => ({
           queryKey: ['query', q],
           queryFn: async () => {
@@ -176,13 +176,13 @@ describe('injectQueries', () => {
       }))
 
       mapped = computed(() => {
-        const results = this.result().map((q) => q.data())
+        const results = this.queries().map((q) => q.data())
         if (results.length === 0) return 'empty'
         return results.join(',')
       })
 
       _pushResults = effect(() => {
-        const snapshot = this.result().map((q) => ({ data: q.data() }))
+        const snapshot = this.queries().map((q) => ({ data: q.data() }))
         results.push(snapshot)
       })
     }

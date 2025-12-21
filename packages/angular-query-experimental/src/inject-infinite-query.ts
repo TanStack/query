@@ -6,6 +6,7 @@ import {
   runInInjectionContext,
 } from '@angular/core'
 import { createBaseQuery } from './create-base-query'
+import type { MethodKeys } from './signal-proxy'
 import type {
   DefaultError,
   InfiniteData,
@@ -22,7 +23,6 @@ import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infinite-query-options'
-import { MethodKeys } from './signal-proxy'
 
 export interface InjectInfiniteQueryOptions {
   /**

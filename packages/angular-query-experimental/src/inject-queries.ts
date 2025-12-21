@@ -373,7 +373,7 @@ export function injectQueries<
 
       return combine
         ? result
-        : (result as QueryObserverResult<T>[]).map((query) =>
+        : (result as Array<QueryObserverResult<T>>).map((query) =>
             signalProxy(signal(query), ['refetch']),
           )
     })
