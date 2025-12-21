@@ -509,6 +509,36 @@ describe('injectQuery', () => {
     await vi.advanceTimersByTimeAsync(11)
   })
 
+  test('should support selection function with select', async () => {
+    const app = TestBed.inject(ApplicationRef)
+
+    @Component({
+      selector: 'app-test',
+      template: '',
+      changeDetection: ChangeDetectionStrategy.OnPush,
+    })
+    class TestComponent {
+      query = injectQuery(() => ({
+        queryKey: ['key13'],
+        queryFn: () => [{ id: 1 }, { id: 2 }],
+        select: (data) => data.map((item) => item.id),
+      }))
+    }
+
+    const fixture = TestBed.createComponent(TestComponent)
+    fixture.detectChanges()
+    const query = fixture.componentInstance.query
+
+    // Wait for query to complete (even synchronous queryFn needs time to process)
+    const stablePromise = app.whenStable()
+    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(10)
+    await stablePromise
+
+    expect(query.status()).toBe('success')
+    expect(query.data()).toEqual([1, 2])
+  })
+
   describe('throwOnError', () => {
     test('should evaluate throwOnError when query is expected to throw', async () => {
       const boundaryFn = vi.fn()
