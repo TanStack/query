@@ -2,7 +2,12 @@
 id: invalidations-from-mutations
 title: Invalidations from Mutations
 ref: docs/framework/react/guides/invalidations-from-mutations.md
-replace: { 'useMutation': 'injectMutation', 'hook': 'function' }
+replace:
+  {
+    'react-query': 'angular-query-experimental',
+    'useMutation': 'injectMutation',
+    'hook': 'function',
+  }
 ---
 
 [//]: # 'Example'
@@ -22,6 +27,9 @@ import {
   QueryClient,
 } from '@tanstack/angular-query-experimental'
 
+@Component({
+  // ...
+})
 export class TodosComponent {
   queryClient = inject(QueryClient)
 
