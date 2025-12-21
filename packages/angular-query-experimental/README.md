@@ -29,7 +29,7 @@ Visit https://tanstack.com/query/latest/docs/framework/angular/overview
 
 # Quick Start
 
-> The Angular adapter for TanStack Query requires Angular 16 or higher.
+> The Angular adapter for TanStack Query requires Angular 19 or higher.
 
 1. Install `angular-query`
 
