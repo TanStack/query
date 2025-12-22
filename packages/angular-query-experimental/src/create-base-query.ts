@@ -15,7 +15,7 @@ import {
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
-import type { MethodKeys} from './signal-proxy';
+import type { MethodKeys } from './signal-proxy'
 import type {
   DefaultedQueryObserverOptions,
   QueryKey,
@@ -53,14 +53,6 @@ export function createBaseQuery<
   const isRestoring = injectIsRestoring()
   const destroyRef = inject(DestroyRef)
 
-  let observer: QueryObserver<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  > | null = null
-
   let destroyed = false
   let taskCleanupRef: (() => void) | null = null
 
@@ -91,6 +83,15 @@ export function createBaseQuery<
     return defaultedOptions
   })
 
+  // Computed without deps to lazy initialize the observer
+  const observerSignal = computed(() => {
+    return new Observer(queryClient, untracked(defaultedOptionsSignal))
+  })
+
+  effect(() => {
+    observerSignal().setOptions(defaultedOptionsSignal())
+  })
+
   const trackObserverResult = (
     result: QueryObserverResult<TData, TError>,
     notifyOnChangeProps?: DefaultedQueryObserverOptions<
@@ -101,10 +102,7 @@ export function createBaseQuery<
       TQueryKey
     >['notifyOnChangeProps'],
   ) => {
-    if (!observer) {
-      throw new Error(OBSERVER_NOT_READY_ERROR)
-    }
-
+    const observer = untracked(observerSignal)
     const trackedResult = observer.trackResult(result)
 
     if (!notifyOnChangeProps) {
@@ -128,31 +126,8 @@ export function createBaseQuery<
     }
   }
 
-  const setObserverOptions = (
-    options: DefaultedQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >,
-  ) => {
-    if (!observer) {
-      observer = new Observer(queryClient, options)
-      destroyRef.onDestroy(() => {
-        destroyed = true
-        stopPendingTask()
-      })
-    } else {
-      observer.setOptions(options)
-    }
-  }
-
   const subscribeToObserver = () => {
-    if (!observer) {
-      throw new Error(OBSERVER_NOT_READY_ERROR)
-    }
-
+    const observer = untracked(observerSignal)
     const initialState = observer.getCurrentResult()
     if (initialState.fetchStatus !== 'idle') {
       startPendingTask()
@@ -172,9 +147,9 @@ export function createBaseQuery<
             if (
               state.isError &&
               !state.isFetching &&
-              shouldThrowError(observer!.options.throwOnError, [
+              shouldThrowError(observer.options.throwOnError, [
                 state.error,
-                observer!.getCurrentQuery(),
+                observer.getCurrentQuery(),
               ])
             ) {
               ngZone.onError.emit(state.error)
@@ -182,7 +157,7 @@ export function createBaseQuery<
             }
             const trackedState = trackObserverResult(
               state,
-              observer!.options.notifyOnChangeProps,
+              observer.options.notifyOnChangeProps,
             )
             resultSignal.set(trackedState)
           })
@@ -194,18 +169,12 @@ export function createBaseQuery<
   const resultSignal = linkedSignal({
     source: defaultedOptionsSignal,
     computation: () => {
-      if (!observer) throw new Error(OBSERVER_NOT_READY_ERROR)
+      const observer = untracked(observerSignal)
       const defaultedOptions = defaultedOptionsSignal()
+
       const result = observer.getOptimisticResult(defaultedOptions)
       return trackObserverResult(result, defaultedOptions.notifyOnChangeProps)
     },
-  })
-
-  effect(() => {
-    const defaultedOptions = defaultedOptionsSignal()
-    untracked(() => {
-      setObserverOptions(defaultedOptions)
-    })
   })
 
   effect((onCleanup) => {
@@ -219,10 +188,13 @@ export function createBaseQuery<
     })
   })
 
+  destroyRef.onDestroy(() => {
+    destroyed = true
+    stopPendingTask()
+  })
+
   return signalProxy(
     resultSignal.asReadonly(),
     excludeFunctions as Array<MethodKeys<QueryObserverResult<TData, TError>>>,
   )
 }
-const OBSERVER_NOT_READY_ERROR =
-  'injectQuery: QueryObserver not initialized yet. Avoid reading the query result or running methods during construction'
