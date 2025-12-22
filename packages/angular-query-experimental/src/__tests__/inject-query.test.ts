@@ -5,6 +5,7 @@ import {
   Injector,
   NgZone,
   computed,
+  effect,
   input,
   provideZonelessChangeDetection,
   signal,
@@ -718,6 +719,127 @@ describe('injectQuery', () => {
 
     const result = fixture.nativeElement.querySelector('app-fake').textContent
     expect(result).toEqual('signal-input-required-test')
+  })
+
+  test('should allow reading the query data on effect registered before injection', () => {
+    const spy = vi.fn()
+    @Component({
+      selector: 'app-test',
+      template: '',
+      changeDetection: ChangeDetectionStrategy.OnPush,
+    })
+    class TestComponent {
+      readEffect = effect(() => {
+        spy(this.query.data())
+      })
+
+      query = injectQuery(() => ({
+        queryKey: ['effect-before-injection'],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      }))
+    }
+
+    const fixture = TestBed.createComponent(TestComponent)
+    fixture.detectChanges()
+    expect(spy).toHaveBeenCalledWith(undefined)
+  })
+
+  test('should render with an initial value for input signal if available before change detection', () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    queryClient.setQueryData(key1, 'value 1')
+    queryClient.setQueryData(key2, 'value 2')
+
+    @Component({
+      selector: 'app-test',
+      template: '{{ query.data() }}',
+      changeDetection: ChangeDetectionStrategy.OnPush,
+    })
+    class TestComponent {
+      inputKey = input.required<[string]>()
+      query = injectQuery(() => ({
+        queryKey: this.inputKey(),
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      }))
+    }
+    registerSignalInput(TestComponent, 'inputKey')
+
+    const fixture = TestBed.createComponent(TestComponent)
+    fixture.componentRef.setInput('inputKey', key1)
+
+    const instance = fixture.componentInstance
+    const query = instance.query
+
+    expect(() => instance.inputKey()).not.toThrow()
+
+    expect(instance.inputKey()).toEqual(key1)
+    expect(query.data()).toEqual('value 1')
+
+    fixture.componentRef.setInput('inputKey', key2)
+
+    expect(instance.inputKey()).toEqual(key2)
+    expect(query.data()).toEqual('value 2')
+  })
+
+  test('should allow reading the query data on component ngOnInit with required signal input', async () => {
+    const spy = vi.fn()
+    @Component({
+      selector: 'app-test',
+      template: '',
+      changeDetection: ChangeDetectionStrategy.OnPush,
+    })
+    class TestComponent {
+      key = input.required<[string]>()
+      query = injectQuery(() => ({
+        queryKey: this.key(),
+        queryFn: () => Promise.resolve(() => 'Some data'),
+      }))
+
+      initialStatus!: string
+
+      ngOnInit() {
+        this.initialStatus = this.query.status()
+
+        // effect should not have been called yet
+        expect(spy).not.toHaveBeenCalled()
+      }
+
+      _spyEffect = effect(() => {
+        spy()
+      })
+    }
+
+    registerSignalInput(TestComponent, 'key')
+
+    const fixture = TestBed.createComponent(TestComponent)
+    fixture.componentRef.setInput('key', ['ngOnInitTest'])
+
+    fixture.detectChanges()
+    expect(spy).toHaveBeenCalled()
+
+    const instance = fixture.componentInstance
+    expect(instance.initialStatus).toEqual('pending')
+  })
+
+  test('should update query data on the same macrotask when query data changes', async () => {
+    const query = TestBed.runInInjectionContext(() =>
+      injectQuery(() => ({
+        queryKey: ['test'],
+        initialData: 'initial data',
+      })),
+    )
+
+    // Run effects
+    TestBed.tick()
+
+    expect(query.data()).toBe('initial data')
+    queryClient.setQueryData(['test'], 'new data')
+
+    // Flush microtasks
+    await Promise.resolve()
+
+    expect(query.data()).toBe('new data')
   })
 
   describe('injection context', () => {
