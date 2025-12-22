@@ -12,6 +12,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import { expectSignals, registerSignalInput } from './test-utils'
+import { firstValueFrom } from 'rxjs'
 
 describe('injectMutation', () => {
   let queryClient: QueryClient
@@ -657,12 +658,13 @@ describe('injectMutation', () => {
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (data: string) => `final: ${data}`, // Synchronous resolution
+          mutationFn: async (data: string) => {
+            await sleep(50)
+            return `final: ${data}`
+          },
           onMutate: async (variables) => {
             onMutateCalled = true
-            const previousData = queryClient.getQueryData(testQueryKey)
             queryClient.setQueryData(testQueryKey, `optimistic: ${variables}`)
-            return { previousData }
           },
           onSuccess: (data) => {
             onSuccessCalled = true
@@ -671,19 +673,30 @@ describe('injectMutation', () => {
         })),
       )
 
-      // Start mutation
-      mutation.mutate('test')
-
-      // Synchronize pending effects
+      // Run effects
       TestBed.tick()
 
-      const stablePromise = app.whenStable()
+      // Start mutation
+      expect(queryClient.getQueryData(testQueryKey)).toBe('initial')
+      mutation.mutate('test')
+
       // Flush microtasks to allow TanStack Query's scheduled notifications to process
       await Promise.resolve()
-      await vi.advanceTimersByTimeAsync(1)
+
+      // Check for optimistic update in the same macrotask
+      expect(onMutateCalled).toBe(true)
+      expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic: test')
+
+      // Check stability before the mutation completes, waiting got the next macrotask task
+      await vi.advanceTimersByTimeAsync(0)
+      expect(mutation.isPending()).toBe(true)
+      expect(await firstValueFrom(app.isStable)).toBe(false)
+
+      // Wait for the mutation to complete
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(60)
       await stablePromise
 
-      expect(onMutateCalled).toBe(true)
       expect(onSuccessCalled).toBe(true)
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('final: test')
