@@ -534,14 +534,14 @@ For more information, check out the [Next.js App with Prefetching Example](../ex
 
 ### Using the Persist Adapter with Streaming
 
-If you're using the persist adapter with the [Streaming with Server Components](#streaming-with-server-components) feature, you need to be careful not to save promises to storage. Since pending queries can be dehydrated and streamed to the client, you should configure the persister to only persist settled queries:
+If you're using the persist adapter with the [Streaming with Server Components](#streaming-with-server-components) feature, you need to be careful not to save promises to storage. Since pending queries can be dehydrated and streamed to the client, you should configure the persister to only persist successful queries:
 
 ```tsx
 <PersistQueryClientProvider
   client={queryClient}
   persistOptions={{
     persister,
-    // We don't want to save promises into the storage, so we only persist settled queries
+    // We don't want to save promises into the storage, so we only persist successful queries
     dehydrateOptions: { shouldDehydrateQuery: defaultShouldDehydrateQuery },
   }}
 >
