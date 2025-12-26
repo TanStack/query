@@ -6,7 +6,6 @@ import type { QueryClient } from '..'
 import type { MockInstance } from 'vitest'
 import { useEffect, useState } from 'preact/hooks'
 import { ComponentChildren, VNode } from 'preact'
-import { ErrorBoundary as ErrorBoundaryPreactIso } from 'preact-iso'
 
 export function renderWithClient(
   client: QueryClient,
@@ -71,44 +70,4 @@ export function setIsServer(isServer: boolean) {
       get: () => original,
     })
   }
-}
-
-/**
- * Custom Error Boundary port for 'react-error-boundary'
- * Inspired by https://github.com/bvaughn/react-error-boundary/blob/master/src/ErrorBoundary.ts
- */
-export const ErrorBoundary = ({
-  children,
-  fallbackRender,
-  onReset,
-}: {
-  children: ComponentChildren
-  fallbackRender: (props: {
-    error: Error
-    resetErrorBoundary: (...args: any[]) => void
-  }) => VNode
-  onReset?: (error: Error) => void
-}) => {
-  const [error, setError] = useState<Error | null>()
-
-  const resetErrorBoundary = () => {
-    if (error && onReset) {
-      onReset(error)
-    }
-    setError(null)
-  }
-
-  if (error) {
-    return fallbackRender({ error, resetErrorBoundary })
-  }
-
-  return (
-    <ErrorBoundaryPreactIso
-      onError={(e) => {
-        setError(e)
-      }}
-    >
-      {children}
-    </ErrorBoundaryPreactIso>
-  )
 }

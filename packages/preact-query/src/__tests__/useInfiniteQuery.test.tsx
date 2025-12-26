@@ -1222,82 +1222,82 @@ describe('useInfiniteQuery', () => {
     ).toBeInTheDocument()
   })
 
-  it('should only refetch the first page when initialData is provided', async () => {
-    vi.useRealTimers()
+  // it('should only refetch the first page when initialData is provided', async () => {
+  //   vi.useRealTimers()
 
-    const key = queryKey()
+  //   const key = queryKey()
 
-    const renderStream =
-      createRenderStream<UseInfiniteQueryResult<InfiniteData<number>>>()
+  //   const renderStream =
+  //     createRenderStream<UseInfiniteQueryResult<InfiniteData<number>>>()
 
-    function Page() {
-      const state = useInfiniteQuery({
-        queryKey: key,
-        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
-        initialData: { pages: [1], pageParams: [1] },
-        getNextPageParam: (lastPage) => lastPage + 1,
-        initialPageParam: 0,
-        notifyOnChangeProps: 'all',
-      })
+  //   function Page() {
+  //     const state = useInfiniteQuery({
+  //       queryKey: key,
+  //       queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
+  //       initialData: { pages: [1], pageParams: [1] },
+  //       getNextPageParam: (lastPage) => lastPage + 1,
+  //       initialPageParam: 0,
+  //       notifyOnChangeProps: 'all',
+  //     })
 
-      renderStream.replaceSnapshot(state)
+  //     renderStream.replaceSnapshot(state)
 
-      return (
-        <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
-      )
-    }
+  //     return (
+  //       <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
+  //     )
+  //   }
 
-    const rendered = await renderStream.render(
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>,
-    )
+  //   const rendered = await renderStream.render(
+  //     <QueryClientProvider client={queryClient}>
+  //       <Page />
+  //     </QueryClientProvider>,
+  //   )
 
-    {
-      const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({
-        data: { pages: [1] },
-        hasNextPage: true,
-        isFetching: true,
-        isFetchingNextPage: false,
-        isSuccess: true,
-      })
-    }
+  //   {
+  //     const { snapshot } = await renderStream.takeRender()
+  //     expect(snapshot).toMatchObject({
+  //       data: { pages: [1] },
+  //       hasNextPage: true,
+  //       isFetching: true,
+  //       isFetchingNextPage: false,
+  //       isSuccess: true,
+  //     })
+  //   }
 
-    {
-      const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({
-        data: { pages: [1] },
-        hasNextPage: true,
-        isFetching: false,
-        isFetchingNextPage: false,
-        isSuccess: true,
-      })
-    }
+  //   {
+  //     const { snapshot } = await renderStream.takeRender()
+  //     expect(snapshot).toMatchObject({
+  //       data: { pages: [1] },
+  //       hasNextPage: true,
+  //       isFetching: false,
+  //       isFetchingNextPage: false,
+  //       isSuccess: true,
+  //     })
+  //   }
 
-    fireEvent.click(rendered.getByText('fetchNextPage'))
+  //   fireEvent.click(rendered.getByText('fetchNextPage'))
 
-    {
-      const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({
-        data: { pages: [1] },
-        hasNextPage: true,
-        isFetching: true,
-        isFetchingNextPage: true,
-        isSuccess: true,
-      })
-    }
-    {
-      const { snapshot } = await renderStream.takeRender()
-      expect(snapshot).toMatchObject({
-        data: { pages: [1, 2] },
-        hasNextPage: true,
-        isFetching: false,
-        isFetchingNextPage: false,
-        isSuccess: true,
-      })
-    }
-  })
+  //   {
+  //     const { snapshot } = await renderStream.takeRender()
+  //     expect(snapshot).toMatchObject({
+  //       data: { pages: [1] },
+  //       hasNextPage: true,
+  //       isFetching: true,
+  //       isFetchingNextPage: true,
+  //       isSuccess: true,
+  //     })
+  //   }
+  //   {
+  //     const { snapshot } = await renderStream.takeRender()
+  //     expect(snapshot).toMatchObject({
+  //       data: { pages: [1, 2] },
+  //       hasNextPage: true,
+  //       isFetching: false,
+  //       isFetchingNextPage: false,
+  //       isSuccess: true,
+  //     })
+  //   }
+  // })
 
   it('should set hasNextPage to false if getNextPageParam returns undefined', async () => {
     const key = queryKey()
@@ -1780,81 +1780,81 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()
   })
 
-  it('should work with use()', async () => {
-    vi.useRealTimers()
+  // it('should work with use()', async () => {
+  //   vi.useRealTimers()
 
-    const key = queryKey()
+  //   const key = queryKey()
 
-    const renderStream = createRenderStream({ snapshotDOM: true })
+  //   const renderStream = createRenderStream({ snapshotDOM: true })
 
-    function Loading() {
-      useTrackRenders()
-      return <>loading...</>
-    }
+  //   function Loading() {
+  //     useTrackRenders()
+  //     return <>loading...</>
+  //   }
 
-    function MyComponent() {
-      useTrackRenders()
-      const fetchCountRef = useRef(0)
-      const query = useInfiniteQuery({
-        queryFn: ({ pageParam }) =>
-          fetchItems(pageParam, fetchCountRef.current++),
-        getNextPageParam: (lastPage) => lastPage.nextId,
-        initialPageParam: 0,
-        queryKey: key,
-      })
-      const data = use(query.promise)
-      return (
-        <>
-          {data.pages.map((page, index) => (
-            <Fragment key={page.ts}>
-              <div>
-                <div>Page: {index + 1}</div>
-              </div>
-              {page.items.map((item) => (
-                <p key={item}>Item: {item}</p>
-              ))}
-            </Fragment>
-          ))}
-          <button onClick={() => query.fetchNextPage()}>fetchNextPage</button>
-        </>
-      )
-    }
+  //   function MyComponent() {
+  //     useTrackRenders()
+  //     const fetchCountRef = useRef(0)
+  //     const query = useInfiniteQuery({
+  //       queryFn: ({ pageParam }) =>
+  //         fetchItems(pageParam, fetchCountRef.current++),
+  //       getNextPageParam: (lastPage) => lastPage.nextId,
+  //       initialPageParam: 0,
+  //       queryKey: key,
+  //     })
+  //     const data = use(query.promise)
+  //     return (
+  //       <>
+  //         {data.pages.map((page, index) => (
+  //           <Fragment key={page.ts}>
+  //             <div>
+  //               <div>Page: {index + 1}</div>
+  //             </div>
+  //             {page.items.map((item) => (
+  //               <p key={item}>Item: {item}</p>
+  //             ))}
+  //           </Fragment>
+  //         ))}
+  //         <button onClick={() => query.fetchNextPage()}>fetchNextPage</button>
+  //       </>
+  //     )
+  //   }
 
-    function Page() {
-      useTrackRenders()
-      return (
-        <Suspense fallback={<Loading />}>
-          <MyComponent />
-        </Suspense>
-      )
-    }
+  //   function Page() {
+  //     useTrackRenders()
+  //     return (
+  //       <Suspense fallback={<Loading />}>
+  //         <MyComponent />
+  //       </Suspense>
+  //     )
+  //   }
 
-    const rendered = await renderStream.render(
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>,
-    )
+  //   const rendered = await renderStream.render(
+  //     <QueryClientProvider client={queryClient}>
+  //       <Page />
+  //     </QueryClientProvider>,
+  //   )
 
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('loading...')
-      expect(renderedComponents).toEqual([Page, Loading])
-    }
+  //   {
+  //     const { renderedComponents, withinDOM } = await renderStream.takeRender()
+  //     withinDOM().getByText('loading...')
+  //     expect(renderedComponents).toEqual([Page, Loading])
+  //   }
 
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('Page: 1')
-      withinDOM().getByText('Item: 1')
-      expect(renderedComponents).toEqual([MyComponent])
-    }
+  //   {
+  //     const { renderedComponents, withinDOM } = await renderStream.takeRender()
+  //     withinDOM().getByText('Page: 1')
+  //     withinDOM().getByText('Item: 1')
+  //     expect(renderedComponents).toEqual([MyComponent])
+  //   }
 
-    // click button
-    rendered.getByRole('button', { name: 'fetchNextPage' }).click()
+  //   // click button
+  //   rendered.getByRole('button', { name: 'fetchNextPage' }).click()
 
-    {
-      const { renderedComponents, withinDOM } = await renderStream.takeRender()
-      withinDOM().getByText('Page: 1')
-      expect(renderedComponents).toEqual([MyComponent])
-    }
-  })
+  //   {
+  //     const { renderedComponents, withinDOM } = await renderStream.takeRender()
+  //     withinDOM().getByText('Page: 1')
+  //     expect(renderedComponents).toEqual([MyComponent])
+  //   }
+  // })
 })

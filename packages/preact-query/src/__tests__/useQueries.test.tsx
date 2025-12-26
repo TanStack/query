@@ -8,7 +8,7 @@ import {
   vi,
 } from 'vitest'
 import { fireEvent, render } from '@testing-library/preact'
-import { ErrorBoundary } from './utils'
+import { ErrorBoundary } from './ErrorBoundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,

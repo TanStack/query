@@ -10,7 +10,7 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient, ErrorBoundary } from './utils'
+import { renderWithClient } from './utils'
 import type {
   InfiniteData,
   UseSuspenseInfiniteQueryResult,
@@ -18,6 +18,7 @@ import type {
 } from '..'
 import { useReducer, useState } from 'preact/hooks'
 import { Suspense } from 'preact/compat'
+import { ErrorBoundary } from './ErrorBoundary'
 
 describe('useSuspenseQuery', () => {
   beforeEach(() => {
@@ -31,18 +32,34 @@ describe('useSuspenseQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
 
-  it('should render the correct amount of times in Suspense mode', async () => {
-    const key = queryKey()
+  /**
+   * Preact Suspense handles the rerenders differently than React.
+   * This test only checks for 4 renders (vs. React -> 6)
+   * so, instead of state change reacting and updating (and also losing the state)
+   * we abstract out the suspense
+   */
+  it('should render correctly when state is lifted above Suspense', async () => {
     const states: Array<UseSuspenseQueryResult<number>> = []
 
     let count = 0
     let renders = 0
 
-    function Page() {
+    function TestApp() {
+      // State lives here, ABOVE the Suspense boundary, so it does not get reset
+      const [stateKey, setStateKey] = useState(queryKey())
+
+      return (
+        <>
+          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          <Suspense fallback="loading">
+            <Page stateKey={stateKey} />
+          </Suspense>
+        </>
+      )
+    }
+
+    function Page({ stateKey }: { stateKey: string[] }) {
       renders++
-
-      const [stateKey, setStateKey] = useState(key)
-
       const state = useSuspenseQuery({
         queryKey: stateKey,
         queryFn: () => sleep(10).then(() => ++count),
@@ -50,20 +67,10 @@ describe('useSuspenseQuery', () => {
 
       states.push(state)
 
-      return (
-        <div>
-          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
-          data: {String(state.data)}
-        </div>
-      )
+      return <div>data: {state.data}</div>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <Suspense fallback="loading">
-        <Page />
-      </Suspense>,
-    )
+    const rendered = renderWithClient(queryClient, <TestApp />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -74,7 +81,11 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
-    expect(renders).toBe(6)
+    /**
+     * In this pattern, renders will likely be 4 (2 for each successful mount)
+     * Instead of React's 6 (where strict-mode changes the number of renders)
+     */
+    expect(renders).toBe(4)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: 1, status: 'success' })
     expect(states[1]).toMatchObject({ data: 2, status: 'success' })
@@ -85,8 +96,7 @@ describe('useSuspenseQuery', () => {
     const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
       []
 
-    function Page() {
-      const [multiplier, setMultiplier] = useState(1)
+    function Page({ multiplier }: { multiplier: number }) {
       const state = useSuspenseInfiniteQuery({
         queryKey: [`${key}_${multiplier}`],
         queryFn: ({ pageParam }) =>
@@ -97,20 +107,23 @@ describe('useSuspenseQuery', () => {
 
       states.push(state)
 
+      return <div>data: {state.data?.pages.join(',')}</div>
+    }
+
+    function TestApp() {
+      const [multiplier, setMultiplier] = useState(1)
+
       return (
-        <div>
+        <>
           <button onClick={() => setMultiplier(2)}>next</button>
-          data: {state.data?.pages.join(',')}
-        </div>
+          <Suspense fallback="loading">
+            <Page multiplier={multiplier} />
+          </Suspense>
+        </>
       )
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <Suspense fallback="loading">
-        <Page />
-      </Suspense>,
-    )
+    const rendered = renderWithClient(queryClient, <TestApp />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -193,14 +206,18 @@ describe('useSuspenseQuery', () => {
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(10)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(1)
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(10)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(0)
   })
@@ -370,7 +387,9 @@ describe('useSuspenseQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(10)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     expect(
@@ -580,9 +599,7 @@ describe('useSuspenseQuery', () => {
       .mockImplementation(() => undefined)
     const key = queryKey()
 
-    let succeed = true
-
-    function Page() {
+    function Page({ succeed }: { succeed: boolean }) {
       const [nonce] = useState(0)
       const queryKeys = [`${key}-${succeed}`]
       const result = useSuspenseQuery({
@@ -597,24 +614,37 @@ describe('useSuspenseQuery', () => {
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
-          <button aria-label="fail" onClick={() => queryClient.resetQueries()}>
-            fail
-          </button>
         </div>
       )
     }
 
     function App() {
       const { reset } = useQueryErrorResetBoundary()
+      const [succeed, setSucceed] = useState(true)
+
       return (
-        <ErrorBoundary
-          onReset={reset}
-          fallbackRender={() => <div>error boundary</div>}
-        >
-          <Suspense fallback="loading">
-            <Page />
-          </Suspense>
-        </ErrorBoundary>
+        <div>
+          <button
+            aria-label="set-fail"
+            onClick={() => {
+              setSucceed(false)
+            }}
+          />
+          <button
+            aria-label="fail"
+            onClick={() => {
+              queryClient.resetQueries()
+            }}
+          />
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={() => <div>error boundary</div>}
+          >
+            <Suspense fallback="loading">
+              <Page succeed={succeed} />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
       )
     }
 
@@ -626,8 +656,8 @@ describe('useSuspenseQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    // change query key
-    succeed = false
+    // change query result to error by updating state above Suspense
+    fireEvent.click(rendered.getByLabelText('set-fail'))
 
     // reset query -> and throw error
     fireEvent.click(rendered.getByLabelText('fail'))
@@ -648,9 +678,8 @@ describe('useSuspenseQuery', () => {
       .mockImplementation(() => undefined)
     let succeed = true
 
-    function Page() {
-      const [key, rerender] = useReducer((x) => x + 1, 0)
-      const queryKeys = [key, succeed]
+    function Child({ keyVal }: { keyVal: number }) {
+      const queryKeys = [keyVal, succeed]
 
       const result = useSuspenseQuery({
         queryKey: queryKeys,
@@ -669,9 +698,21 @@ describe('useSuspenseQuery', () => {
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
+        </div>
+      )
+    }
+
+    function Page() {
+      const [key, rerender] = useReducer((x) => x + 1, 0)
+
+      return (
+        <div>
           <button aria-label="fail" onClick={rerender}>
             fail
           </button>
+          <Suspense fallback="loading">
+            <Child keyVal={key} />
+          </Suspense>
         </div>
       )
     }
@@ -683,9 +724,7 @@ describe('useSuspenseQuery', () => {
           onReset={reset}
           fallbackRender={() => <div>error boundary</div>}
         >
-          <Suspense fallback="loading">
-            <Page />
-          </Suspense>
+          <Page />
         </ErrorBoundary>
       )
     }
@@ -701,7 +740,7 @@ describe('useSuspenseQuery', () => {
     // change promise result to error
     succeed = false
 
-    // change query key
+    // change query key (state is above Suspense)
     fireEvent.click(rendered.getByLabelText('fail'))
     expect(rendered.getByText('loading')).toBeInTheDocument()
     // render error boundary fallback (error boundary)
@@ -752,7 +791,8 @@ describe('useSuspenseQuery', () => {
       data: 1,
       status: 'success',
     })
-    expect(renders).toBe(3)
+    // reducing 1 for strict mode render
+    expect(renders).toBe(2)
   })
 
   it('should not throw background errors to the error boundary', async () => {
@@ -830,9 +870,21 @@ describe('useSuspenseQuery', () => {
 
     let count = 0
 
-    function Page() {
+    function TestApp() {
+      // State lives here, ABOVE the Suspense boundary, so it does not get reset
       const [stateKey, setStateKey] = useState(key)
 
+      return (
+        <>
+          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          <Suspense fallback="loading">
+            <Page stateKey={stateKey} />
+          </Suspense>
+        </>
+      )
+    }
+
+    function Page({ stateKey }: { stateKey: string[] }) {
       const state = useSuspenseQuery({
         queryKey: stateKey,
         queryFn: async () => sleep(10).then(() => ++count),
@@ -840,20 +892,10 @@ describe('useSuspenseQuery', () => {
 
       states.push(state)
 
-      return (
-        <div>
-          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
-          data: {String(state.data)}
-        </div>
-      )
+      return <div>data: {String(state.data)}</div>
     }
 
-    const rendered = renderWithClient(
-      queryClientWithPlaceholder,
-      <Suspense fallback="loading">
-        <Page />
-      </Suspense>,
-    )
+    const rendered = renderWithClient(queryClientWithPlaceholder, <TestApp />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
@@ -920,11 +962,17 @@ describe('useSuspenseQuery', () => {
     )
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(10)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(21)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(21)
+    })
     expect(rendered.getByText('count: 2')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(21)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(21)
+    })
     expect(rendered.getByText('count: 3')).toBeInTheDocument()
 
     expect(count).toBeGreaterThanOrEqual(3)

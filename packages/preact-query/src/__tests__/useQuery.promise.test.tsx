@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import { ErrorBoundary } from './utils'
+import { ErrorBoundary } from './ErrorBoundary'
 import {
   createRenderStream,
   useTrackRenders,

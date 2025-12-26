@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent } from '@testing-library/preact'
-import { ErrorBoundary } from './utils'
+import { ErrorBoundary } from './ErrorBoundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -273,7 +273,9 @@ describe('usePrefetchQuery', () => {
       queryClient.getQueryState(thirdQueryOpts.queryKey)?.fetchStatus,
     ).toBe('fetching')
     expect(rendered.getByText('Loading...')).toBeInTheDocument()
-    await vi.advanceTimersByTimeAsync(10)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
     expect(rendered.getByText('data: Prefetch is nice!')).toBeInTheDocument()
     expect(
       rendered.getByText('data: Prefetch is really nice!!'),

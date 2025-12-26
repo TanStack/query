@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, render } from '@testing-library/preact'
+import { render } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
 import type { QueryKey } from '..'

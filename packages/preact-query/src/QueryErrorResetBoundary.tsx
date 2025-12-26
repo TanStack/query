@@ -1,5 +1,3 @@
-'use client'
-
 import { ComponentChildren, createContext } from 'preact'
 import { useContext, useState } from 'preact/hooks'
 

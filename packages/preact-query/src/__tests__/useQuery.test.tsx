@@ -19,7 +19,6 @@ import {
   mockOnlineManagerIsOnline,
   renderWithClient,
   setActTimeout,
-  ErrorBoundary,
 } from './utils'
 import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 import type { Mock } from 'vitest'
@@ -31,6 +30,7 @@ import {
   useRef,
   useState,
 } from 'preact/hooks'
+import { ErrorBoundary } from './ErrorBoundary'
 
 describe('useQuery', () => {
   let queryCache: QueryCache
