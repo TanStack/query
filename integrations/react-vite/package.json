@@ -9,8 +9,8 @@
     "@tanstack/react-query": "workspace:*",
     "@tanstack/react-query-devtools": "workspace:*",
     "@vitejs/plugin-react": "^4.3.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.0.3",
+    "react-dom": "^19.0.3",
     "vite": "^6.3.6"
   }
 }

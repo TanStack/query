@@ -10,8 +10,8 @@
     "@tanstack/react-query": "workspace:*",
     "@tanstack/react-query-devtools": "workspace:*",
     "next": "^15.4.8",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "tupleson": "0.23.1"
   },
   "devDependencies": {
