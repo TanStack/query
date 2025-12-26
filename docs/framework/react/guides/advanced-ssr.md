@@ -549,7 +549,7 @@ If you're using the persist adapter with the [Streaming with Server Components](
 </PersistQueryClientProvider>
 ```
 
-This ensures that only successfully resolved or errored queries are persisted to storage, preventing serialization issues with pending promises.
+This ensures that only successfully resolved queries are persisted to storage, preventing serialization issues with pending promises.
 
 ## Experimental streaming without prefetching in Next.js
 
