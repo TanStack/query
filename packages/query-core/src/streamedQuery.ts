@@ -79,14 +79,12 @@ export function streamedQuery<
       if (context.signal.aborted) {
         break
       }
-
+      const nextResult = reducer(result, chunk)
       // don't append to the cache directly when replace-refetching
       if (!isRefetch || refetchMode !== 'replace') {
-        context.client.setQueryData<TData>(context.queryKey, (prev) =>
-          reducer(prev === undefined ? initialValue : prev, chunk),
-        )
+        context.client.setQueryData<TData>(context.queryKey, nextResult)
       }
-      result = reducer(result, chunk)
+      result = nextResult
     }
 
     // finalize result: replace-refetching needs to write to the cache
