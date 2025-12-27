@@ -68,10 +68,6 @@ const result = injectQuery(() => ({
     </div>
   `,
 })
-
-@Component({
-  // ...
-})
 export class PaginationExampleComponent {
   page = signal(0)
   queryClient = inject(QueryClient)
