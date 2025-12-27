@@ -50,7 +50,15 @@ export default [
   {
     files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
-    rules: vitest.configs.recommended.rules,
+    rules: {
+      ...vitest.configs.recommended.rules,
+      'vitest/no-standalone-expect': [
+        'error',
+        {
+          additionalTestBlockFunctions: ['testIf'],
+        },
+      ],
+    },
     settings: { vitest: { typecheck: true } },
   },
 ]

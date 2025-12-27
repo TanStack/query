@@ -71,7 +71,7 @@
     "@tanstack/query-persist-client-core": "workspace:*",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/react": "^16.1.0",
-    "@testing-library/react-render-stream": "^2.0.0",
+    "@testing-library/react-render-stream": "^2.0.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.3.4",

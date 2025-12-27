@@ -158,9 +158,7 @@ describe('query', () => {
 
     // make page unfocused
     const visibilityMock = mockVisibilityState('hidden')
-
     let count = 0
-    let result: unknown
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
@@ -172,25 +170,18 @@ describe('query', () => {
       retryDelay: 1,
     })
 
-    promise.catch((data) => {
-      result = data
-    })
-
     const query = queryCache.find({ queryKey: key })!
 
     // Check if the query is really paused
     await vi.advanceTimersByTimeAsync(50)
-    expect(result).toBeUndefined()
+    expect(query.state.fetchStatus).toBe('paused')
 
     // Cancel query
     query.cancel()
 
     // Check if the error is set to the cancelled error
     try {
-      await promise
-      expect.unreachable()
-    } catch {
-      expect(result).toBeInstanceOf(CancelledError)
+      await expect(promise).rejects.toBeInstanceOf(CancelledError)
     } finally {
       // Reset visibilityState to original value
       visibilityMock.mockRestore()

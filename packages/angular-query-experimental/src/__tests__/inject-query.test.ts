@@ -183,9 +183,7 @@ describe('injectQuery', () => {
 
     TestBed.runInInjectionContext(() =>
       effect(() => {
-        if (fromPromiseAnyQueryFn.isSuccess()) {
-          expect(fromMyDataArrayKeyQueryFn.data()).toBe(142)
-        }
+        expect(fromMyDataArrayKeyQueryFn.data()).toBe(142)
       }),
     )
 
@@ -206,9 +204,7 @@ describe('injectQuery', () => {
 
     TestBed.runInInjectionContext(() =>
       effect(() => {
-        if (fromGetMyDataStringKeyQueryFn.isSuccess()) {
-          expect(fromGetMyDataStringKeyQueryFn.data()).toBe(43)
-        }
+        expect(fromGetMyDataStringKeyQueryFn.data()).toBe(43)
       }),
     )
 
@@ -424,7 +420,7 @@ describe('injectQuery', () => {
 
     expect(fetchFn).not.toHaveBeenCalled()
 
-    query.refetch().then(() => {
+    void query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(1)
       expect(fetchFn).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -437,7 +433,7 @@ describe('injectQuery', () => {
 
     keySignal.set('key12')
 
-    query.refetch().then(() => {
+    void query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(2)
       expect(fetchFn).toHaveBeenCalledWith(
         expect.objectContaining({
