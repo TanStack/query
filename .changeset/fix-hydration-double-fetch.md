@@ -1,6 +1,6 @@
 ---
-'@tanstack/query-core': patch
-'@tanstack/react-query': patch
+'@tanstack/query-core': minor
+'@tanstack/react-query': minor
 ---
 
 fix(react-query/HydrationBoundary): prevent unnecessary refetch during hydration
