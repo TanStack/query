@@ -64,6 +64,7 @@ jobs:
         uses: andresz1/size-limit-action@94bc357df29c36c8f8d50ea497c3e225c3c95d1d
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          script: pnpm run test:size
   provenance:
     name: Provenance
     runs-on: ubuntu-latest
