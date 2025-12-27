@@ -1,6 +1,6 @@
 import { defineConfig, mergeConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { tanstackViteConfig } from '@tanstack/config/vite'
+import { tanstackViteConfig } from '@tanstack/vite-config'
 
 const config = defineConfig({
   plugins: [vue()],

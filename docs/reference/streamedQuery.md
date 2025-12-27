@@ -25,7 +25,7 @@ const query = queryOptions({
 - `streamFn: (context: QueryFunctionContext) => Promise<AsyncIterable<TData>>`
   - **Required**
   - The function that returns a Promise of an AsyncIterable with data to stream in.
-  - Receives a [QueryFunctionContext](../../framework/react/guides/query-functions.md#queryfunctioncontext)
+  - Receives a [QueryFunctionContext](../framework/react/guides/query-functions.md#queryfunctioncontext)
 - `refetchMode?: 'append' | 'reset' | 'replace'`
   - Optional
   - Defines how refetches are handled.

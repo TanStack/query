@@ -317,9 +317,9 @@ export interface QueryObserverOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends WithRequired<
-    QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey, TPageParam>,
-    'queryKey'
-  > {
+  QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey, TPageParam>,
+  'queryKey'
+> {
   /**
    * Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
@@ -461,7 +461,9 @@ export interface InfiniteQueryObserverOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends QueryObserverOptions<
+>
+  extends
+    QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
@@ -515,9 +517,9 @@ export interface FetchQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends WithRequired<
-    QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
-    'queryKey'
-  > {
+  QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
+  'queryKey'
+> {
   initialPageParam?: never
   /**
    * The time in milliseconds after data is considered stale.
@@ -533,12 +535,12 @@ export interface EnsureQueryDataOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends FetchQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  > {
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> {
   revalidateIfStale?: boolean
 }
 
@@ -619,13 +621,15 @@ export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters<TQueryKey extends QueryKey = QueryKey>
-  extends QueryFilters<TQueryKey> {
+export interface InvalidateQueryFilters<
+  TQueryKey extends QueryKey = QueryKey,
+> extends QueryFilters<TQueryKey> {
   refetchType?: QueryTypeFilter | 'none'
 }
 
-export interface RefetchQueryFilters<TQueryKey extends QueryKey = QueryKey>
-  extends QueryFilters<TQueryKey> {}
+export interface RefetchQueryFilters<
+  TQueryKey extends QueryKey = QueryKey,
+> extends QueryFilters<TQueryKey> {}
 
 export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}
@@ -1299,11 +1303,11 @@ export interface MutationObserverIdleResult<
   TVariables = void,
   TOnMutateResult = unknown,
 > extends MutationObserverBaseResult<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  > {
+  TData,
+  TError,
+  TVariables,
+  TOnMutateResult
+> {
   data: undefined
   variables: undefined
   error: null
@@ -1320,11 +1324,11 @@ export interface MutationObserverLoadingResult<
   TVariables = void,
   TOnMutateResult = unknown,
 > extends MutationObserverBaseResult<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  > {
+  TData,
+  TError,
+  TVariables,
+  TOnMutateResult
+> {
   data: undefined
   variables: TVariables
   error: null
@@ -1341,11 +1345,11 @@ export interface MutationObserverErrorResult<
   TVariables = void,
   TOnMutateResult = unknown,
 > extends MutationObserverBaseResult<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  > {
+  TData,
+  TError,
+  TVariables,
+  TOnMutateResult
+> {
   data: undefined
   error: TError
   variables: TVariables
@@ -1362,11 +1366,11 @@ export interface MutationObserverSuccessResult<
   TVariables = void,
   TOnMutateResult = unknown,
 > extends MutationObserverBaseResult<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  > {
+  TData,
+  TError,
+  TVariables,
+  TOnMutateResult
+> {
   data: TData
   error: null
   variables: TVariables

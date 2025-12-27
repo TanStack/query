@@ -253,6 +253,6 @@ In case you are creating the `QueryClient` for every request, Vue Query creates 
 
 On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../../reference/QueryClient/#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../reference/QueryClient/#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
 Alternatively, you can set a smaller `gcTime`.

@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/react-query-devtools"
   },
   "homepage": "https://tanstack.com/query",
@@ -84,10 +84,10 @@
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
     "@testing-library/react": "^16.1.0",
-    "@types/react": "^19.0.1",
+    "@types/react": "^19.2.7",
     "@vitejs/plugin-react": "^4.3.4",
     "npm-run-all2": "^5.0.0",
-    "react": "^19.0.0"
+    "react": "^19.2.1"
   },
   "peerDependencies": {
     "@tanstack/react-query": "workspace:^",
