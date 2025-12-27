@@ -24,7 +24,6 @@
     "build": "nx affected --target=build --exclude=examples/** --exclude=integrations/**",
     "build:all": "nx run-many --target=build --exclude=examples/** --exclude=integrations/**",
     "watch": "pnpm run build:all && nx watch --all -- pnpm run build:all",
-    "noop": "true",
     "dev": "pnpm run watch",
     "format": "prettier --experimental-cli --ignore-unknown '**/*' --write",
     "generate-docs": "node scripts/generate-docs.ts",
