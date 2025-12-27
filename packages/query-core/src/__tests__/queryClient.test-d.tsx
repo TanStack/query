@@ -13,9 +13,39 @@ import type {
   InfiniteQueryExecuteOptions,
   MutationOptions,
   OmitKeyof,
+  QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
 } from '../types'
+
+const queryExecuteOptions = <
+  TData,
+  TError,
+  TQueryData,
+  TQueryKey extends QueryKey,
+>(
+  options: QueryExecuteOptions<TData, TError, TQueryData, TQueryKey>,
+) => {
+  return options
+}
+
+const infiniteQueryExecuteOptions = <
+  TData,
+  TError,
+  TQueryData,
+  TQueryKey extends QueryKey,
+  TPageParam,
+>(
+  options: InfiniteQueryExecuteOptions<
+    TData,
+    TError,
+    TQueryData,
+    TQueryKey,
+    TPageParam
+  >,
+) => {
+  return options
+}
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
@@ -228,13 +258,13 @@ describe('fetchInfiniteQuery', () => {
 
 describe('query', () => {
   it('should allow passing select option', () => {
-    assertType<Parameters<QueryClient['query']>>([
-      {
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve('string'),
-        select: (data) => (data as string).length,
-      },
-    ])
+    const options = queryExecuteOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      select: (data) => data.length,
+    })
+
+    assertType<Parameters<QueryClient['query']>>([options])
   })
 })
 
