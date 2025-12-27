@@ -65,7 +65,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           skip_step: install
-          build_script: "echo 'Skipping build step, we already built above'"
+          build_script: noop
           script: pnpm run test:size
   provenance:
     name: Provenance
