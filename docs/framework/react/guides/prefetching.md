@@ -26,8 +26,8 @@ Before jumping into the different specific prefetch patterns, let's look at the 
   - If you want to ignore `staleTime` and instead always return data if it's available in the cache, you can use the `ensureQueryData` function.
   - Tip: If you are prefetching on the server, set a default `staleTime` higher than `0` for that `queryClient` to avoid having to pass in a specific `staleTime` to each prefetch call
 - If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `gcTime`
-- These functions returns `Promise<void>` and thus never return query data. If that's something you need, use `fetchQuery`/`fetchInfiniteQuery` instead.
-- The prefetch functions never throws errors because they usually try to fetch again in a `useQuery` which is a nice graceful fallback. If you need to catch errors, use `fetchQuery`/`fetchInfiniteQuery` instead.
+- These functions return `Promise<void>` and thus never return query data. If that's something you need, use `fetchQuery`/`fetchInfiniteQuery` instead.
+- The prefetch functions never throw errors because they usually try to fetch again in a `useQuery` which is a nice graceful fallback. If you need to catch errors, use `fetchQuery`/`fetchInfiniteQuery` instead.
 
 This is how you use `prefetchQuery`:
 
@@ -433,6 +433,6 @@ queryClient.setQueryData(['todos'], todos)
 
 For a deep-dive on how to get data into your Query Cache before you fetch, see the [article Seeding the Query Cache by TkDodo](https://tkdodo.eu/blog/seeding-the-query-cache).
 
-Integrating with Server Side routers and frameworks is very similar to what we just saw, with the addition that the data has to passed from the server to the client to be hydrated into the cache there. To learn how, continue on to the [Server Rendering & Hydration guide](./ssr.md).
+Integrating with Server Side routers and frameworks is very similar to what we just saw, with the addition that the data has to be passed from the server to the client to be hydrated into the cache there. To learn how, continue on to the [Server Rendering & Hydration guide](./ssr.md).
 
 [//]: # 'Materials'
