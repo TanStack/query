@@ -33,7 +33,6 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     })
   })
 
-
   afterAll(() => {
     vi.useRealTimers()
     queryClient.setDefaultOptions({

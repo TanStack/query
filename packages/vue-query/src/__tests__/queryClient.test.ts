@@ -5,7 +5,9 @@ import { QueryClient } from '../queryClient'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 
 vi.mock('@tanstack/query-core', async () => {
-  const actual = await vi.importActual<{ QueryClient: typeof QueryClientOrigin }>('@tanstack/query-core')
+  const actual = await vi.importActual<{
+    QueryClient: typeof QueryClientOrigin
+  }>('@tanstack/query-core')
 
   // Get the prototype methods dynamically
   const prototypeMethods = Object.getOwnPropertyNames(
