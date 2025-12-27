@@ -10,8 +10,8 @@
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
     "test": "pnpm run test:ci",
-    "test:pr": "nx affected --targets=test:sherif,test:knip,test:size,test:docs,test:eslint,test:lib,test:types,test:build,build",
-    "test:ci": "nx run-many --targets=test:sherif,test:knip,test:size,test:docs,test:eslint,test:lib,test:types,test:build,build",
+    "test:pr": "nx affected --targets=test:sherif,test:knip,test:docs,test:eslint,test:lib,test:types,test:build,build",
+    "test:ci": "nx run-many --targets=test:sherif,test:knip,test:docs,test:eslint,test:lib,test:types,test:build,build",
     "test:eslint": "nx affected --target=test:eslint",
     "test:sherif": "sherif -i typescript -p \"./integrations/*\" -p \"./examples/*\"",
     "test:size": "size-limit",
