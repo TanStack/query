@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import {
   QueryCache,
   QueryClient,
-  QueryClientProvider,
+  // QueryClientProvider,
   keepPreviousData,
   useInfiniteQuery,
 } from '..'
@@ -16,7 +16,7 @@ import type {
   UseInfiniteQueryResult,
 } from '..'
 import type { Mock } from 'vitest'
-import { Suspense } from 'preact/compat'
+// import { Suspense } from 'preact/compat'
 
 interface Result {
   items: Array<number>

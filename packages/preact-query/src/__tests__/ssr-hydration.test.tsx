@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { renderToString } from 'preact-render-to-string'
-import { hydrate as preactHydrate, VNode } from 'preact'
+import { hydrate as preactHydrate, render, VNode } from 'preact'
 import {
   QueryCache,
   QueryClient,
@@ -12,13 +12,15 @@ import {
 import { setIsServer } from './utils'
 import { act } from '@testing-library/preact'
 
-const ReactHydrate = (element: VNode, container: Element) => {
-  let root: any
+const PreactHydrate = (element: VNode, container: Element) => {
   act(() => {
-    root = preactHydrate(element, container)
+    preactHydrate(element, container)
   })
+  // To unmount in Preact, you render null into the same container
   return () => {
-    root.unmount()
+    act(() => {
+      render(null, container)
+    })
   }
 }
 
@@ -102,7 +104,7 @@ describe('Server side rendering with de/rehydration', () => {
     const queryClient = new QueryClient({ queryCache })
     hydrate(queryClient, JSON.parse(stringifiedState))
 
-    const unmount = ReactHydrate(
+    const unmount = PreactHydrate(
       <QueryClientProvider client={queryClient}>
         <SuccessComponent />
       </QueryClientProvider>,
@@ -178,7 +180,7 @@ describe('Server side rendering with de/rehydration', () => {
     const queryClient = new QueryClient({ queryCache })
     hydrate(queryClient, JSON.parse(stringifiedState))
 
-    const unmount = ReactHydrate(
+    const unmount = PreactHydrate(
       <QueryClientProvider client={queryClient}>
         <ErrorComponent />
       </QueryClientProvider>,
@@ -245,7 +247,7 @@ describe('Server side rendering with de/rehydration', () => {
     const queryClient = new QueryClient({ queryCache })
     hydrate(queryClient, JSON.parse(stringifiedState))
 
-    const unmount = ReactHydrate(
+    const unmount = PreactHydrate(
       <QueryClientProvider client={queryClient}>
         <SuccessComponent />
       </QueryClientProvider>,
