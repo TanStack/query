@@ -4,7 +4,7 @@ import preact from '@preact/preset-vite'
 import packageJson from './package.json'
 
 export default defineConfig({
-  plugins: [preact()],
+  plugins: [preact() as any],
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
     conditions: ['@tanstack/custom-condition'],
