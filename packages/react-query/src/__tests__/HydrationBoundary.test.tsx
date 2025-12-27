@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import * as React from 'react'
 import { render } from '@testing-library/react'
 import * as coreModule from '@tanstack/query-core'
+import { pendingHydrationQueries } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import {
   HydrationBoundary,
@@ -1266,6 +1267,121 @@ describe('React hydration', () => {
 
     // The component should render without crashing
     expect(rendered.container).toBeInTheDocument()
+
+    queryClient.clear()
+    serverQueryClient.clear()
+  })
+
+  test('should clear pending hydration flags on unmount', async () => {
+    const queryClient = new QueryClient()
+
+    // First, prefetch to populate the cache
+    queryClient.prefetchQuery({
+      queryKey: ['unmount-cleanup-test'],
+      queryFn: () => sleep(10).then(() => 'initial-data'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Simulate server prefetch
+    const serverQueryClient = new QueryClient()
+    serverQueryClient.prefetchQuery({
+      queryKey: ['unmount-cleanup-test'],
+      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(serverQueryClient)
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['unmount-cleanup-test'],
+        queryFn: () => sleep(10).then(() => 'new-data'),
+        staleTime: Infinity,
+      })
+      return (
+        <div>
+          <h1>{data ?? 'loading'}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Get the query to check pending status
+    const query = queryClient.getQueryCache().find({
+      queryKey: ['unmount-cleanup-test'],
+    })
+    expect(query).toBeDefined()
+
+    // After useEffect runs, the pending flag should be cleared
+    expect(pendingHydrationQueries.has(query!)).toBe(false)
+
+    // Unmount and verify cleanup
+    rendered.unmount()
+
+    // After unmount, the pending flag should still be cleared
+    expect(pendingHydrationQueries.has(query!)).toBe(false)
+
+    queryClient.clear()
+    serverQueryClient.clear()
+  })
+
+  test('should clear pending hydration flags when component unmounts before hydration completes', async () => {
+    const queryClient = new QueryClient()
+
+    // First, prefetch to populate the cache
+    queryClient.prefetchQuery({
+      queryKey: ['early-unmount-test'],
+      queryFn: () => sleep(10).then(() => 'initial-data'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Simulate server prefetch
+    const serverQueryClient = new QueryClient()
+    serverQueryClient.prefetchQuery({
+      queryKey: ['early-unmount-test'],
+      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(serverQueryClient)
+
+    function ConditionalHydrationBoundary({ show }: { show: boolean }) {
+      if (!show) return null
+      return (
+        <HydrationBoundary state={dehydratedState}>
+          <div>content</div>
+        </HydrationBoundary>
+      )
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <ConditionalHydrationBoundary show={true} />
+      </QueryClientProvider>,
+    )
+
+    // Get the query - at this point it should be marked as pending hydration
+    const query = queryClient.getQueryCache().find({
+      queryKey: ['early-unmount-test'],
+    })
+    expect(query).toBeDefined()
+
+    // Unmount before useEffect has a chance to run hydration
+    rendered.rerender(
+      <QueryClientProvider client={queryClient}>
+        <ConditionalHydrationBoundary show={false} />
+      </QueryClientProvider>,
+    )
+
+    // After unmount cleanup, the pending flag should be cleared
+    expect(pendingHydrationQueries.has(query!)).toBe(false)
 
     queryClient.clear()
     serverQueryClient.clear()

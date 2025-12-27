@@ -112,15 +112,25 @@ export const HydrationBoundary = ({
   React.useEffect(() => {
     if (hydrationQueue) {
       hydrate(client, { queries: hydrationQueue }, optionsRef.current)
-      // Clear pending hydration flags after hydration completes
-      const queryCache = client.getQueryCache()
-      for (const dehydratedQuery of hydrationQueue) {
-        const query = queryCache.get(dehydratedQuery.queryHash)
-        if (query) {
-          pendingHydrationQueries.delete(query)
+    }
+
+    const clearPendingQueries = () => {
+      if (hydrationQueue) {
+        const queryCache = client.getQueryCache()
+        for (const dehydratedQuery of hydrationQueue) {
+          const query = queryCache.get(dehydratedQuery.queryHash)
+          if (query) {
+            pendingHydrationQueries.delete(query)
+          }
         }
       }
     }
+
+    // Clear pending hydration flags after hydration completes
+    clearPendingQueries()
+
+    // Cleanup: also clear on unmount in case component unmounts before effect runs
+    return clearPendingQueries
   }, [client, hydrationQueue])
 
   return children as React.ReactElement
