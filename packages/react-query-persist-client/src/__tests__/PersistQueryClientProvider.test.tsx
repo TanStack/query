@@ -384,12 +384,11 @@ describe('PersistQueryClientProvider', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => {
-            fetched = true
-            return 'fetched'
-          }),
-
+        queryFn: async () => {
+          await sleep(10)
+          fetched = true
+          return 'fetched'
+        },
         staleTime: Infinity,
       })
 
@@ -414,6 +413,8 @@ describe('PersistQueryClientProvider', () => {
 
     expect(rendered.getByText('data: null')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: hydrated')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('data: hydrated')).toBeInTheDocument()
 
     expect(states).toHaveLength(2)
