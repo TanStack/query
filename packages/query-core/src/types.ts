@@ -498,9 +498,9 @@ export interface QueryExecuteOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends WithRequired<
-    QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey, TPageParam>,
-    'queryKey'
-  > {
+  QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey, TPageParam>,
+  'queryKey'
+> {
   initialPageParam?: never
   select?: (data: TQueryData) => TData
   /**
