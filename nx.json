@@ -42,6 +42,10 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/**/package.json"]
     },
+    "test:size": {
+      "cache": true,
+      "inputs": ["{workspaceRoot}/**/package.json"]
+    },
     "test:eslint": {
       "cache": true,
       "dependsOn": ["^compile"],
