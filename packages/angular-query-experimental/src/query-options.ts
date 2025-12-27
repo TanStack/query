@@ -4,7 +4,6 @@ import type {
   InitialDataFunction,
   NonUndefinedGuard,
   OmitKeyof,
-  QueryFunction,
   QueryKey,
   SkipToken,
 } from '@tanstack/query-core'
@@ -42,14 +41,10 @@ export type DefinedInitialDataOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
-  CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'queryFn'
-> & {
+> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
   initialData:
     | NonUndefinedGuard<TQueryFnData>
     | (() => NonUndefinedGuard<TQueryFnData>)
-  queryFn?: QueryFunction<TQueryFnData, TQueryKey>
 }
 
 /**

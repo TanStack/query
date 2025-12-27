@@ -1,42 +1,97 @@
-import { TestBed } from '@angular/core/testing'
-import { afterEach, beforeEach, describe, expectTypeOf, test, vi } from 'vitest'
-import { provideZonelessChangeDetection } from '@angular/core'
-import { sleep } from '@tanstack/query-test-utils'
-import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
+import { describe, expectTypeOf, it, test } from 'vitest'
+import { injectInfiniteQuery } from '..'
+import type { Signal } from '@angular/core'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('injectInfiniteQuery', () => {
-  let queryClient: QueryClient
-
-  beforeEach(() => {
-    queryClient = new QueryClient()
-    vi.useFakeTimers()
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
-  test('should narrow type after isSuccess', () => {
-    const query = TestBed.runInInjectionContext(() => {
-      return injectInfiniteQuery(() => ({
+  describe('Discriminated union return type', () => {
+    test('data should be possibly undefined by default', () => {
+      const query = injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) =>
-          sleep(0).then(() => 'data on page ' + pageParam),
+          Promise.resolve('data on page ' + pageParam),
         initialPageParam: 0,
         getNextPageParam: () => 12,
       }))
+
+      expectTypeOf(query.data).toEqualTypeOf<
+        Signal<undefined> | Signal<InfiniteData<string, unknown>>
+      >()
     })
 
-    if (query.isSuccess()) {
-      const data = query.data()
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
-    }
+    test('data should be defined when query is success', () => {
+      const query = injectInfiniteQuery(() => ({
+        queryKey: ['infiniteQuery'],
+        queryFn: ({ pageParam }) =>
+          Promise.resolve('data on page ' + pageParam),
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+      }))
+
+      if (query.isSuccess()) {
+        expectTypeOf(query.data).toEqualTypeOf<
+          Signal<InfiniteData<string, unknown>>
+        >()
+      }
+    })
+
+    test('error should be null when query is success', () => {
+      const query = injectInfiniteQuery(() => ({
+        queryKey: ['infiniteQuery'],
+        queryFn: ({ pageParam }) =>
+          Promise.resolve('data on page ' + pageParam),
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+      }))
+
+      if (query.isSuccess()) {
+        expectTypeOf(query.error).toEqualTypeOf<Signal<null>>()
+      }
+    })
+
+    test('data should be undefined when query is pending', () => {
+      const query = injectInfiniteQuery(() => ({
+        queryKey: ['infiniteQuery'],
+        queryFn: ({ pageParam }) =>
+          Promise.resolve('data on page ' + pageParam),
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+      }))
+
+      if (query.isPending()) {
+        expectTypeOf(query.data).toEqualTypeOf<Signal<undefined>>()
+      }
+    })
+
+    test('error should be defined when query is error', () => {
+      const query = injectInfiniteQuery(() => ({
+        queryKey: ['infiniteQuery'],
+        queryFn: ({ pageParam }) =>
+          Promise.resolve('data on page ' + pageParam),
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+      }))
+
+      if (query.isError()) {
+        expectTypeOf(query.error).toEqualTypeOf<Signal<Error>>()
+      }
+    })
+  })
+
+  it('should provide the correct types to the select function', () => {
+    const query = injectInfiniteQuery(() => ({
+      queryKey: ['infiniteQuery'],
+      queryFn: ({ pageParam }) => Promise.resolve('data on page ' + pageParam),
+      initialPageParam: 0,
+      getNextPageParam: () => 12,
+      select: (data) => {
+        expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+        return data
+      },
+    }))
+
+    expectTypeOf(query.data).toEqualTypeOf<
+      Signal<undefined> | Signal<InfiniteData<string, number>>
+    >()
   })
 })

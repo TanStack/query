@@ -8,8 +8,12 @@ replace: { 'useQuery': 'injectQuery', 'hooks': 'functions' }
 [//]: # 'Example2'
 
 ```ts
+import { Component, inject } from '@angular/core'
 import { injectQuery, QueryClient } from '@tanstack/angular-query-experimental'
 
+@Component({
+  // ...
+})
 class QueryInvalidationExample {
   queryClient = inject(QueryClient)
 
@@ -72,7 +76,7 @@ todoListQuery = injectQuery(() => ({
 }))
 
 // However, the following query below will NOT be invalidated
-const todoListQuery = injectQuery(() => ({
+todoListQuery = injectQuery(() => ({
   queryKey: ['todos', { type: 'done' }],
   queryFn: fetchTodoList,
 }))

@@ -13,6 +13,7 @@ import {
 } from '@angular/core'
 import { provideTanStackQuery } from '../providers'
 import { withDevtools } from '../devtools'
+import { flushQueryUpdates } from './test-utils'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
@@ -134,7 +135,7 @@ describe('withDevtools feature', () => {
       })
 
       TestBed.inject(ENVIRONMENT_INITIALIZER)
-      await vi.advanceTimersByTimeAsync(0)
+      await flushQueryUpdates()
       TestBed.tick()
       await vi.dynamicImportSettled()
       TestBed.tick()
@@ -166,7 +167,7 @@ describe('withDevtools feature', () => {
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     // Destroys injector
     TestBed.resetTestingModule()
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
     await vi.dynamicImportSettled()
 
     expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
@@ -186,7 +187,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
 
     expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
 
@@ -202,7 +203,7 @@ describe('withDevtools feature', () => {
     )
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
 
     expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
   })
@@ -247,7 +248,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
 
     TestBed.tick()
 
@@ -287,7 +288,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
 
     TestBed.tick()
 
@@ -319,7 +320,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
 
     TestBed.tick()
 
@@ -350,7 +351,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
 
     TestBed.tick()
 
@@ -383,7 +384,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
 
     TestBed.tick()
 
@@ -413,7 +414,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
 
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)
@@ -439,7 +440,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
     TestBed.tick()
     await vi.dynamicImportSettled()
 
@@ -469,7 +470,7 @@ describe('withDevtools feature', () => {
     })
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
 
     expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
     expect(mockDevtoolsInstance.mount).not.toHaveBeenCalled()
@@ -526,7 +527,7 @@ describe('withDevtools feature', () => {
       })
 
       TestBed.inject(ENVIRONMENT_INITIALIZER)
-      await vi.advanceTimersByTimeAsync(0)
+      await flushQueryUpdates()
 
       expect(withDevtoolsFn).toHaveBeenCalledWith(mockService1, mockService2)
     })
@@ -547,7 +548,7 @@ describe('withDevtools feature', () => {
       })
 
       TestBed.inject(ENVIRONMENT_INITIALIZER)
-      await vi.advanceTimersByTimeAsync(0)
+      await flushQueryUpdates()
 
       expect(withDevtoolsFn).toHaveBeenCalledWith()
     })
@@ -577,7 +578,7 @@ describe('withDevtools feature', () => {
       })
 
       TestBed.inject(ENVIRONMENT_INITIALIZER)
-      await vi.advanceTimersByTimeAsync(0)
+      await flushQueryUpdates()
 
       const service = TestBed.inject(ReactiveService)
 
