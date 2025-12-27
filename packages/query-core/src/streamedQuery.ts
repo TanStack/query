@@ -78,7 +78,7 @@ export function streamedQuery<
 
     let result = initialValue
 
-    let cancelled = false
+    let cancelled: boolean = false as boolean
     const streamFnContext = addConsumeAwareSignal<
       OmitKeyof<typeof context, 'signal'>
     >(
