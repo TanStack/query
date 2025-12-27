@@ -465,3 +465,33 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
 
   return !!throwOnError
 }
+
+export function addConsumeAwareSignal<T>(
+  object: T,
+  getSignal: () => AbortSignal,
+  onCancelled: VoidFunction,
+): T & { signal: AbortSignal } {
+  let consumed = false
+  let signal: AbortSignal | undefined
+
+  Object.defineProperty(object, 'signal', {
+    enumerable: true,
+    get: () => {
+      signal ??= getSignal()
+      if (consumed) {
+        return signal
+      }
+
+      consumed = true
+      if (signal.aborted) {
+        onCancelled()
+      } else {
+        signal.addEventListener('abort', onCancelled, { once: true })
+      }
+
+      return signal
+    },
+  })
+
+  return object as T & { signal: AbortSignal }
+}
