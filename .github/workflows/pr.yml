@@ -60,16 +60,10 @@ jobs:
         id: determine-sha
         run: |
           echo "COMMIT_SHA=${{ github.event.pull_request.head.sha || github.sha }}" >> $GITHUB_ENV
-      - name: Preview Bundle Size
-        uses: marocchino/sticky-pull-request-comment@fd19551a2a7c0d29677c63257f86d8ef8bb24b48
+      - name: Size Limit
+        uses: andresz1/size-limit-action@94bc357df29c36c8f8d50ea497c3e225c3c95d1d
         with:
-          message: |
-            Sizes for commit ${{ env.COMMIT_SHA }}:
-            | Branch | Bundle Size |
-            |--------|--------|
-            | Main | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.2.1/jsx-runtime?target=es2022%22,%22react@^19.2.1?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.2.0/jsx-runtime?target=es2022%22,%22react@%5E19.2.0?target=es2022%22%5D%7D%7D) |
-            | This PR | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.2.1/jsx-runtime?target=es2022%22,%22react@^19.2.1?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.2.0/jsx-runtime?target=es2022%22,%22react@%5E19.2.0?target=es2022%22%5D%7D%7D) |
-        continue-on-error: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
   provenance:
     name: Provenance
     runs-on: ubuntu-latest
