@@ -41,7 +41,7 @@ TanStack Query provides `injectQueries`, which you can use to dynamically execut
 [//]: # 'DynamicParallelIntro'
 [//]: # 'Example2'
 
-> IMPORTANT: `injectQueries` is experimental and is provided in it's own entry point
+> IMPORTANT: `injectQueries` is experimental and is provided in its own entry point
 
 ```ts
 @Component({
