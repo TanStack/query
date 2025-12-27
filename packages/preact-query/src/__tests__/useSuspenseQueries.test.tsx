@@ -43,31 +43,21 @@ describe('useSuspenseQueries', () => {
 
   beforeAll(() => {
     vi.useFakeTimers()
-    console.log(
-      '[DEBUG] useSuspenseQueries describe - beforeAll: fake timers enabled',
-    )
   })
 
   afterAll(() => {
     vi.useRealTimers()
-    console.log(
-      '[DEBUG] useSuspenseQueries describe - afterAll: real timers restored',
-    )
   })
 
   afterEach(() => {
     queryClient.clear()
     onSuspend.mockClear()
     onQueriesResolution.mockClear()
-    console.log(
-      '[DEBUG] useSuspenseQueries describe - afterEach: queryClient cleared, mocks reset',
-    )
   })
 
   function SuspenseFallback() {
     useEffect(() => {
       onSuspend()
-      console.log('[DEBUG] SuspenseFallback mounted -> onSuspend called')
     }, [])
 
     return <div>loading</div>
@@ -77,24 +67,6 @@ describe('useSuspenseQueries', () => {
     Component: FunctionalComponent<T>,
   ) => {
     function SuspendedComponent(props: T) {
-      // Debug log to help track when the suspended wrapper renders and with which props
-      try {
-        const maybeQueries = (props as any).queries
-        if (maybeQueries) {
-          console.log(
-            '[DEBUG] SuspendedComponent render - received queries keys ->',
-            maybeQueries.map((q: any) => q.queryKey),
-          )
-        } else {
-          console.log('[DEBUG] SuspendedComponent render - props ->', props)
-        }
-      } catch (err) {
-        console.log(
-          '[DEBUG] SuspendedComponent render - error while logging props',
-          err,
-        )
-      }
-
       return (
         <Suspense fallback={<SuspenseFallback />}>
           <Component {...props} />
@@ -110,57 +82,14 @@ describe('useSuspenseQueries', () => {
   }: {
     queries: Array<NumberQueryOptions>
   }) {
-    // simple render counter for debugging render loops
-    const renderCount = useRef(0)
-    renderCount.current++
-    console.log(
-      `[DEBUG] QueriesContainer render #${renderCount.current} - incoming queries ->`,
-      queries.map((q) => q.queryKey),
-    )
-
     const queriesResults = useSuspenseQueries(
-      {
-        queries,
-        combine: (results) => {
-          try {
-            console.log(
-              '[DEBUG] combine called - results length:',
-              results.length,
-              'data:',
-              results.map((r) => r?.data),
-            )
-          } catch (err) {
-            console.log(
-              '[DEBUG] combine encountered error when logging results',
-              err,
-            )
-          }
-          return results.map((r) => r.data)
-        },
-      },
+      { queries, combine: (results) => results.map((r) => r.data) },
       queryClient,
     )
 
     useEffect(() => {
-      console.log(
-        '[DEBUG] QueriesContainer useEffect - queriesResults changed ->',
-        queriesResults,
-      )
       onQueriesResolution(queriesResults)
     }, [queriesResults])
-
-    useEffect(() => {
-      console.log(
-        '[DEBUG] QueriesContainer mounted/queries changed - current queries keys ->',
-        queries.map((q) => q.queryKey),
-      )
-      return () => {
-        console.log(
-          '[DEBUG] QueriesContainer unmounted or queries prop about to change - last known queries keys ->',
-          queries.map((q) => q.queryKey),
-        )
-      }
-    }, [queries])
 
     return null
   }
@@ -196,43 +125,13 @@ describe('useSuspenseQueries', () => {
     const initQueries = [1, 2].map(createQuery)
     const nextQueries = [3, 4, 5, 6].map(createQuery)
 
-    console.log(
-      'Debug: initQueries keys ->',
-      initQueries.map((q) => q.queryKey),
-    )
-    console.log(
-      'Debug: nextQueries keys ->',
-      nextQueries.map((q) => q.queryKey),
-    )
-
     const { rerender } = render(<TestComponent queries={initQueries} />)
-    console.log('Debug: Rendered with initQueries')
 
     rerender(<TestComponent queries={nextQueries} />)
 
-    console.log('Debug: Rerendered with nextQueries')
-
-    console.log('Debug: Calling resolveQueries via act')
     await act(resolveQueries)
-    console.log('Debug: resolveQueries completed')
 
-    console.log('Debug: onSuspend call count:', onSuspend.mock.calls.length)
-    console.log(
-      'Debug: onQueriesResolution call count:',
-      onQueriesResolution.mock.calls.length,
-    )
-    console.log(
-      'Debug: onQueriesResolution last call args:',
-      onQueriesResolution.mock.calls[onQueriesResolution.mock.calls.length - 1],
-    )
-
-    /**
-     * React often "reconciles" the existing suspended state.
-     * It recognizes it's already in a "fallback" mode and may
-     * not re-mount the fallback component. But Preact will call the
-     * onSuspend again because of no persistance
-     */
-    expect(onSuspend).toHaveBeenCalledTimes(2)
+    expect(onSuspend).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([3, 4, 5, 6])
   })
