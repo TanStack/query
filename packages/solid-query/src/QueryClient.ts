@@ -17,16 +17,16 @@ export interface QueryObserverOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends OmitKeyof<
-    QueryCoreObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey,
-      TPageParam
-    >,
-    'structuralSharing'
-  > {
+  QueryCoreObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey,
+    TPageParam
+  >,
+  'structuralSharing'
+> {
   /**
    * Set this to a reconciliation key to enable reconciliation between query results.
    * Set this to `false` to disable reconciliation between query results.
@@ -46,15 +46,15 @@ export interface InfiniteQueryObserverOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
-    QueryCoreInfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-    'structuralSharing'
-  > {
+  QueryCoreInfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  'structuralSharing'
+> {
   /**
    * Set this to a reconciliation key to enable reconciliation between query results.
    * Set this to `false` to disable reconciliation between query results.
@@ -67,8 +67,9 @@ export interface InfiniteQueryObserverOptions<
     | ((oldData: TData | undefined, newData: TData) => TData)
 }
 
-export interface DefaultOptions<TError = DefaultError>
-  extends CoreDefaultOptions<TError> {
+export interface DefaultOptions<
+  TError = DefaultError,
+> extends CoreDefaultOptions<TError> {
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'>
 }
 

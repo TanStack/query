@@ -255,7 +255,7 @@ describe('useQueries', () => {
   })
 
   test('should be `enabled` to accept getter function', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const checked = ref(false)
 
     useQueries({
@@ -278,7 +278,7 @@ describe('useQueries', () => {
   })
 
   test('should allow getters for query keys', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
 
@@ -307,7 +307,7 @@ describe('useQueries', () => {
   })
 
   test('should allow arbitrarily nested getters for query keys', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')
@@ -327,6 +327,69 @@ describe('useQueries', () => {
               foo: {
                 bar: {
                   baz: () => key5.value,
+                },
+              },
+            }),
+          ],
+          queryFn: fetchFn,
+        },
+      ],
+    })
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+
+    key1.value = 'key1-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(2)
+
+    key2.value = 'key2-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(3)
+
+    key3.value = 'key3-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(4)
+
+    key4.value = 'key4-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(5)
+
+    key5.value = 'key5-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(6)
+  })
+
+  test('should work with options getter and be reactive', async () => {
+    const fetchFn = vi.fn(() => 'foo')
+    const key1 = ref('key1')
+    const key2 = ref('key2')
+    const key3 = ref('key3')
+    const key4 = ref('key4')
+    const key5 = ref('key5')
+
+    useQueries({
+      queries: () => [
+        {
+          queryKey: [
+            'key',
+            key1,
+            key2.value,
+            { key: key3.value },
+            [{ foo: { bar: key4.value } }],
+            () => ({
+              foo: {
+                bar: {
+                  baz: key5.value,
                 },
               },
             }),
