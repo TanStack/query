@@ -35,6 +35,6 @@
   },
   "type": "module",
   "devDependencies": {
-    "npm-run-all2": "^5.0.2"
+    "npm-run-all2": "^5.0.0"
   }
 }

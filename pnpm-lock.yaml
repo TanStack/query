@@ -2333,7 +2333,7 @@ importers:
         specifier: ^50.5.0
         version: 50.5.0(eslint@9.39.2(jiti@2.5.1))
       npm-run-all2:
-        specifier: ^5.0.2
+        specifier: ^5.0.0
         version: 5.0.2
 
   packages/eslint-plugin-query:
@@ -2355,7 +2355,7 @@ importers:
         specifier: ^9.36.0
         version: 9.36.0(jiti@2.5.1)
       npm-run-all2:
-        specifier: ^5.0.2
+        specifier: ^5.0.0
         version: 5.0.2
 
   packages/preact-query:
@@ -2414,7 +2414,7 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       npm-run-all2:
-        specifier: ^5.0.2
+        specifier: ^5.0.0
         version: 5.0.2
 
   packages/query-broadcast-client-experimental:
@@ -2433,7 +2433,7 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4(vite@7.3.0(@types/node@25.0.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
       npm-run-all2:
-        specifier: ^5.0.2
+        specifier: ^5.0.0
         version: 5.0.2
 
   packages/query-codemods:
@@ -2451,7 +2451,7 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       npm-run-all2:
-        specifier: ^5.0.2
+        specifier: ^5.0.0
         version: 5.0.2
 
   packages/query-devtools:
@@ -2509,7 +2509,7 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       npm-run-all2:
-        specifier: ^5.0.2
+        specifier: ^5.0.0
         version: 5.0.2
 
   packages/query-sync-storage-persister:
@@ -2525,13 +2525,13 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       npm-run-all2:
-        specifier: ^5.0.2
+        specifier: ^5.0.0
         version: 5.0.2
 
   packages/query-test-utils:
     devDependencies:
       npm-run-all2:
-        specifier: ^5.0.2
+        specifier: ^5.0.0
         version: 5.0.2
 
   packages/react-query:
