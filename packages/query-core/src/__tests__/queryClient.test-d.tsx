@@ -252,7 +252,7 @@ describe('infiniteQuery', () => {
       }),
     })
 
-    expectTypeOf(data).toEqualTypeOf<Promise<{ pages: string[] }>>()
+    expectTypeOf(data).toEqualTypeOf<Promise<{ pages: Array<string> }>>()
   })
 
   it('should allow passing pages', async () => {
