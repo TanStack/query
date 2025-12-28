@@ -85,9 +85,12 @@ export function useBaseQuery<
     errorResetBoundary,
     client
       .getQueryCache()
-      .get<TQueryFnData, TError, TQueryData, TQueryKey>(
-        defaultedOptions.queryHash,
-      ),
+      .get<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        TQueryKey
+      >(defaultedOptions.queryHash),
   )
   useClearResetErrorBoundary(errorResetBoundary)
 
