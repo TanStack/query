@@ -89,26 +89,5 @@
       "@types/react": "^19.0.1",
       "@types/react-dom": "^19.0.2"
     }
-  },
-  "size-limit": [
-    {
-      "name": "react full",
-      "path": "packages/react-query/build/modern/index.js",
-      "limit": "12.02 kB",
-      "ignore": [
-        "react",
-        "react-dom"
-      ]
-    },
-    {
-      "name": "react minimal",
-      "path": "packages/react-query/build/modern/index.js",
-      "limit": "9.08 kB",
-      "import": "{ useQuery, QueryClient, QueryClientProvider }",
-      "ignore": [
-        "react",
-        "react-dom"
-      ]
-    }
-  ]
+  }
 }
