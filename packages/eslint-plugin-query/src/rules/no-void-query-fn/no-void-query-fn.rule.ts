@@ -1,9 +1,14 @@
 import { ESLintUtils } from '@typescript-eslint/utils'
-import ts from 'typescript'
 import { ASTUtils } from '../../utils/ast-utils'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { getDocsUrl } from '../../utils/get-docs-url'
+import type { ParserServicesWithTypeInformation } from '@typescript-eslint/utils'
 import type { ExtraRuleDocs } from '../../types'
+
+const TypeFlags = {
+  Void: 16384,
+  Undefined: 32768,
+} as const
 
 export const name = 'no-void-query-fn'
 
@@ -69,7 +74,11 @@ export const rule = createRule({
   }),
 })
 
-function isIllegalReturn(checker: ts.TypeChecker, type: ts.Type): boolean {
+type Program = ParserServicesWithTypeInformation['program']
+type TypeChecker = ReturnType<Program['getTypeChecker']>
+type Type = ReturnType<TypeChecker['getTypeAtLocation']>
+
+function isIllegalReturn(checker: TypeChecker, type: Type): boolean {
   const awaited = checker.getAwaitedType(type)
 
   if (!awaited) return false
@@ -78,7 +87,5 @@ function isIllegalReturn(checker: ts.TypeChecker, type: ts.Type): boolean {
     return awaited.types.some((t) => isIllegalReturn(checker, t))
   }
 
-  return awaited.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined)
-    ? true
-    : false
+  return awaited.flags & (TypeFlags.Void | TypeFlags.Undefined) ? true : false
 }

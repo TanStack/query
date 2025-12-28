@@ -1,51 +1,56 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-  import { persistQueryClient } from '@tanstack/query-persist-client-core'
+  import {
+    persistQueryClientRestore,
+    persistQueryClientSubscribe,
+  } from '@tanstack/query-persist-client-core'
   import {
     QueryClientProvider,
     setIsRestoringContext,
   } from '@tanstack/svelte-query'
-  import { writable } from 'svelte/store'
+  import { box } from './utils.svelte.js'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-  import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
+  import type {
+    OmitKeyof,
+    QueryClientProviderProps,
+  } from '@tanstack/svelte-query'
 
-  export let client: QueryClient
-  export let onSuccess: () => Promise<unknown> | unknown = () => undefined
-  export let onError: () => Promise<unknown> | unknown = () => undefined
-  export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-
-  const isRestoring = writable(true)
-  setIsRestoringContext(isRestoring)
-  $: {
-    let isStale = false
-    isRestoring.set(true)
-    const [unsubscribe, promise] = persistQueryClient({
-      ...persistOptions,
-      queryClient: client,
-    })
-    promise
-      .then(async () => {
-        if (!isStale) {
-          await onSuccess()
-        }
-      })
-      .catch(async () => {
-        if (!isStale) {
-          await onError()
-        }
-      })
-      .finally(() => {
-        if (!isStale) {
-          isRestoring.set(false)
-        }
-      })
-    onDestroy(() => {
-      isStale = true
-      unsubscribe()
-    })
+  type PersistQueryClientProviderProps = QueryClientProviderProps & {
+    persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+    onSuccess?: () => void
+    onError?: () => void
   }
+
+  let {
+    client,
+    children,
+    persistOptions,
+    ...props
+  }: PersistQueryClientProviderProps = $props()
+
+  let isRestoring = box(true)
+
+  setIsRestoringContext(isRestoring)
+
+  const options = $derived({
+    ...persistOptions,
+    queryClient: client,
+  })
+
+  $effect(() => {
+    return isRestoring.current ? () => {} : persistQueryClientSubscribe(options)
+  })
+
+  $effect(() => {
+    isRestoring.current = true
+    persistQueryClientRestore(options)
+      .then(() => props.onSuccess?.())
+      .catch(() => props.onError?.())
+      .finally(() => {
+        isRestoring.current = false
+      })
+  })
 </script>
 
-<QueryClientProvider {client}>
-  <slot />
+<QueryClientProvider {client} {...props}>
+  {@render children()}
 </QueryClientProvider>

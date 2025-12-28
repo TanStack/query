@@ -1,20 +1,20 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
   import { sleep } from '@tanstack/query-test-utils'
-  import type { Writable } from 'svelte/store'
+  import { StatelessRef } from '../utils.svelte.js'
 
-  export let states: Writable<Array<string>>
+  let { states }: { states: StatelessRef<Array<string>> } = $props()
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['test'],
     queryFn: async () => {
-      states.update((s) => [...s, 'fetching'])
-      await sleep(5)
-      states.update((s) => [...s, 'fetched'])
+      states.current.push('fetching')
+      await sleep(10)
+      states.current.push('fetched')
       return 'fetched'
     },
-  })
+  }))
 </script>
 
-<div>{$query.data}</div>
-<div>fetchStatus: {$query.fetchStatus}</div>
+<div>{query.data}</div>
+<div>fetchStatus: {query.fetchStatus}</div>

@@ -93,9 +93,10 @@ Alternatively, add `@tanstack/query` to the plugins section, and configure the r
 
 ## Rules
 
-- [@tanstack/query/exhaustive-deps](../exhaustive-deps.md)
-- [@tanstack/query/no-rest-destructuring](../no-rest-destructuring.md)
-- [@tanstack/query/stable-query-client](../stable-query-client.md)
-- [@tanstack/query/no-unstable-deps](../no-unstable-deps.md)
-- [@tanstack/query/infinite-query-property-order](../infinite-query-property-order.md)
-- [@tanstack/query/no-void-query-fn](../no-void-query-fn.md)
+- [@tanstack/query/exhaustive-deps](./exhaustive-deps.md)
+- [@tanstack/query/no-rest-destructuring](./no-rest-destructuring.md)
+- [@tanstack/query/stable-query-client](./stable-query-client.md)
+- [@tanstack/query/no-unstable-deps](./no-unstable-deps.md)
+- [@tanstack/query/infinite-query-property-order](./infinite-query-property-order.md)
+- [@tanstack/query/no-void-query-fn](./no-void-query-fn.md)
+- [@tanstack/query/mutation-property-order](./mutation-property-order.md)

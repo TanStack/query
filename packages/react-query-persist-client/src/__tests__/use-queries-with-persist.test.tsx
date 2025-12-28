@@ -1,7 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, render } from '@testing-library/react'
 import * as React from 'react'
 import { QueryClient, useQueries } from '@tanstack/react-query'
+import { sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import type {
   PersistedClient,
@@ -13,6 +14,7 @@ describe('useQueries with persist and memoized combine', () => {
   const storage: { [key: string]: string } = {}
 
   beforeEach(() => {
+    vi.useFakeTimers()
     Object.defineProperty(window, 'localStorage', {
       value: {
         getItem: (key: string) => storage[key] || null,
@@ -31,6 +33,7 @@ describe('useQueries with persist and memoized combine', () => {
   })
 
   afterEach(() => {
+    vi.useRealTimers()
     Object.keys(storage).forEach((key) => delete storage[key])
   })
 
@@ -51,10 +54,9 @@ describe('useQueries with persist and memoized combine', () => {
       },
       restoreClient: async () => {
         const stored = storage['REACT_QUERY_OFFLINE_CACHE']
-        if (stored) {
-          await new Promise((resolve) => setTimeout(resolve, 10))
-          return JSON.parse(stored) as PersistedClient
-        }
+        if (stored)
+          return sleep(10).then(() => JSON.parse(stored) as PersistedClient)
+
         return undefined
       },
       removeClient: () => {
@@ -95,7 +97,7 @@ describe('useQueries with persist and memoized combine', () => {
       const combinedQueries = useQueries({
         queries: [1, 2, 3].map((id) => ({
           queryKey: ['post', id],
-          queryFn: () => Promise.resolve(id),
+          queryFn: () => sleep(100).then(() => id),
           staleTime: 30_000,
         })),
         combine: React.useCallback(
@@ -126,9 +128,9 @@ describe('useQueries with persist and memoized combine', () => {
       </PersistQueryClientProvider>,
     )
 
-    await waitFor(() => {
-      expect(getByTestId('pending').textContent).toBe('false')
-      expect(getByTestId('data').textContent).toBe('1,2,3')
-    })
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(() => vi.advanceTimersByTimeAsync(0))
+    expect(getByTestId('pending').textContent).toBe('false')
+    expect(getByTestId('data').textContent).toBe('1,2,3')
   })
 })

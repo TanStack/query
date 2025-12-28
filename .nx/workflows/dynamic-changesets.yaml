@@ -1,4 +1,4 @@
 distribute-on:
   small-changeset: 3 linux-medium-js
-  medium-changeset: 6 linux-medium-js
-  large-changeset: 10 linux-medium-js
+  medium-changeset: 4 linux-medium-js
+  large-changeset: 5 linux-medium-js

@@ -1,7 +1,7 @@
 // @ts-check
 
 // @ts-ignore Needed due to moduleResolution Node vs Bundler
-import { tanstackConfig } from '@tanstack/config/eslint'
+import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
 
@@ -44,6 +44,7 @@ export default [
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'no-case-declarations': 'off',
+      'prefer-const': 'off',
     },
   },
   {

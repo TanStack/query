@@ -5,7 +5,7 @@ title: Queries
 
 ## Query Basics
 
-A query is a declarative dependency on an asynchronous source of data that is tied to a **unique key**. A query can be used with any Promise based method (including GET and POST methods) to fetch data from a server. If your method modifies data on the server, we recommend using [Mutations](../mutations.md) instead.
+A query is a declarative dependency on an asynchronous source of data that is tied to a **unique key**. A query can be used with any Promise based method (including GET and POST methods) to fetch data from a server. If your method modifies data on the server, we recommend using [Mutations](./mutations.md) instead.
 
 To subscribe to a query in your components or custom hooks, call the `useQuery` hook with at least:
 
@@ -121,7 +121,7 @@ TypeScript will also narrow the type of `data` correctly if you've checked for `
 In addition to the `status` field, you will also get an additional `fetchStatus` property with the following options:
 
 - `fetchStatus === 'fetching'` - The query is currently fetching.
-- `fetchStatus === 'paused'` - The query wanted to fetch, but it is paused. Read more about this in the [Network Mode](../network-mode.md) guide.
+- `fetchStatus === 'paused'` - The query wanted to fetch, but it is paused. Read more about this in the [Network Mode](./network-mode.md) guide.
 - `fetchStatus === 'idle'` - The query is not doing anything at the moment.
 
 ### Why two different states?
@@ -140,6 +140,6 @@ So keep in mind that a query can be in `pending` state without actually fetching
 
 ## Further Reading
 
-For an alternative way of performing status checks, have a look at the [Community Resources](../../community/tkdodos-blog.md#4-status-checks-in-react-query).
+For an alternative way of performing status checks, have a look at [this article by TkDodo](https://tkdodo.eu/blog/status-checks-in-react-query).
 
 [//]: # 'Materials'

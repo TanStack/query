@@ -95,9 +95,9 @@ so it will only be true if the query is currently fetching for the first time.
 
 ## Typesafe disabling of queries using `skipToken`
 
-If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
+If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want the query to be type safe.
 
-> IMPORTANT: `refetch` from `useQuery` will not work with `skipToken`. Other than that, `skipToken` works the same as `enabled: false`.
+> **IMPORTANT**: `refetch` from `useQuery` will not work with `skipToken`. Calling `refetch()` on a query that uses `skipToken` will result in a `Missing queryFn` error because there is no valid query function to execute. If you need to manually trigger queries, consider using `enabled: false` instead, which allows `refetch()` to work properly. Other than this limitation, `skipToken` works the same as `enabled: false`.
 
 [//]: # 'Example3'
 

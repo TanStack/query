@@ -82,7 +82,11 @@ export function useBaseQuery<
   const client = queryClient || useQueryClient()
 
   const defaultedOptions = computed(() => {
-    const clonedOptions = cloneDeepUnref(options as any)
+    let resolvedOptions = options
+    if (typeof resolvedOptions === 'function') {
+      resolvedOptions = resolvedOptions()
+    }
+    const clonedOptions = cloneDeepUnref(resolvedOptions as any)
 
     if (typeof clonedOptions.enabled === 'function') {
       clonedOptions.enabled = clonedOptions.enabled()
