@@ -13,39 +13,9 @@ import type {
   InfiniteQueryExecuteOptions,
   MutationOptions,
   OmitKeyof,
-  QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
 } from '../types'
-
-const queryExecuteOptions = <
-  TData,
-  TError,
-  TQueryData,
-  TQueryKey extends QueryKey,
->(
-  options: QueryExecuteOptions<TData, TError, TQueryData, TQueryKey>,
-) => {
-  return options
-}
-
-const infiniteQueryExecuteOptions = <
-  TData,
-  TError,
-  TQueryData,
-  TQueryKey extends QueryKey,
-  TPageParam,
->(
-  options: InfiniteQueryExecuteOptions<
-    TData,
-    TError,
-    TQueryData,
-    TQueryKey,
-    TPageParam
-  >,
-) => {
-  return options
-}
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
@@ -258,32 +228,31 @@ describe('fetchInfiniteQuery', () => {
 
 describe('query', () => {
   it('should allow passing select option', () => {
-    const options = queryExecuteOptions({
+    const options = new QueryClient().query({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
-      select: (data) => data.length,
+      select: (data: string) => data.length,
     })
 
-    assertType<Parameters<QueryClient['query']>>([options])
+    expectTypeOf(options).toEqualTypeOf<Promise<number>>()
   })
 })
 
 describe('infiniteQuery', () => {
   it('should allow passing select option', () => {
-    assertType<Parameters<QueryClient['infiniteQuery']>>([
-      {
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve({ count: 1 }),
-        initialPageParam: 1,
-        getNextPageParam: () => 2,
-        select: (data) => ({
-          pages: data.pages.map(
-            (x) => `count: ${(x as { count: number }).count}`,
-          ),
-          pageParams: data.pageParams,
-        }),
-      },
-    ])
+    const data = new QueryClient().infiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve({ count: 1 }),
+      initialPageParam: 1,
+      getNextPageParam: () => 2,
+      select: (data) => ({
+        pages: data.pages.map(
+          (x) => `count: ${(x as { count: number }).count}`,
+        ),
+      }),
+    })
+
+    expectTypeOf(data).toEqualTypeOf<Promise<{ pages: string[] }>>()
   })
 
   it('should allow passing pages', async () => {
@@ -355,8 +324,16 @@ describe('fully typed usage', () => {
     // Construct typed arguments
     //
 
-    const infiniteQueryOptions: InfiniteQueryExecuteOptions<TData, TError> = {
-      queryKey: ['key'] as any,
+    const infiniteQueryOptions: InfiniteQueryExecuteOptions<
+      TData,
+      TError,
+      InfiniteData<TData>
+    > = {
+      queryKey: ['key', 'infinite'] as DataTag<
+        ['key', 'infinite'],
+        InfiniteData<TData>,
+        TError
+      >,
       pages: 5,
       getNextPageParam: (lastPage) => {
         expectTypeOf(lastPage).toEqualTypeOf<TData>()
@@ -366,11 +343,16 @@ describe('fully typed usage', () => {
     }
 
     const queryOptions: EnsureQueryDataOptions<TData, TError> = {
-      queryKey: ['key'] as any,
+      queryKey: ['key', 'query'] as DataTag<['key', 'query'], TData, TError>,
     }
+
     const fetchInfiniteQueryOptions: FetchInfiniteQueryOptions<TData, TError> =
       {
-        queryKey: ['key'] as any,
+        queryKey: ['key', 'infinite'] as DataTag<
+          ['key', 'infinite'],
+          InfiniteData<TData>,
+          TError
+        >,
         pages: 5,
         getNextPageParam: (lastPage) => {
           expectTypeOf(lastPage).toEqualTypeOf<TData>()
