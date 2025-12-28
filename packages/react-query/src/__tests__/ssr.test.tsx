@@ -7,6 +7,7 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
+  useIsFetching,
   useMutation,
   useMutationState,
   useQuery,
@@ -172,6 +173,37 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('page 1')
     expect(queryFn).toHaveBeenCalledTimes(1)
+
+    queryCache.clear()
+  })
+
+  it('useIsFetching should return 0 after prefetch completes', async () => {
+    const key = queryKey()
+    const queryFn = () => sleep(10).then(() => 'data')
+
+    function Page() {
+      const { data } = useQuery({ queryKey: key, queryFn })
+      const isFetching = useIsFetching()
+
+      return (
+        <div>
+          <div>{data}</div>
+          <div>{`isFetching: ${isFetching}`}</div>
+        </div>
+      )
+    }
+
+    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('data')
+    expect(markup).toContain('isFetching: 0')
 
     queryCache.clear()
   })
