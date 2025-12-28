@@ -383,4 +383,97 @@ describe('mutationObserver', () => {
 
     unsubscribe()
   })
+
+  describe('erroneous mutation callback', () => {
+    test('onSuccess and onSettled is transferred to different execution context where it is reported', async ({
+      onTestFinished,
+    }) => {
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
+
+      const onSuccessError = new Error('onSuccess-error')
+      const onSuccess = vi.fn(() => {
+        throw onSuccessError
+      })
+      const onSettledError = new Error('onSettled-error')
+      const onSettled = vi.fn(() => {
+        throw onSettledError
+      })
+
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationFn: (text: string) => Promise.resolve(text.toUpperCase()),
+      })
+
+      const subscriptionHandler = vi.fn()
+      const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+      mutationObserver.mutate('success', {
+        onSuccess,
+        onSettled,
+      })
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onSettled).toHaveBeenCalledTimes(1)
+
+      expect(unhandledRejectionFn).toHaveBeenCalledTimes(2)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, onSuccessError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(2, onSettledError)
+
+      expect(subscriptionHandler).toHaveBeenCalledTimes(2)
+
+      unsubscribe()
+    })
+
+    test('onError and onSettled is transferred to different execution context where it is reported', async ({
+      onTestFinished,
+    }) => {
+      const unhandledRejectionFn = vi.fn()
+      process.on('unhandledRejection', (error) => unhandledRejectionFn(error))
+      onTestFinished(() => {
+        process.off('unhandledRejection', unhandledRejectionFn)
+      })
+
+      const onErrorError = new Error('onError-error')
+      const onError = vi.fn(() => {
+        throw onErrorError
+      })
+      const onSettledError = new Error('onSettled-error')
+      const onSettled = vi.fn(() => {
+        throw onSettledError
+      })
+
+      const error = new Error('error')
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationFn: (_: string) => Promise.reject(error),
+      })
+
+      const subscriptionHandler = vi.fn()
+      const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+      mutationObserver
+        .mutate('error', {
+          onError,
+          onSettled,
+        })
+        .catch(() => {})
+
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onSettled).toHaveBeenCalledTimes(1)
+
+      expect(unhandledRejectionFn).toHaveBeenCalledTimes(2)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(1, onErrorError)
+      expect(unhandledRejectionFn).toHaveBeenNthCalledWith(2, onSettledError)
+
+      expect(subscriptionHandler).toHaveBeenCalledTimes(2)
+
+      unsubscribe()
+    })
+  })
 })

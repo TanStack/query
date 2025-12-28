@@ -240,6 +240,7 @@ export function useQueries<
     ...options
   }: ShallowOption & {
     queries:
+      | (() => MaybeRefDeep<UseQueriesOptionsArg<T>>)
       | MaybeRefDeep<UseQueriesOptionsArg<T>>
       | MaybeRefDeep<
           readonly [
@@ -261,8 +262,12 @@ export function useQueries<
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() => {
+    const resolvedQueries =
+      typeof queries === 'function'
+        ? (queries as () => MaybeRefDeep<UseQueriesOptionsArg<T>>)()
+        : queries
     // Only unref the top level array.
-    const queriesRaw = unref(queries) as ReadonlyArray<any>
+    const queriesRaw = unref(resolvedQueries) as ReadonlyArray<any>
 
     // Unref the rest for each element in the top level array.
     return queriesRaw.map((queryOptions) => {

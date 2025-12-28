@@ -5,7 +5,7 @@ title: Overview
 
 The `@tanstack/svelte-query` package offers a 1st-class API for using TanStack Query via Svelte.
 
-> Migrating from stores to the runes syntax? See the [migration guide](../migrate-from-v5-to-v6).
+> Migrating from stores to the runes syntax? See the [migration guide](./migrate-from-v5-to-v6).
 
 ## Example
 
@@ -51,7 +51,7 @@ Then call any function (e.g. createQuery) from any component:
 
 ## SvelteKit
 
-If you are using SvelteKit, please have a look at [SSR & SvelteKit](../ssr).
+If you are using SvelteKit, please have a look at [SSR & SvelteKit](./ssr).
 
 ## Available Functions
 

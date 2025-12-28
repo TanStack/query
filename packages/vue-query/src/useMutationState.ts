@@ -21,7 +21,7 @@ import type { MutationCache } from './mutationCache'
 export type MutationFilters = MaybeRefDeep<MF>
 
 export function useIsMutating(
-  filters: MutationFilters = {},
+  filters: MutationFilters | (() => MutationFilters) = {},
   queryClient?: QueryClient,
 ): Ref<number> {
   if (process.env.NODE_ENV === 'development') {
@@ -37,7 +37,7 @@ export function useIsMutating(
   const mutationState = useMutationState(
     {
       filters: computed(() => ({
-        ...cloneDeepUnref(filters),
+        ...cloneDeepUnref(typeof filters === 'function' ? filters() : filters),
         status: 'pending' as const,
       })),
     },
@@ -66,18 +66,26 @@ function getResult<TResult = MutationState>(
 }
 
 export function useMutationState<TResult = MutationState>(
-  options: MutationStateOptions<TResult> = {},
+  options:
+    | MutationStateOptions<TResult>
+    | (() => MutationStateOptions<TResult>) = {},
   queryClient?: QueryClient,
 ): Readonly<Ref<Array<TResult>>> {
-  const filters = computed(() => cloneDeepUnref(options.filters))
+  const resolvedOptions = computed(() => {
+    const newOptions = typeof options === 'function' ? options() : options
+    return {
+      filters: cloneDeepUnref(newOptions.filters),
+      select: newOptions.select,
+    }
+  })
   const mutationCache = (queryClient || useQueryClient()).getMutationCache()
-  const state = shallowRef(getResult(mutationCache, options))
+  const state = shallowRef(getResult(mutationCache, resolvedOptions.value))
   const unsubscribe = mutationCache.subscribe(() => {
-    state.value = getResult(mutationCache, options)
+    state.value = getResult(mutationCache, resolvedOptions.value)
   })
 
-  watch(filters, () => {
-    state.value = getResult(mutationCache, options)
+  watch(resolvedOptions, () => {
+    state.value = getResult(mutationCache, resolvedOptions.value)
   })
 
   onScopeDispose(() => {

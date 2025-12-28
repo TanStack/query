@@ -6,6 +6,7 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  Theme,
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
@@ -46,6 +47,11 @@ export interface DevtoolsOptions {
    * Set this to true to hide disabled queries from the devtools panel.
    */
   hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Defaults to 'system'.
+   */
+  theme?: Theme
 }
 
 export function ReactQueryDevtools(
@@ -61,6 +67,7 @@ export function ReactQueryDevtools(
     styleNonce,
     shadowDOMTarget,
     hideDisabledQueries,
+    theme,
   } = props
   const [devtools] = React.useState(
     new TanstackQueryDevtools({
@@ -75,6 +82,7 @@ export function ReactQueryDevtools(
       styleNonce,
       shadowDOMTarget,
       hideDisabledQueries,
+      theme,
     }),
   )
 
@@ -101,6 +109,10 @@ export function ReactQueryDevtools(
   React.useEffect(() => {
     devtools.setErrorTypes(errorTypes || [])
   }, [errorTypes, devtools])
+
+  React.useEffect(() => {
+    devtools.setTheme(theme)
+  }, [theme, devtools])
 
   React.useEffect(() => {
     if (ref.current) {

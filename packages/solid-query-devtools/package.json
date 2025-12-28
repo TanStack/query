@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.90.4",
+  "version": "5.91.2",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/solid-query-devtools"
   },
   "homepage": "https://tanstack.com/query",
@@ -39,7 +39,7 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
-    "@tanstack/custom-condition": "./src/index.ts",
+    "@tanstack/custom-condition": "./src/index.tsx",
     "solid": {
       "development": "./build/dev.jsx",
       "import": "./build/index.jsx"

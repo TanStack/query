@@ -1,5 +1,65 @@
 # @tanstack/vue-query
 
+## 5.92.3
+
+### Patch Changes
+
+- Updated dependencies [[`d576092`](https://github.com/TanStack/query/commit/d576092e2ece4ca3936add3eb0da5234c1d82ed4)]:
+  - @tanstack/query-core@5.90.14
+
+## 5.92.2
+
+### Patch Changes
+
+- Updated dependencies [[`4a0a78a`](https://github.com/TanStack/query/commit/4a0a78afbc2432f8cb6828035965853fa98c86a0)]:
+  - @tanstack/query-core@5.90.13
+
+## 5.92.1
+
+### Patch Changes
+
+- Updated dependencies [[`72d8ac5`](https://github.com/TanStack/query/commit/72d8ac5c592004b8f9c3ee086fcb9c3cd615ca05)]:
+  - @tanstack/query-core@5.90.12
+
+## 5.92.0
+
+### Minor Changes
+
+- feat(vue-query): allow options getters in additional composables ([#9914](https://github.com/TanStack/query/pull/9914))
+
+## 5.91.4
+
+### Patch Changes
+
+- Updated dependencies [[`c01b150`](https://github.com/TanStack/query/commit/c01b150e3673e11d6533768529a5e6fe3ebee68c)]:
+  - @tanstack/query-core@5.90.11
+
+## 5.91.3
+
+### Patch Changes
+
+- Include TPageParam in enabled of InfiniteQueryObserverOptions ([#9898](https://github.com/TanStack/query/pull/9898))
+
+## 5.91.2
+
+### Patch Changes
+
+- Updated dependencies [[`8e2e174`](https://github.com/TanStack/query/commit/8e2e174e9fd2e7b94cd232041e49c9d014d74e26), [`eb559a6`](https://github.com/TanStack/query/commit/eb559a66dc0d77dd46435f624fa64fc068bef9ae)]:
+  - @tanstack/query-core@5.90.10
+
+## 5.91.1
+
+### Patch Changes
+
+- Updated dependencies [[`08b211f`](https://github.com/TanStack/query/commit/08b211f8aa475e05d2f13a36517fc556861ef962)]:
+  - @tanstack/query-core@5.90.9
+
+## 5.91.0
+
+### Minor Changes
+
+- feat(vue-query): support useQuery options getter ([#9866](https://github.com/TanStack/query/pull/9866))
+
 ## 5.90.8
 
 ### Patch Changes

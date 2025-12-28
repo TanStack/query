@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@3.1.2/schema.json",
   "changelog": [
     "@svitejs/changesets-changelog-github-compact",
     { "repo": "TanStack/query" }
@@ -9,5 +9,9 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "fixed": [],
-  "linked": []
+  "linked": [],
+  "ignore": [],
+  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+    "onlyUpdatePeerDependentsWhenOutOfRange": true
+  }
 }
