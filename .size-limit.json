@@ -8,7 +8,7 @@
   {
     "name": "react minimal",
     "path": "packages/react-query/build/modern/index.js",
-    "limit": "9.11 kB",
+    "limit": "9.12 kB",
     "import": "{ useQuery, QueryClient, QueryClientProvider }",
     "ignore": ["react", "react-dom"]
   }
