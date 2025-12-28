@@ -658,8 +658,7 @@ export class Query<
             fetchFailureReason: error,
             fetchStatus: 'idle',
             status: 'error',
-            isInvalidated:
-              state.data !== undefined ? true : state.isInvalidated,
+            isInvalidated: true,
           }
         case 'invalidate':
           return {
