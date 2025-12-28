@@ -7,6 +7,8 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
+  useMutation,
+  useMutationState,
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
@@ -172,5 +174,39 @@ describe('Server Side Rendering', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     queryCache.clear()
+  })
+
+  it('useMutation should return idle status', () => {
+    function Page() {
+      const mutation = useMutation({
+        mutationFn: () => sleep(10).then(() => 'data'),
+      })
+
+      return <div>{`status: ${mutation.status}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('status: idle')
+  })
+
+  it('useMutationState should return empty array', () => {
+    function Page() {
+      const mutationState = useMutationState()
+
+      return <div>{`mutationState: ${mutationState.length}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('mutationState: 0')
   })
 })
