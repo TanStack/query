@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import solid from 'vite-plugin-solid'
 
+import packageJson from './package.json'
+
 export default defineConfig({
   plugins: [solid()],
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
@@ -13,5 +15,15 @@ export default defineConfig({
         conditions: ['@tanstack/custom-condition'],
       },
     },
+  },
+  test: {
+    name: packageJson.name,
+    dir: './src',
+    watch: false,
+    environment: 'jsdom',
+    setupFiles: ['test-setup.ts'],
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    typecheck: { enabled: true },
+    restoreMocks: true,
   },
 })

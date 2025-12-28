@@ -34,7 +34,7 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 
 Svelte Query supports two ways of prefetching data on the server and passing that to the client with SvelteKit.
 
-If you wish to view the ideal SSR setup, please have a look at the [SSR example](../examples/ssr).
+If you wish to view the ideal SSR setup, please have a look at the [SSR example](./examples/ssr).
 
 ### Using `initialData`
 
@@ -58,11 +58,11 @@ export async function load() {
 
   export let data: PageData
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['posts'],
     queryFn: getPosts,
     initialData: data.posts,
-  })
+  }))
 </script>
 ```
 
@@ -136,10 +136,10 @@ export async function load({ parent, fetch }) {
   import { createQuery } from '@tanstack/svelte-query'
 
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['posts'],
     queryFn: async () => (await fetch('/api/posts')).json(),
-  })
+  }))
 </script>
 ```
 

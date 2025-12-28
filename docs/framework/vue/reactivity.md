@@ -155,7 +155,7 @@ export function useUserProjects(userId: MaybeRef<string>) {
 }
 ```
 
-More details on this option can be found on the [useQuery reference](../reference/useQuery.md) page.
+More details on this option can be found on the [useQuery reference](./reference/useQuery.md) page.
 
 ## Immutability
 

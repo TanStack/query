@@ -16,27 +16,26 @@ import { Suspense } from 'solid-js'
 
 You can use async `suspense` function that is provided by `solid-query`.
 
-```vue
-<script>
-import { defineComponent } from 'vue'
+```tsx
 import { useQuery } from '@tanstack/solid-query'
 
 const todoFetcher = async () =>
   await fetch('https://jsonplaceholder.cypress.io/todos').then((response) =>
     response.json(),
   )
-export default defineComponent({
-  name: 'SuspendableComponent',
-  async setup() {
-    const { data, suspense } = useQuery(() => ['todos'], todoFetcher)
-    await suspense()
 
-    return { data }
-  },
-})
-</script>
+function SuspendableComponent() {
+  const query = useQuery(() => ({
+    queryKey: ['todos'],
+    queryFn: todoFetcher,
+  }))
+
+  // Accessing query.data directly inside a <Suspense> boundary
+  // automatically triggers suspension until data is ready
+  return <div>Data: {JSON.stringify(query.data)}</div>
+}
 ```
 
 ## Fetch-on-render vs Render-as-you-fetch
 
-Out of the box, Solid Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. This means that when your components attempt to mount, they will trigger query fetching and suspend, but only once you have imported them and mounted them. If you want to take it to the next level and implement a **Render-as-you-fetch** model, we recommend implementing [Prefetching](../prefetching) on routing callbacks and/or user interactions events to start loading queries before they are mounted and hopefully even before you start importing or mounting their parent components.
+Out of the box, Solid Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. This means that when your components attempt to mount, they will trigger query fetching and suspend, but only once you have imported them and mounted them. If you want to take it to the next level and implement a **Render-as-you-fetch** model, we recommend implementing [Prefetching](./prefetching) on routing callbacks and/or user interactions events to start loading queries before they are mounted and hopefully even before you start importing or mounting their parent components.

@@ -169,7 +169,7 @@ Custom loggers were already deprecated in 4 and have been removed in this versio
 
 ### Supported Browsers
 
-We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../../installation#requirements).
+We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
 
 ### Private class fields and methods
 
@@ -218,7 +218,7 @@ useQuery<number, string>({
 })
 ```
 
-For a way to set a different kind of Error globally, see [the TypeScript Guide](../../typescript.md#registering-a-global-error).
+For a way to set a different kind of Error globally, see [the TypeScript Guide](../typescript.md#registering-a-global-error).
 
 ### eslint `prefer-query-object-syntax` rule is removed
 
@@ -480,7 +480,7 @@ if (queryInfo.data) {
 }
 ```
 
-Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../optimistic-updates.md).
+Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](./optimistic-updates.md).
 
 ### Limited, Infinite Queries with new maxPages option
 
@@ -494,21 +494,21 @@ Note that the infinite list must be bi-directional, which requires both `getNext
 
 ### Infinite Queries can prefetch multiple pages
 
-Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](../prefetching.md) for more information.
+Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](./prefetching.md) for more information.
 
 ### New `combine` option for `useQueries`
 
-See the [useQueries docs](../../reference/useQueries.md#combine) for more details.
+See the [useQueries docs](../reference/useQueries.md#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 
-See the [experimental_createPersister docs](../../plugins/createPersister.md) for more details.
+See the [experimental_createPersister docs](../plugins/createPersister.md) for more details.
 
 [//]: # 'FrameworkSpecificNewFeatures'
 
 ### Typesafe way to create Query Options
 
-See the [TypeScript docs](../../typescript.md#typing-query-options) for more details.
+See the [TypeScript docs](../typescript.md#typing-query-options) for more details.
 
 ### new hooks for suspense
 
@@ -524,6 +524,6 @@ const { data: post } = useSuspenseQuery({
 
 The experimental `suspense: boolean` flag on the query hooks has been removed.
 
-You can read more about them in the [suspense docs](../suspense.md).
+You can read more about them in the [suspense docs](./suspense.md).
 
 [//]: # 'FrameworkSpecificNewFeatures'

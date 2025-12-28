@@ -1,5 +1,10 @@
-import { addToEnd } from './utils'
-import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
+import { addConsumeAwareSignal, addToEnd } from './utils'
+import type {
+  OmitKeyof,
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+} from './types'
 
 type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
   streamFn: (
@@ -41,7 +46,7 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
  * Set to `'replace'` to write all data to the cache once the stream ends.
  * @param reducer - A function to reduce the streamed chunks into the final data.
  * Defaults to a function that appends chunks to the end of the array.
- * @param initialValue - Initial value to be used while the first chunk is being fetched.
+ * @param initialValue - Initial value to be used while the first chunk is being fetched, and returned if the stream yields no values.
  */
 export function streamedQuery<
   TQueryFnData = unknown,
@@ -73,27 +78,45 @@ export function streamedQuery<
 
     let result = initialValue
 
-    const stream = await streamFn(context)
+    let cancelled: boolean = false as boolean
+    const streamFnContext = addConsumeAwareSignal<
+      OmitKeyof<typeof context, 'signal'>
+    >(
+      {
+        client: context.client,
+        meta: context.meta,
+        queryKey: context.queryKey,
+        pageParam: context.pageParam,
+        direction: context.direction,
+      },
+      () => context.signal,
+      () => (cancelled = true),
+    )
+
+    const stream = await streamFn(streamFnContext)
+
+    const isReplaceRefetch = isRefetch && refetchMode === 'replace'
 
     for await (const chunk of stream) {
-      if (context.signal.aborted) {
+      if (cancelled) {
         break
       }
 
-      // don't append to the cache directly when replace-refetching
-      if (!isRefetch || refetchMode !== 'replace') {
+      if (isReplaceRefetch) {
+        // don't append to the cache directly when replace-refetching
+        result = reducer(result, chunk)
+      } else {
         context.client.setQueryData<TData>(context.queryKey, (prev) =>
           reducer(prev === undefined ? initialValue : prev, chunk),
         )
       }
-      result = reducer(result, chunk)
     }
 
     // finalize result: replace-refetching needs to write to the cache
-    if (isRefetch && refetchMode === 'replace' && !context.signal.aborted) {
+    if (isReplaceRefetch && !cancelled) {
       context.client.setQueryData<TData>(context.queryKey, result)
     }
 
-    return context.client.getQueryData(context.queryKey)!
+    return context.client.getQueryData(context.queryKey) ?? initialValue
   }
 }

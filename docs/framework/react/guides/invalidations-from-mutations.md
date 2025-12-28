@@ -46,13 +46,12 @@ Returning a Promise on `onSuccess` makes sure the data is updated before the mut
 
 [//]: # 'Example2'
 
-You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](../mutations.md)
+You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](./mutations.md)
 
 [//]: # 'Materials'
 
 ## Further reading
 
-For a technique to automatically invalidate Queries after Mutations, have a look at [Automatic Query Invalidation after Mutations](../../community/tkdodos-blog.md#25-automatic-query-invalidation-after-mutations) from
-the Community Resources.
+For a technique to automatically invalidate Queries after Mutations, have a look at [TkDodo's article on Automatic Query Invalidation after Mutations](https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations).
 
 [//]: # 'Materials'

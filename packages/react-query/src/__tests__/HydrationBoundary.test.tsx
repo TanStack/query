@@ -211,13 +211,10 @@ describe('React hydration', () => {
       const newDehydratedState = dehydrate(intermediateClient)
       intermediateClient.clear()
 
-      function Thrower() {
+      function Thrower(): never {
         throw new Promise(() => {
           // Never resolve
         })
-
-        // @ts-expect-error
-        return null
       }
 
       React.startTransition(() => {
@@ -451,11 +448,6 @@ describe('React hydration', () => {
 
     const dehydratedState = dehydrate(prefetchQueryClient)
 
-    function ignore() {
-      // Ignore redacted unhandled rejection
-    }
-    process.addListener('unhandledRejection', ignore)
-
     // Mimic what React/our synchronous thenable does for already rejected promises
     // @ts-expect-error
     dehydratedState.queries[0].promise.status = 'failure'
@@ -484,9 +476,68 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('new')).toBeInTheDocument()
 
-    process.removeListener('unhandledRejection', ignore)
     hydrateSpy.mockRestore()
     prefetchQueryClient.clear()
     clientQueryClient.clear()
+  })
+
+  test('should not refetch when query has enabled set to false', async () => {
+    const queryFn = vi.fn()
+    const queryClient = new QueryClient()
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['string'],
+        queryFn,
+        enabled: false,
+      })
+      return <div>{JSON.stringify(data)}</div>
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={JSON.parse(stringifiedState)}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
+
+    queryClient.clear()
+  })
+
+  test('should not refetch when query has staleTime set to Infinity', async () => {
+    const queryFn = vi.fn()
+    const queryClient = new QueryClient()
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['string'],
+        queryFn,
+        staleTime: Infinity,
+      })
+      return <div>{JSON.stringify(data)}</div>
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={JSON.parse(stringifiedState)}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
+
+    queryClient.clear()
   })
 })

@@ -2,8 +2,6 @@ name: PR
 
 on:
   pull_request:
-  push:
-    branches: ['svelte-5-adapter']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -22,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
       - name: Start Nx Agents
@@ -30,13 +28,11 @@ jobs:
       - name: Setup Tools
         uses: tanstack/config/.github/setup@main
       - name: Get base and head commits for `nx affected`
-        uses: nrwl/nx-set-shas@v4.3.3
+        uses: nrwl/nx-set-shas@v4.4.0
         with:
           main-branch-name: main
       - name: Run Checks
-        run: pnpm run test:pr --parallel=3
-      - name: Verify Links
-        run: pnpm run verify-links
+        run: pnpm run test:pr
       - name: Stop Nx Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
@@ -51,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
       - name: Setup Tools
@@ -64,13 +60,21 @@ jobs:
         id: determine-sha
         run: |
           echo "COMMIT_SHA=${{ github.event.pull_request.head.sha || github.sha }}" >> $GITHUB_ENV
-      - name: Preview Bundle Size
-        uses: marocchino/sticky-pull-request-comment@fd19551a2a7c0d29677c63257f86d8ef8bb24b48
+      - name: Size Limit
+        uses: andresz1/size-limit-action@94bc357df29c36c8f8d50ea497c3e225c3c95d1d
         with:
-          message: |
-            Sizes for commit ${{ env.COMMIT_SHA }}:
-            | Branch | Bundle Size |
-            |--------|--------|
-            | Main | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.1.1/jsx-runtime?target=es2022%22,%22react@^19.1.1?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/@tanstack/react-query/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.1.1/jsx-runtime?target=es2022%22,%22react@%5E19.1.1?target=es2022%22%5D%7D%7D) |
-            | This PR | [![](https://deno.bundlejs.com/badge?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config={%22esbuild%22:{%22external%22:[%22react@^19.1.1/jsx-runtime?target=es2022%22,%22react@^19.1.1?target=es2022%22]}}&badge=detailed)](https://bundlejs.com/?q=https://esm.sh/pr/@tanstack/react-query@${{ env.COMMIT_SHA }}/es2022/react-query.mjs&config=%7B%22esbuild%22:%7B%22external%22:%5B%22react@%5E19.1.1/jsx-runtime?target=es2022%22,%22react@%5E19.1.1?target=es2022%22%5D%7D%7D) |
-        continue-on-error: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_step: install
+          build_script: build:all
+  provenance:
+    name: Provenance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0
+      - name: Check Provenance
+        uses: danielroe/provenance-action@v0.1.1
+        with:
+          fail-on-downgrade: true
