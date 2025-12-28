@@ -1,5 +1,3 @@
-'use client'
-
 import { hydrate } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {

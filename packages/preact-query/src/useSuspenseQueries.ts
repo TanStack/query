@@ -1,4 +1,3 @@
-'use client'
 import { skipToken } from '@tanstack/query-core'
 import { useQueries } from './useQueries'
 import { defaultThrowOnError } from './suspense'

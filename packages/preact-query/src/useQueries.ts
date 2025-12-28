@@ -1,5 +1,3 @@
-'use client'
-
 import { useMemo, useState, useEffect, useCallback } from 'preact/hooks'
 import {
   QueriesObserver,
@@ -37,10 +35,7 @@ import type {
   QueryObserverOptions,
   ThrowOnError,
 } from '@tanstack/query-core'
-
-// TODO: We might need to use the useSyncExternalStore abstraction created in Preact/store
-// Since preact/compat adds additional overhead to the bundle and is not ideal
-import { useSyncExternalStore } from 'preact/compat'
+import { useSyncExternalStore } from './utils'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed

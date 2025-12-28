@@ -1,4 +1,3 @@
-'use client'
 import { shouldThrowError } from '@tanstack/query-core'
 import type {
   DefaultedQueryObserverOptions,

@@ -1,4 +1,3 @@
-'use client'
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {

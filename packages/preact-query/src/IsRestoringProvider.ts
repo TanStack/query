@@ -1,5 +1,3 @@
-'use client'
-
 import { createContext } from 'preact'
 import { useContext } from 'preact/hooks'
 

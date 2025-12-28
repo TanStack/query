@@ -1,13 +1,9 @@
-'use client'
 import { notifyManager } from '@tanstack/query-core'
 
 import { useQueryClient } from './QueryClientProvider'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import { useCallback } from 'preact/hooks'
-
-// TODO: We might need to use the useSyncExternalStore abstraction created in Preact/store
-// since preact/compat adds additional overhead to the bundle and is not ideal
-import { useSyncExternalStore } from 'preact/compat'
+import { useSyncExternalStore } from './utils'
 
 export function useIsFetching(
   filters?: QueryFilters,

@@ -1,4 +1,3 @@
-'use client'
 import { InfiniteQueryObserver, skipToken } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import { defaultThrowOnError } from './suspense'

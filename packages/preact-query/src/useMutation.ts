@@ -1,4 +1,3 @@
-'use client'
 import {
   MutationObserver,
   noop,
@@ -13,10 +12,7 @@ import type {
 } from './types'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 import { useCallback, useEffect, useState } from 'preact/hooks'
-
-// TODO: We might need to use the useSyncExternalStore abstraction created in Preact/store
-// Since preact/compat adds additional overhead to the bundle and is not ideal
-import { useSyncExternalStore } from 'preact/compat'
+import { useSyncExternalStore } from './utils'
 
 // HOOK
 

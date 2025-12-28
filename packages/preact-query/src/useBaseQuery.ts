@@ -1,5 +1,3 @@
-'use client'
-
 import { isServer, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
@@ -23,10 +21,7 @@ import type {
 } from '@tanstack/query-core'
 import type { UseBaseQueryOptions } from './types'
 import { useCallback, useEffect, useState } from 'preact/hooks'
-
-// TODO: We might need to use the useSyncExternalStore abstraction created in Preact/store
-// Since preact/compat adds additional overhead to the bundle and is not ideal
-import { useSyncExternalStore } from 'preact/compat'
+import { useSyncExternalStore } from './utils'
 
 export function useBaseQuery<
   TQueryFnData,
