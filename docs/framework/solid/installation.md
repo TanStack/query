@@ -31,7 +31,7 @@ or
 bun add @tanstack/solid-query
 ```
 
-> Wanna give it a spin before you download? Try out the [simple](../examples/simple) or [basic](../examples/basic) examples!
+> Wanna give it a spin before you download? Try out the [simple](./examples/simple) or [basic](./examples/basic) examples!
 
 ### CDN
 

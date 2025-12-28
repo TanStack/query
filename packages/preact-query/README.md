@@ -8,12 +8,12 @@ Hooks for fetching, caching and updating asynchronous data in React
   <img alt="#TanStack" src="https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack">
 </a><a href="https://discord.com/invite/WrRKjPJ" target="\_parent">
   <img alt="" src="https://img.shields.io/badge/Discord-TanStack-%235865F2" />
-</a><a href="https://github.com/TanStack/query/actions?query=workflow%3A%22react-query+tests%22">
-<img src="https://github.com/TanStack/query/workflows/react-query%20tests/badge.svg" />
+</a><a href="https://github.com/TanStack/query/actions?query=workflow%3A%22preact-query+tests%22">
+<img src="https://github.com/TanStack/query/workflows/preact-query%20tests/badge.svg" />
 </a><a href="https://www.npmjs.com/package/@tanstack/query-core" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/@tanstack/query-core.svg" />
-</a><a href="https://bundlejs.com/?q=%40tanstack%2Freact-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="\_parent">
-  <img alt="" src="https://deno.bundlejs.com/?q=@tanstack/react-query&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-dom%22]}}&badge=detailed" />
+</a><a href="https://bundlejs.com/?q=%40tanstack%2Fpreact-query&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="\_parent">
+  <img alt="" src="https://deno.bundlejs.com/?q=@tanstack/preact-query&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-dom%22]}}&badge=detailed" />
 </a><a href="#badge">
     <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
   </a><a href="https://github.com/TanStack/query/discussions">

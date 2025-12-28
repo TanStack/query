@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
       - name: Start Nx Agents
@@ -58,7 +58,6 @@ jobs:
           title: 'ci: Version Packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       # - name: Auto-merge Changesets PR
       #   if: steps.changesets.outputs.hasChangesets == 'true' && steps.major.outputs.found == 'false'
       #   run: |

@@ -49,56 +49,54 @@ export const HydrationBoundary = ({
   // If the transition is aborted, we will have hydrated any _new_ queries, but
   // we throw away the fresh data for any existing ones to avoid unexpectedly
   // updating the UI.
-  const hydrationQueue: DehydratedState['queries'] | undefined =
-    useMemo(() => {
-      if (state) {
-        if (typeof state !== 'object') {
-          return
-        }
+  const hydrationQueue: DehydratedState['queries'] | undefined = useMemo(() => {
+    if (state) {
+      if (typeof state !== 'object') {
+        return
+      }
 
-        const queryCache = client.getQueryCache()
-        // State is supplied from the outside and we might as well fail
-        // gracefully if it has the wrong shape, so while we type `queries`
-        // as required, we still provide a fallback.
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const queries = state.queries || []
+      const queryCache = client.getQueryCache()
+      // State is supplied from the outside and we might as well fail
+      // gracefully if it has the wrong shape, so while we type `queries`
+      // as required, we still provide a fallback.
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      const queries = state.queries || []
 
-        const newQueries: DehydratedState['queries'] = []
-        const existingQueries: DehydratedState['queries'] = []
-        for (const dehydratedQuery of queries) {
-          const existingQuery = queryCache.get(dehydratedQuery.queryHash)
+      const newQueries: DehydratedState['queries'] = []
+      const existingQueries: DehydratedState['queries'] = []
+      for (const dehydratedQuery of queries) {
+        const existingQuery = queryCache.get(dehydratedQuery.queryHash)
 
-          if (!existingQuery) {
-            newQueries.push(dehydratedQuery)
-          } else {
-            const hydrationIsNewer =
-              dehydratedQuery.state.dataUpdatedAt >
-                existingQuery.state.dataUpdatedAt ||
-              (dehydratedQuery.promise &&
-                existingQuery.state.status !== 'pending' &&
-                existingQuery.state.fetchStatus !== 'fetching' &&
-                dehydratedQuery.dehydratedAt !== undefined &&
-                dehydratedQuery.dehydratedAt >
-                  existingQuery.state.dataUpdatedAt)
+        if (!existingQuery) {
+          newQueries.push(dehydratedQuery)
+        } else {
+          const hydrationIsNewer =
+            dehydratedQuery.state.dataUpdatedAt >
+              existingQuery.state.dataUpdatedAt ||
+            (dehydratedQuery.promise &&
+              existingQuery.state.status !== 'pending' &&
+              existingQuery.state.fetchStatus !== 'fetching' &&
+              dehydratedQuery.dehydratedAt !== undefined &&
+              dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
 
-            if (hydrationIsNewer) {
-              existingQueries.push(dehydratedQuery)
-            }
+          if (hydrationIsNewer) {
+            existingQueries.push(dehydratedQuery)
           }
         }
-
-        if (newQueries.length > 0) {
-          // It's actually fine to call this with queries/state that already exists
-          // in the cache, or is older. hydrate() is idempotent for queries.
-          // eslint-disable-next-line react-hooks/refs
-          hydrate(client, { queries: newQueries }, optionsRef.current)
-        }
-        if (existingQueries.length > 0) {
-          return existingQueries
-        }
       }
-      return undefined
-    }, [client, state])
+
+      if (newQueries.length > 0) {
+        // It's actually fine to call this with queries/state that already exists
+        // in the cache, or is older. hydrate() is idempotent for queries.
+        // eslint-disable-next-line react-hooks/refs
+        hydrate(client, { queries: newQueries }, optionsRef.current)
+      }
+      if (existingQueries.length > 0) {
+        return existingQueries
+      }
+    }
+    return undefined
+  }, [client, state])
 
   useEffect(() => {
     if (hydrationQueue) {

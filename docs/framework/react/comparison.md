@@ -79,8 +79,8 @@ Feature/Capability Key:
 
 > **<sup>8</sup> React Router cache persistence** - React Router does not cache data beyond the currently matched routes. If a route is left, its data is lost.
 
-[bpl-react-query]: https://bundlephobia.com/result?p=react-query
-[bp-react-query]: https://badgen.net/bundlephobia/minzip/react-query?label=💾
+[bpl-react-query]: https://bundlephobia.com/result?p=@tanstack/react-query
+[bp-react-query]: https://badgen.net/bundlephobia/minzip/@tanstack/react-query?label=💾
 [gh-react-query]: https://github.com/tannerlinsley/react-query
 [stars-react-query]: https://img.shields.io/github/stars/tannerlinsley/react-query?label=%F0%9F%8C%9F
 [swr]: https://github.com/vercel/swr
