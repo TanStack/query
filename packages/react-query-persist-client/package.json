@@ -67,7 +67,7 @@
     "@testing-library/react": "^16.1.0",
     "@types/react": "^19.2.7",
     "@vitejs/plugin-react": "^4.3.4",
-    "npm-run-all2": "^5.0.0",
+    "npm-run-all2": "^5.0.2",
     "react": "^19.2.1"
   },
   "peerDependencies": {

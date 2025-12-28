@@ -72,7 +72,7 @@
     "@tanstack/query-core": "workspace:*",
     "clsx": "^2.1.1",
     "goober": "^2.1.16",
-    "npm-run-all2": "^5.0.0",
+    "npm-run-all2": "^5.0.2",
     "solid-js": "^1.9.7",
     "solid-transition-group": "^0.2.3",
     "superjson": "^2.2.2",

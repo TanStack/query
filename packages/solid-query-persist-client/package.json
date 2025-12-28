@@ -70,7 +70,7 @@
     "@solidjs/testing-library": "^0.8.10",
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/solid-query": "workspace:*",
-    "npm-run-all2": "^5.0.0",
+    "npm-run-all2": "^5.0.2",
     "solid-js": "^1.9.7",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.11.6"

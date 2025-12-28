@@ -2276,7 +2276,7 @@ importers:
         specifier: ^18.0.0
         version: 18.0.0(a90319a35d42cb3251aca17bd8660a90)
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
       rxjs:
         specifier: ^7.8.2
@@ -2333,7 +2333,7 @@ importers:
         specifier: ^50.5.0
         version: 50.5.0(eslint@9.39.2(jiti@2.5.1))
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
 
   packages/eslint-plugin-query:
@@ -2355,7 +2355,7 @@ importers:
         specifier: ^9.36.0
         version: 9.36.0(jiti@2.5.1)
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
 
   packages/preact-query:
@@ -2414,7 +2414,7 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
 
   packages/query-broadcast-client-experimental:
@@ -2433,7 +2433,7 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4(vite@7.3.0(@types/node@25.0.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
 
   packages/query-codemods:
@@ -2451,7 +2451,7 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
 
   packages/query-devtools:
@@ -2481,7 +2481,7 @@ importers:
         specifier: ^2.1.16
         version: 2.1.16(csstype@3.1.3)
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
       solid-js:
         specifier: ^1.9.7
@@ -2509,7 +2509,7 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
 
   packages/query-sync-storage-persister:
@@ -2525,13 +2525,13 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
 
   packages/query-test-utils:
     devDependencies:
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
 
   packages/react-query:
@@ -2565,7 +2565,7 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
       react:
         specifier: ^19.2.1
@@ -2596,7 +2596,7 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4(vite@7.3.0(@types/node@25.0.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
       react:
         specifier: ^19.2.1
@@ -2617,7 +2617,7 @@ importers:
         specifier: ^16.0.1
         version: 16.0.2(babel-plugin-react-compiler@0.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.88.0)
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
       react:
         specifier: ^19.2.1
@@ -2645,7 +2645,7 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4(vite@7.3.0(@types/node@25.0.3)(jiti@2.5.1)(less@4.3.0)(lightningcss@1.30.1)(sass@1.88.0)(terser@5.39.1)(tsx@4.20.1)(yaml@2.8.1))
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
       react:
         specifier: ^19.2.1
@@ -2664,7 +2664,7 @@ importers:
         specifier: workspace:*
         version: link:../query-test-utils
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
       solid-js:
         specifier: ^1.9.7
@@ -2689,7 +2689,7 @@ importers:
         specifier: workspace:*
         version: link:../solid-query
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
       solid-js:
         specifier: ^1.9.7
@@ -2717,7 +2717,7 @@ importers:
         specifier: workspace:*
         version: link:../solid-query
       npm-run-all2:
-        specifier: ^5.0.0
+        specifier: ^5.0.2
         version: 5.0.2
       solid-js:
         specifier: ^1.9.7
@@ -23617,7 +23617,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.48.0(typescript@5.8.3)
       '@typescript-eslint/types': 8.48.0
-      debug: 4.4.1
+      debug: 4.4.3
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -23626,7 +23626,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.48.0(typescript@5.9.3)
       '@typescript-eslint/types': 8.48.0
-      debug: 4.4.1
+      debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
