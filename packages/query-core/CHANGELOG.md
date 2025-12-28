@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.13
+
+### Patch Changes
+
+- Made context.signal consume aware with streamedQuery ([#9963](https://github.com/TanStack/query/pull/9963))
+
 ## 5.90.12
 
 ### Patch Changes
