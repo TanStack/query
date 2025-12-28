@@ -5,8 +5,9 @@ import {
   useQuery,
 } from '@tanstack/preact-query'
 
+const queryClient = new QueryClient()
+
 export function App() {
-  const queryClient = new QueryClient()
   return (
     <QueryClientProvider client={queryClient}>
       <Example />
