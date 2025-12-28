@@ -26,9 +26,9 @@ export interface UseBaseQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-    'suspense'
-  > {
+  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  'suspense'
+> {
   /**
    * Only applicable while rendering queries on the server with streaming.
    * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
@@ -50,12 +50,12 @@ export interface SolidQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends UseBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
-  > {}
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryFnData,
+  TQueryKey
+> {}
 
 export type UseQueryOptions<
   TQueryFnData = unknown,
@@ -94,15 +94,15 @@ export interface SolidInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
-    InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-    'queryKey' | 'suspense'
-  > {
+  InfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  'queryKey' | 'suspense'
+> {
   queryKey: TQueryKey
   /**
    * Only applicable while rendering queries on the server with streaming.
@@ -146,9 +146,9 @@ export interface SolidMutationOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 > extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
-    '_defaulted'
-  > {}
+  MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
+  '_defaulted'
+> {}
 
 export type UseMutationOptions<
   TData = unknown,

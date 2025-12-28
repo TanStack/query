@@ -3,7 +3,7 @@ import { externalizeDeps } from 'vite-plugin-externalize-deps'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import dts from 'vite-plugin-dts'
 import packageJson from './package.json'
-import type { Options } from '@tanstack/config/vite'
+import type { Options } from '@tanstack/vite-config'
 
 function ensureImportFileExtension({
   content,

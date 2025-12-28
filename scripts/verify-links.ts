@@ -1,12 +1,19 @@
 import { existsSync, readFileSync, statSync } from 'node:fs'
-import path, { resolve } from 'node:path'
+import { extname, resolve } from 'node:path'
 import { glob } from 'tinyglobby'
 // @ts-ignore Could not find a declaration file for module 'markdown-link-extractor'.
 import markdownLinkExtractor from 'markdown-link-extractor'
 
+const errors: Array<{
+  file: string
+  link: string
+  resolvedPath: string
+  reason: string
+}> = []
+
 function isRelativeLink(link: string) {
   return (
-    link &&
+    !link.startsWith('/') &&
     !link.startsWith('http://') &&
     !link.startsWith('https://') &&
     !link.startsWith('//') &&
@@ -15,39 +22,33 @@ function isRelativeLink(link: string) {
   )
 }
 
-function normalizePath(p: string): string {
-  // Remove any trailing .md
-  p = p.replace(`${path.extname(p)}`, '')
-  return p
+/** Remove any trailing .md */
+function stripExtension(p: string): string {
+  return p.replace(`${extname(p)}`, '')
 }
 
-function fileExistsForLink(
-  link: string,
-  markdownFile: string,
-  errors: Array<any>,
-): boolean {
+function relativeLinkExists(link: string, file: string): boolean {
   // Remove hash if present
-  const filePart = link.split('#')[0]
+  const linkWithoutHash = link.split('#')[0]
   // If the link is empty after removing hash, it's not a file
-  if (!filePart) return false
+  if (!linkWithoutHash) return false
 
-  // Normalize the markdown file path
-  markdownFile = normalizePath(markdownFile)
-
-  // Normalize the path
-  const normalizedPath = normalizePath(filePart)
+  // Strip the file/link extensions
+  const filePath = stripExtension(file)
+  const linkPath = stripExtension(linkWithoutHash)
 
   // Resolve the path relative to the markdown file's directory
-  let absPath = resolve(markdownFile, normalizedPath)
+  // Nav up a level to simulate how links are resolved on the web
+  let absPath = resolve(filePath, '..', linkPath)
 
   // Ensure the resolved path is within /docs
   const docsRoot = resolve('docs')
   if (!absPath.startsWith(docsRoot)) {
     errors.push({
       link,
-      markdownFile,
+      file,
       resolvedPath: absPath,
-      reason: 'navigates above /docs, invalid',
+      reason: 'Path outside /docs',
     })
     return false
   }
@@ -76,15 +77,15 @@ function fileExistsForLink(
   if (!exists) {
     errors.push({
       link,
-      markdownFile,
+      file,
       resolvedPath: absPath,
-      reason: 'not found',
+      reason: 'Not found',
     })
   }
   return exists
 }
 
-async function findMarkdownLinks() {
+async function verifyMarkdownLinks() {
   // Find all markdown files in docs directory
   const markdownFiles = await glob('docs/**/*.md', {
     ignore: ['**/node_modules/**'],
@@ -92,26 +93,18 @@ async function findMarkdownLinks() {
 
   console.log(`Found ${markdownFiles.length} markdown files\n`)
 
-  const errors: Array<any> = []
-
   // Process each file
   for (const file of markdownFiles) {
     const content = readFileSync(file, 'utf-8')
-    const links: Array<any> = markdownLinkExtractor(content)
+    const links: Array<string> = markdownLinkExtractor(content)
 
-    const filteredLinks = links.filter((link: any) => {
-      if (typeof link === 'string') {
-        return isRelativeLink(link)
-      } else if (link && typeof link.href === 'string') {
-        return isRelativeLink(link.href)
-      }
-      return false
+    const relativeLinks = links.filter((link: string) => {
+      return isRelativeLink(link)
     })
 
-    if (filteredLinks.length > 0) {
-      filteredLinks.forEach((link) => {
-        const href = typeof link === 'string' ? link : link.href
-        fileExistsForLink(href, file, errors)
+    if (relativeLinks.length > 0) {
+      relativeLinks.forEach((link) => {
+        relativeLinkExists(link, file)
       })
     }
   }
@@ -120,7 +113,7 @@ async function findMarkdownLinks() {
     console.log(`\n❌ Found ${errors.length} broken links:`)
     errors.forEach((err) => {
       console.log(
-        `${err.link}\n  in:    ${err.markdownFile}\n  path:  ${err.resolvedPath}\n  why:   ${err.reason}\n`,
+        `${err.file}\n  link:      ${err.link}\n  resolved:  ${err.resolvedPath}\n  why:       ${err.reason}\n`,
       )
     })
     process.exit(1)
@@ -129,4 +122,4 @@ async function findMarkdownLinks() {
   }
 }
 
-findMarkdownLinks().catch(console.error)
+verifyMarkdownLinks().catch(console.error)
