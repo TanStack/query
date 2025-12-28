@@ -3,13 +3,13 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { queryKey } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
   useQuery,
 } from '..'
-import { queryKey } from '@tanstack/query-test-utils'
 
 describe('issue 9728', () => {
   it('should refetch after error when staleTime is Infinity and previous data exists', async () => {
