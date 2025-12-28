@@ -329,11 +329,7 @@ describe('fully typed usage', () => {
       TError,
       InfiniteData<TData>
     > = {
-      queryKey: ['key', 'infinite'] as DataTag<
-        ['key', 'infinite'],
-        InfiniteData<TData>,
-        TError
-      >,
+      queryKey: ['key', 'infinite'],
       pages: 5,
       getNextPageParam: (lastPage) => {
         expectTypeOf(lastPage).toEqualTypeOf<TData>()
@@ -343,16 +339,12 @@ describe('fully typed usage', () => {
     }
 
     const queryOptions: EnsureQueryDataOptions<TData, TError> = {
-      queryKey: ['key', 'query'] as DataTag<['key', 'query'], TData, TError>,
+      queryKey: ['key', 'query'],
     }
 
     const fetchInfiniteQueryOptions: FetchInfiniteQueryOptions<TData, TError> =
       {
-        queryKey: ['key', 'infinite'] as DataTag<
-          ['key', 'infinite'],
-          InfiniteData<TData>,
-          TError
-        >,
+        queryKey: ['key', 'infinite'],
         pages: 5,
         getNextPageParam: (lastPage) => {
           expectTypeOf(lastPage).toEqualTypeOf<TData>()
