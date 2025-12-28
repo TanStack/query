@@ -541,7 +541,7 @@ describe('streamedQuery', () => {
 
   test('should not call reducer twice when refetchMode is replace', async () => {
     const key = queryKey()
-    const arr: number[] = []
+    const arr: Array<number> = []
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -554,7 +554,7 @@ describe('streamedQuery', () => {
           arr.push(newChunk)
           return [...oldStream, newChunk]
         },
-        initialValue: [] as number[],
+        initialValue: [] as Array<number>,
         refetchMode: 'replace',
       }),
     })
