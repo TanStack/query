@@ -76,7 +76,10 @@ export function streamedQuery<
       })
     }
 
-    let result = initialValue
+    let result =
+    isRefetch && refetchMode === 'append'
+      ? (query.state.data as TData)
+      : initialValue
 
     let cancelled: boolean = false as boolean
     const streamFnContext = addConsumeAwareSignal<
@@ -99,12 +102,11 @@ export function streamedQuery<
       if (cancelled) {
         break
       }
-      const nextResult = reducer(result, chunk)
+      result = reducer(result, chunk)
       // don't append to the cache directly when replace-refetching
       if (!isRefetch || refetchMode !== 'replace') {
-        context.client.setQueryData<TData>(context.queryKey, nextResult)
+        context.client.setQueryData<TData>(context.queryKey, result)
       }
-      result = nextResult
     }
 
     // finalize result: replace-refetching needs to write to the cache
