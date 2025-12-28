@@ -1,5 +1,10 @@
-import { addToEnd } from './utils'
-import type { QueryFunction, QueryFunctionContext, QueryKey } from './types'
+import { addConsumeAwareSignal, addToEnd } from './utils'
+import type {
+  OmitKeyof,
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+} from './types'
 
 type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
   streamFn: (
@@ -73,10 +78,25 @@ export function streamedQuery<
 
     let result = initialValue
 
-    const stream = await streamFn(context)
+    let cancelled: boolean = false as boolean
+    const streamFnContext = addConsumeAwareSignal<
+      OmitKeyof<typeof context, 'signal'>
+    >(
+      {
+        client: context.client,
+        meta: context.meta,
+        queryKey: context.queryKey,
+        pageParam: context.pageParam,
+        direction: context.direction,
+      },
+      () => context.signal,
+      () => (cancelled = true),
+    )
+
+    const stream = await streamFn(streamFnContext)
 
     for await (const chunk of stream) {
-      if (context.signal.aborted) {
+      if (cancelled) {
         break
       }
 
@@ -90,7 +110,7 @@ export function streamedQuery<
     }
 
     // finalize result: replace-refetching needs to write to the cache
-    if (isRefetch && refetchMode === 'replace' && !context.signal.aborted) {
+    if (isRefetch && refetchMode === 'replace' && !cancelled) {
       context.client.setQueryData<TData>(context.queryKey, result)
     }
 
