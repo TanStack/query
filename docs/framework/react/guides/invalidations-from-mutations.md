@@ -46,7 +46,7 @@ Returning a Promise on `onSuccess` makes sure the data is updated before the mut
 
 [//]: # 'Example2'
 
-You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](../mutations.md)
+You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](./mutations.md)
 
 [//]: # 'Materials'
 

@@ -109,19 +109,19 @@ class ServiceOrComponent {
 
 #### injectQueryFn
 
-() => [`DefinedInitialDataOptions`](../../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+() => [`DefinedInitialDataOptions`](../type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function that returns query options.
 
 #### options?
 
-[`InjectQueryOptions`](../../interfaces/InjectQueryOptions.md)
+[`InjectQueryOptions`](../interfaces/InjectQueryOptions.md)
 
 Additional configuration
 
 ### Returns
 
-[`DefinedCreateQueryResult`](../../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
+[`DefinedCreateQueryResult`](../type-aliases/DefinedCreateQueryResult.md)\<`TData`, `TError`\>
 
 The query result.
 
@@ -190,19 +190,19 @@ class ServiceOrComponent {
 
 #### injectQueryFn
 
-() => [`UndefinedInitialDataOptions`](../../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+() => [`UndefinedInitialDataOptions`](../type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function that returns query options.
 
 #### options?
 
-[`InjectQueryOptions`](../../interfaces/InjectQueryOptions.md)
+[`InjectQueryOptions`](../interfaces/InjectQueryOptions.md)
 
 Additional configuration
 
 ### Returns
 
-[`CreateQueryResult`](../../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
+[`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
 The query result.
 
@@ -271,19 +271,19 @@ class ServiceOrComponent {
 
 #### injectQueryFn
 
-() => [`CreateQueryOptions`](../../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+() => [`CreateQueryOptions`](../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function that returns query options.
 
 #### options?
 
-[`InjectQueryOptions`](../../interfaces/InjectQueryOptions.md)
+[`InjectQueryOptions`](../interfaces/InjectQueryOptions.md)
 
 Additional configuration
 
 ### Returns
 
-[`CreateQueryResult`](../../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
+[`CreateQueryResult`](../type-aliases/CreateQueryResult.md)\<`TData`, `TError`\>
 
 The query result.
 

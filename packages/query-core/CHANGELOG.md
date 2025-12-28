@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.12
+
+### Patch Changes
+
+- fix: update react and nextJs ([#9944](https://github.com/TanStack/query/pull/9944))
+
 ## 5.90.11
 
 ### Patch Changes

@@ -29,7 +29,7 @@ A function that returns mutation state options.
 
 ### options?
 
-[`InjectMutationStateOptions`](../../interfaces/InjectMutationStateOptions.md)
+[`InjectMutationStateOptions`](../interfaces/InjectMutationStateOptions.md)
 
 The Angular injector to use.
 

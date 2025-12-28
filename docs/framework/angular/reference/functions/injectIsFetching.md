@@ -26,7 +26,7 @@ The filters to apply to the query.
 
 ### options?
 
-[`InjectIsFetchingOptions`](../../interfaces/InjectIsFetchingOptions.md)
+[`InjectIsFetchingOptions`](../interfaces/InjectIsFetchingOptions.md)
 
 Additional configuration
 
