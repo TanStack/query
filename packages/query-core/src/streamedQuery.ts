@@ -71,7 +71,10 @@ export function streamedQuery<
       })
     }
 
-    let result = initialValue
+    let result =
+    isRefetch && refetchMode === 'append'
+      ? (query.state.data as TData)
+      : initialValue
 
     const stream = await streamFn(context)
 
