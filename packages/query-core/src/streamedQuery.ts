@@ -95,22 +95,25 @@ export function streamedQuery<
 
     const stream = await streamFn(streamFnContext)
 
+    const isReplaceRefetch = isRefetch && refetchMode === 'replace'
+
     for await (const chunk of stream) {
       if (cancelled) {
         break
       }
 
-      // don't append to the cache directly when replace-refetching
-      if (!isRefetch || refetchMode !== 'replace') {
+      if (isReplaceRefetch) {
+        // don't append to the cache directly when replace-refetching
+        result = reducer(result, chunk)
+      } else {
         context.client.setQueryData<TData>(context.queryKey, (prev) =>
           reducer(prev === undefined ? initialValue : prev, chunk),
         )
       }
-      result = reducer(result, chunk)
     }
 
     // finalize result: replace-refetching needs to write to the cache
-    if (isRefetch && refetchMode === 'replace' && !cancelled) {
+    if (isReplaceRefetch && !cancelled) {
       context.client.setQueryData<TData>(context.queryKey, result)
     }
 
