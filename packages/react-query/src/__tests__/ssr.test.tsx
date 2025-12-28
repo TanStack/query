@@ -224,6 +224,8 @@ describe('Server Side Rendering', () => {
     )
 
     expect(markup).toContain('status: idle')
+
+    queryCache.clear()
   })
 
   it('useMutationState should return empty array', () => {
@@ -240,5 +242,7 @@ describe('Server Side Rendering', () => {
     )
 
     expect(markup).toContain('mutationState: 0')
+
+    queryCache.clear()
   })
 })
