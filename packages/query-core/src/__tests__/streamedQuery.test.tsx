@@ -538,4 +538,41 @@ describe('streamedQuery', () => {
 
     unsubscribe()
   })
+
+  test('should not call reducer twice when refetchMode is replace', async () => {
+    const key = queryKey()
+    const arr: Array<number> = []
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        streamFn: async function* () {
+          const v = [1, 2, 3]
+          yield* v
+        },
+        reducer: (oldStream, newChunk) => {
+          arr.push(newChunk)
+          return [...oldStream, newChunk]
+        },
+        initialValue: [] as Array<number>,
+        refetchMode: 'replace',
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(arr).toEqual([1, 2, 3])
+    expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
+
+    void observer.refetch()
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(arr).toEqual([1, 2, 3, 1, 2, 3])
+    expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
+
+    unsubscribe()
+  })
 })
