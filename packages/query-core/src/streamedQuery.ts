@@ -77,9 +77,9 @@ export function streamedQuery<
     }
 
     let result =
-    isRefetch && refetchMode === 'append'
-      ? (query.state.data as TData)
-      : initialValue
+      isRefetch && refetchMode === 'append'
+        ? (query.state.data as TData)
+        : initialValue
 
     let cancelled: boolean = false as boolean
     const streamFnContext = addConsumeAwareSignal<
