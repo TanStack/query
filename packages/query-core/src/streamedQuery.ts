@@ -76,10 +76,7 @@ export function streamedQuery<
       })
     }
 
-    let result =
-      isRefetch && refetchMode === 'append'
-        ? (query.state.data as TData)
-        : initialValue
+    let result = initialValue
 
     let cancelled: boolean = false as boolean
     const streamFnContext = addConsumeAwareSignal<
@@ -98,19 +95,25 @@ export function streamedQuery<
 
     const stream = await streamFn(streamFnContext)
 
+    const isReplaceRefetch = isRefetch && refetchMode === 'replace'
+
     for await (const chunk of stream) {
       if (cancelled) {
         break
       }
-      result = reducer(result, chunk)
-      // don't append to the cache directly when replace-refetching
-      if (!isRefetch || refetchMode !== 'replace') {
-        context.client.setQueryData<TData>(context.queryKey, result)
+
+      if (isReplaceRefetch) {
+        // don't append to the cache directly when replace-refetching
+        result = reducer(result, chunk)
+      } else {
+        context.client.setQueryData<TData>(context.queryKey, (prev) =>
+          reducer(prev === undefined ? initialValue : prev, chunk),
+        )
       }
     }
 
     // finalize result: replace-refetching needs to write to the cache
-    if (isRefetch && refetchMode === 'replace' && !cancelled) {
+    if (isReplaceRefetch && !cancelled) {
       context.client.setQueryData<TData>(context.queryKey, result)
     }
 
