@@ -1410,6 +1410,7 @@ describe('queryObserver', () => {
       queryFn,
       staleTime: 'static',
       refetchOnWindowFocus: true,
+      retry: false,
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -1451,6 +1452,7 @@ describe('queryObserver', () => {
       queryFn,
       staleTime: 1000,
       refetchOnWindowFocus: true,
+      retry: false,
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
