@@ -81,11 +81,7 @@ export function useBaseQuery<
 
   ensureSuspenseTimers(defaultedOptions)
   if (query) {
-    ensurePreventErrorBoundaryRetry(
-      defaultedOptions,
-      errorResetBoundary,
-      query,
-    )
+    ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
   }
   useClearResetErrorBoundary(errorResetBoundary)
 
