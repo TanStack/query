@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.15
+
+### Patch Changes
+
+- Fix: Always treat existing data as stale when query goes into error state. ([#9927](https://github.com/TanStack/query/pull/9927))
+
 ## 5.90.14
 
 ### Patch Changes
