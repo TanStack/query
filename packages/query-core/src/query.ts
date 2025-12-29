@@ -658,6 +658,9 @@ export class Query<
             fetchFailureReason: error,
             fetchStatus: 'idle',
             status: 'error',
+            // flag existing data as invalidated if we get a background error
+            // note that "no data" always means stale so we can set unconditionally here
+            isInvalidated: true,
           }
         case 'invalidate':
           return {
