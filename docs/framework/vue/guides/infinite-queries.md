@@ -10,7 +10,7 @@ ref: docs/framework/react/guides/infinite-queries.md
 <script setup>
 import { useInfiniteQuery } from '@tanstack/vue-query'
 
-const fetchProjects = async ({ pageParam = 0 }) => {
+const fetchProjects = async ({ pageParam }) => {
   const res = await fetch('/api/projects?cursor=' + pageParam)
   return res.json()
 }
