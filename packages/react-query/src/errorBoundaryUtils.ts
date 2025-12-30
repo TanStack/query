@@ -25,10 +25,10 @@ export const ensurePreventErrorBoundaryRetry = <
     TQueryKey
   >,
   errorResetBoundary: QueryErrorResetBoundaryValue,
-  query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ) => {
   const throwOnError =
-    query.state.error && typeof options.throwOnError === 'function'
+    query?.state.error && typeof options.throwOnError === 'function'
       ? shouldThrowError(options.throwOnError, [query.state.error, query])
       : options.throwOnError
 
