@@ -79,7 +79,7 @@ import type {
   QueryState,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
-import type { Accessor, Component, JSX, Setter } from 'solid-js'
+import type { Accessor, Component, JSX } from 'solid-js'
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
