@@ -4,7 +4,7 @@ import { ContentView, ParentPanel } from './Devtools'
 import { getPreferredColorScheme } from './utils'
 import { THEME_PREFERENCE } from './constants'
 import { DevtoolsStateContext, PiPProvider, QueryDevtoolsContext, ThemeContext } from './contexts'
-import type { Theme, QueryCacheMap, MutationCacheMap } from './contexts'
+import type { MutationCacheMap, QueryCacheMap, Theme } from './contexts'
 import type { DevtoolsComponentType } from './Devtools'
 
 const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {

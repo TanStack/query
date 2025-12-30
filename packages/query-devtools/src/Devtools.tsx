@@ -51,7 +51,7 @@ import {
   XCircle,
 } from './icons'
 import Explorer from './Explorer'
-import { usePiPWindow, useQueryDevtoolsContext, useTheme, DevtoolsStateContext, useDevtoolsState, type QueryCacheMap, type MutationCacheMap } from './contexts'
+import { DevtoolsStateContext, useDevtoolsState, usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
   BUTTON_POSITION,
   DEFAULT_HEIGHT,
@@ -68,6 +68,8 @@ import {
 import type {
   DevtoolsErrorType,
   DevtoolsPosition,
+  MutationCacheMap,
+  QueryCacheMap,
   QueryDevtoolsProps,
 } from './contexts'
 import type {
