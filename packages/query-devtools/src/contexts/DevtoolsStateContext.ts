@@ -37,9 +37,5 @@ export interface DevtoolsState {
 export const DevtoolsStateContext = createContext<DevtoolsState>()
 
 export function useDevtoolsState() {
-  const context = useContext(DevtoolsStateContext)
-  if (!context) {
-    throw new Error('useDevtoolsState must be used within DevtoolsStateContext.Provider')
-  }
-  return context
+  return useContext(DevtoolsStateContext)!
 }
