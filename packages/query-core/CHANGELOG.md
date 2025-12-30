@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.16
+
+### Patch Changes
+
+- fix useQueries race condition on queries length change (#9971) ([#9973](https://github.com/TanStack/query/pull/9973))
+
 ## 5.90.15
 
 ### Patch Changes
