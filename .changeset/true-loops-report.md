@@ -2,4 +2,4 @@
 '@tanstack/query-devtools': patch
 ---
 
-Multiple ReactQueryDevtoolsPanel instances sharing state causing isolation issues
+Multiple Devtool instances sharing same state causing isolation issues
