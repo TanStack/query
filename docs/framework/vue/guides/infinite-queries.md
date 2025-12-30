@@ -27,6 +27,7 @@ const {
 } = useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
+  initialPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
 })
 </script>
