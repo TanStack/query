@@ -1,6 +1,10 @@
-import { createContext, useContext } from "solid-js"
-import type { Accessor, Setter } from "solid-js"
-import type { MutationCache, QueryCache, QueryCacheNotifyEvent } from "@tanstack/query-core"
+import { createContext, useContext } from 'solid-js'
+import type { Accessor, Setter } from 'solid-js'
+import type {
+  MutationCache,
+  QueryCache,
+  QueryCacheNotifyEvent,
+} from '@tanstack/query-core'
 
 export type QueryCacheMapValue = {
   setter: Setter<any>

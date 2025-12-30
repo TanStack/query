@@ -3,7 +3,12 @@ import { createMemo, createSignal } from 'solid-js'
 import { ContentView, ParentPanel } from './Devtools'
 import { getPreferredColorScheme } from './utils'
 import { THEME_PREFERENCE } from './constants'
-import { DevtoolsStateContext, PiPProvider, QueryDevtoolsContext, ThemeContext } from './contexts'
+import {
+  DevtoolsStateContext,
+  PiPProvider,
+  QueryDevtoolsContext,
+  ThemeContext,
+} from './contexts'
 import type { MutationCacheMap, QueryCacheMap, Theme } from './contexts'
 import type { DevtoolsComponentType } from './Devtools'
 
@@ -12,8 +17,12 @@ const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
     prefix: 'TanstackQueryDevtools',
   })
 
-  const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(null)
-  const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(null)
+  const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
+    null,
+  )
+  const [selectedMutationId, setSelectedMutationId] = createSignal<
+    number | null
+  >(null)
   const [panelWidth, setPanelWidth] = createSignal(0)
   const [offline, setOffline] = createSignal(false)
   const queryCacheMap: QueryCacheMap = new Map()
@@ -31,13 +40,20 @@ const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
 
   return (
     <QueryDevtoolsContext.Provider value={props}>
-      <DevtoolsStateContext.Provider value={{
-        selectedQueryHash, setSelectedQueryHash,
-        selectedMutationId, setSelectedMutationId,
-        panelWidth, setPanelWidth,
-        offline, setOffline,
-        queryCacheMap, mutationCacheMap,
-      }}>
+      <DevtoolsStateContext.Provider
+        value={{
+          selectedQueryHash,
+          setSelectedQueryHash,
+          selectedMutationId,
+          setSelectedMutationId,
+          panelWidth,
+          setPanelWidth,
+          offline,
+          setOffline,
+          queryCacheMap,
+          mutationCacheMap,
+        }}
+      >
         <PiPProvider
           disabled
           localStore={localStore}

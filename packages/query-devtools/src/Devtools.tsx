@@ -51,7 +51,13 @@ import {
   XCircle,
 } from './icons'
 import Explorer from './Explorer'
-import { DevtoolsStateContext, useDevtoolsState, usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
+import {
+  DevtoolsStateContext,
+  useDevtoolsState,
+  usePiPWindow,
+  useQueryDevtoolsContext,
+  useTheme,
+} from './contexts'
 import {
   BUTTON_POSITION,
   DEFAULT_HEIGHT,
@@ -106,8 +112,12 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
 }
 
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
-  const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(null)
-  const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(null)
+  const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
+    null,
+  )
+  const [selectedMutationId, setSelectedMutationId] = createSignal<
+    number | null
+  >(null)
   const [panelWidth, setPanelWidth] = createSignal(0)
   const [offline, setOffline] = createSignal(false)
   const queryCacheMap: QueryCacheMap = new Map()
@@ -193,7 +203,20 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   )
 
   return (
-    <DevtoolsStateContext.Provider value={{ selectedQueryHash, setSelectedQueryHash, selectedMutationId, setSelectedMutationId, panelWidth, setPanelWidth, offline, setOffline, queryCacheMap, mutationCacheMap }}>
+    <DevtoolsStateContext.Provider
+      value={{
+        selectedQueryHash,
+        setSelectedQueryHash,
+        selectedMutationId,
+        setSelectedMutationId,
+        panelWidth,
+        setPanelWidth,
+        offline,
+        setOffline,
+        queryCacheMap,
+        mutationCacheMap,
+      }}
+    >
       <Show when={pip().pipWindow && pip_open() == 'true'}>
         <Portal mount={pip().pipWindow?.document.body}>
           <PiPPanel>
@@ -693,7 +716,14 @@ export const ContentView: Component<ContentViewProps> = (props) => {
     'queries',
   )
 
-  const { selectedQueryHash, offline, setSelectedQueryHash, selectedMutationId, setSelectedMutationId, panelWidth } = useDevtoolsState()
+  const {
+    selectedQueryHash,
+    offline,
+    setSelectedQueryHash,
+    selectedMutationId,
+    setSelectedMutationId,
+    panelWidth,
+  } = useDevtoolsState()
 
   const sort = createMemo(() => props.localStore.sort || DEFAULT_SORT_FN_NAME)
   const sortOrder = createMemo(
@@ -1390,7 +1420,6 @@ const QueryRow: Component<{ query: Query }> = (props) => {
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
   const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
 
-
   const queryState = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
       queryCache().find({
@@ -1521,7 +1550,6 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
   const { selectedMutationId, setSelectedMutationId } = useDevtoolsState()
-
 
   const mutationState = createSubscribeToMutationCacheBatcher(
     (mutationCache) => {
