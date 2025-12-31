@@ -1,6 +1,11 @@
-import { DestroyRef, InjectionToken, inject } from '@angular/core'
+import {
+  DestroyRef,
+  InjectionToken,
+  inject,
+  makeEnvironmentProviders,
+} from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
-import type { Provider } from '@angular/core'
+import type { EnvironmentProviders, Provider } from '@angular/core'
 
 /**
  * Usually {@link provideTanStackQuery} is used once to set up TanStack Query and the
@@ -105,11 +110,11 @@ export function provideQueryClient(
 export function provideTanStackQuery(
   queryClient: QueryClient | InjectionToken<QueryClient>,
   ...features: Array<QueryFeatures>
-): Array<Provider> {
-  return [
+): EnvironmentProviders {
+  return makeEnvironmentProviders([
     provideQueryClient(queryClient),
     features.map((feature) => feature.ɵproviders),
-  ]
+  ])
 }
 
 /**
@@ -121,7 +126,9 @@ export function provideTanStackQuery(
  * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
  * @deprecated Use `provideTanStackQuery` instead.
  */
-export function provideAngularQuery(queryClient: QueryClient): Array<Provider> {
+export function provideAngularQuery(
+  queryClient: QueryClient,
+): EnvironmentProviders {
   return provideTanStackQuery(queryClient)
 }
 
@@ -134,7 +141,7 @@ type QueryFeatureKind = (typeof queryFeatures)[number]
  */
 export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
   ɵkind: TFeatureKind
-  ɵproviders: Array<Provider>
+  ɵproviders: Array<Provider | EnvironmentProviders>
 }
 
 /**
@@ -145,7 +152,7 @@ export interface QueryFeature<TFeatureKind extends QueryFeatureKind> {
  */
 export function queryFeature<TFeatureKind extends QueryFeatureKind>(
   kind: TFeatureKind,
-  providers: Array<Provider>,
+  providers: Array<Provider | EnvironmentProviders>,
 ): QueryFeature<TFeatureKind> {
   return { ɵkind: kind, ɵproviders: providers }
 }

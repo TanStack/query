@@ -36,7 +36,7 @@ import { TasksService } from '../services/tasks.service'
         <input type="text" [(ngModel)]="newItem" placeholder="Enter text" />
         <button (click)="addItem()">Create</button>
         <ul>
-          @for (task of tasks.data(); track task) {
+          @for (task of tasks.data(); track $index) {
             <li>{{ task }}</li>
           }
         </ul>

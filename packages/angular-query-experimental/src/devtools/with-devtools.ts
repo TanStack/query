@@ -1,7 +1,6 @@
 import { isPlatformBrowser } from '@angular/common'
 import {
   DestroyRef,
-  ENVIRONMENT_INITIALIZER,
   InjectionToken,
   Injector,
   PLATFORM_ID,
@@ -9,8 +8,9 @@ import {
   effect,
   inject,
   isDevMode,
+  provideEnvironmentInitializer,
 } from '@angular/core'
-import { QueryClient, noop, onlineManager } from '@tanstack/query-core'
+import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { queryFeature } from '../providers'
 import type { Signal } from '@angular/core'
 import type {
@@ -69,112 +69,103 @@ export const withDevtools: WithDevtools = (
         computed(() => withDevtoolsFn?.(...deps) ?? {}),
       deps: options.deps || [],
     },
-    {
-      // Do not use provideEnvironmentInitializer while Angular < v19 is supported
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useFactory: () => {
-        const devtoolsProvided = inject(DEVTOOLS_PROVIDED)
-        if (
-          !isPlatformBrowser(inject(PLATFORM_ID)) ||
-          devtoolsProvided.isProvided
-        )
-          return noop
+    provideEnvironmentInitializer(() => {
+      const devtoolsProvided = inject(DEVTOOLS_PROVIDED)
+      if (
+        !isPlatformBrowser(inject(PLATFORM_ID)) ||
+        devtoolsProvided.isProvided
+      )
+        return
 
-        devtoolsProvided.isProvided = true
-        let injectorIsDestroyed = false
-        inject(DestroyRef).onDestroy(() => (injectorIsDestroyed = true))
+      devtoolsProvided.isProvided = true
+      let injectorIsDestroyed = false
+      inject(DestroyRef).onDestroy(() => (injectorIsDestroyed = true))
 
-        return () => {
-          const injectedClient = inject(QueryClient, {
-            optional: true,
-          })
-          const destroyRef = inject(DestroyRef)
-          const devtoolsOptions = inject(DEVTOOLS_OPTIONS_SIGNAL)
-          const injector = inject(Injector)
+      const injectedClient = inject(QueryClient, {
+        optional: true,
+      })
+      const destroyRef = inject(DestroyRef)
+      const devtoolsOptions = inject(DEVTOOLS_OPTIONS_SIGNAL)
+      const injector = inject(Injector)
 
-          let devtools: TanstackQueryDevtools | null = null
-          let el: HTMLElement | null = null
+      let devtools: TanstackQueryDevtools | null = null
+      let el: HTMLElement | null = null
 
-          const shouldLoadToolsSignal = computed(() => {
-            const { loadDevtools } = devtoolsOptions()
-            return typeof loadDevtools === 'boolean'
-              ? loadDevtools
-              : isDevMode()
-          })
+      const shouldLoadToolsSignal = computed(() => {
+        const { loadDevtools } = devtoolsOptions()
+        return typeof loadDevtools === 'boolean' ? loadDevtools : isDevMode()
+      })
 
-          const getResolvedQueryClient = () => {
-            const client = devtoolsOptions().client ?? injectedClient
-            if (!client) {
-              throw new Error('No QueryClient found')
-            }
-            return client
-          }
-
-          const destroyDevtools = () => {
-            devtools?.unmount()
-            el?.remove()
-            devtools = null
-          }
-
-          effect(
-            () => {
-              const shouldLoadTools = shouldLoadToolsSignal()
-              const {
-                client,
-                position,
-                errorTypes,
-                buttonPosition,
-                initialIsOpen,
-              } = devtoolsOptions()
-
-              if (!shouldLoadTools) {
-                // Destroy or do nothing
-                devtools && destroyDevtools()
-                return
-              }
-
-              if (devtools) {
-                // Update existing devtools config
-                client && devtools.setClient(client)
-                position && devtools.setPosition(position)
-                errorTypes && devtools.setErrorTypes(errorTypes)
-                buttonPosition && devtools.setButtonPosition(buttonPosition)
-                typeof initialIsOpen === 'boolean' &&
-                  devtools.setInitialIsOpen(initialIsOpen)
-                return
-              }
-
-              // Create devtools
-              import('@tanstack/query-devtools')
-                .then((queryDevtools) => {
-                  // As this code runs async, the injector could have been destroyed
-                  if (injectorIsDestroyed) return
-
-                  devtools = new queryDevtools.TanstackQueryDevtools({
-                    ...devtoolsOptions(),
-                    client: getResolvedQueryClient(),
-                    queryFlavor: 'Angular Query',
-                    version: '5',
-                    onlineManager,
-                  })
-
-                  el = document.body.appendChild(document.createElement('div'))
-                  el.classList.add('tsqd-parent-container')
-                  devtools.mount(el)
-
-                  destroyRef.onDestroy(destroyDevtools)
-                })
-                .catch((error) => {
-                  console.error(
-                    'Install @tanstack/query-devtools or reinstall without --omit=optional.',
-                    error,
-                  )
-                })
-            },
-            { injector },
-          )
+      const getResolvedQueryClient = () => {
+        const client = devtoolsOptions().client ?? injectedClient
+        if (!client) {
+          throw new Error('No QueryClient found')
         }
-      },
-    },
+        return client
+      }
+
+      const destroyDevtools = () => {
+        devtools?.unmount()
+        el?.remove()
+        devtools = null
+      }
+
+      effect(
+        () => {
+          const shouldLoadTools = shouldLoadToolsSignal()
+          const {
+            client,
+            position,
+            errorTypes,
+            buttonPosition,
+            initialIsOpen,
+          } = devtoolsOptions()
+
+          if (!shouldLoadTools) {
+            // Destroy or do nothing
+            devtools && destroyDevtools()
+            return
+          }
+
+          if (devtools) {
+            // Update existing devtools config
+            client && devtools.setClient(client)
+            position && devtools.setPosition(position)
+            errorTypes && devtools.setErrorTypes(errorTypes)
+            buttonPosition && devtools.setButtonPosition(buttonPosition)
+            typeof initialIsOpen === 'boolean' &&
+              devtools.setInitialIsOpen(initialIsOpen)
+            return
+          }
+
+          // Create devtools
+          import('@tanstack/query-devtools')
+            .then((queryDevtools) => {
+              // As this code runs async, the injector could have been destroyed
+              if (injectorIsDestroyed) return
+
+              devtools = new queryDevtools.TanstackQueryDevtools({
+                ...devtoolsOptions(),
+                client: getResolvedQueryClient(),
+                queryFlavor: 'Angular Query',
+                version: '5',
+                onlineManager,
+              })
+
+              el = document.body.appendChild(document.createElement('div'))
+              el.classList.add('tsqd-parent-container')
+              devtools.mount(el)
+
+              destroyRef.onDestroy(destroyDevtools)
+            })
+            .catch((error) => {
+              console.error(
+                'Install @tanstack/query-devtools or reinstall without --omit=optional.',
+                error,
+              )
+            })
+        },
+        { injector },
+      )
+    }),
   ])
