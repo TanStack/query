@@ -1,5 +1,12 @@
 # @tanstack/vue-query
 
+## 5.92.5
+
+### Patch Changes
+
+- Updated dependencies [[`7f47906`](https://github.com/TanStack/query/commit/7f47906eaccc3f3aa5ce24b77a83bd7a620a237b)]:
+  - @tanstack/query-core@5.90.16
+
 ## 5.92.4
 
 ### Patch Changes
