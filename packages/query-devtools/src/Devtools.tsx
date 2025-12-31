@@ -935,6 +935,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                 }
               >
                 <button
+                  type="button"
                   aria-label="Clear filter"
                   class={cx(styles().clearFilterBtn, 'tsqd-clear-filter-btn')}
                   onClick={() => {
@@ -3285,6 +3286,7 @@ const stylesFactory = (
     `,
     clearFilterBtn: css`
       all: unset;
+      user-select: none;
       display: flex;
       align-items: center;
       justify-content: center;
