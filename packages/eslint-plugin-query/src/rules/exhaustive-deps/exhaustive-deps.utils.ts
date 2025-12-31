@@ -37,7 +37,6 @@ export const ExhaustiveDepsUtils = {
       if (isGlobalVariable || isImport) {
         return false
       }
-
     }
 
     return (
