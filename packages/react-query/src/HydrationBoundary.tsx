@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { hydrate } from '@tanstack/query-core'
+import { hydrate, pendingHydrationQueries } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
@@ -95,6 +95,14 @@ export const HydrationBoundary = ({
           hydrate(client, { queries: newQueries }, optionsRef.current)
         }
         if (existingQueries.length > 0) {
+          // Mark existing queries as pending hydration to prevent double-fetching
+          // The flag will be cleared in useEffect after hydration completes
+          for (const dehydratedQuery of existingQueries) {
+            const query = queryCache.get(dehydratedQuery.queryHash)
+            if (query) {
+              pendingHydrationQueries.add(query)
+            }
+          }
           return existingQueries
         }
       }
@@ -105,6 +113,24 @@ export const HydrationBoundary = ({
     if (hydrationQueue) {
       hydrate(client, { queries: hydrationQueue }, optionsRef.current)
     }
+
+    const clearPendingQueries = () => {
+      if (hydrationQueue) {
+        const queryCache = client.getQueryCache()
+        for (const dehydratedQuery of hydrationQueue) {
+          const query = queryCache.get(dehydratedQuery.queryHash)
+          if (query) {
+            pendingHydrationQueries.delete(query)
+          }
+        }
+      }
+    }
+
+    // Clear pending hydration flags after hydration completes
+    clearPendingQueries()
+
+    // Cleanup: also clear on unmount in case component unmounts before effect runs
+    return clearPendingQueries
   }, [client, hydrationQueue])
 
   return children as React.ReactElement

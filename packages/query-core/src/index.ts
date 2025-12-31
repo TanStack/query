@@ -6,6 +6,7 @@ export {
   defaultShouldDehydrateQuery,
   dehydrate,
   hydrate,
+  pendingHydrationQueries,
 } from './hydration'
 export { InfiniteQueryObserver } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
