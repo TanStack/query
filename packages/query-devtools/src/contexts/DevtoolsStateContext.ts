@@ -6,12 +6,12 @@ import type {
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
 
-export type QueryCacheMapValue = {
+type QueryCacheMapValue = {
   setter: Setter<any>
   shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
 }
 
-export type MutationCacheMapValue = {
+type MutationCacheMapValue = {
   setter: Setter<any>
 }
 
@@ -25,7 +25,7 @@ export type MutationCacheMap = Map<
   MutationCacheMapValue
 >
 
-export interface DevtoolsState {
+interface DevtoolsState {
   selectedQueryHash: Accessor<string | null>
   setSelectedQueryHash: Setter<string | null>
   selectedMutationId: Accessor<number | null>
