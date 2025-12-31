@@ -8,22 +8,36 @@ export const ExhaustiveDepsUtils = {
     reference: TSESLint.Scope.Reference
     scopeManager: TSESLint.Scope.ScopeManager
     node: TSESTree.Node
+    filename: string
   }) {
-    const { sourceCode, reference, scopeManager, node } = params
+    const { sourceCode, reference, scopeManager, node, filename } = params
     const component = ASTUtils.getFunctionAncestor(sourceCode, node)
 
-    if (component === undefined) {
-      return false
-    }
+    if (component !== undefined) {
+      if (
+        !ASTUtils.isDeclaredInNode({
+          scopeManager,
+          reference,
+          functionNode: component,
+        })
+      ) {
+        return false
+      }
+    } else {
+      const isVueFile = filename.endsWith('.vue')
 
-    if (
-      !ASTUtils.isDeclaredInNode({
-        scopeManager,
-        reference,
-        functionNode: component,
-      })
-    ) {
-      return false
+      if (!isVueFile) {
+        return false
+      }
+
+      const definition = reference.resolved?.defs[0]
+      const isGlobalVariable = definition === undefined
+      const isImport = definition?.type === 'ImportBinding'
+
+      if (isGlobalVariable || isImport) {
+        return false
+      }
+
     }
 
     return (
