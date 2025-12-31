@@ -676,6 +676,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
+  let filterInputRef!: HTMLInputElement
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -907,6 +908,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
             >
               <Search />
               <input
+                ref={filterInputRef}
                 aria-label="Filter queries by query key"
                 type="text"
                 placeholder="Filter"
@@ -925,6 +927,29 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                     : props.localStore.mutationFilter || ''
                 }
               />
+              <Show
+                when={
+                  selectedView() === 'queries'
+                    ? props.localStore.filter
+                    : props.localStore.mutationFilter
+                }
+              >
+                <button
+                  aria-label="Clear filter"
+                  class={cx(styles().clearFilterBtn, 'tsqd-clear-filter-btn')}
+                  onClick={() => {
+                    if (selectedView() === 'queries') {
+                      props.setLocalStore('filter', '')
+                    } else {
+                      props.setLocalStore('mutationFilter', '')
+                    }
+                    // Focus back to input after clearing
+                    filterInputRef.focus()
+                  }}
+                >
+                  <XCircle />
+                </button>
+              </Show>
             </div>
             <div
               class={cx(
@@ -3256,6 +3281,31 @@ const stylesFactory = (
         outline-offset: 2px;
         border-radius: ${border.radius.xs};
         outline: 2px solid ${colors.blue[800]};
+      }
+    `,
+    clearFilterBtn: css`
+      all: unset;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: ${t(colors.gray[500], colors.gray[400])};
+      transition: color 0.2s ease;
+      flex-shrink: 0;
+
+      & > svg {
+        width: ${size[3]};
+        height: ${size[3]};
+      }
+
+      &:hover {
+        color: ${t(colors.gray[700], colors.gray[200])};
+      }
+
+      &:focus-visible {
+        outline: 2px solid ${colors.blue[800]};
+        outline-offset: 2px;
+        border-radius: ${border.radius.xs};
       }
     `,
     filterSelect: css`
