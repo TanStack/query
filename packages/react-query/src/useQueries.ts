@@ -242,9 +242,10 @@ export function useQueries<
     [queries, client, isRestoring],
   )
 
-  defaultedQueries.forEach((query) => {
-    ensureSuspenseTimers(query)
-    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
+  defaultedQueries.forEach((queryOptions) => {
+    ensureSuspenseTimers(queryOptions)
+    const query = client.getQueryCache().get(queryOptions.queryHash)
+    ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
   })
 
   useClearResetErrorBoundary(errorResetBoundary)
