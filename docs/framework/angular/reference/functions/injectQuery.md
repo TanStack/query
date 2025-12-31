@@ -9,11 +9,14 @@ Injects a query: a declarative dependency on an asynchronous source of data that
 
 **Basic example**
 ```ts
+import { lastValueFrom } from 'rxjs'
+
 class ServiceOrComponent {
   query = injectQuery(() => ({
     queryKey: ['repoData'],
-    queryFn: () =>
-      this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+    queryFn: () => lastValueFrom(
+      this.#http.get<Response>('https://api.github.com/repos/tanstack/query')
+    )
   }))
 }
 ```
@@ -60,11 +63,14 @@ Injects a query: a declarative dependency on an asynchronous source of data that
 
 **Basic example**
 ```ts
+import { lastValueFrom } from 'rxjs'
+
 class ServiceOrComponent {
   query = injectQuery(() => ({
     queryKey: ['repoData'],
-    queryFn: () =>
-      this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+    queryFn: () => lastValueFrom(
+      this.#http.get<Response>('https://api.github.com/repos/tanstack/query')
+    ),
   }))
 }
 ```
@@ -141,11 +147,14 @@ Injects a query: a declarative dependency on an asynchronous source of data that
 
 **Basic example**
 ```ts
+import { lastValueFrom } from 'rxjs'
+
 class ServiceOrComponent {
   query = injectQuery(() => ({
     queryKey: ['repoData'],
-    queryFn: () =>
-      this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+    queryFn: () => lastValueFrom(
+      this.#http.get<Response>('https://api.github.com/repos/tanstack/query')
+    ),
   }))
 }
 ```
@@ -222,11 +231,14 @@ Injects a query: a declarative dependency on an asynchronous source of data that
 
 **Basic example**
 ```ts
+import { lastValueFrom } from 'rxjs'
+
 class ServiceOrComponent {
   query = injectQuery(() => ({
     queryKey: ['repoData'],
-    queryFn: () =>
-      this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+    queryFn: () => lastValueFrom(
+      this.#http.get<Response>('https://api.github.com/repos/tanstack/query')
+    ),
   }))
 }
 ```

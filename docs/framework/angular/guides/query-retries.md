@@ -31,10 +31,10 @@ const result = injectQuery(() => ({
 ```ts
 // Configure for all queries
 import {
-  QueryCache,
   QueryClient,
-  QueryClientProvider,
+  provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
+import { bootstrapApplication } from '@angular/platform-browser'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,7 +51,7 @@ bootstrapApplication(AppComponent, {
 
 [//]: # 'Example2'
 
-Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the Provider and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
+Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the QueryClient default options and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
 
 [//]: # 'Example3'
 

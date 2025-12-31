@@ -4,7 +4,6 @@ title: Important Defaults
 ref: docs/framework/react/guides/important-defaults.md
 replace:
   {
-    'React': 'Angular',
     'react-query': 'angular-query',
     'useQuery': 'injectQuery',
     'useInfiniteQuery': 'injectInfiniteQuery',

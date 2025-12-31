@@ -28,7 +28,10 @@ bootstrapApplication(MyAppComponent, {
   providers: [provideTanStackQuery(queryClient)],
 })
 
-export class PostsComponent {
+@Component({
+  // ...
+})
+class PostsComponent {
   // All you have to do now is pass a key!
   postsQuery = injectQuery<Array<Post>>(() => ({
     queryKey: ['/posts'],
@@ -36,11 +39,16 @@ export class PostsComponent {
   // ...
 }
 
-export class PostComponent {
+@Component({
+  // ...
+})
+class PostComponent {
+  postId = input(0)
+
   // You can even leave out the queryFn and just go straight into options
   postQuery = injectQuery<Post>(() => ({
-    enabled: this.postIdSignal() > 0,
-    queryKey: [`/posts/${this.postIdSignal()}`],
+    enabled: this.postId() > 0,
+    queryKey: [`/posts/${this.postId()}`],
   }))
   // ...
 }
