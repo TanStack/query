@@ -1,5 +1,47 @@
 # @tanstack/query-broadcast-client-experimental
 
+## 5.90.16
+
+### Patch Changes
+
+- Updated dependencies [[`7f47906`](https://github.com/TanStack/query/commit/7f47906eaccc3f3aa5ce24b77a83bd7a620a237b)]:
+  - @tanstack/query-core@5.90.16
+
+## 5.90.15
+
+### Patch Changes
+
+- Updated dependencies [[`fccef79`](https://github.com/TanStack/query/commit/fccef797d57d4a9566517bba87c8377f363920f2)]:
+  - @tanstack/query-core@5.90.15
+
+## 5.90.14
+
+### Patch Changes
+
+- Updated dependencies [[`d576092`](https://github.com/TanStack/query/commit/d576092e2ece4ca3936add3eb0da5234c1d82ed4)]:
+  - @tanstack/query-core@5.90.14
+
+## 5.90.13
+
+### Patch Changes
+
+- Updated dependencies [[`4a0a78a`](https://github.com/TanStack/query/commit/4a0a78afbc2432f8cb6828035965853fa98c86a0)]:
+  - @tanstack/query-core@5.90.13
+
+## 5.90.12
+
+### Patch Changes
+
+- Updated dependencies [[`72d8ac5`](https://github.com/TanStack/query/commit/72d8ac5c592004b8f9c3ee086fcb9c3cd615ca05)]:
+  - @tanstack/query-core@5.90.12
+
+## 5.90.11
+
+### Patch Changes
+
+- Updated dependencies [[`c01b150`](https://github.com/TanStack/query/commit/c01b150e3673e11d6533768529a5e6fe3ebee68c)]:
+  - @tanstack/query-core@5.90.11
+
 ## 5.90.10
 
 ### Patch Changes

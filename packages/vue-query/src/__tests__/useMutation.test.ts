@@ -82,6 +82,39 @@ describe('useMutation', () => {
     })
   })
 
+  test('should work with options getter and be reactive', async () => {
+    const result = 'Mock data'
+    const keyRef = ref('key01')
+    const fnMock = vi.fn((params: string) => sleep(10).then(() => params))
+    const mutation = useMutation(() => ({
+      mutationKey: [keyRef.value],
+      mutationFn: fnMock,
+    }))
+
+    mutation.mutate(result)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fnMock).toHaveBeenCalledTimes(1)
+    expect(fnMock).toHaveBeenNthCalledWith(
+      1,
+      result,
+      expect.objectContaining({ mutationKey: ['key01'] }),
+    )
+
+    keyRef.value = 'key02'
+    await vi.advanceTimersByTimeAsync(0)
+    mutation.mutate(result)
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fnMock).toHaveBeenCalledTimes(2)
+    expect(fnMock).toHaveBeenNthCalledWith(
+      2,
+      result,
+      expect.objectContaining({ mutationKey: ['key02'] }),
+    )
+  })
+
   test('should update reactive options', async () => {
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()

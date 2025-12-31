@@ -33,12 +33,12 @@ export interface UseBaseQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  > {
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey
+> {
   /**
    * Set this to `false` to unsubscribe this observer from updates to the query cache.
    * Defaults to `true`.
@@ -52,9 +52,9 @@ export interface UsePrefetchQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
-    FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryFn'
-  > {
+  FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'queryFn'
+> {
   queryFn?: Exclude<
     FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
     SkipToken
@@ -68,9 +68,9 @@ export interface UseQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
-    UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-    'suspense'
-  > {}
+  UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
+  'suspense'
+> {}
 
 export type AnyUseSuspenseQueryOptions = UseSuspenseQueryOptions<
   any,
@@ -84,9 +84,9 @@ export interface UseSuspenseQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
-  > {
+  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+> {
   queryFn?: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
     SkipToken
@@ -107,15 +107,15 @@ export interface UseInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
-    InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-    'suspense'
-  > {
+  InfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  'suspense'
+> {
   /**
    * Set this to `false` to unsubscribe this observer from updates to the query cache.
    * Defaults to `true`.
@@ -132,9 +132,9 @@ export interface UseSuspenseInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends OmitKeyof<
-    UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
-    'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
-  > {
+  UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
+  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+> {
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
@@ -195,9 +195,9 @@ export interface UseMutationOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 > extends OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
-    '_defaulted'
-  > {}
+  MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
+  '_defaulted'
+> {}
 
 export type UseMutateFunction<
   TData = unknown,
