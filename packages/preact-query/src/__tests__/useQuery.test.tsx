@@ -2424,7 +2424,7 @@ describe('useQuery', () => {
     expect(renders).toBe(2)
   })
 
-  it('should render latest data even if react has discarded certain renders', async () => {
+  it('should render latest data even if preact has discarded certain renders', async () => {
     const key = queryKey()
 
     function Page() {
@@ -2433,7 +2433,7 @@ describe('useQuery', () => {
       useEffect(() => {
         setActTimeout(() => {
           queryClient.setQueryData(key, 'new')
-          // Update with same state to make react discard the next render
+          // Update with same state to make preact discard the next render
           setNewState('state')
         }, 10)
       }, [])
@@ -4691,7 +4691,6 @@ describe('useQuery', () => {
 
     function Page(props: { limit: number }) {
       const state = useQuery({ queryKey: [key, props.limit], queryFn })
-      // eslint-disable-next-line react-hooks/immutability
       states[props.limit] = state
       return (
         <div>

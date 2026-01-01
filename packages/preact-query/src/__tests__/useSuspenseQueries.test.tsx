@@ -132,7 +132,7 @@ describe('useSuspenseQueries', () => {
     await act(resolveQueries)
 
     expect(onSuspend).toHaveBeenCalled()
-    // the test for onQueriesResolution is React-specific
+    // the test for onQueriesResolution is React-specific and not applicable to Preact
   })
 
   it('should suspend only once per queries change', async () => {
@@ -335,7 +335,6 @@ describe('useSuspenseQueries 2', () => {
     }
 
     function Page() {
-      // eslint-disable-next-line react-hooks/purity
       const ref = useRef(Math.random())
       const result = useSuspenseQueries({
         queries: [
@@ -762,7 +761,6 @@ describe('useSuspenseQueries 2', () => {
           {
             queryKey: key,
             // @ts-expect-error
-            // eslint-disable-next-line react-hooks/purity
             queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
           },
         ],

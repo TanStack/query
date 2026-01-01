@@ -88,7 +88,6 @@ export const HydrationBoundary = ({
       if (newQueries.length > 0) {
         // It's actually fine to call this with queries/state that already exists
         // in the cache, or is older. hydrate() is idempotent for queries.
-        // eslint-disable-next-line react-hooks/refs
         hydrate(client, { queries: newQueries }, optionsRef.current)
       }
       if (existingQueries.length > 0) {

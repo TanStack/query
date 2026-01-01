@@ -39,7 +39,6 @@
   "types": "build/legacy/index.d.ts",
   "main": "build/legacy/index.cjs",
   "module": "build/legacy/index.js",
-  "react-native": "src/index.ts",
   "exports": {
     ".": {
       "@tanstack/custom-condition": "./src/index.ts",
@@ -72,7 +71,6 @@
     "@tanstack/query-persist-client-core": "workspace:*",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/preact": "^3.2.4",
-    "@testing-library/react-render-stream": "^2.0.0",
     "cpy-cli": "^5.0.0",
     "eslint-config-preact": "^2.0.0",
     "npm-run-all2": "^5.0.0",

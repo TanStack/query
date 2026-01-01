@@ -34,16 +34,11 @@ function PrintStateComponent({ componentName, result }: any): any {
 }
 
 describe('Server side rendering with de/rehydration', () => {
-  let previousIsReactActEnvironment: unknown
   beforeAll(() => {
-    // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
-    previousIsReactActEnvironment = globalThis.IS_REACT_ACT_ENVIRONMENT = true
     vi.useFakeTimers()
   })
 
   afterAll(() => {
-    // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
-    globalThis.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
     vi.useRealTimers()
   })
 

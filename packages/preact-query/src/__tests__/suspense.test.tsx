@@ -4,8 +4,9 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
 import type { QueryKey } from '..'
 import { Suspense } from 'preact/compat'
+import { ComponentChildren } from 'preact'
 
-function renderWithSuspense(client: QueryClient, ui: React.ReactNode) {
+function renderWithSuspense(client: QueryClient, ui: ComponentChildren) {
   return render(
     <QueryClientProvider client={client}>
       <Suspense fallback="loading">{ui}</Suspense>

@@ -31,7 +31,6 @@ export default [
   {
     files: ['**/__tests__/**'],
     rules: {
-      '@eslint-react/dom/no-missing-button-type': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
     },
   },

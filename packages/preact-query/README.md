@@ -2,7 +2,7 @@
 
 ![TanStack Query Header](https://github.com/TanStack/query/raw/main/media/repo-header.png)
 
-Hooks for fetching, caching and updating asynchronous data in React
+Hooks for fetching, caching and updating asynchronous data in Preact
 
 <a href="https://twitter.com/intent/tweet?button_hashtag=TanStack" target="\_parent">
   <img alt="#TanStack" src="https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack">
@@ -40,7 +40,7 @@ Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [TanStack T
 - Paginated + Cursor-based Queries
 - Load-More + Infinite Scroll Queries w/ Scroll Recovery
 - Request Cancellation
-- [React Suspense](https://react.dev/reference/react/Suspense) + Fetch-As-You-Render Query Prefetching
+- [Preact Suspense](https://preactjs.com/guide/v10/api-reference/#suspense) + Fetch-As-You-Render Query Prefetching -- Though not recommended because of the bulk preact/compat adds
 - Dedicated Devtools
 
 ### [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)

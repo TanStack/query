@@ -12,7 +12,7 @@ import {
 import type { hydrate } from '@tanstack/query-core'
 import { startTransition, Suspense } from 'preact/compat'
 
-describe('React hydration', () => {
+describe('Preact hydration', () => {
   let stringifiedState: string
 
   beforeEach(async () => {
@@ -97,7 +97,7 @@ describe('React hydration', () => {
     queryClientOuter.clear()
   })
 
-  describe('ReactQueryCacheProvider with hydration support', () => {
+  describe('PreactQueryCacheProvider with hydration support', () => {
     test('should hydrate new queries if queries change', async () => {
       const dehydratedState = JSON.parse(stringifiedState)
       const queryClient = new QueryClient()
