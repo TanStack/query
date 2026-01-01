@@ -7,6 +7,7 @@ packages:
   - 'integrations/*'
   - 'examples/angular/*'
   - 'examples/react/*'
+  - 'examples/preact/*'
   - 'examples/solid/*'
   - 'examples/svelte/*'
   - 'examples/vue/*'
