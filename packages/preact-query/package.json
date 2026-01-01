@@ -76,8 +76,7 @@
     "npm-run-all2": "^5.0.0",
     "preact": "^10.28.0",
     "preact-iso": "^2.11.1",
-    "preact-render-to-string": "^6.6.4",
-    "typescript-eslint": "^8.50.0"
+    "preact-render-to-string": "^6.6.4"
   },
   "peerDependencies": {
     "preact": "^10.0.0"
