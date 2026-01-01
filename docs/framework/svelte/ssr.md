@@ -34,7 +34,7 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 
 Svelte Query supports two ways of prefetching data on the server and passing that to the client with SvelteKit.
 
-If you wish to view the ideal SSR setup, please have a look at the [SSR example](../examples/ssr).
+If you wish to view the ideal SSR setup, please have a look at the [SSR example](./examples/ssr).
 
 ### Using `initialData`
 

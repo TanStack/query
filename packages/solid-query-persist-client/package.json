@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/solid-query-persist-client",
-  "version": "5.90.3",
+  "version": "5.90.19",
   "description": "Solid.js bindings to work with persisters in TanStack/solid-query",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/solid-query-persist-client"
   },
   "homepage": "https://tanstack.com/query",

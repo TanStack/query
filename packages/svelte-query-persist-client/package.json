@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/svelte-query-persist-client",
-  "version": "6.0.0",
+  "version": "6.0.16",
   "description": "Svelte bindings to work with persisters in TanStack/svelte-query",
   "author": "Lachlan Collins",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/svelte-query-persist-client"
   },
   "homepage": "https://tanstack.com/query",
@@ -57,7 +57,7 @@
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/svelte-query": "workspace:*",
     "@testing-library/svelte": "^5.2.8",
-    "@typescript-eslint/parser": "^8.44.1",
+    "@typescript-eslint/parser": "^8.48.0",
     "eslint-plugin-svelte": "^3.11.0",
     "svelte": "^5.39.3",
     "svelte-check": "^4.3.1"

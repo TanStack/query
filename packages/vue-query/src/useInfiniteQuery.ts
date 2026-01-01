@@ -44,7 +44,8 @@ export type UseInfiniteQueryOptions<
             TQueryFnData,
             TError,
             TData,
-            DeepUnwrapRef<TQueryKey>
+            DeepUnwrapRef<TQueryKey>,
+            TPageParam
           >[Property]
         >
       : MaybeRefDeep<

@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "5.90.2",
+  "version": "6.1.3",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/vue-query-devtools"
   },
   "homepage": "https://tanstack.com/query",

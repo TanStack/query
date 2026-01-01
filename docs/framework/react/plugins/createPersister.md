@@ -170,6 +170,13 @@ export interface StoragePersisterOptions {
    */
   prefix?: string
   /**
+   * If set to `true`, the query will refetch on successful query restoration if the data is stale.
+   * If set to `false`, the query will not refetch on successful query restoration.
+   * If set to `'always'`, the query will always refetch on successful query restoration.
+   * Defaults to `true`.
+   */
+  refetchOnRestore?: boolean | 'always'
+  /**
    * Filters to narrow down which Queries should be persisted.
    */
   filters?: QueryFilters
@@ -191,5 +198,6 @@ The default options are:
   maxAge = 1000 * 60 * 60 * 24,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
+  refetchOnRestore = true,
 }
 ```

@@ -4,7 +4,7 @@ import type {
   DevtoolsErrorType,
   DevtoolsPosition,
 } from '@tanstack/query-devtools'
-import type { DeveloperToolsFeature } from '../providers'
+import type { DevtoolsFeature } from '../providers'
 
 /**
  * Options for configuring withDevtools.
@@ -104,4 +104,4 @@ export type WithDevtoolsFn = (...deps: Array<any>) => DevtoolsOptions
 export type WithDevtools = (
   withDevtoolsFn?: WithDevtoolsFn,
   options?: WithDevtoolsOptions,
-) => DeveloperToolsFeature
+) => DevtoolsFeature

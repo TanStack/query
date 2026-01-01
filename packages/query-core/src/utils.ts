@@ -14,6 +14,17 @@ import type {
 
 // TYPES
 
+type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
+  ...infer R,
+  unknown,
+]
+  ? readonly [...R]
+  : never
+
+type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
+  ? readonly []
+  : TuplePrefixes<DropLast<T>> | T
+
 export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
@@ -30,7 +41,7 @@ export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Include queries matching this query key
    */
-  queryKey?: TQueryKey
+  queryKey?: TQueryKey | TuplePrefixes<TQueryKey>
   /**
    * Include or exclude stale queries
    */
@@ -60,7 +71,7 @@ export interface MutationFilters<
   /**
    * Include mutations matching this mutation key
    */
-  mutationKey?: MutationKey
+  mutationKey?: TuplePrefixes<MutationKey>
   /**
    * Filter by mutation status
    */
@@ -493,4 +504,34 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   }
 
   return !!throwOnError
+}
+
+export function addConsumeAwareSignal<T>(
+  object: T,
+  getSignal: () => AbortSignal,
+  onCancelled: VoidFunction,
+): T & { signal: AbortSignal } {
+  let consumed = false
+  let signal: AbortSignal | undefined
+
+  Object.defineProperty(object, 'signal', {
+    enumerable: true,
+    get: () => {
+      signal ??= getSignal()
+      if (consumed) {
+        return signal
+      }
+
+      consumed = true
+      if (signal.aborted) {
+        onCancelled()
+      } else {
+        signal.addEventListener('abort', onCancelled, { once: true })
+      }
+
+      return signal
+    },
+  })
+
+  return object as T & { signal: AbortSignal }
 }
