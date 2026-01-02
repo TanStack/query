@@ -126,7 +126,11 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
-    const promise = fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    const promise = fetchOptimistic(
+      defaultedOptions,
+      observer,
+      errorResetBoundary,
+    )
     suspend(promise)
     observer.updateResult()
   }
