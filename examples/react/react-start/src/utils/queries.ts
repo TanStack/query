@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions } from '@tanstack/react-query'
 
 export async function fetchProjects(): Promise<
   Array<{ name: string; full_name: string }>
@@ -12,10 +12,11 @@ export async function fetchProjects(): Promise<
   return await response.json()
 }
 
-export const projectsQuery = () => queryOptions({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-})
+export const projectsQuery = () =>
+  queryOptions({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+  })
 
 export async function fetchProject(id: string): Promise<{
   full_name: string
@@ -30,7 +31,8 @@ export async function fetchProject(id: string): Promise<{
   return await response.json()
 }
 
-export const projectQuery = (id: string) => queryOptions({
-  queryKey: ['project', id],
-  queryFn: () => fetchProject(id),
-})
+export const projectQuery = (id: string) =>
+  queryOptions({
+    queryKey: ['project', id],
+    queryFn: () => fetchProject(id),
+  })

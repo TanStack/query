@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import {  noop, notifyManager } from '@tanstack/query-core'
+import { noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -15,7 +15,6 @@ import {
   fetchOptimistic,
   shouldSuspend,
   suspend,
-
 } from './suspense'
 import type {
   QueryClient,
@@ -131,9 +130,9 @@ export function useBaseQuery<
         fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
       : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
         query?.promise
-        if (promise) {
-          suspend(promise, defaultedOptions.queryHash)
-        }
+    if (promise) {
+      suspend(promise, defaultedOptions.queryHash)
+    }
   }
   console.debug(`${defaultedOptions.queryHash} after suspend. Result:`, result)
 

@@ -12,7 +12,10 @@ import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 /**
  * TODO (v6): Bump peer dependency to React 19 and use `React.use` directly.
  */
-export function suspend<T extends Promise<unknown>>(promise: T, debugId?: string): void {
+export function suspend<T extends Promise<unknown>>(
+  promise: T,
+  debugId?: string,
+): void {
   if (typeof React.use === 'function') {
     console.debug(`Suspending ${debugId} using React.use`)
     // `React.use` can be called conditionally

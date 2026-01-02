@@ -7,7 +7,7 @@ import Spinner from '../components/Spinner'
 export const Route = createFileRoute('/')({
   component: RouteComponent,
   // pendingComponent: () => <div>Loading projects...</div>,
-  wrapInSuspense: false
+  wrapInSuspense: false,
 })
 
 function RouteComponent() {

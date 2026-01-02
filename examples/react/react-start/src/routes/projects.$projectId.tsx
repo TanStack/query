@@ -15,7 +15,7 @@ function RouteComponent() {
   return (
     <div>
       <h1>TanStack Repositories</h1>
-      <Link to='/'>Back</Link>
+      <Link to="/">Back</Link>
       <h1>
         {projectId} {isFetching ? <Spinner /> : null}
       </h1>
