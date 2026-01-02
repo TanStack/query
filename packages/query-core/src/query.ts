@@ -729,7 +729,7 @@ function getDefaultState<
   const hasData = data !== undefined
 
   const initialDataUpdatedAt = hasData
-    ? (resolveOption(options.initialDataUpdatedAt) as number | undefined)
+    ? resolveOption(options.initialDataUpdatedAt)
     : 0
 
   return {
