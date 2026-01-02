@@ -114,7 +114,7 @@ export function streamedQuery<
 
     // finalize result: replace-refetching needs to write to the cache
     if (isReplaceRefetch && !cancelled) {
-      context.client.setQueryData<TData>(context.queryKey, result)
+      context.client.setQueryData<TData>(context.queryKey, () => result)
     }
 
     return context.client.getQueryData(context.queryKey) ?? initialValue
