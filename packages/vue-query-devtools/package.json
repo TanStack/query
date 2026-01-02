@@ -19,8 +19,7 @@
     "compile": "vue-tsc --build",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "vue-tsc --build",
-    "test:build": "publint --strict && attw --pack",
-    "build": "pnpm run compile && vite build"
+    "test:build": "publint --strict && attw --pack"
   },
   "type": "module",
   "types": "dist/esm/index.d.ts",
