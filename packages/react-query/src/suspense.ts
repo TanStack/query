@@ -1,3 +1,4 @@
+import * as React from 'react'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -7,6 +8,19 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+
+/**
+ * TODO (v6): Bump peer dependency to React 19 and use `React.use` directly.
+ */
+export function suspend<T>(promise: Promise<T>): void {
+  if (typeof React.use === 'function') {
+    // `React.use` can be called conditionally
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    React.use(promise)
+  } else {
+    throw promise
+  }
+}
 
 export const defaultThrowOnError = <
   TQueryFnData = unknown,

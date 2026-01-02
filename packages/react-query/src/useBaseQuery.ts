@@ -14,6 +14,7 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
+  suspend,
   willFetch,
 } from './suspense'
 import type {
@@ -125,7 +126,9 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    const promise = fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    suspend(promise)
+    observer.updateResult()
   }
 
   // Handle error boundary
