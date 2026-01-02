@@ -92,79 +92,51 @@ export function noop(): void
 export function noop(): undefined
 export function noop() {}
 
+type ResolvedValue<TValueOrFn> = TValueOrFn extends (
+  ...args: Array<any>
+) => infer R
+  ? R
+  : TValueOrFn
+
 /**
  * Resolves a value that can either be a direct value or a function that computes the value.
  *
  * This utility eliminates the need for repetitive `typeof value === 'function'` checks
- * throughout the codebase and provides a clean way to handle the common pattern where
- * options can be static values or dynamic functions.
- *
- * The NonFunctionGuard<T> constraint eliminates ambiguity by ensuring T can never be a function
- * type. This makes the value-or-function pattern type-safe and unambiguous.
- *
- * The function provides two overloads: one that includes `| undefined` for optional values
- * (where the value might not be provided), and another without `| undefined` for required
- * values. This allows proper type inference for both optional config parameters and
- * required ones while maintaining type safety.
- *
- * @template T - The type of the resolved value (constrained to non-function types)
- * @template TArgs - Array of argument types when resolving function variants
- * @param value - Either a direct value of type T or a function that returns T
- * @param args - Arguments to pass to the function if value is a function
- * @returns The resolved value of type T
+ * throughout the codebase. It uses input-driven type inference, meaning it infers the
+ * return type from the actual input type rather than requiring explicit generic constraints.
  *
  * @example
  * ```ts
  * // Zero-argument function resolution (like initialData)
  * const initialData: string | (() => string) = 'hello'
- * const resolved = resolveOption(initialData) // 'hello'
+ * const resolved = resolveOption(initialData) // string
  *
- * const initialDataFn: string | (() => string) = () => 'world'
- * const resolved2 = resolveOption(initialDataFn) // 'world'
- * ```
- *
- * @example
- * ```ts
  * // Function with arguments (like staleTime, retryDelay)
- * const staleTime: number | ((query: Query) => number) = (query) => query.state.dataUpdatedAt + 5000
+ * const staleTime: number | ((query: Query) => number) = 1000
  * const resolved = resolveOption(staleTime, query) // number
  *
- * const retryDelay: number | ((failureCount: number, error: Error) => number) = 1000
- * const resolved2 = resolveOption(retryDelay, 3, new Error()) // 1000
+ * // Works with generics (TData, TQueryData, etc.)
+ * const placeholderData: TData | ((prev: TData) => TData) = ...
+ * const resolved = resolveOption(placeholderData, prevData) // TData
  * ```
  *
- * @example
- * ```ts
- * // Replaces verbose patterns like:
- * // const delay = typeof retryDelay === 'function'
- * //   ? retryDelay(failureCount, error)
- * //   : retryDelay
- *
- * // With:
- * const delay = resolveOption(retryDelay, failureCount, error)
- * ```
+ * @remarks
+ * If the resolved value itself needs to be a function, wrap it:
+ * `resolveOption(() => myFunction)` or `setQueryData(key, () => myFunction)`
  */
-export function resolveOption<T, TArgs extends Array<any>>(
-  valueOrFn: NonFunctionGuard<T> | ((...args: TArgs) => T) | undefined,
-  ...args: TArgs
-): T | undefined
-// Overload for when value is guaranteed to be present
-export function resolveOption<T, TArgs extends Array<any>>(
-  valueOrFn: NonFunctionGuard<T> | ((...args: TArgs) => T),
-  ...args: TArgs
-): T
-// Implementation
-export function resolveOption<T, TArgs extends Array<any>>(
-  valueOrFn: NonFunctionGuard<T> | ((...args: TArgs) => T) | undefined,
-  ...args: TArgs
-): T | undefined {
-  if (typeof valueOrFn === 'function') {
-    // Because of our NonFunctionGuard<T> utility, TypeScript now correctly
-    // infers that if valueOrFn is a function, it must be the producer `(...args: TArgs) => T`.
-    return (valueOrFn as (...args: TArgs) => T)(...args)
-  }
-  // If it's not a function, it must be of type T or undefined.
-  return valueOrFn as T | undefined
+export function resolveOption<TValueOrFn>(
+  valueOrFn: TValueOrFn,
+  ...args: Array<unknown>
+): ResolvedValue<TValueOrFn>
+export function resolveOption<TValueOrFn>(
+  valueOrFn: TValueOrFn | undefined,
+  ...args: Array<unknown>
+): ResolvedValue<TValueOrFn> | undefined
+export function resolveOption(
+  valueOrFn: unknown,
+  ...args: Array<unknown>
+): unknown {
+  return typeof valueOrFn === 'function' ? valueOrFn(...args) : valueOrFn
 }
 
 export function isValidTimeout(value: unknown): value is number {

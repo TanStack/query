@@ -724,12 +724,12 @@ function getDefaultState<
 >(
   options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): QueryState<TData, TError> {
-  const data = resolveOption(options.initialData)
+  const data = resolveOption(options.initialData) as TData | undefined
 
   const hasData = data !== undefined
 
   const initialDataUpdatedAt = hasData
-    ? resolveOption(options.initialDataUpdatedAt)
+    ? (resolveOption(options.initialDataUpdatedAt) as number | undefined)
     : 0
 
   return {
