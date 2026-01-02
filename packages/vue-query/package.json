@@ -33,8 +33,7 @@
     "test:lib:2.7": "vue-demi-switch 2.7 vue2.7 && vitest",
     "test:lib:3": "vue-demi-switch 3 && vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
-    "build": "tsup --tsconfig tsconfig.prod.json"
+    "test:build": "publint --strict && attw --pack"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",

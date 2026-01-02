@@ -91,4 +91,8 @@ function Example() {
 }
 
 const rootElement = document.getElementById('root') as HTMLElement
-ReactDOM.createRoot(rootElement).render(<App />)
+ReactDOM.createRoot(rootElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)

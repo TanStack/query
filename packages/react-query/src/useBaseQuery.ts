@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { isServer, noop, notifyManager } from '@tanstack/query-core'
+import { noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -14,7 +14,7 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
-  willFetch,
+  suspend,
 } from './suspense'
 import type {
   QueryClient,
@@ -125,8 +125,16 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    const promise = isNewCacheEntry
+      ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
+        fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+      : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
+        query?.promise
+    if (promise) {
+      suspend(promise, defaultedOptions.queryHash)
+    }
   }
+  console.debug(`${defaultedOptions.queryHash} after suspend. Result:`, result)
 
   // Handle error boundary
   if (
@@ -146,22 +154,22 @@ export function useBaseQuery<
     result,
   )
 
-  if (
-    defaultedOptions.experimental_prefetchInRender &&
-    !isServer &&
-    willFetch(result, isRestoring)
-  ) {
-    const promise = isNewCacheEntry
-      ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
-        fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
-      : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-        query?.promise
+  // if (
+  //   defaultedOptions.experimental_prefetchInRender &&
+  //   !isServer &&
+  //   willFetch(result, isRestoring)
+  // ) {
+  //   const promise = isNewCacheEntry
+  //     ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
+  //       fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+  //     : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
+  //       query?.promise
 
-    promise?.catch(noop).finally(() => {
-      // `.updateResult()` will trigger `.#currentThenable` to finalize
-      observer.updateResult()
-    })
-  }
+  //   promise?.catch(noop).finally(() => {
+  //     // `.updateResult()` will trigger `.#currentThenable` to finalize
+  //     observer.updateResult()
+  //   })
+  // }
 
   // Handle result property usage tracking
   return !defaultedOptions.notifyOnChangeProps
