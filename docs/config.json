@@ -1038,6 +1038,14 @@
         {
           "label": "Infinite Query Property Order",
           "to": "eslint/infinite-query-property-order"
+        },
+        {
+          "label": "No void Query Functions",
+          "to": "eslint/no-void-query-fn"
+        },
+        {
+          "label": "Mutation Property Order",
+          "to": "eslint/mutation-property-order"
         }
       ]
     },
