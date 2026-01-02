@@ -1,10 +1,10 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig, ViteUserConfig } from 'vitest/config'
 import preact from '@preact/preset-vite'
 
 import packageJson from './package.json'
 
 export default defineConfig({
-  plugins: [preact() as any],
+  plugins: [preact() as ViteUserConfig['plugins']],
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
     conditions: ['@tanstack/custom-condition'],
