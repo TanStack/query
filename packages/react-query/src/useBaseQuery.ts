@@ -131,8 +131,7 @@ export function useBaseQuery<
       observer,
       errorResetBoundary,
     )
-    suspend(promise)
-    observer.updateResult()
+    suspend(promise.finally(() => observer.updateResult()))
   }
 
   // Handle error boundary
