@@ -278,14 +278,22 @@ export class Mutation<
           this as Mutation<unknown, unknown, unknown, unknown>,
           mutationFnContext,
         )
+      } catch (e) {
+        void Promise.reject(e)
+      }
 
+      try {
         await this.options.onError?.(
           error as TError,
           variables,
           this.state.context,
           mutationFnContext,
         )
+      } catch (e) {
+        void Promise.reject(e)
+      }
 
+      try {
         // Notify cache callback
         await this.#mutationCache.config.onSettled?.(
           undefined,
@@ -295,7 +303,11 @@ export class Mutation<
           this as Mutation<unknown, unknown, unknown, unknown>,
           mutationFnContext,
         )
+      } catch (e) {
+        void Promise.reject(e)
+      }
 
+      try {
         await this.options.onSettled?.(
           undefined,
           error as TError,
@@ -303,10 +315,12 @@ export class Mutation<
           this.state.context,
           mutationFnContext,
         )
-        throw error
-      } finally {
-        this.#dispatch({ type: 'error', error: error as TError })
+      } catch (e) {
+        void Promise.reject(e)
       }
+
+      this.#dispatch({ type: 'error', error: error as TError })
+      throw error
     } finally {
       this.#mutationCache.runNext(this)
     }

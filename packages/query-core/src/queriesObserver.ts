@@ -107,7 +107,6 @@ export class QueriesObserver<
       const prevObservers = this.#observers
 
       const newObserverMatches = this.#findMatchingObservers(this.#queries)
-      this.#observerMatches = newObserverMatches
 
       // set options for the new observers to notify of changes
       newObserverMatches.forEach((match) =>
@@ -135,6 +134,7 @@ export class QueriesObserver<
       if (!hasStructuralChange && !hasResultChange) return
 
       if (hasStructuralChange) {
+        this.#observerMatches = newObserverMatches
         this.#observers = newObservers
       }
 

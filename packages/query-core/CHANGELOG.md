@@ -1,5 +1,23 @@
 # @tanstack/query-core
 
+## 5.90.16
+
+### Patch Changes
+
+- fix useQueries race condition on queries length change (#9971) ([#9973](https://github.com/TanStack/query/pull/9973))
+
+## 5.90.15
+
+### Patch Changes
+
+- Fix: Always treat existing data as stale when query goes into error state. ([#9927](https://github.com/TanStack/query/pull/9927))
+
+## 5.90.14
+
+### Patch Changes
+
+- Fix streamedQuery reducer being called twice ([#9970](https://github.com/TanStack/query/pull/9970))
+
 ## 5.90.13
 
 ### Patch Changes
