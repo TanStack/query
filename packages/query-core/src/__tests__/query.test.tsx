@@ -153,6 +153,33 @@ describe('query', () => {
     onlineMock.mockRestore()
   })
 
+  it('should pass a 1-based failureCount to retry callbacks', async () => {
+    const key = queryKey()
+    const failureCounts: number[] = []
+    let attempt = 0
+
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: () => {
+        attempt++
+        if (attempt < 3) {
+          throw new Error(`error${attempt}`)
+        }
+        return `data${attempt}`
+      },
+      retry: (failureCount) => {
+        failureCounts.push(failureCount)
+        return failureCount < 3
+      },
+      retryDelay: 1,
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    await expect(promise).resolves.toBe('data3')
+    expect(failureCounts).toEqual([1, 2])
+  })
+
   it('should throw a CancelledError when a paused query is cancelled', async () => {
     const key = queryKey()
 

@@ -10,7 +10,7 @@ You can configure retries both on a global level and an individual query level.
 - Setting `retry = false` will disable retries.
 - Setting `retry = 6` will retry failing requests 6 times before showing the final error thrown by the function.
 - Setting `retry = true` will infinitely retry failing requests.
-- Setting `retry = (failureCount, error) => ...` allows for custom logic based on why the request failed.
+- Setting `retry = (failureCount, error) => ...` allows for custom logic based on why the request failed. The `failureCount` starts at `1` for the first failure.
 
 [//]: # 'Info'
 

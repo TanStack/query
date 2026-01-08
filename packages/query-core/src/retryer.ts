@@ -175,7 +175,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         const shouldRetry =
           retry === true ||
           (typeof retry === 'number' && failureCount < retry) ||
-          (typeof retry === 'function' && retry(failureCount, error))
+          (typeof retry === 'function' && retry(failureCount + 1, error))
 
         if (isRetryCancelled || !shouldRetry) {
           // We are done if the query does not need to be retried

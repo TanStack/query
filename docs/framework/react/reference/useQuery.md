@@ -84,6 +84,7 @@ const {
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
   - If set to a `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
+  - When set to a function, `failureCount` starts at `1` for the first failed attempt.
   - defaults to `3` on the client and `0` on the server
 - `retryOnMount: boolean`
   - If set to `false`, the query will not be retried on mount if it contains an error. Defaults to `true`.
