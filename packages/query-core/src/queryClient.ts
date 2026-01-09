@@ -1,20 +1,13 @@
-import {
-  functionalUpdate,
-  hashKey,
-  hashQueryKeyByOptions,
-  noop,
-  partialMatchKey,
-  resolveStaleTime,
-  skipToken,
-} from './utils'
-import { QueryCache } from './queryCache'
-import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
-import { onlineManager } from './onlineManager'
-import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { MutationCache } from './mutationCache'
+import { notifyManager } from './notifyManager'
+import { onlineManager } from './onlineManager'
+import type { QueryState } from './query'
+import { QueryCache } from './queryCache'
 import type {
   CancelOptions,
+  ClientCacheState,
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
@@ -41,8 +34,18 @@ import type {
   ResetOptions,
   SetDataOptions,
 } from './types'
-import type { QueryState } from './query'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
+import {
+  functionalUpdate,
+  hashKey,
+  hashQueryKeyByOptions,
+  noop,
+  partialMatchKey,
+  resolveStaleTime,
+  skipToken,
+  timeUntilStale,
+} from './utils'
+
 
 // TYPES
 
@@ -65,6 +68,7 @@ export class QueryClient {
   #queryDefaults: Map<string, QueryDefaults>
   #mutationDefaults: Map<string, MutationDefaults>
   #mountCount: number
+  #clientCacheState?: ClientCacheState
   #unsubscribeFocus?: () => void
   #unsubscribeOnline?: () => void
 
@@ -75,6 +79,7 @@ export class QueryClient {
     this.#queryDefaults = new Map()
     this.#mutationDefaults = new Map()
     this.#mountCount = 0
+    this.#clientCacheState = config.clientCacheState
   }
 
   mount(): void {
@@ -377,7 +382,27 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void> {
-    return this.fetchQuery(options).then(noop).catch(noop)
+    const defaultedOptions = this.defaultQueryOptions(options)
+
+    if (this.#clientCacheState && defaultedOptions.staleTime !== undefined) {
+      const queryHash = defaultedOptions.queryHash
+      const clientUpdatedAt = this.#clientCacheState[queryHash]
+      if (
+        clientUpdatedAt !== undefined &&
+        typeof defaultedOptions.staleTime !== 'function'
+      ) {
+        // If the query is static, it is always fresh
+        if (defaultedOptions.staleTime === 'static') {
+          return Promise.resolve()
+        }
+        // If the query is fresh, we can skip the prefetch
+        if (timeUntilStale(clientUpdatedAt, defaultedOptions.staleTime) > 0) {
+          return Promise.resolve()
+        }
+      }
+    }
+
+    return this.fetchQuery(defaultedOptions).then(noop).catch(noop)
   }
 
   fetchInfiniteQuery<

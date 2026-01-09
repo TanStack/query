@@ -1,13 +1,13 @@
 /* istanbul ignore file */
 
-import type { QueryClient } from './queryClient'
 import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
+import type { MutationCache } from './mutationCache'
 import type { FetchDirection, Query, QueryBehavior } from './query'
+import type { QueryCache } from './queryCache'
+import type { QueryClient } from './queryClient'
 import type { RetryDelayValue, RetryValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
-import type { QueryCache } from './queryCache'
-import type { MutationCache } from './mutationCache'
 
 export type NonUndefinedGuard<T> = T extends undefined ? never : T
 
@@ -1352,10 +1352,13 @@ export type MutationObserverResult<
   | MutationObserverErrorResult<TData, TError, TVariables, TOnMutateResult>
   | MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>
 
+export type ClientCacheState = Record<string, number>
+
 export interface QueryClientConfig {
   queryCache?: QueryCache
   mutationCache?: MutationCache
   defaultOptions?: DefaultOptions
+  clientCacheState?: ClientCacheState
 }
 
 export interface DefaultOptions<TError = DefaultError> {
