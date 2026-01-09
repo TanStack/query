@@ -1,18 +1,19 @@
-import { hashQueryKeyByOptions, matchQuery } from './utils'
-import { Query } from './query'
 import { notifyManager } from './notifyManager'
-import { Subscribable } from './subscribable'
-import type { QueryFilters } from './utils'
 import type { Action, QueryState } from './query'
+import { Query } from './query'
+import type { QueryClient } from './queryClient'
+import type { QueryObserver } from './queryObserver'
+import { Subscribable } from './subscribable'
 import type {
+  ClientCacheState,
   DefaultError,
   NotifyEvent,
   QueryKey,
   QueryOptions,
   WithRequired,
 } from './types'
-import type { QueryClient } from './queryClient'
-import type { QueryObserver } from './queryObserver'
+import type { QueryFilters } from './utils'
+import { hashQueryKeyByOptions, matchQuery } from './utils'
 
 // TYPES
 
@@ -219,5 +220,21 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         query.onOnline()
       })
     })
+  }
+
+  extractClientCacheState(
+    filter?: QueryFilters,
+  ): ClientCacheState {
+    const queries = this.findAll(filter)
+    const state: ClientCacheState = {}
+
+    queries.forEach((query) => {
+      const { queryHash, state: queryState } = query
+      if (queryState.status === 'success') {
+        state[queryHash] = queryState.dataUpdatedAt
+      }
+    })
+
+    return state
   }
 }
