@@ -32,7 +32,7 @@ import type {
   RefetchOptions,
   RefetchQueryFilters,
   ResetOptions,
-  SetDataOptions,
+  SetDataOptions
 } from './types'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 import {
@@ -384,22 +384,13 @@ export class QueryClient {
   ): Promise<void> {
     const defaultedOptions = this.defaultQueryOptions(options)
 
-    if (this.#clientCacheState && defaultedOptions.staleTime !== undefined) {
-      const queryHash = defaultedOptions.queryHash
-      const clientUpdatedAt = this.#clientCacheState[queryHash]
-      if (
-        clientUpdatedAt !== undefined &&
-        typeof defaultedOptions.staleTime !== 'function'
-      ) {
-        // If the query is static, it is always fresh
-        if (defaultedOptions.staleTime === 'static') {
-          return Promise.resolve()
-        }
-        // If the query is fresh, we can skip the prefetch
-        if (timeUntilStale(clientUpdatedAt, defaultedOptions.staleTime) > 0) {
-          return Promise.resolve()
-        }
-      }
+    if (
+      this.#shouldSkipPrefetch(
+        defaultedOptions.queryHash,
+        defaultedOptions.staleTime,
+      )
+    ) {
+      return Promise.resolve()
     }
 
     return this.fetchQuery(defaultedOptions).then(noop).catch(noop)
@@ -444,6 +435,17 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<void> {
+    const defaultedOptions = this.defaultQueryOptions(options as any)
+
+    if (
+      this.#shouldSkipPrefetch(
+        defaultedOptions.queryHash,
+        defaultedOptions.staleTime,
+      )
+    ) {
+      return Promise.resolve()
+    }
+
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
@@ -669,5 +671,35 @@ export class QueryClient {
   clear(): void {
     this.#queryCache.clear()
     this.#mutationCache.clear()
+  }
+
+  #shouldSkipPrefetch(
+    queryHash: string,
+    staleTime: any,
+  ): boolean {
+    if (!this.#clientCacheState || staleTime === undefined) {
+      return false
+    }
+
+    const clientUpdatedAt = this.#clientCacheState[queryHash]
+    
+    // If client doesn't have the data, we can't skip
+    if (clientUpdatedAt === undefined) {
+      return false
+    }
+
+    // If staleTime is a function, we cannot determine freshness without building the Query instance.
+    // To keep this optimization cheap (avoiding Query instantiation), we skip the optimization for function staleTimes.
+    if (typeof staleTime === 'function') {
+      return false
+    }
+
+    // If the query is static, it is always fresh
+    if (staleTime === 'static') {
+      return true
+    }
+
+    // If the query is fresh, we can skip the prefetch
+    return timeUntilStale(clientUpdatedAt, staleTime) > 0
   }
 }

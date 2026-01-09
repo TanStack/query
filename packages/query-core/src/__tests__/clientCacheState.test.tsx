@@ -24,16 +24,12 @@ describe('Client Cache State', () => {
     expect(fetchCount).toBe(1)
   })
 
-  // This test describes the DESIRED behavior, which is currently NOT implemented.
-  // It is expected to FAIL until we implement the changes.
-  it('should SKIP prefetch when client has fresh data (Simulated)', async () => {
-    // 1. Simulate hypothetical QueryClient with clientCacheState
-    // We haven't implemented the types yet, so we cast to any or expect it to be ignored for now.
+  it('should SKIP prefetch when client has fresh data', async () => {
+    // 1. Initialize QueryClient with clientCacheState indicating fresh data
     const clientCacheState = {
-      '["test-optim"]': Date.now(), // Client has fresh data right now
+      '["test-optim"]': Date.now(),
     }
     
-    // @ts-ignore - API not implemented yet
     const queryClient = new QueryClient({ clientCacheState })
     
     const key = ['test-optim']
@@ -49,14 +45,37 @@ describe('Client Cache State', () => {
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn,
-      staleTime: 5000, // 5 seconds stale time
+      staleTime: 5000,
     })
 
-    // CURRENT BEHAVIOR: fetchCount is 1 (Server fetches anyway)
-    // DESIRED BEHAVIOR: fetchCount should be 0 (Server skips because client has it)
+    expect(fetchCount).toBe(0)
+  })
+
+  it('should SKIP prefetchInfiniteQuery when client has fresh data', async () => {
+    const clientCacheState = {
+      '["test-infinite-optim"]': Date.now(),
+    }
     
-    // We expect this to equal 0 if our feature is working.
-    // For now, let's assert 0 and see it fail, proving the need for the feature.
+    const queryClient = new QueryClient({ clientCacheState })
+    
+    const key = ['test-infinite-optim']
+    const serverData = 'server-data'
+    let fetchCount = 0
+
+    const queryFn = async () => {
+      fetchCount++
+      await sleep(10)
+      return serverData
+    }
+
+    await queryClient.prefetchInfiniteQuery({
+      queryKey: key,
+      queryFn,
+      initialPageParam: 0,
+      getNextPageParam: () => undefined,
+      staleTime: 5000,
+    })
+
     expect(fetchCount).toBe(0)
   })
 })
