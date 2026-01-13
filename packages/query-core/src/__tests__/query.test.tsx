@@ -1065,7 +1065,7 @@ describe('query', () => {
     const data = {
       get foo(): void {
         return this.foo
-      }
+      },
     }
 
     queryFn.mockImplementation(() => sleep(10).then(() => data))
