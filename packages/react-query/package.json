@@ -49,7 +49,7 @@
     "@types/jscodeshift": "^0.11.3",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
-    "@types/use-sync-external-store": "^0.0.3",
+    "@types/use-sync-external-store": "^1.5.0",
     "react": "^19.1.1",
     "react-17": "npm:react@^17.0.2",
     "react-18": "npm:react@^18.2.0",
@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "use-sync-external-store": "^1.2.0"
+    "use-sync-external-store": "^1.6.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
