@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Start Nx Agents
-        run: npx nx-cloud start-ci-run
+        run: npx nx-cloud@16.3.0 start-ci-run
       - name: Setup Tools
         uses: tanstack/config/.github/setup@main
       - name: Get base and head commits for `nx affected`
@@ -30,7 +30,7 @@ jobs:
       - name: Run Tests
         run: pnpm run test:pr --parallel=3
       - name: Stop Agents
-        run: npx nx-cloud stop-all-agents
+        run: npx nx-cloud@16.3.0 stop-all-agents
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
   format:
