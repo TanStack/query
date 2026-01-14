@@ -1,0 +1,164 @@
+import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { reactive, ref } from 'vue-demi'
+import { useIsMutating, useMutationState } from '../useMutationState'
+import { useMutation } from '../useMutation'
+import { mutationOptions } from '../mutationOptions'
+import type {
+  DefaultError,
+  MutationFunctionContext,
+  MutationState,
+} from '@tanstack/query-core'
+
+describe('mutationOptions', () => {
+  it('should not allow excess properties', () => {
+    // @ts-expect-error this is a good error, because onMutates does not exist!
+    mutationOptions({
+      mutationFn: () => Promise.resolve(5),
+      mutationKey: ['key'],
+      onMutates: 1000,
+      onSuccess: (data) => {
+        expectTypeOf(data).toEqualTypeOf<number>()
+      },
+    })
+  })
+
+  it('should infer types for callbacks', () => {
+    mutationOptions({
+      mutationFn: () => Promise.resolve(5),
+      mutationKey: ['key'],
+      onSuccess: (data) => {
+        expectTypeOf(data).toEqualTypeOf<number>()
+      },
+    })
+  })
+
+  it('should infer types for onError callback', () => {
+    mutationOptions({
+      mutationFn: () => {
+        throw new Error('fail')
+      },
+      mutationKey: ['key'],
+      onError: (error) => {
+        expectTypeOf(error).toEqualTypeOf<DefaultError>()
+      },
+    })
+  })
+
+  it('should infer types for variables', () => {
+    mutationOptions<number, DefaultError, { id: string }>({
+      mutationFn: (vars) => {
+        expectTypeOf(vars).toEqualTypeOf<{ id: string }>()
+        return Promise.resolve(5)
+      },
+      mutationKey: ['with-vars'],
+    })
+  })
+
+  it('should infer result type correctly', () => {
+    mutationOptions<number, DefaultError, void, { name: string }>({
+      mutationFn: () => Promise.resolve(5),
+      mutationKey: ['key'],
+      onMutate: () => {
+        return { name: 'onMutateResult' }
+      },
+      onSuccess: (_data, _variables, onMutateResult) => {
+        expectTypeOf(onMutateResult).toEqualTypeOf<{ name: string }>()
+      },
+    })
+  })
+
+  it('should infer context type correctly', () => {
+    mutationOptions<number>({
+      mutationFn: (_variables, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+        return Promise.resolve(5)
+      },
+      mutationKey: ['key'],
+      onMutate: (_variables, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onError: (_error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+      onSettled: (_data, _error, _variables, _onMutateResult, context) => {
+        expectTypeOf(context).toEqualTypeOf<MutationFunctionContext>()
+      },
+    })
+  })
+
+  it('should error if mutationFn return type mismatches TData', () => {
+    assertType(
+      mutationOptions<number>({
+        // @ts-expect-error this is a good error, because return type is string, not number
+        mutationFn: async () => Promise.resolve('wrong return'),
+      }),
+    )
+  })
+
+  it('should allow mutationKey to be omitted', () => {
+    return mutationOptions({
+      mutationFn: () => Promise.resolve(123),
+      onSuccess: (data) => {
+        expectTypeOf(data).toEqualTypeOf<number>()
+      },
+    })
+  })
+
+  it('should infer types when used with useMutation', () => {
+    const mutation = reactive(
+      useMutation(
+        mutationOptions({
+          mutationKey: ['key'],
+          mutationFn: () => Promise.resolve('data'),
+          onSuccess: (data) => {
+            expectTypeOf(data).toEqualTypeOf<string>()
+          },
+        }),
+      ),
+    )
+    expectTypeOf(mutation.data).toEqualTypeOf<string | undefined>()
+
+    reactive(
+      useMutation(
+        // should allow when used with useMutation without mutationKey
+        mutationOptions({
+          mutationFn: () => Promise.resolve('data'),
+          onSuccess: (data) => {
+            expectTypeOf(data).toEqualTypeOf<string>()
+          },
+        }),
+      ),
+    )
+  })
+
+  it('should infer types when used with useIsMutating', () => {
+    const isMutating = useIsMutating({
+      mutationKey: ['key'],
+    })
+    expectTypeOf(isMutating.value).toEqualTypeOf<number>()
+  })
+
+  it('should infer types when used with useMutationState', () => {
+    const mutationState = useMutationState({
+      filters: {
+        mutationKey: ['key'],
+      },
+    })
+    expectTypeOf(mutationState.value).toEqualTypeOf<
+      Array<MutationState<unknown, Error, unknown, unknown>>
+    >()
+  })
+
+  it('should allow to be passed to useMutation while containing ref in mutationKey', () => {
+    const options = mutationOptions({
+      mutationKey: ['key', ref(1), { nested: ref(2) }],
+      mutationFn: () => Promise.resolve(5),
+    })
+
+    const mutation = reactive(useMutation(options))
+    expectTypeOf(mutation.data).toEqualTypeOf<number | undefined>()
+  })
+})
