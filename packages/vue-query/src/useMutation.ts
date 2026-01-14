@@ -21,7 +21,7 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
 } from '@tanstack/query-core'
-import type { MaybeRefDeep, ShallowOption } from './types'
+import type { MaybeRefDeepOrGetter, ShallowOption } from './types'
 import type { QueryClient } from './queryClient'
 
 type MutationResult<TData, TError, TVariables, TOnMutateResult> =
@@ -39,13 +39,7 @@ export type UseMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TOnMutateResult = unknown,
-> =
-  | MaybeRefDeep<
-      UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult>
-    >
-  | (() => MaybeRefDeep<
-      UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult>
-    >)
+> = MaybeRefDeepOrGetter<UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult>>
 
 type MutateSyncFunction<
   TData = unknown,
