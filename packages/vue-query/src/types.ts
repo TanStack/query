@@ -36,6 +36,8 @@ export type MaybeRefDeep<T> = MaybeRef<
       : T
 >
 
+export type MaybeRefDeepOrGetter<T> = MaybeRefDeep<T> | (() => T)
+
 export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
 
 export type Equal<TTargetA, TTargetB> =
@@ -54,6 +56,10 @@ export type DeepUnwrapRef<T> = T extends UnwrapLeaf
           [Property in keyof T]: DeepUnwrapRef<T[Property]>
         }
       : UnwrapRef<T>
+
+export type DeepUnwrapRefOrGetter<T> = T extends (...args: any) => MaybeRefDeep<any>
+  ? DeepUnwrapRef<ReturnType<T>>
+  : DeepUnwrapRef<T>
 
 export type ShallowOption = {
   /**
