@@ -6,6 +6,21 @@ import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 
 describe('queryOptions', () => {
+  it('should expose queryFn and other properties on the returned options object', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+      staleTime: 1000,
+    })
+
+    // These should be accessible without TS errors (issue #7892)
+    expectTypeOf(options.queryFn).toEqualTypeOf<
+      (() => Promise<number>) | undefined
+    >()
+    expectTypeOf(options.staleTime).toEqualTypeOf<number | undefined>()
+    expectTypeOf(options.queryKey).toMatchTypeOf<readonly unknown[]>()
+  })
+
   it('should not allow excess properties', () => {
     assertType(
       queryOptions({
