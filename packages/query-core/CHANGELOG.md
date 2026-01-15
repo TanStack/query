@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.17
+
+### Patch Changes
+
+- fix(query-core): replaceEqualDeep max depth ([#10032](https://github.com/TanStack/query/pull/10032))
+
 ## 5.90.16
 
 ### Patch Changes
