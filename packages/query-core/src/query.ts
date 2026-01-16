@@ -2,8 +2,7 @@ import {
   ensureQueryFn,
   noop,
   replaceData,
-  resolveEnabled,
-  resolveStaleTime,
+  resolveOption,
   skipToken,
   timeUntilStale,
 } from './utils'
@@ -16,7 +15,6 @@ import type {
   CancelOptions,
   DefaultError,
   FetchStatus,
-  InitialDataFunction,
   OmitKeyof,
   QueryFunctionContext,
   QueryKey,
@@ -267,7 +265,7 @@ export class Query<
 
   isActive(): boolean {
     return this.observers.some(
-      (observer) => resolveEnabled(observer.options.enabled, this) !== false,
+      (observer) => resolveOption(observer.options.enabled, this) !== false,
     )
   }
 
@@ -286,7 +284,7 @@ export class Query<
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) =>
-          resolveStaleTime(observer.options.staleTime, this) === 'static',
+          resolveOption(observer.options.staleTime, this) === 'static',
       )
     }
 
@@ -389,7 +387,7 @@ export class Query<
   ): Promise<TData> {
     if (
       this.state.fetchStatus !== 'idle' &&
-      // If the promise in the retyer is already rejected, we have to definitely
+      // If the promise in the retryer is already rejected, we have to definitely
       // re-start the fetch; there is a chance that the query is still in a
       // pending state when that happens
       this.#retryer?.status() !== 'rejected'
@@ -726,17 +724,12 @@ function getDefaultState<
 >(
   options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): QueryState<TData, TError> {
-  const data =
-    typeof options.initialData === 'function'
-      ? (options.initialData as InitialDataFunction<TData>)()
-      : options.initialData
+  const data = resolveOption(options.initialData) as TData | undefined
 
   const hasData = data !== undefined
 
   const initialDataUpdatedAt = hasData
-    ? typeof options.initialDataUpdatedAt === 'function'
-      ? (options.initialDataUpdatedAt as () => number | undefined)()
-      : options.initialDataUpdatedAt
+    ? resolveOption(options.initialDataUpdatedAt)
     : 0
 
   return {

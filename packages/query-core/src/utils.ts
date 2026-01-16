@@ -1,18 +1,16 @@
 import { timeoutManager } from './timeoutManager'
+import type { Mutation } from './mutation'
+import type { FetchOptions, Query } from './query'
 import type {
   DefaultError,
-  Enabled,
   FetchStatus,
   MutationKey,
   MutationStatus,
+  NonFunctionGuard,
   QueryFunction,
   QueryKey,
   QueryOptions,
-  StaleTime,
-  StaleTimeFunction,
 } from './types'
-import type { Mutation } from './mutation'
-import type { FetchOptions, Query } from './query'
 
 // TYPES
 
@@ -80,7 +78,9 @@ export interface MutationFilters<
   status?: MutationStatus
 }
 
-export type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput)
+export type Updater<TInput, TOutput> =
+  | NonFunctionGuard<TOutput>
+  | ((input: TInput) => TOutput)
 
 export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
@@ -92,13 +92,51 @@ export function noop(): void
 export function noop(): undefined
 export function noop() {}
 
-export function functionalUpdate<TInput, TOutput>(
-  updater: Updater<TInput, TOutput>,
-  input: TInput,
-): TOutput {
-  return typeof updater === 'function'
-    ? (updater as (_: TInput) => TOutput)(input)
-    : updater
+type ResolvedValue<TValueOrFn> = TValueOrFn extends (
+  ...args: Array<any>
+) => infer R
+  ? R
+  : TValueOrFn
+
+/**
+ * Resolves a value that can either be a direct value or a function that computes the value.
+ *
+ * This utility eliminates the need for repetitive `typeof value === 'function'` checks
+ * throughout the codebase. It uses input-driven type inference, meaning it infers the
+ * return type from the actual input type rather than requiring explicit generic constraints.
+ *
+ * @example
+ * ```ts
+ * // Zero-argument function resolution (like initialData)
+ * const initialData: string | (() => string) = 'hello'
+ * const resolved = resolveOption(initialData) // string
+ *
+ * // Function with arguments (like staleTime, retryDelay)
+ * const staleTime: number | ((query: Query) => number) = 1000
+ * const resolved = resolveOption(staleTime, query) // number
+ *
+ * // Works with generics (TData, TQueryData, etc.)
+ * const placeholderData: TData | ((prev: TData) => TData) = ...
+ * const resolved = resolveOption(placeholderData, prevData) // TData
+ * ```
+ *
+ * @remarks
+ * If the resolved value itself needs to be a function, wrap it:
+ * `resolveOption(() => myFunction)` or `setQueryData(key, () => myFunction)`
+ */
+export function resolveOption<TValueOrFn>(
+  valueOrFn: TValueOrFn,
+  ...args: Array<unknown>
+): ResolvedValue<TValueOrFn>
+export function resolveOption<TValueOrFn>(
+  valueOrFn: TValueOrFn | undefined,
+  ...args: Array<unknown>
+): ResolvedValue<TValueOrFn> | undefined
+export function resolveOption(
+  valueOrFn: unknown,
+  ...args: Array<unknown>
+): unknown {
+  return typeof valueOrFn === 'function' ? valueOrFn(...args) : valueOrFn
 }
 
 export function isValidTimeout(value: unknown): value is number {
@@ -107,32 +145,6 @@ export function isValidTimeout(value: unknown): value is number {
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
-}
-
-export function resolveStaleTime<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  staleTime:
-    | undefined
-    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
-  query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): StaleTime | undefined {
-  return typeof staleTime === 'function' ? staleTime(query) : staleTime
-}
-
-export function resolveEnabled<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  enabled: undefined | Enabled<TQueryFnData, TError, TData, TQueryKey>,
-  query: Query<TQueryFnData, TError, TData, TQueryKey>,
-): boolean | undefined {
-  return typeof enabled === 'function' ? enabled(query) : enabled
 }
 
 export function matchQuery(
