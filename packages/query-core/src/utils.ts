@@ -264,11 +264,13 @@ const hasOwn = Object.prototype.hasOwnProperty
  * If not, it will replace any deeply equal children of `b` with those of `a`.
  * This can be used for structural sharing between JSON values for example.
  */
-export function replaceEqualDeep<T>(a: unknown, b: T): T
-export function replaceEqualDeep(a: any, b: any): any {
+export function replaceEqualDeep<T>(a: unknown, b: T, depth?: number): T
+export function replaceEqualDeep(a: any, b: any, depth = 0): any {
   if (a === b) {
     return a
   }
+
+  if (depth > 500) return b
 
   const array = isPlainArray(a) && isPlainArray(b)
 
@@ -303,7 +305,7 @@ export function replaceEqualDeep(a: any, b: any): any {
       continue
     }
 
-    const v = replaceEqualDeep(aItem, bItem)
+    const v = replaceEqualDeep(aItem, bItem, depth + 1)
     copy[key] = v
     if (v === aItem) equalItems++
   }
