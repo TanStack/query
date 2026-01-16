@@ -1,5 +1,11 @@
 # @tanstack/eslint-plugin-query
 
+## 5.91.3
+
+### Patch Changes
+
+- exhaustive-deps rule fixed for vue files ([#10011](https://github.com/TanStack/query/pull/10011))
+
 ## 5.91.2
 
 ### Patch Changes
