@@ -4,6 +4,9 @@
   "nxCloudId": "6412c827e6da5d7b4a0b1fe3",
   "useInferencePlugins": false,
   "parallel": 5,
+  "tui": {
+    "enabled": false
+  },
   "namedInputs": {
     "globalBuildAffectingConfig": [
       "{workspaceRoot}/babel.config.js",
