@@ -26,7 +26,6 @@ import type {
   QueryObserverBaseResult,
   QueryObserverOptions,
   QueryObserverResult,
-  QueryOptions,
   RefetchOptions,
 } from './types'
 
@@ -341,7 +340,7 @@ export class QueryObserver<
 
     // Fetch
     let promise: Promise<TQueryData | undefined> = this.#currentQuery.fetch(
-      this.options as QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
+      this.options,
       fetchOptions,
     )
 
@@ -545,7 +544,7 @@ export class QueryObserver<
     }
 
     if (this.#selectError) {
-      error = this.#selectError as any
+      error = this.#selectError
       data = this.#selectResult
       errorUpdatedAt = Date.now()
       status = 'error'
