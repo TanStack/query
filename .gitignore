@@ -7,15 +7,10 @@ package-lock.json
 yarn.lock
 
 # builds
-types
-*/**/build
-*/**/dist
-*/**/lib
-*/**/es
-artifacts
-.rpt2_cache
+build
 coverage
-*.tgz
+dist
+dist-ts
 
 # misc
 .DS_Store
@@ -35,12 +30,22 @@ stats-hydration.json
 stats.json
 stats.html
 .vscode/settings.json
+.vscode/mcp.json
+.cursor/rules
+.github/instructions/nx.instructions.md
 
 *.log
 *.tsbuildinfo
-.DS_Store
+.angular
 .cache
 .idea
 .nx/cache
 .nx/workspace-data
-nx-cloud.env
+.pnpm-store
+.svelte-kit
+.tsup
+.vinxi
+temp
+
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
