@@ -329,7 +329,12 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
-        streamFn: () => createAsyncNumberGenerator(3),
+        streamFn: (context) => {
+          // just consume the signal
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          const numbers = context.signal ? 3 : 0
+          return createAsyncNumberGenerator(numbers)
+        },
         refetchMode: 'append',
       }),
     })
@@ -420,6 +425,42 @@ describe('streamedQuery', () => {
     })
   })
 
+  test('should not abort when signal not consumed', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        streamFn: () => createAsyncNumberGenerator(3),
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await vi.advanceTimersByTimeAsync(60)
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0],
+    })
+
+    unsubscribe()
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: [0, 1],
+    })
+  })
+
   test('should support custom reducer', async () => {
     const key = queryKey()
 
@@ -494,6 +535,43 @@ describe('streamedQuery', () => {
         1: true,
       },
     })
+
+    unsubscribe()
+  })
+
+  test('should not call reducer twice when refetchMode is replace', async () => {
+    const key = queryKey()
+    const arr: Array<number> = []
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: streamedQuery({
+        streamFn: async function* () {
+          const v = [1, 2, 3]
+          yield* v
+        },
+        reducer: (oldStream, newChunk) => {
+          arr.push(newChunk)
+          return [...oldStream, newChunk]
+        },
+        initialValue: [] as Array<number>,
+        refetchMode: 'replace',
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(arr).toEqual([1, 2, 3])
+    expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
+
+    void observer.refetch()
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(arr).toEqual([1, 2, 3, 1, 2, 3])
+    expect(observer.getCurrentResult().data).toEqual([1, 2, 3])
 
     unsubscribe()
   })

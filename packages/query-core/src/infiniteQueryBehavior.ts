@@ -1,4 +1,9 @@
-import { addToEnd, addToStart, ensureQueryFn } from './utils'
+import {
+  addConsumeAwareSignal,
+  addToEnd,
+  addToStart,
+  ensureQueryFn,
+} from './utils'
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
@@ -23,19 +28,11 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
       const fetchFn = async () => {
         let cancelled = false
         const addSignalProperty = (object: unknown) => {
-          Object.defineProperty(object, 'signal', {
-            enumerable: true,
-            get: () => {
-              if (context.signal.aborted) {
-                cancelled = true
-              } else {
-                context.signal.addEventListener('abort', () => {
-                  cancelled = true
-                })
-              }
-              return context.signal
-            },
-          })
+          addConsumeAwareSignal(
+            object,
+            () => context.signal,
+            () => (cancelled = true),
+          )
         }
 
         const queryFn = ensureQueryFn(context.options, context.fetchOptions)

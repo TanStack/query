@@ -14,6 +14,7 @@
     "test:ci": "nx run-many --targets=test:sherif,test:knip,test:docs,test:eslint,test:lib,test:types,test:build,build",
     "test:eslint": "nx affected --target=test:eslint",
     "test:sherif": "sherif -i typescript -p \"./integrations/*\" -p \"./examples/*\"",
+    "test:size": "size-limit",
     "test:lib": "nx affected --target=test:lib --exclude=examples/**",
     "test:lib:dev": "pnpm run test:lib && nx watch --all -- pnpm run test:lib",
     "test:build": "nx affected --target=test:build --exclude=examples/**",
@@ -34,7 +35,8 @@
     "includedScripts": [
       "test:docs",
       "test:knip",
-      "test:sherif"
+      "test:sherif",
+      "test:size"
     ]
   },
   "devDependencies": {
@@ -42,6 +44,7 @@
     "@changesets/cli": "^2.29.8",
     "@cspell/eslint-plugin": "^9.2.1",
     "@eslint-react/eslint-plugin": "^2.0.1",
+    "@size-limit/preset-small-lib": "^12.0.0",
     "@svitejs/changesets-changelog-github-compact": "^1.2.0",
     "@tanstack/eslint-config": "0.3.2",
     "@tanstack/typedoc-config": "0.3.1",
@@ -66,6 +69,7 @@
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "sherif": "^1.6.1",
+    "size-limit": "^12.0.0",
     "tinyglobby": "^0.2.15",
     "tsup": "^8.4.0",
     "typescript": "5.8.3",

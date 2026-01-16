@@ -1049,21 +1049,14 @@ describe('query', () => {
 
     const queryFn = vi.fn()
 
-    const data: Array<{
-      id: number
-      name: string
-      link: null | { id: number; name: string; link: unknown }
-    }> = Array.from({ length: 5 })
-      .fill(null)
-      .map((_, index) => ({
-        id: index,
-        name: `name-${index}`,
-        link: null,
-      }))
+    const initialData = {
+      foo: 'bar',
+    }
 
-    if (data[0] && data[1]) {
-      data[0].link = data[1]
-      data[1].link = data[0]
+    const data = {
+      get foo(): void {
+        return this.foo
+      },
     }
 
     queryFn.mockImplementation(() => sleep(10).then(() => data))
@@ -1071,7 +1064,7 @@ describe('query', () => {
     queryClient.prefetchQuery({
       queryKey: key,
       queryFn,
-      initialData: structuredClone(data),
+      initialData,
     })
     await vi.advanceTimersByTimeAsync(10)
 

@@ -7,6 +7,8 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
+  useIsFetching,
+  useQueries,
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
@@ -170,6 +172,79 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('page 1')
     expect(queryFn).toHaveBeenCalledTimes(1)
+
+    queryCache.clear()
+  })
+
+  it('useIsFetching should return 0 after prefetch completes', async () => {
+    const key = queryKey()
+    const queryFn = () => sleep(10).then(() => 'data')
+
+    function Page() {
+      const { data } = useQuery({ queryKey: key, queryFn })
+      const isFetching = useIsFetching()
+
+      return (
+        <div>
+          <div>{data}</div>
+          <div>{`isFetching: ${isFetching}`}</div>
+        </div>
+      )
+    }
+
+    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('data')
+    expect(markup).toContain('isFetching: 0')
+
+    queryCache.clear()
+  })
+
+  it('useQueries should return existing data from the cache', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = () => sleep(10).then(() => 'data1')
+    const queryFn2 = () => sleep(10).then(() => 'data2')
+
+    function Page() {
+      const queries = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div>{`status1: ${queries[0].status}`}</div>
+          <div>{`status2: ${queries[1].status}`}</div>
+          <div>{`data1: ${queries[0].data}`}</div>
+          <div>{`data2: ${queries[1].data}`}</div>
+        </div>
+      )
+    }
+
+    queryClient.prefetchQuery({ queryKey: key1, queryFn: queryFn1 })
+    queryClient.prefetchQuery({ queryKey: key2, queryFn: queryFn2 })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('status1: success')
+    expect(markup).toContain('status2: success')
+    expect(markup).toContain('data1: data1')
+    expect(markup).toContain('data2: data2')
 
     queryCache.clear()
   })
