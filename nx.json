@@ -1,31 +1,11 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "affected": {
-    "defaultBase": "main"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx-cloud",
-      "options": {
-        "cacheableOperations": [
-          "test:lib",
-          "test:eslint",
-          "test:types",
-          "test:build",
-          "build:types",
-          "build",
-          "rollup"
-        ],
-        "parallel": 5,
-        "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
-      }
-    }
-  },
-  "defaultBase": "main",
-  "pluginsConfig": {
-    "@nrwl/js": {
-      "analyzeSourceFiles": false
-    }
+  "defaultBase": "v4",
+  "nxCloudId": "6412c827e6da5d7b4a0b1fe3",
+  "useInferencePlugins": false,
+  "parallel": 5,
+  "tui": {
+    "enabled": false
   },
   "namedInputs": {
     "globalBuildAffectingConfig": [
@@ -59,10 +39,12 @@
   "targetDefaults": {
     "test:lib": {
       "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["default", "^public"]
+      "inputs": ["default", "^public"],
+      "cache": true
     },
     "test:eslint": {
-      "inputs": ["default", "^public"]
+      "inputs": ["default", "^public"],
+      "cache": true
     },
     "test:types": {
       "outputs": [
@@ -70,7 +52,8 @@
         "{projectRoot}/build/.tsbuildinfo"
       ],
       "inputs": ["default", "^public"],
-      "dependsOn": ["^test:types"]
+      "dependsOn": ["^test:types"],
+      "cache": true
     },
     "build:types": {
       "outputs": [
@@ -78,11 +61,19 @@
         "{projectRoot}/build/.tsbuildinfo"
       ],
       "inputs": ["default", "^public"],
-      "dependsOn": ["^build:types"]
+      "dependsOn": ["^build:types"],
+      "cache": true
     },
     "test:build": {
       "dependsOn": ["build"],
-      "inputs": ["^public"]
+      "inputs": ["^public"],
+      "cache": true
+    },
+    "build": {
+      "cache": true
+    },
+    "rollup": {
+      "cache": true
     }
   }
 }

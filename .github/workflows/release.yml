@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+    branches: [main, alpha, beta, rc, v4]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NX_CLOUD_DISTRIBUTED_EXECUTION: false
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
+
+jobs:
+  release:
+    name: Release
+    if: github.repository_owner == 'TanStack'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0
+      - name: Setup Tools
+        uses: tanstack/config/.github/setup@main
+      - name: Run Tests
+        run: pnpm run test:ci
+      - name: Run Changesets (version or publish)
+        id: changesets
+        uses: changesets/action@v1.5.3
+        with:
+          version: pnpm run changeset:version
+          publish: pnpm run changeset:publish
+          commit: 'ci: Version Packages (v4)'
+          title: 'ci: Version Packages (v4)'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
