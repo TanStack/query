@@ -25,7 +25,9 @@
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples,scripts}/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
-    "cipublish": "node scripts/publish.mjs"
+    "changeset": "pnpx @changesets/cli",
+    "changeset:version": "changeset version && pnpm install --no-frozen-lockfile && pnpm format",
+    "changeset:publish": "changeset publish --tag=v4"
   },
   "nx": {
     "includedScripts": [
