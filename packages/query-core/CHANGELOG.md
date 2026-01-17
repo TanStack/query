@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.19
+
+### Patch Changes
+
+- fix stable combine reference not updating when queries change dynamically ([#9954](https://github.com/TanStack/query/pull/9954))
+
 ## 5.90.18
 
 ### Patch Changes
