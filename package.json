@@ -26,8 +26,8 @@
     "prettier": "prettier --plugin-search-dir . \"{packages,examples,scripts}/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
     "changeset": "pnpx @changesets/cli",
-    "changeset:version": "changeset version && pnpm install --no-frozen-lockfile && pnpm format",
-    "changeset:publish": "changeset publish --tag=v4"
+    "changeset:version": "pnpx @changesets/cli version && pnpm install --no-frozen-lockfile",
+    "changeset:publish": "pnpx @changesets/cli publish --tag=v4"
   },
   "nx": {
     "includedScripts": [
