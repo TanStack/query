@@ -548,6 +548,45 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
+    {
+      name: 'should pass in Vue file when deps are correctly included (script setup)',
+      filename: 'Component.vue',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query'
+
+        const id = 1
+        useQuery({
+          queryKey: ['entity', id],
+          queryFn: () => fetchEntity(id),
+        })
+      `,
+    },
+    {
+      name: 'should not require imports in queryKey for Vue files',
+      filename: 'Component.vue',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query'
+        import { fetchTodos } from './api'
+
+        useQuery({
+          queryKey: ['todos'],
+          queryFn: () => fetchTodos(),
+        })
+      `,
+    },
+    {
+      name: 'should not require global fetch in queryKey for Vue files',
+      filename: 'Component.vue',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query'
+
+        const id = 1
+        useQuery({
+          queryKey: ['entity', id],
+          queryFn: () => fetch('/api/entity/' + id),
+        })
+      `,
+    },
   ],
   invalid: [
     {
@@ -972,6 +1011,76 @@ ruleTester.run('exhaustive-deps', rule, {
           ],
           messageId: 'missingDeps',
           data: { deps: 'id' },
+        },
+      ],
+    },
+    {
+      name: 'should fail in Vue file when deps are missing (script setup)',
+      filename: 'Component.vue',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query'
+
+        const id = 1
+        useQuery({
+          queryKey: ['entity'],
+          queryFn: () => fetchEntity(id),
+        })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'id' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              data: { result: "['entity', id]" },
+              output: normalizeIndent`
+                import { useQuery } from '@tanstack/vue-query'
+
+                const id = 1
+                useQuery({
+                  queryKey: ['entity', id],
+                  queryFn: () => fetchEntity(id),
+                })
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fail in Vue file when multiple deps are missing',
+      filename: 'Component.vue',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query'
+
+        const userId = 1
+        const orgId = 2
+        useQuery({
+          queryKey: ['users'],
+          queryFn: () => fetchUser(userId, orgId),
+        })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'userId, orgId' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              data: { result: "['users', userId, orgId]" },
+              output: normalizeIndent`
+                import { useQuery } from '@tanstack/vue-query'
+
+                const userId = 1
+                const orgId = 2
+                useQuery({
+                  queryKey: ['users', userId, orgId],
+                  queryFn: () => fetchUser(userId, orgId),
+                })
+              `,
+            },
+          ],
         },
       ],
     },

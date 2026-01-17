@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.18
+
+### Patch Changes
+
+- Align experimental_prefetchInRender promise rejection with Suspense behavior by only throwing when no data is available. ([#10025](https://github.com/TanStack/query/pull/10025))
+
 ## 5.90.17
 
 ### Patch Changes
