@@ -20,7 +20,7 @@
     "@react-native-community/netinfo": "6.0.2",
     "@react-navigation/stack": "^6.0.2",
     "@react-navigation/native": "^6.0.2",
-    "@tanstack/react-query": "^4.42.0",
+    "@tanstack/react-query": "^4.42.1",
     "@tanstack/react-query-devtools": "^4.42.0",
     "expo": "~43.0.2",
     "expo-constants": "~12.1.3",
