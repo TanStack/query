@@ -27,7 +27,7 @@
     "prettier:write": "pnpm run prettier --write",
     "changeset": "pnpx @changesets/cli",
     "changeset:version": "pnpx @changesets/cli version && pnpm install --no-frozen-lockfile",
-    "changeset:publish": "pnpx @changesets/cli publish --tag=v4"
+    "changeset:publish": "pnpx @changesets/cli publish --tag=previous"
   },
   "nx": {
     "includedScripts": [
