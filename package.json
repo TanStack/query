@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@8.5.1",
+  "packageManager": "pnpm@9.5.0",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
@@ -74,8 +74,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "expect-type": "^1.2.1",
     "jest": "^27.5.1",
-    "nx": "16.7.4",
-    "nx-cloud": "16.3.0",
+    "nx": "22.3.3",
     "prettier": "^2.6.2",
     "prettier-plugin-svelte": "^2.9.0",
     "react": "^19.1.1",

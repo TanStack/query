@@ -3,4 +3,5 @@
 **/build
 **/coverage
 **/dist
+**/dist-ts
 **/codemods/**/__testfixtures__

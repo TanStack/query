@@ -1,6 +1,7 @@
-name: pr
+name: PR
 
-on: [pull_request]
+on:
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -17,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
       - name: Start Nx Agents
@@ -25,31 +26,23 @@ jobs:
       - name: Setup Tools
         uses: tanstack/config/.github/setup@main
       - name: Get base and head commits for `nx affected`
-        uses: nrwl/nx-set-shas@v4.1.2
+        uses: nrwl/nx-set-shas@v4.4.0
+        with:
+          main-branch-name: v4
       - name: Run Tests
         run: pnpm run test:pr --parallel=3
       - name: Stop Agents
         run: npx nx-cloud stop-all-agents
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
   format:
     name: Format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4.1.0
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Setup Tools
+        uses: tanstack/config/.github/setup@main
       - name: Run prettier
         run: pnpm run test:format
   test-react-version:
@@ -60,22 +53,15 @@ jobs:
         react-version: [17, 18]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4.1.0
-      - uses: actions/setup-node@v3
+      - name: Setup Tools
+        uses: tanstack/config/.github/setup@main
+      - name: Get base and head commits for `nx affected`
+        uses: nrwl/nx-set-shas@v4.4.0
         with:
-          node-version-file: .nvmrc
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v2
+          main-branch-name: v4
       - name: Run Tests for React ${{ matrix.react-version }}
         uses: nick-fields/retry@v2.8.3
         with:
