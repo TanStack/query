@@ -13,6 +13,11 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
 
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
 jobs:
   release:
     name: Release
