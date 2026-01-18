@@ -8,7 +8,7 @@ replace: { 'React': 'Preact', 'react-query': 'preact-query' }
 [//]: # 'Example2'
 
 ```tsx
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/preact-query'
 import { useState } from 'preact/hooks'
 
 function Todos() {

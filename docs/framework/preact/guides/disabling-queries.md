@@ -33,7 +33,7 @@ function Todos() {
 [//]: # 'Example3'
 
 ```tsx
-import { skipToken, useQuery } from '@tanstack/react-query'
+import { skipToken, useQuery } from '@tanstack/preact-query'
 
 function Todos() {
   const [filter, setFilter] = useState<string | undefined>()
