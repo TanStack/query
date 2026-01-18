@@ -1,6 +1,7 @@
 import {
   Injector,
   NgZone,
+  PendingTasks,
   assertInInjectionContext,
   computed,
   effect,
@@ -16,8 +17,6 @@ import {
   shouldThrowError,
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { PENDING_TASKS } from './pending-tasks-compat'
-import type { PendingTaskRef } from './pending-tasks-compat'
 import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
@@ -59,7 +58,7 @@ export function injectMutation<
   !options?.injector && assertInInjectionContext(injectMutation)
   const injector = options?.injector ?? inject(Injector)
   const ngZone = injector.get(NgZone)
-  const pendingTasks = injector.get(PENDING_TASKS)
+  const pendingTasks = injector.get(PendingTasks)
   const queryClient = injector.get(QueryClient)
 
   /**
@@ -81,6 +80,22 @@ export function injectMutation<
       return (instance ||= new MutationObserver(queryClient, optionsSignal()))
     })
   })()
+
+  let destroyed = false
+  let taskCleanupRef: (() => void) | null = null
+
+  const startPendingTask = () => {
+    if (!taskCleanupRef && !destroyed) {
+      taskCleanupRef = pendingTasks.add()
+    }
+  }
+
+  const stopPendingTask = () => {
+    if (taskCleanupRef) {
+      taskCleanupRef()
+      taskCleanupRef = null
+    }
+  }
 
   const mutateFnSignal = computed<
     CreateMutateFunction<TData, TError, TVariables, TOnMutateResult>
@@ -125,24 +140,19 @@ export function injectMutation<
 
   effect(
     (onCleanup) => {
-      // observer.trackResult is not used as this optimization is not needed for Angular
       const observer = observerSignal()
-      let pendingTaskRef: PendingTaskRef | null = null
 
       untracked(() => {
         const unsubscribe = ngZone.runOutsideAngular(() =>
           observer.subscribe(
             notifyManager.batchCalls((state) => {
               ngZone.run(() => {
-                // Track pending task when mutation is pending
-                if (state.isPending && !pendingTaskRef) {
-                  pendingTaskRef = pendingTasks.add()
-                }
+                if (destroyed) return
 
-                // Clear pending task when mutation is no longer pending
-                if (!state.isPending && pendingTaskRef) {
-                  pendingTaskRef()
-                  pendingTaskRef = null
+                if (state.isPending) {
+                  startPendingTask()
+                } else {
+                  stopPendingTask()
                 }
 
                 if (
@@ -159,11 +169,8 @@ export function injectMutation<
           ),
         )
         onCleanup(() => {
-          // Clean up any pending task on destroy
-          if (pendingTaskRef) {
-            pendingTaskRef()
-            pendingTaskRef = null
-          }
+          destroyed = true
+          stopPendingTask()
           unsubscribe()
         })
       })
@@ -186,10 +193,9 @@ export function injectMutation<
     }
   })
 
-  return signalProxy(resultSignal) as CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  >
+  return signalProxy(resultSignal, [
+    'mutate',
+    'mutateAsync',
+    'reset',
+  ]) as CreateMutationResult<TData, TError, TVariables, TOnMutateResult>
 }

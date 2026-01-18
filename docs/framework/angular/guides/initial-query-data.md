@@ -81,7 +81,7 @@ result = injectQuery(() => ({
 ```ts
 result = injectQuery(() => ({
   queryKey: ['todo', this.todoId()],
-  queryFn: () => fetch('/todos'),
+  queryFn: () => fetch(`/todos/${this.todoId()}`),
   initialData: () => {
     // Use a todo from the 'todos' query as the initial data for this todo query
     return this.queryClient
@@ -99,9 +99,11 @@ result = injectQuery(() => ({
   queryKey: ['todos', this.todoId()],
   queryFn: () => fetch(`/todos/${this.todoId()}`),
   initialData: () =>
-    queryClient.getQueryData(['todos'])?.find((d) => d.id === this.todoId()),
+    this.queryClient
+      .getQueryData(['todos'])
+      ?.find((d) => d.id === this.todoId()),
   initialDataUpdatedAt: () =>
-    queryClient.getQueryState(['todos'])?.dataUpdatedAt,
+    this.queryClient.getQueryState(['todos'])?.dataUpdatedAt,
 }))
 ```
 
@@ -114,7 +116,7 @@ result = injectQuery(() => ({
   queryFn: () => fetch(`/todos/${this.todoId()}`),
   initialData: () => {
     // Get the query state
-    const state = queryClient.getQueryState(['todos'])
+    const state = this.queryClient.getQueryState(['todos'])
 
     // If the query exists and has data that is no older than 10 seconds...
     if (state && Date.now() - state.dataUpdatedAt <= 10 * 1000) {

@@ -35,9 +35,9 @@ const result = injectQuery(() => ({
         instantaneously while they are also re-fetched invisibly in the
         background.
       </p>
-      @if (query.status() === 'pending') {
+      @if (query.isPending()) {
         <div>Loading...</div>
-      } @else if (query.status() === 'error') {
+      } @else if (query.isError()) {
         <div>Error: {{ query.error().message }}</div>
       } @else {
         <!-- 'data' will either resolve to the latest page's data -->
@@ -83,7 +83,7 @@ export class PaginationExampleComponent {
     effect(() => {
       // Prefetch the next page!
       if (!this.query.isPlaceholderData() && this.query.data()?.hasMore) {
-        this.#queryClient.prefetchQuery({
+        this.queryClient.prefetchQuery({
           queryKey: ['projects', this.page() + 1],
           queryFn: () => lastValueFrom(fetchProjects(this.page() + 1)),
         })
