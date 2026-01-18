@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { RuleTester } from '@typescript-eslint/rule-tester'
-import { afterAll, describe, it, test } from 'vitest'
+import { afterAll, describe, it } from 'vitest'
 import { rule } from '../rules/no-void-query-fn/no-void-query-fn.rule'
 import { normalizeIndent } from './test-utils'
 
@@ -18,8 +18,7 @@ const ruleTester = new RuleTester({
   },
 })
 
-test('should run rule tests', () => {
-  ruleTester.run('no-void-query-fn', rule, {
+ruleTester.run('no-void-query-fn', rule, {
     valid: [
       {
         name: 'queryFn returns a value',
@@ -323,5 +322,5 @@ test('should run rule tests', () => {
         errors: [{ messageId: 'noVoidReturn' }],
       },
     ],
-  })
-}, 10_000)
+  },
+)
