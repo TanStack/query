@@ -19,7 +19,6 @@
     "compile": "tsc --build",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
-    "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js --build",
     "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js --build",
