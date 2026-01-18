@@ -19,7 +19,11 @@ export default defineConfig({
     dir: './src',
     watch: false,
     globals: true,
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    coverage: {
+      enabled: true,
+      provider: 'istanbul',
+      include: ['src/**/*.{js,ts,cjs,mjs,jsx,tsx}'],
+    },
     typecheck: { enabled: true },
     restoreMocks: true,
   },
