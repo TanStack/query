@@ -1437,4 +1437,71 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       expect(withinDOM().getByText('hasNextPage: true')).toBeInTheDocument()
     }
   })
+
+  it('should not throw to error boundary for refetch errors in infinite queries', async () => {
+    const key = queryKey()
+    const renderStream = createRenderStream({ snapshotDOM: true })
+
+    function Page() {
+      const query = useInfiniteQuery({
+        queryKey: key,
+        queryFn: async ({ pageParam = 0 }) => {
+          await vi.advanceTimersByTimeAsync(1)
+          if (pageParam === 0) {
+            return { nextCursor: 1, data: 'page-1' }
+          }
+          throw new Error('page error')
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        retry: false,
+      })
+
+      const data = React.use(query.promise)
+
+      return (
+        <div>
+          <div>pages:{data.pages.length}</div>
+          <div>isError:{String(query.isError)}</div>
+          <div>isFetchNextPageError:{String(query.isFetchNextPageError)}</div>
+          <button onClick={() => query.fetchNextPage()}>fetchNext</button>
+        </div>
+      )
+    }
+
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <React.Suspense fallback="loading..">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      </QueryClientProvider>,
+    )
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      expect(withinDOM().getByText('loading..')).toBeInTheDocument()
+    }
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      expect(withinDOM().getByText('pages:1')).toBeInTheDocument()
+      expect(withinDOM().getByText('isError:false')).toBeInTheDocument()
+      expect(
+        withinDOM().getByText('isFetchNextPageError:false'),
+      ).toBeInTheDocument()
+    }
+
+    rendered.getByText('fetchNext').click()
+    await vi.advanceTimersByTimeAsync(1)
+
+    await waitFor(() => {
+      expect(
+        rendered.getByText('isFetchNextPageError:true'),
+      ).toBeInTheDocument()
+    })
+
+    expect(rendered.queryByText('error boundary')).toBeNull()
+  })
 })
