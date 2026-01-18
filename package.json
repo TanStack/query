@@ -73,6 +73,7 @@
     "tinyglobby": "^0.2.15",
     "tsup": "^8.4.0",
     "typescript": "5.8.3",
+    "typescript50": "npm:typescript@5.0",
     "typescript51": "npm:typescript@5.1",
     "typescript52": "npm:typescript@5.2",
     "typescript53": "npm:typescript@5.3",
