@@ -42,7 +42,7 @@ function Projects() {
           {group.data.map((project) => (
             <p key={project.id}>{project.name}</p>
           ))}
-        <div/>
+        </div>
       ))}
       <div>
         <button
