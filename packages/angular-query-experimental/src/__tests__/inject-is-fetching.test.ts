@@ -1,13 +1,9 @@
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { Injector, provideZonelessChangeDetection } from '@angular/core'
+import { Injector } from '@angular/core'
 import { sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  injectIsFetching,
-  injectQuery,
-  provideTanStackQuery,
-} from '..'
+import { QueryClient, injectIsFetching, injectQuery } from '..'
+import { setupTanStackQueryTestBed } from './test-utils'
 
 describe('injectIsFetching', () => {
   let queryClient: QueryClient
@@ -16,12 +12,7 @@ describe('injectIsFetching', () => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
 
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
+    setupTanStackQueryTestBed(queryClient)
   })
 
   afterEach(() => {
