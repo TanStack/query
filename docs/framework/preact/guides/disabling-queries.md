@@ -29,7 +29,6 @@ function Todos() {
 ```
 
 [//]: # 'Example2'
-
 [//]: # 'Example3'
 
 ```tsx
