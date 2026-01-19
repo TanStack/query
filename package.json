@@ -89,8 +89,9 @@
       "@types/react": "^19.2.7",
       "@types/react-dom": "^19.2.3",
       "@types/node": "^22.15.3",
-      "vite": "^6.4.1",
-      "esbuild": "^0.27.2"
+      "esbuild": "^0.27.2",
+      "typescript": "5.8.3",
+      "vite": "^6.4.1"
     }
   }
 }
