@@ -48,6 +48,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
+    "@typescript-eslint/scope-manager": "^5.41.0",
     "@typescript-eslint/utils": "^5.41.0",
     "eslint": "^8.26.0",
     "tsup": "^6.3.0"

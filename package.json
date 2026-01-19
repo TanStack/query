@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@9.5.0",
+  "packageManager": "pnpm@10.24.0",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
@@ -25,7 +25,9 @@
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples,scripts}/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
-    "cipublish": "node scripts/publish.mjs"
+    "changeset": "pnpx @changesets/cli",
+    "changeset:version": "pnpx @changesets/cli version && pnpm install --no-frozen-lockfile",
+    "changeset:publish": "pnpx @changesets/cli publish --tag=previous"
   },
   "nx": {
     "includedScripts": [

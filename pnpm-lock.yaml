@@ -198,11 +198,11 @@ importers:
         specifier: 4.11.0
         version: 4.11.0
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       algoliasearch:
         specifier: 4.12.2
         version: 4.12.2
@@ -235,11 +235,11 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^0.21.1
         version: 0.21.4
@@ -259,11 +259,11 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^0.21.1
         version: 0.21.4
@@ -287,11 +287,11 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       graphql:
         specifier: ^15.3.0
         version: 15.8.0
@@ -315,17 +315,17 @@ importers:
   examples/react/basic-typescript:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^4.41.0
-        version: 4.41.0
+        specifier: ^4.41.1
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query-persist-client':
-        specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^0.26.1
         version: 0.26.1
@@ -364,11 +364,11 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^0.26.1
         version: 0.26.1
@@ -389,11 +389,11 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^0.21.1
         version: 0.21.4
@@ -416,11 +416,11 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       ky:
         specifier: ^0.23.0
         version: 0.23.0
@@ -446,20 +446,20 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^4.41.0
-        version: 4.41.0
+        specifier: ^4.41.1
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.0
         version: 3.7.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query-persist-client':
-        specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^0.30.0
         version: 0.30.0
@@ -486,11 +486,11 @@ importers:
   examples/react/optimistic-updates-typescript:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^0.21.1
         version: 0.21.4
@@ -520,11 +520,11 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^0.21.1
         version: 0.21.4
@@ -544,11 +544,11 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react:
         specifier: ^18.0.0
         version: 18.2.0
@@ -566,11 +566,11 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^0.21.1
         version: 0.21.4
@@ -599,11 +599,11 @@ importers:
         specifier: ^6.0.2
         version: 6.2.2(@react-navigation/native@6.0.11(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1))(react-native-gesture-handler@1.10.3(encoding@0.1.13))(react-native-safe-area-context@3.3.2(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1))(react-native-screens@3.8.0(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1)
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@17.0.1(react@17.0.1))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@17.0.1(react@17.0.1))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1))(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)
       expo:
         specifier: ~43.0.2
         version: 43.0.5(@babel/core@7.19.1)
@@ -664,7 +664,7 @@ importers:
         version: 1.1.2(eslint-plugin-import@2.27.5(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.4.4))(eslint-import-resolver-typescript@3.5.5(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-plugin-import@2.27.5)(eslint@8.34.0))(eslint@8.34.0))
       eslint-plugin-flowtype:
         specifier: ^8.0.3
-        version: 8.0.3(@babel/plugin-syntax-flow@7.18.6(@babel/core@7.19.1))(@babel/plugin-transform-react-jsx@7.19.0(@babel/core@7.19.1))(eslint@8.34.0)
+        version: 8.0.3(@babel/plugin-syntax-flow@7.27.1(@babel/core@7.19.1))(@babel/plugin-transform-react-jsx@7.19.0(@babel/core@7.19.1))(eslint@8.34.0)
       eslint-plugin-prettier:
         specifier: ^4.0.0
         version: 4.2.1(eslint-config-prettier@8.8.0(eslint@8.34.0))(eslint@8.34.0)(prettier@2.7.1)
@@ -678,11 +678,11 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -718,11 +718,11 @@ importers:
         specifier: ^4.9.7
         version: 4.12.4(@types/react@17.0.50)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react:
         specifier: ^18.0.0
         version: 18.2.0
@@ -746,11 +746,11 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^0.26.1
         version: 0.26.1
@@ -774,11 +774,11 @@ importers:
         specifier: ^4.9.7
         version: 4.12.4(@types/react@17.0.50)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react:
         specifier: ^18.0.0
         version: 18.2.0
@@ -802,11 +802,11 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.0
-        version: 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
+        specifier: ^4.42.1
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
-        version: 4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^0.21.1
         version: 0.21.4
@@ -830,8 +830,8 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^4.41.0
-        version: 4.41.0(solid-js@1.5.4)
+        specifier: ^4.41.1
+        version: link:../../../packages/solid-query
       graphql:
         specifier: ^16.6.0
         version: 16.6.0
@@ -855,8 +855,8 @@ importers:
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^4.41.0
-        version: 4.41.0(solid-js@1.5.4)
+        specifier: ^4.41.1
+        version: link:../../../packages/solid-query
       solid-js:
         specifier: ^1.5.1
         version: 1.5.4
@@ -874,8 +874,8 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^4.41.0
-        version: 4.41.0(solid-js@1.5.4)
+        specifier: ^4.41.1
+        version: link:../../../packages/solid-query
       solid-js:
         specifier: ^1.5.1
         version: 1.5.4
@@ -893,8 +893,8 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^4.41.0
-        version: 4.41.0(solid-js@1.5.4)
+        specifier: ^4.41.1
+        version: link:../../../packages/solid-query
       solid-js:
         specifier: ^1.5.1
         version: 1.5.4
@@ -915,8 +915,8 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.41.0
-        version: 4.41.0(svelte@3.55.0)
+        specifier: ^4.41.1
+        version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.0.0
@@ -929,7 +929,7 @@ importers:
         version: 3.55.0
       svelte-check:
         specifier: ^2.9.2
-        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0)
+        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)))(postcss@8.4.21)(svelte@3.55.0)
       tslib:
         specifier: ^2.4.1
         version: 2.4.1
@@ -943,8 +943,8 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.41.0
-        version: 4.41.0(svelte@3.55.0)
+        specifier: ^4.41.1
+        version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.0.0
@@ -957,7 +957,7 @@ importers:
         version: 3.55.0
       svelte-check:
         specifier: ^2.9.2
-        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0)
+        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)))(postcss@8.4.21)(svelte@3.55.0)
       tslib:
         specifier: ^2.4.1
         version: 2.4.1
@@ -971,8 +971,8 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.41.0
-        version: 4.41.0(svelte@3.55.0)
+        specifier: ^4.41.1
+        version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.0.0
@@ -985,7 +985,7 @@ importers:
         version: 3.55.0
       svelte-check:
         specifier: ^2.9.2
-        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0)
+        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)))(postcss@8.4.21)(svelte@3.55.0)
       tslib:
         specifier: ^2.4.1
         version: 2.4.1
@@ -999,8 +999,8 @@ importers:
   examples/svelte/optimistic-updates-typescript:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.41.0
-        version: 4.41.0(svelte@3.55.0)
+        specifier: ^4.41.1
+        version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.0.0
@@ -1013,7 +1013,7 @@ importers:
         version: 3.55.0
       svelte-check:
         specifier: ^2.9.2
-        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0)
+        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)))(postcss@8.4.21)(svelte@3.55.0)
       tslib:
         specifier: ^2.4.1
         version: 2.4.1
@@ -1027,8 +1027,8 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.41.0
-        version: 4.41.0(svelte@3.55.0)
+        specifier: ^4.41.1
+        version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.0.0
@@ -1041,7 +1041,7 @@ importers:
         version: 3.55.0
       svelte-check:
         specifier: ^2.9.2
-        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0)
+        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)))(postcss@8.4.21)(svelte@3.55.0)
       tslib:
         specifier: ^2.4.1
         version: 2.4.1
@@ -1055,8 +1055,8 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.41.0
-        version: 4.41.0(svelte@3.55.0)
+        specifier: ^4.41.1
+        version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.0.2
@@ -1069,7 +1069,7 @@ importers:
         version: 3.55.0
       svelte-check:
         specifier: ^2.9.2
-        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0)
+        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)))(postcss@8.4.21)(svelte@3.55.0)
       tslib:
         specifier: ^2.4.1
         version: 2.4.1
@@ -1083,8 +1083,8 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.41.0
-        version: 4.41.0(svelte@3.55.0)
+        specifier: ^4.41.1
+        version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.0.0
@@ -1097,7 +1097,7 @@ importers:
         version: 3.55.0
       svelte-check:
         specifier: ^2.9.2
-        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0)
+        version: 2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)))(postcss@8.4.21)(svelte@3.55.0)
       tslib:
         specifier: ^2.4.1
         version: 2.4.1
@@ -1111,8 +1111,8 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^4.41.0
-        version: 4.41.0(svelte@3.55.0)
+        specifier: ^4.41.1
+        version: link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.0.0
@@ -1148,8 +1148,8 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^4.41.0
-        version: 4.41.0(@vue/composition-api@1.7.1(vue@3.2.41))(vue@3.2.41)
+        specifier: ^4.41.1
+        version: link:../../../packages/vue-query
       vue:
         specifier: ^3.2.41
         version: 3.2.41
@@ -1167,8 +1167,8 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^4.41.0
-        version: 4.41.0(@vue/composition-api@1.7.1(vue@3.2.39))(vue@3.2.39)
+        specifier: ^4.41.1
+        version: link:../../../packages/vue-query
       vue:
         specifier: 3.2.39
         version: 3.2.39
@@ -1186,14 +1186,14 @@ importers:
   examples/vue/persister:
     dependencies:
       '@tanstack/query-persist-client-core':
-        specifier: ^4.41.0
-        version: 4.41.0
+        specifier: ^4.41.1
+        version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^4.41.0
-        version: 4.41.0
+        specifier: ^4.41.1
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^4.41.0
-        version: 4.41.0(@vue/composition-api@1.7.1(vue@3.2.41))(vue@3.2.41)
+        specifier: ^4.41.1
+        version: link:../../../packages/vue-query
       vue:
         specifier: 3.2.41
         version: 3.2.41
@@ -1216,6 +1216,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^5.41.0
         version: 5.41.0(eslint@8.26.0)(typescript@4.8.4)
+      '@typescript-eslint/scope-manager':
+        specifier: ^5.41.0
+        version: 5.41.0
       '@typescript-eslint/utils':
         specifier: ^5.41.0
         version: 5.41.0(eslint@8.26.0)(typescript@4.8.4)
@@ -1262,7 +1265,7 @@ importers:
         version: link:../query-core
       react-native:
         specifier: '*'
-        version: 0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@19.1.1)
+        version: 0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.28.0))(encoding@0.1.13)(react@19.1.1)
       use-sync-external-store:
         specifier: ^1.6.0
         version: 1.6.0(react@19.1.1)
@@ -1281,7 +1284,7 @@ importers:
         version: 1.5.0
       jscodeshift:
         specifier: ^0.13.1
-        version: 0.13.1(@babel/preset-env@7.18.6(@babel/core@7.19.1))
+        version: 0.13.1(@babel/preset-env@7.18.6(@babel/core@7.28.0))
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -3452,15 +3455,6 @@ packages:
     resolution: {integrity: sha512-gw46t9d8fkf4ICU+EVcQdVWWRRux3K3+DM/vO3xp3KrU4/BlQOZgP9BFEWY7znU5pqD5rJ3ozrTbv9ezw78Qyw==}
     engines: {node: '>=18'}
 
-  '@tanstack/query-core@4.41.0':
-    resolution: {integrity: sha512-193R4Jp9hjvlij6LryxrB5Mpbffd2L9PeWh3KlIy/hJV4SkBOfiQZ+jc5qAZLDCrdbkA5FjGj+UoDYw6TcNnyA==}
-
-  '@tanstack/query-persist-client-core@4.41.0':
-    resolution: {integrity: sha512-1CBSufr8Hl+D2V0/oPczycOo6qeEcEDDC0nfEg+K5y7ulGmuTXOojgNFP/i5+ej9iyv8upa7zpYuMl79Xd9BLg==}
-
-  '@tanstack/query-sync-storage-persister@4.41.0':
-    resolution: {integrity: sha512-8iCrVMWUZA/A/l2Ork8bLvF1GwTWpTfAPt1kj1jZflJj0TiKmjxYmpsaPk8jrn/e9PETOFyhnpuKKlgQXNA5ig==}
-
   '@tanstack/react-location@3.7.4':
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
     engines: {node: '>=12'}
@@ -3474,42 +3468,6 @@ packages:
       '@tanstack/react-query': ^4.42.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  '@tanstack/react-query-persist-client@4.42.0':
-    resolution: {integrity: sha512-Wn7oChcIhu1FXZbPfKPLz2sKLa/CjQ1V1BQPJa5IEx+Na94ozQccXYGhZuaSwt/PyhkmFwtI49i/Jx0JAhG4mA==}
-    peerDependencies:
-      '@tanstack/react-query': ^4.42.0
-
-  '@tanstack/react-query@4.42.0':
-    resolution: {integrity: sha512-j0tiofkzE3CSrYKmVRaKuwGgvCE+P2OOEDlhmfjeZf5ufcuFHwYwwgw3j08n4WYPVZ+OpsHblcFYezhKA3jDwg==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-
-  '@tanstack/solid-query@4.41.0':
-    resolution: {integrity: sha512-QTaE9j7pFniZu6cbbMhHgF0RohZSTxWQgJoWfCo37Ony+5K5wtiQse91J1i2hlXqBYgL4N12uiXOgnfm8Gybkw==}
-    peerDependencies:
-      solid-js: ^1.5.7
-
-  '@tanstack/svelte-query@4.41.0':
-    resolution: {integrity: sha512-7o51zA8WqbHVsAut6AhhPBXJDMb6lVJ/BmmoIuJTR74kHGRpdHuu4CpvT6WFXM0mk+0WD4ac+BuU9Nll4KUGVQ==}
-    peerDependencies:
-      svelte: '>=3 <5'
-
-  '@tanstack/vue-query@4.41.0':
-    resolution: {integrity: sha512-uqRasE5l4yxa1urhk+iC4wFTdKkjm89Vyo6CZSYQS3O7KggZnY3ZYdV7QLmv9nUdJ1L6QhQN8CI5ycPBcH4rwA==}
-    peerDependencies:
-      '@vue/composition-api': ^1.1.2
-      vue: ^2.5.0 || ^3.0.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
 
   '@testing-library/dom@10.4.1':
     resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
@@ -13520,150 +13478,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@react-native-community/cli@5.0.1(@babel/core@7.19.1)(encoding@0.1.13)(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))':
-    dependencies:
-      '@react-native-community/cli-debugger-ui': 5.0.1
-      '@react-native-community/cli-hermes': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-server-api': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-tools': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-types': 5.0.1
-      appdirsjs: 1.2.7
-      chalk: 3.0.0
-      command-exists: 1.2.9
-      commander: 2.20.3
-      cosmiconfig: 5.2.1
-      deepmerge: 3.3.0
-      envinfo: 7.8.1
-      execa: 1.0.0
-      find-up: 4.1.0
-      fs-extra: 8.1.0
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      joi: 17.6.0
-      leven: 3.1.0
-      lodash: 4.17.21
-      metro: 0.64.0(encoding@0.1.13)
-      metro-config: 0.64.0(encoding@0.1.13)
-      metro-core: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.19.1)
-      metro-resolver: 0.64.0
-      metro-runtime: 0.64.0
-      minimist: 1.2.6
-      mkdirp: 0.5.6
-      node-stream-zip: 1.15.0
-      ora: 3.4.0
-      pretty-format: 26.6.2
-      prompts: 2.4.2
-      react-native: 0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0)
-      semver: 6.3.1
-      serve-static: 1.15.0
-      strip-ansi: 5.2.0
-      sudo-prompt: 9.2.1
-      wcwidth: 1.0.1
-    transitivePeerDependencies:
-      - '@babel/core'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    optional: true
-
-  '@react-native-community/cli@5.0.1(@babel/core@7.19.1)(encoding@0.1.13)(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@19.1.1))':
-    dependencies:
-      '@react-native-community/cli-debugger-ui': 5.0.1
-      '@react-native-community/cli-hermes': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-server-api': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-tools': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-types': 5.0.1
-      appdirsjs: 1.2.7
-      chalk: 3.0.0
-      command-exists: 1.2.9
-      commander: 2.20.3
-      cosmiconfig: 5.2.1
-      deepmerge: 3.3.0
-      envinfo: 7.8.1
-      execa: 1.0.0
-      find-up: 4.1.0
-      fs-extra: 8.1.0
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      joi: 17.6.0
-      leven: 3.1.0
-      lodash: 4.17.21
-      metro: 0.64.0(encoding@0.1.13)
-      metro-config: 0.64.0(encoding@0.1.13)
-      metro-core: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.19.1)
-      metro-resolver: 0.64.0
-      metro-runtime: 0.64.0
-      minimist: 1.2.6
-      mkdirp: 0.5.6
-      node-stream-zip: 1.15.0
-      ora: 3.4.0
-      pretty-format: 26.6.2
-      prompts: 2.4.2
-      react-native: 0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@19.1.1)
-      semver: 6.3.1
-      serve-static: 1.15.0
-      strip-ansi: 5.2.0
-      sudo-prompt: 9.2.1
-      wcwidth: 1.0.1
-    transitivePeerDependencies:
-      - '@babel/core'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-
-  '@react-native-community/cli@5.0.1(@babel/core@7.19.1)(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))':
-    dependencies:
-      '@react-native-community/cli-debugger-ui': 5.0.1
-      '@react-native-community/cli-hermes': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-server-api': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-tools': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-types': 5.0.1
-      appdirsjs: 1.2.7
-      chalk: 3.0.0
-      command-exists: 1.2.9
-      commander: 2.20.3
-      cosmiconfig: 5.2.1
-      deepmerge: 3.3.0
-      envinfo: 7.8.1
-      execa: 1.0.0
-      find-up: 4.1.0
-      fs-extra: 8.1.0
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      joi: 17.6.0
-      leven: 3.1.0
-      lodash: 4.17.21
-      metro: 0.64.0
-      metro-config: 0.64.0
-      metro-core: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.19.1)
-      metro-resolver: 0.64.0
-      metro-runtime: 0.64.0
-      minimist: 1.2.6
-      mkdirp: 0.5.6
-      node-stream-zip: 1.15.0
-      ora: 3.4.0
-      pretty-format: 26.6.2
-      prompts: 2.4.2
-      react-native: 0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0)
-      semver: 6.3.1
-      serve-static: 1.15.0
-      strip-ansi: 5.2.0
-      sudo-prompt: 9.2.1
-      wcwidth: 1.0.1
-    transitivePeerDependencies:
-      - '@babel/core'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    optional: true
-
-  '@react-native-community/cli@5.0.1(@babel/core@7.28.0)(encoding@0.1.13)(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))':
+  '@react-native-community/cli@5.0.1(@babel/core@7.28.0)(encoding@0.1.13)(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.28.0))(encoding@0.1.13)(react@19.1.1))':
     dependencies:
       '@react-native-community/cli-debugger-ui': 5.0.1
       '@react-native-community/cli-hermes': 5.0.1(encoding@0.1.13)
@@ -13697,7 +13512,7 @@ snapshots:
       ora: 3.4.0
       pretty-format: 26.6.2
       prompts: 2.4.2
-      react-native: 0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0)
+      react-native: 0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.28.0))(encoding@0.1.13)(react@19.1.1)
       semver: 6.3.1
       serve-static: 1.15.0
       strip-ansi: 5.2.0
@@ -13709,55 +13524,6 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
-    optional: true
-
-  '@react-native-community/cli@5.0.1(@babel/core@7.28.0)(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))':
-    dependencies:
-      '@react-native-community/cli-debugger-ui': 5.0.1
-      '@react-native-community/cli-hermes': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-server-api': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-tools': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-types': 5.0.1
-      appdirsjs: 1.2.7
-      chalk: 3.0.0
-      command-exists: 1.2.9
-      commander: 2.20.3
-      cosmiconfig: 5.2.1
-      deepmerge: 3.3.0
-      envinfo: 7.8.1
-      execa: 1.0.0
-      find-up: 4.1.0
-      fs-extra: 8.1.0
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      joi: 17.6.0
-      leven: 3.1.0
-      lodash: 4.17.21
-      metro: 0.64.0
-      metro-config: 0.64.0
-      metro-core: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.28.0)
-      metro-resolver: 0.64.0
-      metro-runtime: 0.64.0
-      minimist: 1.2.6
-      mkdirp: 0.5.6
-      node-stream-zip: 1.15.0
-      ora: 3.4.0
-      pretty-format: 26.6.2
-      prompts: 2.4.2
-      react-native: 0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0)
-      semver: 6.3.1
-      serve-static: 1.15.0
-      strip-ansi: 5.2.0
-      sudo-prompt: 9.2.1
-      wcwidth: 1.0.1
-    transitivePeerDependencies:
-      - '@babel/core'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    optional: true
 
   '@react-native-community/netinfo@6.0.2(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))':
     dependencies:
@@ -13948,16 +13714,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@tanstack/query-core@4.41.0': {}
-
-  '@tanstack/query-persist-client-core@4.41.0':
-    dependencies:
-      '@tanstack/query-core': 4.41.0
-
-  '@tanstack/query-sync-storage-persister@4.41.0':
-    dependencies:
-      '@tanstack/query-persist-client-core': 4.41.0
-
   '@tanstack/react-location@3.7.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@babel/runtime': 7.18.9
@@ -13965,135 +13721,23 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  '@tanstack/react-query-devtools@4.42.0(@tanstack/react-query@4.42.0(react-dom@17.0.1(react@17.0.1))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1))(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
+  '@tanstack/react-query-devtools@4.42.0(@tanstack/react-query@packages+react-query)(react-dom@17.0.1(react@17.0.1))(react@17.0.1)':
     dependencies:
       '@tanstack/match-sorter-utils': 8.7.0
-      '@tanstack/react-query': 4.42.0(react-dom@17.0.1(react@17.0.1))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1)
+      '@tanstack/react-query': link:packages/react-query
       react: 17.0.1
       react-dom: 17.0.1(react@17.0.1)
       superjson: 1.10.0
       use-sync-external-store: 1.2.0(react@17.0.1)
 
-  '@tanstack/react-query-devtools@4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@tanstack/react-query-devtools@4.42.0(@tanstack/react-query@packages+react-query)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@tanstack/match-sorter-utils': 8.7.0
-      '@tanstack/react-query': 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
+      '@tanstack/react-query': link:packages/react-query
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       superjson: 1.10.0
       use-sync-external-store: 1.2.0(react@18.2.0)
-
-  '@tanstack/react-query-devtools@4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.7.0
-      '@tanstack/react-query': 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      superjson: 1.10.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-
-  '@tanstack/react-query-devtools@4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.7.0
-      '@tanstack/react-query': 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      superjson: 1.10.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-
-  '@tanstack/react-query-devtools@4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.7.0
-      '@tanstack/react-query': 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      superjson: 1.10.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-
-  '@tanstack/react-query-persist-client@4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0))':
-    dependencies:
-      '@tanstack/query-persist-client-core': 4.41.0
-      '@tanstack/react-query': 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
-
-  '@tanstack/react-query-persist-client@4.42.0(@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0))':
-    dependencies:
-      '@tanstack/query-persist-client-core': 4.41.0
-      '@tanstack/react-query': 4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)
-
-  '@tanstack/react-query@4.42.0(react-dom@17.0.1(react@17.0.1))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1)':
-    dependencies:
-      '@tanstack/query-core': 4.41.0
-      react: 17.0.1
-      use-sync-external-store: 1.2.0(react@17.0.1)
-    optionalDependencies:
-      react-dom: 17.0.1(react@17.0.1)
-      react-native: 0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1)
-
-  '@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/query-core': 4.41.0
-      react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-    optionalDependencies:
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0)
-
-  '@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/query-core': 4.41.0
-      react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-    optionalDependencies:
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0)
-
-  '@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/query-core': 4.41.0
-      react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-    optionalDependencies:
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0)
-
-  '@tanstack/react-query@4.42.0(react-dom@18.2.0(react@18.2.0))(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/query-core': 4.41.0
-      react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-    optionalDependencies:
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0)
-
-  '@tanstack/solid-query@4.41.0(solid-js@1.5.4)':
-    dependencies:
-      '@tanstack/query-core': 4.41.0
-      solid-js: 1.5.4
-
-  '@tanstack/svelte-query@4.41.0(svelte@3.55.0)':
-    dependencies:
-      '@tanstack/query-core': 4.41.0
-      svelte: 3.55.0
-
-  '@tanstack/vue-query@4.41.0(@vue/composition-api@1.7.1(vue@3.2.39))(vue@3.2.39)':
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.7.0
-      '@tanstack/query-core': 4.41.0
-      '@vue/devtools-api': 6.4.2
-      vue: 3.2.39
-      vue-demi: 0.13.11(@vue/composition-api@1.7.1(vue@3.2.39))(vue@3.2.39)
-    optionalDependencies:
-      '@vue/composition-api': 1.7.1(vue@3.2.39)
-
-  '@tanstack/vue-query@4.41.0(@vue/composition-api@1.7.1(vue@3.2.41))(vue@3.2.41)':
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.7.0
-      '@tanstack/query-core': 4.41.0
-      '@vue/devtools-api': 6.4.2
-      vue: 3.2.41
-      vue-demi: 0.13.11(@vue/composition-api@1.7.1(vue@3.2.41))(vue@3.2.41)
-    optionalDependencies:
-      '@vue/composition-api': 1.7.1(vue@3.2.41)
 
   '@testing-library/dom@10.4.1':
     dependencies:
@@ -14813,19 +14457,9 @@ snapshots:
       '@vue/compiler-dom': 3.2.41
       '@vue/shared': 3.2.41
 
-  '@vue/composition-api@1.7.1(vue@3.2.39)':
-    dependencies:
-      vue: 3.2.39
-    optional: true
-
   '@vue/composition-api@1.7.1(vue@3.2.40)':
     dependencies:
       vue: 3.2.40
-
-  '@vue/composition-api@1.7.1(vue@3.2.41)':
-    dependencies:
-      vue: 3.2.41
-    optional: true
 
   '@vue/devtools-api@6.4.2': {}
 
@@ -16564,7 +16198,7 @@ snapshots:
       debug: 4.3.4
       enhanced-resolve: 5.15.0
       eslint: 8.34.0
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-plugin-import@2.27.5)(eslint@8.34.0))(eslint@8.34.0)
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.34.0)
       eslint-plugin-import: 2.27.5(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-import-resolver-typescript@3.5.5)(eslint@8.34.0)
       get-tsconfig: 4.6.0
       globby: 13.2.0
@@ -16588,7 +16222,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.8.0(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-plugin-import@2.27.5)(eslint@8.34.0))(eslint@8.34.0):
+  eslint-module-utils@2.8.0(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.34.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -16614,6 +16248,14 @@ snapshots:
   eslint-plugin-flowtype@8.0.3(@babel/plugin-syntax-flow@7.18.6(@babel/core@7.19.1))(@babel/plugin-transform-react-jsx@7.19.0(@babel/core@7.19.1))(eslint@8.34.0):
     dependencies:
       '@babel/plugin-syntax-flow': 7.18.6(@babel/core@7.19.1)
+      '@babel/plugin-transform-react-jsx': 7.19.0(@babel/core@7.19.1)
+      eslint: 8.34.0
+      lodash: 4.17.21
+      string-natural-compare: 3.0.1
+
+  eslint-plugin-flowtype@8.0.3(@babel/plugin-syntax-flow@7.27.1(@babel/core@7.19.1))(@babel/plugin-transform-react-jsx@7.19.0(@babel/core@7.19.1))(eslint@8.34.0):
+    dependencies:
+      '@babel/plugin-syntax-flow': 7.27.1(@babel/core@7.19.1)
       '@babel/plugin-transform-react-jsx': 7.19.0(@babel/core@7.19.1)
       eslint: 8.34.0
       lodash: 4.17.21
@@ -16653,7 +16295,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.34.0
       eslint-import-resolver-node: 0.3.7
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-plugin-import@2.27.5)(eslint@8.34.0))(eslint@8.34.0)
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.41.0(eslint@8.34.0)(typescript@4.8.3))(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.34.0)
       has: 1.0.3
       is-core-module: 2.12.1
       is-glob: 4.0.3
@@ -18423,7 +18065,32 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jscodeshift@0.13.1(@babel/preset-env@7.18.6(@babel/core@7.19.1)):
+  jscodeshift@0.11.0(@babel/preset-env@7.18.6(@babel/core@7.28.0)):
+    dependencies:
+      '@babel/core': 7.28.0
+      '@babel/parser': 7.28.0
+      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.28.0)
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.28.0)
+      '@babel/plugin-proposal-optional-chaining': 7.18.6(@babel/core@7.28.0)
+      '@babel/plugin-transform-modules-commonjs': 7.27.1(@babel/core@7.28.0)
+      '@babel/preset-env': 7.18.6(@babel/core@7.28.0)
+      '@babel/preset-flow': 7.27.1(@babel/core@7.28.0)
+      '@babel/preset-typescript': 7.27.1(@babel/core@7.28.0)
+      '@babel/register': 7.27.1(@babel/core@7.28.0)
+      babel-core: 7.0.0-bridge.0(@babel/core@7.28.0)
+      colors: 1.1.2
+      flow-parser: 0.121.0
+      graceful-fs: 4.2.11
+      micromatch: 3.1.10
+      neo-async: 2.6.2
+      node-dir: 0.1.17
+      recast: 0.20.5
+      temp: 0.8.4
+      write-file-atomic: 2.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  jscodeshift@0.13.1(@babel/preset-env@7.18.6(@babel/core@7.28.0)):
     dependencies:
       '@babel/core': 7.19.1
       '@babel/parser': 7.19.1
@@ -18431,7 +18098,7 @@ snapshots:
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.19.1)
       '@babel/plugin-proposal-optional-chaining': 7.18.6(@babel/core@7.19.1)
       '@babel/plugin-transform-modules-commonjs': 7.18.6(@babel/core@7.19.1)
-      '@babel/preset-env': 7.18.6(@babel/core@7.19.1)
+      '@babel/preset-env': 7.18.6(@babel/core@7.28.0)
       '@babel/preset-flow': 7.18.6(@babel/core@7.19.1)
       '@babel/preset-typescript': 7.18.6(@babel/core@7.19.1)
       '@babel/register': 7.18.6(@babel/core@7.19.1)
@@ -18874,20 +18541,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  metro-config@0.64.0:
-    dependencies:
-      cosmiconfig: 5.2.1
-      jest-validate: 26.6.2
-      metro: 0.64.0
-      metro-cache: 0.64.0
-      metro-core: 0.64.0
-      metro-runtime: 0.64.0
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-
   metro-config@0.64.0(encoding@0.1.13):
     dependencies:
       cosmiconfig: 5.2.1
@@ -19090,7 +18743,6 @@ snapshots:
       nullthrows: 1.1.1
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   metro-resolver@0.64.0:
     dependencies:
@@ -19154,27 +18806,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  metro-transform-worker@0.64.0:
-    dependencies:
-      '@babel/core': 7.28.0
-      '@babel/generator': 7.28.6
-      '@babel/parser': 7.28.6
-      '@babel/types': 7.28.6
-      babel-preset-fbjs: 3.4.0(@babel/core@7.28.0)
-      metro: 0.64.0
-      metro-babel-transformer: 0.64.0
-      metro-cache: 0.64.0
-      metro-cache-key: 0.64.0
-      metro-hermes-compiler: 0.64.0
-      metro-source-map: 0.64.0
-      metro-transform-plugins: 0.64.0
-      nullthrows: 1.1.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-
   metro-transform-worker@0.64.0(encoding@0.1.13):
     dependencies:
       '@babel/core': 7.28.0
@@ -19190,65 +18821,6 @@ snapshots:
       metro-source-map: 0.64.0
       metro-transform-plugins: 0.64.0
       nullthrows: 1.1.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-
-  metro@0.64.0:
-    dependencies:
-      '@babel/code-frame': 7.28.6
-      '@babel/core': 7.28.0
-      '@babel/generator': 7.28.6
-      '@babel/parser': 7.28.6
-      '@babel/template': 7.28.6
-      '@babel/traverse': 7.28.6
-      '@babel/types': 7.28.6
-      absolute-path: 0.0.0
-      accepts: 1.3.8
-      async: 2.6.4
-      chalk: 4.1.2
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 2.6.9
-      denodeify: 1.2.1
-      error-stack-parser: 2.1.4
-      fs-extra: 1.0.0
-      graceful-fs: 4.2.11
-      image-size: 0.6.3
-      invariant: 2.2.4
-      jest-haste-map: 26.6.2
-      jest-worker: 26.6.2
-      lodash.throttle: 4.1.1
-      metro-babel-register: 0.64.0
-      metro-babel-transformer: 0.64.0
-      metro-cache: 0.64.0
-      metro-cache-key: 0.64.0
-      metro-config: 0.64.0
-      metro-core: 0.64.0
-      metro-hermes-compiler: 0.64.0
-      metro-inspector-proxy: 0.64.0
-      metro-minify-uglify: 0.64.0
-      metro-react-native-babel-preset: 0.64.0(@babel/core@7.28.0)
-      metro-resolver: 0.64.0
-      metro-runtime: 0.64.0
-      metro-source-map: 0.64.0
-      metro-symbolicate: 0.64.0
-      metro-transform-plugins: 0.64.0
-      metro-transform-worker: 0.64.0
-      mime-types: 2.1.35
-      mkdirp: 0.5.6
-      node-fetch: 2.6.7(encoding@0.1.13)
-      nullthrows: 1.1.1
-      rimraf: 2.7.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      strip-ansi: 6.0.1
-      temp: 0.8.3
-      throat: 5.0.0
-      ws: 1.1.5
-      yargs: 15.4.1
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -19284,7 +18856,7 @@ snapshots:
       metro-babel-transformer: 0.64.0
       metro-cache: 0.64.0
       metro-cache-key: 0.64.0
-      metro-config: 0.64.0
+      metro-config: 0.64.0(encoding@0.1.13)
       metro-core: 0.64.0
       metro-hermes-compiler: 0.64.0
       metro-inspector-proxy: 0.64.0
@@ -19983,15 +19555,6 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.4.21
 
-  postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)):
-    dependencies:
-      lilconfig: 2.0.6
-      yaml: 1.10.2
-    optionalDependencies:
-      postcss: 8.4.21
-      ts-node: 10.8.2(@types/node@22.15.3)(typescript@4.8.3)
-    optional: true
-
   postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)):
     dependencies:
       lilconfig: 2.0.6
@@ -20205,6 +19768,15 @@ snapshots:
       - '@babel/preset-env'
       - supports-color
 
+  react-native-codegen@0.0.6(@babel/preset-env@7.18.6(@babel/core@7.28.0)):
+    dependencies:
+      flow-parser: 0.121.0
+      jscodeshift: 0.11.0(@babel/preset-env@7.18.6(@babel/core@7.28.0))
+      nullthrows: 1.1.1
+    transitivePeerDependencies:
+      - '@babel/preset-env'
+      - supports-color
+
   react-native-gesture-handler@1.10.3(encoding@0.1.13):
     dependencies:
       '@egjs/hammerjs': 2.0.17
@@ -20314,10 +19886,10 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0):
+  react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.28.0))(encoding@0.1.13)(react@19.1.1):
     dependencies:
       '@jest/create-cache-key-function': 26.6.2
-      '@react-native-community/cli': 5.0.1(@babel/core@7.19.1)(encoding@0.1.13)(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))
+      '@react-native-community/cli': 5.0.1(@babel/core@7.28.0)(encoding@0.1.13)(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.28.0))(encoding@0.1.13)(react@19.1.1))
       '@react-native-community/cli-platform-android': 5.0.1(encoding@0.1.13)
       '@react-native-community/cli-platform-ios': 5.0.2(encoding@0.1.13)
       '@react-native/assets': 1.0.0
@@ -20331,51 +19903,7 @@ snapshots:
       invariant: 2.2.4
       jsc-android: 245459.0.0
       metro-babel-register: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.19.1)
-      metro-runtime: 0.64.0
-      metro-source-map: 0.64.0
-      nullthrows: 1.1.1
-      pretty-format: 26.6.2
-      promise: 8.1.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-devtools-core: 4.24.7
-      react-native-codegen: 0.0.6(@babel/preset-env@7.18.6(@babel/core@7.19.1))
-      react-refresh: 0.4.3
-      regenerator-runtime: 0.13.9
-      scheduler: 0.20.2
-      shelljs: 0.8.5
-      stacktrace-parser: 0.1.10
-      use-subscription: 1.1.1(react@18.2.0)
-      whatwg-fetch: 3.0.0
-      ws: 6.2.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/preset-env'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    optional: true
-
-  react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@19.1.1):
-    dependencies:
-      '@jest/create-cache-key-function': 26.6.2
-      '@react-native-community/cli': 5.0.1(@babel/core@7.19.1)(encoding@0.1.13)(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@19.1.1))
-      '@react-native-community/cli-platform-android': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-platform-ios': 5.0.2(encoding@0.1.13)
-      '@react-native/assets': 1.0.0
-      '@react-native/normalize-color': 1.0.0
-      '@react-native/polyfills': 1.0.0
-      abort-controller: 3.0.0
-      anser: 1.4.10
-      base64-js: 1.5.1
-      event-target-shim: 5.0.1
-      hermes-engine: 0.7.2
-      invariant: 2.2.4
-      jsc-android: 245459.0.0
-      metro-babel-register: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.19.1)
+      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.28.0)
       metro-runtime: 0.64.0
       metro-source-map: 0.64.0
       nullthrows: 1.1.1
@@ -20384,7 +19912,7 @@ snapshots:
       prop-types: 15.8.1
       react: 19.1.1
       react-devtools-core: 4.24.7
-      react-native-codegen: 0.0.6(@babel/preset-env@7.18.6(@babel/core@7.19.1))
+      react-native-codegen: 0.0.6(@babel/preset-env@7.18.6(@babel/core@7.28.0))
       react-refresh: 0.4.3
       regenerator-runtime: 0.13.9
       scheduler: 0.20.2
@@ -20400,138 +19928,6 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
-
-  react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0):
-    dependencies:
-      '@jest/create-cache-key-function': 26.6.2
-      '@react-native-community/cli': 5.0.1(@babel/core@7.19.1)(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))
-      '@react-native-community/cli-platform-android': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-platform-ios': 5.0.2(encoding@0.1.13)
-      '@react-native/assets': 1.0.0
-      '@react-native/normalize-color': 1.0.0
-      '@react-native/polyfills': 1.0.0
-      abort-controller: 3.0.0
-      anser: 1.4.10
-      base64-js: 1.5.1
-      event-target-shim: 5.0.1
-      hermes-engine: 0.7.2
-      invariant: 2.2.4
-      jsc-android: 245459.0.0
-      metro-babel-register: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.19.1)
-      metro-runtime: 0.64.0
-      metro-source-map: 0.64.0
-      nullthrows: 1.1.1
-      pretty-format: 26.6.2
-      promise: 8.1.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-devtools-core: 4.24.7
-      react-native-codegen: 0.0.6(@babel/preset-env@7.18.6(@babel/core@7.19.1))
-      react-refresh: 0.4.3
-      regenerator-runtime: 0.13.9
-      scheduler: 0.20.2
-      shelljs: 0.8.5
-      stacktrace-parser: 0.1.10
-      use-subscription: 1.1.1(react@18.2.0)
-      whatwg-fetch: 3.0.0
-      ws: 6.2.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/preset-env'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    optional: true
-
-  react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0):
-    dependencies:
-      '@jest/create-cache-key-function': 26.6.2
-      '@react-native-community/cli': 5.0.1(@babel/core@7.28.0)(encoding@0.1.13)(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@18.2.0))
-      '@react-native-community/cli-platform-android': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-platform-ios': 5.0.2(encoding@0.1.13)
-      '@react-native/assets': 1.0.0
-      '@react-native/normalize-color': 1.0.0
-      '@react-native/polyfills': 1.0.0
-      abort-controller: 3.0.0
-      anser: 1.4.10
-      base64-js: 1.5.1
-      event-target-shim: 5.0.1
-      hermes-engine: 0.7.2
-      invariant: 2.2.4
-      jsc-android: 245459.0.0
-      metro-babel-register: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.28.0)
-      metro-runtime: 0.64.0
-      metro-source-map: 0.64.0
-      nullthrows: 1.1.1
-      pretty-format: 26.6.2
-      promise: 8.1.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-devtools-core: 4.24.7
-      react-native-codegen: 0.0.6(@babel/preset-env@7.18.6(@babel/core@7.19.1))
-      react-refresh: 0.4.3
-      regenerator-runtime: 0.13.9
-      scheduler: 0.20.2
-      shelljs: 0.8.5
-      stacktrace-parser: 0.1.10
-      use-subscription: 1.1.1(react@18.2.0)
-      whatwg-fetch: 3.0.0
-      ws: 6.2.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/preset-env'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    optional: true
-
-  react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0):
-    dependencies:
-      '@jest/create-cache-key-function': 26.6.2
-      '@react-native-community/cli': 5.0.1(@babel/core@7.28.0)(react-native@0.64.3(@babel/core@7.28.0)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(react@18.2.0))
-      '@react-native-community/cli-platform-android': 5.0.1(encoding@0.1.13)
-      '@react-native-community/cli-platform-ios': 5.0.2(encoding@0.1.13)
-      '@react-native/assets': 1.0.0
-      '@react-native/normalize-color': 1.0.0
-      '@react-native/polyfills': 1.0.0
-      abort-controller: 3.0.0
-      anser: 1.4.10
-      base64-js: 1.5.1
-      event-target-shim: 5.0.1
-      hermes-engine: 0.7.2
-      invariant: 2.2.4
-      jsc-android: 245459.0.0
-      metro-babel-register: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0(@babel/core@7.28.0)
-      metro-runtime: 0.64.0
-      metro-source-map: 0.64.0
-      nullthrows: 1.1.1
-      pretty-format: 26.6.2
-      promise: 8.1.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-devtools-core: 4.24.7
-      react-native-codegen: 0.0.6(@babel/preset-env@7.18.6(@babel/core@7.19.1))
-      react-refresh: 0.4.3
-      regenerator-runtime: 0.13.9
-      scheduler: 0.20.2
-      shelljs: 0.8.5
-      stacktrace-parser: 0.1.10
-      use-subscription: 1.1.1(react@18.2.0)
-      whatwg-fetch: 3.0.0
-      ws: 6.2.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/preset-env'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    optional: true
 
   react-refresh@0.14.0: {}
 
@@ -21336,29 +20732,6 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-check@2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.14
-      chokidar: 3.5.3
-      fast-glob: 3.2.11
-      import-fresh: 3.3.0
-      picocolors: 1.0.0
-      sade: 1.8.1
-      svelte: 3.55.0
-      svelte-preprocess: 4.10.7(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0)(typescript@4.8.4)
-      typescript: 4.8.4
-    transitivePeerDependencies:
-      - '@babel/core'
-      - coffeescript
-      - less
-      - node-sass
-      - postcss
-      - postcss-load-config
-      - pug
-      - sass
-      - stylus
-      - sugarss
-
   svelte-check@2.10.3(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)))(postcss@8.4.21)(svelte@3.55.0):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.14
@@ -21392,21 +20765,6 @@ snapshots:
   svelte-hmr@0.15.1(svelte@3.55.0):
     dependencies:
       svelte: 3.55.0
-
-  svelte-preprocess@4.10.7(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3)))(postcss@8.4.21)(svelte@3.55.0)(typescript@4.8.4):
-    dependencies:
-      '@types/pug': 2.0.6
-      '@types/sass': 1.43.1
-      detect-indent: 6.1.0
-      magic-string: 0.25.9
-      sorcery: 0.10.0
-      strip-indent: 3.0.0
-      svelte: 3.55.0
-    optionalDependencies:
-      '@babel/core': 7.28.0
-      postcss: 8.4.21
-      postcss-load-config: 3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.3))
-      typescript: 4.8.4
 
   svelte-preprocess@4.10.7(@babel/core@7.28.0)(postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.8.2(@types/node@22.15.3)(typescript@4.8.4)))(postcss@8.4.21)(svelte@3.55.0)(typescript@4.8.4):
     dependencies:
@@ -21875,11 +21233,6 @@ snapshots:
     dependencies:
       react: 17.0.1
 
-  use-subscription@1.1.1(react@18.2.0):
-    dependencies:
-      react: 18.2.0
-    optional: true
-
   use-subscription@1.1.1(react@19.1.1):
     dependencies:
       react: 19.1.1
@@ -22057,23 +21410,11 @@ snapshots:
 
   vlq@1.0.1: {}
 
-  vue-demi@0.13.11(@vue/composition-api@1.7.1(vue@3.2.39))(vue@3.2.39):
-    dependencies:
-      vue: 3.2.39
-    optionalDependencies:
-      '@vue/composition-api': 1.7.1(vue@3.2.39)
-
   vue-demi@0.13.11(@vue/composition-api@1.7.1(vue@3.2.40))(vue@3.2.40):
     dependencies:
       vue: 3.2.40
     optionalDependencies:
       '@vue/composition-api': 1.7.1(vue@3.2.40)
-
-  vue-demi@0.13.11(@vue/composition-api@1.7.1(vue@3.2.41))(vue@3.2.41):
-    dependencies:
-      vue: 3.2.41
-    optionalDependencies:
-      '@vue/composition-api': 1.7.1(vue@3.2.41)
 
   vue@2.7.10:
     dependencies:
