@@ -8,16 +8,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-core": "^5.90.13",
-    "@tanstack/query-persist-client-core": "^5.91.12",
-    "@tanstack/query-sync-storage-persister": "^5.90.15",
-    "@tanstack/vue-query": "^5.92.2",
+    "@tanstack/query-core": "^5.90.19",
+    "@tanstack/query-persist-client-core": "^5.91.18",
+    "@tanstack/query-sync-storage-persister": "^5.90.21",
+    "@tanstack/vue-query": "^5.92.8",
     "idb-keyval": "^6.2.1",
     "vue": "^3.4.27"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "typescript": "5.8.3",
-    "vite": "^6.3.6"
+    "vite": "^6.4.1"
   }
 }
