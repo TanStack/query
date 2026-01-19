@@ -5,6 +5,7 @@ import {
   systemSetTimeoutZero,
   timeoutManager,
 } from '../timeoutManager'
+import type { MockInstance } from 'vitest'
 
 describe('timeoutManager', () => {
   function createMockProvider(name: string = 'custom') {
@@ -17,7 +18,7 @@ describe('timeoutManager', () => {
     }
   }
 
-  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+  let consoleErrorSpy: MockInstance<typeof console.error>
 
   beforeEach(() => {
     consoleErrorSpy = vi.spyOn(console, 'error')
