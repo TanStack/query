@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.42.1",
+    "@tanstack/react-query": "^4.42.2",
     "@tanstack/react-query-devtools": "^4.42.0",
     "@tanstack/react-query-persist-client": "^4.42.1",
     "@tanstack/query-sync-storage-persister": "^4.41.1",

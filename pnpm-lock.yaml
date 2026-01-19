@@ -198,7 +198,7 @@ importers:
         specifier: 4.11.0
         version: 4.11.0
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -235,7 +235,7 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -259,7 +259,7 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -287,7 +287,7 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -318,7 +318,7 @@ importers:
         specifier: ^4.41.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -364,7 +364,7 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -389,7 +389,7 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -416,7 +416,7 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -452,7 +452,7 @@ importers:
         specifier: ^3.7.0
         version: 3.7.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -486,7 +486,7 @@ importers:
   examples/react/optimistic-updates-typescript:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -520,7 +520,7 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -544,7 +544,7 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -566,7 +566,7 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -599,7 +599,7 @@ importers:
         specifier: ^6.0.2
         version: 6.2.2(@react-navigation/native@6.0.11(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1))(react-native-gesture-handler@1.10.3(encoding@0.1.13))(react-native-safe-area-context@3.3.2(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1))(react-native-screens@3.8.0(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1))(react-native@0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6(@babel/core@7.19.1))(encoding@0.1.13)(react@17.0.1))(react@17.0.1)
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -678,7 +678,7 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -718,7 +718,7 @@ importers:
         specifier: ^4.9.7
         version: 4.12.4(@types/react@17.0.50)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -746,7 +746,7 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -774,7 +774,7 @@ importers:
         specifier: ^4.9.7
         version: 4.12.4(@types/react@17.0.50)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -802,7 +802,7 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^4.42.1
+        specifier: ^4.42.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^4.42.0
@@ -3155,28 +3155,24 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@next/swc-linux-arm64-musl@12.2.2':
     resolution: {integrity: sha512-rIZRFxI9N/502auJT1i7coas0HTHUM+HaXMyJiCpnY8Rimbo0495ir24tzzHo3nQqJwcflcPTwEh/DV17sdv9A==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@next/swc-linux-x64-gnu@12.2.2':
     resolution: {integrity: sha512-ir1vNadlUDj7eQk15AvfhG5BjVizuCHks9uZwBfUgT5jyeDCeRvaDCo1+Q6+0CLOAnYDR/nqSCvBgzG2UdFh9A==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@next/swc-linux-x64-musl@12.2.2':
     resolution: {integrity: sha512-bte5n2GzLN3O8JdSFYWZzMgEgDHZmRz5wiispiiDssj4ik3l8E7wq/czNi8RmIF+ioj2sYVokUNa/ekLzrESWw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@next/swc-win32-arm64-msvc@12.2.2':
     resolution: {integrity: sha512-ZUGCmcDmdPVSAlwJ/aD+1F9lYW8vttseiv4n2+VCDv5JloxiX9aY32kYZaJJO7hmTLNrprvXkb4OvNuHdN22Jg==}
@@ -3235,25 +3231,21 @@ packages:
     resolution: {integrity: sha512-NmPeCexWIZHW9RM3lDdFENN9C3WtlQ5L4RSNFESIjreS921rgePhulsszYdGnHdcnKPYlBBJnX/NxVsfioBbnQ==}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-arm64-musl@22.3.3':
     resolution: {integrity: sha512-K02U88Q0dpvCfmSXXvY7KbYQSa1m+mkYeqDBRHp11yHk1GoIqaHp8oEWda7FV4gsriNExPSS5tX1/QGVoLZrCw==}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@nx/nx-linux-x64-gnu@22.3.3':
     resolution: {integrity: sha512-04TEbvgwRaB9ifr39YwJmWh3RuXb4Ry4m84SOJyjNXAfPrepcWgfIQn1VL2ul1Ybq+P023dLO9ME8uqFh6j1YQ==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.3.3':
     resolution: {integrity: sha512-uxBXx5q+S5OGatbYDxnamsKXRKlYn+Eq1nrCAHaf8rIfRoHlDiRV2PqtWuF+O2pxR5FWKpvr+/sZtt9rAf7KMw==}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@nx/nx-win32-arm64-msvc@22.3.3':
     resolution: {integrity: sha512-aOwlfD6ZA1K6hjZtbhBSp7s1yi3sHbMpLCa4stXzfhCCpKUv46HU/EdiWdE1N8AsyNFemPZFq81k1VTowcACdg==}
