@@ -32,24 +32,6 @@ export default function MyApp({ Component, pageProps }) {
 }
 ```
 
-```tsx
-// pages/_app.tsx
-/* eslint "@tanstack/query/no-module-query-client": "error" */
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-export default function MyApp({ Component, pageProps }) {
-  // This is also incorrect - creating a new instance on every render
-  const queryClient = new QueryClient()
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
-    </QueryClientProvider>
-  )
-}
-```
-
 Examples of **correct** code for this rule:
 
 ```tsx
@@ -74,40 +56,6 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
-    </QueryClientProvider>
-  )
-}
-```
-
-```tsx
-// app/providers.tsx
-'use client'
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState } from 'react'
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient())
-
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  )
-}
-```
-
-```tsx
-// app/providers.tsx
-'use client'
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useRef } from 'react'
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  const queryClientRef = useRef(new QueryClient())
-
-  return (
-    <QueryClientProvider client={queryClientRef.current}>
-      {children}
     </QueryClientProvider>
   )
 }
