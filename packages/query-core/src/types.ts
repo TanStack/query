@@ -626,6 +626,10 @@ export interface QueryObserverBaseResult<
   TError = DefaultError,
 > {
   /**
+   * The query key used by the query.
+   */
+  queryKey: QueryKey
+  /**
    * The last successfully resolved data for the query.
    */
   data: TData | undefined
