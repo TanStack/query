@@ -1,4 +1,4 @@
-# 2.6 Basic example
+# 2.7 Basic example
 
 To run this example:
 

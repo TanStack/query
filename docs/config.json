@@ -1049,7 +1049,6 @@
         }
       ]
     },
-
     {
       "label": "Examples",
       "children": [],
@@ -1198,6 +1197,10 @@
             {
               "label": "Vue 2.6",
               "to": "framework/vue/examples/2.6-basic"
+            },
+            {
+              "label": "Vue 2.7",
+              "to": "framework/vue/examples/2.7-basic"
             },
             {
               "label": "Nuxt 3",
