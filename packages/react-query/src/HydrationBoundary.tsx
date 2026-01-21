@@ -131,14 +131,10 @@ export const HydrationBoundary = ({
     return clearPendingQueries
   }, [client, hydrationQueue])
 
-  // Provide the mutable ref to children
-  // Children can check ref.current.has(hash) without needing re-renders
-  /* eslint-disable react-hooks/refs */
-  const contextValue = React.useMemo(
-    () => ({ current: hydratingQueriesRef.current }),
-    [],
-  )
-  /* eslint-enable react-hooks/refs */
+  // Provide the mutable Set to children
+  // Children can check set.has(hash) without needing re-renders
+  // eslint-disable-next-line react-hooks/refs
+  const contextValue = React.useMemo(() => hydratingQueriesRef.current, [])
 
   return (
     <IsHydratingProvider value={contextValue}>{children}</IsHydratingProvider>

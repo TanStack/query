@@ -224,7 +224,7 @@ export function useQueries<
 ): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
-  const hydratingQueriesRef = useIsHydrating()
+  const hydratingQueries = useIsHydrating()
   const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedQueries = React.useMemo(
@@ -239,14 +239,14 @@ export function useQueries<
           ? 'isRestoring'
           : 'optimistic'
 
-        // Check if this query is pending hydration (using mutable ref)
-        if (hydratingQueriesRef.current.has(defaultedOptions.queryHash)) {
+        // Check if this query is pending hydration
+        if (hydratingQueries.has(defaultedOptions.queryHash)) {
           defaultedOptions._isHydrating = true
         }
 
         return defaultedOptions
       }),
-    // Note: hydratingQueriesRef is a stable ref object, so we don't include it in deps
+    // Note: hydratingQueries is a stable Set object, so we don't include it in deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [queries, client, isRestoring],
   )

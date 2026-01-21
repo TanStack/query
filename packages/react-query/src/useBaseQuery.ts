@@ -51,14 +51,13 @@ export function useBaseQuery<
   }
 
   const isRestoring = useIsRestoring()
-  const hydratingQueriesRef = useIsHydrating()
+  const hydratingQueries = useIsHydrating()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
 
-  // Check if this query is pending hydration (using mutable ref)
-  // eslint-disable-next-line react-hooks/refs
-  if (hydratingQueriesRef.current.has(defaultedOptions.queryHash)) {
+  // Check if this query is pending hydration
+  if (hydratingQueries.has(defaultedOptions.queryHash)) {
     defaultedOptions._isHydrating = true
   }
 
