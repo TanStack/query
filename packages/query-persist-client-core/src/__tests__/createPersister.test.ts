@@ -78,8 +78,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
   test('should fetch if there is no stored data', async () => {
@@ -90,8 +89,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
   test('should fetch if query already has data', async () => {
@@ -103,8 +101,7 @@ describe('createPersister', () => {
 
     await persister.persisterFn(queryFn, context, query)
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
   test('should fetch if deserialization fails', async () => {
@@ -122,8 +119,7 @@ describe('createPersister', () => {
 
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
   test('should remove stored item if `dataUpdatedAt` is empty', async () => {
@@ -147,8 +143,7 @@ describe('createPersister', () => {
 
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
   test('should remove stored item if its expired', async () => {
@@ -173,8 +168,7 @@ describe('createPersister', () => {
 
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
   test('should remove stored item if its busted', async () => {
@@ -198,8 +192,7 @@ describe('createPersister', () => {
 
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
   test('should restore item from the storage and set proper `updatedAt` values', async () => {
@@ -335,8 +328,7 @@ describe('createPersister', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
 
     expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
       buster: '',
@@ -431,8 +423,7 @@ describe('createPersister', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
 
     expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
       buster: '',

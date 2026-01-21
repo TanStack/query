@@ -3,7 +3,7 @@
     "strict": true,
     "esModuleInterop": true,
     "lib": ["DOM", "ES2015"],
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "target": "ES5",
     "allowJs": true,
     "skipLibCheck": true,
