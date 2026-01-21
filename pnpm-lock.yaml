@@ -2038,6 +2038,9 @@ importers:
 
   integrations/react-next-15:
     dependencies:
+      '@hey-api/client-next':
+        specifier: ^0.2.1
+        version: 0.2.1
       '@js-temporal/polyfill':
         specifier: ^0.4.4
         version: 0.4.4
@@ -4550,6 +4553,9 @@ packages:
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+
+  '@hey-api/client-next@0.2.1':
+    resolution: {integrity: sha512-/FJceHUYqvkbbLbloUhUbNwqrpaJXNfivYtlUFQVz58yqLH/BX1WW7IE+kIiPxWN8oPYaTPvbb2yIKagK3HmAg==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -17988,6 +17994,8 @@ snapshots:
   '@graphql-typed-document-node/core@3.2.0(graphql@16.9.0)':
     dependencies:
       graphql: 16.9.0
+
+  '@hey-api/client-next@0.2.1': {}
 
   '@humanfs/core@0.19.1': {}
 
