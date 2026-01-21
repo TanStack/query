@@ -114,7 +114,7 @@ function App() {
 
 > Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
 
-> Note: `HydrationBoundary` automatically prevents unnecessary refetching during hydration. Queries being hydrated will not trigger a refetch on mount, unless `refetchOnMount` is explicitly set to `'always'`.
+> Note: `HydrationBoundary` intelligently prevents unnecessary refetching during hydration. Queries being hydrated will not trigger a refetch on mount if the data is still fresh (within `staleTime`). However, if the hydrated data is stale (e.g., from cached markup), a refetch will be triggered. You can always force a refetch by setting `refetchOnMount` to `'always'`.
 
 **Options**
 
