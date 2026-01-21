@@ -50,6 +50,7 @@ export {
 } from './QueryErrorResetBoundary'
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating, useMutationState } from './useMutationState'
+export { useQueryState } from './useQueryState'
 export { useMutation } from './useMutation'
 export { mutationOptions } from './mutationOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
