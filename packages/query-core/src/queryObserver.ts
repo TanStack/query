@@ -1,5 +1,4 @@
 import { focusManager } from './focusManager'
-import { pendingHydrationQueries } from './hydration'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
@@ -97,19 +96,15 @@ export class QueryObserver<
     if (this.listeners.size === 1) {
       this.#currentQuery.addObserver(this)
 
-      // Check if this query is pending hydration
+      // Check if this query is pending hydration via options._isHydrating
       // If so, skip fetch unless refetchOnMount is explicitly 'always'
-      const hasPendingHydration = pendingHydrationQueries.has(
-        this.#currentQuery,
-      )
-
       const resolvedRefetchOnMount =
         typeof this.options.refetchOnMount === 'function'
           ? this.options.refetchOnMount(this.#currentQuery)
           : this.options.refetchOnMount
 
       const shouldSkipFetchForHydration =
-        hasPendingHydration && resolvedRefetchOnMount !== 'always'
+        this.options._isHydrating && resolvedRefetchOnMount !== 'always'
 
       if (
         shouldFetchOnMount(this.#currentQuery, this.options) &&

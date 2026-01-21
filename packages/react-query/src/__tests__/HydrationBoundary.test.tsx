@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import * as React from 'react'
 import { render } from '@testing-library/react'
 import * as coreModule from '@tanstack/query-core'
-import { pendingHydrationQueries } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import {
   HydrationBoundary,
@@ -877,7 +876,7 @@ describe('React hydration', () => {
     queryFn.mockClear()
 
     // Render with HydrationBoundary containing fresh data
-    // Even though hydration is pending, refetchOnMount: 'always' should trigger refetch
+    // refetchOnMount: 'always' should trigger refetch even during hydration
     const rendered = render(
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={dehydratedState}>
@@ -889,11 +888,11 @@ describe('React hydration', () => {
     // Initially shows cached data (from first prefetch)
     expect(rendered.getByText('new-data')).toBeInTheDocument()
 
-    // Allow useEffect to run (hydration happens here) and wait for refetch to complete
-    // refetchOnMount: 'always' triggers refetch even during hydration
+    // refetchOnMount: 'always' should trigger refetch even during hydration
+    // Wait for the refetch to complete
     await vi.advanceTimersByTimeAsync(10)
 
-    // Should refetch because refetchOnMount is 'always'
+    // Should refetch because refetchOnMount is 'always' bypasses hydration skip
     expect(queryFn).toHaveBeenCalledTimes(1)
     // Hydration data is shown because useEffect runs after refetch starts
     expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
@@ -1159,15 +1158,15 @@ describe('React hydration', () => {
     const dehydratedState = dehydrate(serverQueryClient)
 
     // Mock queryCache.get to return undefined on second call within useMemo
-    // First call: existingQuery check (line 70) - returns query
-    // Second call: pendingHydrationQueries.add (line 101) - returns undefined
+    // First call: existingQuery check - returns query
+    // Second call: adding to hydrating set - returns undefined
     const queryCache = queryClient.getQueryCache()
     const originalGet = queryCache.get.bind(queryCache)
     let callCount = 0
     vi.spyOn(queryCache, 'get').mockImplementation((queryHash) => {
       callCount++
       // First call returns the query (for existingQuery check)
-      // Second call returns undefined (simulates removal before pendingHydrationQueries.add)
+      // Second call returns undefined (simulates removal before adding to hydrating set)
       if (callCount === 1) {
         return originalGet(queryHash)
       }
@@ -1225,9 +1224,9 @@ describe('React hydration', () => {
     const dehydratedState = dehydrate(serverQueryClient)
 
     // Mock queryCache.get to return undefined on third call (in useEffect)
-    // First call: existingQuery check (line 70) - returns query
-    // Second call: pendingHydrationQueries.add (line 101) - returns query
-    // Third call: useEffect pendingHydrationQueries.delete (line 118) - returns undefined
+    // First call: existingQuery check - returns query
+    // Second call: adding to hydrating set - returns query
+    // Third call: useEffect cleanup - returns undefined
     const queryCache = queryClient.getQueryCache()
     const originalGet = queryCache.get.bind(queryCache)
     let callCount = 0
@@ -1272,15 +1271,20 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should clear pending hydration flags on unmount', async () => {
+  test('should not refetch after unmount and remount during hydration', async () => {
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+
     const queryClient = new QueryClient()
 
     // First, prefetch to populate the cache
     queryClient.prefetchQuery({
       queryKey: ['unmount-cleanup-test'],
-      queryFn: () => sleep(10).then(() => 'initial-data'),
+      queryFn,
     })
     await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
 
     // Simulate server prefetch
     const serverQueryClient = new QueryClient()
@@ -1291,11 +1295,13 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(10)
     const dehydratedState = dehydrate(serverQueryClient)
 
+    queryFn.mockClear()
+
     function Page() {
       const { data } = useQuery({
         queryKey: ['unmount-cleanup-test'],
-        queryFn: () => sleep(10).then(() => 'new-data'),
-        staleTime: Infinity,
+        queryFn,
+        staleTime: 0,
       })
       return (
         <div>
@@ -1314,76 +1320,39 @@ describe('React hydration', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    // Get the query to check pending status
-    const query = queryClient.getQueryCache().find({
-      queryKey: ['unmount-cleanup-test'],
-    })
-    expect(query).toBeDefined()
+    // Should not refetch during hydration
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 
-    // After useEffect runs, the pending flag should be cleared
-    expect(pendingHydrationQueries.has(query!)).toBe(false)
-
-    // Unmount and verify cleanup
+    // Unmount
     rendered.unmount()
 
-    // After unmount, the pending flag should still be cleared
-    expect(pendingHydrationQueries.has(query!)).toBe(false)
-
-    queryClient.clear()
-    serverQueryClient.clear()
-  })
-
-  test('should clear pending hydration flags when component unmounts before hydration completes', async () => {
-    const queryClient = new QueryClient()
-
-    // First, prefetch to populate the cache
-    queryClient.prefetchQuery({
-      queryKey: ['early-unmount-test'],
-      queryFn: () => sleep(10).then(() => 'initial-data'),
+    // Create a new dehydrated state with newer data for second mount
+    const serverQueryClient2 = new QueryClient()
+    serverQueryClient2.prefetchQuery({
+      queryKey: ['unmount-cleanup-test'],
+      queryFn: () => sleep(10).then(() => 'second-server-data'),
     })
     await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState2 = dehydrate(serverQueryClient2)
 
-    // Simulate server prefetch
-    const serverQueryClient = new QueryClient()
-    serverQueryClient.prefetchQuery({
-      queryKey: ['early-unmount-test'],
-      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
-    })
-    await vi.advanceTimersByTimeAsync(10)
-    const dehydratedState = dehydrate(serverQueryClient)
-
-    function ConditionalHydrationBoundary({ show }: { show: boolean }) {
-      if (!show) return null
-      return (
-        <HydrationBoundary state={dehydratedState}>
-          <div>content</div>
+    // Remounting with new hydration state
+    const rendered2 = render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState2}>
+          <Page />
         </HydrationBoundary>
-      )
-    }
-
-    const rendered = render(
-      <QueryClientProvider client={queryClient}>
-        <ConditionalHydrationBoundary show={true} />
       </QueryClientProvider>,
     )
 
-    // Get the query - at this point it should be marked as pending hydration
-    const query = queryClient.getQueryCache().find({
-      queryKey: ['early-unmount-test'],
-    })
-    expect(query).toBeDefined()
+    await vi.advanceTimersByTimeAsync(0)
 
-    // Unmount before useEffect has a chance to run hydration
-    rendered.rerender(
-      <QueryClientProvider client={queryClient}>
-        <ConditionalHydrationBoundary show={false} />
-      </QueryClientProvider>,
-    )
-
-    // After unmount cleanup, the pending flag should be cleared
-    expect(pendingHydrationQueries.has(query!)).toBe(false)
+    // Should show new hydrated data and not refetch
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(rendered2.getByText('second-server-data')).toBeInTheDocument()
 
     queryClient.clear()
     serverQueryClient.clear()
+    serverQueryClient2.clear()
   })
 })
