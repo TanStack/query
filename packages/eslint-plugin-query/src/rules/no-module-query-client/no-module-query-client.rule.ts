@@ -53,9 +53,12 @@ export const rule = createRule({
           return
         }
 
-        const component = ASTUtils.getFunctionAncestor(context.sourceCode, node)
+        const functionAncestor = ASTUtils.getFunctionAncestor(
+          context.sourceCode,
+          node,
+        )
 
-        if (component === undefined) {
+        if (functionAncestor === undefined) {
           context.report({
             node,
             messageId: 'noModuleQueryClient',

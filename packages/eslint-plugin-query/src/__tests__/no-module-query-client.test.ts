@@ -84,6 +84,17 @@ ruleTester.run('no-module-query-client', rule, {
       `,
     },
     {
+      name: 'QueryClient at module level in directory containing "app" as substring',
+      filename: 'myapp/components/Provider.tsx',
+      code: normalizeIndent`
+        import { QueryClient } from "@tanstack/react-query";
+
+        const queryClient = new QueryClient();
+
+        export { queryClient };
+      `,
+    },
+    {
       name: 'QueryClient in custom hook',
       filename: 'pages/custom-hook.ts',
       code: normalizeIndent`
