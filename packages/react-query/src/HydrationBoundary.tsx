@@ -83,8 +83,7 @@ export const HydrationBoundary = ({
               existingQuery.state.status !== 'pending' &&
               existingQuery.state.fetchStatus !== 'fetching' &&
               dehydratedQuery.dehydratedAt !== undefined &&
-              dehydratedQuery.dehydratedAt >
-                existingQuery.state.dataUpdatedAt)
+              dehydratedQuery.dehydratedAt > existingQuery.state.dataUpdatedAt)
 
           if (hydrationIsNewer) {
             existingQueries.push(dehydratedQuery)
@@ -142,8 +141,6 @@ export const HydrationBoundary = ({
   /* eslint-enable react-hooks/refs */
 
   return (
-    <IsHydratingProvider value={contextValue}>
-      {children}
-    </IsHydratingProvider>
+    <IsHydratingProvider value={contextValue}>{children}</IsHydratingProvider>
   )
 }
