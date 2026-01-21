@@ -560,7 +560,9 @@ describe('React hydration', () => {
       const { data } = useQuery({
         queryKey: ['revisit-test'],
         queryFn,
-        staleTime: 0,
+        // Use staleTime to prevent refetch during hydration
+        // When data is not stale, hydration should skip refetch
+        staleTime: Infinity,
       })
       return (
         <div>
@@ -582,7 +584,7 @@ describe('React hydration', () => {
 
     // Render with HydrationBoundary containing fresh data
     // The existing query in cache should be marked as pending hydration
-    // and should NOT refetch
+    // and should NOT refetch because data is not stale (staleTime: Infinity)
     const rendered = render(
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={dehydratedState}>
@@ -593,7 +595,7 @@ describe('React hydration', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    // Should NOT refetch because we're hydrating fresh data
+    // Should NOT refetch because data is not stale
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 
@@ -620,7 +622,8 @@ describe('React hydration', () => {
       const { data } = useQuery({
         queryKey: ['value-true-test'],
         queryFn,
-        staleTime: 0,
+        // Data is not stale, so hydration should skip refetch
+        staleTime: Infinity,
         refetchOnMount: true,
       })
       return (
@@ -652,7 +655,7 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     // Should NOT refetch because refetchOnMount is true (not 'always')
-    // and hydration is pending
+    // and data is not stale
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 
@@ -679,7 +682,8 @@ describe('React hydration', () => {
       const { data } = useQuery({
         queryKey: ['function-true-test'],
         queryFn,
-        staleTime: 0,
+        // Data is not stale, so hydration should skip refetch
+        staleTime: Infinity,
         refetchOnMount: () => true,
       })
       return (
@@ -711,7 +715,7 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     // Should NOT refetch because refetchOnMount returns true (not 'always')
-    // and hydration is pending
+    // and data is not stale
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 
@@ -962,6 +966,66 @@ describe('React hydration', () => {
     serverQueryClient.clear()
   })
 
+  test('should refetch when hydrated data is stale (cached markup scenario)', async () => {
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'new-data'))
+
+    const queryClient = new QueryClient()
+
+    // First, prefetch to populate the cache
+    queryClient.prefetchQuery({
+      queryKey: ['stale-hydration-test'],
+      queryFn,
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['stale-hydration-test'],
+        queryFn,
+        // staleTime: 0 means data is immediately stale
+        // This simulates cached markup scenario where server fetch was long ago
+        staleTime: 0,
+      })
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    // Simulate server prefetch
+    const serverQueryClient = new QueryClient()
+    serverQueryClient.prefetchQuery({
+      queryKey: ['stale-hydration-test'],
+      queryFn: () => sleep(10).then(() => 'fresh-from-server'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    const dehydratedState = dehydrate(serverQueryClient)
+
+    queryFn.mockClear()
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
+          <Page />
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Should refetch because data is stale (staleTime: 0)
+    // This is the "cached markup scenario" - when hydrated data is old,
+    // we should still refetch to get fresh data
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    queryClient.clear()
+    serverQueryClient.clear()
+  })
+
   test('should not double fetch for multiple queries when hydrating', async () => {
     const queryFn1 = vi
       .fn()
@@ -983,12 +1047,14 @@ describe('React hydration', () => {
       const query1 = useQuery({
         queryKey: ['multi-1'],
         queryFn: queryFn1,
-        staleTime: 0,
+        // Data is not stale, so hydration should skip refetch
+        staleTime: Infinity,
       })
       const query2 = useQuery({
         queryKey: ['multi-2'],
         queryFn: queryFn2,
-        staleTime: 0,
+        // Data is not stale, so hydration should skip refetch
+        staleTime: Infinity,
       })
       return (
         <div>
@@ -1301,7 +1367,8 @@ describe('React hydration', () => {
       const { data } = useQuery({
         queryKey: ['unmount-cleanup-test'],
         queryFn,
-        staleTime: 0,
+        // Data is not stale, so hydration should skip refetch
+        staleTime: Infinity,
       })
       return (
         <div>
@@ -1320,7 +1387,7 @@ describe('React hydration', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    // Should not refetch during hydration
+    // Should not refetch during hydration because data is not stale
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('fresh-from-server')).toBeInTheDocument()
 

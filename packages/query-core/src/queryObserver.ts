@@ -97,14 +97,19 @@ export class QueryObserver<
       this.#currentQuery.addObserver(this)
 
       // Check if this query is pending hydration via options._isHydrating
-      // If so, skip fetch unless refetchOnMount is explicitly 'always'
+      // If so, skip fetch unless:
+      // - refetchOnMount is explicitly 'always', or
+      // - the hydrated data is stale (e.g., cached markup scenario where
+      //   server fetch happened long ago)
       const resolvedRefetchOnMount =
         typeof this.options.refetchOnMount === 'function'
           ? this.options.refetchOnMount(this.#currentQuery)
           : this.options.refetchOnMount
 
       const shouldSkipFetchForHydration =
-        this.options._isHydrating && resolvedRefetchOnMount !== 'always'
+        this.options._isHydrating &&
+        resolvedRefetchOnMount !== 'always' &&
+        !isStale(this.#currentQuery, this.options)
 
       if (
         shouldFetchOnMount(this.#currentQuery, this.options) &&
