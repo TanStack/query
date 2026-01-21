@@ -8,7 +8,34 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "fixed": [],
+  "fixed": [
+    [
+      "@tanstack/angular-query-experimental",
+      "@tanstack/angular-query-persist-client",
+      "@tanstack/eslint-plugin-query",
+      "@tanstack/query-async-storage-persister",
+      "@tanstack/query-broadcast-client-experimental",
+      "@tanstack/query-codemods",
+      "@tanstack/query-core",
+      "@tanstack/query-devtools",
+      "@tanstack/query-persist-client-core",
+      "@tanstack/query-sync-storage-persister",
+      "@tanstack/react-query",
+      "@tanstack/react-query-devtools",
+      "@tanstack/react-query-next-experimental",
+      "@tanstack/react-query-persist-client",
+      "@tanstack/solid-query",
+      "@tanstack/solid-query-devtools",
+      "@tanstack/solid-query-persist-client",
+      "@tanstack/vue-query"
+    ],
+    ["@tanstack/vue-query-devtools"],
+    [
+      "@tanstack/svelte-query",
+      "@tanstack/svelte-query-devtools",
+      "@tanstack/svelte-query-persist-client"
+    ]
+  ],
   "linked": [],
   "ignore": [],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
