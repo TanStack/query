@@ -15,7 +15,6 @@
       "@tanstack/eslint-plugin-query",
       "@tanstack/query-async-storage-persister",
       "@tanstack/query-broadcast-client-experimental",
-      "@tanstack/query-codemods",
       "@tanstack/query-core",
       "@tanstack/query-devtools",
       "@tanstack/query-persist-client-core",
