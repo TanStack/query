@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.90.20
+
+### Patch Changes
+
+- Fix: onMutate callback now runs synchronously when mutationCache.config.onMutate is not defined ([#10066](https://github.com/TanStack/query/pull/10066))
+
 ## 5.90.19
 
 ### Patch Changes
