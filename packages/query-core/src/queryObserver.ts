@@ -26,7 +26,6 @@ import type {
   QueryObserverBaseResult,
   QueryObserverOptions,
   QueryObserverResult,
-  QueryOptions,
   RefetchOptions,
 } from './types'
 
@@ -341,7 +340,7 @@ export class QueryObserver<
 
     // Fetch
     let promise: Promise<TQueryData | undefined> = this.#currentQuery.fetch(
-      this.options as QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
+      this.options,
       fetchOptions,
     )
 
@@ -545,7 +544,7 @@ export class QueryObserver<
     }
 
     if (this.#selectError) {
-      error = this.#selectError as any
+      error = this.#selectError
       data = this.#selectResult
       errorUpdatedAt = Date.now()
       status = 'error'
@@ -592,11 +591,13 @@ export class QueryObserver<
     const nextResult = result as QueryObserverResult<TData, TError>
 
     if (this.options.experimental_prefetchInRender) {
+      const hasResultData = nextResult.data !== undefined
+      const isErrorWithoutData = nextResult.status === 'error' && !hasResultData
       const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
-        if (nextResult.status === 'error') {
+        if (isErrorWithoutData) {
           thenable.reject(nextResult.error)
-        } else if (nextResult.data !== undefined) {
-          thenable.resolve(nextResult.data)
+        } else if (hasResultData) {
+          thenable.resolve(nextResult.data as TData)
         }
       }
 
@@ -622,18 +623,12 @@ export class QueryObserver<
           }
           break
         case 'fulfilled':
-          if (
-            nextResult.status === 'error' ||
-            nextResult.data !== prevThenable.value
-          ) {
+          if (isErrorWithoutData || nextResult.data !== prevThenable.value) {
             recreateThenable()
           }
           break
         case 'rejected':
-          if (
-            nextResult.status !== 'error' ||
-            nextResult.error !== prevThenable.reason
-          ) {
+          if (!isErrorWithoutData || nextResult.error !== prevThenable.reason) {
             recreateThenable()
           }
           break
