@@ -1,5 +1,11 @@
 # @tanstack/eslint-plugin-query
 
+## 5.91.4
+
+### Patch Changes
+
+- fix(eslint-plugin-query): declare typescript as optional peer dependency ([#10007](https://github.com/TanStack/query/pull/10007))
+
 ## 5.91.3
 
 ### Patch Changes
