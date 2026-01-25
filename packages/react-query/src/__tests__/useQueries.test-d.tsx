@@ -61,19 +61,29 @@ describe('UseQueries config object overload', () => {
   })
 
   it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
+    const queryKey = ['key'] as const
+    const queryFn = () => Promise.resolve(1)
+    type TQueryFnData = Awaited<ReturnType<typeof queryFn>>
+
     const query1 = queryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(1),
+      queryKey,
+      queryFn,
       select: (data) => data > 1,
     })
 
-    const query2 = {
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(1),
-      select: (data: number) => data > 1,
-    }
-
-    const queryResults = useQueries({ queries: [query1, query2] })
+    const queryResults = useQueries({
+      queries: [
+        query1,
+        {
+          queryKey,
+          queryFn,
+          select: (data) => {
+            expectTypeOf(data).toEqualTypeOf<number>()
+            return data > 1
+          },
+        } satisfies UseQueryOptions<TQueryFnData, Error, boolean, typeof queryKey>,
+      ] as const,
+    })
     const query1Data = queryResults[0].data
     const query2Data = queryResults[1].data
 

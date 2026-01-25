@@ -31,6 +31,25 @@ export type UndefinedInitialDataInfiniteOptions<
       >
 }
 
+export type UndefinedInitialDataInfiniteOptionsResult<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = Omit<
+  UndefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  'queryKey'
+> & {
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+}
+
 export type UnusedSkipTokenInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -53,6 +72,25 @@ export type UnusedSkipTokenInfiniteOptions<
   >
 }
 
+export type UnusedSkipTokenInfiniteOptionsResult<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = Omit<
+  UnusedSkipTokenInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  'queryKey'
+> & {
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+}
+
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -72,6 +110,25 @@ export type DefinedInitialDataInfiniteOptions<
     | undefined
 }
 
+export type DefinedInitialDataInfiniteOptionsResult<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = Omit<
+  DefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  'queryKey'
+> & {
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+}
+
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -86,15 +143,13 @@ export function infiniteQueryOptions<
     TQueryKey,
     TPageParam
   >,
-): DefinedInitialDataInfiniteOptions<
+): DefinedInitialDataInfiniteOptionsResult<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
   TPageParam
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+>
 
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -110,15 +165,13 @@ export function infiniteQueryOptions<
     TQueryKey,
     TPageParam
   >,
-): UnusedSkipTokenInfiniteOptions<
+): UnusedSkipTokenInfiniteOptionsResult<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
   TPageParam
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+>
 
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -134,15 +187,13 @@ export function infiniteQueryOptions<
     TQueryKey,
     TPageParam
   >,
-): UndefinedInitialDataInfiniteOptions<
+): UndefinedInitialDataInfiniteOptionsResult<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
   TPageParam
-> & {
-  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-}
+>
 
 export function infiniteQueryOptions(options: unknown) {
   return options
