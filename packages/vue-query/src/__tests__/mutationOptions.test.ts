@@ -232,21 +232,27 @@ describe('mutationOptions', () => {
 
     const { mutate: mutate1 } = useMutation(mutationOpts1)
     const { mutate: mutate2 } = useMutation(mutationOpts2)
-    isMutatingArray.push(queryClient.isMutating({
-      mutationKey: mutationKey1,
-    }))
+    isMutatingArray.push(
+      queryClient.isMutating({
+        mutationKey: mutationKey1,
+      }),
+    )
 
     mutate1()
     mutate2()
     await vi.advanceTimersByTimeAsync(0)
-    isMutatingArray.push(queryClient.isMutating({
-      mutationKey: mutationKey1,
-    }))
+    isMutatingArray.push(
+      queryClient.isMutating({
+        mutationKey: mutationKey1,
+      }),
+    )
 
     await vi.advanceTimersByTimeAsync(501)
-    isMutatingArray.push(queryClient.isMutating({
-      mutationKey: mutationKey1,
-    }))
+    isMutatingArray.push(
+      queryClient.isMutating({
+        mutationKey: mutationKey1,
+      }),
+    )
 
     expect(isMutatingArray[0]).toEqual(0)
     expect(isMutatingArray[1]).toEqual(1)

@@ -1,4 +1,4 @@
-import type { UseMutationOptions } from './useMutation';
+import type { UseMutationOptions } from './useMutation'
 import type { DefaultError, WithRequired } from '@tanstack/query-core'
 import type { DeepUnwrapRefOrGetter, MaybeRefDeepOrGetter } from './types'
 
@@ -10,13 +10,17 @@ export function mutationOptions<
 >(
   options: MaybeRefDeepOrGetter<
     WithRequired<
-      DeepUnwrapRefOrGetter<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>>,
+      DeepUnwrapRefOrGetter<
+        UseMutationOptions<TData, TError, TVariables, TOnMutateResult>
+      >,
       'mutationKey'
     >
   >,
 ): MaybeRefDeepOrGetter<
   WithRequired<
-    DeepUnwrapRefOrGetter<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>>,
+    DeepUnwrapRefOrGetter<
+      UseMutationOptions<TData, TError, TVariables, TOnMutateResult>
+    >,
     'mutationKey'
   >
 >
@@ -28,13 +32,17 @@ export function mutationOptions<
 >(
   options: MaybeRefDeepOrGetter<
     Omit<
-      DeepUnwrapRefOrGetter<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>>,
+      DeepUnwrapRefOrGetter<
+        UseMutationOptions<TData, TError, TVariables, TOnMutateResult>
+      >,
       'mutationKey'
     >
   >,
 ): MaybeRefDeepOrGetter<
   Omit<
-    DeepUnwrapRefOrGetter<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>>,
+    DeepUnwrapRefOrGetter<
+      UseMutationOptions<TData, TError, TVariables, TOnMutateResult>
+    >,
     'mutationKey'
   >
 >

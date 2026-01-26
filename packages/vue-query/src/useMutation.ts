@@ -39,7 +39,9 @@ export type UseMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TOnMutateResult = unknown,
-> = MaybeRefDeepOrGetter<UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult>>
+> = MaybeRefDeepOrGetter<
+  UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult>
+>
 
 type MutateSyncFunction<
   TData = unknown,
