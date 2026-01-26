@@ -18,7 +18,7 @@ describe('queryOptions', () => {
       (() => Promise<number>) | undefined
     >()
     expectTypeOf(options.staleTime).toMatchTypeOf<number | undefined>()
-    expectTypeOf(options.queryKey).toMatchTypeOf<readonly unknown[]>()
+    expectTypeOf(options.queryKey).toMatchTypeOf<ReadonlyArray<unknown>>()
   })
 
   it('should not allow excess properties', () => {
