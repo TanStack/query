@@ -57,7 +57,9 @@ export type DeepUnwrapRef<T> = T extends UnwrapLeaf
         }
       : UnwrapRef<T>
 
-export type DeepUnwrapRefOrGetter<T> = T extends (...args: any) => MaybeRefDeep<any>
+export type DeepUnwrapRefOrGetter<T> = T extends (
+  ...args: any
+) => MaybeRefDeep<any>
   ? DeepUnwrapRef<ReturnType<T>>
   : DeepUnwrapRef<T>
 
