@@ -50,6 +50,20 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<string, unknown> | undefined
     >()
   })
+  it('should work when passed to useInfiniteQuery with select', () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      select: (data) => data.pages,
+    })
+
+    const { data } = useInfiniteQuery(options)
+
+    // known issue: type of pageParams is unknown when returned from useInfiniteQuery
+    expectTypeOf(data).toEqualTypeOf<Array<string> | undefined>()
+  })
   it('should work when passed to useSuspenseInfiniteQuery', () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
@@ -62,12 +76,64 @@ describe('infiniteQueryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
   })
+  it('should work when passed to useSuspenseInfiniteQuery with select', () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      select: (data) => data.pages,
+    })
+
+    const { data } = useSuspenseInfiniteQuery(options)
+
+    // known issue: type of pageParams is unknown when returned from useInfiniteQuery
+    expectTypeOf(data).toEqualTypeOf<Array<string>>()
+  })
+  it('should work when passed to infiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+  it('should work when passed to infiniteQuery with select', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      select: (data) => data.pages,
+    })
+
+    const data = await new QueryClient().infiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<Array<string>>()
+  })
   it('should work when passed to fetchInfiniteQuery', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
+    })
+
+    const data = await new QueryClient().fetchInfiniteQuery(options)
+
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+  it('should ignore select when passed to fetchInfiniteQuery', async () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      getNextPageParam: () => 1,
+      initialPageParam: 1,
+      select: (data) => data.pages,
     })
 
     const data = await new QueryClient().fetchInfiniteQuery(options)
