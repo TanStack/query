@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^6.0.15",
+    "@tanstack/svelte-query": "^6.0.18",
     "@tanstack/svelte-query-devtools": "^6.0.3"
   },
   "devDependencies": {
@@ -20,6 +20,6 @@
     "svelte-check": "^4.3.1",
     "tailwindcss": "^4.1.13",
     "typescript": "5.8.3",
-    "vite": "^6.3.6"
+    "vite": "^6.4.1"
   }
 }

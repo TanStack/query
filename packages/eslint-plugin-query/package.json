@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.91.2",
+  "version": "5.91.3",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -69,6 +69,12 @@
     "npm-run-all2": "^5.0.0"
   },
   "peerDependencies": {
-    "eslint": "^8.57.0 || ^9.0.0"
+    "eslint": "^8.57.0 || ^9.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   }
 }
