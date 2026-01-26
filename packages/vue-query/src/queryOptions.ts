@@ -1,57 +1,42 @@
 import type {
   DataTag,
   DefaultError,
-  InitialDataFunction,
-  NonUndefinedGuard,
+  QueryFunction,
   QueryKey,
-  QueryObserverOptions,
 } from '@tanstack/query-core'
-import type { DeepUnwrapRef, ShallowOption } from './types'
+import type {
+  DefinedInitialQueryOptions,
+  UndefinedInitialQueryOptions,
+} from './useQuery'
+import type { DeepUnwrapRef } from './types'
 
 /**
- * Options for queryOptions with defined initial data.
- * These are unwrapped types (not MaybeRef) so that properties like queryFn are directly accessible.
- */
-export type DefinedInitialDataOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> = QueryObserverOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryFnData,
-  DeepUnwrapRef<TQueryKey>
-> &
-  ShallowOption & {
-    initialData:
-      | NonUndefinedGuard<TQueryFnData>
-      | (() => NonUndefinedGuard<TQueryFnData>)
-  }
-
-/**
- * Options for queryOptions with undefined initial data.
- * These are unwrapped types (not MaybeRef) so that properties like queryFn are directly accessible.
+ * Augmented version of UndefinedInitialQueryOptions that explicitly exposes
+ * queryFn and other properties for direct TypeScript access.
  */
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = QueryObserverOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryFnData,
-  DeepUnwrapRef<TQueryKey>
-> &
-  ShallowOption & {
-    initialData?:
-      | undefined
-      | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
-      | NonUndefinedGuard<TQueryFnData>
-  }
+> = UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: TQueryKey
+  queryFn?: QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>
+}
+
+/**
+ * Augmented version of DefinedInitialQueryOptions that explicitly exposes
+ * queryFn and other properties for direct TypeScript access.
+ */
+export type DefinedInitialDataOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: TQueryKey
+  queryFn?: QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>
+}
 
 export function queryOptions<
   TQueryFnData = unknown,

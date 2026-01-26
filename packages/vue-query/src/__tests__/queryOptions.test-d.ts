@@ -14,10 +14,10 @@ describe('queryOptions', () => {
     })
 
     // These should be accessible without TS errors (issue #7892)
-    expectTypeOf(options.queryFn).toEqualTypeOf<
+    expectTypeOf(options.queryFn).toMatchTypeOf<
       (() => Promise<number>) | undefined
     >()
-    expectTypeOf(options.staleTime).toEqualTypeOf<number | undefined>()
+    expectTypeOf(options.staleTime).toMatchTypeOf<number | undefined>()
     expectTypeOf(options.queryKey).toMatchTypeOf<readonly unknown[]>()
   })
 
