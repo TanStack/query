@@ -212,11 +212,13 @@ export class Mutation<
       } else {
         this.#dispatch({ type: 'pending', variables, isPaused })
         // Notify cache callback
-        await this.#mutationCache.config.onMutate?.(
-          variables,
-          this as Mutation<unknown, unknown, unknown, unknown>,
-          mutationFnContext,
-        )
+        if (this.#mutationCache.config.onMutate) {
+          await this.#mutationCache.config.onMutate(
+            variables,
+            this as Mutation<unknown, unknown, unknown, unknown>,
+            mutationFnContext,
+          )
+        }
         const context = await this.options.onMutate?.(
           variables,
           mutationFnContext,
