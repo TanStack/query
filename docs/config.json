@@ -1038,10 +1038,17 @@
         {
           "label": "Infinite Query Property Order",
           "to": "eslint/infinite-query-property-order"
+        },
+        {
+          "label": "No void Query Functions",
+          "to": "eslint/no-void-query-fn"
+        },
+        {
+          "label": "Mutation Property Order",
+          "to": "eslint/mutation-property-order"
         }
       ]
     },
-
     {
       "label": "Examples",
       "children": [],
@@ -1190,6 +1197,10 @@
             {
               "label": "Vue 2.6",
               "to": "framework/vue/examples/2.6-basic"
+            },
+            {
+              "label": "Vue 2.7",
+              "to": "framework/vue/examples/2.7-basic"
             },
             {
               "label": "Nuxt 3",
