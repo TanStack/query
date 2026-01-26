@@ -628,7 +628,11 @@ export class QueryObserver<
           }
           break
         case 'rejected':
-          if (!isErrorWithoutData || nextResult.error !== prevThenable.reason) {
+          if (
+            !isErrorWithoutData ||
+            nextResult.error !== prevThenable.reason ||
+            nextResult.fetchStatus === 'fetching'
+          ) {
             recreateThenable()
           }
           break
