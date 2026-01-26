@@ -536,7 +536,7 @@ This is much better, but if we want to improve this further we can flatten this 
 
 A query is considered stale depending on when it was `dataUpdatedAt`. A caveat here is that the server needs to have the correct time for this to work properly, but UTC time is used, so timezones do not factor into this.
 
-Because `staleTime` defaults to `0`, queries will be refetched in the background on page load by default. You might want to use a higher `staleTime` to avoid this double fetching, especially if you don't cache your markup.
+Because `staleTime` defaults to `0`, queries will be refetched in the background on page load by default. When using `HydrationBoundary`, React Query intelligently handles this: if the hydrated data is still fresh (within `staleTime`), it prevents unnecessary refetching during hydration. However, if the hydrated data is stale (e.g., from cached markup where the server fetch happened long ago), a refetch will be triggered. You can always force a refetch by setting `refetchOnMount` to `'always'`. For other approaches like `initialData`, you might want to use a higher `staleTime` to avoid double fetching.
 
 This refetching of stale queries is a perfect match when caching markup in a CDN! You can set the cache time of the page itself decently high to avoid having to re-render pages on the server, but configure the `staleTime` of the queries lower to make sure data is refetched in the background as soon as a user visits the page. Maybe you want to cache the pages for a week, but refetch the data automatically on page load if it's older than a day?
 
