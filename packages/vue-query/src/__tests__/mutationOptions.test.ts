@@ -3,7 +3,6 @@ import { sleep } from '@tanstack/query-test-utils'
 import { mutationOptions } from '../mutationOptions'
 
 describe('mutationOptions', () => {
-
   it('should return the object received as a parameter without any modification (with mutationKey in mutationOptions)', () => {
     const object = {
       mutationKey: ['key'],
@@ -20,5 +19,4 @@ describe('mutationOptions', () => {
 
     expect(mutationOptions(object)).toStrictEqual(object)
   })
-
 })
