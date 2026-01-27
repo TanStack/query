@@ -1400,4 +1400,77 @@ describe('dehydration and rehydration', () => {
     // error and test will fail
     await originalPromise
   })
+
+  test('should preserve queryType for infinite queries during hydration', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+
+    await vi.waitFor(() =>
+      queryClient.prefetchInfiniteQuery({
+        queryKey: ['infinite'],
+        queryFn: async ({ pageParam }) =>
+          sleep(0).then(() => ({
+            items: [`page-${pageParam}`],
+            nextCursor: pageParam + 1,
+          })),
+        initialPageParam: 0,
+        getNextPageParam: (
+          lastPage: { items: Array<string>; nextCursor: number },
+        ) => lastPage.nextCursor,
+      }),
+    )
+
+    const dehydrated = dehydrate(queryClient)
+
+    const infiniteQueryState = dehydrated.queries.find(
+      (q) => q.queryKey[0] === 'infinite',
+    )
+    expect(infiniteQueryState?.queryType).toBe('infiniteQuery')
+
+    const hydrationCache = new QueryCache()
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
+    hydrate(hydrationClient, dehydrated)
+
+    const hydratedQuery = hydrationCache.find({ queryKey: ['infinite'] })
+    expect(hydratedQuery?.state.data).toBeDefined()
+    expect(hydratedQuery?.state.data).toHaveProperty('pages')
+    expect(hydratedQuery?.state.data).toHaveProperty('pageParams')
+    expect((hydratedQuery?.state.data as any).pages).toHaveLength(1)
+  })
+
+  test('should attach infiniteQueryBehavior during hydration', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+
+    await vi.waitFor(() =>
+      queryClient.prefetchInfiniteQuery({
+        queryKey: ['infinite-with-behavior'],
+        queryFn: async ({ pageParam }) =>
+          sleep(0).then(() => ({ data: `page-${pageParam}`, next: pageParam + 1 })),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage: { data: string; next: number }) =>
+          lastPage.next,
+      }),
+    )
+
+    const dehydrated = dehydrate(queryClient)
+
+    const hydrationCache = new QueryCache()
+    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
+    hydrate(hydrationClient, dehydrated)
+
+    const result = await vi.waitFor(() =>
+      hydrationClient.fetchInfiniteQuery({
+        queryKey: ['infinite-with-behavior'],
+        queryFn: async ({ pageParam }) =>
+          sleep(0).then(() => ({ data: `page-${pageParam}`, next: pageParam + 1 })),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage: { data: string; next: number }) =>
+          lastPage.next,
+      }),
+    )
+
+    expect(result.pages).toHaveLength(1)
+    expect(result.pageParams).toHaveLength(1)
+  })
 })
