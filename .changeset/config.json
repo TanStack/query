@@ -28,8 +28,8 @@
       "@tanstack/solid-query-persist-client",
       "@tanstack/vue-query"
     ],
-    ["@tanstack/vue-query-devtools"],
     [
+      "@tanstack/vue-query-devtools",
       "@tanstack/svelte-query",
       "@tanstack/svelte-query-devtools",
       "@tanstack/svelte-query-persist-client"
