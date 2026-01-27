@@ -10,7 +10,7 @@ export type FallbackProps = {
   resetErrorBoundary: (...args: any[]) => void
 }
 
-export type PropsWithChildren<P = {}> = P & {
+type PropsWithChildren<P = {}> = P & {
   children?: ComponentChildren
 }
 

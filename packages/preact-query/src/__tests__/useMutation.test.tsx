@@ -1074,7 +1074,10 @@ describe('useMutation', () => {
           await sleep(10)
           throw mutateFnError
         },
-        onError: () => Promise.reject(error),
+        onError: () => {
+          console.log('REJECTING....')
+          Promise.reject(error)
+        },
       })
 
       return (

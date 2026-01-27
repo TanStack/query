@@ -46,6 +46,8 @@ describe('usePrefetchInfiniteQuery', () => {
   })
 
   afterEach(() => {
+    queryClient.clear()
+    Fallback.mockClear()
     vi.useRealTimers()
   })
 
