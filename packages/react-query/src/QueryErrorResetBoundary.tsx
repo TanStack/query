@@ -24,7 +24,10 @@ function createValue(client?: QueryClient): QueryErrorResetBoundaryValue {
     reset: () => {
       isReset = true
       void client?.refetchQueries({
-        predicate: (query) => query.state.status === 'error',
+        predicate: (query) =>
+          query.state.status === 'error' &&
+          query.getObserversCount() > 0 &&
+          query.observers.some((observer) => observer.options.enabled !== false),
       })
     },
     isReset: () => {
