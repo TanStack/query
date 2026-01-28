@@ -8,14 +8,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.42.2",
-    "@tanstack/react-query-devtools": "^4.42.0",
+    "@tanstack/react-query": "^4.43.0",
+    "@tanstack/react-query-devtools": "^4.43.0",
     "axios": "^0.21.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^4.39.1",
+    "@tanstack/eslint-plugin-query": "^4.43.0",
     "@vitejs/plugin-react": "^2.0.0",
     "vite": "^3.0.0"
   },
