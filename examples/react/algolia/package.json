@@ -10,14 +10,14 @@
   "dependencies": {
     "@algolia/client-search": "4.11.0",
     "@algolia/transporter": "4.11.0",
-    "@tanstack/react-query": "^4.42.2",
-    "@tanstack/react-query-devtools": "^4.42.0",
+    "@tanstack/react-query": "^4.43.0",
+    "@tanstack/react-query-devtools": "^4.43.0",
     "algoliasearch": "4.12.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^4.39.1",
+    "@tanstack/eslint-plugin-query": "^4.43.0",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
     "@vitejs/plugin-react": "^2.0.0",

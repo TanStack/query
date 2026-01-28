@@ -9,11 +9,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@tanstack/solid-query": "^4.41.1",
+    "@tanstack/solid-query": "^4.43.0",
     "solid-js": "^1.5.1"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^4.39.1",
+    "@tanstack/eslint-plugin-query": "^4.43.0",
     "typescript": "^4.8.2",
     "vite": "^3.0.9",
     "vite-plugin-solid": "^2.3.9"
