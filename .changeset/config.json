@@ -5,7 +5,20 @@
   "access": "public",
   "baseBranch": "v4",
   "updateInternalDependencies": "patch",
-  "fixed": [],
+  "fixed": [
+    "@tanstack/eslint-plugin-query",
+    "@tanstack/query-async-storage-persister",
+    "@tanstack/query-broadcast-client-experimental",
+    "@tanstack/query-core",
+    "@tanstack/query-persist-client-core",
+    "@tanstack/query-sync-storage-persister",
+    "@tanstack/react-query",
+    "@tanstack/react-query-devtools",
+    "@tanstack/react-query-persist-client",
+    "@tanstack/solid-query",
+    "@tanstack/svelte-query",
+    "@tanstack/vue-query"
+  ],
   "linked": [],
   "ignore": [],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
