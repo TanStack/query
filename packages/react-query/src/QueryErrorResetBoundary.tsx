@@ -1,6 +1,9 @@
 'use client'
 import * as React from 'react'
 
+import { useQueryClient } from './QueryClientProvider'
+import type { QueryClient } from '@tanstack/query-core'
+
 // CONTEXT
 export type QueryErrorResetFunction = () => void
 export type QueryErrorIsResetFunction = () => boolean
@@ -12,7 +15,7 @@ export interface QueryErrorResetBoundaryValue {
   reset: QueryErrorResetFunction
 }
 
-function createValue(): QueryErrorResetBoundaryValue {
+function createValue(client?: QueryClient): QueryErrorResetBoundaryValue {
   let isReset = false
   return {
     clearReset: () => {
@@ -20,6 +23,14 @@ function createValue(): QueryErrorResetBoundaryValue {
     },
     reset: () => {
       isReset = true
+      void client?.refetchQueries({
+        predicate: (query) =>
+          query.state.status === 'error' &&
+          query.getObserversCount() > 0 &&
+          query.observers.some(
+            (observer) => observer.options.enabled !== false,
+          ),
+      })
     },
     isReset: () => {
       return isReset
@@ -47,7 +58,8 @@ export interface QueryErrorResetBoundaryProps {
 export const QueryErrorResetBoundary = ({
   children,
 }: QueryErrorResetBoundaryProps) => {
-  const [value] = React.useState(() => createValue())
+  const client = useQueryClient()
+  const [value] = React.useState(() => createValue(client))
   return (
     <QueryErrorResetBoundaryContext.Provider value={value}>
       {typeof children === 'function' ? children(value) : children}
