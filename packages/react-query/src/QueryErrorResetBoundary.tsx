@@ -30,7 +30,8 @@ function createValue(client?: QueryClient): QueryErrorResetBoundaryValue {
           query.state.status === 'error' &&
           query.getObserversCount() > 0 &&
           query.observers.some(
-            (observer) => resolveEnabled(observer.options.enabled, query) !== false,
+            (observer) =>
+              resolveEnabled(observer.options.enabled, query) !== false,
           ),
       })
     },
