@@ -1,6 +1,8 @@
 'use client'
 import * as React from 'react'
 
+import { resolveEnabled } from '@tanstack/query-core'
+
 import { useQueryClient } from './QueryClientProvider'
 import type { QueryClient } from '@tanstack/query-core'
 
@@ -28,7 +30,7 @@ function createValue(client?: QueryClient): QueryErrorResetBoundaryValue {
           query.state.status === 'error' &&
           query.getObserversCount() > 0 &&
           query.observers.some(
-            (observer) => observer.options.enabled !== false,
+            (observer) => resolveEnabled(observer.options.enabled, query) !== false,
           ),
       })
     },
