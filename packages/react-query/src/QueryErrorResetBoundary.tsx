@@ -27,7 +27,9 @@ function createValue(client?: QueryClient): QueryErrorResetBoundaryValue {
         predicate: (query) =>
           query.state.status === 'error' &&
           query.getObserversCount() > 0 &&
-          query.observers.some((observer) => observer.options.enabled !== false),
+          query.observers.some(
+            (observer) => observer.options.enabled !== false,
+          ),
       })
     },
     isReset: () => {
