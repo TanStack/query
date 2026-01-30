@@ -11,7 +11,7 @@ import type {
   QueryOptions,
 } from './types'
 import type { QueryClient } from './queryClient'
-import type { Query, QueryState } from './query'
+import type { Query, QueryBehavior, QueryState } from './query'
 import type { Mutation, MutationState } from './mutation'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 
@@ -261,11 +261,11 @@ export function hydrate(
           queryKey,
           queryHash,
           meta,
+          behavior: queryType === 'infiniteQuery'
+          ? (infiniteQueryBehavior() as QueryBehavior<unknown, unknown, unknown>)
+          : undefined,
         }
 
-        if (queryType === 'infiniteQuery') {
-          queryOptions.behavior = infiniteQueryBehavior(undefined)
-        }
         // Restore query
         query = queryCache.build(
           client,
@@ -293,24 +293,13 @@ export function hydrate(
         // which will re-use the passed `initialPromise`
         // Note that we need to call these even when data was synchronously
         // available, as we still need to set up the retryer
-
-        const isRejectedThenable =
-          promise &&
-          typeof promise === 'object' &&
-          'status' in promise &&
-          (promise as any).status === 'rejected'
-
-        if (!isRejectedThenable) {
-          query
-            .fetch(undefined, {
-              // RSC transformed promises are not thenable
-              initialPromise: Promise.resolve(promise).then((resolvedData) => {
-                return deserializeData(resolvedData)
-              }),
-            })
-            // Avoid unhandled promise rejections
-            .catch(noop)
-        }
+        query
+          .fetch(undefined, {
+            // RSC transformed promises are not thenable
+            initialPromise: Promise.resolve(promise).then(deserializeData),
+          })
+          // Avoid unhandled promise rejections
+          .catch(noop)
       }
     },
   )
