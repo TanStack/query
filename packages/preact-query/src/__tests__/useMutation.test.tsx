@@ -1,15 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/preact'
-import { ErrorBoundary } from './ErrorBoundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { fireEvent, render } from '@testing-library/preact'
+import { useEffect, useState } from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { MutationCache, QueryCache, QueryClient, useMutation } from '..'
+import type { UseMutationResult } from '../types'
+import { ErrorBoundary } from './ErrorBoundary'
 import {
   mockOnlineManagerIsOnline,
   renderWithClient,
   setActTimeout,
 } from './utils'
-import type { UseMutationResult } from '../types'
-import { useEffect, useState } from 'preact/hooks'
 
 describe('useMutation', () => {
   let queryCache: QueryCache
@@ -1184,7 +1185,7 @@ describe('useMutation', () => {
       )
     }
 
-    const rendered = render(<Page></Page>)
+    const rendered = render(<Page />)
 
     expect(rendered.getByText('data: null, status: idle')).toBeInTheDocument()
 

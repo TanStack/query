@@ -1,12 +1,24 @@
-import { useMemo, useState, useEffect, useCallback } from 'preact/hooks'
 import {
   QueriesObserver,
   QueryObserver,
   noop,
   notifyManager,
 } from '@tanstack/query-core'
-import { useQueryClient } from './QueryClientProvider'
+import type {
+  DefaultError,
+  OmitKeyof,
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryClient,
+  QueryFunction,
+  QueryKey,
+  QueryObserverOptions,
+  ThrowOnError,
+} from '@tanstack/query-core'
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+
 import { useIsRestoring } from './IsRestoringProvider'
+import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
   ensurePreventErrorBoundaryRetry,
@@ -24,17 +36,6 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from './types'
-import type {
-  DefaultError,
-  OmitKeyof,
-  QueriesObserverOptions,
-  QueriesPlaceholderDataFunction,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  QueryObserverOptions,
-  ThrowOnError,
-} from '@tanstack/query-core'
 import { useSyncExternalStore } from './utils'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.

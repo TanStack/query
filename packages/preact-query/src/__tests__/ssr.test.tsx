@@ -1,5 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { renderToString } from 'preact-render-to-string'
+import { useState } from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import {
   QueryCache,
   QueryClient,
@@ -8,8 +11,6 @@ import {
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
-import { renderToString } from 'preact-render-to-string'
-import { useState } from 'preact/hooks'
 
 describe('Server Side Rendering', () => {
   setIsServer(true)

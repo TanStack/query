@@ -1,5 +1,6 @@
-import { useQueryClient } from './QueryClientProvider'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+
+import { useQueryClient } from './QueryClientProvider'
 import type { UsePrefetchQueryOptions } from './types'
 
 export function usePrefetchQuery<

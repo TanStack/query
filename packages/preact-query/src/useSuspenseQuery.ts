@@ -1,8 +1,9 @@
 import { QueryObserver, skipToken } from '@tanstack/query-core'
-import { useBaseQuery } from './useBaseQuery'
+import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+
 import { defaultThrowOnError } from './suspense'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
 
 export function useSuspenseQuery<
   TQueryFnData = unknown,

@@ -6,8 +6,9 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 import { useEffect } from 'preact/hooks'
+
+import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
 export const ensurePreventErrorBoundaryRetry = <
   TQueryFnData,

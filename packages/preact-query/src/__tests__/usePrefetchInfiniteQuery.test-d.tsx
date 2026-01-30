@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+
 import { usePrefetchInfiniteQuery } from '..'
 
 describe('usePrefetchInfiniteQuery', () => {

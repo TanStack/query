@@ -1,6 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { fireEvent } from '@testing-library/preact'
+import { Suspense } from 'preact/compat'
+import { useEffect, useState } from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import {
   QueryCache,
   QueryClient,
@@ -10,10 +13,8 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
-import { useEffect, useState } from 'preact/hooks'
-import { Suspense } from 'preact/compat'
 import { ErrorBoundary } from './ErrorBoundary'
+import { renderWithClient } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
   beforeEach(() => {

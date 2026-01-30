@@ -1,8 +1,9 @@
-import { describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
-import { useQuery } from '../useQuery'
-import { queryOptions } from '../queryOptions'
+import { describe, expectTypeOf, it } from 'vitest'
+
 import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
+import { queryOptions } from '../queryOptions'
+import { useQuery } from '../useQuery'
 
 describe('useQuery', () => {
   const key = queryKey()
@@ -280,6 +281,7 @@ describe('useQuery', () => {
       // eslint-disable-next-line vitest/expect-expect
       it('TData should depend from only arguments, not the result', () => {
         // @ts-expect-error
+        // eslint-disable-next-line
         const result: UseQueryResult<{ wow: string }> = useQuery({
           queryKey: ['key'],
           queryFn: () => {

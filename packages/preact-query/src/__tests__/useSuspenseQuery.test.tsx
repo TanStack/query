@@ -1,6 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, fireEvent } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { act, fireEvent } from '@testing-library/preact'
+import { Suspense } from 'preact/compat'
+import { useReducer, useState } from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import {
   QueryCache,
   QueryClient,
@@ -10,15 +13,13 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
 import type {
   InfiniteData,
   UseSuspenseInfiniteQueryResult,
   UseSuspenseQueryResult,
 } from '..'
-import { useReducer, useState } from 'preact/hooks'
-import { Suspense } from 'preact/compat'
 import { ErrorBoundary } from './ErrorBoundary'
+import { renderWithClient } from './utils'
 
 describe('useSuspenseQuery', () => {
   beforeEach(() => {
@@ -58,7 +59,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    function Page({ stateKey }: { stateKey: string[] }) {
+    function Page({ stateKey }: { stateKey: Array<string> }) {
       renders++
       const state = useSuspenseQuery({
         queryKey: stateKey,
@@ -884,7 +885,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    function Page({ stateKey }: { stateKey: string[] }) {
+    function Page({ stateKey }: { stateKey: Array<string> }) {
       const state = useSuspenseQuery({
         queryKey: stateKey,
         queryFn: async () => sleep(10).then(() => ++count),
@@ -917,7 +918,7 @@ describe('useSuspenseQuery', () => {
       useSuspenseQuery({
         queryKey: key,
         // @ts-expect-error
-        // eslint-disable-next-line react-hooks/purity
+        // eslint-disable-next-line
         queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
       })
 

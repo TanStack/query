@@ -1,17 +1,18 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { fireEvent } from '@testing-library/preact'
+import type { VNode } from 'preact'
+import { Suspense } from 'preact/compat'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { Mock } from 'vitest'
+
 import {
   QueryCache,
   QueryClient,
   usePrefetchInfiniteQuery,
   useSuspenseInfiniteQuery,
 } from '..'
-import { renderWithClient } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryOptions } from '..'
-import type { Mock } from 'vitest'
-import { Suspense } from 'preact/compat'
-import { VNode } from 'preact'
+import { renderWithClient } from './utils'
 
 const generateInfiniteQueryOptions = (
   data: Array<{ data: string; currentPage: number; totalPages: number }>,

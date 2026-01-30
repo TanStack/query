@@ -1,13 +1,14 @@
 import { hydrate } from '@tanstack/query-core'
-import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
   HydrateOptions,
   OmitKeyof,
   QueryClient,
 } from '@tanstack/query-core'
+import type { ComponentChildren } from 'preact'
 import { useEffect, useMemo, useRef } from 'preact/hooks'
-import { ComponentChildren } from 'preact'
+
+import { useQueryClient } from './QueryClientProvider'
 
 export interface HydrationBoundaryProps {
   state: DehydratedState | null | undefined

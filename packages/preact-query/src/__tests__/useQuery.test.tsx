@@ -1,10 +1,20 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { act, fireEvent, render } from '@testing-library/preact'
 import {
   mockVisibilityState,
   queryKey,
   sleep,
 } from '@tanstack/query-test-utils'
+import { act, fireEvent, render } from '@testing-library/preact'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
+import type { Mock } from 'vitest'
+
 import {
   QueryCache,
   QueryClient,
@@ -14,23 +24,14 @@ import {
   skipToken,
   useQuery,
 } from '..'
+import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
+import { ErrorBoundary } from './ErrorBoundary'
 import {
   Blink,
   mockOnlineManagerIsOnline,
   renderWithClient,
   setActTimeout,
 } from './utils'
-import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
-import type { Mock } from 'vitest'
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from 'preact/hooks'
-import { ErrorBoundary } from './ErrorBoundary'
 
 describe('useQuery', () => {
   let queryCache: QueryCache
@@ -6149,7 +6150,7 @@ describe('useQuery', () => {
       return <div>data: {data}</div>
     }
 
-    const rendered = render(<Page></Page>)
+    const rendered = render(<Page />)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()

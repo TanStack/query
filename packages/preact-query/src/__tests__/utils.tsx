@@ -1,11 +1,12 @@
-import { vi } from 'vitest'
-import { act, render } from '@testing-library/preact'
 import * as utils from '@tanstack/query-core'
+import { act, render } from '@testing-library/preact'
+import type { ComponentChildren, VNode } from 'preact'
+import { useEffect, useState } from 'preact/hooks'
+import { vi } from 'vitest'
+import type { MockInstance } from 'vitest'
+
 import { QueryClientProvider, onlineManager } from '..'
 import type { QueryClient } from '..'
-import type { MockInstance } from 'vitest'
-import { useEffect, useState } from 'preact/hooks'
-import { ComponentChildren, VNode } from 'preact'
 
 export function renderWithClient(
   client: QueryClient,

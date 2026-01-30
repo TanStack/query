@@ -1,9 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render } from '@testing-library/preact'
 import { sleep } from '@tanstack/query-test-utils'
+import { fireEvent, render } from '@testing-library/preact'
+import { useEffect } from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { QueryClient, useIsMutating, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
-import { useEffect } from 'preact/hooks'
 
 describe('useIsMutating', () => {
   beforeEach(() => {

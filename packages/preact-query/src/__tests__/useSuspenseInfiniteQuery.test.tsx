@@ -1,5 +1,7 @@
-import { describe, expect, it, vi } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
+import { Suspense } from 'preact/compat'
+import { describe, expect, it, vi } from 'vitest'
+
 import {
   QueryCache,
   QueryClient,
@@ -7,7 +9,6 @@ import {
   useSuspenseInfiniteQuery,
 } from '..'
 import { renderWithClient } from './utils'
-import { Suspense } from 'preact/compat'
 
 describe('useSuspenseInfiniteQuery', () => {
   const queryCache = new QueryCache()

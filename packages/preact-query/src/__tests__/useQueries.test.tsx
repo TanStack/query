@@ -1,3 +1,7 @@
+import type { QueryFunctionContext } from '@tanstack/query-core'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { fireEvent, render } from '@testing-library/preact'
+import { useCallback, useEffect, useState } from 'preact/hooks'
 import {
   afterEach,
   beforeEach,
@@ -7,9 +11,7 @@ import {
   it,
   vi,
 } from 'vitest'
-import { fireEvent, render } from '@testing-library/preact'
-import { ErrorBoundary } from './ErrorBoundary'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+
 import {
   QueryCache,
   QueryClient,
@@ -17,7 +19,6 @@ import {
   skipToken,
   useQueries,
 } from '..'
-import { renderWithClient } from './utils'
 import type {
   QueryFunction,
   QueryKey,
@@ -25,8 +26,8 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import type { QueryFunctionContext } from '@tanstack/query-core'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { ErrorBoundary } from './ErrorBoundary'
+import { renderWithClient } from './utils'
 
 describe('useQueries', () => {
   beforeEach(() => {
@@ -957,7 +958,7 @@ describe('useQueries', () => {
       return <div>data: {queries[0].data}</div>
     }
 
-    const rendered = render(<Page></Page>)
+    const rendered = render(<Page />)
 
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('data: custom client')).toBeInTheDocument()

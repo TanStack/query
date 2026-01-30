@@ -1,5 +1,4 @@
 /* istanbul ignore file */
-
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,

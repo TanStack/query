@@ -1,20 +1,21 @@
 import { QueryObserver } from '@tanstack/query-core'
-import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   NoInfer,
   QueryClient,
   QueryKey,
 } from '@tanstack/query-core'
+
+import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
   UseQueryResult,
 } from './types'
-import type {
-  DefinedInitialDataOptions,
-  UndefinedInitialDataOptions,
-} from './queryOptions'
+import { useBaseQuery } from './useBaseQuery'
 
 export function useQuery<
   TQueryFnData = unknown,

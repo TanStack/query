@@ -1,7 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, fireEvent } from '@testing-library/preact'
-import { ErrorBoundary } from './ErrorBoundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { act, fireEvent } from '@testing-library/preact'
+import type { VNode } from 'preact'
+import { Suspense } from 'preact/compat'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import {
   QueryCache,
   QueryClient,
@@ -9,11 +11,9 @@ import {
   useQueryErrorResetBoundary,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
-
 import type { UseSuspenseQueryOptions } from '..'
-import { Suspense } from 'preact/compat'
-import { VNode } from 'preact'
+import { ErrorBoundary } from './ErrorBoundary'
+import { renderWithClient } from './utils'
 
 const generateQueryFn = (data: string) =>
   vi

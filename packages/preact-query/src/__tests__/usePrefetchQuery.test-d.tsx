@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+
 import { skipToken, usePrefetchQuery } from '..'
 
 describe('usePrefetchQuery', () => {

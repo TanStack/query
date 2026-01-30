@@ -1,5 +1,4 @@
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
-import { useQueryClient } from './QueryClientProvider'
 import type {
   Mutation,
   MutationCache,
@@ -8,6 +7,8 @@ import type {
   QueryClient,
 } from '@tanstack/query-core'
 import { useCallback, useEffect, useRef } from 'preact/hooks'
+
+import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
 
 export function useIsMutating(

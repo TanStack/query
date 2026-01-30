@@ -1,12 +1,13 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createQueryPersister,
 } from '@tanstack/query-persist-client-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { useState } from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { QueryCache, QueryClient, hashKey, useQuery } from '..'
 import { renderWithClient } from './utils'
-import { useState } from 'preact/hooks'
 
 describe('fine grained persister', () => {
   beforeEach(() => {

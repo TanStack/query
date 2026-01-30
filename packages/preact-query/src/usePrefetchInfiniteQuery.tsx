@@ -1,10 +1,11 @@
-import { useQueryClient } from './QueryClientProvider'
 import type {
   DefaultError,
   FetchInfiniteQueryOptions,
   QueryClient,
   QueryKey,
 } from '@tanstack/query-core'
+
+import { useQueryClient } from './QueryClientProvider'
 
 export function usePrefetchInfiniteQuery<
   TQueryFnData = unknown,

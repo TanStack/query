@@ -1,8 +1,8 @@
-import {
+import type {
+  ComponentChild,
+  ComponentChildren,
   ComponentType,
   ErrorInfo,
-  ComponentChildren,
-  ComponentChild,
 } from 'preact'
 
 export type FallbackProps = {
@@ -10,7 +10,7 @@ export type FallbackProps = {
   resetErrorBoundary: (...args: any[]) => void
 }
 
-type PropsWithChildren<P = {}> = P & {
+type PropsWithChildren<TProps = {}> = TProps & {
   children?: ComponentChildren
 }
 

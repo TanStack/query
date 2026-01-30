@@ -1,20 +1,21 @@
-import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueriesObserver,
   QueryClient,
   dataTagSymbol,
   skipToken,
 } from '@tanstack/query-core'
-import { queryOptions } from '../queryOptions'
-import { useQuery } from '../useQuery'
-import { useQueries } from '../useQueries'
-import { useSuspenseQuery } from '../useSuspenseQuery'
-import type { AnyUseQueryOptions } from '../types'
 import type {
   DataTag,
   InitialDataFunction,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
+
+import { queryOptions } from '../queryOptions'
+import type { AnyUseQueryOptions } from '../types'
+import { useQueries } from '../useQueries'
+import { useQuery } from '../useQuery'
+import { useSuspenseQuery } from '../useSuspenseQuery'
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {

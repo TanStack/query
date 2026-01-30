@@ -1,6 +1,8 @@
-import { Component, createElement, ErrorInfo } from 'preact'
+import { createElement, Component } from 'preact'
+import type { ErrorInfo } from 'preact'
+
 import { ErrorBoundaryContext } from './ErrorBoundaryContext'
-import { ErrorBoundaryProps, FallbackProps } from './types'
+import type { ErrorBoundaryProps, FallbackProps } from './types'
 
 type ErrorBoundaryState =
   | {
@@ -78,6 +80,7 @@ export class ErrorBoundary extends Component<
         reason: 'keys',
       })
 
+      // eslint-disable-next-line
       this.setState(initialState)
     }
   }

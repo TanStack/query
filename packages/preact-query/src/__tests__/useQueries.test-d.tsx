@@ -1,9 +1,10 @@
 import { describe, expectTypeOf, it } from 'vitest'
+
 import { skipToken } from '..'
-import { useQueries } from '../useQueries'
-import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
+import { queryOptions } from '../queryOptions'
 import type { UseQueryOptions, UseQueryResult } from '../types'
+import { useQueries } from '../useQueries'
 
 describe('UseQueries config object overload', () => {
   it('TData should always be defined when initialData is provided as an object', () => {

@@ -1,6 +1,9 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { act } from '@testing-library/preact'
+import { hydrate as preactHydrate, render } from 'preact'
+import type { VNode } from 'preact'
 import { renderToString } from 'preact-render-to-string'
-import { hydrate as preactHydrate, render, VNode } from 'preact'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+
 import {
   QueryCache,
   QueryClient,
@@ -10,7 +13,6 @@ import {
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
-import { act } from '@testing-library/preact'
 
 const PreactHydrate = (element: VNode, container: Element) => {
   act(() => {

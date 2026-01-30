@@ -1,7 +1,7 @@
+import { notifyManager } from '@tanstack/query-core'
 import '@testing-library/jest-dom/vitest'
 import { act, cleanup as cleanupRTL } from '@testing-library/preact'
 import { afterEach } from 'vitest'
-import { notifyManager } from '@tanstack/query-core'
 
 // https://testing-library.com/docs/preact-testing-library/api#cleanup
 afterEach(() => {

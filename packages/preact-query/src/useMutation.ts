@@ -4,14 +4,15 @@ import {
   notifyManager,
   shouldThrowError,
 } from '@tanstack/query-core'
+import type { DefaultError, QueryClient } from '@tanstack/query-core'
+import { useCallback, useEffect, useState } from 'preact/hooks'
+
 import { useQueryClient } from './QueryClientProvider'
 import type {
   UseMutateFunction,
   UseMutationOptions,
   UseMutationResult,
 } from './types'
-import type { DefaultError, QueryClient } from '@tanstack/query-core'
-import { useCallback, useEffect, useState } from 'preact/hooks'
 import { useSyncExternalStore } from './utils'
 
 // HOOK

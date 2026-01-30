@@ -1,4 +1,13 @@
 import { isServer, noop, notifyManager } from '@tanstack/query-core'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
+import { useCallback, useEffect, useState } from 'preact/hooks'
+
+import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -6,21 +15,13 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
   willFetch,
 } from './suspense'
-import type {
-  QueryClient,
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
 import type { UseBaseQueryOptions } from './types'
-import { useCallback, useEffect, useState } from 'preact/hooks'
 import { useSyncExternalStore } from './utils'
 
 export function useBaseQuery<

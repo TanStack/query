@@ -1,8 +1,8 @@
 import { notifyManager } from '@tanstack/query-core'
-
-import { useQueryClient } from './QueryClientProvider'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import { useCallback } from 'preact/hooks'
+
+import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
 
 export function useIsFetching(

@@ -1,3 +1,8 @@
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { act, fireEvent, render } from '@testing-library/preact'
+import type { FunctionalComponent } from 'preact'
+import { Suspense, startTransition, useTransition } from 'preact/compat'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import {
   afterAll,
   afterEach,
@@ -8,20 +13,16 @@ import {
   it,
   vi,
 } from 'vitest'
-import { act, fireEvent, render } from '@testing-library/preact'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+
 import {
   QueryClient,
   skipToken,
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
-import { startTransition, Suspense, useTransition } from 'preact/compat'
-import { useEffect, useRef, useState } from 'preact/hooks'
-import { FunctionalComponent } from 'preact'
 import { ErrorBoundary } from './ErrorBoundary'
+import { renderWithClient } from './utils'
 
 type NumberQueryOptions = UseSuspenseQueryOptions<number>
 

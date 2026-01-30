@@ -1,10 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/preact'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { render } from '@testing-library/preact'
+import type { ComponentChildren } from 'preact'
+import { Suspense } from 'preact/compat'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
 import type { QueryKey } from '..'
-import { Suspense } from 'preact/compat'
-import { ComponentChildren } from 'preact'
 
 function renderWithSuspense(client: QueryClient, ui: ComponentChildren) {
   return render(

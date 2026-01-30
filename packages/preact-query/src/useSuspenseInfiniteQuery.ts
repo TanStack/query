@@ -1,6 +1,4 @@
 import { InfiniteQueryObserver, skipToken } from '@tanstack/query-core'
-import { useBaseQuery } from './useBaseQuery'
-import { defaultThrowOnError } from './suspense'
 import type {
   DefaultError,
   InfiniteData,
@@ -9,10 +7,13 @@ import type {
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
+
+import { defaultThrowOnError } from './suspense'
 import type {
   UseSuspenseInfiniteQueryOptions,
   UseSuspenseInfiniteQueryResult,
 } from './types'
+import { useBaseQuery } from './useBaseQuery'
 
 export function useSuspenseInfiniteQuery<
   TQueryFnData,
