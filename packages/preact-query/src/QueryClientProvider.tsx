@@ -1,6 +1,6 @@
 import type { QueryClient } from '@tanstack/query-core'
 import { createContext } from 'preact'
-import type {ComponentChildren, VNode} from 'preact'
+import type { ComponentChildren, VNode } from 'preact'
 import { useContext, useEffect } from 'preact/hooks'
 
 export const QueryClientContext = createContext<QueryClient | undefined>(
