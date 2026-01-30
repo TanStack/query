@@ -1,5 +1,11 @@
 # @tanstack/query-devtools
 
+## 5.93.0
+
+### Minor Changes
+
+- Set data to undefined on Trigger Error ([#10072](https://github.com/TanStack/query/pull/10072))
+
 ## 5.92.0
 
 ### Minor Changes
