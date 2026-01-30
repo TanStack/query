@@ -160,7 +160,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -200,7 +200,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -240,7 +240,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       '@tanstack/angular-query-persist-client':
         specifier: ^5.62.27
@@ -289,7 +289,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -329,7 +329,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -372,7 +372,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -412,7 +412,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -455,7 +455,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -498,7 +498,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -541,7 +541,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -581,7 +581,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.2
@@ -615,7 +615,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -625,7 +625,7 @@ importers:
         version: 19.2.4(react@19.2.4)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.91.3
+        specifier: ^5.91.4
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -649,7 +649,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -680,7 +680,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.90.22
@@ -693,7 +693,7 @@ importers:
         version: 19.2.4(react@19.2.4)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.91.3
+        specifier: ^5.91.4
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -717,7 +717,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -745,7 +745,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -776,7 +776,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -801,7 +801,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -829,7 +829,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.90.22
@@ -842,7 +842,7 @@ importers:
         version: 19.2.4(react@19.2.4)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.91.3
+        specifier: ^5.91.4
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^19.2.7
@@ -866,7 +866,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -894,7 +894,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -925,7 +925,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -953,7 +953,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -981,7 +981,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
         specifier: ^5.91.0
@@ -1018,7 +1018,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.90.22
@@ -1052,7 +1052,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1080,7 +1080,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1108,7 +1108,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1136,7 +1136,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1161,7 +1161,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^16.0.7
@@ -1198,7 +1198,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^52.0.11
@@ -1250,7 +1250,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -1302,7 +1302,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1339,7 +1339,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1370,7 +1370,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1395,7 +1395,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^19.0.0
@@ -1432,7 +1432,7 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       font-awesome:
         specifier: ^4.7.0
@@ -1478,7 +1478,7 @@ importers:
         specifier: ^5.90.23
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^5.5.6
@@ -1499,7 +1499,7 @@ importers:
         specifier: ^5.90.23
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.7
@@ -1521,7 +1521,7 @@ importers:
         specifier: ^5.90.23
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -1549,7 +1549,7 @@ importers:
         specifier: ^5.90.23
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.7
@@ -1571,14 +1571,14 @@ importers:
         specifier: ^5.90.23
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.7
         version: 1.9.11
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.91.3
+        specifier: ^5.91.4
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.8.3
@@ -1605,7 +1605,7 @@ importers:
         specifier: ^5.90.23
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.2
+        specifier: ^5.91.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.9.7
@@ -1620,7 +1620,7 @@ importers:
         specifier: ^6.0.18
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.0.3
+        specifier: ^6.0.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1654,7 +1654,7 @@ importers:
         specifier: ^6.0.18
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.0.3
+        specifier: ^6.0.4
         version: link:../../../packages/svelte-query-devtools
       '@tanstack/svelte-query-persist-client':
         specifier: ^6.0.20
@@ -1688,7 +1688,7 @@ importers:
         specifier: ^6.0.18
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.0.3
+        specifier: ^6.0.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1719,7 +1719,7 @@ importers:
         specifier: ^6.0.18
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.0.3
+        specifier: ^6.0.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1750,7 +1750,7 @@ importers:
         specifier: ^6.0.18
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.0.3
+        specifier: ^6.0.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1781,7 +1781,7 @@ importers:
         specifier: ^6.0.18
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.0.3
+        specifier: ^6.0.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1809,7 +1809,7 @@ importers:
         specifier: ^6.0.18
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.0.3
+        specifier: ^6.0.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1840,7 +1840,7 @@ importers:
         specifier: ^6.0.18
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^6.0.3
+        specifier: ^6.0.4
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1877,7 +1877,7 @@ importers:
         specifier: ^5.92.9
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^6.1.3
+        specifier: ^6.1.4
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
@@ -1949,7 +1949,7 @@ importers:
         specifier: ^5.92.9
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^6.1.3
+        specifier: ^6.1.4
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
@@ -1986,7 +1986,7 @@ importers:
         specifier: ^20.0.0
         version: 20.3.16(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@20.3.16(@angular/animations@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@20.3.16(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.90.24
+        specifier: ^5.90.25
         version: link:../../packages/angular-query-experimental
       rxjs:
         specifier: ~7.8.0
