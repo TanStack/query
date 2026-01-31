@@ -14,6 +14,7 @@ import {
   keepPreviousData,
   useInfiniteQuery,
   useQuery,
+  useTrackQueryHash,
 } from '..'
 import { QueryCache } from '../index'
 
@@ -1511,6 +1512,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
 
     let queryCount = 0
     function Child(props: { promise: Promise<string> }) {
+      useTrackQueryHash(props.promise)
       const data = React.use(props.promise)
       return <>{data}</>
     }
