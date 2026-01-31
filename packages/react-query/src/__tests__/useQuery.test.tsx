@@ -100,6 +100,7 @@ describe('useQuery', () => {
     expect(states.length).toEqual(2)
 
     expect(states[0]).toEqual({
+      queryKey: key,
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -129,6 +130,7 @@ describe('useQuery', () => {
     })
 
     expect(states[1]).toEqual({
+      queryKey: key,
       data: 'test',
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -192,6 +194,7 @@ describe('useQuery', () => {
     rendered.getByText('Status: error')
 
     expect(states[0]).toEqual({
+      queryKey: key,
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -221,6 +224,7 @@ describe('useQuery', () => {
     })
 
     expect(states[1]).toEqual({
+      queryKey: key,
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -250,6 +254,7 @@ describe('useQuery', () => {
     })
 
     expect(states[2]).toEqual({
+      queryKey: key,
       data: undefined,
       dataUpdatedAt: 0,
       error: new Error('rejected #2'),
@@ -6788,7 +6793,6 @@ describe('useQuery', () => {
     let fetchCount = 0
     const queryFn = vi.fn().mockImplementation(() => {
       fetchCount++
-      console.log(`Fetching... (attempt ${fetchCount})`)
       return Promise.reject(new Error('Simulated 500 error'))
     })
 
@@ -6906,7 +6910,6 @@ describe('useQuery', () => {
     let fetchCount = 0
     const queryFn = vi.fn().mockImplementation(() => {
       fetchCount++
-      console.log(`Fetching... (attempt ${fetchCount})`)
       return Promise.reject(new Error('Simulated 500 error'))
     })
 
