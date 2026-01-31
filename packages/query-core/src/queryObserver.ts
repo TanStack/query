@@ -584,7 +584,7 @@ export class QueryObserver<
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
-      promise: this.#currentThenable,
+      promise: tagThenable(this.#currentThenable, query.queryHash),
       isEnabled: resolveEnabled(options.enabled, query) !== false,
     }
 
@@ -608,7 +608,7 @@ export class QueryObserver<
         const pending =
           (this.#currentThenable =
           nextResult.promise =
-            pendingThenable())
+            tagThenable(pendingThenable<TData>(), query.queryHash))
 
         finalizeThenableIfPossible(pending)
       }
@@ -830,3 +830,22 @@ function shouldAssignObserverCurrentProperties<
   // basically, just keep previous properties if nothing changed
   return false
 }
+
+function tagThenable<TThenable extends Thenable<any>>(
+  thenable: TThenable,
+  queryHash: string,
+): TThenable {
+  if (!Object.prototype.hasOwnProperty.call(thenable, 'queryHash')) {
+    Object.defineProperty(thenable, 'queryHash', {
+      value: queryHash,
+      enumerable: false,
+      configurable: true,
+    })
+  }
+  return thenable
+}
+
+/**
+ * @internal
+ */
+export type PromiseWithHash<T> = Promise<T> & { queryHash?: string }
