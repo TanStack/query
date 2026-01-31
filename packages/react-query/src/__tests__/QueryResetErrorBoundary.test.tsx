@@ -1064,8 +1064,9 @@ describe('QueryErrorResetBoundary', () => {
         const hash = queryClient
           .getQueryCache()
           .build(queryClient, { queryKey: key }).queryHash
-        useTrackQueryHash(hash)
+        useTrackQueryHash({ queryHash: hash })
         return null
+      }
       }
 
       const rendered = renderWithClient(
