@@ -1,5 +1,7 @@
 # @tanstack/angular-query-experimental
 
+## 5.90.25
+
 ## 5.90.24
 
 ### Patch Changes
