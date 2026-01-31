@@ -190,5 +190,10 @@ others:
       url: 'https://www.zodios.org/',
       description: 'End-to-end typesafe REST API toolbox',
     },
+    {
+      title: 'Tanstack Query Visualizer',
+      url: 'https://tanstack-query-visualizer.sofi.coop/',
+      description: 'An interactive sandbox that visualizes the relationship between mutations and query keys.',
+    },
   ]
 ---
