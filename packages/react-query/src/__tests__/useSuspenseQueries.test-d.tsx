@@ -1,6 +1,8 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken, useSuspenseQueries } from '..'
 import { queryOptions } from '../queryOptions'
+import type { SuspenseQueriesOptions, SuspenseQueriesResults } from '../useSuspenseQueries'
+import type { QueryFunction } from '@tanstack/query-core'
 import type { OmitKeyof } from '..'
 import type { UseQueryOptions, UseSuspenseQueryResult } from '../types'
 
@@ -204,6 +206,27 @@ describe('UseSuspenseQueries config object overload', () => {
         UseSuspenseQueryResult<boolean, Error>,
       ]
     >()
+  })
+
+  it('should only infer TData from select when select input matches TQueryFnData (regression)', () => {
+    type QueryKey = readonly ['key']
+    type QueryFn = QueryFunction<number, QueryKey>
+
+    type Input = [
+      {
+        queryKey: QueryKey
+        queryFn: QueryFn
+        // Intentionally unrelated input type: we should NOT infer TData from this select
+        select: (data: string) => boolean
+      },
+    ]
+
+    type Option = SuspenseQueriesOptions<Input>[0]
+    type Result = SuspenseQueriesResults<Input>[0]
+    type Select = NonNullable<Option['select']>
+
+    expectTypeOf<ReturnType<Select>>().toEqualTypeOf<number>()
+    expectTypeOf<Result['data']>().toEqualTypeOf<number>()
   })
 
   it('queryOptions with initialData works on useSuspenseQueries', () => {
