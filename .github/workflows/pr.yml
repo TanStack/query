@@ -36,12 +36,6 @@ jobs:
       - name: Stop Nx Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.6.0
-        with:
-          directory: packages
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   preview:
     name: Preview
     runs-on: ubuntu-latest

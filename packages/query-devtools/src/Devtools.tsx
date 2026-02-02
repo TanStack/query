@@ -1998,6 +1998,7 @@ const QueryDetails = () => {
     const __previousQueryOptions = activeQueryVal.options
 
     activeQueryVal.setState({
+      data: undefined,
       status: 'error',
       error,
       fetchMeta: {

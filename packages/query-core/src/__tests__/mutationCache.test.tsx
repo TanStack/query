@@ -249,6 +249,30 @@ describe('mutationCache', () => {
 
       expect(states).toEqual([1, 2, 3, 4])
     })
+
+    test('options.onMutate should run synchronously when mutationCache.config.onMutate is not defined', () => {
+      const key = queryKey()
+      const states: Array<string> = []
+
+      // No onMutate in cache config
+      const testCache = new MutationCache({})
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      executeMutation(
+        testClient,
+        {
+          mutationKey: key,
+          mutationFn: () => sleep(10).then(() => ({ data: 5 })),
+          onMutate: () => {
+            states.push('onMutate')
+            return 'context'
+          },
+        },
+        'vars',
+      )
+
+      expect(states).toEqual(['onMutate'])
+    })
   })
 
   describe('find', () => {
