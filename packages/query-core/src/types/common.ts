@@ -41,6 +41,7 @@ export type NoInfer<T> = [T][T extends any ? 0 : never]
  * }
  * ```
  */
+// biome-ignore lint/suspicious/noEmptyInterface: Intentionally empty for module augmentation
 export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
