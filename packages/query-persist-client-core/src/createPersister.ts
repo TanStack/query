@@ -113,9 +113,9 @@ function validateDeserializedData(data: unknown): void {
 
   // Check for prototype pollution vectors (only own properties, not inherited)
   if (
-    Object.hasOwn(obj, '__proto__') ||
-    Object.hasOwn(obj, 'constructor') ||
-    Object.hasOwn(obj, 'prototype')
+    Object.prototype.hasOwnProperty.call(obj, '__proto__') ||
+    Object.prototype.hasOwnProperty.call(obj, 'constructor') ||
+    Object.prototype.hasOwnProperty.call(obj, 'prototype')
   ) {
     throw new Error('Deserialized data contains forbidden keys')
   }
