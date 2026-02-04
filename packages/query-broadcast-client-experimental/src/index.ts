@@ -45,7 +45,7 @@ export function broadcastQueryClient({
       })
     }
 
-    if (queryEvent.type === 'removed' && observers.length > 0) {
+    if (queryEvent.type === 'removed' && observers.size > 0) {
       channel.postMessage({
         type: 'removed',
         queryHash,

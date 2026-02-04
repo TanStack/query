@@ -24,6 +24,8 @@
     "compile": "tsc --build",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
     "build": "svelte-package --input ./src --output ./dist"
   },

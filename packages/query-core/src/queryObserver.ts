@@ -37,6 +37,26 @@ interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
 
+/**
+ * QueryObserver subscribes to a query and provides reactive updates.
+ * It manages the subscription lifecycle, handles refetching strategies,
+ * and transforms query data through select functions.
+ *
+ * Framework adapters (like useQuery in React) use this internally.
+ * For direct usage, subscribe via the subscribe() method from Subscribable.
+ *
+ * @example
+ * ```ts
+ * const observer = new QueryObserver(queryClient, {
+ *   queryKey: ['todos'],
+ *   queryFn: fetchTodos,
+ * })
+ *
+ * const unsubscribe = observer.subscribe((result) => {
+ *   console.log(result.data)
+ * })
+ * ```
+ */
 export class QueryObserver<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -68,6 +88,11 @@ export class QueryObserver<
   #currentRefetchInterval?: number | false
   #trackedProps = new Set<keyof QueryObserverResult>()
 
+  /**
+   * Creates a new QueryObserver instance.
+   * @param client - The QueryClient to use
+   * @param options - Observer options including queryKey and queryFn
+   */
   constructor(
     client: QueryClient,
     public options: QueryObserverOptions<
@@ -128,6 +153,10 @@ export class QueryObserver<
     )
   }
 
+  /**
+   * Destroys the observer, removing it from the query and clearing all timers.
+   * Called automatically when the last listener unsubscribes.
+   */
   destroy(): void {
     this.listeners = new Set()
     this.#clearStaleTimeout()
@@ -135,6 +164,11 @@ export class QueryObserver<
     this.#currentQuery.removeObserver(this)
   }
 
+  /**
+   * Updates the observer options. This may trigger a refetch if the query key
+   * changes or other conditions are met.
+   * @param options - New observer options
+   */
   setOptions(
     options: QueryObserverOptions<
       TQueryFnData,
@@ -219,6 +253,12 @@ export class QueryObserver<
     }
   }
 
+  /**
+   * Returns a result optimistically based on the current options.
+   * Used by framework adapters to get immediate results during render.
+   * @param options - Defaulted observer options
+   * @returns The optimistic query result
+   */
   getOptimisticResult(
     options: DefaultedQueryObserverOptions<
       TQueryFnData,
@@ -256,10 +296,21 @@ export class QueryObserver<
     return result
   }
 
+  /**
+   * Returns the current cached result for this observer.
+   * @returns The current query result
+   */
   getCurrentResult(): QueryObserverResult<TData, TError> {
     return this.#currentResult
   }
 
+  /**
+   * Wraps the result in a proxy to track which properties are accessed.
+   * Used for optimizing re-renders by only notifying when tracked properties change.
+   * @param result - The result to track
+   * @param onPropTracked - Optional callback when a property is accessed
+   * @returns A proxied result that tracks property access
+   */
   trackResult(
     result: QueryObserverResult<TData, TError>,
     onPropTracked?: (key: keyof QueryObserverResult) => void,
@@ -286,14 +337,27 @@ export class QueryObserver<
     })
   }
 
+  /**
+   * Manually marks a property as tracked for change detection.
+   * @param key - The property key to track
+   */
   trackProp(key: keyof QueryObserverResult) {
     this.#trackedProps.add(key)
   }
 
+  /**
+   * Returns the current Query instance being observed.
+   * @returns The underlying Query object
+   */
   getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
     return this.#currentQuery
   }
 
+  /**
+   * Manually triggers a refetch of the query.
+   * @param options - Optional refetch options
+   * @returns Promise resolving to the query result
+   */
   refetch({ ...options }: RefetchOptions = {}): Promise<
     QueryObserverResult<TData, TError>
   > {
@@ -302,6 +366,12 @@ export class QueryObserver<
     })
   }
 
+  /**
+   * Fetches the query with the given options and returns an optimistic result.
+   * Used for prefetching or eagerly loading queries.
+   * @param options - Observer options for the fetch
+   * @returns Promise resolving to the query result
+   */
   fetchOptimistic(
     options: QueryObserverOptions<
       TQueryFnData,

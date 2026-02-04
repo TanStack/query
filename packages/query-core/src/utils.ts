@@ -320,11 +320,16 @@ export function shallowEqualObjects<T extends Record<string, any>>(
   a: T,
   b: T | undefined,
 ): boolean {
-  if (!b || Object.keys(a).length !== Object.keys(b).length) {
+  if (!b) {
     return false
   }
 
-  for (const key in a) {
+  const aKeys = Object.keys(a)
+  if (aKeys.length !== Object.keys(b).length) {
+    return false
+  }
+
+  for (const key of aKeys) {
     if (a[key] !== b[key]) {
       return false
     }

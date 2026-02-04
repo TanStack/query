@@ -374,8 +374,10 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     expect(
-      typeof queryClient.getQueryCache().find({ queryKey: key })?.observers[0]
-        ?.options.staleTime,
+      typeof [
+        ...(queryClient.getQueryCache().find({ queryKey: key })?.observers ??
+          []),
+      ][0]?.options.staleTime,
     ).toBe('function')
   })
 

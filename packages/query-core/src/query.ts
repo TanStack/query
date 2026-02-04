@@ -172,7 +172,7 @@ export class Query<
   #cache: QueryCache
   #client: QueryClient
   #retryer?: Retryer<TData>
-  observers: Array<QueryObserver<any, any, any, any, any>>
+  observers: Set<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
 
@@ -182,7 +182,7 @@ export class Query<
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
-    this.observers = []
+    this.observers = new Set()
     this.#client = config.client
     this.#cache = this.#client.getQueryCache()
     this.queryKey = config.queryKey
@@ -219,7 +219,7 @@ export class Query<
   }
 
   protected optionalRemove() {
-    if (!this.observers.length && this.state.fetchStatus === 'idle') {
+    if (this.observers.size === 0 && this.state.fetchStatus === 'idle') {
       this.#cache.remove(this)
     }
   }
@@ -266,9 +266,12 @@ export class Query<
   }
 
   isActive(): boolean {
-    return this.observers.some(
-      (observer) => resolveEnabled(observer.options.enabled, this) !== false,
-    )
+    for (const observer of this.observers) {
+      if (resolveEnabled(observer.options.enabled, this) !== false) {
+        return true
+      }
+    }
+    return false
   }
 
   isDisabled(): boolean {
@@ -283,23 +286,25 @@ export class Query<
   }
 
   isStatic(): boolean {
-    if (this.getObserversCount() > 0) {
-      return this.observers.some(
-        (observer) =>
-          resolveStaleTime(observer.options.staleTime, this) === 'static',
-      )
+    for (const observer of this.observers) {
+      if (resolveStaleTime(observer.options.staleTime, this) === 'static') {
+        return true
+      }
     }
-
     return false
   }
 
   isStale(): boolean {
     // check observers first, their `isStale` has the source of truth
     // calculated with `isStaleByTime` and it takes `enabled` into account
-    if (this.getObserversCount() > 0) {
-      return this.observers.some(
-        (observer) => observer.getCurrentResult().isStale,
-      )
+    for (const observer of this.observers) {
+      if (observer.getCurrentResult().isStale) {
+        return true
+      }
+    }
+
+    if (this.observers.size > 0) {
+      return false
     }
 
     return this.state.data === undefined || this.state.isInvalidated
@@ -323,26 +328,32 @@ export class Query<
   }
 
   onFocus(): void {
-    const observer = this.observers.find((x) => x.shouldFetchOnWindowFocus())
-
-    observer?.refetch({ cancelRefetch: false })
+    for (const observer of this.observers) {
+      if (observer.shouldFetchOnWindowFocus()) {
+        observer.refetch({ cancelRefetch: false })
+        break
+      }
+    }
 
     // Continue fetch if currently paused
     this.#retryer?.continue()
   }
 
   onOnline(): void {
-    const observer = this.observers.find((x) => x.shouldFetchOnReconnect())
-
-    observer?.refetch({ cancelRefetch: false })
+    for (const observer of this.observers) {
+      if (observer.shouldFetchOnReconnect()) {
+        observer.refetch({ cancelRefetch: false })
+        break
+      }
+    }
 
     // Continue fetch if currently paused
     this.#retryer?.continue()
   }
 
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (!this.observers.includes(observer)) {
-      this.observers.push(observer)
+    if (!this.observers.has(observer)) {
+      this.observers.add(observer)
 
       // Stop the query from being garbage collected
       this.clearGcTimeout()
@@ -352,10 +363,10 @@ export class Query<
   }
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.observers.includes(observer)) {
-      this.observers = this.observers.filter((x) => x !== observer)
+    if (this.observers.has(observer)) {
+      this.observers.delete(observer)
 
-      if (!this.observers.length) {
+      if (this.observers.size === 0) {
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
         if (this.#retryer) {
@@ -374,7 +385,7 @@ export class Query<
   }
 
   getObserversCount(): number {
-    return this.observers.length
+    return this.observers.size
   }
 
   invalidate(): void {
@@ -413,9 +424,11 @@ export class Query<
     // Use the options from the first observer with a query function if no function is found.
     // This can happen when the query is hydrated or created with setQueryData.
     if (!this.options.queryFn) {
-      const observer = this.observers.find((x) => x.options.queryFn)
-      if (observer) {
-        this.setOptions(observer.options)
+      for (const observer of this.observers) {
+        if (observer.options.queryFn) {
+          this.setOptions(observer.options)
+          break
+        }
       }
     }
 

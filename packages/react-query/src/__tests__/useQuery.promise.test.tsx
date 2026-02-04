@@ -1365,7 +1365,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
 
     expect(
       queryClient.getQueryCache().find({ queryKey: [key, 'defaultInput'] })!
-        .observers.length,
+        .observers.size,
     ).toBe(2)
 
     rendered.getByText('setInput').click()
@@ -1382,12 +1382,12 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
 
     expect(
       queryClient.getQueryCache().find({ queryKey: [key, 'defaultInput'] })!
-        .observers.length,
+        .observers.size,
     ).toBe(0)
 
     expect(
       queryClient.getQueryCache().find({ queryKey: [key, 'someInput'] })!
-        .observers.length,
+        .observers.size,
     ).toBe(2)
   })
 

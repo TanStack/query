@@ -19,6 +19,8 @@
     "compile": "vue-tsc --build",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "vue-tsc --build",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm run compile && vite build"
   },

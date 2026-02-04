@@ -5942,13 +5942,13 @@ describe('useQuery', () => {
       rendered.getByText('data: data')
 
       expect(
-        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.size,
       ).toBe(1)
 
       fireEvent.click(rendered.getByRole('button', { name: 'toggle' }))
 
       expect(
-        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.size,
       ).toBe(0)
 
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -5959,7 +5959,7 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(queryFn).toHaveBeenCalledTimes(2)
       expect(
-        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.size,
       ).toBe(1)
     })
 
@@ -5986,7 +5986,7 @@ describe('useQuery', () => {
       rendered.getByText('data:')
 
       expect(
-        queryClient.getQueryCache().find({ queryKey: key })!.observers.length,
+        queryClient.getQueryCache().find({ queryKey: key })!.observers.size,
       ).toBe(0)
 
       expect(queryFn).toHaveBeenCalledTimes(0)

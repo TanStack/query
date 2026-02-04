@@ -133,18 +133,21 @@ export function createHydrationStreamProvider<TShape>() {
       // eslint-disable-next-line react-hooks/immutability
       stream.length = 0
 
-      const html: Array<string> = [
+      // Build the script content using text content instead of dangerouslySetInnerHTML
+      // This is safer as textContent is automatically escaped by the browser
+      const scriptContent = [
         `window[${idJSON}] = window[${idJSON}] || [];`,
         `window[${idJSON}].push(${htmlEscapeJsonString(serializedCacheArgs)});`,
-      ]
+      ].join('')
+
       return (
         <script
           key={count.current++}
           nonce={props.nonce}
-          dangerouslySetInnerHTML={{
-            __html: html.join(''),
-          }}
-        />
+          suppressHydrationWarning
+        >
+          {scriptContent}
+        </script>
       )
     })
     // </server stuff>

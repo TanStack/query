@@ -197,6 +197,20 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       : queries
   }
 
+  countMatching(filters: QueryFilters<any> = {}): number {
+    const hasFilters = Object.keys(filters).length > 0
+    if (!hasFilters) {
+      return this.getAll().length
+    }
+    let count = 0
+    for (const query of this.#queries.values()) {
+      if (matchQuery(filters, query)) {
+        count++
+      }
+    }
+    return count
+  }
+
   notify(event: QueryCacheNotifyEvent): void {
     notifyManager.batch(() => {
       this.listeners.forEach((listener) => {

@@ -77,6 +77,57 @@ export interface StoragePersisterOptions<TStorageValue = string> {
 
 export const PERSISTER_KEY_PREFIX = 'tanstack-query'
 
+// Storage key validation constants
+const MAX_STORAGE_KEY_LENGTH = 256
+const ALLOWED_KEY_CHARS = /^[a-zA-Z0-9_\-:.[\]]+$/
+
+/**
+ * Validates and sanitizes a storage key
+ * @throws Error if key is invalid
+ */
+function validateStorageKey(key: string): void {
+  if (typeof key !== 'string' || key.length === 0) {
+    throw new Error('Storage key must be a non-empty string')
+  }
+  if (key.length > MAX_STORAGE_KEY_LENGTH) {
+    throw new Error(
+      `Storage key exceeds maximum length of ${MAX_STORAGE_KEY_LENGTH} characters`,
+    )
+  }
+  if (!ALLOWED_KEY_CHARS.test(key)) {
+    throw new Error(
+      'Storage key contains invalid characters. Only alphanumeric, underscore, hyphen, colon, dot, and brackets are allowed.',
+    )
+  }
+}
+
+/**
+ * Validates deserialized data to prevent prototype pollution
+ */
+function validateDeserializedData(data: unknown): void {
+  if (data === null || typeof data !== 'object') {
+    return
+  }
+
+  const obj = data as Record<string, unknown>
+
+  // Check for prototype pollution vectors (only own properties, not inherited)
+  if (
+    Object.hasOwn(obj, '__proto__') ||
+    Object.hasOwn(obj, 'constructor') ||
+    Object.hasOwn(obj, 'prototype')
+  ) {
+    throw new Error('Deserialized data contains forbidden keys')
+  }
+
+  // Recursively validate nested objects
+  for (const value of Object.values(obj)) {
+    if (value !== null && typeof value === 'object') {
+      validateDeserializedData(value)
+    }
+  }
+}
+
 /**
  * Warning: experimental feature.
  * This utility function enables fine-grained query persistence.
@@ -106,6 +157,8 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   refetchOnRestore = true,
   filters,
 }: StoragePersisterOptions<TStorageValue>) {
+  // Validate prefix parameter at initialization
+  validateStorageKey(prefix)
   function isExpiredOrBusted(persistedQuery: PersistedQuery) {
     if (persistedQuery.state.dataUpdatedAt) {
       const queryAge = Date.now() - persistedQuery.state.dataUpdatedAt
@@ -128,10 +181,13 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   ) {
     if (storage != null) {
       const storageKey = `${prefix}-${queryHash}`
+      // Note: storageKey is not validated here because queryHash is internally generated
+      // and may contain JSON characters. The prefix is validated at initialization.
       try {
         const storedData = await storage.getItem(storageKey)
         if (storedData) {
           const persistedQuery = await deserialize(storedData)
+          validateDeserializedData(persistedQuery)
 
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(storageKey)
@@ -182,6 +238,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
   async function persistQuery(query: Query) {
     if (storage != null) {
       const storageKey = `${prefix}-${query.queryHash}`
+      // Note: storageKey is not validated here because queryHash is internally generated
       storage.setItem(
         storageKey,
         await serialize({
@@ -245,6 +302,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       for (const [key, value] of entries) {
         if (key.startsWith(prefix)) {
           const persistedQuery = await deserialize(value)
+          validateDeserializedData(persistedQuery)
 
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(key)
@@ -260,15 +318,16 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
   async function restoreQueries(
     queryClient: QueryClient,
-    filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
+    queryFilters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
   ): Promise<void> {
-    const { exact, queryKey } = filters
+    const { exact, queryKey } = queryFilters
 
     if (storage?.entries) {
       const entries = await storage.entries()
       for (const [key, value] of entries) {
         if (key.startsWith(prefix)) {
           const persistedQuery = await deserialize(value)
+          validateDeserializedData(persistedQuery)
 
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(key)

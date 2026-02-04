@@ -101,7 +101,12 @@ export async function persistQueryClientRestore({
 
     await persister.removeClient()
 
-    throw err
+    // Throw a sanitized error to avoid exposing internal details
+    const sanitizedError = new Error(
+      'Failed to restore persisted query client. The cache has been discarded.',
+    )
+    sanitizedError.name = 'PersistQueryClientError'
+    throw sanitizedError
   }
 }
 

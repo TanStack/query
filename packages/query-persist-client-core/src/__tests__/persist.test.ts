@@ -86,7 +86,11 @@ describe('persistQueryClientRestore', () => {
         queryClient,
         persister,
       }),
-    ).rejects.toBe(restoreError)
+    ).rejects.toMatchObject({
+      name: 'PersistQueryClientError',
+      message:
+        'Failed to restore persisted query client. The cache has been discarded.',
+    })
 
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(consoleWarn).toHaveBeenCalledTimes(1)
