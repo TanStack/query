@@ -211,6 +211,12 @@ export interface InjectQueriesOptions<
         ...{ [K in keyof T]: GetCreateQueryOptionsForCreateQueries<T[K]> },
       ]
   combine?: (result: QueriesResults<T>) => TCombinedResult
+  /**
+   * Set this to `false` to disable structural sharing between query results.
+   * Only applies when `combine` is provided.
+   * Defaults to `true`.
+   */
+  structuralSharing?: boolean
 }
 
 /**
@@ -271,6 +277,8 @@ export function injectQueries<
       observerSignal().getOptimisticResult(
         defaultedQueries(),
         (optionsSignal() as QueriesObserverOptions<TCombinedResult>).combine,
+        (optionsSignal() as QueriesObserverOptions<TCombinedResult>)
+          .structuralSharing,
       ),
     )
 

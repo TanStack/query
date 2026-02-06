@@ -343,6 +343,7 @@ describe('queriesObserver', () => {
           { queryKey: key1, queryFn: queryFn1 },
         ],
         undefined,
+        undefined,
       )[0],
     )
 
@@ -457,6 +458,7 @@ describe('queriesObserver', () => {
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
       combine,
+      undefined,
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -469,6 +471,7 @@ describe('queriesObserver', () => {
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       newQueries,
       combine,
+      undefined,
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -580,6 +583,7 @@ describe('queriesObserver', () => {
         { queryKey: key2, queryFn: queryFn2 },
       ],
       combine,
+      undefined,
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -589,6 +593,7 @@ describe('queriesObserver', () => {
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       newQueries,
       combine,
+      undefined,
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -616,6 +621,7 @@ describe('queriesObserver', () => {
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
       combine,
+      undefined,
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -624,6 +630,7 @@ describe('queriesObserver', () => {
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       [{ queryKey: key2, queryFn: queryFn2 }],
       combine,
+      undefined,
     )
     const newCombined = getNewCombined(newRaw)
 

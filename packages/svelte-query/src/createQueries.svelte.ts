@@ -197,13 +197,20 @@ export function createQueries<
           ...{ [K in keyof T]: GetCreateQueryOptionsForCreateQueries<T[K]> },
         ]
     combine?: (result: QueriesResults<T>) => TCombinedResult
+    /**
+     * Set this to `false` to disable structural sharing between query results.
+     * Only applies when `combine` is provided.
+     * Defaults to `true`.
+     */
+    structuralSharing?: boolean
   }>,
   queryClient?: Accessor<QueryClient>,
 ): TCombinedResult {
   const client = $derived(useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
-  const { queries, combine } = $derived.by(createQueriesOptions)
+  const { queries, ...derivedCreateQueriesOptions } =
+    $derived.by(createQueriesOptions)
   const resolvedQueryOptions = $derived(
     queries.map((opts) => {
       const resolvedOptions = client.defaultQueryOptions(opts)
@@ -220,14 +227,15 @@ export function createQueries<
     new QueriesObserver<TCombinedResult>(
       client,
       resolvedQueryOptions,
-      combine as QueriesObserverOptions<TCombinedResult>,
+      derivedCreateQueriesOptions as QueriesObserverOptions<TCombinedResult>,
     ),
   )
 
   function createResult() {
     const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
       resolvedQueryOptions,
-      combine as QueriesObserverOptions<TCombinedResult>['combine'],
+      derivedCreateQueriesOptions.combine as QueriesObserverOptions<TCombinedResult>['combine'],
+      derivedCreateQueriesOptions.structuralSharing,
     )
     return getCombinedResult(trackResult())
   }
@@ -244,9 +252,10 @@ export function createQueries<
   })
 
   $effect.pre(() => {
-    observer.setQueries(resolvedQueryOptions, {
-      combine,
-    } as QueriesObserverOptions<TCombinedResult>)
+    observer.setQueries(
+      resolvedQueryOptions,
+      derivedCreateQueriesOptions as QueriesObserverOptions<TCombinedResult>,
+    )
     update(createResult())
   })
 

@@ -193,6 +193,12 @@ export function useQueries<
       | readonly [...QueriesOptions<T>]
       | readonly [...{ [K in keyof T]: GetOptions<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
+    /**
+     * Set this to `false` to disable structural sharing between query results.
+     * Only applies when `combine` is provided.
+     * Defaults to `true`.
+     */
+    structuralSharing?: boolean
   }>,
   queryClient?: Accessor<QueryClient>,
 ): TCombinedResult {
@@ -219,6 +225,7 @@ export function useQueries<
     queriesOptions().combine
       ? ({
           combine: queriesOptions().combine,
+          structuralSharing: queriesOptions().structuralSharing,
         } as QueriesObserverOptions<TCombinedResult>)
       : undefined,
   )
@@ -227,6 +234,8 @@ export function useQueries<
     observer.getOptimisticResult(
       defaultedQueries(),
       (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+      (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
+        .structuralSharing,
     )[1](),
   )
 
@@ -239,6 +248,8 @@ export function useQueries<
             defaultedQueries(),
             (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
               .combine,
+            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
+              .structuralSharing,
           )[1](),
         ),
     ),
@@ -304,22 +315,14 @@ export function useQueries<
   onMount(() => {
     observer.setQueries(
       defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
+      queriesOptions() as QueriesObserverOptions<TCombinedResult>,
     )
   })
 
   createComputed(() => {
     observer.setQueries(
       defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
+      queriesOptions() as QueriesObserverOptions<TCombinedResult>,
     )
   })
 

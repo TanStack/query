@@ -24,6 +24,9 @@ The `useQueries` hook accepts an options object with a **queries** key whose val
   - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context will be used.
 - `combine?: (result: UseQueriesResults) => TCombinedResult`
   - Use this to combine the results of the queries into a single value.
+- `structuralSharing?: boolean`
+  - Set this to `false` to disable structural sharing between query results when `combine` is provided.
+  - Defaults to `true`.
 
 > Having the same query key more than once in the array of query objects may cause some data to be shared between queries. To avoid this, consider de-duplicating the queries and map the results back to the desired structure.
 
@@ -37,7 +40,7 @@ The `useQueries` hook returns an array with all the query results. The order ret
 
 ## Combine
 
-If you want to combine `data` (or other Query information) from the results into a single value, you can use the `combine` option. The result will be structurally shared to be as referentially stable as possible.
+If you want to combine `data` (or other Query information) from the results into a single value, you can use the `combine` option. The result will be structurally shared to be as referentially stable as possible. If you want to disable structural sharing for the combined result, you can set the `structuralSharing` option to `false`.
 
 ```tsx
 const ids = [1, 2, 3]

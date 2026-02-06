@@ -30,6 +30,12 @@ export interface QueriesObserverOptions<
   TCombinedResult = Array<QueryObserverResult>,
 > {
   combine?: CombineFn<TCombinedResult>
+  /**
+   * Set this to `false` to disable structural sharing between query results.
+   * Only applies when `combine` is provided.
+   * Defaults to `true`.
+   */
+  structuralSharing?: boolean
 }
 
 export class QueriesObserver<
@@ -172,6 +178,7 @@ export class QueriesObserver<
   getOptimisticResult(
     queries: Array<QueryObserverOptions>,
     combine: CombineFn<TCombinedResult> | undefined,
+    structuralSharing: boolean | undefined,
   ): [
     rawResult: Array<QueryObserverResult>,
     combineResult: (r?: Array<QueryObserverResult>) => TCombinedResult,
@@ -188,7 +195,12 @@ export class QueriesObserver<
     return [
       result,
       (r?: Array<QueryObserverResult>) => {
-        return this.#combineResult(r ?? result, combine, queryHashes)
+        return this.#combineResult(
+          r ?? result,
+          combine,
+          structuralSharing,
+          queryHashes,
+        )
       },
       () => {
         return this.#trackResult(result, matches)
@@ -221,6 +233,7 @@ export class QueriesObserver<
   #combineResult(
     input: Array<QueryObserverResult>,
     combine: CombineFn<TCombinedResult> | undefined,
+    structuralSharing: boolean | undefined = true,
     queryHashes?: Array<string>,
   ): TCombinedResult {
     if (combine) {
@@ -242,10 +255,12 @@ export class QueriesObserver<
         if (queryHashes !== undefined) {
           this.#lastQueryHashes = queryHashes
         }
-        this.#combinedResult = replaceEqualDeep(
-          this.#combinedResult,
-          combine(input),
-        )
+
+        const combined = combine(input)
+
+        this.#combinedResult = structuralSharing
+          ? replaceEqualDeep(this.#combinedResult, combined)
+          : combined
       }
 
       return this.#combinedResult
@@ -316,6 +331,7 @@ export class QueriesObserver<
         : this.#combineResult(
             this.#trackResult(this.#result, this.#observerMatches),
             this.#options?.combine,
+            this.#options?.structuralSharing,
           )
 
       if (shouldSkipCombine || previousResult !== newResult) {
