@@ -212,4 +212,14 @@ describe('queryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<number>()
   })
+
+  it('should allow accessing queryFn and other properties on the returned options object', () => {
+    const options = queryOptions({
+      queryKey: ['groups'],
+      queryFn: () => Promise.resolve([]),
+    })
+
+    expectTypeOf(options.queryFn).not.toBeUndefined()
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
 })

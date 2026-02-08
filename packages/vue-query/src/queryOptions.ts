@@ -3,6 +3,14 @@ import type {
   DefinedInitialQueryOptions,
   UndefinedInitialQueryOptions,
 } from './useQuery'
+import type { ComputedRef, Ref } from 'vue-demi'
+
+// Removes Ref and ComputedRef branches from a MaybeRef union type,
+// leaving only the plain object type so all properties are directly
+// accessible via dot notation.
+// Fixes #7892: queryOptions return type only contains queryKey and
+// initialData properties due to MaybeRef union narrowing.
+type PlainQueryOptions<T> = Exclude<T, Ref<any> | ComputedRef<any>>
 
 export function queryOptions<
   TQueryFnData = unknown,
@@ -11,7 +19,9 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+): PlainQueryOptions<
+  DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+> & {
   queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
@@ -22,7 +32,9 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+): PlainQueryOptions<
+  UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+> & {
   queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
