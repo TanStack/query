@@ -28,8 +28,6 @@ projectsQuery = injectQuery(() => ({
 
 Dynamic parallel query - `injectQueries` can depend on a previous query also, here's how to achieve this:
 
-> IMPORTANT: `injectQueries` is experimental and is provided in it's own entry point
-
 ```ts
 // Get the users ids
 userIds = injectQuery(() => ({

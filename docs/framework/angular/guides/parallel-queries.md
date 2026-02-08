@@ -41,8 +41,6 @@ TanStack Query provides `injectQueries`, which you can use to dynamically execut
 [//]: # 'DynamicParallelIntro'
 [//]: # 'Example2'
 
-> IMPORTANT: `injectQueries` is experimental and is provided in its own entry point
-
 ```ts
 @Component({
   // ...
@@ -51,7 +49,7 @@ export class AppComponent {
   users = signal<Array<User>>([])
 
   userQueries = injectQueries(() => ({
-    queries: users().map((user) => {
+    queries: this.users().map((user) => {
       return {
         queryKey: ['user', user.id],
         queryFn: () => fetchUserById(user.id),
