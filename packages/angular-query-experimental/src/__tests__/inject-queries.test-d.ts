@@ -1,6 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { skipToken } from '..'
-import { injectQueries } from '../inject-queries'
+import { injectQueries, skipToken } from '..'
 import { queryOptions } from '../query-options'
 import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
 import type { Signal } from '@angular/core'

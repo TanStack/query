@@ -27,7 +27,13 @@ import {
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
-import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
+import {
+  QueryCache,
+  QueryClient,
+  injectQuery,
+  provideIsRestoring,
+  provideTanStackQuery,
+} from '..'
 import { registerSignalInput } from './test-utils'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
 
@@ -721,6 +727,41 @@ describe('injectQuery', () => {
     expect(result).toEqual('signal-input-required-test')
   })
 
+  test('should support aliasing query.data on required signal inputs', async () => {
+    @Component({
+      selector: 'app-fake',
+      template: `{{ data() }}`,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+    })
+    class FakeComponent {
+      name = input.required<string>()
+
+      query = injectQuery(() => ({
+        queryKey: ['fake-alias', this.name()],
+        queryFn: () => this.name(),
+      }))
+
+      data = this.query.data
+    }
+
+    registerSignalInput(FakeComponent, 'name')
+
+    @Component({
+      template: `<app-fake [name]="name()" />`,
+      imports: [FakeComponent],
+    })
+    class HostComponent {
+      protected readonly name = signal('signal-input-alias-test')
+    }
+
+    const fixture = TestBed.createComponent(HostComponent)
+    fixture.detectChanges()
+    await vi.advanceTimersByTimeAsync(0)
+
+    const result = fixture.nativeElement.querySelector('app-fake').textContent
+    expect(result).toEqual('signal-input-alias-test')
+  })
+
   test('should allow reading the query data on effect registered before injection', () => {
     const spy = vi.fn()
     @Component({
@@ -840,6 +881,53 @@ describe('injectQuery', () => {
     await Promise.resolve()
 
     expect(query.data()).toBe('new data')
+  })
+
+  test('should pause fetching while restoring and fetch once restoring is disabled', async () => {
+    const isRestoring = signal(true)
+    const fetchSpy = vi.fn(() => sleep(10).then(() => 'restored-data'))
+
+    TestBed.resetTestingModule()
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+        provideIsRestoring(isRestoring.asReadonly()),
+      ],
+    })
+
+    @Component({
+      selector: 'app-test',
+      template: '',
+      changeDetection: ChangeDetectionStrategy.OnPush,
+    })
+    class TestComponent {
+      query = injectQuery(() => ({
+        queryKey: ['restoring'],
+        queryFn: fetchSpy,
+      }))
+    }
+
+    const fixture = TestBed.createComponent(TestComponent)
+    fixture.detectChanges()
+
+    const query = fixture.componentInstance.query
+    expect(fetchSpy).not.toHaveBeenCalled()
+    expect(query.status()).toBe('pending')
+
+    const stablePromise = fixture.whenStable()
+    await Promise.resolve()
+    await stablePromise
+
+    isRestoring.set(false)
+    fixture.detectChanges()
+
+    await vi.advanceTimersByTimeAsync(11)
+    await fixture.whenStable()
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(query.status()).toBe('success')
+    expect(query.data()).toBe('restored-data')
   })
 
   describe('injection context', () => {

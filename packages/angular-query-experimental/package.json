@@ -95,7 +95,8 @@
     "rxjs": "^7.8.2",
     "vite-plugin-dts": "4.2.3",
     "vite-plugin-externalize-deps": "^0.9.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "zone.js": "^0.16.0"
   },
   "optionalDependencies": {
     "@tanstack/query-devtools": "workspace:*"

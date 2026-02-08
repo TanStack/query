@@ -7,12 +7,13 @@ import {
   DestroyRef,
   Injector,
   NgZone,
+  PendingTasks,
   assertInInjectionContext,
   computed,
   effect,
   inject,
+  linkedSignal,
   runInInjectionContext,
-  signal,
   untracked,
 } from '@angular/core'
 import { signalProxy } from './signal-proxy'
@@ -35,6 +36,7 @@ import type {
   DefinedCreateQueryResult,
 } from './types'
 import type { Signal } from '@angular/core'
+import type { MethodKeys } from './signal-proxy'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed
@@ -264,6 +266,11 @@ export interface InjectQueriesOptions<
   combine?: (result: RawQueriesResults<T>) => TCombinedResult
 }
 
+const methodsToExclude: Array<MethodKeys<QueryObserverResult>> = ['refetch']
+
+const hasPendingQueriesState = (results: Array<QueryObserverResult>): boolean =>
+  results.some((result) => result.fetchStatus !== 'idle')
+
 /**
  * @param optionsFn - A function that returns queries' options.
  * @param injector - The Angular injector to use.
@@ -279,8 +286,24 @@ export function injectQueries<
   return runInInjectionContext(injector ?? inject(Injector), () => {
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
+    const pendingTasks = inject(PendingTasks)
     const queryClient = inject(QueryClient)
     const isRestoring = injectIsRestoring()
+    let destroyed = false
+    let taskCleanupRef: (() => void) | null = null
+
+    const startPendingTask = () => {
+      if (!taskCleanupRef && !destroyed) {
+        taskCleanupRef = pendingTasks.add()
+      }
+    }
+
+    const stopPendingTask = () => {
+      if (taskCleanupRef) {
+        taskCleanupRef()
+        taskCleanupRef = null
+      }
+    }
 
     /**
      * Signal that has the default options from query client applied
@@ -306,76 +329,125 @@ export function injectQueries<
       })
     })
 
-    const observerSignal = (() => {
-      let instance: QueriesObserver<TCombinedResult> | null = null
+    const observerOptionsSignal = computed(
+      () => optionsSignal() as QueriesObserverOptions<TCombinedResult>,
+    )
 
-      return computed(() => {
-        return (instance ||= new QueriesObserver<TCombinedResult>(
-          queryClient,
-          defaultedQueries(),
-          optionsSignal() as QueriesObserverOptions<TCombinedResult>,
-        ))
-      })
-    })()
+    // Computed without deps to lazy initialize the observer
+    const observerSignal = computed(() => {
+      return new QueriesObserver<TCombinedResult>(
+        queryClient,
+        untracked(defaultedQueries),
+        untracked(observerOptionsSignal),
+      )
+    })
 
     const optimisticResultSignal = computed(() =>
       observerSignal().getOptimisticResult(
         defaultedQueries(),
-        (optionsSignal() as QueriesObserverOptions<TCombinedResult>).combine,
+        observerOptionsSignal().combine,
       ),
     )
 
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     effect(() => {
-      observerSignal().setQueries(
-        defaultedQueries(),
-        optionsSignal() as QueriesObserverOptions<TCombinedResult>,
-      )
+      observerSignal().setQueries(defaultedQueries(), observerOptionsSignal())
     })
 
-    const optimisticCombinedResultSignal = computed(() => {
-      const [_optimisticResult, getCombinedResult, trackResult] =
-        optimisticResultSignal()
-      return getCombinedResult(trackResult())
+    const optimisticResultSourceSignal = computed(() => {
+      const options = observerOptionsSignal()
+      return { queries: defaultedQueries(), combine: options.combine }
     })
 
-    const resultFromSubscriberSignal = signal<TCombinedResult | null>(null)
+    const resultSignal = linkedSignal({
+      source: optimisticResultSourceSignal,
+      computation: () => {
+        const observer = untracked(observerSignal)
+        const [_optimisticResult, getCombinedResult, trackResult] =
+          observer.getOptimisticResult(
+            defaultedQueries(),
+            observerOptionsSignal().combine,
+          )
+        return getCombinedResult(trackResult())
+      },
+    })
 
-    effect(() => {
+    effect((onCleanup) => {
       const observer = observerSignal()
-      const [_optimisticResult, getCombinedResult] = optimisticResultSignal()
+      const [optimisticResult, getCombinedResult] = optimisticResultSignal()
 
-      untracked(() => {
-        const unsubscribe = isRestoring()
-          ? () => undefined
-          : ngZone.runOutsideAngular(() =>
-              observer.subscribe(
-                notifyManager.batchCalls((state) => {
-                  resultFromSubscriberSignal.set(getCombinedResult(state))
-                }),
-              ),
-            )
+      if (isRestoring()) {
+        stopPendingTask()
+        return
+      }
 
-        destroyRef.onDestroy(unsubscribe)
+      if (hasPendingQueriesState(optimisticResult)) {
+        startPendingTask()
+      } else {
+        stopPendingTask()
+      }
+
+      const unsubscribe = untracked(() =>
+        ngZone.runOutsideAngular(() =>
+          observer.subscribe((state) => {
+            if (hasPendingQueriesState(state)) {
+              startPendingTask()
+            } else {
+              stopPendingTask()
+            }
+
+            queueMicrotask(() => {
+              if (destroyed) return
+              notifyManager.batch(() => {
+                ngZone.run(() => {
+                  resultSignal.set(getCombinedResult(state))
+                })
+              })
+            })
+          }),
+        ),
+      )
+
+      onCleanup(() => {
+        unsubscribe()
+        stopPendingTask()
       })
     })
 
-    const resultSignal = computed(() => {
-      const subscriberResult = resultFromSubscriberSignal()
-      const optimisticResult = optimisticCombinedResultSignal()
-      return subscriberResult ?? optimisticResult
+    // Angular does not use reactive getters on plain objects, so we wrap each
+    // QueryObserverResult in a signal-backed proxy to keep field-level tracking
+    // (`result.data()`, `result.status()`, etc.).
+    // Solid uses a related proxy approach in useQueries, but there it proxies
+    // object fields for store/resource reactivity rather than callable signals.
+    const createResultProxy = (index: number) =>
+      signalProxy(
+        computed(() => (resultSignal() as Array<QueryObserverResult>)[index]!),
+        methodsToExclude,
+      )
+
+    // Keep this positional to match QueriesObserver semantics.
+    // Like Solid/Vue adapters, proxies are rebuilt from current observer output.
+    const proxiedResultsSignal = computed(() =>
+      (resultSignal() as Array<QueryObserverResult>).map((_, index) =>
+        createResultProxy(index),
+      ),
+    )
+
+    destroyRef.onDestroy(() => {
+      destroyed = true
+      stopPendingTask()
     })
 
     return computed(() => {
       const result = resultSignal()
       const { combine } = optionsSignal()
 
-      return combine
-        ? result
-        : (result as Array<QueryObserverResult<T>>).map((query) =>
-            signalProxy(signal(query), ['refetch']),
-          )
+      if (combine) {
+        return result
+      }
+
+      return proxiedResultsSignal() as unknown as TCombinedResult
     })
   }) as unknown as Signal<TCombinedResult>
 }

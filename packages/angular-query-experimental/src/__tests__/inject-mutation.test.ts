@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Injector,
+  NgZone,
   input,
   provideZonelessChangeDetection,
   signal,
@@ -444,6 +445,36 @@ describe('injectMutation', () => {
 
       expect(boundaryFn).toHaveBeenCalledTimes(1)
       expect(boundaryFn).toHaveBeenCalledWith(err)
+    })
+
+    test('should emit zone error when throwOnError is true and mutate is used', async () => {
+      const err = new Error('Expected mock error. All is well!')
+      const zone = TestBed.inject(NgZone)
+      const zoneErrorEmitSpy = vi.spyOn(zone.onError, 'emit')
+      const runSpy = vi.spyOn(zone, 'run').mockImplementation((callback: any) => {
+        try {
+          return callback()
+        } catch {
+          return undefined
+        }
+      })
+
+      const { mutate } = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationKey: ['fake'],
+          mutationFn: () => {
+            return sleep(0).then(() => Promise.reject(err))
+          },
+          throwOnError: true,
+        })),
+      )
+
+      mutate()
+
+      await vi.runAllTimersAsync()
+
+      expect(zoneErrorEmitSpy).toHaveBeenCalledWith(err)
+      expect(runSpy).toHaveBeenCalled()
     })
   })
 

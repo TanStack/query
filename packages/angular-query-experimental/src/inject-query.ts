@@ -36,11 +36,15 @@ export interface InjectQueryOptions {
  *
  * **Basic example**
  * ```ts
+ * import { lastValueFrom } from 'rxjs'
+ *
  * class ServiceOrComponent {
  *   query = injectQuery(() => ({
  *     queryKey: ['repoData'],
  *     queryFn: () =>
- *       this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       lastValueFrom(
+ *         this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       ),
  *   }))
  * }
  * ```
@@ -87,11 +91,15 @@ export function injectQuery<
  *
  * **Basic example**
  * ```ts
+ * import { lastValueFrom } from 'rxjs'
+ *
  * class ServiceOrComponent {
  *   query = injectQuery(() => ({
  *     queryKey: ['repoData'],
  *     queryFn: () =>
- *       this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       lastValueFrom(
+ *         this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       ),
  *   }))
  * }
  * ```
@@ -138,11 +146,15 @@ export function injectQuery<
  *
  * **Basic example**
  * ```ts
+ * import { lastValueFrom } from 'rxjs'
+ *
  * class ServiceOrComponent {
  *   query = injectQuery(() => ({
  *     queryKey: ['repoData'],
  *     queryFn: () =>
- *       this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       lastValueFrom(
+ *         this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       ),
  *   }))
  * }
  * ```
@@ -189,11 +201,15 @@ export function injectQuery<
  *
  * **Basic example**
  * ```ts
+ * import { lastValueFrom } from 'rxjs'
+ *
  * class ServiceOrComponent {
  *   query = injectQuery(() => ({
  *     queryKey: ['repoData'],
  *     queryFn: () =>
- *       this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       lastValueFrom(
+ *         this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       ),
  *   }))
  * }
  * ```
