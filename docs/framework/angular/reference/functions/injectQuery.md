@@ -9,11 +9,15 @@ Injects a query: a declarative dependency on an asynchronous source of data that
 
 **Basic example**
 ```ts
+import { lastValueFrom } from 'rxjs'
+
 class ServiceOrComponent {
   query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
-      this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+      lastValueFrom(
+        this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+      ),
   }))
 }
 ```
@@ -54,17 +58,21 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): DefinedCreateQueryResult<TData, TError>;
 ```
 
-Defined in: [inject-query.ts:65](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L65)
+Defined in: [inject-query.ts:74](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L74)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
 ```ts
+import { lastValueFrom } from 'rxjs'
+
 class ServiceOrComponent {
   query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
-      this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+      lastValueFrom(
+        this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+      ),
   }))
 }
 ```
@@ -135,17 +143,21 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [inject-query.ts:116](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L116)
+Defined in: [inject-query.ts:129](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L129)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
 ```ts
+import { lastValueFrom } from 'rxjs'
+
 class ServiceOrComponent {
   query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
-      this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+      lastValueFrom(
+        this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+      ),
   }))
 }
 ```
@@ -216,17 +228,21 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 function injectQuery<TQueryFnData, TError, TData, TQueryKey>(injectQueryFn, options?): CreateQueryResult<TData, TError>;
 ```
 
-Defined in: [inject-query.ts:167](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L167)
+Defined in: [inject-query.ts:184](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-query.ts#L184)
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
 ```ts
+import { lastValueFrom } from 'rxjs'
+
 class ServiceOrComponent {
   query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
-      this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+      lastValueFrom(
+        this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+      ),
   }))
 }
 ```
@@ -271,7 +287,7 @@ class ServiceOrComponent {
 
 #### injectQueryFn
 
-() => [`CreateQueryOptions`](../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+() => [`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
 
 A function that returns query options.
 

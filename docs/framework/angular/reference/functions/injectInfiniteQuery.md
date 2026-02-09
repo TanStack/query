@@ -22,7 +22,7 @@ Additional configuration.
 function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): DefinedCreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [inject-infinite-query.ts:41](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L41)
+Defined in: [inject-infinite-query.ts:43](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L43)
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
@@ -75,7 +75,7 @@ The infinite query result.
 function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [inject-infinite-query.ts:65](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L65)
+Defined in: [inject-infinite-query.ts:67](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L67)
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
@@ -128,7 +128,7 @@ The infinite query result.
 function injectInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(injectInfiniteQueryFn, options?): CreateInfiniteQueryResult<TData, TError>;
 ```
 
-Defined in: [inject-infinite-query.ts:89](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L89)
+Defined in: [inject-infinite-query.ts:91](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-infinite-query.ts#L91)
 
 Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"

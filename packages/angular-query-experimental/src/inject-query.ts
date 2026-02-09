@@ -6,7 +6,12 @@ import {
   runInInjectionContext,
 } from '@angular/core'
 import { createBaseQuery } from './create-base-query'
-import type { DefaultError, QueryKey } from '@tanstack/query-core'
+import type { MethodKeys } from './signal-proxy'
+import type {
+  DefaultError,
+  QueryKey,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -31,11 +36,15 @@ export interface InjectQueryOptions {
  *
  * **Basic example**
  * ```ts
+ * import { lastValueFrom } from 'rxjs'
+ *
  * class ServiceOrComponent {
  *   query = injectQuery(() => ({
  *     queryKey: ['repoData'],
  *     queryFn: () =>
- *       this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       lastValueFrom(
+ *         this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       ),
  *   }))
  * }
  * ```
@@ -82,11 +91,15 @@ export function injectQuery<
  *
  * **Basic example**
  * ```ts
+ * import { lastValueFrom } from 'rxjs'
+ *
  * class ServiceOrComponent {
  *   query = injectQuery(() => ({
  *     queryKey: ['repoData'],
  *     queryFn: () =>
- *       this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       lastValueFrom(
+ *         this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       ),
  *   }))
  * }
  * ```
@@ -133,11 +146,15 @@ export function injectQuery<
  *
  * **Basic example**
  * ```ts
+ * import { lastValueFrom } from 'rxjs'
+ *
  * class ServiceOrComponent {
  *   query = injectQuery(() => ({
  *     queryKey: ['repoData'],
  *     queryFn: () =>
- *       this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       lastValueFrom(
+ *         this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       ),
  *   }))
  * }
  * ```
@@ -184,11 +201,15 @@ export function injectQuery<
  *
  * **Basic example**
  * ```ts
+ * import { lastValueFrom } from 'rxjs'
+ *
  * class ServiceOrComponent {
  *   query = injectQuery(() => ({
  *     queryKey: ['repoData'],
  *     queryFn: () =>
- *       this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       lastValueFrom(
+ *         this.#http.get<Response>('https://api.github.com/repos/tanstack/query'),
+ *       ),
  *   }))
  * }
  * ```
@@ -221,6 +242,8 @@ export function injectQuery(
 ) {
   !options?.injector && assertInInjectionContext(injectQuery)
   return runInInjectionContext(options?.injector ?? inject(Injector), () =>
-    createBaseQuery(injectQueryFn, QueryObserver),
+    createBaseQuery(injectQueryFn, QueryObserver, methodsToExclude),
   ) as unknown as CreateQueryResult
 }
+
+const methodsToExclude: Array<MethodKeys<QueryObserverResult>> = ['refetch']

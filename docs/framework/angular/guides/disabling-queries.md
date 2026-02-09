@@ -13,9 +13,9 @@ replace: { 'useQuery': 'injectQuery' }
   template: `<div>
     <button (click)="query.refetch()">Fetch Todos</button>
 
-    @if (query.data()) {
+    @if (query.data(); as data) {
       <ul>
-        @for (todo of query.data(); track todo.id) {
+        @for (todo of data; track todo.id) {
           <li>{{ todo.title }}</li>
         }
       </ul>
@@ -70,7 +70,7 @@ export class TodosComponent {
 [//]: # 'Example3'
 
 ```angular-ts
-import { skipToken, injectQuery } from '@tanstack/query-angular'
+import { skipToken, injectQuery } from '@tanstack/angular-query-experimental'
 
 @Component({
   selector: 'todos',

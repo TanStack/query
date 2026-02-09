@@ -7,5 +7,7 @@ replace:
     'useQuery': 'injectQuery',
     'useMutation': 'injectMutation',
     'hook': 'function',
+    'Redux, MobX or': 'NgRx Store or',
+    'Redux, MobX, Zustand': 'NgRx Store, custom services with RxJS',
   }
 ---

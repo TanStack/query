@@ -36,8 +36,6 @@ class ExampleComponent {
 ```
 
 > Since Angular is moving towards RxJS as an optional dependency, it's expected that `HttpClient` will also support promises in the future.
->
-> Support for observables in TanStack Query for Angular is planned.
 
 ## Comparison table
 

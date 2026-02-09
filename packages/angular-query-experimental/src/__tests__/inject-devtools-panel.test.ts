@@ -1,13 +1,9 @@
-import {
-  ElementRef,
-  provideZonelessChangeDetection,
-  signal,
-} from '@angular/core'
+import { ElementRef, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { provideTanStackQuery } from '../providers'
 import { injectDevtoolsPanel } from '../devtools-panel'
+import { setupTanStackQueryTestBed } from './test-utils'
 
 const mockDevtoolsPanelInstance = {
   mount: vi.fn(),
@@ -45,12 +41,8 @@ describe('injectDevtoolsPanel', () => {
     vi.clearAllMocks()
     queryClient = new QueryClient()
     mockElementRef = new ElementRef(document.createElement('div'))
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-        { provide: ElementRef, useValue: signal(mockElementRef) },
-      ],
+    setupTanStackQueryTestBed(queryClient, {
+      providers: [{ provide: ElementRef, useValue: signal(mockElementRef) }],
     })
   })
 

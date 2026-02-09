@@ -30,10 +30,10 @@ The query options to tag with the type from `queryFn`.
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & object;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & object;
 ```
 
-Defined in: [query-options.ts:76](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L76)
+Defined in: [query-options.ts:71](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L71)
 
 Allows to share and re-use query options in a type-safe way.
 
@@ -81,7 +81,7 @@ The query options to tag with the type from `queryFn`.
 
 ### Returns
 
-`Omit`\<[`CreateQueryOptions`](../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
+[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
 
 The tagged query options.
 
@@ -91,7 +91,7 @@ The tagged query options.
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): OmitKeyof<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & object;
 ```
 
-Defined in: [query-options.ts:108](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L108)
+Defined in: [query-options.ts:103](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L103)
 
 Allows to share and re-use query options in a type-safe way.
 
@@ -139,7 +139,7 @@ The query options to tag with the type from `queryFn`.
 
 ### Returns
 
-`OmitKeyof`\<[`CreateQueryOptions`](../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
+`OmitKeyof`\<[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>, `"queryFn"`\> & `object` & `object`
 
 The tagged query options.
 
@@ -149,7 +149,7 @@ The tagged query options.
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & object;
 ```
 
-Defined in: [query-options.ts:140](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L140)
+Defined in: [query-options.ts:135](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/query-options.ts#L135)
 
 Allows to share and re-use query options in a type-safe way.
 
@@ -197,6 +197,6 @@ The query options to tag with the type from `queryFn`.
 
 ### Returns
 
-[`CreateQueryOptions`](../interfaces/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
+[`CreateQueryOptions`](../type-aliases/CreateQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object` & `object`
 
 The tagged query options.

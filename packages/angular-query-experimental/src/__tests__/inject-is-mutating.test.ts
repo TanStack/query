@@ -1,13 +1,9 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { TestBed } from '@angular/core/testing'
-import { Injector, provideZonelessChangeDetection } from '@angular/core'
+import { Injector } from '@angular/core'
 import { sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  injectIsMutating,
-  injectMutation,
-  provideTanStackQuery,
-} from '..'
+import { QueryClient, injectIsMutating, injectMutation } from '..'
+import { flushQueryUpdates, setupTanStackQueryTestBed } from './test-utils'
 
 describe('injectIsMutating', () => {
   let queryClient: QueryClient
@@ -16,12 +12,7 @@ describe('injectIsMutating', () => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
 
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
+    setupTanStackQueryTestBed(queryClient)
   })
 
   afterEach(() => {
@@ -44,7 +35,7 @@ describe('injectIsMutating', () => {
     })
 
     expect(isMutating()).toBe(0)
-    await vi.advanceTimersByTimeAsync(0)
+    await flushQueryUpdates()
     expect(isMutating()).toBe(1)
     await vi.advanceTimersByTimeAsync(11)
     expect(isMutating()).toBe(0)
