@@ -11,8 +11,7 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { sleep } from '@tanstack/query-test-utils'
-import { queryKey } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, provideIsRestoring } from '..'
 import { injectQueries } from '../inject-queries'
 import { registerSignalInput, setupTanStackQueryTestBed } from './test-utils'
@@ -146,10 +145,10 @@ describe('injectQueries', () => {
             },
           },
         ],
-        combine: (results) => {
+        combine: (queryResults) => {
           return {
-            refetch: () => results.forEach((r) => r.refetch()),
-            data: results.map((r) => r.data).join(','),
+            refetch: () => queryResults.forEach((r) => r.refetch()),
+            data: queryResults.map((r) => r.data).join(','),
           }
         },
       }))
@@ -384,9 +383,9 @@ describe('injectQueries', () => {
       }))
 
       mapped = computed(() => {
-        const results = this.queries().map((q) => q.data())
-        if (results.length === 0) return 'empty'
-        return results.join(',')
+        const queryData = this.queries().map((q) => q.data())
+        if (queryData.length === 0) return 'empty'
+        return queryData.join(',')
       })
 
       _pushResults = effect(() => {

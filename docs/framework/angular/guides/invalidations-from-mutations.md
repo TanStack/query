@@ -22,6 +22,7 @@ mutation = injectMutation(() => ({
 [//]: # 'Example2'
 
 ```ts
+import { Component, inject } from '@angular/core'
 import {
   injectMutation,
   QueryClient,

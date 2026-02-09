@@ -48,10 +48,6 @@ A function that returns query options.
 
 Additional configuration
 
-## Param
-
-Array of function property names to exclude from signal conversion
-
 ## See
 
 https://tanstack.com/query/latest/docs/framework/angular/guides/queries

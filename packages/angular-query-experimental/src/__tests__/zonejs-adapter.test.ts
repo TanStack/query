@@ -5,6 +5,7 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import { sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
@@ -12,7 +13,6 @@ import {
   injectQuery,
   provideTanStackQuery,
 } from '..'
-import { sleep } from '@tanstack/query-test-utils'
 
 describe('adapter with Zone.js', () => {
   let queryClient: QueryClient

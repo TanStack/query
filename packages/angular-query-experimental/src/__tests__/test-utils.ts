@@ -14,6 +14,8 @@ import type {
   Type,
 } from '@angular/core'
 
+// cspell:ignore ɵcmp ɵdir
+
 // Evaluate all signals on an object and return the result
 function evaluateSignals<T extends Record<string, any>>(
   obj: T,

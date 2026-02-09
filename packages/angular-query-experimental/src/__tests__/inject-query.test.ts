@@ -863,7 +863,7 @@ describe('injectQuery', () => {
     expect(instance.initialStatus).toEqual('pending')
   })
 
-  test('should update query data on the same macrotask when query data changes', async () => {
+  test('should update query data on the same macro task when query data changes', async () => {
     const query = TestBed.runInInjectionContext(() =>
       injectQuery(() => ({
         queryKey: ['test'],

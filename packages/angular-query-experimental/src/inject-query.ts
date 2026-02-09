@@ -233,7 +233,6 @@ export function injectQuery<
  * ```
  * @param injectQueryFn - A function that returns query options.
  * @param options - Additional configuration
- * @param excludeFunctions - Array of function property names to exclude from signal conversion
  * @returns The query result.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  */

@@ -9,11 +9,11 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
+import { firstValueFrom } from 'rxjs'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import { expectSignals, registerSignalInput } from './test-utils'
-import { firstValueFrom } from 'rxjs'
 
 describe('injectMutation', () => {
   let queryClient: QueryClient
@@ -714,11 +714,11 @@ describe('injectMutation', () => {
       // Flush microtasks to allow TanStack Query's scheduled notifications to process
       await Promise.resolve()
 
-      // Check for optimistic update in the same macrotask
+      // Check for optimistic update in the same macro task
       expect(onMutateCalled).toBe(true)
       expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic: test')
 
-      // Check stability before the mutation completes, waiting got the next macrotask task
+      // Check stability before the mutation completes, waiting for the next macro task
       await vi.advanceTimersByTimeAsync(0)
       expect(mutation.isPending()).toBe(true)
       expect(await firstValueFrom(app.isStable)).toBe(false)

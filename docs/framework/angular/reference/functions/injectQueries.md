@@ -9,7 +9,7 @@ title: injectQueries
 function injectQueries<T, TCombinedResult>(optionsFn, injector?): Signal<TCombinedResult>;
 ```
 
-Defined in: [inject-queries.ts:279](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-queries.ts#L279)
+Defined in: [inject-queries.ts:278](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-queries.ts#L278)
 
 ## Type Parameters
 
