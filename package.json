@@ -82,7 +82,7 @@
     "typescript56": "npm:typescript@5.6",
     "typescript57": "npm:typescript@5.7",
     "vite": "^6.4.1",
-    "vitest": "^4.0.17"
+    "vitest": "^4.0.18"
   },
   "pnpm": {
     "overrides": {
