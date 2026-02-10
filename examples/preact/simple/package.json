@@ -1,4 +1,5 @@
 {
+  "name": "@tanstack/query-example-preact-simple",
   "private": true,
   "type": "module",
   "scripts": {
