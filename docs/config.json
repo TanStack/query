@@ -167,6 +167,31 @@
               "to": "framework/angular/zoneless"
             }
           ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "framework/preact/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/preact/installation"
+            },
+            {
+              "label": "Quick Start",
+              "to": "framework/preact/quick-start"
+            },
+            {
+              "label": "TypeScript",
+              "to": "framework/preact/typescript"
+            },
+            {
+              "label": "GraphQL",
+              "to": "framework/preact/graphql"
+            }
+          ]
         }
       ]
     },
@@ -717,6 +742,131 @@
               "to": "framework/angular/guides/does-this-replace-client-state"
             }
           ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "Important Defaults",
+              "to": "framework/preact/guides/important-defaults"
+            },
+            {
+              "label": "Queries",
+              "to": "framework/preact/guides/queries"
+            },
+            {
+              "label": "Query Keys",
+              "to": "framework/preact/guides/query-keys"
+            },
+            {
+              "label": "Query Functions",
+              "to": "framework/preact/guides/query-functions"
+            },
+            {
+              "label": "Query Options",
+              "to": "framework/preact/guides/query-options"
+            },
+            {
+              "label": "Network Mode",
+              "to": "framework/preact/guides/network-mode"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "framework/preact/guides/parallel-queries"
+            },
+            {
+              "label": "Dependent Queries",
+              "to": "framework/preact/guides/dependent-queries"
+            },
+            {
+              "label": "Background Fetching Indicators",
+              "to": "framework/preact/guides/background-fetching-indicators"
+            },
+            {
+              "label": "Window Focus Refetching",
+              "to": "framework/preact/guides/window-focus-refetching"
+            },
+            {
+              "label": "Disabling/Pausing Queries",
+              "to": "framework/preact/guides/disabling-queries"
+            },
+            {
+              "label": "Query Retries",
+              "to": "framework/preact/guides/query-retries"
+            },
+            {
+              "label": "Paginated Queries",
+              "to": "framework/preact/guides/paginated-queries"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "framework/preact/guides/infinite-queries"
+            },
+            {
+              "label": "Initial Query Data",
+              "to": "framework/preact/guides/initial-query-data"
+            },
+            {
+              "label": "Placeholder Query Data",
+              "to": "framework/preact/guides/placeholder-query-data"
+            },
+            {
+              "label": "Mutations",
+              "to": "framework/preact/guides/mutations"
+            },
+            {
+              "label": "Query Invalidation",
+              "to": "framework/preact/guides/query-invalidation"
+            },
+            {
+              "label": "Invalidation from Mutations",
+              "to": "framework/preact/guides/invalidations-from-mutations"
+            },
+            {
+              "label": "Updates from Mutation Responses",
+              "to": "framework/preact/guides/updates-from-mutation-responses"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "framework/preact/guides/optimistic-updates"
+            },
+            {
+              "label": "Query Cancellation",
+              "to": "framework/preact/guides/query-cancellation"
+            },
+            {
+              "label": "Scroll Restoration",
+              "to": "framework/preact/guides/scroll-restoration"
+            },
+            {
+              "label": "Filters",
+              "to": "framework/preact/guides/filters"
+            },
+            {
+              "label": "Performance & Request Waterfalls",
+              "to": "framework/preact/guides/request-waterfalls"
+            },
+            {
+              "label": "Prefetching & Router Integration",
+              "to": "framework/preact/guides/prefetching"
+            },
+            {
+              "label": "Caching",
+              "to": "framework/preact/guides/caching"
+            },
+            {
+              "label": "Render Optimizations",
+              "to": "framework/preact/guides/render-optimizations"
+            },
+            {
+              "label": "Default Query Fn",
+              "to": "framework/preact/guides/default-query-function"
+            },
+            {
+              "label": "Does this replace [Redux, MobX, etc]?",
+              "to": "framework/preact/guides/does-this-replace-client-state"
+            }
+          ]
         }
       ]
     },
@@ -1007,6 +1157,91 @@
             {
               "label": "Functions / injectMutation",
               "to": "framework/angular/reference/functions/injectMutation"
+            }
+          ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "useQuery",
+              "to": "framework/preact/reference/functions/useQuery"
+            },
+            {
+              "label": "useQueries",
+              "to": "framework/preact/reference/functions/useQueries"
+            },
+            {
+              "label": "useInfiniteQuery",
+              "to": "framework/preact/reference/functions/useInfiniteQuery"
+            },
+            {
+              "label": "useMutation",
+              "to": "framework/preact/reference/functions/useMutation"
+            },
+            {
+              "label": "useIsFetching",
+              "to": "framework/preact/reference/functions/useIsFetching"
+            },
+            {
+              "label": "useIsMutating",
+              "to": "framework/preact/reference/functions/useIsMutating"
+            },
+            {
+              "label": "useMutationState",
+              "to": "framework/preact/reference/functions/useMutationState"
+            },
+            {
+              "label": "useSuspenseQuery",
+              "to": "framework/preact/reference/functions/useSuspenseQuery"
+            },
+            {
+              "label": "useSuspenseInfiniteQuery",
+              "to": "framework/preact/reference/functions/useSuspenseInfiniteQuery"
+            },
+            {
+              "label": "useSuspenseQueries",
+              "to": "framework/preact/reference/functions/useSuspenseQueries"
+            },
+            {
+              "label": "QueryClientProvider",
+              "to": "framework/preact/reference/functions/QueryClientProvider"
+            },
+            {
+              "label": "useQueryClient",
+              "to": "framework/preact/reference/functions/useQueryClient"
+            },
+            {
+              "label": "queryOptions",
+              "to": "framework/preact/reference/functions/queryOptions"
+            },
+            {
+              "label": "infiniteQueryOptions",
+              "to": "framework/preact/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "mutationOptions",
+              "to": "framework/preact/reference/functions/mutationOptions"
+            },
+            {
+              "label": "usePrefetchQuery",
+              "to": "framework/preact/reference/functions/usePrefetchQuery"
+            },
+            {
+              "label": "usePrefetchInfiniteQuery",
+              "to": "framework/preact/reference/functions/usePrefetchInfiniteQuery"
+            },
+            {
+              "label": "QueryErrorResetBoundary",
+              "to": "framework/preact/reference/functions/QueryErrorResetBoundary"
+            },
+            {
+              "label": "useQueryErrorResetBoundary",
+              "to": "framework/preact/reference/functions/useQueryErrorResetBoundary"
+            },
+            {
+              "label": "hydration",
+              "to": "framework/react/reference/functions/HydrationBoundary"
             }
           ]
         }
