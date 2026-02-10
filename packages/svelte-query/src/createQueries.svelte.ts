@@ -199,10 +199,13 @@ export function createQueries<
     combine?: (result: QueriesResults<T>) => TCombinedResult
     /**
      * Set this to `false` to disable structural sharing between query results.
+     * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
      * Only applies when `combine` is provided.
      * Defaults to `true`.
      */
-    structuralSharing?: boolean
+    structuralSharing?:
+      | boolean
+      | ((oldData: unknown | undefined, newData: unknown) => unknown)
   }>,
   queryClient?: Accessor<QueryClient>,
 ): TCombinedResult {
