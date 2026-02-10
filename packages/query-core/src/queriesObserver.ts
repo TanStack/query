@@ -32,10 +32,13 @@ export interface QueriesObserverOptions<
   combine?: CombineFn<TCombinedResult>
   /**
    * Set this to `false` to disable structural sharing between query results.
+   * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
    * Only applies when `combine` is provided.
    * Defaults to `true`.
    */
-  structuralSharing?: boolean
+  structuralSharing?:
+    | boolean
+    | ((oldData: unknown | undefined, newData: unknown) => unknown)
 }
 
 export class QueriesObserver<
@@ -178,7 +181,10 @@ export class QueriesObserver<
   getOptimisticResult(
     queries: Array<QueryObserverOptions>,
     combine: CombineFn<TCombinedResult> | undefined,
-    structuralSharing: boolean | undefined,
+    structuralSharing:
+      | boolean
+      | ((oldData: unknown | undefined, newData: unknown) => unknown)
+      | undefined,
   ): [
     rawResult: Array<QueryObserverResult>,
     combineResult: (r?: Array<QueryObserverResult>) => TCombinedResult,
@@ -228,7 +234,10 @@ export class QueriesObserver<
   #combineResult(
     input: Array<QueryObserverResult>,
     combine: CombineFn<TCombinedResult> | undefined,
-    structuralSharing: boolean | undefined = true,
+    structuralSharing:
+      | boolean
+      | ((oldData: unknown | undefined, newData: unknown) => unknown)
+      | undefined = true,
     queryHashes?: Array<string>,
   ): TCombinedResult {
     if (combine) {
@@ -254,9 +263,17 @@ export class QueriesObserver<
 
         const combined = combine(input)
 
-        this.#combinedResult = structuralSharing
-          ? replaceEqualDeep(this.#combinedResult, combined)
-          : combined
+        if (typeof structuralSharing === 'function') {
+          this.#combinedResult = structuralSharing(
+            this.#combinedResult,
+            combined,
+          ) as TCombinedResult
+        } else {
+          this.#combinedResult =
+            structuralSharing !== false
+              ? replaceEqualDeep(this.#combinedResult, combined)
+              : combined
+        }
       }
 
       return this.#combinedResult
