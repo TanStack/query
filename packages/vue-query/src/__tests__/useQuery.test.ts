@@ -246,9 +246,9 @@ describe('useQuery', () => {
     })
   })
 
-  test('should properly execute dependant queries', async () => {
+  test('should properly execute dependent queries', async () => {
     const { data } = useQuery({
-      queryKey: ['dependant1'],
+      queryKey: ['dependent1'],
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
@@ -259,7 +259,7 @@ describe('useQuery', () => {
       .mockImplementation(() => sleep(10).then(() => 'Some data'))
     const { fetchStatus, status } = useQuery(
       reactive({
-        queryKey: ['dependant2'],
+        queryKey: ['dependent2'],
         queryFn: dependentQueryFn,
         enabled,
       }),
@@ -280,7 +280,7 @@ describe('useQuery', () => {
     expect(status.value).toStrictEqual('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['dependant2'] }),
+      expect.objectContaining({ queryKey: ['dependent2'] }),
     )
   })
 

@@ -2114,5 +2114,21 @@ describe('queryClient', () => {
         mutationOptions2,
       )
     })
+
+    test('should return only matching defaults when multiple mutation defaults are set', () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const mutationOptions1 = { retry: 1 }
+      const mutationOptions2 = { retry: 2 }
+      queryClient.setMutationDefaults(key1, mutationOptions1)
+      queryClient.setMutationDefaults(key2, mutationOptions2)
+
+      expect(queryClient.getMutationDefaults(key1)).toMatchObject(
+        mutationOptions1,
+      )
+      expect(queryClient.getMutationDefaults(key2)).toMatchObject(
+        mutationOptions2,
+      )
+    })
   })
 })
