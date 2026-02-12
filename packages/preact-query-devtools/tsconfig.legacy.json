@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "outDir": "./dist-ts/legacy"
+  },
+  "include": ["src"],
+  "exclude": ["src/__tests__"],
+  "references": [{ "path": "../query-devtools" }, { "path": "../preact-query" }]
+}
