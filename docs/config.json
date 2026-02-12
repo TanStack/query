@@ -1593,6 +1593,31 @@
               "to": "framework/vue/plugins/createPersister"
             }
           ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "persistQueryClient",
+              "to": "framework/preact/plugins/persistQueryClient"
+            },
+            {
+              "label": "createSyncStoragePersister",
+              "to": "framework/preact/plugins/createSyncStoragePersister"
+            },
+            {
+              "label": "createAsyncStoragePersister",
+              "to": "framework/preact/plugins/createAsyncStoragePersister"
+            },
+            {
+              "label": "broadcastQueryClient (Experimental)",
+              "to": "framework/preact/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "framework/preact/plugins/createPersister"
+            }
+          ]
         }
       ]
     }
