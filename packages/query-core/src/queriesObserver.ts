@@ -30,6 +30,15 @@ export interface QueriesObserverOptions<
   TCombinedResult = Array<QueryObserverResult>,
 > {
   combine?: CombineFn<TCombinedResult>
+  /**
+   * Set this to `false` to disable structural sharing between query results.
+   * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
+   * Only applies when `combine` is provided.
+   * Defaults to `true`.
+   */
+  structuralSharing?:
+    | boolean
+    | ((oldData: unknown | undefined, newData: unknown) => unknown)
 }
 
 export class QueriesObserver<
@@ -172,6 +181,10 @@ export class QueriesObserver<
   getOptimisticResult(
     queries: Array<QueryObserverOptions>,
     combine: CombineFn<TCombinedResult> | undefined,
+    structuralSharing:
+      | boolean
+      | ((oldData: unknown | undefined, newData: unknown) => unknown)
+      | undefined,
   ): [
     rawResult: Array<QueryObserverResult>,
     combineResult: (r?: Array<QueryObserverResult>) => TCombinedResult,
@@ -188,7 +201,12 @@ export class QueriesObserver<
     return [
       result,
       (r?: Array<QueryObserverResult>) => {
-        return this.#combineResult(r ?? result, combine, queryHashes)
+        return this.#combineResult(
+          r ?? result,
+          combine,
+          structuralSharing,
+          queryHashes,
+        )
       },
       () => {
         return this.#trackResult(result, matches)
@@ -216,6 +234,10 @@ export class QueriesObserver<
   #combineResult(
     input: Array<QueryObserverResult>,
     combine: CombineFn<TCombinedResult> | undefined,
+    structuralSharing:
+      | boolean
+      | ((oldData: unknown | undefined, newData: unknown) => unknown)
+      | undefined = true,
     queryHashes?: Array<string>,
   ): TCombinedResult {
     if (combine) {
@@ -238,10 +260,20 @@ export class QueriesObserver<
         if (queryHashes !== undefined) {
           this.#lastQueryHashes = queryHashes
         }
-        this.#combinedResult = replaceEqualDeep(
-          this.#combinedResult,
-          combine(input),
-        )
+
+        const combined = combine(input)
+
+        if (typeof structuralSharing === 'function') {
+          this.#combinedResult = structuralSharing(
+            this.#combinedResult,
+            combined,
+          ) as TCombinedResult
+        } else {
+          this.#combinedResult =
+            structuralSharing !== false
+              ? replaceEqualDeep(this.#combinedResult, combined)
+              : combined
+        }
       }
 
       return this.#combinedResult
@@ -296,7 +328,11 @@ export class QueriesObserver<
     if (this.hasListeners()) {
       const previousResult = this.#combinedResult
       const newTracked = this.#trackResult(this.#result, this.#observerMatches)
-      const newResult = this.#combineResult(newTracked, this.#options?.combine)
+      const newResult = this.#combineResult(
+        newTracked,
+        this.#options?.combine,
+        this.#options?.structuralSharing,
+      )
 
       if (previousResult !== newResult) {
         notifyManager.batch(() => {
