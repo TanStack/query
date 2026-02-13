@@ -1902,7 +1902,7 @@ importers:
         specifier: ^5.92.9
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^6.1.4
+        specifier: ^6.1.5
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
@@ -1974,7 +1974,7 @@ importers:
         specifier: ^5.92.9
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^6.1.4
+        specifier: ^6.1.5
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
