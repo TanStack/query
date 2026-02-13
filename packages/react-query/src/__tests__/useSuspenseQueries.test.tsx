@@ -843,8 +843,14 @@ describe('useSuspenseQueries 2', () => {
     function Page() {
       const [result1, result2] = useSuspenseQueries({
         queries: [
-          { queryKey: key1, queryFn: () => sleep(QUERY_DURATION).then(() => 'data1') },
-          { queryKey: key2, queryFn: () => sleep(QUERY_DURATION).then(() => 'data2') },
+          {
+            queryKey: key1,
+            queryFn: () => sleep(QUERY_DURATION).then(() => 'data1'),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(QUERY_DURATION).then(() => 'data2'),
+          },
         ],
       })
 
