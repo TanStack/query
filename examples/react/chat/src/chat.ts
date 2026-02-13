@@ -8,7 +8,9 @@ const answers = [
   'TanStack is great. Would you like to know more?'.split(' '),
 ]
 
-function chatAnswer(_question: string) {
+type ChatStream = AsyncIterable<string>
+
+function chatAnswer(_question: string): ChatStream {
   return {
     async *[Symbol.asyncIterator]() {
       const answer = answers[Math.floor(Math.random() * answers.length)]
@@ -22,6 +24,7 @@ function chatAnswer(_question: string) {
     },
   }
 }
+
 
 export const chatQueryOptions = (question: string) =>
   queryOptions({
