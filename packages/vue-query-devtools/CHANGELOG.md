@@ -1,5 +1,11 @@
 # @tanstack/vue-query-devtools
 
+## 6.1.5
+
+### Patch Changes
+
+- fix: style prop type ([#10087](https://github.com/TanStack/query/pull/10087))
+
 ## 6.1.4
 
 ### Patch Changes
