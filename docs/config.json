@@ -184,6 +184,10 @@
               "to": "framework/preact/quick-start"
             },
             {
+              "label": "Devtools",
+              "to": "framework/preact/devtools"
+            },
+            {
               "label": "TypeScript",
               "to": "framework/preact/typescript"
             },
