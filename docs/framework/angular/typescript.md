@@ -78,7 +78,7 @@ class MyComponent {
   template: `
     @if (query.isSuccess()) {
       @let data = query.data();
-      //    ^? data: number
+      // ^? data: number
     }
   `,
 })
@@ -104,7 +104,7 @@ class MyComponent {
 class MyComponent {
   query = injectQuery(() => ({
     queryKey: ['groups'],
-    queryFn: fetchGroups
+    queryFn: fetchGroups,
   }))
 }
 ```

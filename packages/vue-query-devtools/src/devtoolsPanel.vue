@@ -2,11 +2,10 @@
 import { computed, onMounted, onScopeDispose, ref, watchEffect } from 'vue'
 import { onlineManager, useQueryClient } from '@tanstack/vue-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
-import type { StyleValue } from 'vue'
 import type { DevtoolsPanelOptions } from './types'
 
 const props = defineProps<DevtoolsPanelOptions>()
-const style = computed<StyleValue>(() => {
+const style = computed<any>(() => {
   return {
     height: '500px',
     ...props.style,

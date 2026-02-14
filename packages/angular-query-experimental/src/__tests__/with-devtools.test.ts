@@ -30,7 +30,11 @@ const mockDevtoolsInstance = {
   setInitialIsOpen: vi.fn(),
 }
 
-const mockTanstackQueryDevtools = vi.fn(() => mockDevtoolsInstance)
+function MockTanstackQueryDevtools() {
+  return mockDevtoolsInstance
+}
+
+const mockTanstackQueryDevtools = vi.fn(MockTanstackQueryDevtools)
 
 vi.mock('@tanstack/query-devtools', () => ({
   TanstackQueryDevtools: mockTanstackQueryDevtools,
@@ -140,13 +144,12 @@ describe('withDevtools feature', () => {
       TestBed.tick()
       await vi.dynamicImportSettled()
 
-      if (expectedCalled) {
-        expect(mockTanstackQueryDevtools).toHaveBeenCalled()
-        expect(mockDevtoolsInstance.mount).toHaveBeenCalled()
-      } else {
-        expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
-        expect(mockDevtoolsInstance.mount).not.toHaveBeenCalled()
-      }
+      expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(
+        expectedCalled ? 1 : 0,
+      )
+      expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(
+        expectedCalled ? 1 : 0,
+      )
     },
   )
 
@@ -187,6 +190,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     expect(mockTanstackQueryDevtools).toHaveBeenCalledTimes(1)
 
@@ -248,6 +252,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -288,6 +293,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -320,6 +326,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -351,6 +358,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -384,6 +392,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     TestBed.tick()
 
@@ -414,6 +423,7 @@ describe('withDevtools feature', () => {
 
     TestBed.inject(ENVIRONMENT_INITIALIZER)
     await vi.advanceTimersByTimeAsync(0)
+    await vi.dynamicImportSettled()
 
     expect(mockDevtoolsInstance.mount).toHaveBeenCalledTimes(1)
     expect(mockDevtoolsInstance.unmount).toHaveBeenCalledTimes(0)

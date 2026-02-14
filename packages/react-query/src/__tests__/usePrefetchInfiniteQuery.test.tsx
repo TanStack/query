@@ -12,6 +12,9 @@ import { renderWithClient } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryOptions } from '..'
 import type { Mock } from 'vitest'
 
+const createFallback = () =>
+  vi.fn().mockImplementation(() => <div>Loading...</div>)
+
 const generateInfiniteQueryOptions = (
   data: Array<{ data: string; currentPage: number; totalPages: number }>,
 ) => {
@@ -51,8 +54,6 @@ describe('usePrefetchInfiniteQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
 
-  const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
-
   function Suspended<T = unknown>(props: {
     queryOpts: UseSuspenseInfiniteQueryOptions<
       T,
@@ -76,6 +77,7 @@ describe('usePrefetchInfiniteQuery', () => {
   }
 
   it('should prefetch an infinite query if query state does not exist', async () => {
+    const Fallback = createFallback()
     const data = [
       { data: 'Do you fetch on render?', currentPage: 1, totalPages: 3 },
       { data: 'Or do you render as you fetch?', currentPage: 2, totalPages: 3 },
@@ -121,6 +123,7 @@ describe('usePrefetchInfiniteQuery', () => {
   })
 
   it('should not display fallback if the query cache is already populated', async () => {
+    const Fallback = createFallback()
     const queryOpts = {
       queryKey: queryKey(),
       ...generateInfiniteQueryOptions([

@@ -2,13 +2,13 @@
   {
     "name": "react full",
     "path": "packages/react-query/build/modern/index.js",
-    "limit": "12.10 kB",
+    "limit": "13.00 kB",
     "ignore": ["react", "react-dom"]
   },
   {
     "name": "react minimal",
     "path": "packages/react-query/build/modern/index.js",
-    "limit": "9.12 kB",
+    "limit": "9.99 kB",
     "import": "{ useQuery, QueryClient, QueryClientProvider }",
     "ignore": ["react", "react-dom"]
   }

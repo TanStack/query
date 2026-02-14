@@ -8,8 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.90.14",
-    "@tanstack/react-query-devtools": "^5.91.2",
+    "@tanstack/react-query": "^5.90.21",
+    "@tanstack/react-query-devtools": "^5.91.3",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
     "react": "^19.0.0",
@@ -17,6 +17,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^6.3.6"
+    "vite": "^6.4.1"
   }
 }

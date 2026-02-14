@@ -82,6 +82,7 @@ export const rule = createRule({
             reference,
             scopeManager,
             node: getQueryFnRelevantNode(queryFn),
+            filename: context.filename,
           }),
         )
 

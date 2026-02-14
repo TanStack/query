@@ -67,12 +67,6 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     REPO: ${{ github.repository }}
       #     PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.6.0
-        with:
-          directory: packages
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Comment on PRs about release
         if: steps.changesets.outputs.published == 'true'
         uses: tanstack/config/.github/comment-on-release@main

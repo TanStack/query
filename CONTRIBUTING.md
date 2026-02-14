@@ -157,7 +157,7 @@ You can use Gitpod (An Online open-source VS Code-like IDE that is free for Open
 
 ## Changesets
 
-This repo uses [Changesets](https://github.com/changesets/changesets) to automate releases. If your PR should release a new package version (patch, minor, or major), please run run `pnpm changeset` and commit the file. If needed, changeset descriptions can be more descriptive, and will be included in the changelog. If your PR affects docs, examples, styles, etc., you probably don't need to generate a changeset.
+This repo uses [Changesets](https://github.com/changesets/changesets) to automate releases. If your PR should release a new package version (patch, minor, or major), please run `pnpm changeset` and commit the file. If needed, changeset descriptions can be more descriptive, and will be included in the changelog. If your PR affects docs, examples, styles, etc., you probably don't need to generate a changeset.
 
 ## Pull requests
 
