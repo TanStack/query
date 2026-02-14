@@ -51,7 +51,13 @@ import {
   XCircle,
 } from './icons'
 import Explorer from './Explorer'
-import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
+import {
+  DevtoolsStateContext,
+  useDevtoolsState,
+  usePiPWindow,
+  useQueryDevtoolsContext,
+  useTheme,
+} from './contexts'
 import {
   BUTTON_POSITION,
   DEFAULT_HEIGHT,
@@ -68,6 +74,8 @@ import {
 import type {
   DevtoolsErrorType,
   DevtoolsPosition,
+  MutationCacheMap,
+  QueryCacheMap,
   QueryDevtoolsProps,
 } from './contexts'
 import type {
@@ -78,7 +86,7 @@ import type {
   QueryCacheNotifyEvent,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
-import type { Accessor, Component, JSX, Setter } from 'solid-js'
+import type { Accessor, Component, JSX } from 'solid-js'
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
@@ -98,20 +106,22 @@ interface QueryStatusProps {
   count: number
 }
 
-const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
-  null,
-)
-const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
-  null,
-)
-const [panelWidth, setPanelWidth] = createSignal(0)
-const [offline, setOffline] = createSignal(false)
-
 export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
 }
 
 export const Devtools: Component<DevtoolsPanelProps> = (props) => {
+  const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
+    null,
+  )
+  const [selectedMutationId, setSelectedMutationId] = createSignal<
+    number | null
+  >(null)
+  const [panelWidth, setPanelWidth] = createSignal(0)
+  const [offline, setOffline] = createSignal(false)
+  const queryCacheMap: QueryCacheMap = new Map()
+  const mutationCacheMap: MutationCacheMap = new Map()
+
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -192,7 +202,20 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   )
 
   return (
-    <>
+    <DevtoolsStateContext.Provider
+      value={{
+        selectedQueryHash,
+        setSelectedQueryHash,
+        selectedMutationId,
+        setSelectedMutationId,
+        panelWidth,
+        setPanelWidth,
+        offline,
+        setOffline,
+        queryCacheMap,
+        mutationCacheMap,
+      }}
+    >
       <Show when={pip().pipWindow && pip_open() == 'true'}>
         <Portal mount={pip().pipWindow?.document.body}>
           <PiPPanel>
@@ -274,7 +297,7 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
           </Show>
         </TransitionGroup>
       </div>
-    </>
+    </DevtoolsStateContext.Provider>
   )
 }
 
@@ -283,6 +306,7 @@ const PiPPanel: Component<{
 }> = (props) => {
   const pip = usePiPWindow()
   const theme = useTheme()
+  const { panelWidth, setPanelWidth } = useDevtoolsState()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -352,6 +376,7 @@ export const ParentPanel: Component<{
   children: JSX.Element
 }> = (props) => {
   const theme = useTheme()
+  const { panelWidth, setPanelWidth } = useDevtoolsState()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
@@ -408,6 +433,7 @@ export const ParentPanel: Component<{
 }
 
 const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
+  const { setSelectedQueryHash, setPanelWidth, panelWidth } = useDevtoolsState()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -688,6 +714,15 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   const [selectedView, setSelectedView] = createSignal<'queries' | 'mutations'>(
     'queries',
   )
+
+  const {
+    selectedQueryHash,
+    offline,
+    setSelectedQueryHash,
+    selectedMutationId,
+    setSelectedMutationId,
+    panelWidth,
+  } = useDevtoolsState()
 
   const sort = createMemo(() => props.localStore.sort || DEFAULT_SORT_FN_NAME)
   const sortOrder = createMemo(
@@ -1382,6 +1417,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 
   const { colors, alpha } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+  const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
 
   const queryState = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
@@ -1511,6 +1547,8 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
 
   const { colors, alpha } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+
+  const { selectedMutationId, setSelectedMutationId } = useDevtoolsState()
 
   const mutationState = createSubscribeToMutationCacheBatcher(
     (mutationCache) => {
@@ -1758,6 +1796,8 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
   const [mouseOver, setMouseOver] = createSignal(false)
   const [focused, setFocused] = createSignal(false)
 
+  const { selectedQueryHash, panelWidth } = useDevtoolsState()
+
   const showLabel = createMemo(() => {
     if (selectedQueryHash()) {
       if (panelWidth() < firstBreakpoint && panelWidth() > secondBreakpoint) {
@@ -1873,6 +1913,8 @@ const QueryDetails = () => {
   const [restoringLoading, setRestoringLoading] = createSignal(false)
   const [dataMode, setDataMode] = createSignal<'view' | 'edit'>('view')
   const [dataEditError, setDataEditError] = createSignal<boolean>(false)
+
+  const { selectedQueryHash, setSelectedQueryHash } = useDevtoolsState()
 
   const errorTypes = createMemo(() => {
     return useQueryDevtoolsContext().errorTypes || []
@@ -2402,6 +2444,8 @@ const MutationDetails = () => {
   const { colors } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
+  const { selectedMutationId } = useDevtoolsState()
+
   const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
     const mutations = mutationCache().getAll()
     const mutation = mutations.find(
@@ -2578,15 +2622,8 @@ const MutationDetails = () => {
   )
 }
 
-const queryCacheMap = new Map<
-  (q: Accessor<QueryCache>) => any,
-  {
-    setter: Setter<any>
-    shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
-  }
->()
-
 const setupQueryCacheSubscription = () => {
+  const { queryCacheMap } = useDevtoolsState()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
@@ -2614,6 +2651,7 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   equalityCheck: boolean = true,
   shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
 ) => {
+  const { queryCacheMap } = useDevtoolsState()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
@@ -2640,21 +2678,17 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   return value
 }
 
-const mutationCacheMap = new Map<
-  (q: Accessor<MutationCache>) => any,
-  Setter<any>
->()
-
 const setupMutationCacheSubscription = () => {
+  const { mutationCacheMap } = useDevtoolsState()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
   })
 
   const unsubscribe = mutationCache().subscribe(() => {
-    for (const [callback, setter] of mutationCacheMap.entries()) {
+    for (const [callback, value] of mutationCacheMap.entries()) {
       queueMicrotask(() => {
-        setter(callback(mutationCache))
+        value.setter(callback(mutationCache))
       })
     }
   })
@@ -2671,6 +2705,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   callback: (queryCache: Accessor<MutationCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
 ) => {
+  const { mutationCacheMap } = useDevtoolsState()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getMutationCache()
@@ -2685,7 +2720,9 @@ const createSubscribeToMutationCacheBatcher = <T,>(
     setValue(callback(mutationCache))
   })
 
-  mutationCacheMap.set(callback, setValue)
+  mutationCacheMap.set(callback, {
+    setter: setValue,
+  })
 
   onCleanup(() => {
     mutationCacheMap.delete(callback)
