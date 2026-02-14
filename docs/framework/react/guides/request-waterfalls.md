@@ -250,6 +250,8 @@ Splitting an applications JS-code into smaller chunks and only loading the neces
 
 Consider this a slightly modified version of the Feed example.
 
+[//]: # 'LazyExample'
+
 ```tsx
 // This lazy loads the GraphFeedItem component, meaning
 // it wont start loading until something renders it
@@ -288,6 +290,8 @@ function GraphFeedItem({ feedItem }) {
   ...
 }
 ```
+
+[//]: # 'LazyExample'
 
 This example has a double waterfall, looking like this:
 

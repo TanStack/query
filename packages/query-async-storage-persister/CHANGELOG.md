@@ -1,5 +1,53 @@
 # @tanstack/query-async-storage-persister
 
+## 5.90.22
+
+### Patch Changes
+
+- Updated dependencies [[`e7258c5`](https://github.com/TanStack/query/commit/e7258c5cb30cafa456cdb4e6bc75b43bf619954d)]:
+  - @tanstack/query-core@5.90.20
+  - @tanstack/query-persist-client-core@5.91.19
+
+## 5.90.21
+
+### Patch Changes
+
+- Updated dependencies [[`53fc74e`](https://github.com/TanStack/query/commit/53fc74ebb16730bd3317f039a69c6821386bae93)]:
+  - @tanstack/query-core@5.90.19
+  - @tanstack/query-persist-client-core@5.91.18
+
+## 5.90.20
+
+### Patch Changes
+
+- Updated dependencies [[`dea1614`](https://github.com/TanStack/query/commit/dea1614aaad5c572cf43cea54b64ac09dc4d5b41)]:
+  - @tanstack/query-core@5.90.18
+  - @tanstack/query-persist-client-core@5.91.17
+
+## 5.90.19
+
+### Patch Changes
+
+- Updated dependencies [[`269351b`](https://github.com/TanStack/query/commit/269351b8ce4b4846da3d320ac5b850ee6aada0d6)]:
+  - @tanstack/query-core@5.90.17
+  - @tanstack/query-persist-client-core@5.91.16
+
+## 5.90.18
+
+### Patch Changes
+
+- Updated dependencies [[`7f47906`](https://github.com/TanStack/query/commit/7f47906eaccc3f3aa5ce24b77a83bd7a620a237b)]:
+  - @tanstack/query-core@5.90.16
+  - @tanstack/query-persist-client-core@5.91.15
+
+## 5.90.17
+
+### Patch Changes
+
+- Updated dependencies [[`fccef79`](https://github.com/TanStack/query/commit/fccef797d57d4a9566517bba87c8377f363920f2)]:
+  - @tanstack/query-core@5.90.15
+  - @tanstack/query-persist-client-core@5.91.14
+
 ## 5.90.16
 
 ### Patch Changes

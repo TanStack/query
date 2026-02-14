@@ -183,9 +183,7 @@ describe('injectQuery', () => {
 
     TestBed.runInInjectionContext(() =>
       effect(() => {
-        if (fromPromiseAnyQueryFn.isSuccess()) {
-          expect(fromMyDataArrayKeyQueryFn.data()).toBe(142)
-        }
+        expect(fromMyDataArrayKeyQueryFn.data()).toBe(142)
       }),
     )
 
@@ -206,9 +204,7 @@ describe('injectQuery', () => {
 
     TestBed.runInInjectionContext(() =>
       effect(() => {
-        if (fromGetMyDataStringKeyQueryFn.isSuccess()) {
-          expect(fromGetMyDataStringKeyQueryFn.data()).toBe(43)
-        }
+        expect(fromGetMyDataStringKeyQueryFn.data()).toBe(43)
       }),
     )
 
@@ -369,10 +365,10 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('success')
   })
 
-  test('should properly execute dependant queries', async () => {
+  test('should properly execute dependent queries', async () => {
     const query1 = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
-        queryKey: ['dependant1'],
+        queryKey: ['dependent1'],
         queryFn: () => sleep(10).then(() => 'Some data'),
       }))
     })
@@ -384,7 +380,7 @@ describe('injectQuery', () => {
     const query2 = TestBed.runInInjectionContext(() => {
       return injectQuery(
         computed(() => ({
-          queryKey: ['dependant2'],
+          queryKey: ['dependent2'],
           queryFn: dependentQueryFn,
           enabled: !!query1.data(),
         })),
@@ -406,7 +402,7 @@ describe('injectQuery', () => {
     expect(query2.status()).toStrictEqual('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['dependant2'] }),
+      expect.objectContaining({ queryKey: ['dependent2'] }),
     )
   })
 
@@ -424,7 +420,7 @@ describe('injectQuery', () => {
 
     expect(fetchFn).not.toHaveBeenCalled()
 
-    query.refetch().then(() => {
+    void query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(1)
       expect(fetchFn).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -437,7 +433,7 @@ describe('injectQuery', () => {
 
     keySignal.set('key12')
 
-    query.refetch().then(() => {
+    void query.refetch().then(() => {
       expect(fetchFn).toHaveBeenCalledTimes(2)
       expect(fetchFn).toHaveBeenCalledWith(
         expect.objectContaining({

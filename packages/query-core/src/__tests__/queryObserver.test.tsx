@@ -1394,6 +1394,87 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('should not refetchOnWindowFocus when staleTime is static and query has background error', async () => {
+    const key = queryKey()
+    let callCount = 0
+    const queryFn = vi.fn(async () => {
+      callCount++
+      if (callCount === 1) {
+        return 'data'
+      }
+      throw new Error('background error')
+    })
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: 'static',
+      refetchOnWindowFocus: true,
+      retry: false,
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(observer.getCurrentResult().data).toBe('data')
+    expect(observer.getCurrentResult().status).toBe('success')
+
+    await observer.refetch()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(observer.getCurrentResult().status).toBe('error')
+    expect(observer.getCurrentResult().data).toBe('data')
+
+    focusManager.setFocused(false)
+    focusManager.setFocused(true)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(2)
+
+    unsubscribe()
+  })
+
+  test('should refetchOnWindowFocus when query has background error and staleTime is not static', async () => {
+    const key = queryKey()
+    let callCount = 0
+    const queryFn = vi.fn(async () => {
+      callCount++
+      if (callCount === 1) {
+        return 'data'
+      }
+      if (callCount === 2) {
+        throw new Error('background error')
+      }
+      return 'new data'
+    })
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: 1000,
+      refetchOnWindowFocus: true,
+      retry: false,
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(observer.getCurrentResult().data).toBe('data')
+    expect(observer.getCurrentResult().status).toBe('success')
+
+    await observer.refetch()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(observer.getCurrentResult().status).toBe('error')
+    expect(observer.getCurrentResult().data).toBe('data')
+
+    focusManager.setFocused(false)
+    focusManager.setFocused(true)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(queryFn).toHaveBeenCalledTimes(3)
+
+    unsubscribe()
+  })
+
   test('should set fetchStatus to idle when _optimisticResults is isRestoring', () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
@@ -1427,6 +1508,32 @@ describe('queryObserver', () => {
 
     const result = observer.getCurrentResult()
     expect(result.isEnabled).toBe(true)
+  })
+
+  test('should update currentResult when getOptimisticResult is called with changed data', () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    const defaultedOptions = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    // First render: no data yet
+    const initialResult = observer.getOptimisticResult(defaultedOptions)
+    expect(initialResult.data).toBeUndefined()
+
+    // Another component sets data (e.g., dependent query resolved)
+    queryClient.setQueryData(key, 'updated')
+
+    // Re-render: getOptimisticResult should pick up the new data and update currentResult
+    const updatedResult = observer.getOptimisticResult(defaultedOptions)
+    expect(updatedResult.data).toBe('updated')
+    expect(observer.getCurrentResult().data).toBe('updated')
   })
 
   describe('StrictMode behavior', () => {

@@ -1,5 +1,41 @@
 # @tanstack/query-core
 
+## 5.90.20
+
+### Patch Changes
+
+- Fix: onMutate callback now runs synchronously when mutationCache.config.onMutate is not defined ([#10066](https://github.com/TanStack/query/pull/10066))
+
+## 5.90.19
+
+### Patch Changes
+
+- fix stable combine reference not updating when queries change dynamically ([#9954](https://github.com/TanStack/query/pull/9954))
+
+## 5.90.18
+
+### Patch Changes
+
+- Align experimental_prefetchInRender promise rejection with Suspense behavior by only throwing when no data is available. ([#10025](https://github.com/TanStack/query/pull/10025))
+
+## 5.90.17
+
+### Patch Changes
+
+- fix(query-core): replaceEqualDeep max depth ([#10032](https://github.com/TanStack/query/pull/10032))
+
+## 5.90.16
+
+### Patch Changes
+
+- fix useQueries race condition on queries length change (#9971) ([#9973](https://github.com/TanStack/query/pull/9973))
+
+## 5.90.15
+
+### Patch Changes
+
+- Fix: Always treat existing data as stale when query goes into error state. ([#9927](https://github.com/TanStack/query/pull/9927))
+
 ## 5.90.14
 
 ### Patch Changes

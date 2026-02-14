@@ -389,7 +389,7 @@ export class Query<
   ): Promise<TData> {
     if (
       this.state.fetchStatus !== 'idle' &&
-      // If the promise in the retyer is already rejected, we have to definitely
+      // If the promise in the retryer is already rejected, we have to definitely
       // re-start the fetch; there is a chance that the query is still in a
       // pending state when that happens
       this.#retryer?.status() !== 'rejected'
@@ -658,6 +658,9 @@ export class Query<
             fetchFailureReason: error,
             fetchStatus: 'idle',
             status: 'error',
+            // flag existing data as invalidated if we get a background error
+            // note that "no data" always means stale so we can set unconditionally here
+            isInvalidated: true,
           }
         case 'invalidate':
           return {
@@ -732,7 +735,7 @@ function getDefaultState<
 
   const initialDataUpdatedAt = hasData
     ? typeof options.initialDataUpdatedAt === 'function'
-      ? (options.initialDataUpdatedAt as () => number | undefined)()
+      ? options.initialDataUpdatedAt()
       : options.initialDataUpdatedAt
     : 0
 

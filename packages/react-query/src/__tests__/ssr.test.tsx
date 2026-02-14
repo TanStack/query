@@ -8,6 +8,9 @@ import {
   QueryClientProvider,
   useInfiniteQuery,
   useIsFetching,
+  useMutation,
+  useMutationState,
+  useQueries,
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
@@ -202,6 +205,86 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('data')
     expect(markup).toContain('isFetching: 0')
+
+    queryCache.clear()
+  })
+
+  it('useQueries should return existing data from the cache', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = () => sleep(10).then(() => 'data1')
+    const queryFn2 = () => sleep(10).then(() => 'data2')
+
+    function Page() {
+      const queries = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div>{`status1: ${queries[0].status}`}</div>
+          <div>{`status2: ${queries[1].status}`}</div>
+          <div>{`data1: ${queries[0].data}`}</div>
+          <div>{`data2: ${queries[1].data}`}</div>
+        </div>
+      )
+    }
+
+    queryClient.prefetchQuery({ queryKey: key1, queryFn: queryFn1 })
+    queryClient.prefetchQuery({ queryKey: key2, queryFn: queryFn2 })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('status1: success')
+    expect(markup).toContain('status2: success')
+    expect(markup).toContain('data1: data1')
+    expect(markup).toContain('data2: data2')
+
+    queryCache.clear()
+  })
+
+  it('useMutation should return idle status', () => {
+    function Page() {
+      const mutation = useMutation({
+        mutationFn: () => sleep(10).then(() => 'data'),
+      })
+
+      return <div>{`status: ${mutation.status}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('status: idle')
+
+    queryCache.clear()
+  })
+
+  it('useMutationState should return empty array', () => {
+    function Page() {
+      const mutationState = useMutationState()
+
+      return <div>{`mutationState: ${mutationState.length}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('mutationState: 0')
 
     queryCache.clear()
   })

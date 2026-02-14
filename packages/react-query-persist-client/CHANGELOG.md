@@ -1,5 +1,53 @@
 # @tanstack/react-query-persist-client
 
+## 5.90.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.91.19
+  - @tanstack/react-query@5.90.20
+
+## 5.90.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.91.18
+  - @tanstack/react-query@5.90.19
+
+## 5.90.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.91.17
+  - @tanstack/react-query@5.90.18
+
+## 5.90.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.91.16
+  - @tanstack/react-query@5.90.17
+
+## 5.90.18
+
+### Patch Changes
+
+- Updated dependencies [[`4be3ad7`](https://github.com/TanStack/query/commit/4be3ad730c5b8a1e194a91911746be2fce06902a)]:
+  - @tanstack/react-query@5.90.16
+  - @tanstack/query-persist-client-core@5.91.15
+
+## 5.90.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.91.14
+  - @tanstack/react-query@5.90.15
+
 ## 5.90.16
 
 ### Patch Changes

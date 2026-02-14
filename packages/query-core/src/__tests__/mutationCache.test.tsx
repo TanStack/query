@@ -249,6 +249,30 @@ describe('mutationCache', () => {
 
       expect(states).toEqual([1, 2, 3, 4])
     })
+
+    test('options.onMutate should run synchronously when mutationCache.config.onMutate is not defined', () => {
+      const key = queryKey()
+      const states: Array<string> = []
+
+      // No onMutate in cache config
+      const testCache = new MutationCache({})
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      executeMutation(
+        testClient,
+        {
+          mutationKey: key,
+          mutationFn: () => sleep(10).then(() => ({ data: 5 })),
+          onMutate: () => {
+            states.push('onMutate')
+            return 'context'
+          },
+        },
+        'vars',
+      )
+
+      expect(states).toEqual(['onMutate'])
+    })
   })
 
   describe('find', () => {
@@ -419,6 +443,29 @@ describe('mutationCache', () => {
       await vi.advanceTimersByTimeAsync(10)
       expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       expect(onSuccess).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('remove', () => {
+    test('should remove only the target mutation from scope when multiple scoped mutations exist', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      const mutation1 = testCache.build(testClient, {
+        scope: { id: 'scope1' },
+        mutationFn: () => Promise.resolve('data1'),
+      })
+      const mutation2 = testCache.build(testClient, {
+        scope: { id: 'scope1' },
+        mutationFn: () => Promise.resolve('data2'),
+      })
+
+      expect(testCache.getAll()).toHaveLength(2)
+
+      testCache.remove(mutation1)
+
+      expect(testCache.getAll()).toHaveLength(1)
+      expect(testCache.getAll()).toEqual([mutation2])
     })
   })
 })
