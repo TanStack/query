@@ -40,29 +40,23 @@ type GetUseSuspenseQueryOptions<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? UseSuspenseQueryOptions<
-                    TQueryFnData,
-                    TError,
-                    TData,
-                    TQueryKey
-                  >
-                : T extends {
-                      queryFn?:
-                        | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                        | SkipTokenForUseQueries
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
+                ? T extends { select?: (data: TQueryFnData) => infer TData }
                   ? UseSuspenseQueryOptions<
+                      TQueryFnData,
+                      TError,
+                      TData,
+                      TQueryKey
+                    >
+                  : UseSuspenseQueryOptions<
                       TQueryFnData,
                       TError,
                       TQueryFnData,
                       TQueryKey
                     >
-                  : // Fallback
-                    UseSuspenseQueryOptions
+                : // Fallback
+                  UseSuspenseQueryOptions
 
 type GetUseSuspenseQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -84,25 +78,19 @@ type GetUseSuspenseQueryResult<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? UseSuspenseQueryResult<
-                    unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
-                  >
-                : T extends {
-                      queryFn?:
-                        | QueryFunction<infer TQueryFnData, any>
-                        | SkipTokenForUseQueries
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
+                ? T extends { select?: (data: TQueryFnData) => infer TData }
                   ? UseSuspenseQueryResult<
+                      unknown extends TData ? TQueryFnData : TData,
+                      unknown extends TError ? DefaultError : TError
+                    >
+                  : UseSuspenseQueryResult<
                       TQueryFnData,
                       unknown extends TError ? DefaultError : TError
                     >
-                  : // Fallback
-                    UseSuspenseQueryResult
+                : // Fallback
+                  UseSuspenseQueryResult
 
 /**
  * SuspenseQueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
