@@ -510,4 +510,43 @@ describe('queriesObserver', () => {
 
     expect(newCombined.keys).toEqual(['pending'])
   })
+
+  test('should still notify listeners when combine throws after query reset', async () => {
+    const key1 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue({ name: 'test' })
+
+    const combine = vi.fn(
+      (results: Array<QueryObserverResult>) => {
+        // This simulates a combine function that assumes data is always defined
+        // (like useSuspenseQueries types suggest)
+        return results.map((r) => (r.data as { name: string }).name)
+      },
+    )
+
+    const observer = new QueriesObserver<Array<string>>(
+      queryClient,
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      { combine },
+    )
+
+    const results: Array<Array<QueryObserverResult>> = []
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    // Wait for queries to resolve
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Reset the query - this transitions it to pending state
+    // which should cause combine to throw since data is undefined
+    queryClient.resetQueries({ queryKey: key1 })
+
+    // The listener should still have been notified despite combine throwing
+    const lastResult = results[results.length - 1]
+    expect(lastResult).toBeDefined()
+    expect(lastResult![0]!.status).toBe('pending')
+    expect(lastResult![0]!.data).toBeUndefined()
+
+    unsubscribe()
+  })
 })
