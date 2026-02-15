@@ -296,9 +296,23 @@ export class QueriesObserver<
     if (this.hasListeners()) {
       const previousResult = this.#combinedResult
       const newTracked = this.#trackResult(this.#result, this.#observerMatches)
-      const newResult = this.#combineResult(newTracked, this.#options?.combine)
 
-      if (previousResult !== newResult) {
+      let shouldNotify: boolean
+      try {
+        const newResult = this.#combineResult(
+          newTracked,
+          this.#options?.combine,
+        )
+        shouldNotify = previousResult !== newResult
+      } catch {
+        // If combine throws (e.g. when used with useSuspenseQueries and
+        // a query transitions to pending/error state after a reset), we
+        // still need to notify so the framework can re-suspend or show
+        // an error boundary.
+        shouldNotify = true
+      }
+
+      if (shouldNotify) {
         notifyManager.batch(() => {
           this.listeners.forEach((listener) => {
             listener(this.#result)
