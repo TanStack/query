@@ -49,25 +49,11 @@ function App() {
 }
 ```
 
-## Available Functions
-
-Solid Query offers useful primitives and functions that will make managing server state in SolidJS apps easier.
-
-- `useQuery`
-- `useQueries`
-- `useInfiniteQuery`
-- `useMutation`
-- `useIsFetching`
-- `useIsMutating`
-- `useQueryClient`
-- `QueryClient`
-- `QueryClientProvider`
-
 ## Important Differences between Solid Query & React Query
 
 Solid Query offers an API similar to React Query, but there are some key differences to be mindful of.
 
-- Arguments to `solid-query` primitives (like `useQuery`, `useMutation`, `useIsFetching`) listed above are functions, so that they can be tracked in a reactive scope.
+- Arguments to `solid-query` primitives (like `useQuery`, `useMutation`, `useIsFetching`) are functions, so that they can be tracked in a reactive scope.
 
 ```tsx
 // ❌ react version
