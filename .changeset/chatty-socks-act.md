@@ -6,4 +6,5 @@
 "@tanstack/vue-query-devtools": patch
 ---
 
-fix(devtools): change onClose callback type from () => unknown to () …
+fix(devtools): change onClose callback type from () => unknown to () => void
+
