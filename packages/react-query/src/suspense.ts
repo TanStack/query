@@ -56,7 +56,7 @@ export const shouldSuspend = (
     | DefaultedQueryObserverOptions<any, any, any, any, any>
     | undefined,
   result: QueryObserverResult<any, any>,
-) => defaultedOptions?.suspense && result.isPending
+) => defaultedOptions?.suspense && result.isFetching
 
 export const fetchOptimistic = <
   TQueryFnData,
