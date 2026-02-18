@@ -105,6 +105,16 @@ describe('initialData', () => {
         expectTypeOf(query.data).toEqualTypeOf<Signal<{ wow: boolean }>>()
       }
     })
+    it('error should be defined when query is error', () => {
+      const query = injectQuery(() => ({
+        queryKey: ['key'],
+        queryFn: () => ({ wow: true }),
+        initialData: { wow: true },
+      }))
+      if (query.isError()) {
+        expectTypeOf(query.error).toEqualTypeOf<Signal<Error>>()
+      }
+    })
   })
 
   describe('structuralSharing', () => {
