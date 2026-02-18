@@ -340,7 +340,6 @@ queryClient.resumePausedMutations()
 ```
 
 [//]: # 'Example10'
-
 [//]: # 'PersistOfflineIntro'
 
 ### Persisting Offline mutations
@@ -389,7 +388,6 @@ export default function App() {
 ```
 
 [//]: # 'Example11'
-
 [//]: # 'OfflineExampleLink'
 
 We also have an extensive [offline example](../examples/offline) that covers both queries and mutations.

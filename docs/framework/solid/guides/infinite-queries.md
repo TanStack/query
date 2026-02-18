@@ -34,9 +34,7 @@ function Projects() {
       <Match when={projectsQuery.isSuccess}>
         <For each={projectsQuery.data.pages}>
           {(group) => (
-            <For each={group.data}>
-              {(project) => <p>{project.name}</p>}
-            </For>
+            <For each={group.data}>{(project) => <p>{project.name}</p>}</For>
           )}
         </For>
         <div>
@@ -51,7 +49,9 @@ function Projects() {
                 : 'Nothing more to load'}
           </button>
         </div>
-        <Show when={projectsQuery.isFetching && !projectsQuery.isFetchingNextPage}>
+        <Show
+          when={projectsQuery.isFetching && !projectsQuery.isFetchingNextPage}
+        >
           <div>Fetching...</div>
         </Show>
       </Match>
@@ -64,7 +64,13 @@ function Projects() {
 [//]: # 'Example1'
 
 ```jsx
-<List onEndReached={() => projectsQuery.hasNextPage && !projectsQuery.isFetching && projectsQuery.fetchNextPage()} />
+<List
+  onEndReached={() =>
+    projectsQuery.hasNextPage &&
+    !projectsQuery.isFetching &&
+    projectsQuery.fetchNextPage()
+  }
+/>
 ```
 
 [//]: # 'Example1'

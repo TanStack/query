@@ -2,11 +2,7 @@
 id: optimistic-updates
 title: Optimistic Updates
 ref: docs/framework/react/guides/optimistic-updates.md
-replace:
-  {
-    'React Query': 'Solid Query',
-    'hook': 'function',
-  }
+replace: { 'React Query': 'Solid Query', 'hook': 'function' }
 ---
 
 [//]: # 'ExampleUI1'
@@ -25,9 +21,7 @@ const addTodoMutation = useMutation(() => ({
 
 ```tsx
 <ul>
-  <For each={todoQuery.data}>
-    {(todo) => <li>{todo.text}</li>}
-  </For>
+  <For each={todoQuery.data}>{(todo) => <li>{todo.text}</li>}</For>
   <Show when={addTodoMutation.isPending}>
     <li style={{ opacity: 0.5 }}>{addTodoMutation.variables}</li>
   </Show>
@@ -41,7 +35,9 @@ const addTodoMutation = useMutation(() => ({
 <Show when={addTodoMutation.isError}>
   <li style={{ color: 'red' }}>
     {addTodoMutation.variables}
-    <button onClick={() => addTodoMutation.mutate(addTodoMutation.variables)}>Retry</button>
+    <button onClick={() => addTodoMutation.mutate(addTodoMutation.variables)}>
+      Retry
+    </button>
   </li>
 </Show>
 ```

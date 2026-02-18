@@ -91,16 +91,12 @@ function Article(props) {
 
   return (
     <Switch>
-      <Match when={articleQuery.isPending}>
-        Loading article...
-      </Match>
+      <Match when={articleQuery.isPending}>Loading article...</Match>
       <Match when={articleQuery.isSuccess}>
         <ArticleHeader articleData={articleQuery.data} />
         <ArticleBody articleData={articleQuery.data} />
         <Switch>
-          <Match when={commentsQuery.isPending}>
-            Loading comments...
-          </Match>
+          <Match when={commentsQuery.isPending}>Loading comments...</Match>
           <Match when={commentsQuery.isSuccess}>
             <Comments commentsData={commentsQuery.data} />
           </Match>

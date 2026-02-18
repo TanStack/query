@@ -2,10 +2,7 @@
 id: mutations
 title: Mutations
 ref: docs/framework/react/guides/mutations.md
-replace:
-  {
-    'hook': 'function',
-  }
+replace: { 'hook': 'function' }
 ---
 
 [//]: # 'Example'
@@ -23,9 +20,7 @@ function App() {
   return (
     <div>
       <Switch>
-        <Match when={mutation.isPending}>
-          Adding todo...
-        </Match>
+        <Match when={mutation.isPending}>Adding todo...</Match>
         <Match when={true}>
           <Show when={mutation.isError}>
             <div>An error occurred: {mutation.error.message}</div>

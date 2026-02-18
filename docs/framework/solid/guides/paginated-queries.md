@@ -2,10 +2,7 @@
 id: paginated-queries
 title: Paginated / Lagged Queries
 ref: docs/framework/react/guides/paginated-queries.md
-replace:
-  {
-    'hook': 'function',
-  }
+replace: { 'hook': 'function' }
 ---
 
 [//]: # 'Example'
@@ -67,7 +64,9 @@ function Todos() {
           }
         }}
         // Disable the Next Page button until we know a next page is available
-        disabled={projectsQuery.isPlaceholderData || !projectsQuery.data?.hasMore}
+        disabled={
+          projectsQuery.isPlaceholderData || !projectsQuery.data?.hasMore
+        }
       >
         Next Page
       </button>

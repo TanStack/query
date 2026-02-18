@@ -23,9 +23,7 @@ function Todos() {
       <Switch>
         <Match when={todosQuery.data}>
           <ul>
-            <For each={todosQuery.data}>
-              {(todo) => <li>{todo.title}</li>}
-            </For>
+            <For each={todosQuery.data}>{(todo) => <li>{todo.title}</li>}</For>
           </ul>
         </Match>
         <Match when={todosQuery.isError}>

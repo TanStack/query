@@ -1,9 +1,5 @@
 import { For, Match, Show, Switch, createSignal } from 'solid-js'
-import {
-  MutationCache,
-  QueryClient,
-  useQuery,
-} from '@tanstack/solid-query'
+import { MutationCache, QueryClient, useQuery } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'

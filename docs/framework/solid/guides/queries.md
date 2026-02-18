@@ -5,6 +5,7 @@ ref: docs/framework/react/guides/queries.md
 ---
 
 [//]: # 'SubscribeDescription'
+
 To subscribe to a query in your components, call the `useQuery` function with at least:
 [//]: # 'SubscribeDescription'
 
@@ -14,7 +15,10 @@ To subscribe to a query in your components, call the `useQuery` function with at
 import { useQuery } from '@tanstack/solid-query'
 
 function App() {
-  const todosQuery = useQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
+  const todosQuery = useQuery(() => ({
+    queryKey: ['todos'],
+    queryFn: fetchTodoList,
+  }))
 }
 ```
 
@@ -22,7 +26,10 @@ function App() {
 [//]: # 'Example2'
 
 ```tsx
-const todosQuery = useQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
+const todosQuery = useQuery(() => ({
+  queryKey: ['todos'],
+  queryFn: fetchTodoList,
+}))
 ```
 
 [//]: # 'Example2'
@@ -47,9 +54,7 @@ function Todos() {
       </Match>
       <Match when={todosQuery.isSuccess}>
         <ul>
-          <For each={todosQuery.data}>
-            {(todo) => <li>{todo.title}</li>}
-          </For>
+          <For each={todosQuery.data}>{(todo) => <li>{todo.title}</li>}</For>
         </ul>
       </Match>
     </Switch>
@@ -79,9 +84,7 @@ function Todos() {
       </Match>
       <Match when={todosQuery.status === 'success'}>
         <ul>
-          <For each={todosQuery.data}>
-            {(todo) => <li>{todo.title}</li>}
-          </For>
+          <For each={todosQuery.data}>{(todo) => <li>{todo.title}</li>}</For>
         </ul>
       </Match>
     </Switch>

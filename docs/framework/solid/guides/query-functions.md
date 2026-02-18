@@ -8,7 +8,10 @@ ref: docs/framework/react/guides/query-functions.md
 
 ```tsx
 useQuery(() => ({ queryKey: ['todos'], queryFn: fetchAllTodos }))
-useQuery(() => ({ queryKey: ['todos', todoId], queryFn: () => fetchTodoById(todoId) }))
+useQuery(() => ({
+  queryKey: ['todos', todoId],
+  queryFn: () => fetchTodoById(todoId),
+}))
 useQuery(() => ({
   queryKey: ['todos', todoId],
   queryFn: async () => {

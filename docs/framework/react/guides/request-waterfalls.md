@@ -104,7 +104,6 @@ While not always feasible, for optimal performance it's better to restructure yo
 > Another way to mitigate dependent queries without restructuring your API is to move the waterfall to the server where latency is lower. This is the idea behind Server Components which are covered in the [Advanced Server Rendering guide](./advanced-ssr.md).
 
 [//]: # 'ServerComponentsNote1'
-
 [//]: # 'SuspenseSerial'
 
 Another example of serial queries is when you use React Query with Suspense:
@@ -220,7 +219,6 @@ function Article({ id }) {
 ```
 
 [//]: # 'NestedHoistedExample'
-
 [//]: # 'NestedHoistedOutro'
 
 The two queries will now fetch in parallel. Note that if you are using suspense, you'd want to combine these two queries into a single `useSuspenseQueries` instead.

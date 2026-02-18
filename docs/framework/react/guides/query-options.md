@@ -38,7 +38,6 @@ For Infinite Queries, a separate [`infiniteQueryOptions`](../reference/infiniteQ
 You can still override some options at the component level. A very common and useful pattern is to create per-component [`select`](./render-optimizations.md#select) functions:
 
 [//]: # 'SelectDescription'
-
 [//]: # 'Example2'
 
 ```ts
