@@ -1590,6 +1590,37 @@ importers:
         specifier: ^2.11.6
         version: 2.11.10(@testing-library/jest-dom@6.9.1)(solid-js@1.9.11)(vite@6.4.1(@types/node@22.19.10)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
 
+  examples/solid/offline:
+    dependencies:
+      '@tanstack/query-async-storage-persister':
+        specifier: ^5.90.22
+        version: link:../../../packages/query-async-storage-persister
+      '@tanstack/solid-query':
+        specifier: ^5.90.23
+        version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.91.3
+        version: link:../../../packages/solid-query-devtools
+      '@tanstack/solid-query-persist-client':
+        specifier: ^5.90.22
+        version: link:../../../packages/solid-query-persist-client
+      msw:
+        specifier: ^2.6.6
+        version: 2.12.9(@types/node@22.19.10)(typescript@5.8.3)
+      solid-js:
+        specifier: ^1.9.7
+        version: 1.9.11
+    devDependencies:
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.4.1
+        version: 6.4.1(@types/node@22.19.10)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
+      vite-plugin-solid:
+        specifier: ^2.11.6
+        version: 2.11.10(@testing-library/jest-dom@6.9.1)(solid-js@1.9.11)(vite@6.4.1(@types/node@22.19.10)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
