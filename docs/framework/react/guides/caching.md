@@ -19,7 +19,9 @@ Let's assume we are using the default `gcTime` of **5 minutes** and the default 
 - A new instance of `useQuery({ queryKey: ['todos'], queryFn: fetchTodos })` mounts.
   - Since no other queries have been made with the `['todos']` query key, this query will show a hard loading state and make a network request to fetch the data.
   - When the network request has completed, the returned data will be cached under the `['todos']` key.
+[//]: # 'StaleNote'
   - The hook will mark the data as stale after the configured `staleTime` (defaults to `0`, or immediately).
+[//]: # 'StaleNote'
 - A second instance of `useQuery({ queryKey: ['todos'], queryFn: fetchTodos })` mounts elsewhere.
   - Since the cache already has data for the `['todos']` key from the first query, that data is immediately returned from the cache.
   - The new instance triggers a new network request using its query function.

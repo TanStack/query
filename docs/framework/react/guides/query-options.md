@@ -33,7 +33,11 @@ queryClient.setQueryData(groupOptions(42).queryKey, newGroups)
 
 For Infinite Queries, a separate [`infiniteQueryOptions`](../reference/infiniteQueryOptions.md) helper is available.
 
+[//]: # 'SelectDescription'
+
 You can still override some options at the component level. A very common and useful pattern is to create per-component [`select`](./render-optimizations.md#select) functions:
+
+[//]: # 'SelectDescription'
 
 [//]: # 'Example2'
 

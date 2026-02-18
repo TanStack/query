@@ -36,7 +36,11 @@ If the number of queries you need to execute is changing from render to render, 
 
 [//]: # 'DynamicParallelIntro'
 
+[//]: # 'DynamicParallelDescription'
+
 `useQueries` accepts an **options object** with a **queries key** whose value is an **array of query objects**. It returns an **array of query results**:
+
+[//]: # 'DynamicParallelDescription'
 
 [//]: # 'Example2'
 
