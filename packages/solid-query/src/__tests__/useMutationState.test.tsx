@@ -18,6 +18,54 @@ describe('useMutationState', () => {
     vi.useRealTimers()
   })
 
+  it('should return all mutation states when called without options', async () => {
+    const queryClient = new QueryClient()
+    const mutationKey = ['mutation']
+
+    function States() {
+      const mutationStates = useMutationState()
+
+      return <div>count: {mutationStates().length}</div>
+    }
+
+    function Mutate() {
+      const mutation = useMutation(() => ({
+        mutationKey,
+        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
+      }))
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate(1)}>mutate</button>
+        </div>
+      )
+    }
+
+    function Page() {
+      return (
+        <div>
+          <States />
+          <Mutate />
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    expect(rendered.getByText('count: 0')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(150)
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
+  })
+
   it('should return variables after calling mutate', async () => {
     const queryClient = new QueryClient()
     const variables: Array<Array<unknown>> = []
