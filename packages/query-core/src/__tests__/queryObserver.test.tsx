@@ -1536,6 +1536,71 @@ describe('queryObserver', () => {
     expect(observer.getCurrentResult().data).toBe('updated')
   })
 
+  test('should refetchInterval when window is undefined (non-windowed environments)', async () => {
+  const originalWindow = (globalThis as any).window
+  ;(globalThis as any).window = undefined
+
+  try {
+    const key = queryKey()
+    let count = 0
+
+    const fetchData = () => {
+      count++
+      return Promise.resolve('data')
+    }
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: fetchData,
+      refetchInterval: 10,
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    // initial fetch
+    expect(count).toBe(1)
+
+    // should refetch even though isServer would be true
+    await vi.advanceTimersByTimeAsync(10)
+    expect(count).toBe(2)
+
+    unsubscribe()
+  } finally {
+    ;(globalThis as any).window = originalWindow
+  }
+  })
+
+  test('should schedule staleTimeout when window is undefined (non-windowed environments)', async () => {
+    const originalWindow = (globalThis as any).window
+    // simulate windowless client runtime (vscode/chrome extension contexts)
+    ;(globalThis as any).window = undefined
+
+    try {
+      const key = queryKey()
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: () => 'data',
+        staleTime: 10,
+      })
+
+      const results: Array<QueryObserverResult> = []
+      const unsubscribe = observer.subscribe((r) => results.push(r))
+
+      await vi.advanceTimersByTimeAsync(0)
+      expect(results.at(-1)?.status).toBe('success')
+      expect(results.at(-1)?.isStale).toBe(false)
+
+      // after staleTime (+1ms padding) the staleTimeout should fire
+      // and updateResult should flip isStale
+      await vi.advanceTimersByTimeAsync(11)
+      expect(observer.getCurrentResult().isStale).toBe(true)
+
+      unsubscribe()
+    } finally {
+      ;(globalThis as any).window = originalWindow
+    }
+  })
+
   describe('StrictMode behavior', () => {
     it('should deduplicate calls to queryFn', async () => {
       const key = queryKey()
