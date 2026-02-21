@@ -68,8 +68,14 @@ export const HydrationBoundary = ({
         const existingQueries: DehydratedState['queries'] = []
         for (const dehydratedQuery of queries) {
           const existingQuery = queryCache.get(dehydratedQuery.queryHash)
+          const existingQueryIsIdleUseQuery =
+            existingQuery?.state.dataUpdatedAt === 0 &&
+            existingQuery.state.status === 'pending' &&
+            existingQuery.state.fetchStatus === 'idle'
 
           if (!existingQuery) {
+            newQueries.push(dehydratedQuery)
+          } else if (existingQueryIsIdleUseQuery) {
             newQueries.push(dehydratedQuery)
           } else {
             const hydrationIsNewer =
