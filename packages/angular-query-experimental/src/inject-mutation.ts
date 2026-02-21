@@ -68,18 +68,7 @@ export function injectMutation<
    */
   const optionsSignal = computed(injectMutationFn)
 
-  const observerSignal = (() => {
-    let instance: MutationObserver<
-      TData,
-      TError,
-      TVariables,
-      TOnMutateResult
-    > | null = null
-
-    return computed(() => {
-      return (instance ||= new MutationObserver(queryClient, optionsSignal()))
-    })
-  })()
+  const observerSignal = computed(() => new MutationObserver(queryClient, untracked(optionsSignal)))
 
   let destroyed = false
   let taskCleanupRef: (() => void) | null = null
