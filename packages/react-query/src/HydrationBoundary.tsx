@@ -73,9 +73,7 @@ export const HydrationBoundary = ({
             existingQuery.state.status === 'pending' &&
             existingQuery.state.fetchStatus === 'idle'
 
-          if (!existingQuery) {
-            newQueries.push(dehydratedQuery)
-          } else if (existingQueryIsIdleUseQuery) {
+          if (!existingQuery || existingQueryIsIdleUseQuery) {
             newQueries.push(dehydratedQuery)
           } else {
             const hydrationIsNewer =
