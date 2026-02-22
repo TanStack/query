@@ -6954,9 +6954,9 @@ describe('useQuery', () => {
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockImplementation(() =>
-      sleep(10).then(() => 'data'),
-    )
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
 
     function Page() {
       const result = useQuery({
