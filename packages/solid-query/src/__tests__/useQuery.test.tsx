@@ -6187,9 +6187,9 @@ describe('useQuery', () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
 
-    const queryFn = vi.fn().mockImplementation(() =>
-      sleep(10).then(() => 'data'),
-    )
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
 
     function Page(props: { client: QueryClient }) {
       const query = useQuery(
