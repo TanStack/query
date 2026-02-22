@@ -6180,4 +6180,48 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Status: custom client')).toBeInTheDocument()
   })
+
+  it('should refetch query when queryClient changes', async () => {
+    const key = queryKey()
+
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+
+    const queryFn = vi.fn().mockImplementation(() =>
+      sleep(10).then(() => 'data'),
+    )
+
+    function Page(props: { client: QueryClient }) {
+      const query = useQuery(
+        () => ({
+          queryKey: key,
+          queryFn,
+        }),
+        () => props.client,
+      )
+
+      return <div>status: {query.status}</div>
+    }
+
+    const [client, setClient] = createSignal(queryClient1)
+
+    const rendered = render(() => (
+      <QueryClientProvider client={client()}>
+        <Page client={client()} />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(queryClient1.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    setClient(queryClient2)
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(queryFn).toHaveBeenCalledTimes(2)
+  })
 })
