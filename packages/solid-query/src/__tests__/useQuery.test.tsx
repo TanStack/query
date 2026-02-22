@@ -40,7 +40,7 @@ import type {
   UseQueryResult,
 } from '..'
 import type { Mock } from 'vitest'
-import type { Accessor, JSX } from 'solid-js'
+import type { JSX } from 'solid-js'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -6191,7 +6191,7 @@ describe('useQuery', () => {
       .fn()
       .mockImplementation(() => sleep(10).then(() => 'data'))
 
-    function Page(props: { client: Accessor<QueryClient> }) {
+    function Page(props: { client: () => QueryClient }) {
       const query = useQuery(
         () => ({
           queryKey: key,
