@@ -31,13 +31,19 @@ or
 bun add @tanstack/react-query
 ```
 
+[//]: # 'Compatibility'
+
 React Query is compatible with React v18+ and works with ReactDOM and React Native.
+
+[//]: # 'Compatibility'
 
 > Wanna give it a spin before you download? Try out the [simple](./examples/simple) or [basic](./examples/basic) examples!
 
 ### CDN
 
 If you're not using a module bundler or package manager, you can also use this library via an ESM-compatible CDN such as [ESM.sh](https://esm.sh/). Simply add a `<script type="module">` tag to the bottom of your HTML file:
+
+[//]: # 'CDN-Example'
 
 ```html
 <script type="module">
@@ -48,6 +54,8 @@ If you're not using a module bundler or package manager, you can also use this l
 ```
 
 > You can find instructions on how to use React without JSX [here](https://react.dev/reference/react/createElement#creating-an-element-without-jsx).
+
+[//]: # 'CDN-Example'
 
 ### Requirements
 
