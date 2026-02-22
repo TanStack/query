@@ -6205,11 +6205,7 @@ describe('useQuery', () => {
 
     const [client, setClient] = createSignal(queryClient1)
 
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient1}>
-        <Page client={client} />
-      </QueryClientProvider>
-    ))
+    const rendered = render(() => <Page client={client} />)
 
     await vi.advanceTimersByTimeAsync(10)
 
