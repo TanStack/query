@@ -69,7 +69,7 @@
     "npm-run-all2": "^5.0.0"
   },
   "peerDependencies": {
-    "eslint": "^8.57.0 || ^9.0.0",
+    "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
     "typescript": "^5.0.0"
   },
   "peerDependenciesMeta": {
