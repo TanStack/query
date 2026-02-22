@@ -1264,8 +1264,7 @@ describe("useQueries's in Suspense mode", () => {
       const queries = useQueries(() => ({
         queries: [1, 2, 3].map((value) => ({
           queryKey: [...key, { value }],
-          queryFn: () =>
-            sleep(value * 10).then(() => ({ value: value * 10 })),
+          queryFn: () => sleep(value * 10).then(() => ({ value: value * 10 })),
         })),
         combine: (result) => {
           combineSpy(result.map((r) => r.data))
@@ -1274,12 +1273,7 @@ describe("useQueries's in Suspense mode", () => {
       }))
 
       return (
-        <div>
-          data:{' '}
-          {queries
-            .map((q) => JSON.stringify(q.data))
-            .join(',')}
-        </div>
+        <div>data: {queries.map((q) => JSON.stringify(q.data)).join(',')}</div>
       )
     }
 
@@ -1313,8 +1307,7 @@ describe("useQueries's in Suspense mode", () => {
     function getUserData() {
       return {
         queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => ({ name: 'John Doe', age: 50 })),
+        queryFn: () => sleep(10).then(() => ({ name: 'John Doe', age: 50 })),
       }
     }
 
@@ -1355,9 +1348,7 @@ describe("useQueries's in Suspense mode", () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
-    expect(
-      rendered.getByText('name: John Doe, age: 50'),
-    ).toBeInTheDocument()
+    expect(rendered.getByText('name: John Doe, age: 50')).toBeInTheDocument()
 
     await vi.advanceTimersByTimeAsync(100)
 
@@ -1375,9 +1366,7 @@ describe("useQueries's in Suspense mode", () => {
         })),
       }))
 
-      return (
-        <div>data: {queries.map((q) => String(q.data)).join(',')}</div>
-      )
+      return <div>data: {queries.map((q) => String(q.data)).join(',')}</div>
     }
 
     function App() {

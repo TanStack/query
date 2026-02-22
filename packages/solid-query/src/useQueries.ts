@@ -1,8 +1,4 @@
-import {
-  QueriesObserver,
-  noop,
-  shouldThrowError,
-} from '@tanstack/query-core'
+import { QueriesObserver, noop, shouldThrowError } from '@tanstack/query-core'
 import { createStore, unwrap } from 'solid-js/store'
 import {
   batch,
@@ -239,8 +235,7 @@ export function useQueries<
       () => {
         const optimisticResult = observer.getOptimisticResult(
           defaultedQueries(),
-          (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-            .combine,
+          (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
         )
         // When queries are paused (e.g. offline), skip state update to
         // keep showing previous data instead of showing undefined.
@@ -306,9 +301,7 @@ export function useQueries<
   let taskQueue: Array<() => void> = []
   const subscribeToObserver = () =>
     observer.subscribe((result) => {
-      const allFinished = result.every(
-        (r) => !(r.isFetching && r.isLoading),
-      )
+      const allFinished = result.every((r) => !(r.isFetching && r.isLoading))
 
       if (allFinished) {
         observerResults = [...result]
@@ -318,9 +311,7 @@ export function useQueries<
         if (allFinished) {
           // When queries are paused (e.g. offline), skip state update to
           // keep showing previous data instead of showing undefined.
-          const hasPaused = result.some(
-            (r) => r.fetchStatus === 'paused',
-          )
+          const hasPaused = result.some((r) => r.fetchStatus === 'paused')
           if (!hasPaused) {
             // Update with combine-aware result when all queries are done
             const optimisticResult = observer.getOptimisticResult(
@@ -350,10 +341,10 @@ export function useQueries<
             const queryResult = result[i]!
             if (
               queryResult.isError &&
-              shouldThrowError(
-                defaultedQueries()[i]?.throwOnError,
-                [queryResult.error, observer.getQueries()[i]!],
-              )
+              shouldThrowError(defaultedQueries()[i]?.throwOnError, [
+                queryResult.error,
+                observer.getQueries()[i]!,
+              ])
             ) {
               resolver.reject(queryResult.error)
               resolver = null
@@ -419,8 +410,7 @@ export function useQueries<
 
         const optimisticResult = observer.getOptimisticResult(
           defaultedQueries(),
-          (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-            .combine,
+          (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
         )
         observerResults = optimisticResult[0]
 
