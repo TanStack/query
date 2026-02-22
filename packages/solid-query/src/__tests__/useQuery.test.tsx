@@ -1091,12 +1091,20 @@ describe('useQuery', () => {
     ))
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('Data: [{"id":"1","done":false},{"id":"2","done":false}]')).toBeInTheDocument()
+    expect(
+      rendered.getByText(
+        'Data: [{"id":"1","done":false},{"id":"2","done":false}]',
+      ),
+    ).toBeInTheDocument()
     expect(states).toHaveLength(1)
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(rendered.getByText('Data: [{"id":"1","done":false},{"id":"2","done":true}]')).toBeInTheDocument()
+    expect(
+      rendered.getByText(
+        'Data: [{"id":"1","done":false},{"id":"2","done":true}]',
+      ),
+    ).toBeInTheDocument()
 
     // reconcile by 'id' updates in-place, so the array reference stays the same
     // and the effect is not triggered again
