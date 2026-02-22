@@ -6203,6 +6203,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByTestId('status')).toHaveTextContent('success')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
     expect(rendered.getByTestId('data')).toHaveTextContent('data')
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
