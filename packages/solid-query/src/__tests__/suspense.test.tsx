@@ -1977,9 +1977,7 @@ describe("useQueries's in Suspense mode", () => {
 
     // Invalidate should refetch in background, not re-suspend
     fireEvent.click(rendered.getByText('invalidate'))
-    expect(
-      rendered.getByText('q1: data1, q2: data2'),
-    ).toBeInTheDocument()
+    expect(rendered.getByText('q1: data1, q2: data2')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('q1: data1, q2: data2')).toBeInTheDocument()
   })
@@ -2024,8 +2022,6 @@ describe("useQueries's in Suspense mode", () => {
 
     // Should not suspend because data is cached and not stale
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
-    expect(
-      rendered.getByText('q1: cached1, q2: cached2'),
-    ).toBeInTheDocument()
+    expect(rendered.getByText('q1: cached1, q2: cached2')).toBeInTheDocument()
   })
 })
