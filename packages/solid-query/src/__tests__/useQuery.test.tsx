@@ -1048,6 +1048,61 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
+  it('should maintain referential equality when reconcile option is a string key', async () => {
+    const key = queryKey()
+    const states: Array<Array<{ id: string; done: boolean }>> = []
+
+    let count = 0
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          count++
+          return [
+            { id: '1', done: false },
+            { id: '2', done: count > 1 },
+          ]
+        },
+        reconcile: 'id',
+      }))
+
+      createEffect(() => {
+        if (state.data) {
+          states.push(state.data)
+        }
+      })
+
+      const { refetch } = state
+
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Data: [{"id":"1","done":false},{"id":"2","done":false}]')).toBeInTheDocument()
+    expect(states).toHaveLength(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Data: [{"id":"1","done":false},{"id":"2","done":true}]')).toBeInTheDocument()
+
+    // reconcile by 'id' updates in-place, so the array reference stays the same
+    // and the effect is not triggered again
+    expect(states).toHaveLength(1)
+  })
+
   it('should share equal data structures between query results', async () => {
     const key = queryKey()
     const result1 = [
