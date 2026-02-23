@@ -242,7 +242,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       const { mutationKey: _m, ...filtersWithoutKey } = defaultedFilters
       for (const mutation of candidates) {
         if (matchMutation(filtersWithoutKey as MutationFilters, mutation)) {
-          return mutation as Mutation<TData, TError, TVariables, TOnMutateResult>
+          return mutation as Mutation<
+            TData,
+            TError,
+            TVariables,
+            TOnMutateResult
+          >
         }
       }
       return undefined

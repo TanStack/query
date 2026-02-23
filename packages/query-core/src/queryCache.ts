@@ -216,7 +216,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       const candidate = this.#queries.get(hashKey(filters.queryKey))
       if (candidate) {
         const { queryKey: _q, ...filtersWithoutKey } = filters
-        return matchQuery(filtersWithoutKey as QueryFilters, candidate) ? [candidate] : []
+        return matchQuery(filtersWithoutKey as QueryFilters, candidate)
+          ? [candidate]
+          : []
       }
     }
 
