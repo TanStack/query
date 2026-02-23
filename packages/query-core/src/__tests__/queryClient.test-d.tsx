@@ -1,5 +1,6 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
+import { skipToken } from '../utils'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
 import type { Mutation } from '../mutation'
 import type { Query, QueryState } from '../query'
@@ -231,6 +232,37 @@ describe('query', () => {
     const options = new QueryClient().query({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
+      select: (data: string) => data.length,
+    })
+
+    expectTypeOf(options).toEqualTypeOf<Promise<number>>()
+  })
+
+  it('should infer select type with skipToken queryFn', () => {
+    const options = new QueryClient().query({
+      queryKey: ['key'],
+      queryFn: skipToken,
+      select: (data: string) => data.length,
+    })
+
+    expectTypeOf(options).toEqualTypeOf<Promise<number>>()
+  })
+
+  it('should infer select type with skipToken queryFn and enabled false', () => {
+    const options = new QueryClient().query({
+      queryKey: ['key'],
+      queryFn: skipToken,
+      enabled: false,
+      select: (data: string) => data.length,
+    })
+
+    expectTypeOf(options).toEqualTypeOf<Promise<number>>()
+  })
+
+  it('should infer select type with skipToken queryFn and enabled true', () => {
+    const options = new QueryClient().query({
+      queryKey: ['key'],
+      enabled: false,
       select: (data: string) => data.length,
     })
 

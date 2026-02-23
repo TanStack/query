@@ -978,6 +978,123 @@ describe('queryClient', () => {
       expect(second).toBe(first)
     })
 
+    test('should throw when disabled and no cached data exists', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('data'))
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn,
+          enabled: false,
+        }),
+      ).rejects.toThrowError()
+
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    test('should return cached data when disabled and apply select', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
+
+      queryClient.setQueryData(key, 'cached-data')
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        enabled: false,
+        staleTime: 0,
+        select: (data) => `${data}-selected`,
+      })
+
+      expect(result).toBe('cached-data-selected')
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    test('should throw when skipToken is provided and no cached data exists', async () => {
+      const key = queryKey()
+      const select = vi.fn((data: unknown) => (data as string).length)
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn: skipToken,
+          select,
+        }),
+      ).rejects.toThrowError()
+
+      expect(select).not.toHaveBeenCalled()
+    })
+
+    test('should return cached data when skipToken is provided', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, 'cached-data')
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn: skipToken,
+        select: (data: unknown) => (data as string).length,
+      })
+
+      expect(result).toBe('cached-data'.length)
+    })
+
+    test('should return cached data when skipToken and enabled false are both provided', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, { value: 'cached-data' })
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn: skipToken,
+        enabled: false,
+        select: (data: { value: string }) => data.value.toUpperCase(),
+      })
+
+      expect(result).toBe('CACHED-DATA')
+    })
+
+    test('should throw when enabled resolves true and skipToken are provided with no cached data', async () => {
+      await expect(
+        queryClient.query({
+          queryKey: queryKey(),
+          queryFn: skipToken,
+          enabled: true,
+        }),
+      ).rejects.toThrowError()
+    })
+
+    test('should return cached data when enabled resolves false and skipToken are provided', async () => {
+      const key1 = queryKey()
+      queryClient.setQueryData(key1, { value: 'cached-data' })
+
+      const booleanDisabledResult = await queryClient.query({
+        queryKey: key1,
+        queryFn: skipToken,
+        enabled: false,
+        select: (data: { value: string }) => data.value.length,
+      })
+
+      expect(booleanDisabledResult).toBe('cached-data'.length)
+    })
+
+    test('should return cached data when enabled callback returns false even if queryFn would return different data', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
+
+      queryClient.setQueryData(key, 'cached-data')
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        enabled: () => false,
+      })
+
+      expect(result).toBe('cached-data')
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
     test('should read from cache with static staleTime even if invalidated', async () => {
       const key = queryKey()
 

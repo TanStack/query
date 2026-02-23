@@ -4,6 +4,7 @@ import {
   hashQueryKeyByOptions,
   noop,
   partialMatchKey,
+  resolveEnabled,
   resolveStaleTime,
   skipToken,
 } from './utils'
@@ -365,6 +366,25 @@ export class QueryClient {
     }
 
     const query = this.#queryCache.build(this, defaultedOptions)
+    const isEnabled = resolveEnabled(defaultedOptions.enabled, query) !== false
+
+    if (!isEnabled) {
+      const queryData = query.state.data
+
+      if (queryData === undefined) {
+        throw new Error(
+          `Missing query data for disabled query. Query hash: '${query.queryHash}'`,
+        )
+      }
+
+      const select = defaultedOptions.select
+
+      if (select) {
+        return select(queryData)
+      }
+
+      return queryData as unknown as TData
+    }
 
     const isStale = query.isStaleByTime(
       resolveStaleTime(defaultedOptions.staleTime, query),
