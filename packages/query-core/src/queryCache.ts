@@ -1,4 +1,4 @@
-import { hashQueryKeyByOptions, matchQuery } from './utils'
+import { hashKey, hashQueryKeyByOptions, matchQuery } from './utils'
 import { Query } from './query'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
@@ -186,6 +186,18 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     const defaultedFilters = { exact: true, ...filters }
 
     let found: Query | undefined
+
+    if (defaultedFilters.exact) {
+      const candidate = this.#queries.get(hashKey(defaultedFilters.queryKey))
+      if (candidate) {
+        const { queryKey: _q, ...filtersWithoutKey } = defaultedFilters
+        found = matchQuery(filtersWithoutKey as QueryFilters, candidate)
+          ? candidate
+          : undefined
+        return found as Query<TQueryFnData, TError, TData> | undefined
+      }
+    }
+
     for (const query of this.#queries.values()) {
       if (matchQuery(defaultedFilters, query)) {
         found = query
@@ -199,6 +211,15 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     if (Object.keys(filters).length === 0) {
       return [...this.#queries.values()]
     }
+
+    if (filters.exact && filters.queryKey) {
+      const candidate = this.#queries.get(hashKey(filters.queryKey))
+      if (candidate) {
+        const { queryKey: _q, ...filtersWithoutKey } = filters
+        return matchQuery(filtersWithoutKey as QueryFilters, candidate) ? [candidate] : []
+      }
+    }
+
     const result: Array<Query> = []
     for (const query of this.#queries.values()) {
       if (matchQuery(filters, query)) {

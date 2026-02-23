@@ -1,6 +1,6 @@
 import { notifyManager } from './notifyManager'
 import { Mutation } from './mutation'
-import { matchMutation, noop } from './utils'
+import { hashKey, matchMutation, noop } from './utils'
 import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
 import type {
@@ -93,12 +93,14 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Set<Mutation<any, any, any, any>>
   #scopes: Map<string, Array<Mutation<any, any, any, any>>>
+  #byMutationKey: Map<string, Array<Mutation<any, any, any, any>>>
   #mutationId: number
 
   constructor(public config: MutationCacheConfig = {}) {
     super()
     this.#mutations = new Set()
     this.#scopes = new Map()
+    this.#byMutationKey = new Map()
     this.#mutationId = 0
   }
 
@@ -131,6 +133,13 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
         this.#scopes.set(scope, [mutation])
       }
     }
+    const { mutationKey } = mutation.options
+    if (mutationKey) {
+      const hash = hashKey(mutationKey)
+      const keyed = this.#byMutationKey.get(hash)
+      if (keyed) keyed.push(mutation)
+      else this.#byMutationKey.set(hash, [mutation])
+    }
     this.notify({ type: 'added', mutation })
   }
 
@@ -147,6 +156,19 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
             }
           } else if (scopedMutations[0] === mutation) {
             this.#scopes.delete(scope)
+          }
+        }
+      }
+      const { mutationKey } = mutation.options
+      if (mutationKey) {
+        const hash = hashKey(mutationKey)
+        const keyed = this.#byMutationKey.get(hash)
+        if (keyed) {
+          if (keyed.length > 1) {
+            const index = keyed.indexOf(mutation)
+            if (index !== -1) keyed.splice(index, 1)
+          } else {
+            this.#byMutationKey.delete(hash)
           }
         }
       }
@@ -194,6 +216,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       })
       this.#mutations.clear()
       this.#scopes.clear()
+      this.#byMutationKey.clear()
     })
   }
 
@@ -211,6 +234,20 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   ): Mutation<TData, TError, TVariables, TOnMutateResult> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
+    if (defaultedFilters.exact && defaultedFilters.mutationKey) {
+      const candidates = this.#byMutationKey.get(
+        hashKey(defaultedFilters.mutationKey),
+      )
+      if (!candidates) return undefined
+      const { mutationKey: _m, ...filtersWithoutKey } = defaultedFilters
+      for (const mutation of candidates) {
+        if (matchMutation(filtersWithoutKey as MutationFilters, mutation)) {
+          return mutation as Mutation<TData, TError, TVariables, TOnMutateResult>
+        }
+      }
+      return undefined
+    }
+
     for (const mutation of this.#mutations) {
       if (matchMutation(defaultedFilters, mutation)) {
         return mutation as Mutation<TData, TError, TVariables, TOnMutateResult>
@@ -220,6 +257,15 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   findAll(filters: MutationFilters = {}): Array<Mutation> {
+    if (filters.exact && filters.mutationKey) {
+      const candidates = this.#byMutationKey.get(hashKey(filters.mutationKey))
+      if (!candidates) return []
+      const { mutationKey: _m, ...filtersWithoutKey } = filters
+      return candidates.filter((m) =>
+        matchMutation(filtersWithoutKey as MutationFilters, m),
+      )
+    }
+
     const result: Array<Mutation> = []
     for (const mutation of this.#mutations) {
       if (matchMutation(filters, mutation)) {
