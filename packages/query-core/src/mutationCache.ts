@@ -164,11 +164,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
         const hash = hashKey(mutationKey)
         const keyed = this.#byMutationKey.get(hash)
         if (keyed) {
-          if (keyed.length > 1) {
-            const index = keyed.indexOf(mutation)
-            if (index !== -1) keyed.splice(index, 1)
-          } else {
-            this.#byMutationKey.delete(hash)
+          const index = keyed.indexOf(mutation)
+          if (index !== -1) {
+            keyed.splice(index, 1)
+            if (keyed.length === 0) this.#byMutationKey.delete(hash)
           }
         }
       }
