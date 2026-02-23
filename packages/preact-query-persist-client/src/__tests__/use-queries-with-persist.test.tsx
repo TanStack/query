@@ -125,7 +125,9 @@ describe('useQueries with persist and memoized combine (preact)', () => {
         <div>
           <div data-testid="pending">{String(combinedQueries.isPending)}</div>
           <div data-testid="data">
-            {combinedQueries.data.filter((value) => value !== undefined).join(',')}
+            {combinedQueries.data
+              .filter((value) => value !== undefined)
+              .join(',')}
           </div>
         </div>
       )
@@ -140,8 +142,12 @@ describe('useQueries with persist and memoized combine (preact)', () => {
       </PersistQueryClientProvider>,
     )
 
-    await act(async () => {await vi.advanceTimersByTimeAsync(10)})
-    await act(async () => {await vi.advanceTimersByTimeAsync(0)})
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0)
+    })
 
     expect(rendered.getByTestId('pending').textContent).toBe('false')
     expect(rendered.getByTestId('data').textContent).toBe('1,2,3')

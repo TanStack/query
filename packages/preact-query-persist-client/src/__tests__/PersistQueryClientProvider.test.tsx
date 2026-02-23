@@ -2,15 +2,15 @@
 /** @jsxImportSource preact */
 import '@testing-library/jest-dom/vitest'
 
-import type { PersistedClient, Persister } from '../../../query-persist-client-core/src'
+import type {
+  PersistedClient,
+  Persister,
+} from '../../../query-persist-client-core/src'
 import { persistQueryClientSave } from '../../../query-persist-client-core/src'
 import { notifyManager } from '../../../query-core/src'
 import { act, cleanup, render } from '@testing-library/preact'
 import type { UseQueryResult } from '../../../preact-query/src'
-import {
-  QueryClient,
-  useQuery,
-} from '../../../preact-query/src'
+import { QueryClient, useQuery } from '../../../preact-query/src'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 import { PersistQueryClientProvider } from './testPersistProvider'
@@ -93,10 +93,14 @@ describe('PersistQueryClientProvider (preact)', () => {
 
     expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
 
-    await act(async () => { await vi.advanceTimersByTimeAsync(10) })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
 
-    await act(async () => { await vi.advanceTimersByTimeAsync(11) })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(11)
+    })
     expect(rendered.getByText('fetched')).toBeInTheDocument()
 
     expect(states.length).toBeGreaterThanOrEqual(3)
@@ -108,7 +112,8 @@ describe('PersistQueryClientProvider (preact)', () => {
 
     expect(
       states.some(
-        (state) => state.fetchStatus === 'fetching' && state.data === 'hydrated',
+        (state) =>
+          state.fetchStatus === 'fetching' && state.data === 'hydrated',
       ),
     ).toBe(true)
 
