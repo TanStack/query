@@ -246,9 +246,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
 
     await vi.advanceTimersByTimeAsync(11)
-    expect(
-      rendered.getByText('mutationState: ["data"]'),
-    ).toBeInTheDocument()
+    expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
 
   it('should return mutation states when used with useMutationState (without mutationKey in mutationOptions)', async () => {
@@ -270,9 +268,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
 
     await vi.advanceTimersByTimeAsync(11)
-    expect(
-      rendered.getByText('mutationState: ["data"]'),
-    ).toBeInTheDocument()
+    expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
 
   it('should return mutation states when used with useMutationState', async () => {
@@ -333,8 +329,6 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
 
     await vi.advanceTimersByTimeAsync(11)
-    expect(
-      rendered.getByText('mutationState: ["data1"]'),
-    ).toBeInTheDocument()
+    expect(rendered.getByText('mutationState: ["data1"]')).toBeInTheDocument()
   })
 })
