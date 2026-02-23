@@ -2472,6 +2472,9 @@ importers:
       '@testing-library/preact':
         specifier: ^3.2.4
         version: 3.2.4(preact@10.28.3)
+      eslint-config-preact:
+        specifier: ^2.0.0
+        version: 2.0.0(eslint@9.39.3(jiti@2.6.1))
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2

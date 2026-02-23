@@ -105,6 +105,6 @@ export function PreactQueryDevtoolsPanel(
       style={{ height: '500px', ...props.style }}
       className="tsqd-parent-container"
       ref={ref}
-    ></div>
+    />
   )
 }

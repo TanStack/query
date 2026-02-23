@@ -83,6 +83,7 @@
     "@preact/preset-vite": "^2.10.2",
     "@tanstack/preact-query": "workspace:*",
     "@testing-library/preact": "^3.2.4",
+    "eslint-config-preact": "^2.0.0",
     "npm-run-all2": "^5.0.0",
     "preact": "^10.28.0",
     "typescript-eslint": "^8.54.0"
