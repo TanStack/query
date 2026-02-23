@@ -203,7 +203,7 @@ describe('fetchInfiniteQuery', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<{ count: number }, number>>()
   })
 
-  it('should not allow passing getNextPageParam without pages', () => {
+  it('should allow passing getNextPageParam without pages', () => {
     assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
       {
         queryKey: ['key'],
