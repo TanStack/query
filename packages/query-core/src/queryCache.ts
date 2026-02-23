@@ -185,16 +185,27 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   ): Query<TQueryFnData, TError, TData> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
-    return this.getAll().find((query) =>
-      matchQuery(defaultedFilters, query),
-    ) as Query<TQueryFnData, TError, TData> | undefined
+    let found: Query | undefined
+    for (const query of this.#queries.values()) {
+      if (matchQuery(defaultedFilters, query)) {
+        found = query
+        break
+      }
+    }
+    return found as Query<TQueryFnData, TError, TData> | undefined
   }
 
   findAll(filters: QueryFilters<any> = {}): Array<Query> {
-    const queries = this.getAll()
-    return Object.keys(filters).length > 0
-      ? queries.filter((query) => matchQuery(filters, query))
-      : queries
+    if (Object.keys(filters).length === 0) {
+      return [...this.#queries.values()]
+    }
+    const result: Array<Query> = []
+    for (const query of this.#queries.values()) {
+      if (matchQuery(filters, query)) {
+        result.push(query)
+      }
+    }
+    return result
   }
 
   notify(event: QueryCacheNotifyEvent): void {
@@ -207,17 +218,17 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   onFocus(): void {
     notifyManager.batch(() => {
-      this.getAll().forEach((query) => {
+      for (const query of this.#queries.values()) {
         query.onFocus()
-      })
+      }
     })
   }
 
   onOnline(): void {
     notifyManager.batch(() => {
-      this.getAll().forEach((query) => {
+      for (const query of this.#queries.values()) {
         query.onOnline()
-      })
+      }
     })
   }
 }

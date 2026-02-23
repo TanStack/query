@@ -211,13 +211,22 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   ): Mutation<TData, TError, TVariables, TOnMutateResult> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
-    return this.getAll().find((mutation) =>
-      matchMutation(defaultedFilters, mutation),
-    ) as Mutation<TData, TError, TVariables, TOnMutateResult> | undefined
+    for (const mutation of this.#mutations) {
+      if (matchMutation(defaultedFilters, mutation)) {
+        return mutation as Mutation<TData, TError, TVariables, TOnMutateResult>
+      }
+    }
+    return undefined
   }
 
   findAll(filters: MutationFilters = {}): Array<Mutation> {
-    return this.getAll().filter((mutation) => matchMutation(filters, mutation))
+    const result: Array<Mutation> = []
+    for (const mutation of this.#mutations) {
+      if (matchMutation(filters, mutation)) {
+        result.push(mutation)
+      }
+    }
+    return result
   }
 
   notify(event: MutationCacheNotifyEvent) {
@@ -229,7 +238,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   resumePausedMutations(): Promise<unknown> {
-    const pausedMutations = this.getAll().filter((x) => x.state.isPaused)
+    const pausedMutations: Array<Mutation> = []
+    for (const mutation of this.#mutations) {
+      if (mutation.state.isPaused) {
+        pausedMutations.push(mutation)
+      }
+    }
 
     return notifyManager.batch(() =>
       Promise.all(
