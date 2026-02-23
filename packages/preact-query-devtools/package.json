@@ -71,7 +71,11 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
-  "files": ["build", "src", "!src/__tests__"],
+  "files": [
+    "build",
+    "src",
+    "!src/__tests__"
+  ],
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*"
   },

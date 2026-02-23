@@ -55,9 +55,7 @@ export interface DevtoolsOptions {
   theme?: Theme
 }
 
-export function PreactQueryDevtools(
-  props: DevtoolsOptions,
-): VNode | null {
+export function PreactQueryDevtools(props: DevtoolsOptions): VNode | null {
   const queryClient = useQueryClient(props.client)
   const ref = useRef<HTMLDivElement>(null)
   const {
