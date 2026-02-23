@@ -37,7 +37,7 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts1: mutationOpts },
+      props: { mutationOpts1: () => mutationOpts },
     })
 
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
@@ -57,7 +57,7 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts1: mutationOpts },
+      props: { mutationOpts1: () => mutationOpts },
     })
 
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
@@ -81,7 +81,10 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts1, mutationOpts2 },
+      props: {
+        mutationOpts1: () => mutationOpts1,
+        mutationOpts2: () => mutationOpts2,
+      },
     })
 
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
@@ -107,8 +110,8 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1,
-        mutationOpts2,
+        mutationOpts1: () => mutationOpts1,
+        mutationOpts2: () => mutationOpts2,
         isMutatingFilters: { mutationKey: mutationOpts1.mutationKey },
       },
     })
@@ -133,7 +136,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1: mutationOpts,
+        mutationOpts1: () => mutationOpts,
         isMutatingFilters: { mutationKey: mutationOpts.mutationKey },
       },
     })
@@ -155,7 +158,7 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts1: mutationOpts },
+      props: { mutationOpts1: () => mutationOpts },
     })
 
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
@@ -179,7 +182,10 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts1, mutationOpts2 },
+      props: {
+        mutationOpts1: () => mutationOpts1,
+        mutationOpts2: () => mutationOpts2,
+      },
     })
 
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
@@ -205,8 +211,8 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1,
-        mutationOpts2,
+        mutationOpts1: () => mutationOpts1,
+        mutationOpts2: () => mutationOpts2,
         isMutatingFilters: { mutationKey: mutationOpts1.mutationKey },
       },
     })
@@ -231,7 +237,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1: mutationOpts,
+        mutationOpts1: () => mutationOpts,
         mutationStateOpts: {
           filters: {
             mutationKey: mutationOpts.mutationKey,
@@ -256,7 +262,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1: mutationOpts,
+        mutationOpts1: () => mutationOpts,
         mutationStateOpts: {
           filters: { status: 'success' },
         },
@@ -282,8 +288,8 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1,
-        mutationOpts2,
+        mutationOpts1: () => mutationOpts1,
+        mutationOpts2: () => mutationOpts2,
         mutationStateOpts: {
           filters: { status: 'success' },
         },
@@ -312,8 +318,8 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1,
-        mutationOpts2,
+        mutationOpts1: () => mutationOpts1,
+        mutationOpts2: () => mutationOpts2,
         mutationStateOpts: {
           filters: {
             mutationKey: mutationOpts1.mutationKey,

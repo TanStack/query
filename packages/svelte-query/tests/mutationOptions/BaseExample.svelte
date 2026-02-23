@@ -7,6 +7,7 @@
     useMutationState,
   } from '../../src/index.js'
   import type {
+    Accessor,
     CreateMutationOptions,
     MutationStateOptions,
   } from '../../src/index.js'
@@ -18,8 +19,10 @@
     isMutatingFilters,
     mutationStateOpts,
   }: {
-    mutationOpts1: CreateMutationOptions<string, Error, void, unknown>
-    mutationOpts2?: CreateMutationOptions<string, Error, void, unknown>
+    mutationOpts1: Accessor<CreateMutationOptions<string, Error, void, unknown>>
+    mutationOpts2?: Accessor<
+      CreateMutationOptions<string, Error, void, unknown>
+    >
     isMutatingFilters?: MutationFilters
     mutationStateOpts?: MutationStateOptions
   } = $props()
@@ -27,10 +30,8 @@
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
-  const mutation1 = createMutation(() => mutationOpts1)
-  const mutation2 = mutationOpts2
-    ? createMutation(() => mutationOpts2!)
-    : undefined
+  const mutation1 = createMutation(mutationOpts1)
+  const mutation2 = mutationOpts2 ? createMutation(mutationOpts2) : undefined
   const isMutating = useIsMutating(isMutatingFilters)
   const mutationState = useMutationState(mutationStateOpts)
 
