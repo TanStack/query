@@ -12,9 +12,9 @@ import { act, cleanup, render } from '@testing-library/preact'
 import type { UseQueryResult } from '../../../preact-query/src'
 import { QueryClient, useQuery } from '../../../preact-query/src'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 
 import { PersistQueryClientProvider } from './testPersistProvider'
-import { queryKey, sleep } from './testUtils'
 
 notifyManager.setNotifyFunction((fn) => {
   act(fn)
