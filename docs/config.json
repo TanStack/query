@@ -1140,6 +1140,10 @@
             {
               "label": "Functions / infiniteQueryOptions",
               "to": "framework/svelte/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "Functions / mutationOptions",
+              "to": "framework/svelte/reference/functions/mutationOptions"
             }
           ]
         },
