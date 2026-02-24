@@ -27,6 +27,8 @@ export const plugin = {
         '@tanstack/query/infinite-query-property-order': 'error',
         '@tanstack/query/no-void-query-fn': 'error',
         '@tanstack/query/mutation-property-order': 'error',
+        '@tanstack/query/use-query-no-inline-query': 'warn',
+        '@tanstack/query/invalidate-queries-no-inline-query': 'warn',
       },
     },
     'flat/recommended': [
@@ -43,6 +45,8 @@ export const plugin = {
           '@tanstack/query/infinite-query-property-order': 'error',
           '@tanstack/query/no-void-query-fn': 'error',
           '@tanstack/query/mutation-property-order': 'error',
+          '@tanstack/query/use-query-no-inline-query': 'warn',
+          '@tanstack/query/invalidate-queries-no-inline-query': 'warn',
         },
       },
     ],
