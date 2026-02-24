@@ -7,7 +7,7 @@ const MAIN_QUERY_PROPERTIES = ['queryKey', 'queryFn']
  * @returns true if the node is an object that has main query options (ie queryKey or queryFn).
  * This is used for detecting inline query options in hooks and functions
  */
-export function detectQueryOptionsInObject(queryNode: TSESTree.Node) {
+export function detectQueryOptionsInObject(queryNode: TSESTree.Node): boolean {
   // skip if it's not an object
   if (queryNode.type !== AST_NODE_TYPES.ObjectExpression) return false
 
@@ -19,5 +19,5 @@ export function detectQueryOptionsInObject(queryNode: TSESTree.Node) {
       MAIN_QUERY_PROPERTIES.includes(property.key.name),
   )
 
-  return hasMainQueryProperties
+  return !!hasMainQueryProperties
 }
