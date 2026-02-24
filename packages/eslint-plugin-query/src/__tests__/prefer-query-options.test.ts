@@ -1,7 +1,12 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
+import { afterAll, describe, it } from 'vitest'
 import { rule } from '../rules/prefer-query-options/prefer-query-options.rule'
 
 const ruleTester = new RuleTester()
+
+RuleTester.afterAll = afterAll
+RuleTester.describe = describe
+RuleTester.it = it
 
 // useQuery hooks
 ruleTester.run(rule.name, rule, {
