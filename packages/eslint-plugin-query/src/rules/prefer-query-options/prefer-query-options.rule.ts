@@ -43,7 +43,7 @@ export const rule = createRule({
     docs: {
       description:
         'Ensures queryOptions constructor pattern is used when calling query apis',
-      recommended: 'warn',
+      recommended: 'strict',
     },
     messages: {
       'no-inline-query-hook': 'Expected query hook to use queryOptions pattern',
