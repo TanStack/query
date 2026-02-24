@@ -8,15 +8,14 @@
   import type { DehydratedState } from '@tanstack/query-core'
 
   let {
-    queryClient,
     dehydratedState,
     queryFn,
   }: {
-    queryClient: QueryClient
     dehydratedState: DehydratedState
     queryFn: () => Promise<string>
   } = $props()
 
+  const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
   const query = createQuery(() => ({
@@ -25,6 +24,10 @@
   }))
 </script>
 
-<HydrationBoundary state={dehydratedState} options={undefined} queryClient={undefined}>
+<HydrationBoundary
+  state={dehydratedState}
+  options={undefined}
+  queryClient={undefined}
+>
   <div>data: {query.data ?? 'undefined'}</div>
 </HydrationBoundary>
