@@ -9,10 +9,10 @@ export const name = 'prefer-query-options'
 const useQueryHooks = [
   // see https://tanstack.com/query/latest/docs/framework/react/reference/useQuery
   'useQuery',
-  'useQueries',
+  // 'useQueries', // only works for single queries for now
   'useInfiniteQuery',
   'useSuspenseQuery',
-  'useSuspenseQueries',
+  // 'useSuspenseQueries',
   'useSuspenseInfiniteQuery',
 ]
 
