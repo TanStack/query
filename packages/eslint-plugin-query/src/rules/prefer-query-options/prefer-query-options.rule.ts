@@ -45,7 +45,7 @@ export const rule = createRule({
     type: 'suggestion',
     docs: {
       description:
-        'Enforces useQuery (and family) hooks use some form of query constructor pattern. Will error if queryKey or queryFn properties are passed to the hook',
+        'Ensures queryOptions constructor pattern is used when calling query apis',
       recommended: 'warn',
     },
     messages: {
