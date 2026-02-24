@@ -9,7 +9,7 @@ const MAIN_QUERY_PROPERTIES = ['queryKey', 'queryFn']
  */
 export function detectQueryOptionsInObject(queryNode: TSESTree.Node) {
   // skip if it's not an object
-  if (queryNode.type !== AST_NODE_TYPES.ObjectExpression) return true
+  if (queryNode.type !== AST_NODE_TYPES.ObjectExpression) return false
 
   // check if any of the properties is queryKey or queryFn
   const hasMainQueryProperties = queryNode.properties.find(
