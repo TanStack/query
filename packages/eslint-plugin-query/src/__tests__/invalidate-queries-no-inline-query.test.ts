@@ -3,7 +3,7 @@ import { rule } from '../rules/invalidate-queries-no-inline-query/invalidate-que
 
 const ruleTester = new RuleTester()
 
-ruleTester.run('invalidate-queries-no-inline-query', rule, {
+ruleTester.run(rule.name, rule, {
   valid: [
     { code: `queryClient.invalidateQueries(usersQuery)` },
     { code: `queryClient.invalidateQueries({ ...usersQuery })` },

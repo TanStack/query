@@ -3,7 +3,7 @@ import { rule } from '../rules/use-query-no-inline-query/use-query-no-inline-que
 
 const ruleTester = new RuleTester()
 
-ruleTester.run('use-query-no-inline-query', rule, {
+ruleTester.run(rule.name, rule, {
   valid: [
     { code: `useQuery(usersQuery)` },
     { code: `useQuery({ ...usersQuery })` },
