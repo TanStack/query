@@ -1489,7 +1489,7 @@ importers:
         version: 0.9.6(prettier@3.8.1)(typescript@5.8.3)
       '@astrojs/node':
         specifier: ^9.1.3
-        version: 9.5.2(astro@5.17.1(@types/node@22.19.11)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.9.2)(jiti@1.21.7)(lightningcss@1.30.2)(rollup@4.57.1)(sass@1.90.0)(terser@5.46.0)(typescript@5.8.3)(yaml@2.8.2))
+        version: 9.5.4(astro@5.17.1(@types/node@22.19.11)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.9.2)(jiti@1.21.7)(lightningcss@1.30.2)(rollup@4.57.1)(sass@1.90.0)(terser@5.46.0)(typescript@5.8.3)(yaml@2.8.2))
       '@astrojs/solid-js':
         specifier: ^5.0.7
         version: 5.1.3(@testing-library/jest-dom@6.9.1)(@types/node@22.19.11)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.90.0)(solid-js@1.9.11)(terser@5.46.0)(yaml@2.8.2)
@@ -3203,10 +3203,10 @@ packages:
   '@astrojs/markdown-remark@6.3.10':
     resolution: {integrity: sha512-kk4HeYR6AcnzC4QV8iSlOfh+N8TZ3MEStxPyenyCtemqn8IpEATBFMTJcfrNW32dgpt6MY3oCkMM/Tv3/I4G3A==}
 
-  '@astrojs/node@9.5.2':
-    resolution: {integrity: sha512-85/x+FRwbNGDip1TzSGMiak31/6LvBhA8auqd9lLoHaM5XElk+uIfIr3KjJqucDojE0PtiLk1lMSwD9gd3YlGg==}
+  '@astrojs/node@9.5.4':
+    resolution: {integrity: sha512-AbPSZsMGu8hXPR2XxV79RaKy8h6wijhtoqZGeUf4OXg2w1mxXlx4VnIc1D+QvtsgauSz7P5PLhmvf6w/J41GJg==}
     peerDependencies:
-      astro: ^5.14.3
+      astro: ^5.17.3
 
   '@astrojs/prism@3.3.0':
     resolution: {integrity: sha512-q8VwfU/fDZNoDOf+r7jUnMC2//H2l0TuQ6FkGJL8vD8nw/q5KiL3DS1KKBI3QhI9UQhpJ5dc7AtqfbXWuOgLCQ==}
@@ -16325,7 +16325,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/node@9.5.2(astro@5.17.1(@types/node@22.19.11)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.9.2)(jiti@1.21.7)(lightningcss@1.30.2)(rollup@4.57.1)(sass@1.90.0)(terser@5.46.0)(typescript@5.8.3)(yaml@2.8.2))':
+  '@astrojs/node@9.5.4(astro@5.17.1(@types/node@22.19.11)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.9.2)(jiti@1.21.7)(lightningcss@1.30.2)(rollup@4.57.1)(sass@1.90.0)(terser@5.46.0)(typescript@5.8.3)(yaml@2.8.2))':
     dependencies:
       '@astrojs/internal-helpers': 0.7.5
       astro: 5.17.1(@types/node@22.19.11)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.9.2)(jiti@1.21.7)(lightningcss@1.30.2)(rollup@4.57.1)(sass@1.90.0)(terser@5.46.0)(typescript@5.8.3)(yaml@2.8.2)
