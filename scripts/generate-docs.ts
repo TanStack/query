@@ -30,6 +30,15 @@ await generateReferenceDocs({
       outputDir: resolve(__dirname, '../docs/framework/svelte/reference'),
       exclude: ['./packages/query-core/**/*'],
     },
+    {
+      name: 'preact-query',
+      entryPoints: [
+        resolve(__dirname, '../packages/preact-query/src/index.ts'),
+      ],
+      tsconfig: resolve(__dirname, '../packages/preact-query/tsconfig.json'),
+      outputDir: resolve(__dirname, '../docs/framework/preact/reference'),
+      exclude: ['./packages/query-core/**/*'],
+    },
   ],
 })
 
