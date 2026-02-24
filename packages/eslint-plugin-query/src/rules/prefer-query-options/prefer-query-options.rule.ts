@@ -60,10 +60,9 @@ export const rule = createRule({
       CallExpression(node) {
         // use*Query hook call
         if (isQueryHookCallExpression(node)) {
-          const queryNode = node.arguments[0]
-          if (!queryNode) return
+          if (!node.arguments[0]) return
 
-          if (detectQueryOptionsInObject(queryNode))
+          if (detectQueryOptionsInObject(node.arguments[0]))
             context.report({ messageId: 'no-inline-query', node })
         }
 
