@@ -70,5 +70,6 @@ export const plugin = {
 } satisfies Plugin
 
 plugin.configs['flat/recommended'][0]!.plugins['@tanstack/query'] = plugin
+plugin.configs['flat/recommendedStrict'][0]!.plugins['@tanstack/query'] = plugin
 
 export default plugin
