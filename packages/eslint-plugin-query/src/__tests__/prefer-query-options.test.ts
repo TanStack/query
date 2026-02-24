@@ -33,6 +33,18 @@ ruleTester.run(rule.name, rule, {
       code: `const users = useQuery({ ...queryOptions, queryFn: () => {} })`,
       errors: [{ messageId: 'no-inline-query-hook' }],
     },
+    {
+      code: `useInfiniteQuery({ queryKey: [] })`,
+      errors: [{ messageId: 'no-inline-query-hook' }],
+    },
+    {
+      code: `useSuspenseQuery({ queryKey: [] })`,
+      errors: [{ messageId: 'no-inline-query-hook' }],
+    },
+    {
+      code: `useSuspenseInfiniteQuery({ queryKey: [] })`,
+      errors: [{ messageId: 'no-inline-query-hook' }],
+    },
   ],
 })
 
