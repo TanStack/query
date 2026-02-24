@@ -262,7 +262,8 @@ describe('query', () => {
   it('should infer select type with skipToken queryFn and enabled true', () => {
     const options = new QueryClient().query({
       queryKey: ['key'],
-      enabled: false,
+      queryFn: skipToken,
+      enabled: true,
       select: (data: string) => data.length,
     })
 
