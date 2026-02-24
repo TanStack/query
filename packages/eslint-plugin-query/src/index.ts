@@ -61,7 +61,7 @@ export const plugin = {
           '@tanstack/query/infinite-query-property-order': 'error',
           '@tanstack/query/no-void-query-fn': 'error',
           '@tanstack/query/mutation-property-order': 'error',
-          '@tanstack/query/prefer-query-options': 'warn',
+          '@tanstack/query/prefer-query-options': 'error',
         },
       },
     ],
