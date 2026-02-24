@@ -1,6 +1,5 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
 import { rule } from '../rules/prefer-query-options/prefer-query-options.rule'
-import { describe } from 'vitest'
 
 const ruleTester = new RuleTester()
 
