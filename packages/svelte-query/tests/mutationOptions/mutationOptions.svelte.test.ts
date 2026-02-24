@@ -3,6 +3,7 @@ import { fireEvent, render } from '@testing-library/svelte'
 import { sleep } from '@tanstack/query-test-utils'
 import { mutationOptions } from '../../src/index.js'
 import BaseExample from './BaseExample.svelte'
+import MultiExample from './MultiExample.svelte'
 
 describe('mutationOptions', () => {
   beforeEach(() => {
@@ -37,12 +38,12 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts1: () => mutationOpts },
+      props: { mutationOpts: () => mutationOpts },
     })
 
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(51)
@@ -55,12 +56,12 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts1: () => mutationOpts },
+      props: { mutationOpts: () => mutationOpts },
     })
 
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isMutating: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(51)
@@ -76,7 +77,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data2'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(MultiExample, {
       props: {
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
@@ -102,7 +103,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data2'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(MultiExample, {
       props: {
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
@@ -128,14 +129,14 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1: () => mutationOpts,
+        mutationOpts: () => mutationOpts,
         isMutatingFilters: { mutationKey: mutationOpts.mutationKey },
       },
     })
 
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(501)
@@ -148,12 +149,12 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts1: () => mutationOpts },
+      props: { mutationOpts: () => mutationOpts },
     })
 
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('clientIsMutating: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(501)
@@ -169,7 +170,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data2'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(MultiExample, {
       props: {
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
@@ -195,7 +196,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data2'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(MultiExample, {
       props: {
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
@@ -221,7 +222,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1: () => mutationOpts,
+        mutationOpts: () => mutationOpts,
         mutationStateOpts: {
           filters: {
             mutationKey: mutationOpts.mutationKey,
@@ -233,7 +234,7 @@ describe('mutationOptions', () => {
 
     expect(rendered.getByText('mutationState: []')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
@@ -245,7 +246,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        mutationOpts1: () => mutationOpts,
+        mutationOpts: () => mutationOpts,
         mutationStateOpts: {
           filters: { status: 'success' },
         },
@@ -254,7 +255,7 @@ describe('mutationOptions', () => {
 
     expect(rendered.getByText('mutationState: []')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('mutationState: ["data"]')).toBeInTheDocument()
   })
@@ -268,7 +269,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data2'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(MultiExample, {
       props: {
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
@@ -297,7 +298,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data2'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(MultiExample, {
       props: {
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,

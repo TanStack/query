@@ -14,11 +14,15 @@
   import type { MutationFilters } from '@tanstack/query-core'
 
   let {
-    mutationOpts,
+    mutationOpts1,
+    mutationOpts2,
     isMutatingFilters,
     mutationStateOpts,
   }: {
-    mutationOpts: Accessor<CreateMutationOptions<string, Error, void, unknown>>
+    mutationOpts1: Accessor<CreateMutationOptions<string, Error, void, unknown>>
+    mutationOpts2: Accessor<
+      CreateMutationOptions<string, Error, void, unknown>
+    >
     isMutatingFilters?: MutationFilters
     mutationStateOpts?: MutationStateOptions
   } = $props()
@@ -26,7 +30,8 @@
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
-  const mutation = createMutation(mutationOpts)
+  const mutation1 = createMutation(mutationOpts1)
+  const mutation2 = createMutation(mutationOpts2)
   const isMutating = useIsMutating(isMutatingFilters)
   const mutationState = useMutationState(mutationStateOpts)
 
@@ -48,7 +53,8 @@
   })
 </script>
 
-<button onclick={() => mutation.mutate()}>mutate</button>
+<button onclick={() => mutation1.mutate()}>mutate1</button>
+<button onclick={() => mutation2.mutate()}>mutate2</button>
 
 <div>isMutating: {isMutating.current}</div>
 <div>clientIsMutating: {clientIsMutating}</div>
