@@ -3,9 +3,9 @@ import {
   ESLintUtils,
   type TSESTree,
 } from '@typescript-eslint/utils'
-import { getDocsUrl } from '../../utils/get-docs-url'
-import { detectQueryOptionsInObject } from '../../utils/detect-query-options-in-object'
 import type { ExtraRuleDocs } from '../../types'
+import { getDocsUrl } from '../../utils/get-docs-url'
+import { detectQueryOptionsInObject } from './prefer-query-options.utils'
 
 export const name = 'prefer-query-options'
 
