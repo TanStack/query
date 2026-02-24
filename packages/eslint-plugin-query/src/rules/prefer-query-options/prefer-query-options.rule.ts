@@ -49,29 +49,32 @@ export const rule = createRule({
       recommended: 'warn',
     },
     messages: {
-      'no-inline-query': 'Expected query hook to use queryOptions pattern',
+      'no-inline-query-hook': 'Expected query hook to use queryOptions pattern',
+      'no-inline-query-invalidate':
+        'Expected query invalidate call to use queryOptions pattern',
     },
     schema: [],
   },
   defaultOptions: [],
-
   create(context) {
     return {
       CallExpression(node) {
         // use*Query hook call
-        if (isQueryHookCallExpression(node)) {
-          if (!node.arguments[0]) return
-
-          if (detectQueryOptionsInObject(node.arguments[0]))
-            context.report({ messageId: 'no-inline-query', node })
+        if (
+          isQueryHookCallExpression(node) &&
+          node.arguments[0] &&
+          detectQueryOptionsInObject(node.arguments[0])
+        ) {
+          context.report({ messageId: 'no-inline-query-hook', node })
         }
 
         // queryClient.invalidateQueries call
-        if (isInvalidateQueriesCallExpression(node)) {
-          if (!node.arguments[0]) return
-
-          if (detectQueryOptionsInObject(node.arguments[0]))
-            context.report({ messageId: 'no-inline-query', node })
+        if (
+          isInvalidateQueriesCallExpression(node) &&
+          node.arguments[0] &&
+          detectQueryOptionsInObject(node.arguments[0])
+        ) {
+          context.report({ messageId: 'no-inline-query-invalidate', node })
         }
       },
     }
