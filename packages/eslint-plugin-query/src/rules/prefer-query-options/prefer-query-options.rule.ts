@@ -1,11 +1,8 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  type TSESTree,
-} from '@typescript-eslint/utils'
-import type { ExtraRuleDocs } from '../../types'
+import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
 import { getDocsUrl } from '../../utils/get-docs-url'
 import { detectQueryOptionsInObject } from './prefer-query-options.utils'
+import type { TSESTree } from '@typescript-eslint/utils'
+import type { ExtraRuleDocs } from '../../types'
 
 export const name = 'prefer-query-options'
 
