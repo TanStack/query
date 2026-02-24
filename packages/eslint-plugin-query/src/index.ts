@@ -9,6 +9,7 @@ export interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
   configs: {
     recommended: ESLint.ConfigData
     'flat/recommended': Array<Linter.Config>
+    'flat/recommendedStrict': Array<Linter.Config>
   }
 }
 
@@ -33,6 +34,23 @@ export const plugin = {
     'flat/recommended': [
       {
         name: 'tanstack/query/flat/recommended',
+        plugins: {
+          '@tanstack/query': {}, // Assigned after plugin object created
+        },
+        rules: {
+          '@tanstack/query/exhaustive-deps': 'error',
+          '@tanstack/query/no-rest-destructuring': 'warn',
+          '@tanstack/query/stable-query-client': 'error',
+          '@tanstack/query/no-unstable-deps': 'error',
+          '@tanstack/query/infinite-query-property-order': 'error',
+          '@tanstack/query/no-void-query-fn': 'error',
+          '@tanstack/query/mutation-property-order': 'error',
+        },
+      },
+    ],
+    'flat/recommendedStrict': [
+      {
+        name: 'tanstack/query/flat/recommendedStrict',
         plugins: {
           '@tanstack/query': {}, // Assigned after plugin object created
         },
