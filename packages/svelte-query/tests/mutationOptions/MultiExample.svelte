@@ -20,9 +20,7 @@
     mutationStateOpts,
   }: {
     mutationOpts1: Accessor<CreateMutationOptions<string, Error, void, unknown>>
-    mutationOpts2: Accessor<
-      CreateMutationOptions<string, Error, void, unknown>
-    >
+    mutationOpts2: Accessor<CreateMutationOptions<string, Error, void, unknown>>
     isMutatingFilters?: MutationFilters
     mutationStateOpts?: MutationStateOptions
   } = $props()
