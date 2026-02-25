@@ -986,9 +986,9 @@ describe('queryClient', () => {
         queryClient.query({
           queryKey: key,
           queryFn,
-          enabled: false,
+/          enabled: false,
         }),
-      ).rejects.toThrowError()
+      ).rejects.toThrowError('Missing query data for disabled query')
 
       expect(queryFn).not.toHaveBeenCalled()
     })
@@ -1095,6 +1095,26 @@ describe('queryClient', () => {
       expect(queryFn).not.toHaveBeenCalled()
     })
 
+    test('should fetch when enabled callback returns true and cache is stale', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, 'old-data')
+
+      await vi.advanceTimersByTimeAsync(1)
+
+      const queryFn = vi.fn(() => Promise.resolve('new-data'))
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        enabled: () => true,
+        staleTime: 0,
+      })
+
+      expect(result).toBe('new-data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
     test('should read from cache with static staleTime even if invalidated', async () => {
       const key = queryKey()
 
@@ -1199,6 +1219,27 @@ describe('queryClient', () => {
       await expect(fourthPromise).resolves.toBe(2)
     })
 
+    test('should evaluate staleTime when provided as a function', async () => {
+      const key = queryKey()
+      const staleTime = vi.fn(() => 0)
+
+      queryClient.setQueryData(key, 'old-data')
+
+      await vi.advanceTimersByTimeAsync(1)
+
+      const queryFn = vi.fn(() => Promise.resolve('new-data'))
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime,
+      })
+
+      expect(result).toBe('new-data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(staleTime).toHaveBeenCalledTimes(1)
+    })
+
     test('should allow new meta', async () => {
       const key = queryKey()
 
@@ -1269,6 +1310,20 @@ describe('queryClient', () => {
 
       expect(result).toBe('cached-data-selected')
       expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    test('should apply select to freshly fetched data', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve({ value: 'fetched-data' }))
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        select: (data) => data.value.toUpperCase(),
+      })
+
+      expect(result).toBe('FETCHED-DATA')
+      expect(queryFn).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -1373,8 +1428,31 @@ describe('queryClient', () => {
           initialPageParam: 0,
           enabled: false,
         }),
-      ).rejects.toThrowError()
+      ).rejects.toThrow('Missing query data for disabled query')
 
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    test('should return cached data when disabled and apply select', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve(String(pageParam)),
+      )
+
+      queryClient.setQueryData(key, {
+        pages: ['cached-page'],
+        pageParams: [0],
+      })
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+        enabled: false,
+        select: (data) => data.pages.map((page) => `${page}-selected`),
+      })
+
+      expect(result).toEqual(['cached-page-selected'])
       expect(queryFn).not.toHaveBeenCalled()
     })
 
