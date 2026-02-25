@@ -1220,6 +1220,56 @@ describe('queryClient', () => {
       })
       expect(second).toStrictEqual({ foo: false })
     })
+
+    test('should fetch when enabled is true and cache is stale', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, 'old-data')
+
+      await vi.advanceTimersByTimeAsync(1)
+
+      const queryFn = vi.fn(() => Promise.resolve('new-data'))
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        enabled: true,
+        staleTime: 0,
+      })
+
+      expect(result).toBe('new-data')
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    test('should propagate errors', async () => {
+      const key = queryKey()
+
+      await expect(
+        queryClient.query({
+          queryKey: key,
+          queryFn: (): Promise<unknown> => {
+            throw new Error('error')
+          },
+        }),
+      ).rejects.toEqual(new Error('error'))
+    })
+
+    test('should apply select when data is fresh in cache', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(() => Promise.resolve('fetched-data'))
+
+      queryClient.setQueryData(key, 'cached-data')
+
+      const result = await queryClient.query({
+        queryKey: key,
+        queryFn,
+        staleTime: Infinity,
+        select: (data) => `${data}-selected`,
+      })
+
+      expect(result).toBe('cached-data-selected')
+      expect(queryFn).not.toHaveBeenCalled()
+    })
   })
 
   /** @deprecated */
@@ -1308,6 +1358,57 @@ describe('queryClient', () => {
 
       expect(result).toEqual(expected)
       expect(result2).toEqual(expected)
+    })
+
+    test('should throw when disabled and no cached data exists', async () => {
+      const key = queryKey()
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve(pageParam),
+      )
+
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: key,
+          queryFn,
+          initialPageParam: 0,
+          enabled: false,
+        }),
+      ).rejects.toThrowError()
+
+      expect(queryFn).not.toHaveBeenCalled()
+    })
+
+    test('should return cached data when skipToken is provided', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, {
+        pages: ['page-1'],
+        pageParams: [0],
+      })
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn: skipToken,
+        initialPageParam: 0,
+      })
+
+      expect(result).toEqual({
+        pages: ['page-1'],
+        pageParams: [0],
+      })
+    })
+
+    test('should apply select to infinite query data', async () => {
+      const key = queryKey()
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        initialPageParam: 10,
+        queryFn: ({ pageParam }) => Number(pageParam),
+        select: (data) => data.pages.map((page) => page * 2),
+      })
+
+      expect(result).toEqual([20])
     })
   })
 
@@ -1567,7 +1668,7 @@ describe('queryClient', () => {
       expect(result).toEqual('data')
     })
 
-    test('should resolve undefined when an error is thrown', async () => {
+    test('should resolve to undefined when error is caught with noop', async () => {
       const key = queryKey()
 
       const result = await queryClient
