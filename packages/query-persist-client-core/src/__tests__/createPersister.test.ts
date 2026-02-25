@@ -705,7 +705,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(0)
     })
 
-    test('should not remove queries from cache if there is no match', async () => {
+    test('should not remove queries from storage if there is no match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -719,7 +719,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(1)
     })
 
-    test('should properly remove queries from cache with partial match', async () => {
+    test('should properly remove queries from storage with partial match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -733,7 +733,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(0)
     })
 
-    test('should not remove queries from cache with exact match if there is no match', async () => {
+    test('should not remove queries from storage with exact match if there is no match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -747,7 +747,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(1)
     })
 
-    test('should remove queries from cache with exact match', async () => {
+    test('should remove queries from storage with exact match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
