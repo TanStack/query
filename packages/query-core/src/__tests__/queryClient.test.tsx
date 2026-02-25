@@ -986,7 +986,7 @@ describe('queryClient', () => {
         queryClient.query({
           queryKey: key,
           queryFn,
-/          enabled: false,
+          enabled: false,
         }),
       ).rejects.toThrowError('Missing query data for disabled query')
 
