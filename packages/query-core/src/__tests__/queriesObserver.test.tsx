@@ -524,7 +524,7 @@ describe('queriesObserver', () => {
 
     const trackPropSpy = vi.spyOn(QueryObserver.prototype, 'trackProp')
 
-    const [, getCombinedResult, trackResult] = observer.getOptimisticResult(
+    const [, , trackResult] = observer.getOptimisticResult(
       [
         { queryKey: key1, queryFn: queryFn1 },
         { queryKey: key2, queryFn: queryFn2 },
@@ -533,9 +533,8 @@ describe('queriesObserver', () => {
     )
 
     const trackedResults = trackResult()
-    const combinedResult = getCombinedResult(trackedResults)
 
-    expect(combinedResult).toHaveLength(2)
+    expect(trackedResults).toHaveLength(2)
 
     // Accessing a property on the first result should trigger trackProp on all observers
     void trackedResults[0]!.status
