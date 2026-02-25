@@ -4,4 +4,4 @@
 '@tanstack/vue-query': minor
 ---
 
-renamed imperative methods
+add query() and infiniteQuery() imperative methods to QueryClient
