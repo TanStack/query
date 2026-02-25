@@ -266,9 +266,15 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
     if (storage?.entries) {
       const entries = await storage.entries()
+      const storageKeyPrefix = `${prefix}-`
       for (const [key, value] of entries) {
-        if (key.startsWith(prefix)) {
-          const persistedQuery = await deserialize(value)
+        if (key.startsWith(storageKeyPrefix)) {
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(value)
+          } catch {
+            continue
+          }
 
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(key)
@@ -308,9 +314,15 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
     if (storage?.entries) {
       const entries = await storage.entries()
+      const storageKeyPrefix = `${prefix}-`
       for (const [key, value] of entries) {
-        if (key.startsWith(prefix)) {
-          const persistedQuery = await deserialize(value)
+        if (key.startsWith(storageKeyPrefix)) {
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(value)
+          } catch {
+            continue
+          }
 
           if (queryKey) {
             if (exact) {
