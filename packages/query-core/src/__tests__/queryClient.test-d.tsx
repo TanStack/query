@@ -229,51 +229,51 @@ describe('fetchInfiniteQuery', () => {
 
 describe('query', () => {
   it('should allow passing select option', () => {
-    const options = new QueryClient().query({
+    const result = new QueryClient().query({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
-      select: (data: string) => data.length,
+      select: (data) => data.length,
     })
 
-    expectTypeOf(options).toEqualTypeOf<Promise<number>>()
+    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
   })
 
   it('should infer select type with skipToken queryFn', () => {
-    const options = new QueryClient().query({
+    const result = new QueryClient().query({
       queryKey: ['key'],
       queryFn: skipToken,
       select: (data: string) => data.length,
     })
 
-    expectTypeOf(options).toEqualTypeOf<Promise<number>>()
+    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
   })
 
   it('should infer select type with skipToken queryFn and enabled false', () => {
-    const options = new QueryClient().query({
+    const result = new QueryClient().query({
       queryKey: ['key'],
       queryFn: skipToken,
       enabled: false,
       select: (data: string) => data.length,
     })
 
-    expectTypeOf(options).toEqualTypeOf<Promise<number>>()
+    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
   })
 
   it('should infer select type with skipToken queryFn and enabled true', () => {
-    const options = new QueryClient().query({
+    const result = new QueryClient().query({
       queryKey: ['key'],
       queryFn: skipToken,
       enabled: true,
       select: (data: string) => data.length,
     })
 
-    expectTypeOf(options).toEqualTypeOf<Promise<number>>()
+    expectTypeOf(result).toEqualTypeOf<Promise<number>>()
   })
 })
 
 describe('infiniteQuery', () => {
   it('should allow passing select option', () => {
-    const data = new QueryClient().infiniteQuery({
+    const result = new QueryClient().infiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve({ count: 1 }),
       initialPageParam: 1,
@@ -285,11 +285,11 @@ describe('infiniteQuery', () => {
       }),
     })
 
-    expectTypeOf(data).toEqualTypeOf<Promise<{ pages: Array<string> }>>()
+    expectTypeOf(result).toEqualTypeOf<Promise<{ pages: Array<string> }>>()
   })
 
   it('should allow passing pages', async () => {
-    const data = await new QueryClient().infiniteQuery({
+    const result = await new QueryClient().infiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve({ count: 1 }),
       getNextPageParam: () => 1,
@@ -297,7 +297,9 @@ describe('infiniteQuery', () => {
       pages: 5,
     })
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ count: number }, number>>()
+    expectTypeOf(result).toEqualTypeOf<
+      InfiniteData<{ count: number }, number>
+    >()
   })
 
   it('should allow passing getNextPageParam without pages', () => {
