@@ -322,12 +322,12 @@ export function experimental_createQueryPersister<TStorageValue = string>({
             }
           }
 
-          storage.removeItem(key)
+          await storage.removeItem(key)
         }
       }
     } else if (process.env.NODE_ENV === 'development') {
       throw new Error(
-        'Provided storage does not implement `entries` method. Restoration of all stored entries is not possible without ability to iterate over storage items.',
+        'Provided storage does not implement `entries` method. Removal of stored entries is not possible without ability to iterate over storage items.',
       )
     }
   }
