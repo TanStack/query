@@ -688,7 +688,7 @@ describe('createPersister', () => {
 
       expect(await storage.entries()).toHaveLength(1)
       await persister.removeQueries()
-      expect(client.getQueryCache().getAll()).toHaveLength(0)
+      expect(await storage.entries()).toHaveLength(0)
     })
 
     test('should remove queries from storage', async () => {
