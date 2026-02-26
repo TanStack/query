@@ -25,6 +25,7 @@ import {
   sleep,
 } from '@tanstack/query-test-utils'
 import {
+  IsRestoringProvider,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -6157,6 +6158,54 @@ describe('useQuery', () => {
     fireEvent.click(fetchBtn)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 3')).toBeInTheDocument()
+  })
+
+  it('should not fetch while restoring and refetch after restoring is complete', async () => {
+    const key = queryKey()
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
+
+    const [isRestoring, setIsRestoring] = createSignal(true)
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn,
+      }))
+
+      return (
+        <div>
+          <div data-testid="status">{query.status}</div>
+          <div data-testid="fetchStatus">{query.fetchStatus}</div>
+          <div data-testid="data">{query.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <IsRestoringProvider value={isRestoring}>
+          <Page />
+        </IsRestoringProvider>
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    // Restoring complete: should refetch
+    setIsRestoring(false)
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('success')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('data')
+    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should use provided custom queryClient', async () => {
