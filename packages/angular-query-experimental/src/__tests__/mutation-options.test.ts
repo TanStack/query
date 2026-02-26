@@ -10,6 +10,7 @@ import {
   mutationOptions,
   provideTanStackQuery,
 } from '..'
+import type { CreateMutationOptions } from '../types'
 
 describe('mutationOptions', () => {
   let queryClient: QueryClient
@@ -30,20 +31,20 @@ describe('mutationOptions', () => {
   })
 
   it('should return the object received as a parameter without any modification (with mutationKey in mutationOptions)', () => {
-    const object = {
+    const object: CreateMutationOptions = {
       mutationKey: ['key'],
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the object received as a parameter without any modification (without mutationKey in mutationOptions)', () => {
-    const object = {
+    const object: CreateMutationOptions = {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the number of fetching mutations when used with injectIsMutating (with mutationKey in mutationOptions)', async () => {
