@@ -2,5 +2,5 @@
 id: graphql
 title: GraphQL
 ref: docs/framework/react/graphql.md
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---
