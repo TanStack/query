@@ -332,6 +332,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
           try {
             persistedQuery = await deserialize(value)
           } catch {
+            await storage.removeItem(key)
             continue
           }
 
