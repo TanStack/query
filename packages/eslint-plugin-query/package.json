@@ -59,7 +59,7 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^8.48.0"
+    "@typescript-eslint/utils": "^8.56.0"
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^8.48.0",
@@ -69,7 +69,7 @@
     "npm-run-all2": "^5.0.0"
   },
   "peerDependencies": {
-    "eslint": "^8.57.0 || ^9.0.0",
+    "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
     "typescript": "^5.0.0"
   },
   "peerDependenciesMeta": {
