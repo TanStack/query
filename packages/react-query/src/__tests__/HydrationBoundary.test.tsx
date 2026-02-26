@@ -7,8 +7,10 @@ import {
   HydrationBoundary,
   QueryClient,
   QueryClientProvider,
+  defaultShouldDehydrateQuery,
   dehydrate,
   useQuery,
+  useSuspenseQuery,
 } from '..'
 import type { hydrate } from '@tanstack/query-core'
 
@@ -479,6 +481,70 @@ describe('React hydration', () => {
     hydrateSpy.mockRestore()
     prefetchQueryClient.clear()
     clientQueryClient.clear()
+  })
+
+  test('should hydrate pending idle queries in render to avoid suspense refetches', async () => {
+    const queryKey = ['string'] as const
+
+    const makeQueryClient = () =>
+      new QueryClient({
+        defaultOptions: {
+          dehydrate: {
+            shouldDehydrateQuery: (query) =>
+              defaultShouldDehydrateQuery(query) ||
+              query.state.status === 'pending',
+            shouldRedactErrors: () => false,
+          },
+        },
+      })
+
+    const prefetchClient = makeQueryClient()
+    void prefetchClient.prefetchQuery({
+      queryKey,
+      queryFn: () => Promise.resolve(['stringCached']),
+      staleTime: Infinity,
+    })
+    const dehydratedState = dehydrate(prefetchClient)
+
+    const queryFn = vi.fn(() => Promise.resolve(['string']))
+    const suspenseQueryFn = vi.fn(() => Promise.resolve(['string']))
+    const queryClient = new QueryClient()
+
+    function Header() {
+      useQuery({
+        queryKey,
+        queryFn,
+      })
+      return null
+    }
+
+    function Page() {
+      const { data } = useSuspenseQuery({
+        queryKey,
+        queryFn: suspenseQueryFn,
+      })
+      return <div>{data}</div>
+    }
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Header />
+        <HydrationBoundary state={dehydratedState}>
+          <React.Suspense fallback="loading">
+            <Page />
+          </React.Suspense>
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await Promise.resolve()
+    await Promise.resolve()
+    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(1)
+    expect(queryClient.getQueryData(queryKey)).toEqual(['stringCached'])
+    expect(suspenseQueryFn).toHaveBeenCalledTimes(0)
+
+    queryClient.clear()
   })
 
   test('should not refetch when query has enabled set to false', async () => {
