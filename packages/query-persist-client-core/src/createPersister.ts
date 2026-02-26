@@ -247,9 +247,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
   async function persisterGc() {
     if (storage?.entries) {
+      const storageKeyPrefix = `${prefix}-`
       const entries = await storage.entries()
       for (const [key, value] of entries) {
-        const storageKeyPrefix = `${prefix}-`
         if (key.startsWith(storageKeyPrefix)) {
           let persistedQuery: PersistedQuery
           try {
@@ -277,9 +277,9 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     const { exact, queryKey } = filters
 
     if (storage?.entries) {
+      const storageKeyPrefix = `${prefix}-`
       const entries = await storage.entries()
       for (const [key, value] of entries) {
-        const storageKeyPrefix = `${prefix}-`
         if (key.startsWith(storageKeyPrefix)) {
           let persistedQuery: PersistedQuery
           try {
