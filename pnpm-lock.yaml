@@ -243,10 +243,10 @@ importers:
         specifier: ^5.90.25
         version: link:../../../packages/angular-query-experimental
       '@tanstack/angular-query-persist-client':
-        specifier: ^5.62.27
+        specifier: ^5.62.28
         version: link:../../../packages/angular-query-persist-client
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/query-async-storage-persister
       rxjs:
         specifier: ^7.8.2
@@ -699,7 +699,7 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-query':
         specifier: ^5.90.21
@@ -708,7 +708,7 @@ importers:
         specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/react-query-persist-client
       react:
         specifier: ^19.0.0
@@ -848,7 +848,7 @@ importers:
   examples/react/eslint-legacy:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-query':
         specifier: ^5.90.21
@@ -857,7 +857,7 @@ importers:
         specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/react-query-persist-client
       react:
         specifier: ^19.0.0
@@ -1034,7 +1034,7 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
@@ -1046,7 +1046,7 @@ importers:
         specifier: ^5.91.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/react-query-persist-client
       msw:
         specifier: ^2.6.6
@@ -1593,7 +1593,7 @@ importers:
   examples/solid/offline:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/solid-query':
         specifier: ^5.90.23
@@ -1602,7 +1602,7 @@ importers:
         specifier: ^5.91.3
         version: link:../../../packages/solid-query-devtools
       '@tanstack/solid-query-persist-client':
-        specifier: ^5.90.22
+        specifier: ^5.90.24
         version: link:../../../packages/solid-query-persist-client
       msw:
         specifier: ^2.6.6
@@ -1704,7 +1704,7 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/svelte-query':
         specifier: ^6.0.18
@@ -1713,7 +1713,7 @@ importers:
         specifier: ^6.0.4
         version: link:../../../packages/svelte-query-devtools
       '@tanstack/svelte-query-persist-client':
-        specifier: ^6.0.20
+        specifier: ^6.0.21
         version: link:../../../packages/svelte-query-persist-client
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1974,10 +1974,10 @@ importers:
         specifier: ^5.90.20
         version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.91.19
+        specifier: ^5.92.0
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.90.22
+        specifier: ^5.90.23
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
         specifier: ^5.92.9
