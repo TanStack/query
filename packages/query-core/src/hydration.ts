@@ -11,8 +11,9 @@ import type {
   QueryOptions,
 } from './types'
 import type { QueryClient } from './queryClient'
-import type { Query, QueryState } from './query'
+import type { Query, QueryBehavior, QueryState } from './query'
 import type { Mutation, MutationState } from './mutation'
+import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 
 // TYPES
 type TransformerFn = (data: any) => any
@@ -52,6 +53,7 @@ interface DehydratedQuery {
   // without it which we need to handle for backwards compatibility.
   // This should be changed to required in the future.
   dehydratedAt?: number
+  queryType?: 'query' | 'infiniteQuery'
 }
 
 export interface DehydratedState {
@@ -68,6 +70,11 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
     ...(mutation.options.scope && { scope: mutation.options.scope }),
     ...(mutation.meta && { meta: mutation.meta }),
   }
+}
+
+function isInfiniteQuery(query: Query): boolean {
+  const options = query.options as any
+  return 'initialPageParam' in options
 }
 
 // Most config is not dehydrated but instead meant to configure again when
@@ -113,6 +120,7 @@ function dehydrateQuery(
     },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
+    queryType: isInfiniteQuery(query) ? 'infiniteQuery' : 'query',
     ...(query.state.status === 'pending' && {
       promise: dehydratePromise(),
     }),
@@ -209,7 +217,15 @@ export function hydrate(
   })
 
   queries.forEach(
-    ({ queryKey, state, queryHash, meta, promise, dehydratedAt }) => {
+    ({
+      queryKey,
+      state,
+      queryHash,
+      meta,
+      promise,
+      dehydratedAt,
+      queryType,
+    }) => {
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
       const data = rawData === undefined ? rawData : deserializeData(rawData)
@@ -239,16 +255,21 @@ export function hydrate(
           })
         }
       } else {
+        const queryOptions: any = {
+          ...client.getDefaultOptions().hydrate?.queries,
+          ...options?.defaultOptions?.queries,
+          queryKey,
+          queryHash,
+          meta,
+          behavior: queryType === 'infiniteQuery'
+          ? (infiniteQueryBehavior() as QueryBehavior<unknown, unknown, unknown>)
+          : undefined,
+        }
+
         // Restore query
         query = queryCache.build(
           client,
-          {
-            ...client.getDefaultOptions().hydrate?.queries,
-            ...options?.defaultOptions?.queries,
-            queryKey,
-            queryHash,
-            meta,
-          },
+          queryOptions,
           // Reset fetch status to idle to avoid
           // query being stuck in fetching state upon hydration
           {
