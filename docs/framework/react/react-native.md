@@ -41,14 +41,23 @@ import { onlineManager } from '@tanstack/react-query'
 import * as Network from 'expo-network'
 
 onlineManager.setEventListener((setOnline) => {
-  Network.getNetworkStateAsync().then((state) => {
+  let initialised = false
+
+  const eventSubscription = Network.addNetworkStateListener((state) => {
+    initialised = true
     setOnline(!!state.isConnected)
   })
 
-  const eventSubscription = Network.addNetworkStateListener((state) => {
-    setOnline(!!state.isConnected)
-  })
-  
+  Network.getNetworkStateAsync()
+    .then((state) => {
+      if (!initialised) {
+        setOnline(!!state.isConnected)
+      }
+    })
+    .catch(() => {
+      // getNetworkStateAsync can reject on some platforms/SDK versions
+    })
+
   return eventSubscription.remove
 })
 ```
