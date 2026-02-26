@@ -1,0 +1,28 @@
+{
+  "name": "@tanstack/query-example-solid-offline",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/query-async-storage-persister": "^5.90.22",
+    "@tanstack/solid-query": "^5.90.23",
+    "@tanstack/solid-query-devtools": "^5.91.3",
+    "@tanstack/solid-query-persist-client": "^5.90.22",
+    "msw": "^2.6.6",
+    "solid-js": "^1.9.7"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3",
+    "vite": "^6.4.1",
+    "vite-plugin-solid": "^2.11.6"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

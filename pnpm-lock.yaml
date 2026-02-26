@@ -1590,6 +1590,37 @@ importers:
         specifier: ^2.11.6
         version: 2.11.10(@testing-library/jest-dom@6.9.1)(solid-js@1.9.11)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
 
+  examples/solid/offline:
+    dependencies:
+      '@tanstack/query-async-storage-persister':
+        specifier: ^5.90.22
+        version: link:../../../packages/query-async-storage-persister
+      '@tanstack/solid-query':
+        specifier: ^5.90.23
+        version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.91.3
+        version: link:../../../packages/solid-query-devtools
+      '@tanstack/solid-query-persist-client':
+        specifier: ^5.90.22
+        version: link:../../../packages/solid-query-persist-client
+      msw:
+        specifier: ^2.6.6
+        version: 2.12.9(@types/node@22.19.11)(typescript@5.8.3)
+      solid-js:
+        specifier: ^1.9.7
+        version: 1.9.11
+    devDependencies:
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.4.1
+        version: 6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
+      vite-plugin-solid:
+        specifier: ^2.11.6
+        version: 2.11.10(@testing-library/jest-dom@6.9.1)(solid-js@1.9.11)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
@@ -2311,13 +2342,13 @@ importers:
         version: 7.8.2
       vite-plugin-dts:
         specifier: 4.2.3
-        version: 4.2.3(@types/node@22.19.11)(rollup@4.57.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+        version: 4.2.3(@types/node@22.19.11)(rollup@4.57.1)(typescript@5.9.3)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
       vite-plugin-externalize-deps:
         specifier: ^0.9.0
         version: 0.9.0(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+        version: 5.1.4(typescript@5.9.3)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
     optionalDependencies:
       '@tanstack/query-devtools':
         specifier: workspace:*
@@ -2424,7 +2455,7 @@ importers:
         version: 6.6.5(preact@10.28.3)
       typescript-eslint:
         specifier: ^8.54.0
-        version: 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)
+        version: 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
 
   packages/query-async-storage-persister:
     dependencies:
@@ -2762,7 +2793,7 @@ importers:
     devDependencies:
       '@sveltejs/package':
         specifier: ^2.4.0
-        version: 2.5.7(svelte@5.51.5)(typescript@5.8.3)
+        version: 2.5.7(svelte@5.51.5)(typescript@5.9.3)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.1.1
         version: 5.1.1(svelte@5.51.5)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
@@ -2771,10 +2802,10 @@ importers:
         version: link:../query-test-utils
       '@testing-library/svelte':
         specifier: ^5.2.8
-        version: 5.3.1(svelte@5.51.5)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))(vitest@4.0.18(@types/node@22.19.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.9(@types/node@22.19.11)(typescript@5.8.3))(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+        version: 5.3.1(svelte@5.51.5)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))(vitest@4.0.18(@types/node@22.19.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.9(@types/node@22.19.11)(typescript@5.9.3))(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
       '@typescript-eslint/parser':
         specifier: ^8.48.0
-        version: 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)
+        version: 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
       eslint-plugin-svelte:
         specifier: ^3.11.0
         version: 3.14.0(eslint@9.39.3(jiti@2.6.1))(svelte@5.51.5)
@@ -2783,7 +2814,7 @@ importers:
         version: 5.51.5
       svelte-check:
         specifier: ^4.3.1
-        version: 4.3.6(picomatch@4.0.3)(svelte@5.51.5)(typescript@5.8.3)
+        version: 4.3.6(picomatch@4.0.3)(svelte@5.51.5)(typescript@5.9.3)
 
   packages/svelte-query-devtools:
     dependencies:
@@ -2796,7 +2827,7 @@ importers:
     devDependencies:
       '@sveltejs/package':
         specifier: ^2.4.0
-        version: 2.5.7(svelte@5.51.5)(typescript@5.8.3)
+        version: 2.5.7(svelte@5.51.5)(typescript@5.9.3)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.1.1
         version: 5.1.1(svelte@5.51.5)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
@@ -2805,7 +2836,7 @@ importers:
         version: link:../svelte-query
       '@typescript-eslint/parser':
         specifier: ^8.48.0
-        version: 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)
+        version: 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
       eslint-plugin-svelte:
         specifier: ^3.11.0
         version: 3.14.0(eslint@9.39.3(jiti@2.6.1))(svelte@5.51.5)
@@ -2814,7 +2845,7 @@ importers:
         version: 5.51.5
       svelte-check:
         specifier: ^4.3.1
-        version: 4.3.6(picomatch@4.0.3)(svelte@5.51.5)(typescript@5.8.3)
+        version: 4.3.6(picomatch@4.0.3)(svelte@5.51.5)(typescript@5.9.3)
 
   packages/svelte-query-persist-client:
     dependencies:
@@ -2824,7 +2855,7 @@ importers:
     devDependencies:
       '@sveltejs/package':
         specifier: ^2.4.0
-        version: 2.5.7(svelte@5.51.5)(typescript@5.8.3)
+        version: 2.5.7(svelte@5.51.5)(typescript@5.9.3)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.1.1
         version: 5.1.1(svelte@5.51.5)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
@@ -2836,10 +2867,10 @@ importers:
         version: link:../svelte-query
       '@testing-library/svelte':
         specifier: ^5.2.8
-        version: 5.3.1(svelte@5.51.5)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))(vitest@4.0.18(@types/node@22.19.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.9(@types/node@22.19.11)(typescript@5.8.3))(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+        version: 5.3.1(svelte@5.51.5)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))(vitest@4.0.18(@types/node@22.19.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.9(@types/node@22.19.11)(typescript@5.9.3))(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
       '@typescript-eslint/parser':
         specifier: ^8.48.0
-        version: 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)
+        version: 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
       eslint-plugin-svelte:
         specifier: ^3.11.0
         version: 3.14.0(eslint@9.39.3(jiti@2.6.1))(svelte@5.51.5)
@@ -2848,7 +2879,7 @@ importers:
         version: 5.51.5
       svelte-check:
         specifier: ^4.3.1
-        version: 4.3.6(picomatch@4.0.3)(svelte@5.51.5)(typescript@5.8.3)
+        version: 4.3.6(picomatch@4.0.3)(svelte@5.51.5)(typescript@5.9.3)
 
   packages/vue-query:
     dependencies:
@@ -4647,7 +4678,7 @@ packages:
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {node: '>=0.10.0'}
+    engines: {'0': node >=0.10.0}
 
   '@expo/cli@0.22.28':
     resolution: {integrity: sha512-lvt72KNitGuixYD2l3SZmRKVu2G4zJpmg5V7WfUBNpmUU5oODBw/6qmiJ6kSLAlfDozscUk+BBGknBBzxUrwrA==}
@@ -20278,14 +20309,14 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.3
 
-  '@sveltejs/package@2.5.7(svelte@5.51.5)(typescript@5.8.3)':
+  '@sveltejs/package@2.5.7(svelte@5.51.5)(typescript@5.9.3)':
     dependencies:
       chokidar: 5.0.0
       kleur: 4.1.5
       sade: 1.8.1
       semver: 7.7.4
       svelte: 5.51.5
-      svelte2tsx: 0.7.47(svelte@5.51.5)(typescript@5.8.3)
+      svelte2tsx: 0.7.47(svelte@5.51.5)(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -20593,14 +20624,14 @@ snapshots:
     dependencies:
       svelte: 5.51.5
 
-  '@testing-library/svelte@5.3.1(svelte@5.51.5)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))(vitest@4.0.18(@types/node@22.19.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.9(@types/node@22.19.11)(typescript@5.8.3))(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))':
+  '@testing-library/svelte@5.3.1(svelte@5.51.5)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))(vitest@4.0.18(@types/node@22.19.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.9(@types/node@22.19.11)(typescript@5.9.3))(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))':
     dependencies:
       '@testing-library/dom': 10.4.1
       '@testing-library/svelte-core': 1.0.0(svelte@5.51.5)
       svelte: 5.51.5
     optionalDependencies:
       vite: 6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
-      vitest: 4.0.18(@types/node@22.19.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.9(@types/node@22.19.11)(typescript@5.8.3))(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
+      vitest: 4.0.18(@types/node@22.19.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.9(@types/node@22.19.11)(typescript@5.9.3))(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
 
   '@tsconfig/svelte@5.0.7': {}
 
@@ -20792,6 +20823,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/eslint-plugin@8.55.0(@typescript-eslint/parser@8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@eslint-community/regexpp': 4.12.2
+      '@typescript-eslint/parser': 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/scope-manager': 8.55.0
+      '@typescript-eslint/type-utils': 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/visitor-keys': 8.55.0
+      eslint: 9.39.3(jiti@2.6.1)
+      ignore: 7.0.5
+      natural-compare: 1.4.0
+      ts-api-utils: 2.4.0(typescript@5.9.3)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@typescript-eslint/parser@8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.55.0
@@ -20815,7 +20862,6 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   '@typescript-eslint/project-service@8.55.0(typescript@5.8.3)':
     dependencies:
@@ -20834,7 +20880,6 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   '@typescript-eslint/rule-tester@8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)':
     dependencies:
@@ -20862,7 +20907,6 @@ snapshots:
   '@typescript-eslint/tsconfig-utils@8.55.0(typescript@5.9.3)':
     dependencies:
       typescript: 5.9.3
-    optional: true
 
   '@typescript-eslint/type-utils@8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)':
     dependencies:
@@ -20873,6 +20917,18 @@ snapshots:
       eslint: 9.39.3(jiti@2.6.1)
       ts-api-utils: 2.4.0(typescript@5.8.3)
       typescript: 5.8.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/type-utils@8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/types': 8.55.0
+      '@typescript-eslint/typescript-estree': 8.55.0(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
+      debug: 4.4.3
+      eslint: 9.39.3(jiti@2.6.1)
+      ts-api-utils: 2.4.0(typescript@5.9.3)
+      typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
 
@@ -20907,7 +20963,6 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   '@typescript-eslint/utils@8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)':
     dependencies:
@@ -20917,6 +20972,17 @@ snapshots:
       '@typescript-eslint/typescript-estree': 8.55.0(typescript@5.8.3)
       eslint: 9.39.3(jiti@2.6.1)
       typescript: 5.8.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/utils@8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.3(jiti@2.6.1))
+      '@typescript-eslint/scope-manager': 8.55.0
+      '@typescript-eslint/types': 8.55.0
+      '@typescript-eslint/typescript-estree': 8.55.0(typescript@5.9.3)
+      eslint: 9.39.3(jiti@2.6.1)
+      typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
 
@@ -21174,6 +21240,16 @@ snapshots:
       msw: 2.12.9(@types/node@22.19.11)(typescript@5.8.3)
       vite: 6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
 
+  '@vitest/mocker@4.0.18(msw@2.12.9(@types/node@22.19.11)(typescript@5.9.3))(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))':
+    dependencies:
+      '@vitest/spy': 4.0.18
+      estree-walker: 3.0.3
+      magic-string: 0.30.21
+    optionalDependencies:
+      msw: 2.12.9(@types/node@22.19.11)(typescript@5.9.3)
+      vite: 6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
+    optional: true
+
   '@vitest/pretty-format@4.0.18':
     dependencies:
       tinyrainbow: 3.0.3
@@ -21319,6 +21395,19 @@ snapshots:
       path-browserify: 1.0.1
     optionalDependencies:
       typescript: 5.8.3
+
+  '@vue/language-core@2.1.6(typescript@5.9.3)':
+    dependencies:
+      '@volar/language-core': 2.4.28
+      '@vue/compiler-dom': 3.5.28
+      '@vue/compiler-vue2': 2.7.16
+      '@vue/shared': 3.5.28
+      computeds: 0.0.1
+      minimatch: 9.0.5
+      muggle-string: 0.4.1
+      path-browserify: 1.0.1
+    optionalDependencies:
+      typescript: 5.9.3
 
   '@vue/language-core@2.2.12(typescript@5.8.3)':
     dependencies:
@@ -27288,6 +27377,32 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
+  msw@2.12.9(@types/node@22.19.11)(typescript@5.9.3):
+    dependencies:
+      '@inquirer/confirm': 5.1.21(@types/node@22.19.11)
+      '@mswjs/interceptors': 0.41.2
+      '@open-draft/deferred-promise': 2.2.0
+      '@types/statuses': 2.0.6
+      cookie: 1.1.1
+      graphql: 16.12.0
+      headers-polyfill: 4.0.3
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      path-to-regexp: 6.3.0
+      picocolors: 1.1.1
+      rettime: 0.10.1
+      statuses: 2.0.2
+      strict-event-emitter: 0.5.1
+      tough-cookie: 6.0.0
+      type-fest: 5.4.4
+      until-async: 3.0.2
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - '@types/node'
+    optional: true
+
   muggle-string@0.4.1: {}
 
   mute-stream@2.0.0: {}
@@ -30149,6 +30264,18 @@ snapshots:
     transitivePeerDependencies:
       - picomatch
 
+  svelte-check@4.3.6(picomatch@4.0.3)(svelte@5.51.5)(typescript@5.9.3):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      chokidar: 4.0.3
+      fdir: 6.5.0(picomatch@4.0.3)
+      picocolors: 1.1.1
+      sade: 1.8.1
+      svelte: 5.51.5
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - picomatch
+
   svelte-eslint-parser@1.4.1(svelte@5.51.5):
     dependencies:
       eslint-scope: 8.4.0
@@ -30160,12 +30287,12 @@ snapshots:
     optionalDependencies:
       svelte: 5.51.5
 
-  svelte2tsx@0.7.47(svelte@5.51.5)(typescript@5.8.3):
+  svelte2tsx@0.7.47(svelte@5.51.5)(typescript@5.9.3):
     dependencies:
       dedent-js: 1.0.1
       scule: 1.3.0
       svelte: 5.51.5
-      typescript: 5.8.3
+      typescript: 5.9.3
 
   svelte@5.51.5:
     dependencies:
@@ -30470,7 +30597,6 @@ snapshots:
   ts-api-utils@2.4.0(typescript@5.9.3):
     dependencies:
       typescript: 5.9.3
-    optional: true
 
   ts-declaration-location@1.0.7(typescript@5.8.3):
     dependencies:
@@ -30486,6 +30612,10 @@ snapshots:
   tsconfck@3.1.6(typescript@5.8.3):
     optionalDependencies:
       typescript: 5.8.3
+
+  tsconfck@3.1.6(typescript@5.9.3):
+    optionalDependencies:
+      typescript: 5.9.3
 
   tsconfig-paths@4.2.0:
     dependencies:
@@ -30667,6 +30797,17 @@ snapshots:
       '@typescript-eslint/utils': 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.8.3)
       eslint: 9.39.3(jiti@2.6.1)
       typescript: 5.8.3
+    transitivePeerDependencies:
+      - supports-color
+
+  typescript-eslint@8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3):
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 8.55.0(@typescript-eslint/parser@8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.55.0(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.55.0(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
+      eslint: 9.39.3(jiti@2.6.1)
+      typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
 
@@ -31134,6 +31275,25 @@ snapshots:
       - rollup
       - supports-color
 
+  vite-plugin-dts@4.2.3(@types/node@22.19.11)(rollup@4.57.1)(typescript@5.9.3)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)):
+    dependencies:
+      '@microsoft/api-extractor': 7.47.7(@types/node@22.19.11)
+      '@rollup/pluginutils': 5.3.0(rollup@4.57.1)
+      '@volar/typescript': 2.4.28
+      '@vue/language-core': 2.1.6(typescript@5.9.3)
+      compare-versions: 6.1.1
+      debug: 4.4.3
+      kolorist: 1.8.0
+      local-pkg: 0.5.1
+      magic-string: 0.30.21
+      typescript: 5.9.3
+    optionalDependencies:
+      vite: 6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
+    transitivePeerDependencies:
+      - '@types/node'
+      - rollup
+      - supports-color
+
   vite-plugin-externalize-deps@0.10.0(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)):
     dependencies:
       vite: 6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
@@ -31187,6 +31347,17 @@ snapshots:
       debug: 4.4.3
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.8.3)
+    optionalDependencies:
+      vite: 6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
+  vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)):
+    dependencies:
+      debug: 4.4.3
+      globrex: 0.1.2
+      tsconfck: 3.1.6(typescript@5.9.3)
     optionalDependencies:
       vite: 6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
     transitivePeerDependencies:
@@ -31272,6 +31443,45 @@ snapshots:
       - terser
       - tsx
       - yaml
+
+  vitest@4.0.18(@types/node@22.19.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.9(@types/node@22.19.11)(typescript@5.9.3))(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2):
+    dependencies:
+      '@vitest/expect': 4.0.18
+      '@vitest/mocker': 4.0.18(msw@2.12.9(@types/node@22.19.11)(typescript@5.9.3))(vite@6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+      '@vitest/pretty-format': 4.0.18
+      '@vitest/runner': 4.0.18
+      '@vitest/snapshot': 4.0.18
+      '@vitest/spy': 4.0.18
+      '@vitest/utils': 4.0.18
+      es-module-lexer: 1.7.0
+      expect-type: 1.3.0
+      magic-string: 0.30.21
+      obug: 2.1.1
+      pathe: 2.0.3
+      picomatch: 4.0.3
+      std-env: 3.10.0
+      tinybench: 2.9.0
+      tinyexec: 1.0.2
+      tinyglobby: 0.2.15
+      tinyrainbow: 3.0.3
+      vite: 6.4.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@types/node': 22.19.11
+      jsdom: 27.4.0
+    transitivePeerDependencies:
+      - jiti
+      - less
+      - lightningcss
+      - msw
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - terser
+      - tsx
+      - yaml
+    optional: true
 
   vlq@1.0.1: {}
 
