@@ -370,20 +370,11 @@ export class QueryClient {
 
     if (!isEnabled) {
       const queryData = query.state.data
-
-      if (queryData === undefined) {
-        throw new Error(
-          `Missing query data for disabled query. Query hash: '${query.queryHash}'`,
-        )
+      if (queryData != null) {
+        const select = defaultedOptions.select
+        if (select) return select(queryData)
+        return queryData as unknown as TData
       }
-
-      const select = defaultedOptions.select
-
-      if (select) {
-        return select(queryData)
-      }
-
-      return queryData as unknown as TData
     }
 
     const isStale = query.isStaleByTime(
