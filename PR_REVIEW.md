@@ -3,6 +3,7 @@
 ## Overview
 
 This PR implements [RFC #9135](https://github.com/TanStack/query/discussions/9135) by adding two new unified imperative methods to `QueryClient`:
+
 - **`query(options)`** — replaces `fetchQuery`, `prefetchQuery`, and `ensureQueryData`
 - **`infiniteQuery(options)`** — replaces `fetchInfiniteQuery`, `prefetchInfiniteQuery`, and `ensureInfiniteQueryData`
 
@@ -23,12 +24,12 @@ This PR implements [RFC #9135](https://github.com/TanStack/query/discussions/913
 
 ### Migration Paths Verified
 
-| Legacy Method | New Equivalent | Tested |
-|---|---|---|
-| `fetchQuery(opts)` | `query(opts)` | ✅ |
-| `prefetchQuery(opts)` | `void query(opts)` or `.catch(noop)` | ✅ (line 1650–1700) |
-| `ensureQueryData(opts)` | `query({...opts, staleTime: 'static'})` | ✅ (line 529–619) |
-| Background revalidation | `void query({...opts, staleTime: 0}).catch(noop)` | ✅ (line 592–619) |
+| Legacy Method           | New Equivalent                                    | Tested              |
+| ----------------------- | ------------------------------------------------- | ------------------- |
+| `fetchQuery(opts)`      | `query(opts)`                                     | ✅                  |
+| `prefetchQuery(opts)`   | `void query(opts)` or `.catch(noop)`              | ✅ (line 1650–1700) |
+| `ensureQueryData(opts)` | `query({...opts, staleTime: 'static'})`           | ✅ (line 529–619)   |
+| Background revalidation | `void query({...opts, staleTime: 0}).catch(noop)` | ✅ (line 592–619)   |
 
 ---
 
@@ -37,6 +38,7 @@ This PR implements [RFC #9135](https://github.com/TanStack/query/discussions/913
 ### Implementation (`queryClient.ts:344–474`)
 
 **Strengths:**
+
 - Clean, well-structured logic with clear branching for disabled/stale states
 - Properly defaults `retry: false` consistent with existing `fetchQuery`
 - Reuses `resolveEnabled` and `resolveStaleTime` utilities correctly
@@ -45,24 +47,29 @@ This PR implements [RFC #9135](https://github.com/TanStack/query/discussions/913
 **Issue 1 — Implicit `undefined` cast when not stale but cache is empty:**
 
 At `queryClient.ts:393–395`:
+
 ```typescript
 const queryData = isStale
   ? await query.fetch(defaultedOptions)
   : (query.state.data as TQueryData)
 ```
+
 If `enabled` is `true` (or unset) and data is not stale, `query.state.data` could theoretically be `undefined` if initialData was used to seed a query that was later cleared. The cast to `TQueryData` hides this. In practice `isStaleByTime` returns `true` when there's no data, so this is not a real bug — but the cast obscures the intent.
 
 **Issue 2 — `as any` cast in `infiniteQuery`:**
 
 At `queryClient.ts:473`:
+
 ```typescript
 return this.query(options as any)
 ```
+
 This bypasses type safety but is consistent with the existing `prefetchInfiniteQuery` and `fetchInfiniteQuery` patterns in the codebase. Accepted pattern.
 
 ### Types (`types.ts:493–593`)
 
 **Strengths:**
+
 - `QueryExecuteOptions` correctly adds `enabled` and `select` which `FetchQueryOptions` lacks
 - `initialPageParam?: never` prevents misuse on non-infinite queries
 - `InfiniteQueryExecuteOptions` uses the `InfiniteQueryPages` discriminated union correctly (pages requires getNextPageParam)
@@ -85,6 +92,7 @@ Follows the established pattern exactly — multiple overloads for `MaybeRefDeep
 **Coverage:** 100% statement, branch, function, and line coverage on `queryClient.ts`. ✅
 
 **Test quality is high overall:**
+
 - Tests match their descriptions accurately
 - Good edge case coverage: falsy cached data (`null`, `0`), `enabled` as callback returning `false`, `staleTime` boundary conditions, gc behavior
 - The `static` staleTime invalidation bypass test (lines 1098–1125) is particularly well-designed — it invalidates with `refetchType: 'none'` and verifies the query still returns the stale cache
@@ -93,6 +101,7 @@ Follows the established pattern exactly — multiple overloads for `MaybeRefDeep
 ### Type Tests (`queryClient.test-d.tsx`, `queryOptions.test-d.tsx`, `infiniteQueryOptions.test-d.tsx`)
 
 **Excellent coverage:**
+
 - `select` transforms return type correctly
 - `skipToken` + `select` type inference works
 - `skipToken` + `enabled: false` + `select` works
@@ -136,14 +145,14 @@ The following cases should be added:
 
 ## Summary
 
-| Category | Rating |
-|---|---|
-| RFC Compliance | ✅ Fully compliant |
-| Code correctness | ✅ No bugs found |
-| Existing patterns | ✅ Follows codebase conventions |
-| Type safety | ✅ Well-typed, proper generics |
-| Test coverage (%) | ✅ 100% on queryClient.ts |
-| Test quality | ⚠️ High, with a few gaps noted above |
-| Build health | ⚠️ Investigate solid-query build failure |
+| Category          | Rating                                   |
+| ----------------- | ---------------------------------------- |
+| RFC Compliance    | ✅ Fully compliant                       |
+| Code correctness  | ✅ No bugs found                         |
+| Existing patterns | ✅ Follows codebase conventions          |
+| Type safety       | ✅ Well-typed, proper generics           |
+| Test coverage (%) | ✅ 100% on queryClient.ts                |
+| Test quality      | ⚠️ High, with a few gaps noted above     |
+| Build health      | ⚠️ Investigate solid-query build failure |
 
 **Overall: This is a well-implemented PR that faithfully follows the RFC design.** The code is clean, follows existing patterns, and has excellent type safety. The primary action items before merging are: adding the ~5 missing edge-case tests, verifying the solid-query build failure is not caused by this change, and planning the deprecation of old methods.
