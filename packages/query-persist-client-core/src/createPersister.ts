@@ -131,7 +131,13 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       try {
         const storedData = await storage.getItem(storageKey)
         if (storedData) {
-          const persistedQuery = await deserialize(storedData)
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(storedData)
+          } catch {
+            await storage.removeItem(storageKey)
+            return
+          }
 
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(storageKey)
