@@ -1419,6 +1419,10 @@
             {
               "label": "Astro",
               "to": "framework/solid/examples/astro"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/solid/examples/offline"
             }
           ]
         },

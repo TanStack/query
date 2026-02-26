@@ -12,6 +12,6 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: null,
     }
 
-    expect(infiniteQueryOptions(object)).toStrictEqual(object)
+    expect(infiniteQueryOptions(object)).toBe(object)
   })
 })

@@ -301,6 +301,47 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     }
   }
 
+  async function removeQueries(
+    filters: Pick<QueryFilters, 'queryKey' | 'exact'> = {},
+  ): Promise<void> {
+    const { exact, queryKey } = filters
+
+    if (storage?.entries) {
+      const entries = await storage.entries()
+      const storageKeyPrefix = `${prefix}-`
+      for (const [key, value] of entries) {
+        if (key.startsWith(storageKeyPrefix)) {
+          if (!queryKey) {
+            await storage.removeItem(key)
+            continue
+          }
+
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(value)
+          } catch {
+            await storage.removeItem(key)
+            continue
+          }
+
+          if (exact) {
+            if (persistedQuery.queryHash !== hashKey(queryKey)) {
+              continue
+            }
+          } else if (!partialMatchKey(persistedQuery.queryKey, queryKey)) {
+            continue
+          }
+
+          await storage.removeItem(key)
+        }
+      }
+    } else if (process.env.NODE_ENV === 'development') {
+      throw new Error(
+        'Provided storage does not implement `entries` method. Removal of stored entries is not possible without ability to iterate over storage items.',
+      )
+    }
+  }
+
   return {
     persisterFn,
     persistQuery,
@@ -308,5 +349,6 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     retrieveQuery,
     persisterGc,
     restoreQueries,
+    removeQueries,
   }
 }
