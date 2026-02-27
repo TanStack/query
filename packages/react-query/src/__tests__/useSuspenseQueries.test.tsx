@@ -833,4 +833,57 @@ describe('useSuspenseQueries 2', () => {
     consoleErrorSpy.mockRestore()
     process.env.NODE_ENV = envCopy
   })
+
+  it('should only suspend queries that are pending when some queries already have data', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    queryClient.setQueryData(key1, 'cached')
+
+    function Page() {
+      const [result1, result2] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(2000).then(() => 'data1'),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(1000).then(() => 'data2'),
+          },
+        ],
+      })
+
+      return (
+        <div>
+          <div>data1: {result1.data}</div>
+          <div>data2: {result2.data}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback={<div>loading</div>}>
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    // key2 resolves: suspend lifts, key1 shows cached data, key2 shows fresh data
+    await act(() => vi.advanceTimersByTimeAsync(1000))
+
+    expect(rendered.getByText('data1: cached')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2')).toBeInTheDocument()
+
+    // key1 stale timer fires, triggering background refetch
+    await act(() => vi.advanceTimersByTimeAsync(1000))
+
+    // key1 background refetch completes: key1 updates to fresh data
+    await act(() => vi.advanceTimersByTimeAsync(2000))
+
+    expect(rendered.getByText('data1: data1')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2')).toBeInTheDocument()
+  })
 })

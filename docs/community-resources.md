@@ -176,6 +176,11 @@ others:
       description: '🥬 OpenAPI to React Query (or SWR) & Axios',
     },
     {
+      title: 'Tanstack Query Visualizer',
+      url: 'https://tanstack-query-visualizer.sofi.coop/',
+      description: 'An interactive sandbox that visualizes the relationship between mutations and query keys.',
+    },
+    {
       title: 'ts-rest',
       url: 'https://ts-rest.com/',
       description: 'Incrementally adoptable type-safety for your new and existing APIs',
