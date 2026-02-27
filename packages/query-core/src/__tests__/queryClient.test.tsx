@@ -1448,7 +1448,6 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn,
         initialPageParam: 0,
-        enabled: false,
         select: (data) => data.pages.map((page) => `${page}-selected`),
       })
 
