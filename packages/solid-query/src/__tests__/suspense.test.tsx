@@ -951,4 +951,76 @@ describe("useQuery's in Suspense mode", () => {
     expect(renders).toBe(2)
     expect(rendered.queryByText('rendered')).toBeInTheDocument()
   })
+
+  it('should not trigger suspense when setQueryData is called with pre-cached data and refetchOnMount: false', async () => {
+    const key = queryKey()
+    let suspenseCount = 0
+
+    const localQueryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchOnMount: false,
+        },
+      },
+    })
+
+    localQueryClient.setQueryData(key, { likes: 42 })
+
+    function Loading() {
+      suspenseCount++
+      return <div>loading</div>
+    }
+
+    function Example() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => Promise.resolve({ likes: 42 }),
+      }))
+
+      const mutate = () => {
+        const old = localQueryClient.getQueryData(key) as { likes: number }
+        localQueryClient.setQueryData(key, {
+          ...old,
+          likes: old.likes + 1,
+        })
+      }
+
+      return (
+        <div>
+          <span data-testid="likes">{query.data?.likes}</span>
+          <button data-testid="mutate" onClick={mutate}>
+            mutate
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={localQueryClient}>
+        <Suspense fallback={<Loading />}>
+          <Example />
+        </Suspense>
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Initial render should show cached data without triggering suspense
+    expect(rendered.getByTestId('likes').textContent).toBe('42')
+    expect(suspenseCount).toBe(0)
+
+    // First mutation
+    fireEvent.click(rendered.getByTestId('mutate'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('likes').textContent).toBe('43')
+    expect(suspenseCount).toBe(0)
+
+    // Second mutation
+    fireEvent.click(rendered.getByTestId('mutate'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByTestId('likes').textContent).toBe('44')
+
+    // Suspense should never trigger when data is already cached
+    expect(suspenseCount).toBe(0)
+  })
 })
