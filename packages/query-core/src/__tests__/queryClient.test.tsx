@@ -981,6 +981,7 @@ describe('queryClient', () => {
     test('should throw when disabled and no cached data exists', async () => {
       const key = queryKey()
       const queryFn = vi.fn(() => Promise.resolve('data'))
+      const errorMsg = `Query is disabled and no cached data is available for key: '${JSON.stringify(key)}'`
 
       await expect(
         queryClient.query({
@@ -988,7 +989,7 @@ describe('queryClient', () => {
           queryFn,
           enabled: false,
         }),
-      ).rejects.toThrowError('Missing query data for disabled query')
+      ).rejects.toThrowError(errorMsg)
 
       expect(queryFn).not.toHaveBeenCalled()
     })
@@ -1420,6 +1421,7 @@ describe('queryClient', () => {
       const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
         Promise.resolve(pageParam),
       )
+      const errorMsg = `Query is disabled and no cached data is available for key: '${JSON.stringify(key)}'`
 
       await expect(
         queryClient.infiniteQuery({
@@ -1428,7 +1430,7 @@ describe('queryClient', () => {
           initialPageParam: 0,
           enabled: false,
         }),
-      ).rejects.toThrow('Missing query data for disabled query')
+      ).rejects.toThrow(errorMsg)
 
       expect(queryFn).not.toHaveBeenCalled()
     })
@@ -1436,7 +1438,7 @@ describe('queryClient', () => {
     test('should return cached data when disabled and apply select', async () => {
       const key = queryKey()
       const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
-        Promise.resolve(String(pageParam)),
+        Promise.resolve(`'fetched-${String(pageParam)}`),
       )
 
       queryClient.setQueryData(key, {
@@ -1448,6 +1450,7 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn,
         initialPageParam: 0,
+        enabled: false,
         select: (data) => data.pages.map((page) => `${page}-selected`),
       })
 
