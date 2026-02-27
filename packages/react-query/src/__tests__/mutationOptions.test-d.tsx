@@ -4,8 +4,10 @@ import { useIsMutating, useMutation, useMutationState } from '..'
 import { mutationOptions } from '../mutationOptions'
 import type {
   DefaultError,
+  InferErrorFromFn,
   MutationFunctionContext,
   MutationState,
+  Throws,
   WithRequired,
 } from '@tanstack/query-core'
 import type { UseMutationOptions, UseMutationResult } from '../types'
@@ -212,6 +214,70 @@ describe('mutationOptions', () => {
       filters: mutationOptions({
         mutationFn: () => Promise.resolve(5),
       }),
+    })
+  })
+
+  describe('Throws pattern for typed errors', () => {
+    // Custom error type
+    class ApiError extends Error {
+      constructor(
+        public code: number,
+        message: string,
+      ) {
+        super(message)
+      }
+    }
+
+    // Data and variables types
+    type User = { id: string; name: string }
+    type CreateUserInput = { name: string }
+
+    // Function that declares what error it can throw using Throws<E>
+    const createUser = async (
+      _input: CreateUserInput,
+    ): Promise<User & Throws<ApiError>> => {
+      throw new ApiError(400, 'Validation failed')
+    }
+
+    it('should allow explicit error type using generics', () => {
+      const mutation = useMutation<User, ApiError, CreateUserInput>({
+        mutationFn: createUser,
+      })
+
+      expectTypeOf(mutation.data).toEqualTypeOf<User | undefined>()
+      expectTypeOf(mutation.error).toEqualTypeOf<ApiError | null>()
+    })
+
+    it('should infer error type from Throws return type', () => {
+      const mutation = useMutation({
+        mutationFn: createUser,
+      })
+
+      expectTypeOf(mutation.data).toEqualTypeOf<User | undefined>()
+      expectTypeOf(mutation.error).toEqualTypeOf<ApiError | null>()
+    })
+
+    it('should allow using InferErrorFromFn helper to extract error type', () => {
+      type CreateUserError = InferErrorFromFn<typeof createUser>
+      expectTypeOf<CreateUserError>().toEqualTypeOf<ApiError>()
+
+      const mutation = useMutation<
+        User,
+        InferErrorFromFn<typeof createUser>,
+        CreateUserInput
+      >({
+        mutationFn: createUser,
+      })
+
+      expectTypeOf(mutation.data).toEqualTypeOf<User | undefined>()
+      expectTypeOf(mutation.error).toEqualTypeOf<ApiError | null>()
+    })
+
+    it('should infer DefaultError when function does not use Throws', () => {
+      const mutateData = async (): Promise<string> => 'data'
+
+      type MutateDataError = InferErrorFromFn<typeof mutateData>
+      expectTypeOf<MutateDataError>().toEqualTypeOf<Error>()
     })
   })
 })
