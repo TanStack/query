@@ -369,12 +369,14 @@ export class QueryClient {
     const isEnabled = resolveEnabled(defaultedOptions.enabled, query) !== false
 
     if (!isEnabled) {
-      const queryData = query.state.data
-      if (queryData != null) {
-        const select = defaultedOptions.select
-        if (select) return select(queryData)
-        return queryData as unknown as TData
+      if (query.state.data !== undefined) {
+        return Promise.resolve(query.state.data as TData)
       }
+      return Promise.reject(
+        new Error(
+          `Query is disabled and no cached data is available for key: '${defaultedOptions.queryHash}'`,
+        ),
+      )
     }
 
     const isStale = query.isStaleByTime(
