@@ -1,4 +1,8 @@
-import { isServer, noop, notifyManager } from '@tanstack/query-core'
+import {
+  environmentManager,
+  noop,
+  notifyManager,
+} from '@tanstack/query-core'
 import type {
   QueryClient,
   QueryKey,
@@ -147,7 +151,7 @@ export function useBaseQuery<
 
   if (
     defaultedOptions.experimental_prefetchInRender &&
-    !isServer &&
+    !environmentManager.isServer() &&
     willFetch(result, isRestoring)
   ) {
     const promise = isNewCacheEntry

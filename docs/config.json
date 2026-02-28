@@ -910,6 +910,10 @@
           "to": "reference/onlineManager"
         },
         {
+          "label": "environmentManager",
+          "to": "reference/environmentManager"
+        },
+        {
           "label": "notifyManager",
           "to": "reference/notifyManager"
         },
