@@ -64,6 +64,16 @@ Its available methods are:
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
   - You can also define defaults to be used for [hydration](../framework/react/reference/hydration.md)
+- `isServer?: boolean`
+  - Optional
+  - Overrides environment detection for this client.
+  - Defaults to the exported `isServer` value from `@tanstack/query-core`.
+  - Use this when your runtime does not match the default detection.
+
+**Properties**
+
+- `queryClient.isServer: boolean`
+  - The resolved server detection used by this `QueryClient` instance.
 
 ## `queryClient.fetchQuery`
 

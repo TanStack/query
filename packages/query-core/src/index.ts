@@ -40,6 +40,7 @@ export type { MutationFilters, QueryFilters, SkipToken, Updater } from './utils'
 
 /** @deprecated
  * use `queryClient.isServer` instead.
+ * Override per client with `new QueryClient({ isServer })`.
  */
 export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 

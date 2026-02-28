@@ -1356,6 +1356,11 @@ export interface QueryClientConfig {
   queryCache?: QueryCache
   mutationCache?: MutationCache
   defaultOptions?: DefaultOptions
+  /**
+   * Overrides environment detection for this client.
+   * When `true`, defaults that depend on server detection behave as server-side.
+   * Defaults to the exported `isServer` value.
+   */
   isServer?: boolean
 }
 

@@ -67,6 +67,10 @@ export class QueryClient {
   #mountCount: number
   #unsubscribeFocus?: () => void
   #unsubscribeOnline?: () => void
+  /**
+   * Resolved server detection for this client instance.
+   * Derived from `QueryClientConfig.isServer` or the default `isServer` export.
+   */
   readonly isServer: boolean
 
   constructor(config: QueryClientConfig = {}) {
