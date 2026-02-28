@@ -1,11 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import {
-  environmentManager,
-  noop,
-  notifyManager,
-} from '@tanstack/query-core'
+import { environmentManager, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {

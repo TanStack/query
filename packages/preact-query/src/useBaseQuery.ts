@@ -1,8 +1,4 @@
-import {
-  environmentManager,
-  noop,
-  notifyManager,
-} from '@tanstack/query-core'
+import { environmentManager, noop, notifyManager } from '@tanstack/query-core'
 import type {
   QueryClient,
   QueryKey,

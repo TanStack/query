@@ -25,9 +25,7 @@ export class EnvironmentManager {
    */
   setIsServer(isServerValue: IsServerValue): void {
     this.#isServer =
-      typeof isServerValue === 'function'
-        ? isServerValue
-        : () => isServerValue
+      typeof isServerValue === 'function' ? isServerValue : () => isServerValue
   }
 }
 
