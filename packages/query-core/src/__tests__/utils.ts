@@ -21,7 +21,7 @@ export function executeMutation<TVariables>(
 }
 
 export function setIsServer(value: boolean) {
-  environmentManager.setIsServer(value)
+  environmentManager.setIsServer(() => value)
   return () => {
     environmentManager.setIsServer(() => isServer)
   }

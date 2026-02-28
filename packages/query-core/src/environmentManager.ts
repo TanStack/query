@@ -1,35 +1,25 @@
 import { isServer } from './utils'
 
-type IsServerValue = boolean | (() => boolean)
+export type IsServerValue = () => boolean
 
 /**
  * Manages environment detection used by TanStack Query internals.
  */
-export class EnvironmentManager {
-  #isServer: () => boolean
+export const environmentManager = (() => {
+  let isServerFn: IsServerValue = () => isServer
 
-  constructor() {
-    this.#isServer = () => isServer
+  return {
+    /**
+     * Returns whether the current runtime should be treated as a server environment.
+     */
+    isServer(): boolean {
+      return isServerFn()
+    },
+    /**
+     * Overrides the server check globally.
+     */
+    setIsServer(isServerValue: IsServerValue): void {
+      isServerFn = isServerValue
+    },
   }
-
-  /**
-   * Returns whether the current runtime should be treated as a server environment.
-   */
-  isServer(): boolean {
-    return this.#isServer()
-  }
-
-  /**
-   * Overrides the server check globally.
-   * Accepts either a boolean value or a function that returns a boolean.
-   */
-  setIsServer(isServerValue: IsServerValue): void {
-    this.#isServer =
-      typeof isServerValue === 'function' ? isServerValue : () => isServerValue
-  }
-}
-
-/**
- * Global manager instance for environment detection.
- */
-export const environmentManager = new EnvironmentManager()
+})()

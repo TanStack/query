@@ -11,10 +11,10 @@ describe('environmentManager', () => {
   })
 
   test('should allow overriding isServer globally', () => {
-    environmentManager.setIsServer(true)
+    environmentManager.setIsServer(() => true)
     expect(environmentManager.isServer()).toBe(true)
 
-    environmentManager.setIsServer(false)
+    environmentManager.setIsServer(() => false)
     expect(environmentManager.isServer()).toBe(false)
   })
 

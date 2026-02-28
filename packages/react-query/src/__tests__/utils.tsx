@@ -57,7 +57,7 @@ export function setActTimeout(fn: () => void, ms?: number) {
 }
 
 export function setIsServer(value: boolean) {
-  environmentManager.setIsServer(value)
+  environmentManager.setIsServer(() => value)
   return () => {
     environmentManager.setIsServer(() => isServer)
   }

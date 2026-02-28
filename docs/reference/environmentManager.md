@@ -31,10 +31,7 @@ Overrides the server check globally.
 ```tsx
 import { environmentManager } from '@tanstack/react-query'
 
-// Static override
-environmentManager.setIsServer(false)
-
-// Dynamic override
+// Override
 environmentManager.setIsServer(() => {
   return typeof window === 'undefined' && !('chrome' in globalThis)
 })
@@ -42,7 +39,7 @@ environmentManager.setIsServer(() => {
 
 **Options**
 
-- `isServerValue: boolean | (() => boolean)`
+- `isServerValue: () => boolean`
 
 To restore the default behavior, set the function back to query-core's `isServer` utility:
 
