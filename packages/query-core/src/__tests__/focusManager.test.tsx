@@ -61,11 +61,15 @@ describe('focusManager', () => {
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
     const subscribe = () => focusManager.subscribe(() => undefined)
+    let firstUnsubscribe: (() => void) | undefined
 
-    expect(subscribe).not.toThrow()
-    const unsubscribe = subscribe()
+    expect(() => {
+      firstUnsubscribe = subscribe()
+    }).not.toThrow()
+    const secondUnsubscribe = subscribe()
 
-    unsubscribe()
+    firstUnsubscribe?.()
+    secondUnsubscribe()
 
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
 

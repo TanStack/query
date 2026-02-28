@@ -19,7 +19,11 @@ describe('environmentManager', () => {
   })
 
   test('should allow overriding isServer with a function', () => {
-    environmentManager.setIsServer(() => true)
+    let server = true
+    environmentManager.setIsServer(() => server)
     expect(environmentManager.isServer()).toBe(true)
+
+    server = false
+    expect(environmentManager.isServer()).toBe(false)
   })
 })

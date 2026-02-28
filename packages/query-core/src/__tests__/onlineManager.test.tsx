@@ -69,10 +69,8 @@ describe('onlineManager', () => {
     )
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
-    const subscribe = () => onlineManager.subscribe(() => undefined)
-
-    expect(subscribe).not.toThrow()
-    const unsubscribe = subscribe()
+    const unsubscribe = onlineManager.subscribe(() => undefined)
+    expect(unsubscribe).toBeInstanceOf(Function)
 
     unsubscribe()
 
