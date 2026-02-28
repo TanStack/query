@@ -64,7 +64,9 @@ describe('onlineManager', () => {
 
   test('cleanup (removeEventListener) should not be called if window is not defined', () => {
     const windowSpy = vi.spyOn(globalThis, 'window', 'get')
-    windowSpy.mockImplementation(() => undefined as unknown as Window & typeof globalThis)
+    windowSpy.mockImplementation(
+      () => undefined as unknown as Window & typeof globalThis,
+    )
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
     const subscribe = () => onlineManager.subscribe(() => undefined)

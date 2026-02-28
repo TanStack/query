@@ -46,8 +46,7 @@ export class QueryClient extends QC {
     }
     super(vueQueryConfig)
     this.isServer =
-      config.isServer ??
-      (typeof window === 'undefined' || 'Deno' in globalThis)
+      config.isServer ?? (typeof window === 'undefined' || 'Deno' in globalThis)
   }
 
   isRestoring?: Ref<boolean> = ref(false)
