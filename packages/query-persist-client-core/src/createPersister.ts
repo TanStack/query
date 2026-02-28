@@ -131,7 +131,13 @@ export function experimental_createQueryPersister<TStorageValue = string>({
       try {
         const storedData = await storage.getItem(storageKey)
         if (storedData) {
-          const persistedQuery = await deserialize(storedData)
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(storedData)
+          } catch {
+            await storage.removeItem(storageKey)
+            return
+          }
 
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(storageKey)
@@ -241,11 +247,17 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
   async function persisterGc() {
     if (storage?.entries) {
+      const storageKeyPrefix = `${prefix}-`
       const entries = await storage.entries()
       for (const [key, value] of entries) {
-        if (key.startsWith(prefix)) {
-          const persistedQuery = await deserialize(value)
-
+        if (key.startsWith(storageKeyPrefix)) {
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(value)
+          } catch {
+            await storage.removeItem(key)
+            continue
+          }
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(key)
           }
@@ -265,11 +277,17 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     const { exact, queryKey } = filters
 
     if (storage?.entries) {
+      const storageKeyPrefix = `${prefix}-`
       const entries = await storage.entries()
       for (const [key, value] of entries) {
-        if (key.startsWith(prefix)) {
-          const persistedQuery = await deserialize(value)
-
+        if (key.startsWith(storageKeyPrefix)) {
+          let persistedQuery: PersistedQuery
+          try {
+            persistedQuery = await deserialize(value)
+          } catch {
+            await storage.removeItem(key)
+            continue
+          }
           if (isExpiredOrBusted(persistedQuery)) {
             await storage.removeItem(key)
             continue
