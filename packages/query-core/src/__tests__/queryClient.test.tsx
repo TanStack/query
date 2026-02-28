@@ -58,6 +58,19 @@ describe('queryClient', () => {
       expect(newQuery?.options.gcTime).toBe(Infinity)
     })
 
+    test('should allow overriding server detection for gcTime defaults', async () => {
+      const key = queryKey()
+      const testClient = new QueryClient({ isServer: true })
+
+      await testClient.prefetchQuery({
+        queryKey: key,
+        queryFn: () => Promise.resolve('data'),
+      })
+
+      const newQuery = testClient.getQueryCache().find({ queryKey: key })
+      expect(newQuery?.gcTime).toBe(Infinity)
+    })
+
     test('should get defaultOptions', () => {
       const queryFn = () => 'data'
       const defaultOptions = { queries: { queryFn } }

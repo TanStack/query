@@ -27,7 +27,6 @@ export {
 } from './timeoutManager'
 export {
   hashKey,
-  isServer,
   keepPreviousData,
   matchMutation,
   matchQuery,
@@ -38,6 +37,11 @@ export {
   skipToken,
 } from './utils'
 export type { MutationFilters, QueryFilters, SkipToken, Updater } from './utils'
+
+/** @deprecated
+ * use `queryClient.isServer` instead.
+ */
+export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 
 export { streamedQuery as experimental_streamedQuery } from './streamedQuery'
 

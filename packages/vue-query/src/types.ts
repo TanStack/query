@@ -75,4 +75,5 @@ export interface QueryClientConfig {
   queryCache?: QueryCache
   mutationCache?: MutationCache
   defaultOptions?: DefaultOptions
+  isServer?: boolean
 }

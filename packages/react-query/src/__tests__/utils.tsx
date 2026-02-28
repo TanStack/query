@@ -1,7 +1,6 @@
 import { vi } from 'vitest'
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-import * as utils from '@tanstack/query-core'
 import { QueryClientProvider, onlineManager } from '..'
 import type { QueryClient } from '..'
 import type { MockInstance } from 'vitest'
@@ -54,19 +53,4 @@ export function setActTimeout(fn: () => void, ms?: number) {
       fn()
     })
   }, ms)
-}
-
-// This monkey-patches the isServer-value from utils,
-// so that we can pretend to be in a server environment
-export function setIsServer(isServer: boolean) {
-  const original = utils.isServer
-  Object.defineProperty(utils, 'isServer', {
-    get: () => isServer,
-  })
-
-  return () => {
-    Object.defineProperty(utils, 'isServer', {
-      get: () => original,
-    })
-  }
 }

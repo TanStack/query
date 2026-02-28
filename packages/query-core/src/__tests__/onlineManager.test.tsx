@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { OnlineManager } from '../onlineManager'
-import { setIsServer } from './utils'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager
@@ -64,17 +63,20 @@ describe('onlineManager', () => {
   })
 
   test('cleanup (removeEventListener) should not be called if window is not defined', () => {
-    const restoreIsServer = setIsServer(true)
-
+    const windowSpy = vi.spyOn(globalThis, 'window', 'get')
+    windowSpy.mockImplementation(() => undefined as unknown as Window & typeof globalThis)
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
-    const unsubscribe = onlineManager.subscribe(() => undefined)
+    const subscribe = () => onlineManager.subscribe(() => undefined)
+
+    expect(subscribe).not.toThrow()
+    const unsubscribe = subscribe()
 
     unsubscribe()
 
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
 
-    restoreIsServer()
+    windowSpy.mockRestore()
   })
 
   test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {

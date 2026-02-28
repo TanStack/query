@@ -1356,6 +1356,7 @@ export interface QueryClientConfig {
   queryCache?: QueryCache
   mutationCache?: MutationCache
   defaultOptions?: DefaultOptions
+  isServer?: boolean
 }
 
 export interface DefaultOptions<TError = DefaultError> {

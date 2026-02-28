@@ -67,6 +67,7 @@ export class QueryClient {
   #mountCount: number
   #unsubscribeFocus?: () => void
   #unsubscribeOnline?: () => void
+  readonly isServer: boolean
 
   constructor(config: QueryClientConfig = {}) {
     this.#queryCache = config.queryCache || new QueryCache()
@@ -75,6 +76,8 @@ export class QueryClient {
     this.#queryDefaults = new Map()
     this.#mutationDefaults = new Map()
     this.#mountCount = 0
+    this.isServer =
+      config.isServer ?? (typeof window === 'undefined' || 'Deno' in globalThis)
   }
 
   mount(): void {

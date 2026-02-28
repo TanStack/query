@@ -13,18 +13,15 @@ import {
   useQueries,
   useQuery,
 } from '..'
-import { setIsServer } from './utils'
 
 describe('Server Side Rendering', () => {
-  setIsServer(true)
-
   let queryCache: QueryCache
   let queryClient: QueryClient
 
   beforeEach(() => {
     vi.useFakeTimers()
     queryCache = new QueryCache()
-    queryClient = new QueryClient({ queryCache })
+    queryClient = new QueryClient({ queryCache, isServer: true })
   })
 
   afterEach(() => {

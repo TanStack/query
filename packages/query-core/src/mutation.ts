@@ -118,7 +118,7 @@ export class Mutation<
   ): void {
     this.options = options
 
-    this.updateGcTime(this.options.gcTime)
+    this.updateGcTime(this.options.gcTime, this.#client.isServer)
   }
 
   get meta(): MutationMeta | undefined {
@@ -199,6 +199,7 @@ export class Mutation<
       retry: this.options.retry ?? 0,
       retryDelay: this.options.retryDelay,
       networkMode: this.options.networkMode,
+      isServer: this.#client.isServer,
       canRun: () => this.#mutationCache.canRun(this),
     })
 

@@ -1,5 +1,4 @@
 import { isVue2 } from 'vue-demi'
-import { isServer } from '@tanstack/query-core'
 
 import { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
@@ -38,7 +37,7 @@ export const VueQueryPlugin = {
       client = new QueryClient(clientConfig)
     }
 
-    if (!isServer) {
+    if (!client.isServer) {
       client.mount()
     }
 

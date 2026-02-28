@@ -10,7 +10,6 @@ import {
   hydrate,
   useQuery,
 } from '..'
-import { setIsServer } from './utils'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   let root: any
@@ -63,11 +62,10 @@ describe('Server side rendering with de/rehydration', () => {
     }
 
     // -- Server part --
-    setIsServer(true)
-
     const prefetchCache = new QueryCache()
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
+      isServer: true,
     })
     await prefetchClient.prefetchQuery({
       queryKey: ['success'],
@@ -77,6 +75,7 @@ describe('Server side rendering with de/rehydration', () => {
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
       queryCache: renderCache,
+      isServer: true,
     })
     hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
@@ -86,7 +85,6 @@ describe('Server side rendering with de/rehydration', () => {
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     renderClient.clear()
-    setIsServer(false)
 
     const expectedMarkup =
       'SuccessComponent - status:success fetching:true data:success'
@@ -141,10 +139,10 @@ describe('Server side rendering with de/rehydration', () => {
     }
 
     // -- Server part --
-    setIsServer(true)
     const prefetchCache = new QueryCache()
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
+      isServer: true,
     })
     await prefetchClient.prefetchQuery({
       queryKey: ['error'],
@@ -154,6 +152,7 @@ describe('Server side rendering with de/rehydration', () => {
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
       queryCache: renderCache,
+      isServer: true,
     })
     hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
@@ -163,7 +162,6 @@ describe('Server side rendering with de/rehydration', () => {
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     renderClient.clear()
-    setIsServer(false)
 
     const expectedMarkup =
       'ErrorComponent - status:pending fetching:true data:undefined'
@@ -217,11 +215,9 @@ describe('Server side rendering with de/rehydration', () => {
     }
 
     // -- Server part --
-    setIsServer(true)
-
-    const prefetchClient = new QueryClient()
+    const prefetchClient = new QueryClient({ isServer: true })
     const dehydratedStateServer = dehydrate(prefetchClient)
-    const renderClient = new QueryClient()
+    const renderClient = new QueryClient({ isServer: true })
     hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
@@ -230,7 +226,6 @@ describe('Server side rendering with de/rehydration', () => {
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     renderClient.clear()
-    setIsServer(false)
 
     const expectedMarkup =
       'SuccessComponent - status:pending fetching:true data:undefined'

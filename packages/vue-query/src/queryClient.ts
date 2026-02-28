@@ -35,13 +35,19 @@ import type {
 } from '@tanstack/query-core'
 
 export class QueryClient extends QC {
+  readonly isServer: boolean
+
   constructor(config: QueryClientConfig = {}) {
     const vueQueryConfig = {
       defaultOptions: config.defaultOptions,
       queryCache: config.queryCache || new QueryCache(),
       mutationCache: config.mutationCache || new MutationCache(),
+      isServer: config.isServer,
     }
     super(vueQueryConfig)
+    this.isServer =
+      config.isServer ??
+      (typeof window === 'undefined' || 'Deno' in globalThis)
   }
 
   isRestoring?: Ref<boolean> = ref(false)

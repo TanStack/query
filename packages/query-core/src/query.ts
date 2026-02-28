@@ -180,11 +180,11 @@ export class Query<
     super()
 
     this.#abortSignalConsumed = false
+    this.#client = config.client
+    this.#cache = this.#client.getQueryCache()
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
-    this.#client = config.client
-    this.#cache = this.#client.getQueryCache()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = getDefaultState(this.options)
@@ -204,7 +204,7 @@ export class Query<
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
 
-    this.updateGcTime(this.options.gcTime)
+    this.updateGcTime(this.options.gcTime, this.#client.isServer)
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (this.state && this.state.data === undefined) {
@@ -539,6 +539,7 @@ export class Query<
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
       networkMode: context.options.networkMode,
+      isServer: this.#client.isServer,
       canRun: () => true,
     })
 

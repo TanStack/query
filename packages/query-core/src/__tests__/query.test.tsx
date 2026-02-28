@@ -13,7 +13,7 @@ import {
   hydrate,
 } from '..'
 import { hashQueryKeyByOptions } from '../utils'
-import { mockOnlineManagerIsOnline, setIsServer } from './utils'
+import { mockOnlineManagerIsOnline } from './utils'
 import type {
   QueryCache,
   QueryFunctionContext,
@@ -867,12 +867,12 @@ describe('query', () => {
   })
 
   it('should not retry on the server', async () => {
-    const resetIsServer = setIsServer(true)
+    const serverClient = new QueryClient({ isServer: true })
 
     const key = queryKey()
     let count = 0
 
-    const observer = new QueryObserver(queryClient, {
+    const observer = new QueryObserver(serverClient, {
       queryKey: key,
       queryFn: () => {
         count++
@@ -883,8 +883,6 @@ describe('query', () => {
     await observer.refetch()
 
     expect(count).toBe(1)
-
-    resetIsServer()
   })
 
   test('constructor should call initialDataUpdatedAt if defined as a function', async () => {
