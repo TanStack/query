@@ -365,10 +365,10 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('success')
   })
 
-  test('should properly execute dependant queries', async () => {
+  test('should properly execute dependent queries', async () => {
     const query1 = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
-        queryKey: ['dependant1'],
+        queryKey: ['dependent1'],
         queryFn: () => sleep(10).then(() => 'Some data'),
       }))
     })
@@ -380,7 +380,7 @@ describe('injectQuery', () => {
     const query2 = TestBed.runInInjectionContext(() => {
       return injectQuery(
         computed(() => ({
-          queryKey: ['dependant2'],
+          queryKey: ['dependent2'],
           queryFn: dependentQueryFn,
           enabled: !!query1.data(),
         })),
@@ -402,7 +402,7 @@ describe('injectQuery', () => {
     expect(query2.status()).toStrictEqual('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['dependant2'] }),
+      expect.objectContaining({ queryKey: ['dependent2'] }),
     )
   })
 
