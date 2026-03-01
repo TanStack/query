@@ -1,5 +1,11 @@
 # @tanstack/query-persist-client-core
 
+## 5.92.0
+
+### Minor Changes
+
+- Add removeQueries to experimental_createQueryPersister ([#10186](https://github.com/TanStack/query/pull/10186))
+
 ## 5.91.19
 
 ### Patch Changes

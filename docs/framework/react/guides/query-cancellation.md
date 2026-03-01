@@ -208,4 +208,8 @@ A cancel options object supports the following properties:
 
 ## Limitations
 
+[//]: # 'Limitations'
+
 Cancellation does not work when working with `Suspense` hooks: `useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery`.
+
+[//]: # 'Limitations'
