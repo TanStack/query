@@ -18,7 +18,7 @@ import type { Signal } from 'solid-js'
 export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot
-  onClose?: () => unknown
+  onClose?: () => void
 }
 
 class TanstackQueryDevtoolsPanel {
