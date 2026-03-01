@@ -5,23 +5,6 @@ import { useInfiniteQuery } from './useInfiniteQuery'
 import { useMutation } from './useMutation'
 import { useQueries } from './useQueries'
 
-import type {
-  DefinedUseBaseQueryResult,
-  DefinedUseInfiniteQueryResult,
-  DefinedUseQueryResult,
-  UseBaseMutationResult,
-  UseBaseQueryOptions,
-  UseBaseQueryResult,
-  UseInfiniteQueryOptions,
-  UseInfiniteQueryResult,
-  UseMutateAsyncFunction,
-  UseMutateFunction,
-  UseMutationOptions,
-  UseMutationResult,
-  UseQueryOptions,
-  UseQueryResult,
-} from './types'
-
 // Re-export core
 export * from '@tanstack/query-core'
 
@@ -46,37 +29,36 @@ export type {
   UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
+  // Compatibility types (deprecated)
+  /** @deprecated Use UseBaseQueryOptions instead */
+  UseBaseQueryOptions as CreateBaseQueryOptions,
+  /** @deprecated Use UseBaseQueryResult instead */
+  UseBaseQueryResult as CreateBaseQueryResult,
+  /** @deprecated Use UseInfiniteQueryOptions instead */
+  UseInfiniteQueryOptions as CreateInfiniteQueryOptions,
+  /** @deprecated Use UseInfiniteQueryResult instead */
+  UseInfiniteQueryResult as CreateInfiniteQueryResult,
+  /** @deprecated Use UseMutateAsyncFunction instead */
+  UseMutateAsyncFunction as CreateMutateAsyncFunction,
+  /** @deprecated Use UseMutateFunction instead */
+  UseMutateFunction as CreateMutateFunction,
+  /** @deprecated Use UseMutationOptions instead */
+  UseMutationOptions as CreateMutationOptions,
+  /** @deprecated Use UseMutationResult instead */
+  UseMutationResult as CreateMutationResult,
+  /** @deprecated Use UseBaseMutationResult instead */
+  UseBaseMutationResult as CreateBaseMutationResult,
+  /** @deprecated Use UseQueryOptions instead */
+  UseQueryOptions as CreateQueryOptions,
+  /** @deprecated Use UseQueryResult instead */
+  UseQueryResult as CreateQueryResult,
+  /** @deprecated Use DefinedUseBaseQueryResult instead */
+  DefinedUseBaseQueryResult as DefinedCreateBaseQueryResult,
+  /** @deprecated Use DefinedUseInfiniteQueryResult instead */
+  DefinedUseInfiniteQueryResult as DefinedCreateInfiniteQueryResult,
+  /** @deprecated Use DefinedUseQueryResult instead */
+  DefinedUseQueryResult as DefinedCreateQueryResult,
 } from './types'
-
-// Compatibility types (deprecated)
-/** @deprecated Use UseQueryOptions instead */
-export type CreateQueryOptions = UseQueryOptions
-/** @deprecated Use UseBaseQueryResult instead */
-export type CreateBaseQueryResult = UseBaseQueryResult
-/** @deprecated Use UseQueryResult instead */
-export type CreateQueryResult = UseQueryResult
-/** @deprecated Use DefinedUseBaseQueryResult instead */
-export type DefinedCreateBaseQueryResult = DefinedUseBaseQueryResult
-/** @deprecated Use DefinedUseQueryResult instead */
-export type DefinedCreateQueryResult = DefinedUseQueryResult
-/** @deprecated Use UseInfiniteQueryOptions instead */
-export type CreateInfiniteQueryOptions = UseInfiniteQueryOptions
-/** @deprecated Use UseInfiniteQueryResult instead */
-export type CreateInfiniteQueryResult = UseInfiniteQueryResult
-/** @deprecated Use DefinedUseInfiniteQueryResult instead */
-export type DefinedCreateInfiniteQueryResult = DefinedUseInfiniteQueryResult
-/** @deprecated Use UseMutationOptions instead */
-export type CreateMutationOptions = UseMutationOptions
-/** @deprecated Use UseMutateFunction instead */
-export type CreateMutateFunction = UseMutateFunction
-/** @deprecated Use UseMutateAsyncFunction instead */
-export type CreateMutateAsyncFunction = UseMutateAsyncFunction
-/** @deprecated Use UseBaseMutationResult instead */
-export type CreateBaseMutationResult = UseBaseMutationResult
-/** @deprecated Use UseMutationResult instead */
-export type CreateMutationResult = UseMutationResult
-/** @deprecated Use UseBaseQueryOptions instead */
-export type CreateBaseQueryOptions = UseBaseQueryOptions
 
 export { QueryClient } from './QueryClient'
 export type {
