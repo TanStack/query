@@ -5,6 +5,7 @@ import type {
   OmitKeyof,
   QueryClient,
 } from '@tanstack/query-core'
+import { Fragment } from 'preact'
 import type { ComponentChildren } from 'preact'
 import { useEffect, useMemo, useRef } from 'preact/hooks'
 
@@ -104,5 +105,5 @@ export const HydrationBoundary = ({
     }
   }, [client, hydrationQueue])
 
-  return children as ComponentChildren
+  return <Fragment>{children}</Fragment>
 }
