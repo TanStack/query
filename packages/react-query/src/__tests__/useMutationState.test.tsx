@@ -79,11 +79,14 @@ describe('useIsMutating', () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
 
-    function IsMutating() {
+    function IsMutatingBase() {
       const isMutating = useIsMutating({ mutationKey: ['mutation1'] })
       isMutatingArray.push(isMutating)
       return null
     }
+
+    // Memo to avoid other `useMutation` hook causing a re-render
+    const IsMutating = React.memo(IsMutatingBase)
 
     function Page() {
       const { mutate: mutate1 } = useMutation({
@@ -113,7 +116,7 @@ describe('useIsMutating', () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
 
-    function IsMutating() {
+    function IsMutatingBase() {
       const isMutating = useIsMutating({
         predicate: (mutation) =>
           mutation.options.mutationKey?.[0] === 'mutation1',
@@ -121,6 +124,8 @@ describe('useIsMutating', () => {
       isMutatingArray.push(isMutating)
       return null
     }
+
+    const IsMutating = React.memo(IsMutatingBase)
 
     function Page() {
       const { mutate: mutate1 } = useMutation({
