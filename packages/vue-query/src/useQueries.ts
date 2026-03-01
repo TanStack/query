@@ -14,6 +14,7 @@ import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { Ref } from 'vue-demi'
 import type {
+  DataTag,
   DefaultError,
   DefinedQueryObserverResult,
   QueriesObserverOptions,
@@ -45,6 +46,10 @@ type GetUseQueryOptionsForUseQueries<T> =
   // Part 1: if UseQueryOptions are already being sent through, then just return T
   T extends UseQueryOptions
     ? DeepUnwrapRef<T>
+    : // Part 1b: handle plain query options returned by queryOptions()
+      // (ExtractPlainType removes MaybeRef branches, so they need DeepUnwrapRef too)
+      T extends { queryKey: DataTag<any, any, any> }
+        ? DeepUnwrapRef<T>
     : // Part 2: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
       T extends {
           queryFnData: infer TQueryFnData
@@ -123,6 +128,19 @@ type GetUseQueryResult<T> =
         undefined extends TData ? TQueryFnData : TData,
         unknown extends TError ? DefaultError : TError
       >
+    : // Part 1b: handle plain query options from queryOptions()
+      T extends { queryKey: DataTag<any, infer TQueryFnData, infer TError> }
+        ? T extends { select?: (data: any) => infer TData }
+          ? GetDefinedOrUndefinedQueryResult<
+              T,
+              unknown extends TData ? TQueryFnData : TData,
+              unknown extends TError ? DefaultError : TError
+            >
+          : GetDefinedOrUndefinedQueryResult<
+              T,
+              TQueryFnData,
+              unknown extends TError ? DefaultError : TError
+            >
     : // Part 2: responsible for mapping explicit type parameter to function result, if object
       T extends { queryFnData: any; error?: infer TError; data: infer TData }
       ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
