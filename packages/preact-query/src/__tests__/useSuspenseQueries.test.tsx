@@ -867,11 +867,11 @@ describe('useSuspenseQueries 2', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: () => sleep(QUERY_DURATION).then(() => 'data1'),
+            queryFn: () => sleep(2000).then(() => 'data1'),
           },
           {
             queryKey: key2,
-            queryFn: () => sleep(QUERY_DURATION).then(() => 'data2'),
+            queryFn: () => sleep(1000).then(() => 'data2'),
           },
         ],
       })
@@ -893,9 +893,19 @@ describe('useSuspenseQueries 2', () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
 
-    await vi.advanceTimersByTimeAsync(QUERY_DURATION)
+    // key2 resolves: suspend lifts, key1 shows cached data, key2 shows fresh data
+    await vi.advanceTimersByTimeAsync(1000)
 
     expect(rendered.getByText('data1: cached')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2')).toBeInTheDocument()
+
+    // key1 stale timer fires, triggering background refetch
+    await vi.advanceTimersByTimeAsync(1000)
+
+    // key1 background refetch completes: key1 updates to fresh data
+    await vi.advanceTimersByTimeAsync(2000)
+
+    expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
   })
 })
