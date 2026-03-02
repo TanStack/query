@@ -1,6 +1,6 @@
 ---
 id: filters
 title: Filters
-ref: docs/framework/react/guides/filters
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+ref: docs/framework/react/guides/filters.md
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---

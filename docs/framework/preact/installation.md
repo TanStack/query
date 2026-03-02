@@ -2,7 +2,7 @@
 id: installation
 title: Installation
 ref: docs/framework/react/installation.md
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---
 
 [//]: # 'Compatibility'
