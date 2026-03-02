@@ -16,6 +16,7 @@ import type {
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
+  InfiniteQueryExecuteOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationFilters,
@@ -23,6 +24,7 @@ import type {
   MutationObserverOptions,
   NoInfer,
   OmitKeyof,
+  QueryExecuteOptions,
   QueryFilters,
   QueryKey,
   QueryObserverOptions,
@@ -251,6 +253,128 @@ export class QueryClient extends QC {
       cloneDeepUnref(filters),
       cloneDeepUnref(options),
     )
+  }
+
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: MaybeRefDeep<
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: MaybeRefDeep<
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<TData> {
+    return super.query(cloneDeepUnref(options))
+  }
+
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  > {
+    return super.infiniteQuery(cloneDeepUnref(options))
   }
 
   fetchQuery<
