@@ -1673,7 +1673,7 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.0.18
+        specifier: ^6.1.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^6.0.4
@@ -1707,7 +1707,7 @@ importers:
         specifier: ^5.90.24
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/svelte-query':
-        specifier: ^6.0.18
+        specifier: ^6.1.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^6.0.4
@@ -1741,7 +1741,7 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.0.18
+        specifier: ^6.1.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^6.0.4
@@ -1772,7 +1772,7 @@ importers:
   examples/svelte/optimistic-updates:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.0.18
+        specifier: ^6.1.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^6.0.4
@@ -1803,7 +1803,7 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.0.18
+        specifier: ^6.1.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^6.0.4
@@ -1834,7 +1834,7 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.0.18
+        specifier: ^6.1.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^6.0.4
@@ -1862,7 +1862,7 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.0.18
+        specifier: ^6.1.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^6.0.4
@@ -1893,7 +1893,7 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^6.0.18
+        specifier: ^6.1.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^6.0.4
