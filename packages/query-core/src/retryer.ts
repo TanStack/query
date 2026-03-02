@@ -1,7 +1,8 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { pendingThenable } from './thenable'
-import { isServer, sleep } from './utils'
+import { environmentManager } from './environmentManager'
+import { sleep } from './utils'
 import type { Thenable } from './thenable'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
@@ -166,7 +167,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         }
 
         // Do we need to retry the request?
-        const retry = config.retry ?? (isServer ? 0 : 3)
+        const retry = config.retry ?? (environmentManager.isServer() ? 0 : 3)
         const retryDelay = config.retryDelay ?? defaultRetryDelay
         const delay =
           typeof retryDelay === 'function'
