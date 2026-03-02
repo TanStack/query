@@ -304,8 +304,7 @@ export function useQueries<
   const getOptimisticResult = () => {
     const [results, getCombinedResult] = observer.getOptimisticResult(
       defaultedQueries.value,
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
-      options.structuralSharing,
+      options as QueriesObserverOptions<TCombinedResult>,
     )
 
     return getCombinedResult(
@@ -315,8 +314,7 @@ export function useQueries<
           refetch: async (...args: Array<any>) => {
             const [{ [index]: query }] = observer.getOptimisticResult(
               defaultedQueries.value,
-              (options as QueriesObserverOptions<TCombinedResult>).combine,
-              options.structuralSharing,
+              options as QueriesObserverOptions<TCombinedResult>,
             )
 
             return query!.refetch(...args)

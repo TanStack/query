@@ -279,9 +279,7 @@ export function injectQueries<
     const optimisticResultSignal = computed(() =>
       observerSignal().getOptimisticResult(
         defaultedQueries(),
-        (optionsSignal() as QueriesObserverOptions<TCombinedResult>).combine,
-        (optionsSignal() as QueriesObserverOptions<TCombinedResult>)
-          .structuralSharing,
+        optionsSignal() as QueriesObserverOptions<TCombinedResult>,
       ),
     )
 

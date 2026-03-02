@@ -343,7 +343,6 @@ describe('queriesObserver', () => {
           { queryKey: key1, queryFn: queryFn1 },
         ],
         undefined,
-        undefined,
       )[0],
     )
 
@@ -457,8 +456,7 @@ describe('queriesObserver', () => {
 
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine,
-      undefined,
+      { combine },
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -470,8 +468,7 @@ describe('queriesObserver', () => {
     ]
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       newQueries,
-      combine,
-      undefined,
+      { combine },
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -498,8 +495,7 @@ describe('queriesObserver', () => {
 
     const [rawResult, getCombinedResult] = observer.getOptimisticResult(
       [query],
-      combine,
-      undefined,
+      { combine },
     )
     expect(getCombinedResult(rawResult)).toEqual(['data'])
     expect(combine).toHaveBeenCalledTimes(1)
@@ -532,8 +528,7 @@ describe('queriesObserver', () => {
 
     const [rawResult, getCombinedResult] = observer.getOptimisticResult(
       [query],
-      combine,
-      undefined,
+      { combine },
     )
     expect(getCombinedResult(rawResult)).toEqual(['data'])
     expect(combine).toHaveBeenCalledTimes(1)
@@ -584,8 +579,7 @@ describe('queriesObserver', () => {
         { queryKey: key1, queryFn: queryFn1 },
         { queryKey: key2, queryFn: queryFn2 },
       ],
-      combine,
-      undefined,
+      { combine },
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -594,8 +588,7 @@ describe('queriesObserver', () => {
     const newQueries = [{ queryKey: key1, queryFn: queryFn1 }]
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       newQueries,
-      combine,
-      undefined,
+      { combine },
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -622,8 +615,7 @@ describe('queriesObserver', () => {
 
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine,
-      undefined,
+      { combine },
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -631,8 +623,7 @@ describe('queriesObserver', () => {
 
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       [{ queryKey: key2, queryFn: queryFn2 }],
-      combine,
-      undefined,
+      { combine },
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -665,14 +656,12 @@ describe('queriesObserver', () => {
 
     const [raw1, getCombined1] = observer.getOptimisticResult(
       queries,
-      combine1,
-      undefined,
+      { combine: combine1 },
     )
     const combined1 = getCombined1(raw1)
     const [raw2, getCombined2] = observer.getOptimisticResult(
       queries,
-      combine2,
-      undefined,
+      { combine: combine2 },
     )
     const combined2 = getCombined2(raw2)
 
@@ -701,8 +690,7 @@ describe('queriesObserver', () => {
 
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine,
-      false,
+      { combine, structuralSharing: false },
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -714,8 +702,7 @@ describe('queriesObserver', () => {
 
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine2,
-      false,
+      { combine: combine2, structuralSharing: false },
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -745,8 +732,7 @@ describe('queriesObserver', () => {
 
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine,
-      true,
+      { combine, structuralSharing: true },
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -758,8 +744,7 @@ describe('queriesObserver', () => {
 
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine2,
-      true,
+      { combine: combine2, structuralSharing: true },
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -798,8 +783,7 @@ describe('queriesObserver', () => {
 
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine,
-      customStructuralSharing,
+      { combine, structuralSharing: customStructuralSharing },
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -836,8 +820,7 @@ describe('queriesObserver', () => {
 
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine,
-      customStructuralSharing,
+      { combine, structuralSharing: customStructuralSharing },
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -849,8 +832,7 @@ describe('queriesObserver', () => {
         { queryKey: key1, queryFn: queryFn1 },
         { queryKey: secondKey, queryFn: () => 2 },
       ],
-      combine,
-      customStructuralSharing,
+      { combine, structuralSharing: customStructuralSharing },
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -884,8 +866,7 @@ describe('queriesObserver', () => {
 
     const [, getCombined] = observer.getOptimisticResult(
       [{ queryKey: key, queryFn }],
-      combine,
-      undefined,
+      { combine },
     )
     const combined = getCombined()
 
@@ -904,7 +885,6 @@ describe('queriesObserver', () => {
 
     const [, , trackResult] = observer.getOptimisticResult(
       [{ queryKey: key, queryFn, notifyOnChangeProps: ['data'] }],
-      undefined,
       undefined,
     )
 
@@ -935,15 +915,13 @@ describe('queriesObserver', () => {
 
     const [raw1, getCombined1] = observer.getOptimisticResult(
       queries,
-      combine,
-      undefined,
+      { combine },
     )
     const combined1 = getCombined1(raw1)
 
     const [raw2, getCombined2] = observer.getOptimisticResult(
       queries,
-      combine,
-      undefined,
+      { combine },
     )
     const combined2 = getCombined2(raw2)
 
@@ -972,15 +950,13 @@ describe('queriesObserver', () => {
 
       const [raw1, getCombined1] = observer.getOptimisticResult(
         queries,
-        combine,
-        undefined,
+        { combine },
       )
       getCombined1(raw1)
 
       const [raw2, getCombined2] = observer.getOptimisticResult(
         queries,
-        combine,
-        undefined,
+        { combine },
       )
       getCombined2(raw2)
 
@@ -1006,7 +982,6 @@ describe('queriesObserver', () => {
         { queryKey: key1, queryFn: queryFn1 },
         { queryKey: key2, queryFn: queryFn2 },
       ],
-      undefined,
       undefined,
     )
 
@@ -1113,8 +1088,7 @@ describe('queriesObserver', () => {
 
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine,
-      customStructuralSharing,
+      { combine, structuralSharing: customStructuralSharing },
     )
     const initialCombined = getInitialCombined(initialRaw)
     const initialArrayRef = initialCombined.existingArray
@@ -1128,8 +1102,7 @@ describe('queriesObserver', () => {
 
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
-      combine2,
-      customStructuralSharing,
+      { combine: combine2, structuralSharing: customStructuralSharing },
     )
     const newCombined = getNewCombined(newRaw)
 

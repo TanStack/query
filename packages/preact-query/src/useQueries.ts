@@ -271,8 +271,7 @@ export function useQueries<
   const [optimisticResult, getCombinedResult, trackResult] =
     observer.getOptimisticResult(
       defaultedQueries,
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
-      options.structuralSharing,
+      options as QueriesObserverOptions<TCombinedResult>,
     )
 
   const shouldSubscribe = !isRestoring && options.subscribed !== false
