@@ -81,15 +81,21 @@ type GetUseQueryOptionsForUseQueries<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? UseQueryOptionsForUseQueries<
-                    TQueryFnData,
-                    unknown extends TError ? DefaultError : TError,
-                    unknown extends TData ? TQueryFnData : TData,
-                    TQueryKey
-                  >
+                ? T extends { select?: (data: TQueryFnData) => infer TData }
+                  ? UseQueryOptionsForUseQueries<
+                      TQueryFnData,
+                      unknown extends TError ? DefaultError : TError,
+                      unknown extends TData ? TQueryFnData : TData,
+                      TQueryKey
+                    >
+                  : UseQueryOptionsForUseQueries<
+                      TQueryFnData,
+                      unknown extends TError ? DefaultError : TError,
+                      TQueryFnData,
+                      TQueryKey
+                    >
                 : // Fallback
                   UseQueryOptionsForUseQueries
 
@@ -130,14 +136,19 @@ type GetUseQueryResult<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? GetDefinedOrUndefinedQueryResult<
-                    T,
-                    unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
-                  >
+                ? T extends { select?: (data: TQueryFnData) => infer TData }
+                  ? GetDefinedOrUndefinedQueryResult<
+                      T,
+                      unknown extends TData ? TQueryFnData : TData,
+                      unknown extends TError ? DefaultError : TError
+                    >
+                  : GetDefinedOrUndefinedQueryResult<
+                      T,
+                      TQueryFnData,
+                      unknown extends TError ? DefaultError : TError
+                    >
                 : // Fallback
                   UseQueryResult
 

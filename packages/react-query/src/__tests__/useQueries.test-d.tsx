@@ -1,7 +1,9 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '..'
-import { useQueries } from '../useQueries'
 import { queryOptions } from '../queryOptions'
+import { useQueries } from '../useQueries'
+import type { QueriesOptions, QueriesResults } from '../useQueries'
+import type { QueryFunction } from '@tanstack/query-core'
 import type { OmitKeyof } from '..'
 import type { UseQueryOptions, UseQueryResult } from '../types'
 
@@ -61,19 +63,29 @@ describe('UseQueries config object overload', () => {
   })
 
   it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
+    const queryKey = ['key'] as const
+    const queryFn = () => Promise.resolve(1)
+    type TQueryFnData = Awaited<ReturnType<typeof queryFn>>
+
     const query1 = queryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(1),
+      queryKey,
+      queryFn,
       select: (data) => data > 1,
     })
 
-    const query2 = {
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(1),
-      select: (data: number) => data > 1,
-    }
-
-    const queryResults = useQueries({ queries: [query1, query2] })
+    const queryResults = useQueries({
+      queries: [
+        query1,
+        {
+          queryKey,
+          queryFn,
+          select: (data) => {
+            expectTypeOf(data).toEqualTypeOf<number>()
+            return data > 1
+          },
+        } satisfies UseQueryOptions<TQueryFnData, Error, boolean, typeof queryKey>,
+      ] as const,
+    })
     const query1Data = queryResults[0].data
     const query2Data = queryResults[1].data
 
@@ -166,5 +178,26 @@ describe('UseQueries config object overload', () => {
     expectTypeOf(result).toEqualTypeOf<
       [...Array<UseQueryResult<number, Error>>, UseQueryResult<boolean, Error>]
     >()
+  })
+
+  it('should only infer TData from select when select input matches TQueryFnData (regression)', () => {
+    type QueryKey = readonly ['key']
+    type QueryFn = QueryFunction<number, QueryKey>
+
+    type Input = [
+      {
+        queryKey: QueryKey
+        queryFn: QueryFn
+        // Intentionally unrelated input type: we should NOT infer TData from this select
+        select: (data: string) => boolean
+      },
+    ]
+
+    type Option = QueriesOptions<Input>[0]
+    type Result = QueriesResults<Input>[0]
+    type Select = NonNullable<Option['select']>
+
+    expectTypeOf<ReturnType<Select>>().toEqualTypeOf<number>()
+    expectTypeOf<Result['data']>().toEqualTypeOf<number | undefined>()
   })
 })
