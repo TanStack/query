@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/preact-query-devtools",
-  "version": "5.91.0",
+  "version": "5.92.0",
   "description": "Developer tools to interact with and visualize the TanStack/preact-query cache",
   "author": "tannerlinsley",
   "license": "MIT",

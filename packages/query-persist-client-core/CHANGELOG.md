@@ -1,5 +1,11 @@
 # @tanstack/query-persist-client-core
 
+## 5.92.1
+
+### Patch Changes
+
+- removeItem if deserialize fails ([#10190](https://github.com/TanStack/query/pull/10190))
+
 ## 5.92.0
 
 ### Minor Changes

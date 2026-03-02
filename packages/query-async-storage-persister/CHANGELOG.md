@@ -1,5 +1,12 @@
 # @tanstack/query-async-storage-persister
 
+## 5.90.24
+
+### Patch Changes
+
+- Updated dependencies [[`e505568`](https://github.com/TanStack/query/commit/e505568f4d51c8281d38e9687091094b7d32a405)]:
+  - @tanstack/query-persist-client-core@5.92.1
+
 ## 5.90.23
 
 ### Patch Changes
