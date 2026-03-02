@@ -19,7 +19,7 @@ Let's assume we are using the default `gcTime` of **5 minutes** and the default 
 - A new instance of `injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodos }))` initializes.
   - Since no other queries have been made with the `['todos']` query key, this query will show a hard loading state and make a network request to fetch the data.
   - When the network request has completed, the returned data will be cached under the `['todos']` key.
-  - The date will be marked as stale after the configured `staleTime` (defaults to `0`, or immediately).
+  - The data will be marked as stale after the configured `staleTime` (defaults to `0`, or immediately).
 - A second instance of `injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodos }))` initializes elsewhere.
   - Since the cache already has data for the `['todos']` key from the first query, that data is immediately returned from the cache.
   - The new instance triggers a new network request using its query function.
