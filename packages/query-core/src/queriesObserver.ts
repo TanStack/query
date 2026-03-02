@@ -180,11 +180,7 @@ export class QueriesObserver<
 
   getOptimisticResult(
     queries: Array<QueryObserverOptions>,
-    combine: CombineFn<TCombinedResult> | undefined,
-    structuralSharing:
-      | boolean
-      | ((oldData: unknown | undefined, newData: unknown) => unknown)
-      | undefined,
+    options?: QueriesObserverOptions<TCombinedResult>,
   ): [
     rawResult: Array<QueryObserverResult>,
     combineResult: (r?: Array<QueryObserverResult>) => TCombinedResult,
@@ -201,12 +197,7 @@ export class QueriesObserver<
     return [
       result,
       (r?: Array<QueryObserverResult>) => {
-        return this.#combineResult(
-          r ?? result,
-          combine,
-          structuralSharing,
-          queryHashes,
-        )
+        return this.#combineResult(r ?? result, options, queryHashes)
       },
       () => {
         return this.#trackResult(result, matches)
@@ -233,13 +224,11 @@ export class QueriesObserver<
 
   #combineResult(
     input: Array<QueryObserverResult>,
-    combine: CombineFn<TCombinedResult> | undefined,
-    structuralSharing:
-      | boolean
-      | ((oldData: unknown | undefined, newData: unknown) => unknown)
-      | undefined = true,
+    options?: QueriesObserverOptions<TCombinedResult>,
     queryHashes?: Array<string>,
   ): TCombinedResult {
+    const combine = options?.combine
+    const structuralSharing = options?.structuralSharing ?? true
     if (combine) {
       const lastHashes = this.#lastQueryHashes
       const queryHashesChanged =
@@ -323,11 +312,7 @@ export class QueriesObserver<
     if (this.hasListeners()) {
       const previousResult = this.#combinedResult
       const newTracked = this.#trackResult(this.#result, this.#observerMatches)
-      const newResult = this.#combineResult(
-        newTracked,
-        this.#options?.combine,
-        this.#options?.structuralSharing,
-      )
+      const newResult = this.#combineResult(newTracked, this.#options)
 
       if (previousResult !== newResult) {
         notifyManager.batch(() => {

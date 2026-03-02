@@ -235,9 +235,7 @@ export function useQueries<
   const [state, setState] = createStore<TCombinedResult>(
     observer.getOptimisticResult(
       defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-        .structuralSharing,
+      queriesOptions() as QueriesObserverOptions<TCombinedResult>,
     )[1](),
   )
 
@@ -248,10 +246,7 @@ export function useQueries<
         setState(
           observer.getOptimisticResult(
             defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .combine,
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .structuralSharing,
+            queriesOptions() as QueriesObserverOptions<TCombinedResult>,
           )[1](),
         ),
     ),

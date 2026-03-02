@@ -237,8 +237,7 @@ export function createQueries<
   function createResult() {
     const [_, getCombinedResult, trackResult] = observer.getOptimisticResult(
       resolvedQueryOptions,
-      derivedCreateQueriesOptions.combine as QueriesObserverOptions<TCombinedResult>['combine'],
-      derivedCreateQueriesOptions.structuralSharing,
+      derivedCreateQueriesOptions as QueriesObserverOptions<TCombinedResult>,
     )
     return getCombinedResult(trackResult())
   }
