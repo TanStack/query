@@ -934,4 +934,60 @@ describe('useSuspenseQueries 2', () => {
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
   })
+
+  it('should not suspend but refetch when all queries have stale cached data', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    queryClient.setQueryData(key1, 'cached1')
+    queryClient.setQueryData(key2, 'cached2')
+
+    // Advance past staleTime (min 1000ms in suspense) so data becomes stale before mount
+    vi.advanceTimersByTime(1000)
+
+    function Page() {
+      const [result1, result2] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(20).then(() => 'data1'),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(10).then(() => 'data2'),
+          },
+        ],
+      })
+
+      return (
+        <div>
+          <div>data1: {result1.data}</div>
+          <div>data2: {result2.data}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback={<div>loading</div>}>
+        <Page />
+      </React.Suspense>,
+    )
+
+    // No suspend, stale cached data shown immediately with background refetch started
+    expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
+    expect(rendered.getByText('data2: cached2')).toBeInTheDocument()
+
+    // key2 background refetch completes
+    await act(() => vi.advanceTimersByTimeAsync(11))
+
+    expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2')).toBeInTheDocument()
+
+    // key1 background refetch completes
+    await act(() => vi.advanceTimersByTimeAsync(10))
+
+    expect(rendered.getByText('data1: data1')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2')).toBeInTheDocument()
+  })
 })
