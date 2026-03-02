@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/preact-query",
-  "version": "5.91.1",
+  "version": "5.92.0",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in preact",
   "author": "tannerlinsley",
   "license": "MIT",
