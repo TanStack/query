@@ -991,6 +991,10 @@
               "to": "framework/react/reference/usePrefetchQuery"
             },
             {
+              "label": "usePrefetchQueries",
+              "to": "framework/react/reference/usePrefetchQueries"
+            },
+            {
               "label": "usePrefetchInfiniteQuery",
               "to": "framework/react/reference/usePrefetchInfiniteQuery"
             },
