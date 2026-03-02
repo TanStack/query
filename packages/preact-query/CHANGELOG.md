@@ -1,5 +1,11 @@
 # @tanstack/preact-query
 
+## 5.93.0
+
+### Minor Changes
+
+- feat: Add preact persist plugin ([#10120](https://github.com/TanStack/query/pull/10120))
+
 ## 5.92.0
 
 ### Minor Changes
