@@ -1,8 +1,8 @@
 ---
 id: paginated-queries
 title: Paginated / Lagged Queries
-ref: docs/framework/react/guides/paginated-queries
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+ref: docs/framework/react/guides/paginated-queries.md
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---
 
 [//]: # 'Example2'

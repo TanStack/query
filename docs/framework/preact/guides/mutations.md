@@ -1,8 +1,8 @@
 ---
 id: mutations
 title: Mutations
-ref: docs/framework/react/guides/mutations
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+ref: docs/framework/react/guides/mutations.md
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---
 
 [//]: # 'Info1'

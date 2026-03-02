@@ -1,8 +1,8 @@
 ---
 id: prefetching
 title: Prefetching & Router Integration
-ref: docs/framework/react/guides/prefetching
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+ref: docs/framework/react/guides/prefetching.md
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---
 
 [//]: # 'ExampleConditionally1'

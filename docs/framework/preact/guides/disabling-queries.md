@@ -2,7 +2,7 @@
 id: disabling-queries
 title: Disabling/Pausing Queries
 ref: docs/framework/react/guides/disabling-queries.md
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---
 
 [//]: # 'Example2'

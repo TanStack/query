@@ -16,6 +16,7 @@ import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import type { Mock } from 'vitest'
 
 import {
+  IsRestoringProvider,
   QueryCache,
   QueryClient,
   dehydrate,
@@ -6781,5 +6782,48 @@ describe('useQuery', () => {
     )
 
     consoleErrorMock.mockRestore()
+  })
+
+  it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
+    const key = queryKey()
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
+
+    function Page() {
+      const result = useQuery({
+        queryKey: key,
+        queryFn,
+      })
+
+      return (
+        <div>
+          <div data-testid="status">{result.status}</div>
+          <div data-testid="fetchStatus">{result.fetchStatus}</div>
+          <div data-testid="data">{result.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <IsRestoringProvider value={true}>
+        <Page />
+      </IsRestoringProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
+    expect(queryFn).toHaveBeenCalledTimes(0)
   })
 })
