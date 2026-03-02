@@ -381,7 +381,10 @@ export function sleep(timeout: number): Promise<void> {
 
 export function replaceData<
   TData,
-  TOptions extends QueryOptions<any, any, any, any>,
+  TOptions extends {
+    structuralSharing?: boolean | ((prev: unknown, data: unknown) => unknown)
+    queryHash?: string | Array<string>
+  },
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data) as TData
@@ -390,8 +393,14 @@ export function replaceData<
       try {
         return replaceEqualDeep(prevData, data)
       } catch (error) {
+        let hashInfo = ''
+        if (Array.isArray(options.queryHash)) {
+          hashInfo = `queryHashes: [${options.queryHash.join(', ')}]`
+        } else if (options.queryHash) {
+          hashInfo = `queryHash: ${options.queryHash}`
+        }
         console.error(
-          `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
+          `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${hashInfo}]: ${error}`,
         )
 
         // Prevent the replaceEqualDeep from being called again down below.

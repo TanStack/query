@@ -1,7 +1,7 @@
 import { notifyManager } from './notifyManager'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
-import { replaceEqualDeep, shallowEqualObjects } from './utils'
+import { replaceData, shallowEqualObjects } from './utils'
 import type {
   DefaultedQueryObserverOptions,
   QueryObserverOptions,
@@ -261,19 +261,14 @@ export class QueriesObserver<
           this.#lastQueryHashes = queryHashes
         }
 
-        const combined = combine(input)
-
-        if (typeof structuralSharing === 'function') {
-          this.#combinedResult = structuralSharing(
-            this.#combinedResult,
-            combined,
-          ) as TCombinedResult
-        } else {
-          this.#combinedResult =
-            structuralSharing !== false
-              ? replaceEqualDeep(this.#combinedResult, combined)
-              : combined
-        }
+        this.#combinedResult = replaceData(
+          this.#combinedResult,
+          combine(input),
+          {
+            structuralSharing,
+            queryHash: queryHashes,
+          },
+        )
       }
 
       return this.#combinedResult
