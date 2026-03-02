@@ -1,5 +1,11 @@
 # @tanstack/react-query
 
+## 5.90.21
+
+### Patch Changes
+
+- refactor(react-query/useQueries): remove unreachable 'willFetch' branch in suspense promise collection ([#10082](https://github.com/TanStack/query/pull/10082))
+
 ## 5.90.20
 
 ### Patch Changes

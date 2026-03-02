@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueriesObserver, QueryClient } from '..'
+import { QueriesObserver, QueryClient, QueryObserver } from '..'
 import type { QueryObserverResult } from '..'
 
 describe('queriesObserver', () => {
@@ -516,6 +516,43 @@ describe('queriesObserver', () => {
     const newCombined = getNewCombined(newRaw)
 
     expect(newCombined.keys).toEqual(['pending'])
+  })
+
+  test('should track properties on all observers when trackResult is called', () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = () => 'data1'
+    const queryFn2 = () => 'data2'
+
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ])
+
+    const trackPropSpy = vi.spyOn(QueryObserver.prototype, 'trackProp')
+
+    const [, , trackResult] = observer.getOptimisticResult(
+      [
+        { queryKey: key1, queryFn: queryFn1 },
+        { queryKey: key2, queryFn: queryFn2 },
+      ],
+      undefined,
+      false,
+    )
+
+    const trackedResults = trackResult()
+
+    expect(trackedResults).toHaveLength(2)
+
+    // Accessing a property on the first result should trigger trackProp on all observers
+    void trackedResults[0]!.status
+
+    // 1 direct call from the accessed observer's proxy +
+    // 2 synchronized calls from onPropTracked callback (one per observer)
+    expect(trackPropSpy).toHaveBeenCalledWith('status')
+    expect(trackPropSpy).toHaveBeenCalledTimes(3)
+
+    trackPropSpy.mockRestore()
   })
 
   test('should not use structural sharing when structuralSharing is false', () => {

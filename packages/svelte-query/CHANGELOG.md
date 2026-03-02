@@ -1,5 +1,11 @@
 # @tanstack/svelte-query
 
+## 6.1.0
+
+### Minor Changes
+
+- feat(svelte-query): add 'mutationOptions' ([#10175](https://github.com/TanStack/query/pull/10175))
+
 ## 6.0.18
 
 ### Patch Changes

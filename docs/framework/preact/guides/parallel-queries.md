@@ -1,8 +1,8 @@
 ---
 id: parallel-queries
 title: Parallel Queries
-ref: docs/framework/react/guides/parallel-queries
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+ref: docs/framework/react/guides/parallel-queries.md
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---
 
 [//]: # 'Info'

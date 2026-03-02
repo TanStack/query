@@ -8,6 +8,7 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
+  useMutationState,
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
@@ -132,6 +133,24 @@ describe('Server Side Rendering', () => {
     const keys = queryCache.getAll().map((query) => query.queryKey)
 
     expect(keys).toEqual([[key, 1]])
+
+    queryCache.clear()
+  })
+
+  it('useMutationState should return empty array', () => {
+    function Page() {
+      const mutationState = useMutationState()
+
+      return <div>{`mutationState: ${mutationState.length}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('mutationState: 0')
 
     queryCache.clear()
   })

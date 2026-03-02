@@ -184,6 +184,10 @@
               "to": "framework/preact/quick-start"
             },
             {
+              "label": "Devtools",
+              "to": "framework/preact/devtools"
+            },
+            {
               "label": "TypeScript",
               "to": "framework/preact/typescript"
             },
@@ -1140,6 +1144,10 @@
             {
               "label": "Functions / infiniteQueryOptions",
               "to": "framework/svelte/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "Functions / mutationOptions",
+              "to": "framework/svelte/reference/functions/mutationOptions"
             }
           ]
         },
@@ -1419,6 +1427,10 @@
             {
               "label": "Astro",
               "to": "framework/solid/examples/astro"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/solid/examples/offline"
             }
           ]
         },
@@ -1583,6 +1595,31 @@
             {
               "label": "createPersister (Experimental)",
               "to": "framework/vue/plugins/createPersister"
+            }
+          ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "persistQueryClient",
+              "to": "framework/preact/plugins/persistQueryClient"
+            },
+            {
+              "label": "createSyncStoragePersister",
+              "to": "framework/preact/plugins/createSyncStoragePersister"
+            },
+            {
+              "label": "createAsyncStoragePersister",
+              "to": "framework/preact/plugins/createAsyncStoragePersister"
+            },
+            {
+              "label": "broadcastQueryClient (Experimental)",
+              "to": "framework/preact/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "framework/preact/plugins/createPersister"
             }
           ]
         }

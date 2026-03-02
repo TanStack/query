@@ -855,4 +855,105 @@ describe('useSuspenseQueries 2', () => {
     consoleErrorSpy.mockRestore()
     process.env.NODE_ENV = envCopy
   })
+
+  it('should only suspend queries that are pending when some queries already have data', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    queryClient.setQueryData(key1, 'cached')
+
+    function Page() {
+      const [result1, result2] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(2000).then(() => 'data1'),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(1000).then(() => 'data2'),
+          },
+        ],
+      })
+
+      return (
+        <div>
+          <div>data1: {result1.data}</div>
+          <div>data2: {result2.data}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback={<div>loading</div>}>
+        <Page />
+      </Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    // key2 resolves: suspend lifts, key1 shows cached data, key2 shows fresh data
+    await vi.advanceTimersByTimeAsync(1000)
+
+    expect(rendered.getByText('data1: cached')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2')).toBeInTheDocument()
+
+    // key1 stale timer fires, triggering background refetch
+    await vi.advanceTimersByTimeAsync(1000)
+
+    // key1 background refetch completes: key1 updates to fresh data
+    await vi.advanceTimersByTimeAsync(2000)
+
+    expect(rendered.getByText('data1: data1')).toBeInTheDocument()
+    expect(rendered.getByText('data2: data2')).toBeInTheDocument()
+  })
+
+  it('should not suspend and not refetch when all queries have fresh cached data', () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    queryClient.setQueryData(key1, 'cached1')
+    queryClient.setQueryData(key2, 'cached2')
+
+    const queryFn1 = vi.fn(() => sleep(20).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+
+    function Page() {
+      const [result1, result2] = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: queryFn1,
+          },
+          {
+            queryKey: key2,
+            queryFn: queryFn2,
+          },
+        ],
+      })
+
+      return (
+        <div>
+          <div>data1: {result1.data}</div>
+          <div>data2: {result2.data}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback={<div>loading</div>}>
+        <Page />
+      </Suspense>,
+    )
+
+    // No suspend, fresh cached data shown immediately
+    expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
+    expect(rendered.getByText('data2: cached2')).toBeInTheDocument()
+
+    // No background refetch because data is still fresh (within staleTime)
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+  })
 })

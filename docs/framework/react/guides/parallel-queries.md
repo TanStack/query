@@ -35,9 +35,11 @@ function App () {
 If the number of queries you need to execute is changing from render to render, you cannot use manual querying since that would violate the rules of hooks. Instead, TanStack Query provides a `useQueries` hook, which you can use to dynamically execute as many queries in parallel as you'd like.
 
 [//]: # 'DynamicParallelIntro'
+[//]: # 'DynamicParallelDescription'
 
 `useQueries` accepts an **options object** with a **queries key** whose value is an **array of query objects**. It returns an **array of query results**:
 
+[//]: # 'DynamicParallelDescription'
 [//]: # 'Example2'
 
 ```tsx
