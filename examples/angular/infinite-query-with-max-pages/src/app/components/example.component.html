@@ -4,9 +4,11 @@
   <h3>3 pages max</h3>
   @if (query.isPending()) {
     <p>Loading...</p>
-  } @else if (query.isError()) {
+  }
+  @if (query.isError()) {
     <span>Error: {{ query.error().message }}</span>
-  } @else {
+  }
+  @if (query.isSuccess()) {
     <div>
       <button
         (click)="query.fetchPreviousPage()"
