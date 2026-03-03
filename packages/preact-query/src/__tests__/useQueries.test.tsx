@@ -13,6 +13,7 @@ import {
 } from 'vitest'
 
 import {
+  IsRestoringProvider,
   QueryCache,
   QueryClient,
   queryOptions,
@@ -1811,5 +1812,128 @@ describe('useQueries', () => {
 
     expect(renderCount).toBeLessThan(10)
     expect(rendered.getByTestId('query-count').textContent).toBe('queries: 1')
+  })
+
+  it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
+
+    function Page() {
+      const results = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div data-testid="status1">{results[0]?.status}</div>
+          <div data-testid="status2">{results[1]?.status}</div>
+          <div data-testid="fetchStatus1">{results[0]?.fetchStatus}</div>
+          <div data-testid="fetchStatus2">{results[1]?.fetchStatus}</div>
+          <div data-testid="data1">{results[0]?.data ?? 'undefined'}</div>
+          <div data-testid="data2">{results[1]?.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <IsRestoringProvider value={true}>
+        <Page />
+      </IsRestoringProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+  })
+
+  it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+
+    function Page() {
+      const results = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div data-testid="status1">{results[0]?.status}</div>
+          <div data-testid="status2">{results[1]?.status}</div>
+          <div data-testid="fetchStatus1">{results[0]?.fetchStatus}</div>
+          <div data-testid="fetchStatus2">{results[1]?.fetchStatus}</div>
+          <div data-testid="data1">{results[0]?.data ?? 'undefined'}</div>
+          <div data-testid="data2">{results[1]?.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <IsRestoringProvider value={true}>
+        <Page />
+      </IsRestoringProvider>,
+    )
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
   })
 })
