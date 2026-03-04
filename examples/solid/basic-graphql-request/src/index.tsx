@@ -170,4 +170,7 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
   )
 }
 
-render(() => <App />, document.getElementById('root') as HTMLElement)
+const root = document.getElementById('root')
+if (!root) throw new Error('Missing #root element')
+
+render(() => <App />, root)
