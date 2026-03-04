@@ -1,10 +1,6 @@
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, test } from 'vitest'
-import {
-  Injector,
-  provideZonelessChangeDetection,
-  signal,
-} from '@angular/core'
+import { Injector, provideZonelessChangeDetection, signal } from '@angular/core'
 import {
   QueryClient,
   injectIsRestoring,
