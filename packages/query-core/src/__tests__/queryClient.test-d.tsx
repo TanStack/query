@@ -194,20 +194,20 @@ describe('fetchInfiniteQuery', () => {
   it('should allow passing pages', async () => {
     const data = await new QueryClient().fetchInfiniteQuery({
       queryKey: ['key'],
-      queryFn: () => Promise.resolve({ count: 1 }),
+      queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
       pages: 5,
     })
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<{ count: number }, number>>()
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
 
   it('should allow passing getNextPageParam without pages', () => {
     assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
       {
         queryKey: ['key'],
-        queryFn: () => Promise.resolve({ count: 1 }),
+        queryFn: () => Promise.resolve('string'),
         initialPageParam: 1,
         getNextPageParam: () => 1,
       },
@@ -219,7 +219,7 @@ describe('fetchInfiniteQuery', () => {
       // @ts-expect-error Property 'getNextPageParam' is missing
       {
         queryKey: ['key'],
-        queryFn: () => Promise.resolve({ count: 1 }),
+        queryFn: () => Promise.resolve('string'),
         initialPageParam: 1,
         pages: 5,
       },
