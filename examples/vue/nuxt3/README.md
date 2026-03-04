@@ -1,6 +1,6 @@
 # Nuxt 3 Minimal Starter
 
-We recommend to look at the [documentation](https://nuxt.com/docs/3.x/getting-started/introduction).
+We recommend looking at the [documentation](https://nuxt.com/docs/3.x/getting-started/introduction).
 
 ## Setup
 
@@ -26,4 +26,4 @@ Build the application for production:
 pnpm build
 ```
 
-Checkout the [deployment documentation](https://nuxt.com/docs/3.x/getting-started/deployment).
+Check out the [deployment documentation](https://nuxt.com/docs/3.x/getting-started/deployment).
