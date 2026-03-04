@@ -17,7 +17,7 @@ If you just want to see some code, you can skip ahead to the [Full Next.js pages
 
 So what is server rendering anyway? The rest of this guide will assume you are familiar with the concept, but let's spend some time to look at how it relates to React Query. Server rendering is the act of generating the initial html on the server, so that the user has some content to look at as soon as the page loads. This can happen on demand when a page is requested (SSR). It can also happen ahead of time either because a previous request was cached, or at build time (SSG).
 
-If you’ve read the [Performance & Request Waterfalls guide](./request-waterfalls.md), you might remember this:
+If you've read the [Performance & Request Waterfalls guide](./request-waterfalls.md), you might remember this:
 
 ```
 1. |-> Markup (without content)
