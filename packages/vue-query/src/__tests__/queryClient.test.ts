@@ -83,6 +83,22 @@ describe('QueryCache', () => {
     })
   })
 
+  describe('ensureQueryData', () => {
+    test('should properly unwrap parameter', () => {
+      const queryClient = new QueryClient()
+
+      queryClient.ensureQueryData({
+        queryKey: queryKeyRef,
+        queryFn: fn,
+      })
+
+      expect(QueryClientOrigin.prototype.ensureQueryData).toBeCalledWith({
+        queryKey: queryKeyUnref,
+        queryFn: fn,
+      })
+    })
+  })
+
   describe('getQueriesData', () => {
     test('should properly unwrap queryKey param', () => {
       const queryClient = new QueryClient()
