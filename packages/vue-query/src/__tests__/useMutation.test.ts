@@ -386,6 +386,21 @@ describe('useMutation', () => {
     })
   })
 
+  test('should warn when used outside of setup function in development mode', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    useMutation({
+      mutationFn: (params: string) => sleep(0).then(() => params),
+    })
+
+    vi.unstubAllEnvs()
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+    )
+  })
+
   describe('throwOnError', () => {
     test('should evaluate throwOnError when mutation is expected to throw', async () => {
       const err = new Error('Expected mock error. All is well!')
