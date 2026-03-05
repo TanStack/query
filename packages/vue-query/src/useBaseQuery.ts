@@ -149,6 +149,8 @@ export function useBaseQuery<
     return state.refetch(...args)
   }
 
+  let isSuspenseFetching = false
+
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>(
       (resolve, reject) => {
@@ -164,20 +166,28 @@ export function useBaseQuery<
             )
             if (optimisticResult.isStale) {
               stopWatch()
+              isSuspenseFetching = true
               observer
                 .fetchOptimistic(defaultedOptions.value)
-                .then(resolve, (error: TError) => {
-                  if (
-                    shouldThrowError(defaultedOptions.value.throwOnError, [
-                      error,
-                      observer.getCurrentQuery(),
-                    ])
-                  ) {
-                    reject(error)
-                  } else {
-                    resolve(observer.getCurrentResult())
-                  }
-                })
+                .then(
+                  (result) => {
+                    isSuspenseFetching = false
+                    resolve(result)
+                  },
+                  (error: TError) => {
+                    isSuspenseFetching = false
+                    if (
+                      shouldThrowError(defaultedOptions.value.throwOnError, [
+                        error,
+                        observer.getCurrentQuery(),
+                      ])
+                    ) {
+                      reject(error)
+                    } else {
+                      resolve(observer.getCurrentResult())
+                    }
+                  },
+                )
             } else {
               stopWatch()
               resolve(optimisticResult)
@@ -196,15 +206,15 @@ export function useBaseQuery<
   watch(
     () => state.error,
     (error) => {
-      if (
-        state.isError &&
-        !state.isFetching &&
-        shouldThrowError(defaultedOptions.value.throwOnError, [
-          error as TError,
-          observer.getCurrentQuery(),
-        ])
-      ) {
-        throw error
+      if (state.isError && !state.isFetching) {
+        const shouldThrow = shouldThrowError(
+          defaultedOptions.value.throwOnError,
+          [error as TError, observer.getCurrentQuery()],
+        )
+
+        if (shouldThrow && !isSuspenseFetching) {
+          throw error
+        }
       }
     },
   )
