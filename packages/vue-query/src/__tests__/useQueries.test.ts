@@ -369,6 +369,35 @@ describe('useQueries', () => {
     expect(fetchFn).toHaveBeenCalledTimes(6)
   })
 
+  test('should refetch only the specific query without affecting others', async () => {
+    let userCount = 0
+    let postCount = 0
+
+    const queriesState = useQueries({
+      queries: [
+        {
+          queryKey: ['users'],
+          queryFn: () => sleep(10).then(() => `users-${++userCount}`),
+        },
+        {
+          queryKey: ['posts'],
+          queryFn: () => sleep(20).then(() => `posts-${++postCount}`),
+        },
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(20)
+
+    expect(queriesState.value[0].data).toBe('users-1')
+    expect(queriesState.value[1].data).toBe('posts-1')
+
+    queriesState.value[0].refetch()
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queriesState.value[0].data).toBe('users-2')
+    expect(queriesState.value[1].data).toBe('posts-1')
+  })
+
   test('should work with options getter and be reactive', async () => {
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
