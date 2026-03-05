@@ -390,15 +390,18 @@ describe('useMutation', () => {
     vi.stubEnv('NODE_ENV', 'development')
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
-    useMutation({
-      mutationFn: (params: string) => sleep(0).then(() => params),
-    })
+    try {
+      useMutation({
+        mutationFn: (params: string) => sleep(0).then(() => params),
+      })
 
-    vi.unstubAllEnvs()
-
-    expect(warnSpy).toHaveBeenCalledWith(
-      'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
-    )
+      expect(warnSpy).toHaveBeenCalledWith(
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    } finally {
+      warnSpy.mockRestore()
+      vi.unstubAllEnvs()
+    }
   })
 
   describe('throwOnError', () => {
