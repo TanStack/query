@@ -25,6 +25,7 @@ import {
   sleep,
 } from '@tanstack/query-test-utils'
 import {
+  IsRestoringProvider,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -1046,6 +1047,69 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
+  })
+
+  it('should maintain referential equality when reconcile option is a string key', async () => {
+    const key = queryKey()
+    const states: Array<Array<{ id: string; done: boolean }>> = []
+
+    let count = 0
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          count++
+          return [
+            { id: '1', done: false },
+            { id: '2', done: count > 1 },
+          ]
+        },
+        reconcile: 'id',
+      }))
+
+      createEffect(() => {
+        if (state.data) {
+          states.push(state.data)
+        }
+      })
+
+      const { refetch } = state
+
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText(
+        'Data: [{"id":"1","done":false},{"id":"2","done":false}]',
+      ),
+    ).toBeInTheDocument()
+    expect(states).toHaveLength(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText(
+        'Data: [{"id":"1","done":false},{"id":"2","done":true}]',
+      ),
+    ).toBeInTheDocument()
+
+    // reconcile by 'id' updates in-place, so the array reference stays the same
+    // and the effect is not triggered again
+    expect(states).toHaveLength(1)
   })
 
   it('should share equal data structures between query results', async () => {
@@ -6159,6 +6223,54 @@ describe('useQuery', () => {
     expect(rendered.getByText('data: 3')).toBeInTheDocument()
   })
 
+  it('should not fetch while restoring and refetch after restoring is complete', async () => {
+    const key = queryKey()
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
+
+    const [isRestoring, setIsRestoring] = createSignal(true)
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn,
+      }))
+
+      return (
+        <div>
+          <div data-testid="status">{query.status}</div>
+          <div data-testid="fetchStatus">{query.fetchStatus}</div>
+          <div data-testid="data">{query.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <IsRestoringProvider value={isRestoring}>
+          <Page />
+        </IsRestoringProvider>
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    // Restoring complete: should refetch
+    setIsRestoring(false)
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('success')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('data')
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
   it('should use provided custom queryClient', async () => {
     const key = queryKey()
     const queryFn = () => sleep(10).then(() => 'custom client')
@@ -6179,5 +6291,45 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Status: custom client')).toBeInTheDocument()
+  })
+
+  it('should refetch query when queryClient changes', async () => {
+    const key = queryKey()
+
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
+
+    function Page(props: { client: () => QueryClient }) {
+      const query = useQuery(
+        () => ({
+          queryKey: key,
+          queryFn,
+        }),
+        props.client,
+      )
+
+      return <div>status: {query.status}</div>
+    }
+
+    const [client, setClient] = createSignal(queryClient1)
+
+    const rendered = render(() => <Page client={client} />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(queryClient1.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    setClient(queryClient2)
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 })

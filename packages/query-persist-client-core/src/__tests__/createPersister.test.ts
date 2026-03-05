@@ -675,4 +675,93 @@ describe('createPersister', () => {
       expect(client.getQueryCache().getAll()).toHaveLength(1)
     })
   })
+
+  describe('removeQueries', () => {
+    test('should remove restore queries from storage without filters', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      await persister.removeQueries()
+      expect(await storage.entries()).toHaveLength(0)
+    })
+
+    test('should remove queries from storage', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      await persister.removeQueries({ queryKey })
+      expect(await storage.entries()).toHaveLength(0)
+    })
+
+    test('should not remove queries from storage if there is no match', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      await persister.removeQueries({ queryKey: ['bar'] })
+      expect(await storage.entries()).toHaveLength(1)
+    })
+
+    test('should properly remove queries from storage with partial match', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      await persister.removeQueries({ queryKey: ['foo'] })
+      expect(await storage.entries()).toHaveLength(0)
+    })
+
+    test('should not remove queries from storage with exact match if there is no match', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      await persister.removeQueries({ queryKey: ['foo'], exact: true })
+      expect(await storage.entries()).toHaveLength(1)
+    })
+
+    test('should remove queries from storage with exact match', async () => {
+      const storage = getFreshStorage()
+      const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
+        storage,
+      })
+      client.setQueryData(queryKey, 'foo')
+
+      await persister.persistQueryByKey(queryKey, client)
+
+      expect(await storage.entries()).toHaveLength(1)
+      await persister.removeQueries({
+        queryKey: queryKey,
+        exact: true,
+      })
+      expect(await storage.entries()).toHaveLength(0)
+    })
+  })
 })
