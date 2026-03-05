@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { flushSync } from 'svelte'
 import { fireEvent, render } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
+import { createMutation } from '../../src/index.js'
+import { withEffectRoot } from '../utils.svelte.js'
 import ResetExample from './ResetExample.svelte'
 import OnSuccessExample from './OnSuccessExample.svelte'
 import FailureExample from './FailureExample.svelte'
@@ -95,4 +99,33 @@ describe('createMutation', () => {
     expect(rendered.getByText('Failure Count: 0')).toBeInTheDocument()
     expect(rendered.getByText('Failure Reason: undefined')).toBeInTheDocument()
   })
+
+  test(
+    'should recreate observer when queryClient changes',
+    withEffectRoot(async () => {
+      const queryClient1 = new QueryClient()
+      const queryClient2 = new QueryClient()
+
+      let queryClient = $state(queryClient1)
+
+      const mutation = createMutation(
+        () => ({
+          mutationFn: (params: string) => sleep(10).then(() => params),
+        }),
+        () => queryClient,
+      )
+
+      mutation.mutate('first')
+      await vi.advanceTimersByTimeAsync(11)
+
+      expect(mutation.status).toBe('success')
+      expect(mutation.data).toBe('first')
+
+      queryClient = queryClient2
+      flushSync()
+
+      expect(mutation.status).toBe('idle')
+      expect(mutation.data).toBeUndefined()
+    }),
+  )
 })
