@@ -167,27 +167,25 @@ export function useBaseQuery<
             if (optimisticResult.isStale) {
               stopWatch()
               isSuspenseFetching = true
-              observer
-                .fetchOptimistic(defaultedOptions.value)
-                .then(
-                  (result) => {
-                    isSuspenseFetching = false
-                    resolve(result)
-                  },
-                  (error: TError) => {
-                    isSuspenseFetching = false
-                    if (
-                      shouldThrowError(defaultedOptions.value.throwOnError, [
-                        error,
-                        observer.getCurrentQuery(),
-                      ])
-                    ) {
-                      reject(error)
-                    } else {
-                      resolve(observer.getCurrentResult())
-                    }
-                  },
-                )
+              observer.fetchOptimistic(defaultedOptions.value).then(
+                (result) => {
+                  isSuspenseFetching = false
+                  resolve(result)
+                },
+                (error: TError) => {
+                  isSuspenseFetching = false
+                  if (
+                    shouldThrowError(defaultedOptions.value.throwOnError, [
+                      error,
+                      observer.getCurrentQuery(),
+                    ])
+                  ) {
+                    reject(error)
+                  } else {
+                    resolve(observer.getCurrentResult())
+                  }
+                },
+              )
             } else {
               stopWatch()
               resolve(optimisticResult)
