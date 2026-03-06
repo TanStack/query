@@ -84,6 +84,28 @@ describe('queriesObserver', () => {
     ])
   })
 
+  test('should return current observers via getObservers', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ])
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    const observers = observer.getObservers()
+
+    expect(observers).toHaveLength(2)
+    expect(observers[0]).toBeInstanceOf(QueryObserver)
+    expect(observers[1]).toBeInstanceOf(QueryObserver)
+
+    unsubscribe()
+  })
+
   test('should update when a query is removed', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
