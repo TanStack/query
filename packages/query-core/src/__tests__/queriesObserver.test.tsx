@@ -546,4 +546,44 @@ describe('queriesObserver', () => {
 
     trackPropSpy.mockRestore()
   })
+
+  test('should subscribe to new observers when a query is added while subscribed', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+    const queryFn3 = vi.fn(() => sleep(10).then(() => 3))
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ])
+    const results: Array<Array<QueryObserverResult>> = []
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(results[results.length - 1]).toMatchObject([
+      { status: 'success', data: 1 },
+      { status: 'success', data: 2 },
+    ])
+
+    observer.setQueries([
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+      { queryKey: key3, queryFn: queryFn3 },
+    ])
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    unsubscribe()
+
+    expect(results[results.length - 1]).toMatchObject([
+      { status: 'success', data: 1 },
+      { status: 'success', data: 2 },
+      { status: 'success', data: 3 },
+    ])
+  })
 })
