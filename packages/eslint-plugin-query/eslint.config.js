@@ -3,7 +3,8 @@
 import vitest from '@vitest/eslint-plugin'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+/** @type {import('eslint').Linter.Config[]} */
+const config = [
   ...rootConfig,
   {
     plugins: { vitest },
@@ -18,3 +19,5 @@ export default [
     },
   },
 ]
+
+export default config

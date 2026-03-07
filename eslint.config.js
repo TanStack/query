@@ -1,16 +1,18 @@
 // @ts-check
 
-// @ts-ignore Needed due to moduleResolution Node vs Bundler
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
+import unusedImports from 'eslint-plugin-unused-imports'
 import vitest from '@vitest/eslint-plugin'
 
-export default [
+/** @type {import('eslint').Linter.Config[]} */
+const config = [
   ...tanstackConfig,
   {
     name: 'tanstack/temp',
     plugins: {
       cspell: pluginCspell,
+      'unused-imports': unusedImports,
     },
     rules: {
       'cspell/spellchecker': [
@@ -44,7 +46,11 @@ export default [
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'no-case-declarations': 'off',
+      'no-shadow': 'off',
+      'pnpm/enforce-catalog': 'off',
+      'pnpm/json-enforce-catalog': 'off',
       'prefer-const': 'off',
+      'unused-imports/no-unused-imports': 'warn',
     },
   },
   {
@@ -62,3 +68,5 @@ export default [
     settings: { vitest: { typecheck: true } },
   },
 ]
+
+export default config
