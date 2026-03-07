@@ -1,7 +1,6 @@
 import { QueryObserver } from '@tanstack/query-core'
 import type {
   DefaultError,
-  NoInfer,
   QueryClient,
   QueryKey,
 } from '@tanstack/query-core'
