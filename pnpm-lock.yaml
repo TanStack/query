@@ -117,12 +117,6 @@ importers:
       typescript:
         specifier: 6.0.1-rc
         version: 6.0.1-rc
-      typescript52:
-        specifier: npm:typescript@5.2
-        version: typescript@5.2.2
-      typescript53:
-        specifier: npm:typescript@5.3
-        version: typescript@5.3.3
       typescript54:
         specifier: npm:typescript@5.4
         version: typescript@5.4.5
@@ -14948,11 +14942,6 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <6.0.0'
-
-  typescript@5.2.2:
-    resolution: {integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==}
-    engines: {node: '>=14.17'}
-    hasBin: true
 
   typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
@@ -30924,8 +30913,6 @@ snapshots:
       typescript: 6.0.1-rc
     transitivePeerDependencies:
       - supports-color
-
-  typescript@5.2.2: {}
 
   typescript@5.3.3: {}
 

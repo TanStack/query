@@ -26,8 +26,6 @@
     "tsup",
     "@typescript/native-preview",
     "typescript",
-    "typescript52",
-    "typescript53",
     "typescript54",
     "typescript55",
     "typescript56",
