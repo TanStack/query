@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "customConditions": []
   },
   "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
   "references": [{ "path": "../query-devtools" }, { "path": "../react-query" }]
