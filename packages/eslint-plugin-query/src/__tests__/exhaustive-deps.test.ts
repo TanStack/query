@@ -260,6 +260,22 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'should pass when queryKey is a chained queryKeyFactory while having deps in nested calls',
+      code: normalizeIndent`
+        const fooQueryKeyFactory = {
+          foo: (num: number) => ({
+            detail: (flag: boolean) => ['foo', num, flag] as const,
+          }),
+        }
+
+        const useFoo = (num: number, flag: boolean) =>
+          useQuery({
+            queryKey: fooQueryKeyFactory.foo(num).detail(flag),
+            queryFn: () => Promise.resolve({ num, flag }),
+          })
+      `,
+    },
+    {
       name: 'should not treat new Error as missing dependency',
       code: normalizeIndent`
         useQuery({
@@ -424,6 +440,50 @@ ruleTester.run('exhaustive-deps', rule, {
         `,
     },
     {
+      name: 'should pass when queryKey uses a direct conditional expression',
+      code: normalizeIndent`
+        function Component(cond, a, b) {
+          useQuery({
+            queryKey: ['thing', cond ? a : b],
+            queryFn: () => (cond ? a : b),
+          })
+        }
+      `,
+    },
+    {
+      name: 'should pass when queryKey uses a direct binary expression',
+      code: normalizeIndent`
+        function Component(a, b) {
+          useQuery({
+            queryKey: ['thing', a + b],
+            queryFn: () => a + b,
+          })
+        }
+      `,
+    },
+    {
+      name: 'should pass when queryKey uses a nested type assertion',
+      code: normalizeIndent`
+        function Component(dep) {
+          useQuery({
+            queryKey: ['thing', dep as string],
+            queryFn: () => dep,
+          })
+        }
+      `,
+    },
+    {
+      name: 'should pass when queryKey derives values inside a callback',
+      code: normalizeIndent`
+        function Component(ids, prefix) {
+          useQuery({
+            queryKey: ['thing', ids.map((id) => prefix + '-' + id)],
+            queryFn: () => ({ ids, prefix }),
+          })
+        }
+      `,
+    },
+    {
       name: 'instanceof value should not be in query key',
       code: `
         class SomeClass {}
@@ -585,6 +645,55 @@ ruleTester.run('exhaustive-deps', rule, {
           queryKey: ['entity', id],
           queryFn: () => fetch('/api/entity/' + id),
         })
+      `,
+    },
+    {
+      name: 'should ignore callback locals in Vue file queryFn',
+      filename: 'Component.vue',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query'
+
+        const ids = [1, 2, 3]
+        useQuery({
+          queryKey: ['entities', ids],
+          queryFn: () => ids.map((id) => fetchEntity(id)),
+        })
+      `,
+    },
+    {
+      name: 'should pass when dep used in then/catch is listed in queryKey',
+      code: normalizeIndent`
+        function Component() {
+          const id = 1
+          useQuery({
+            queryKey: ['foo', id],
+            queryFn: () =>
+              Promise.resolve(null)
+                .then(() => id)
+                .catch(() => id),
+          })
+        }
+      `,
+    },
+    {
+      name: 'should pass when dep used in try/catch/finally is listed in queryKey',
+      code: normalizeIndent`
+        function Component() {
+          const id = 1
+          useQuery({
+            queryKey: ['foo', id],
+            queryFn: () => {
+              try {
+                return fetch(id)
+              } catch (error) {
+                console.error(error)
+                return id
+              } finally {
+                console.log('done')
+              }
+            },
+          })
+        }
       `,
     },
   ],
@@ -889,6 +998,49 @@ ruleTester.run('exhaustive-deps', rule, {
       ],
     },
     {
+      name: 'should fail when alias of props used in queryFn is missing in queryKey',
+      code: normalizeIndent`
+        function Component(props) {
+          const entities = props.entities;
+
+          const q = useQuery({
+            queryKey: ['get-stuff'],
+            queryFn: () => {
+              return api.fetchStuff({
+                ids: entities.map((o) => o.id)
+              });
+            }
+          });
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'entities' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              data: { result: "['get-stuff', entities]" },
+              output: normalizeIndent`
+                function Component(props) {
+                  const entities = props.entities;
+
+                  const q = useQuery({
+                    queryKey: ['get-stuff', entities],
+                    queryFn: () => {
+                      return api.fetchStuff({
+                        ids: entities.map((o) => o.id)
+                      });
+                    }
+                  });
+                }
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: 'should fail when queryKey is a queryKeyFactory while having missing dep',
       code: normalizeIndent`
         const fooQueryKeyFactory = { foo: () => ['foo'] as const }
@@ -897,6 +1049,28 @@ ruleTester.run('exhaustive-deps', rule, {
           useQuery({
               queryKey: fooQueryKeyFactory.foo(),
               queryFn: () => Promise.resolve(num),
+          })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'num' },
+        },
+      ],
+    },
+    {
+      name: 'should fail when queryKey is a chained queryKeyFactory while having missing dep in earlier call',
+      code: normalizeIndent`
+        const fooQueryKeyFactory = {
+          foo: (num: number) => ({
+            detail: (flag: boolean) => ['foo', num, flag] as const,
+          }),
+        }
+
+        const useFoo = (num: number, flag: boolean) =>
+          useQuery({
+            queryKey: fooQueryKeyFactory.foo(1).detail(flag),
+            queryFn: () => Promise.resolve({ num, flag }),
           })
       `,
       errors: [
@@ -1078,6 +1252,124 @@ ruleTester.run('exhaustive-deps', rule, {
                   queryKey: ['users', userId, orgId],
                   queryFn: () => fetchUser(userId, orgId),
                 })
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fail when dep used in then/catch is missing in queryKey',
+      code: normalizeIndent`
+        function Component() {
+          const id = 1
+          useQuery({
+            queryKey: ['foo'],
+            queryFn: () =>
+              Promise.resolve(null)
+                .then(() => id)
+                .catch(() => id),
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'id' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+                function Component() {
+                  const id = 1
+                  useQuery({
+                    queryKey: ['foo', id],
+                    queryFn: () =>
+                      Promise.resolve(null)
+                        .then(() => id)
+                        .catch(() => id),
+                  })
+                }
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fail when queryKey callback only references a shadowing local',
+      code: normalizeIndent`
+        function Component(id, ids) {
+          useQuery({
+            queryKey: ['thing', ids.map((id) => id)],
+            queryFn: () => id,
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'id' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+                function Component(id, ids) {
+                  useQuery({
+                    queryKey: ['thing', ids.map((id) => id), id],
+                    queryFn: () => id,
+                  })
+                }
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fail when dep used in try/catch/finally is missing in queryKey',
+      code: normalizeIndent`
+        function Component() {
+          const id = 1
+          useQuery({
+            queryKey: ['foo'],
+            queryFn: () => {
+              try {
+                return fetch(id)
+              } catch (error) {
+                console.error(error)
+                return id
+              } finally {
+                console.log('done')
+              }
+            },
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'id' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+                function Component() {
+                  const id = 1
+                  useQuery({
+                    queryKey: ['foo', id],
+                    queryFn: () => {
+                      try {
+                        return fetch(id)
+                      } catch (error) {
+                        console.error(error)
+                        return id
+                      } finally {
+                        console.log('done')
+                      }
+                    },
+                  })
+                }
               `,
             },
           ],

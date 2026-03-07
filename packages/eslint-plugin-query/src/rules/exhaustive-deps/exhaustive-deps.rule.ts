@@ -86,10 +86,11 @@ export const rule = createRule({
           }),
         )
 
-        const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyNode).map(
-          (identifier) =>
-            ASTUtils.mapKeyNodeToBaseText(identifier, context.sourceCode),
-        )
+        const queryKeyDeps = ExhaustiveDepsUtils.collectQueryKeyDeps({
+          sourceCode: context.sourceCode,
+          scopeManager,
+          queryKeyNode,
+        })
 
         const missingRefs = relevantRefs
           .map((ref) => ({
@@ -103,8 +104,8 @@ export const rule = createRule({
             return (
               !ref.isTypeReference &&
               !ASTUtils.isAncestorIsCallee(ref.identifier) &&
-              !existingKeys.some((existingKey) => existingKey === text) &&
-              !existingKeys.includes(text.split(/[?.]/)[0] ?? '')
+              !queryKeyDeps.has(text) &&
+              !queryKeyDeps.has(text.split(/[?.]/)[0] ?? '')
             )
           })
           .map(({ ref, text }) => ({
