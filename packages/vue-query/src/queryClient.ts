@@ -21,6 +21,7 @@ import type {
   MutationFilters,
   MutationKey,
   MutationObserverOptions,
+  NoInfer,
   OmitKeyof,
   QueryFilters,
   QueryKey,

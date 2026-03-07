@@ -1,5 +1,10 @@
 import { QueryObserver } from '@tanstack/query-core'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  NoInfer,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core'
 
 import type {
   DefinedInitialDataOptions,
