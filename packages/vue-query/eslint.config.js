@@ -3,4 +3,7 @@
 import pluginVue from 'eslint-plugin-vue'
 import rootConfig from './root.eslint.config.js'
 
-export default [...rootConfig, ...pluginVue.configs['flat/base']]
+/** @type {import('eslint').Linter.Config[]} */
+const config = [...rootConfig, ...pluginVue.configs['flat/base']]
+
+export default config
