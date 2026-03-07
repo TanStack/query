@@ -24,7 +24,6 @@
     "react",
     "react-dom",
     "tsup",
-    "@typescript/native-preview",
     "typescript",
     "typescript54",
     "typescript55",

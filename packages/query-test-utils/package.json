@@ -30,7 +30,6 @@
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
     "test:types:tscurrent": "tsc --build",
-    "test:types:tsgo": "tsgo --build",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch"
   },
