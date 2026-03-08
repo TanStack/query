@@ -22,7 +22,7 @@
   "scripts": {
     "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
     "compile": "tsc --build",
-    "test:types": "svelte-check --tsconfig ./tsconfig.json",
+    "test:types": "node ../../scripts/run-svelte-check.mjs --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
@@ -59,8 +59,7 @@
     "@typescript-eslint/parser": "^8.48.0",
     "eslint-plugin-svelte": "^3.11.0",
     "svelte": "^5.39.3",
-    "svelte-check": "^4.4.5",
-    "typescript": "5.9.3"
+    "svelte-check": "^4.4.5"
   },
   "peerDependencies": {
     "svelte": "^5.25.0"
