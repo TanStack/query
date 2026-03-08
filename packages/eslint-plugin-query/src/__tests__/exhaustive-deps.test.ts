@@ -35,20 +35,6 @@ ruleTester.run('exhaustive-deps', rule, {
       code: 'useQuery({ queryKey: ["entity", id], queryFn: () => api.entity.get(id) });',
     },
     {
-      name: 'should not pass api when is being used for calling a function',
-      code: `
-        import useApi from './useApi'
-
-        const useFoo = () => {
-          const api = useApi();
-          return useQuery({
-            queryKey: ['foo'],
-            queryFn: () => api.fetchFoo(),
-          })
-        }
-      `,
-    },
-    {
       name: 'should pass props.src',
       code: `
         function MyComponent(props) {
@@ -698,6 +684,43 @@ ruleTester.run('exhaustive-deps', rule, {
     },
   ],
   invalid: [
+    {
+      name: 'should fail when api from hook is used for calling a function',
+      code: normalizeIndent`
+        import useApi from './useApi'
+
+        const useFoo = () => {
+          const api = useApi();
+          return useQuery({
+            queryKey: ['foo'],
+            queryFn: () => api.fetchFoo(),
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'api' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              data: { result: "['foo', api]" },
+              output: normalizeIndent`
+                import useApi from './useApi'
+
+                const useFoo = () => {
+                  const api = useApi();
+                  return useQuery({
+                    queryKey: ['foo', api],
+                    queryFn: () => api.fetchFoo(),
+                  })
+                }
+              `,
+            },
+          ],
+        },
+      ],
+    },
     {
       name: 'should fail when deps are missing in query factory',
       code: normalizeIndent`

@@ -80,8 +80,12 @@ export const ExhaustiveDepsUtils = {
     }
 
     function visitChildren(node: TSESTree.Node): void {
-      for (const key of visitorKeys[node.type] ?? []) {
-        const value = (node as Record<string, unknown>)[key]
+      const keys = (visitorKeys[node.type] ?? []) as ReadonlyArray<
+        keyof TSESTree.Node
+      >
+
+      for (const key of keys) {
+        const value = node[key]
 
         if (Array.isArray(value)) {
           for (const item of value) {
@@ -122,7 +126,15 @@ export const ExhaustiveDepsUtils = {
           visit(node.value)
           return
         case AST_NODE_TYPES.MemberExpression:
-          visit(node.object)
+          if (
+            node.parent.type === AST_NODE_TYPES.CallExpression &&
+            node.parent.callee === node &&
+            node.object.type === AST_NODE_TYPES.Identifier
+          ) {
+            deps.add(node.object.name)
+          } else {
+            visit(node.object)
+          }
           return
         case AST_NODE_TYPES.CallExpression:
           node.arguments.forEach((argument) => visit(argument))
@@ -154,9 +166,7 @@ export const ExhaustiveDepsUtils = {
   },
 
   collectExternalRefsInFunction(params: {
-    functionNode:
-      | TSESTree.ArrowFunctionExpression
-      | TSESTree.FunctionExpression
+    functionNode: TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression
     scopeManager: TSESLint.Scope.ScopeManager
   }): Array<TSESLint.Scope.Reference> {
     const { functionNode, scopeManager } = params

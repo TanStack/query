@@ -95,15 +95,16 @@ export const rule = createRule({
         const missingRefs = relevantRefs
           .map((ref) => ({
             ref: ref,
-            text: ASTUtils.mapKeyNodeToBaseText(
-              ref.identifier,
-              context.sourceCode,
-            ),
+            text: ASTUtils.isAncestorIsCallee(ref.identifier)
+              ? ref.identifier.name
+              : ASTUtils.mapKeyNodeToBaseText(
+                  ref.identifier,
+                  context.sourceCode,
+                ),
           }))
           .filter(({ ref, text }) => {
             return (
               !ref.isTypeReference &&
-              !ASTUtils.isAncestorIsCallee(ref.identifier) &&
               !queryKeyDeps.has(text) &&
               !queryKeyDeps.has(text.split(/[?.]/)[0] ?? '')
             )
@@ -117,9 +118,7 @@ export const rule = createRule({
 
         if (uniqueMissingRefs.length > 0) {
           const missingAsText = uniqueMissingRefs
-            .map((ref) =>
-              ASTUtils.mapKeyNodeToText(ref.identifier, context.sourceCode),
-            )
+            .map((ref) => ref.text)
             .join(', ')
 
           const queryKeyValue = context.sourceCode.getText(queryKeyNode)
