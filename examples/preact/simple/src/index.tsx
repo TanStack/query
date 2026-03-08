@@ -42,4 +42,7 @@ const Example = () => {
   )
 }
 
-render(<App />, document.getElementById('app'))
+const app = document.getElementById('app')
+if (!app) throw new Error('Missing #app element')
+
+render(<App />, app)

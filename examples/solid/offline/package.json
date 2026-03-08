@@ -8,10 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-async-storage-persister": "^5.90.23",
+    "@tanstack/query-async-storage-persister": "^5.90.24",
     "@tanstack/solid-query": "^5.90.23",
     "@tanstack/solid-query-devtools": "^5.91.3",
-    "@tanstack/solid-query-persist-client": "^5.90.24",
+    "@tanstack/solid-query-persist-client": "^5.90.25",
     "msw": "^2.6.6",
     "solid-js": "^1.9.7"
   },
