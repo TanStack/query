@@ -36,11 +36,15 @@ async function findSvelteCheckBin(): Promise<string> {
 
 const svelteCheckBin = await findSvelteCheckBin()
 
-const child = spawn(process.execPath, [svelteCheckBin, ...process.argv.slice(2)], {
-  cwd,
-  stdio: 'inherit',
-  env: process.env,
-})
+const child = spawn(
+  process.execPath,
+  [svelteCheckBin, ...process.argv.slice(2)],
+  {
+    cwd,
+    stdio: 'inherit',
+    env: process.env,
+  },
+)
 
 child.on('exit', (code, signal) => {
   if (signal) {
