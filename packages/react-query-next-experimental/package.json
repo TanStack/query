@@ -26,6 +26,7 @@
     "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:tscurrent": "tsc --build",
+    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build",
     "test:build": "publint --strict && attw --pack",
     "build": "tsup --tsconfig tsconfig.prod.json"
   },

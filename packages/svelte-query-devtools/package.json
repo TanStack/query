@@ -22,7 +22,7 @@
   "scripts": {
     "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
     "compile": "tsc --build",
-    "test:types": "node --experimental-strip-types ../../scripts/run-svelte-check.ts --tsconfig ./tsconfig.json",
+    "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:build": "publint --strict && attw --pack",
     "build": "svelte-package --input ./src --output ./dist"

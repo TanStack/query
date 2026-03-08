@@ -24,15 +24,6 @@
       "entry": ["src/v4/**/*.cjs", "src/v5/**/*.cjs"],
       "ignore": ["**/__testfixtures__/**"]
     },
-    "packages/svelte-query": {
-      "ignoreDependencies": ["svelte-check"]
-    },
-    "packages/svelte-query-devtools": {
-      "ignoreDependencies": ["svelte-check"]
-    },
-    "packages/svelte-query-persist-client": {
-      "ignoreDependencies": ["svelte-check"]
-    },
     "packages/vue-query": {
       "ignore": ["**/__mocks__/**"],
       "ignoreDependencies": ["vue2", "vue2.7"]

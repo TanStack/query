@@ -26,6 +26,7 @@
     "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:tscurrent": "tsc --build",
+    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build",
     "test:lib": "pnpm run test:lib:2 && pnpm run test:lib:2.7 && pnpm run test:lib:3",
     "test:lib:2": "vue-demi-switch 2 vue2 && vitest",
     "test:lib:2.7": "vue-demi-switch 2.7 vue2.7 && vitest",
