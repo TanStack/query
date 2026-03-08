@@ -1,14 +1,15 @@
+import { spawn } from 'node:child_process'
 import { readdir } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { spawn } from 'node:child_process'
 
+const cwd = process.cwd()
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
 const workspaceRoot = path.resolve(scriptDir, '..')
 const pnpmStoreDir = path.join(workspaceRoot, 'node_modules', '.pnpm')
 const targetTypeScriptVersion = '5.9.3'
 
-async function findSvelteCheckBin() {
+async function findSvelteCheckBin(): Promise<string> {
   const entries = await readdir(pnpmStoreDir, { withFileTypes: true })
   const match = entries.find(
     (entry) =>
@@ -36,7 +37,7 @@ async function findSvelteCheckBin() {
 const svelteCheckBin = await findSvelteCheckBin()
 
 const child = spawn(process.execPath, [svelteCheckBin, ...process.argv.slice(2)], {
-  cwd: process.cwd(),
+  cwd,
   stdio: 'inherit',
   env: process.env,
 })
