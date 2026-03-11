@@ -476,4 +476,27 @@ describe('mutationObserver', () => {
       unsubscribe()
     })
   })
+
+  test('should not notify cache when setOptions is called with same options', () => {
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationFn: (text: string) => Promise.resolve(text),
+    })
+
+    const notifySpy = vi.spyOn(queryClient.getMutationCache(), 'notify')
+
+    const unsubscribe = mutationObserver.subscribe(() => undefined)
+
+    notifySpy.mockClear()
+
+    // Call setOptions with the same options
+    mutationObserver.setOptions({
+      mutationFn: mutationObserver.options.mutationFn,
+    })
+
+    expect(notifySpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'observerOptionsUpdated' }),
+    )
+
+    unsubscribe()
+  })
 })

@@ -98,7 +98,7 @@ describe('focusManager', () => {
 
     unsubscribe()
 
-    // Should unsubscribe our event event
+    // Should unsubscribe our event listener once
     expect(unsubscribeSpy).toHaveBeenCalledTimes(1)
 
     handlerSpy.mockRestore()

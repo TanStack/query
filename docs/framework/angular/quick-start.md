@@ -51,7 +51,7 @@ import { lastValueFrom } from 'rxjs'
 import {
   injectMutation,
   injectQuery,
-  QueryClient
+  QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 @Component({

@@ -25,14 +25,14 @@ const todoFetcher = async () =>
   )
 
 function SuspendableComponent() {
-  const query = useQuery(() => ({
+  const todosQuery = useQuery(() => ({
     queryKey: ['todos'],
     queryFn: todoFetcher,
   }))
 
-  // Accessing query.data directly inside a <Suspense> boundary
+  // Accessing todosQuery.data directly inside a <Suspense> boundary
   // automatically triggers suspension until data is ready
-  return <div>Data: {JSON.stringify(query.data)}</div>
+  return <div>Data: {JSON.stringify(todosQuery.data)}</div>
 }
 ```
 

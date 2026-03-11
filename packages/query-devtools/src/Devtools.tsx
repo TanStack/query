@@ -76,7 +76,6 @@ import type {
   Query,
   QueryCache,
   QueryCacheNotifyEvent,
-  QueryState,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
 import type { Accessor, Component, JSX, Setter } from 'solid-js'
@@ -1983,13 +1982,14 @@ const QueryDetails = () => {
     const __previousQueryOptions = activeQueryVal.options
 
     activeQueryVal.setState({
+      data: undefined,
       status: 'error',
       error,
       fetchMeta: {
         ...activeQueryVal.state.fetchMeta,
         __previousQueryOptions,
       } as any,
-    } as QueryState<unknown, Error>)
+    })
   }
 
   const restoreQueryAfterLoadingOrError = () => {
@@ -2225,7 +2225,7 @@ const QueryDetails = () => {
                     ...activeQueryVal.state.fetchMeta,
                     __previousQueryOptions,
                   } as any,
-                } as QueryState<unknown, Error>)
+                })
               }
             }}
           >

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueriesObserver, QueryClient } from '..'
+import { QueriesObserver, QueryClient, QueryObserver } from '..'
 import type { QueryObserverResult } from '..'
 
 describe('queriesObserver', () => {
@@ -393,5 +393,157 @@ describe('queriesObserver', () => {
       { status: 'success', data: 101 },
       { status: 'success', data: 102 },
     ])
+  })
+
+  test('should update combined result when queries are added with stable combine reference', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+      results,
+    }))
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    const observer = new QueriesObserver<{
+      count: number
+      results: Array<QueryObserverResult>
+    }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], { combine })
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    expect(initialCombined.count).toBe(1)
+
+    const newQueries = [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ]
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      newQueries,
+      combine,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    expect(newCombined.count).toBe(2)
+  })
+
+  test('should handle queries being removed with stable combine reference', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+      results,
+    }))
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    const observer = new QueriesObserver<{
+      count: number
+      results: Array<QueryObserverResult>
+    }>(
+      queryClient,
+      [
+        { queryKey: key1, queryFn: queryFn1 },
+        { queryKey: key2, queryFn: queryFn2 },
+      ],
+      { combine },
+    )
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [
+        { queryKey: key1, queryFn: queryFn1 },
+        { queryKey: key2, queryFn: queryFn2 },
+      ],
+      combine,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    expect(initialCombined.count).toBe(2)
+
+    const newQueries = [{ queryKey: key1, queryFn: queryFn1 }]
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      newQueries,
+      combine,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    expect(newCombined.count).toBe(1)
+  })
+
+  test('should update combined result when queries are replaced with different ones (same length)', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      keys: results.map((r) => r.status),
+      results,
+    }))
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    queryClient.setQueryData(key1, 'cached-1')
+
+    const observer = new QueriesObserver<{
+      keys: Array<string>
+      results: Array<QueryObserverResult>
+    }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], { combine })
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    expect(initialCombined.keys).toEqual(['success'])
+
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      [{ queryKey: key2, queryFn: queryFn2 }],
+      combine,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    expect(newCombined.keys).toEqual(['pending'])
+  })
+
+  test('should track properties on all observers when trackResult is called', () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = () => 'data1'
+    const queryFn2 = () => 'data2'
+
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ])
+
+    const trackPropSpy = vi.spyOn(QueryObserver.prototype, 'trackProp')
+
+    const [, , trackResult] = observer.getOptimisticResult(
+      [
+        { queryKey: key1, queryFn: queryFn1 },
+        { queryKey: key2, queryFn: queryFn2 },
+      ],
+      undefined,
+    )
+
+    const trackedResults = trackResult()
+
+    expect(trackedResults).toHaveLength(2)
+
+    // Accessing a property on the first result should trigger trackProp on all observers
+    void trackedResults[0]!.status
+
+    // 1 direct call from the accessed observer's proxy +
+    // 2 synchronized calls from onPropTracked callback (one per observer)
+    expect(trackPropSpy).toHaveBeenCalledWith('status')
+    expect(trackPropSpy).toHaveBeenCalledTimes(3)
+
+    trackPropSpy.mockRestore()
   })
 })

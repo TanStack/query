@@ -1510,6 +1510,32 @@ describe('queryObserver', () => {
     expect(result.isEnabled).toBe(true)
   })
 
+  test('should update currentResult when getOptimisticResult is called with changed data', () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    const defaultedOptions = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    // First render: no data yet
+    const initialResult = observer.getOptimisticResult(defaultedOptions)
+    expect(initialResult.data).toBeUndefined()
+
+    // Another component sets data (e.g., dependent query resolved)
+    queryClient.setQueryData(key, 'updated')
+
+    // Re-render: getOptimisticResult should pick up the new data and update currentResult
+    const updatedResult = observer.getOptimisticResult(defaultedOptions)
+    expect(updatedResult.data).toBe('updated')
+    expect(observer.getCurrentResult().data).toBe('updated')
+  })
+
   describe('StrictMode behavior', () => {
     it('should deduplicate calls to queryFn', async () => {
       const key = queryKey()

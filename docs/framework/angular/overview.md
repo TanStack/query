@@ -84,7 +84,7 @@ import { lastValueFrom } from 'rxjs'
       <strong>✨ {{ data.stargazers_count }}</strong>
       <strong>🍴 {{ data.forks_count }}</strong>
     }
-  `
+  `,
 })
 export class SimpleExampleComponent {
   http = inject(HttpClient)

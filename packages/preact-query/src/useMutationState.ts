@@ -1,0 +1,74 @@
+import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
+import type {
+  Mutation,
+  MutationCache,
+  MutationFilters,
+  MutationState,
+  QueryClient,
+} from '@tanstack/query-core'
+import { useCallback, useEffect, useRef } from 'preact/hooks'
+
+import { useQueryClient } from './QueryClientProvider'
+import { useSyncExternalStore } from './utils'
+
+export function useIsMutating(
+  filters?: MutationFilters,
+  queryClient?: QueryClient,
+): number {
+  const client = useQueryClient(queryClient)
+  return useMutationState(
+    { filters: { ...filters, status: 'pending' } },
+    client,
+  ).length
+}
+
+type MutationStateOptions<TResult = MutationState> = {
+  filters?: MutationFilters
+  select?: (mutation: Mutation) => TResult
+}
+
+function getResult<TResult = MutationState>(
+  mutationCache: MutationCache,
+  options: MutationStateOptions<TResult>,
+): Array<TResult> {
+  return mutationCache
+    .findAll(options.filters)
+    .map(
+      (mutation): TResult =>
+        (options.select ? options.select(mutation) : mutation.state) as TResult,
+    )
+}
+
+export function useMutationState<TResult = MutationState>(
+  options: MutationStateOptions<TResult> = {},
+  queryClient?: QueryClient,
+): Array<TResult> {
+  const mutationCache = useQueryClient(queryClient).getMutationCache()
+  const optionsRef = useRef(options)
+  const result = useRef<Array<TResult>>(null)
+  if (result.current === null) {
+    result.current = getResult(mutationCache, options)
+  }
+
+  useEffect(() => {
+    optionsRef.current = options
+  })
+
+  return useSyncExternalStore(
+    useCallback(
+      (onStoreChange) =>
+        mutationCache.subscribe(() => {
+          const nextResult = replaceEqualDeep(
+            result.current,
+            getResult(mutationCache, optionsRef.current),
+          )
+          if (result.current !== nextResult) {
+            result.current = nextResult
+            notifyManager.schedule(onStoreChange)
+          }
+        }),
+      [mutationCache],
+    ),
+    () => result.current,
+  )!
+}
