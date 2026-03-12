@@ -64,6 +64,7 @@ export {
   QueryClientContext,
   QueryClientProvider,
   useQueryClient,
+  useQueryClient as createQueryClient,
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export { useIsFetching } from './useIsFetching'
@@ -83,4 +84,8 @@ export { useMutationState } from './useMutationState'
 export { useMutationState as createMutationState } from './useMutationState'
 export { useQueries } from './useQueries'
 export const createQueries = useQueries
-export { useIsRestoring, IsRestoringProvider } from './isRestoring'
+export {
+  useIsRestoring,
+  useIsRestoring as createIsRestoring,
+  IsRestoringProvider,
+} from './isRestoring'
