@@ -64,7 +64,6 @@ export {
   QueryClientContext,
   QueryClientProvider,
   useQueryClient,
-  useQueryClient as createQueryClient,
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export { useIsFetching } from './useIsFetching'
