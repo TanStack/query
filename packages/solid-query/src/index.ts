@@ -83,8 +83,4 @@ export { useMutationState } from './useMutationState'
 export { useMutationState as createMutationState } from './useMutationState'
 export { useQueries } from './useQueries'
 export const createQueries = useQueries
-export {
-  useIsRestoring,
-  useIsRestoring as createIsRestoring,
-  IsRestoringProvider,
-} from './isRestoring'
+export { useIsRestoring, IsRestoringProvider } from './isRestoring'
