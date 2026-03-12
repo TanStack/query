@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 5.90.25
+
+### Patch Changes
+
+- fix: allow both create/use for solid ([#10260](https://github.com/TanStack/query/pull/10260))
+
 ## 5.90.24
 
 ### Patch Changes
