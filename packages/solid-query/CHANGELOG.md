@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 5.90.24
+
+### Patch Changes
+
+- fix: forward generic parameters in deprecated type aliases ([#10093](https://github.com/TanStack/query/pull/10093))
+
 ## 5.90.23
 
 ### Patch Changes
