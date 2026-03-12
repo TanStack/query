@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 5.90.26
+
+### Patch Changes
+
+- fix(solid-router): should only have useQueryClient/useIsRestoring due to context read ([#10262](https://github.com/TanStack/query/pull/10262))
+
 ## 5.90.25
 
 ### Patch Changes
