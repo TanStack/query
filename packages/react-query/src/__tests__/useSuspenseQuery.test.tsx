@@ -200,7 +200,7 @@ describe('useSuspenseQuery', () => {
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(0)
   })
@@ -811,7 +811,7 @@ describe('useSuspenseQuery', () => {
     // refetch
     fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
     // we are now in error state but still have data to show
-    await act(() => vi.advanceTimersByTimeAsync(11))
+    await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('rendered data error')).toBeInTheDocument()
 
     consoleMock.mockRestore()
@@ -922,9 +922,9 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('count: 1')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(21))
+    await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('count: 2')).toBeInTheDocument()
-    await act(() => vi.advanceTimersByTimeAsync(21))
+    await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('count: 3')).toBeInTheDocument()
 
     expect(count).toBeGreaterThanOrEqual(3)
