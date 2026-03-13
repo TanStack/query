@@ -68,5 +68,7 @@ export function useMutation<
     throw result.error
   }
 
-  return { ...result, mutate, mutateAsync: result.mutate }
+  return React.useMemo(() => {
+    return Object.assign(result, { mutate, mutateAsync: result.mutate })
+  }, [mutate, result])
 }

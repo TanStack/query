@@ -40,6 +40,16 @@ export class MutationObserver<
   #currentMutation?: Mutation<TData, TError, TVariables, TOnMutateResult>
   #mutateOptions?: MutateOptions<TData, TError, TVariables, TOnMutateResult>
   #trackedProps = new Set<keyof MutationObserverResult>()
+  #lastTrackedResult?: MutationObserverResult<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >
+  #resultProxyCache = new WeakMap<
+    MutationObserverResult<TData, TError, TVariables, TOnMutateResult>, // un-proxied result
+    MutationObserverResult<TData, TError, TVariables, TOnMutateResult> // proxied result
+  >()
 
   constructor(
     client: QueryClient,
@@ -164,13 +174,32 @@ export class MutationObserver<
     >,
     onPropTracked?: (key: keyof MutationObserverResult) => void,
   ): MutationObserverResult<TData, TError, TVariables, TOnMutateResult> {
-    return new Proxy(nextResult, {
-      get: (target, key) => {
-        this.trackProp(key as keyof MutationObserverResult)
-        onPropTracked?.(key as keyof MutationObserverResult)
-        return Reflect.get(target, key)
-      },
-    })
+    let resultProxy = this.#resultProxyCache.get(nextResult)
+
+    if (resultProxy) {
+      return resultProxy
+    }
+
+    if (this.#lastTrackedResult) {
+      if (shallowEqualObjects(this.#lastTrackedResult, nextResult)) {
+        resultProxy = this.#resultProxyCache.get(this.#lastTrackedResult)
+      }
+    }
+
+    if (!resultProxy) {
+      resultProxy = new Proxy(nextResult, {
+        get: (target, key) => {
+          this.trackProp(key as keyof MutationObserverResult)
+          onPropTracked?.(key as keyof MutationObserverResult)
+          return Reflect.get(target, key)
+        },
+      })
+    }
+
+    this.#resultProxyCache.set(nextResult, resultProxy)
+    this.#lastTrackedResult = nextResult
+
+    return resultProxy
   }
 
   trackProp(key: keyof MutationObserverResult) {
@@ -204,11 +233,15 @@ export class MutationObserver<
   }
 
   #updateResult(): void {
+    const prevResult = this.#currentResult as
+      | MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
+      | undefined
+
     const state =
       this.#currentMutation?.state ??
       getDefaultState<TData, TError, TVariables, TOnMutateResult>()
 
-    this.#currentResult = {
+    const nextResult = {
       ...state,
       isPending: state.status === 'pending',
       isSuccess: state.status === 'success',
@@ -217,6 +250,12 @@ export class MutationObserver<
       mutate: this.mutate,
       reset: this.reset,
     } as MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
+
+    if (shallowEqualObjects(nextResult, prevResult)) {
+      return
+    }
+
+    this.#currentResult = nextResult
   }
 
   #notify(
