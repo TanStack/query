@@ -39,6 +39,7 @@ export class MutationObserver<
   > = undefined!
   #currentMutation?: Mutation<TData, TError, TVariables, TOnMutateResult>
   #mutateOptions?: MutateOptions<TData, TError, TVariables, TOnMutateResult>
+  #trackedProps = new Set<keyof MutationObserverResult>()
 
   constructor(
     client: QueryClient,
@@ -102,9 +103,47 @@ export class MutationObserver<
   onMutationUpdate(
     action: Action<TData, TError, TVariables, TOnMutateResult>,
   ): void {
+    const prevResult = this.#currentResult as
+      | MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
+      | undefined
+
     this.#updateResult()
 
-    this.#notify(action)
+    const shouldNotifyListeners = (): boolean => {
+      if (!prevResult) {
+        return true
+      }
+
+      const { notifyOnChangeProps } = this.options
+      const notifyOnChangePropsValue =
+        typeof notifyOnChangeProps === 'function'
+          ? notifyOnChangeProps()
+          : notifyOnChangeProps
+
+      if (
+        notifyOnChangePropsValue === 'all' ||
+        (!notifyOnChangePropsValue && !this.#trackedProps.size)
+      ) {
+        return true
+      }
+
+      const includedProps = new Set(
+        notifyOnChangePropsValue ?? this.#trackedProps,
+      )
+
+      if (this.options.throwOnError) {
+        includedProps.add('error')
+      }
+
+      return Object.keys(this.#currentResult).some((key) => {
+        const typedKey = key as keyof MutationObserverResult
+        const changed = this.#currentResult[typedKey] !== prevResult[typedKey]
+
+        return changed && includedProps.has(typedKey)
+      })
+    }
+
+    this.#notify(action, { listeners: shouldNotifyListeners() })
   }
 
   getCurrentResult(): MutationObserverResult<
@@ -116,13 +155,35 @@ export class MutationObserver<
     return this.#currentResult
   }
 
+  trackResult(
+    nextResult: MutationObserverResult<
+      TData,
+      TError,
+      TVariables,
+      TOnMutateResult
+    >,
+    onPropTracked?: (key: keyof MutationObserverResult) => void,
+  ): MutationObserverResult<TData, TError, TVariables, TOnMutateResult> {
+    return new Proxy(nextResult, {
+      get: (target, key) => {
+        this.trackProp(key as keyof MutationObserverResult)
+        onPropTracked?.(key as keyof MutationObserverResult)
+        return Reflect.get(target, key)
+      },
+    })
+  }
+
+  trackProp(key: keyof MutationObserverResult) {
+    this.#trackedProps.add(key)
+  }
+
   reset(): void {
     // reset needs to remove the observer from the mutation because there is no way to "get it back"
     // another mutate call will yield a new mutation!
     this.#currentMutation?.removeObserver(this)
     this.#currentMutation = undefined
     this.#updateResult()
-    this.#notify()
+    this.#notify(undefined, { listeners: true })
   }
 
   mutate(
@@ -158,7 +219,10 @@ export class MutationObserver<
     } as MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
   }
 
-  #notify(action?: Action<TData, TError, TVariables, TOnMutateResult>): void {
+  #notify(
+    action?: Action<TData, TError, TVariables, TOnMutateResult>,
+    notifyOptions?: { listeners?: boolean },
+  ): void {
     notifyManager.batch(() => {
       // First trigger the mutate callbacks
       if (this.#mutateOptions && this.hasListeners()) {
@@ -219,9 +283,11 @@ export class MutationObserver<
       }
 
       // Then trigger the listeners
-      this.listeners.forEach((listener) => {
-        listener(this.#currentResult)
-      })
+      if (notifyOptions?.listeners) {
+        this.listeners.forEach((listener) => {
+          listener(this.#currentResult)
+        })
+      }
     })
   }
 }
