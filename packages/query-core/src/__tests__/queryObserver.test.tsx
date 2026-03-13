@@ -10,6 +10,7 @@ import {
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, QueryObserver, focusManager } from '..'
+import { setIsServer } from './utils'
 import type { QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
@@ -865,6 +866,57 @@ describe('queryObserver', () => {
     // Clean-up
     unsubscribe()
     focusManager.setFocused(true)
+  })
+
+  test('should not refetch on server by default', async () => {
+    const restoreIsServer = setIsServer(true)
+
+    const key = queryKey()
+    let count = 0
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        count++
+        return Promise.resolve('data')
+      },
+      refetchInterval: 10,
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(30)
+
+    // Should only have the initial fetch, no refetch interval
+    expect(count).toBe(1)
+
+    unsubscribe()
+    restoreIsServer()
+  })
+
+  test('should refetch on server when refetchIntervalOnServer is true', async () => {
+    const restoreIsServer = setIsServer(true)
+
+    const key = queryKey()
+    let count = 0
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        count++
+        return Promise.resolve('data')
+      },
+      refetchInterval: 10,
+      refetchIntervalOnServer: true,
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.advanceTimersByTimeAsync(30)
+
+    // Should have the initial fetch plus refetches from the interval
+    expect(count).toBeGreaterThan(1)
+
+    unsubscribe()
+    restoreIsServer()
   })
 
   test('should not use replaceEqualDeep for select value when structuralSharing option is true', async () => {

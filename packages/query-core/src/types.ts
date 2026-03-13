@@ -351,6 +351,18 @@ export interface QueryObserverOptions<
    */
   refetchIntervalInBackground?: boolean
   /**
+   * If set to `true`, the refetch interval will be active even in server environments
+   * (where `typeof window === 'undefined'`).
+   *
+   * By default, `refetchInterval` is paused on the server because most server-side
+   * rendering scenarios don't need polling. However, long-running server processes
+   * (like daemons or background workers) that use TanStack Query for data synchronization
+   * may need polling to function correctly.
+   *
+   * Defaults to `false`.
+   */
+  refetchIntervalOnServer?: boolean
+  /**
    * If set to `true`, the query will refetch on window focus if the data is stale.
    * If set to `false`, the query will not refetch on window focus.
    * If set to `'always'`, the query will always refetch on window focus.
