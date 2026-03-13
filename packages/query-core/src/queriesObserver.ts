@@ -37,7 +37,7 @@ export class QueriesObserver<
 > extends Subscribable<QueriesObserverListener> {
   #client: QueryClient
   #result!: Array<QueryObserverResult>
-  #queries: Array<QueryObserverOptions>
+  #queries: Array<QueryObserverOptions<any, any, any, any, any>>
   #options?: QueriesObserverOptions<TCombinedResult>
   #observers: Array<QueryObserver>
   #combinedResult?: TCombinedResult
@@ -86,7 +86,7 @@ export class QueriesObserver<
   }
 
   setQueries(
-    queries: Array<QueryObserverOptions>,
+    queries: Array<QueryObserverOptions<any, any, any, any, any>>,
     options?: QueriesObserverOptions<TCombinedResult>,
   ): void {
     this.#queries = queries
@@ -170,7 +170,7 @@ export class QueriesObserver<
   }
 
   getOptimisticResult(
-    queries: Array<QueryObserverOptions>,
+    queries: Array<QueryObserverOptions<any, any, any, any, any>>,
     combine: CombineFn<TCombinedResult> | undefined,
   ): [
     rawResult: Array<QueryObserverResult>,
@@ -250,7 +250,7 @@ export class QueriesObserver<
   }
 
   #findMatchingObservers(
-    queries: Array<QueryObserverOptions>,
+    queries: Array<QueryObserverOptions<any, any, any, any, any>>,
   ): Array<QueryObserverMatch> {
     const prevObserversMap = new Map<string, Array<QueryObserver>>()
 
