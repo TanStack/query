@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
-import { createEffect } from 'solid-js'
+import { createRenderEffect } from 'solid-js'
 import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
@@ -77,9 +77,12 @@ describe('useMutationState', () => {
         select: (mutation) => mutation.state.variables,
       }))
 
-      createEffect(() => {
-        variables.push(states())
-      })
+      createRenderEffect(
+        () => [...states()],
+        (s) => {
+          variables.push(s)
+        },
+      )
 
       return null
     }

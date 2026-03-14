@@ -1,12 +1,5 @@
 import { QueriesObserver, noop } from '@tanstack/query-core'
-import {
-  createMemo,
-  createProjection,
-  merge,
-  onCleanup,
-  onSettled,
-  snapshot
-} from 'solid-js'
+import { createMemo, createStore, merge, onCleanup, reconcile } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { SolidQueryOptions, UseQueryResult } from './types'
@@ -58,64 +51,64 @@ type GetOptions<T> =
     error?: infer TError
     data: infer TData
   }
-  ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
-  : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-  ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
-  : T extends { data: infer TData; error?: infer TError }
-  ? UseQueryOptionsForUseQueries<unknown, TError, TData>
-  : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
-  T extends [infer TQueryFnData, infer TError, infer TData]
-  ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
-  : T extends [infer TQueryFnData, infer TError]
-  ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
-  : T extends [infer TQueryFnData]
-  ? UseQueryOptionsForUseQueries<TQueryFnData>
-  : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
-  T extends {
-    queryFn?:
-    | QueryFunction<infer TQueryFnData, infer TQueryKey>
-    | SkipTokenForUseQueries
-    select?: (data: any) => infer TData
-    throwOnError?: ThrowOnError<any, infer TError, any, any>
-  }
-  ? UseQueryOptionsForUseQueries<
-    TQueryFnData,
-    unknown extends TError ? DefaultError : TError,
-    unknown extends TData ? TQueryFnData : TData,
-    TQueryKey
-  >
-  : // Fallback
-  UseQueryOptionsForUseQueries
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
+    : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
+      ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
+      : T extends { data: infer TData; error?: infer TError }
+        ? UseQueryOptionsForUseQueries<unknown, TError, TData>
+        : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
+          T extends [infer TQueryFnData, infer TError, infer TData]
+          ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
+          : T extends [infer TQueryFnData, infer TError]
+            ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
+            : T extends [infer TQueryFnData]
+              ? UseQueryOptionsForUseQueries<TQueryFnData>
+              : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
+                T extends {
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                      | SkipTokenForUseQueries
+                    select?: (data: any) => infer TData
+                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  }
+                ? UseQueryOptionsForUseQueries<
+                    TQueryFnData,
+                    unknown extends TError ? DefaultError : TError,
+                    unknown extends TData ? TQueryFnData : TData,
+                    TQueryKey
+                  >
+                : // Fallback
+                  UseQueryOptionsForUseQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
-  ? UseQueryResult<TData, TError>
-  : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-  ? UseQueryResult<TQueryFnData, TError>
-  : T extends { data: infer TData; error?: infer TError }
-  ? UseQueryResult<TData, TError>
-  : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
-  T extends [any, infer TError, infer TData]
-  ? UseQueryResult<TData, TError>
-  : T extends [infer TQueryFnData, infer TError]
-  ? UseQueryResult<TQueryFnData, TError>
-  : T extends [infer TQueryFnData]
-  ? UseQueryResult<TQueryFnData>
-  : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
-  T extends {
-    queryFn?:
-    | QueryFunction<infer TQueryFnData, any>
-    | SkipTokenForUseQueries
-    select?: (data: any) => infer TData
-    throwOnError?: ThrowOnError<any, infer TError, any, any>
-  }
-  ? UseQueryResult<
-    unknown extends TData ? TQueryFnData : TData,
-    unknown extends TError ? DefaultError : TError
-  >
-  : // Fallback
-  UseQueryResult
+    ? UseQueryResult<TData, TError>
+    : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
+      ? UseQueryResult<TQueryFnData, TError>
+      : T extends { data: infer TData; error?: infer TError }
+        ? UseQueryResult<TData, TError>
+        : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
+          T extends [any, infer TError, infer TData]
+          ? UseQueryResult<TData, TError>
+          : T extends [infer TQueryFnData, infer TError]
+            ? UseQueryResult<TQueryFnData, TError>
+            : T extends [infer TQueryFnData]
+              ? UseQueryResult<TQueryFnData>
+              : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
+                T extends {
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
+                    select?: (data: any) => infer TData
+                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  }
+                ? UseQueryResult<
+                    unknown extends TData ? TQueryFnData : TData,
+                    unknown extends TError ? DefaultError : TError
+                  >
+                : // Fallback
+                  UseQueryResult
 
 /**
  * QueriesOptions reducer recursively snapshots function arguments to infer/enforce type param
@@ -127,37 +120,37 @@ type QueriesOptions<
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryOptionsForUseQueries>
   : T extends []
-  ? []
-  : T extends [infer Head]
-  ? [...TResult, GetOptions<Head>]
-  : T extends [infer Head, ...infer Tail]
-  ? QueriesOptions<
-    [...Tail],
-    [...TResult, GetOptions<Head>],
-    [...TDepth, 1]
-  >
-  : ReadonlyArray<unknown> extends T
-  ? T
-  : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
-  // use this to infer the param types in the case of Array.map() argument
-  T extends Array<
-    UseQueryOptionsForUseQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >
-  >
-  ? Array<
-    UseQueryOptionsForUseQueries<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey
-    >
-  >
-  : // Fallback
-  Array<UseQueryOptionsForUseQueries>
+    ? []
+    : T extends [infer Head]
+      ? [...TResult, GetOptions<Head>]
+      : T extends [infer Head, ...infer Tail]
+        ? QueriesOptions<
+            [...Tail],
+            [...TResult, GetOptions<Head>],
+            [...TDepth, 1]
+          >
+        : ReadonlyArray<unknown> extends T
+          ? T
+          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
+            // use this to infer the param types in the case of Array.map() argument
+            T extends Array<
+                UseQueryOptionsForUseQueries<
+                  infer TQueryFnData,
+                  infer TError,
+                  infer TData,
+                  infer TQueryKey
+                >
+              >
+            ? Array<
+                UseQueryOptionsForUseQueries<
+                  TQueryFnData,
+                  TError,
+                  TData,
+                  TQueryKey
+                >
+              >
+            : // Fallback
+              Array<UseQueryOptionsForUseQueries>
 
 /**
  * QueriesResults reducer recursively maps type param to results
@@ -169,16 +162,16 @@ type QueriesResults<
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryResult>
   : T extends []
-  ? []
-  : T extends [infer Head]
-  ? [...TResult, GetResults<Head>]
-  : T extends [infer Head, ...infer Tail]
-  ? QueriesResults<
-    [...Tail],
-    [...TResult, GetResults<Head>],
-    [...TDepth, 1]
-  >
-  : { [K in keyof T]: GetResults<T[K]> }
+    ? []
+    : T extends [infer Head]
+      ? [...TResult, GetResults<Head>]
+      : T extends [infer Head, ...infer Tail]
+        ? QueriesResults<
+            [...Tail],
+            [...TResult, GetResults<Head>],
+            [...TDepth, 1]
+          >
+        : { [K in keyof T]: GetResults<T[K]> }
 
 export function useQueries<
   T extends Array<any>,
@@ -186,8 +179,8 @@ export function useQueries<
 >(
   queriesOptions: Accessor<{
     queries:
-    | readonly [...QueriesOptions<T>]
-    | readonly [...{ [K in keyof T]: GetOptions<T[K]> }]
+      | readonly [...QueriesOptions<T>]
+      | readonly [...{ [K in keyof T]: GetOptions<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
   }>,
   queryClient?: Accessor<QueryClient>,
@@ -197,127 +190,73 @@ export function useQueries<
 
   const defaultedQueries = createMemo(() =>
     queriesOptions().queries.map((options) =>
-      merge(
-        client().defaultQueryOptions(options as QueryObserverOptions),
-        {
-          get _optimisticResults() {
-            return isRestoring() ? 'isRestoring' : 'optimistic'
-          },
+      merge(client().defaultQueryOptions(options as QueryObserverOptions), {
+        get _optimisticResults() {
+          return isRestoring() ? 'isRestoring' : 'optimistic'
         },
-      ),
+      }),
     ),
   )
 
-  const observer = new QueriesObserver(
+  const observer = new QueriesObserver<TCombinedResult>(
     client(),
     defaultedQueries(),
     queriesOptions().combine
       ? ({
-        combine: queriesOptions().combine,
-      } as QueriesObserverOptions<TCombinedResult>)
+          combine: queriesOptions().combine,
+        } as QueriesObserverOptions<TCombinedResult>)
       : undefined,
   )
 
-  const state = createProjection<TCombinedResult>(
-    () => observer.getOptimisticResult(
-      defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
+  // Get initial optimistic result
+  const [, getCombinedResult] = observer.getOptimisticResult(
+    defaultedQueries(),
+    (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
   )
 
-  // createRenderEffect(
-  //   on(
-  //     () => queriesOptions().queries.length,
-  //     () =>
-  //       setState(
-  //         observer.getOptimisticResult(
-  //           defaultedQueries(),
-  //           (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-  //             .combine,
-  //         )[1](),
-  //       ),
-  //   ),
-  // )
+  const initialResult = getCombinedResult()
 
-  const dataResources = createMemo(
-    () =>
-      state.map((queryRes) => {
-        const dataPromise = () =>
-          new Promise((resolve) => {
-            if (queryRes.isFetching && queryRes.isLoading) return
-            resolve(snapshot(queryRes.data))
-          })
-        return createMemo(dataPromise)
-      }),
+  // Store the combined result in a reactive store
+  const [state, setState] = createStore<Array<QueryObserverResult>>(
+    (Array.isArray(initialResult)
+      ? initialResult
+      : [initialResult]) as Array<QueryObserverResult>,
   )
 
-  // let taskQueue: Array<() => void> = []
-  // const subscribeToObserver = () =>
-  //   observer.subscribe((result) => {
-  //     taskQueue.push(() => {
-  //       const dataResources_ = dataResources()
-  //       for (let index = 0; index < dataResources_.length; index++) {
-  //         const dataResource = dataResources_[index]!
-  //         const unwrapedResult = { ...snapshot(result[index]) }
-  //         // @ts-expect-error typescript pedantry regarding the possible range of index
-  //         setState(index, snapshot(unwrapedResult))
-  //         refresh(dataResource);
-  //       }
-  //     })
+  // Subscribe to the observer for updates
+  const unsubscribe = isRestoring()
+    ? noop
+    : observer.subscribe((result) => {
+        setState(
+          reconcile(
+            [...result] as Array<QueryObserverResult>,
+            // Use a key function that returns undefined so reconcile
+            // uses positional matching and recursively updates nested properties
+            () => undefined,
+          ),
+        )
+      })
 
-  //     queueMicrotask(() => {
-  //       const taskToRun = taskQueue.pop()
-  //       if (taskToRun) taskToRun()
-  //       taskQueue = []
-  //     })
-  //   })
+  onCleanup(() => {
+    unsubscribe()
+  })
 
-  let unsubscribe: () => void = noop
-  // createComputed<() => void>((cleanup) => {
-  //   cleanup?.()
-  //   unsubscribe = isRestoring() ? noop : subscribeToObserver()
-  //   // cleanup needs to be scheduled after synchronous effects take place
-  //   return () => queueMicrotask(unsubscribe)
-  // })
-  onCleanup(unsubscribe)
-
-  onSettled(() => {
+  // Update observer queries when options change reactively
+  const trackedDefaultedQueries = createMemo(() => {
+    const queries = defaultedQueries()
     observer.setQueries(
-      defaultedQueries(),
+      queries,
       queriesOptions().combine
         ? ({
-          combine: queriesOptions().combine,
-        } as QueriesObserverOptions<TCombinedResult>)
+            combine: queriesOptions().combine,
+          } as QueriesObserverOptions<TCombinedResult>)
         : undefined,
     )
+    return queries
   })
 
-  // createComputed(() => {
-  //   observer.setQueries(
-  //     defaultedQueries(),
-  //     queriesOptions().combine
-  //       ? ({
-  //         combine: queriesOptions().combine,
-  //       } as QueriesObserverOptions<TCombinedResult>)
-  //       : undefined,
-  //   )
-  // })
+  // Force read of trackedDefaultedQueries to ensure it runs
+  void trackedDefaultedQueries
 
-  const handler = (index: number) => ({
-    get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
-      if (prop === 'data') {
-        return dataResources()[index]!()
-      }
-      return Reflect.get(target, prop)
-    },
-  })
-
-  const getProxies = () =>
-    state.map((s, index) => {
-      return new Proxy(s, handler(index))
-    })
-
-  const proxyState = createProjection(() => getProxies())
-
-  return proxyState as unknown as TCombinedResult
+  return state as unknown as TCombinedResult
 }

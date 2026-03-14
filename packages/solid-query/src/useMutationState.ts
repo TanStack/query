@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal } from 'solid-js'
+import { createMemo, createSignal, onCleanup } from 'solid-js'
 import { replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -38,14 +38,17 @@ export function useMutationState<TResult = MutationState>(
     getResult(mutationCache(), options()),
   )
 
-  createEffect(mutationCache, (cache) => {
-    return cache.subscribe(() => {
-      setResult((prev) => {
-        const nextResult = replaceEqualDeep(prev, getResult(cache, options()))
-        return prev === nextResult ? prev : nextResult
-      })
+  const unsubscribe = mutationCache().subscribe(() => {
+    setResult((prev) => {
+      const nextResult = replaceEqualDeep(
+        prev,
+        getResult(mutationCache(), options()),
+      )
+      return prev === nextResult ? prev : nextResult
     })
   })
+
+  onCleanup(unsubscribe)
 
   return result
 }

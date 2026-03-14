@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
-import { Show, Suspense, createSignal, startTransition } from 'solid-js'
+import { Loading, Show, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, QueryClientProvider, useQuery } from '..'
 
-describe("useQuery's in Suspense mode with transitions", () => {
+describe("useQuery's in Loading mode with transitions", () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
@@ -37,17 +37,16 @@ describe("useQuery's in Suspense mode with transitions", () => {
         <div>
           <button
             aria-label="toggle"
-            onClick={() =>
-              startTransition(() => setShowSignal((value) => !value))
+            onClick={() => setShowSignal((value) => !value)
             }
           >
             {showSignal() ? 'Hide' : 'Show'}
           </button>
-          <Suspense fallback="Loading">
+          <Loading fallback="Loading">
             <Show when={showSignal()}>
               <Suspended />
             </Show>
-          </Suspense>
+          </Loading>
         </div>
       )
     }

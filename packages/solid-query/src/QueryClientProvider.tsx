@@ -1,14 +1,10 @@
-import {
-  createContext,
-  onCleanup,
-  useContext,
-} from 'solid-js'
+import { createContext, onCleanup, useContext } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type { JSX } from 'solid-js'
 
-export const QueryClientContext = createContext<
-  (() => QueryClient) | undefined
->(undefined)
+export const QueryClientContext = createContext<(() => QueryClient) | null>(
+  null,
+)
 
 export const useQueryClient = (queryClient?: QueryClient) => {
   if (queryClient) {
@@ -31,6 +27,7 @@ export type QueryClientProviderProps = {
 export const QueryClientProvider = (
   props: QueryClientProviderProps,
 ): JSX.Element => {
+  props.client.mount()
   onCleanup(() => props.client.unmount())
 
   return (

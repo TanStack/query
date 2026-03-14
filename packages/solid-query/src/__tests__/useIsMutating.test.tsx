@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
-import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
+import { Show, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import {
@@ -27,8 +27,8 @@ describe('useIsMutating', () => {
     function IsMutating() {
       const isMutating = useIsMutating()
 
-      createRenderEffect(() => {
-        isMutatingArray.push(isMutating())
+      createRenderEffect(isMutating, (i) => {
+        isMutatingArray.push(i)
       })
 
       return null
@@ -44,12 +44,10 @@ describe('useIsMutating', () => {
         mutationFn: () => sleep(50).then(() => 'data'),
       }))
 
-      createEffect(() => {
-        mutate1()
-        setActTimeout(() => {
-          mutate2()
-        }, 50)
-      })
+      mutate1()
+      setActTimeout(() => {
+        mutate2()
+      }, 50)
 
       return null
     }
@@ -81,8 +79,8 @@ describe('useIsMutating', () => {
     function IsMutating() {
       const isMutating = useIsMutating(() => ({ mutationKey: ['mutation1'] }))
 
-      createRenderEffect(() => {
-        isMutatingArray.push(isMutating())
+      createRenderEffect(isMutating, (i) => {
+        isMutatingArray.push(i)
       })
 
       return null
@@ -98,10 +96,10 @@ describe('useIsMutating', () => {
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
-      createEffect(() => {
+      setActTimeout(() => {
         mutate1()
         mutate2()
-      })
+      }, 10)
 
       return <IsMutating />
     }
@@ -113,6 +111,7 @@ describe('useIsMutating', () => {
     ))
 
     // Unlike React, IsMutating Wont re-render twice with mutation2
+    await vi.advanceTimersByTimeAsync(10)
     await vi.advanceTimersByTimeAsync(100)
 
     expect(isMutatingArray).toEqual([0, 1, 0])
@@ -128,8 +127,8 @@ describe('useIsMutating', () => {
           mutation.options.mutationKey?.[0] === 'mutation1',
       }))
 
-      createRenderEffect(() => {
-        isMutatingArray.push(isMutating())
+      createRenderEffect(isMutating, (i) => {
+        isMutatingArray.push(i)
       })
 
       return null
@@ -145,10 +144,10 @@ describe('useIsMutating', () => {
         mutationFn: () => sleep(100).then(() => 'data'),
       }))
 
-      createEffect(() => {
+      setActTimeout(() => {
         mutate1()
         mutate2()
-      })
+      }, 10)
 
       return <IsMutating />
     }
@@ -160,6 +159,7 @@ describe('useIsMutating', () => {
     ))
 
     // Again, No unnecessary re-renders like React
+    await vi.advanceTimersByTimeAsync(10)
     await vi.advanceTimersByTimeAsync(100)
 
     expect(isMutatingArray).toEqual([0, 1, 0])
@@ -178,11 +178,9 @@ describe('useIsMutating', () => {
         () => queryClient,
       )
 
-      createEffect(() => {
-        setActTimeout(() => {
-          mutate()
-        }, 10)
-      })
+      setActTimeout(() => {
+        mutate()
+      }, 10)
 
       return (
         <div>
@@ -232,9 +230,7 @@ describe('useIsMutating', () => {
         mutationFn: () => sleep(10).then(() => 'data'),
       }))
 
-      createEffect(() => {
-        mutate1()
-      })
+      mutate1()
 
       return (
         <div>

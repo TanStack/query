@@ -1,5 +1,5 @@
 import { vi } from 'vitest'
-import { Show, createEffect, createSignal, onCleanup } from 'solid-js'
+import { Show, createSignal, createTrackedEffect, onCleanup } from 'solid-js'
 import { onlineManager } from '@tanstack/query-core'
 import type { ParentProps } from 'solid-js'
 import type { MockInstance } from 'vitest'
@@ -11,7 +11,7 @@ export function Blink(
 ) {
   const [shouldShow, setShouldShow] = createSignal<boolean>(true)
 
-  createEffect(() => {
+  createTrackedEffect(() => {
     setShouldShow(true)
     const timeout = setActTimeout(() => setShouldShow(false), props.duration)
     onCleanup(() => clearTimeout(timeout))

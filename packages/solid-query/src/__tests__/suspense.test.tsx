@@ -1,12 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import {
-  ErrorBoundary,
+  Errored,
+  Loading,
   Show,
-  Suspense,
   createRenderEffect,
   createSignal,
-  on,
 } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
@@ -18,7 +17,7 @@ import {
 } from '..'
 import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 
-describe("useQuery's in Suspense mode", () => {
+describe("useQuery's in Loading mode", () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
@@ -30,7 +29,7 @@ describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
 
-  it('should render the correct amount of times in Suspense mode', async () => {
+  it('should render the correct amount of times in Loading mode', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<number>> = []
 
@@ -45,15 +44,13 @@ describe("useQuery's in Suspense mode", () => {
         queryFn: () => sleep(10).then(() => ++count),
       }))
 
-      createRenderEffect(() => {
-        states.push({ ...state })
+      createRenderEffect(() => state, (s) => {
+        states.push({ ...s })
       })
 
-      createRenderEffect(
-        on([() => ({ ...state }), () => key], () => {
-          renders++
-        }),
-      )
+      createRenderEffect(() => [{ ...state }, () => key], () => {
+        renders++
+      });
 
       return (
         <div>
@@ -65,9 +62,9 @@ describe("useQuery's in Suspense mode", () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
+        <Loading fallback="loading">
           <Page />
-        </Suspense>
+        </Loading>
       </QueryClientProvider>
     ))
 
@@ -101,8 +98,8 @@ describe("useQuery's in Suspense mode", () => {
         getNextPageParam: (lastPage) => lastPage + 1,
       }))
 
-      createRenderEffect(() => {
-        states.push({ ...state })
+      createRenderEffect(() => state, (s) => {
+        states.push({ ...s })
       })
 
       return (
@@ -115,9 +112,9 @@ describe("useQuery's in Suspense mode", () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
+        <Loading fallback="loading">
           <Page />
-        </Suspense>
+        </Loading>
       </QueryClientProvider>
     ))
 
@@ -125,7 +122,7 @@ describe("useQuery's in Suspense mode", () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
     // eslint-disable-next-line cspell/spellchecker
-    // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
+    // TODO(lukemurray): in react this is 1 in solid this is 2 because Loading
     // occurs on read.
     expect(states.length).toBe(2)
     expect(states[1]).toMatchObject({
@@ -146,7 +143,7 @@ describe("useQuery's in Suspense mode", () => {
     })
   })
 
-  it('should not call the queryFn twice when used in Suspense mode', async () => {
+  it('should not call the queryFn twice when used in Loading mode', async () => {
     const key = queryKey()
 
     const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
@@ -163,9 +160,9 @@ describe("useQuery's in Suspense mode", () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
+        <Loading fallback="loading">
           <Page />
-        </Suspense>
+        </Loading>
       </QueryClientProvider>
     ))
 
@@ -192,7 +189,7 @@ describe("useQuery's in Suspense mode", () => {
 
       return (
         <>
-          <Suspense fallback="loading">{show() && <Page />}</Suspense>
+          <Loading fallback="loading">{show() && <Page />}</Loading>
           <button
             aria-label="toggle"
             onClick={() => setShow((prev) => !prev)}
@@ -233,14 +230,14 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: key,
         queryFn: () =>
           sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
+            if (!succeed) throw new Error('Loading Error Bingo')
             return 'data'
           }),
         retryDelay: 10,
         suspense: true,
       }))
 
-      // Suspense only triggers if used in JSX
+      // Loading only triggers if used in JSX
       return (
         <Show when={state.data}>
           <div>rendered</div>
@@ -250,7 +247,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <ErrorBoundary
+        <Errored
           fallback={(_err, resetSolid) => (
             <div>
               <div>error boundary</div>
@@ -265,10 +262,10 @@ describe("useQuery's in Suspense mode", () => {
             </div>
           )}
         >
-          <Suspense fallback="loading">
+          <Loading fallback="loading">
             <Page />
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       </QueryClientProvider>
     ))
 
@@ -293,14 +290,14 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: key,
         queryFn: () =>
           sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
+            if (!succeed) throw new Error('Loading Error Bingo')
             return 'data'
           }),
         retry: false,
         suspense: true,
       }))
 
-      // Suspense only triggers if used in JSX
+      // Loading only triggers if used in JSX
       return (
         <Show when={state.data}>
           <div>rendered</div>
@@ -310,7 +307,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <ErrorBoundary
+        <Errored
           fallback={(_err, resetSolid) => (
             <div>
               <div>error boundary</div>
@@ -324,10 +321,10 @@ describe("useQuery's in Suspense mode", () => {
             </div>
           )}
         >
-          <Suspense fallback="loading">
+          <Loading fallback="loading">
             <Page />
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       </QueryClientProvider>
     ))
 
@@ -382,7 +379,7 @@ describe("useQuery's in Suspense mode", () => {
           >
             {show() ? 'hide' : 'show'}
           </button>
-          <Suspense fallback="loading">{show() && <Component />}</Suspense>
+          <Loading fallback="loading">{show() && <Component />}</Loading>
         </div>
       )
     }
@@ -438,9 +435,9 @@ describe("useQuery's in Suspense mode", () => {
           >
             switch
           </button>
-          <Suspense fallback="loading">
+          <Loading fallback="loading">
             <Component queryKey={key()} />
-          </Suspense>
+          </Loading>
         </div>
       )
     }
@@ -472,32 +469,27 @@ describe("useQuery's in Suspense mode", () => {
       const state = useQuery(() => ({
         queryKey: key,
         queryFn: () =>
-          sleep(10).then(() => Promise.reject(new Error('Suspense Error a1x'))),
+          sleep(10).then(() => Promise.reject(new Error('Loading Error a1x'))),
         retry: false,
         suspense: true,
       }))
 
-      // read state.data to trigger suspense.
-      createRenderEffect(() => {
-        state.data
-      })
-
-      return <div>rendered</div>
+      return <div>rendered {state.data}</div>
     }
 
     function App() {
       return (
-        <ErrorBoundary
+        <Errored
           fallback={() => (
             <div>
               <div>error boundary</div>
             </div>
           )}
         >
-          <Suspense fallback="loading">
+          <Loading fallback="loading">
             <Page />
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       )
     }
 
@@ -521,32 +513,27 @@ describe("useQuery's in Suspense mode", () => {
       const state = useQuery(() => ({
         queryKey: key,
         queryFn: () =>
-          sleep(10).then(() => Promise.reject(new Error('Suspense Error a2x'))),
+          sleep(10).then(() => Promise.reject(new Error('Loading Error a2x'))),
         retry: false,
         throwOnError: false,
       }))
 
-      // read state.data to trigger suspense.
-      createRenderEffect(() => {
-        state.data
-      })
-
-      return <div>rendered</div>
+      return <div>rendered {state.data}</div>
     }
 
     function App() {
       return (
-        <ErrorBoundary
+        <Errored
           fallback={() => (
             <div>
               <div>error boundary</div>
             </div>
           )}
         >
-          <Suspense fallback="loading">
+          <Loading fallback="loading">
             <Page />
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       )
     }
 
@@ -577,27 +564,22 @@ describe("useQuery's in Suspense mode", () => {
         throwOnError: (err) => err.message !== 'Local Error',
       }))
 
-      // read state.data to trigger suspense.
-      createRenderEffect(() => {
-        state.data
-      })
-
-      return <div>rendered</div>
+      return <div>rendered {state.data}</div>
     }
 
     function App() {
       return (
-        <ErrorBoundary
+        <Errored
           fallback={() => (
             <div>
               <div>error boundary</div>
             </div>
           )}
         >
-          <Suspense fallback="loading">
+          <Loading fallback="loading">
             <Page />
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       )
     }
 
@@ -627,27 +609,22 @@ describe("useQuery's in Suspense mode", () => {
         throwOnError: (err) => err.message !== 'Local Error',
       }))
 
-      // read state.data to trigger suspense.
-      createRenderEffect(() => {
-        state.data
-      })
-
-      return <div>rendered</div>
+      return <div>rendered {state.data}</div>
     }
 
     function App() {
       return (
-        <ErrorBoundary
+        <Errored
           fallback={() => (
             <div>
               <div>error boundary</div>
             </div>
           )}
         >
-          <Suspense fallback="loading">
+          <Loading fallback="loading">
             <Page />
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       )
     }
 
@@ -687,9 +664,9 @@ describe("useQuery's in Suspense mode", () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
+        <Loading fallback="loading">
           <Page />
-        </Suspense>
+        </Loading>
       </QueryClientProvider>
     ))
 
@@ -721,7 +698,7 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: queryKeys,
         queryFn: () =>
           sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
+            if (!succeed) throw new Error('Loading Error Bingo')
             return nonce()
           }),
         retry: false,
@@ -740,11 +717,11 @@ describe("useQuery's in Suspense mode", () => {
 
     function App() {
       return (
-        <ErrorBoundary fallback={() => <div>error boundary</div>}>
-          <Suspense fallback="loading">
+        <Errored fallback={() => <div>error boundary</div>}>
+          <Loading fallback="loading">
             <Page />
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       )
     }
 
@@ -754,7 +731,7 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    // render suspense fallback (Loading...)
+    // render Loading fallback (Loading...)
     expect(rendered.getByText('loading')).toBeInTheDocument()
     // resolve promise -> render Page (rendered)
     await vi.advanceTimersByTimeAsync(10)
@@ -786,7 +763,7 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: [`${key()}-${succeed}`],
         queryFn: async () =>
           sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
+            if (!succeed) throw new Error('Loading Error Bingo')
             return 'data'
           }),
         retry: false,
@@ -805,11 +782,11 @@ describe("useQuery's in Suspense mode", () => {
 
     function App() {
       return (
-        <ErrorBoundary fallback={() => <div>error boundary</div>}>
-          <Suspense fallback="loading">
+        <Errored fallback={() => <div>error boundary</div>}>
+          <Loading fallback="loading">
             <Page />
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       )
     }
 
@@ -819,7 +796,7 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    // render suspense fallback (Loading...)
+    // render Loading fallback (Loading...)
     expect(rendered.getByText('loading')).toBeInTheDocument()
     // resolve promise -> render Page (rendered)
     await vi.advanceTimersByTimeAsync(10)
@@ -851,7 +828,7 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: [queryKeys],
         queryFn: () =>
           sleep(10).then(() =>
-            Promise.reject(new Error('Suspense Error Bingo')),
+            Promise.reject(new Error('Loading Error Bingo')),
           ),
         retry: false,
         suspense: true,
@@ -875,11 +852,11 @@ describe("useQuery's in Suspense mode", () => {
 
     function App() {
       return (
-        <ErrorBoundary fallback={() => <div>error boundary</div>}>
-          <Suspense fallback="loading">
+        <Errored fallback={() => <div>error boundary</div>}>
+          <Loading fallback="loading">
             <Page />
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       )
     }
 
@@ -905,7 +882,7 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
-  it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
+  it('should render the correct amount of times in Loading mode when gcTime is set to 0', async () => {
     const key = queryKey()
     let state: UseQueryResult<number> | null = null
 
@@ -919,11 +896,9 @@ describe("useQuery's in Suspense mode", () => {
         gcTime: 0,
       }))
 
-      createRenderEffect(
-        on([() => ({ ...state })], () => {
-          renders++
-        }),
-      )
+      createRenderEffect(() => [() => ({ ...state })], () => {
+        renders++
+      })
 
       return (
         <div>
@@ -934,9 +909,9 @@ describe("useQuery's in Suspense mode", () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
+        <Loading fallback="loading">
           <Page />
-        </Suspense>
+        </Loading>
       </QueryClientProvider>
     ))
 

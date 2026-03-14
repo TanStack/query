@@ -7,7 +7,6 @@ import {
   createMemo,
   createStore,
   isPending,
-  latest,
   onCleanup,
   reconcile,
   refresh,
@@ -34,11 +33,15 @@ function reconcileFn<TData, TError>(
     | ((oldData: TData | undefined, newData: TData) => TData),
   queryHash?: string,
 ): QueryObserverResult<TData, TError> {
-  if (reconcileOption === false) return result
   if (typeof reconcileOption === 'function') {
     const newData = reconcileOption(store.data, result.data as TData)
     return { ...result, data: newData } as typeof result
   }
+
+  if (reconcileOption === false) return result
+
+  const key = reconcileOption
+
   let data = result.data
   if (store.data === undefined) {
     try {
@@ -48,16 +51,24 @@ function reconcileFn<TData, TError>(
         if (error instanceof Error) {
           console.warn(
             `Unable to correctly reconcile data for query key: ${queryHash}. ` +
-            `Possibly because the query data contains data structures that aren't supported ` +
-            `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
-            `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
+              `Possibly because the query data contains data structures that aren't supported ` +
+              `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
+              `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
           )
         }
       }
     }
   }
-  const newData = reconcile(data, reconcileOption)(store.data)
-  return { ...result, data: newData } as typeof result
+  // reconcile() in Solid 2.0 mutates in place and returns void.
+  // We apply it to store.data so the store's nested signals update.
+  // On first load (store.data is undefined), there's nothing to reconcile against,
+  // so we just return the data as-is.
+  if (store.data !== undefined && data !== undefined) {
+    reconcile(data, key)(store.data)
+    // Return result with the existing store.data reference (now reconciled in place)
+    return { ...result, data: store.data } as typeof result
+  }
+  return { ...result, data } as typeof result
 }
 
 /**
@@ -140,11 +151,17 @@ export function useBaseQuery<
     return defaultOptions
   })
 
-  const observer = createMemo(() =>
-    new Observer(client(), defaultedOptions()),
-  )
+  const observer = new Observer(client(), defaultedOptions())
 
-  let observerResult = observer().getOptimisticResult(defaultedOptions())
+  // Update the observer's options when they change reactively.
+  // This handles cases like `enabled` toggling without recreating the observer.
+  const trackedDefaultedOptions = createMemo(() => {
+    const opts = defaultedOptions()
+    observer.setOptions(opts)
+    return opts
+  })
+
+  let observerResult = observer.getOptimisticResult(defaultedOptions())
   const [state, setState] =
     createStore<QueryObserverResult<TData, TError>>(observerResult)
 
@@ -154,9 +171,9 @@ export function useBaseQuery<
     ) => void,
     reject: (reason?: any) => void,
   ) => {
-    return observer().subscribe((result) => {
+    return observer.subscribe((result) => {
       notifyManager.batchCalls(() => {
-        const query = observer().getCurrentQuery()
+        const query = observer.getCurrentQuery()
         const unwrappedResult = hydratableObserverResult(query, result)
 
         if (result.data !== undefined && unwrappedResult.isError) {
@@ -178,21 +195,26 @@ export function useBaseQuery<
   }
 
   const createClientSubscriber = () => {
-    const obs = observer()
-    return obs.subscribe((result) => {
+    return observer.subscribe((result) => {
       observerResult = result
+      setStateWithReconciliation(result)
       queueMicrotask(() => {
-        if (unsubscribe) {
-          refresh(queryResource)
+        if (unsubscribe && !disposed) {
+          try {
+            refresh(queryResource)
+          } catch {
+            // NotReadyError is expected when refreshing a memo that returns
+            // a Promise. The Loading boundary handles this during rendering,
+            // but when refresh is called from a microtask there is no boundary.
+          }
         }
       })
     })
   }
 
   function setStateWithReconciliation(res: typeof observerResult) {
-    const opts = observer().options
-    // @ts-expect-error - Reconcile option is not correctly typed internally
-    const reconcileOptions = opts.reconcile
+    const opts = observer.options
+    const reconcileOptions = (opts as any).reconcile
 
     setState((store) => {
       return reconcileFn(
@@ -208,6 +230,7 @@ export function useBaseQuery<
    * Unsubscribe is set lazily, so that we can subscribe after hydration when needed.
    */
   let unsubscribe: (() => void) | null = null
+  let disposed = false
 
   /*
     Fixes #7275
@@ -217,43 +240,46 @@ export function useBaseQuery<
     but the resource is still in a loading state
   */
   let resolver: ((value: ResourceData) => void) | null = null
-  const queryResource = createMemo<ResourceData>(
-    () => {
-      const obs = observer()
-      return new Promise((resolve, reject) => {
-        resolver = resolve
-        if (isServer) {
-          unsubscribe = createServerSubscriber((data) => {
-            resolve(data as ResourceData)
-          }, reject)
-        } else if (!unsubscribe && !isRestoring()) {
-          unsubscribe = createClientSubscriber()
-        }
-        obs.updateResult()
+  const queryResource = createMemo<ResourceData>(() => {
+    // Read trackedDefaultedOptions to ensure this memo re-runs when options change
+    trackedDefaultedOptions()
+    return new Promise((resolve, reject) => {
+      resolver = resolve
+      if (isServer) {
+        unsubscribe = createServerSubscriber((data) => {
+          resolve(data as ResourceData)
+        }, reject)
+      } else if (!unsubscribe && !isRestoring()) {
+        unsubscribe = createClientSubscriber()
+      }
+      observer.updateResult()
+      // Get the latest result after updateResult - observerResult may be stale
+      // (e.g. after query key change, the observer now points to a new query)
+      const currentResult = observer.getOptimisticResult(defaultedOptions())
+      observerResult = currentResult
 
-        if (
-          observerResult.isError &&
-          !observerResult.isFetching &&
-          !isRestoring() &&
-          shouldThrowError(obs.options.throwOnError, [
-            observerResult.error,
-            obs.getCurrentQuery(),
-          ])
-        ) {
-          setStateWithReconciliation(observerResult)
-          return reject(observerResult.error)
-        }
-        if (!observerResult.isLoading) {
-          resolver = null
-          return resolve(
-            hydratableObserverResult(obs.getCurrentQuery(), observerResult),
-          )
-        }
+      if (
+        currentResult.isError &&
+        !currentResult.isFetching &&
+        !isRestoring() &&
+        shouldThrowError(observer.options.throwOnError, [
+          currentResult.error,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        setStateWithReconciliation(currentResult)
+        return reject(currentResult.error)
+      }
+      if (!currentResult.isLoading) {
+        resolver = null
+        return resolve(
+          hydratableObserverResult(observer.getCurrentQuery(), currentResult),
+        )
+      }
 
-        setStateWithReconciliation(observerResult)
-      })
-    },
-  )
+      setStateWithReconciliation(currentResult)
+    })
+  })
 
   // createComputed(
   //   on(
@@ -285,6 +311,7 @@ export function useBaseQuery<
   // )
 
   onCleanup(() => {
+    disposed = true
     if (isServer && isPending(queryResource)) {
       unsubscribeQueued = true
       return
@@ -311,20 +338,43 @@ export function useBaseQuery<
   //   ),
   // )
 
-  const handler = {
-    get(
-      target: QueryObserverResult<TData, TError>,
-      prop: keyof QueryObserverResult<TData, TError>,
-    ): any {
-      if (prop === 'data') {
-        if (state.data !== undefined) {
-          return latest(queryResource);
-        }
-        return queryResource().data
-      }
-      return Reflect.get(target, prop)
-    },
-  }
+  // Properties that should never throw — these let users access error info
+  // even outside an ErrorBoundary.
+  const errorPassthroughProps = new Set([
+    'error',
+    'isError',
+    'failureCount',
+    'failureReason',
+    'errorUpdateCount',
+    'errorUpdatedAt',
+  ])
 
-  return new Proxy(state, handler)
+  // Return a proxy that throws on property access when throwOnError is enabled
+  return new Proxy(state, {
+    get(target, prop, receiver) {
+      // Always pass through symbols (needed for store internals, iteration, etc.)
+      if (typeof prop === 'symbol') {
+        return Reflect.get(target, prop, receiver)
+      }
+
+      // Always pass through error-related props without throwing
+      if (errorPassthroughProps.has(prop as string)) {
+        return Reflect.get(target, prop, receiver)
+      }
+
+      // Check throwOnError condition before returning the value
+      if (
+        state.isError &&
+        !state.isFetching &&
+        shouldThrowError(observer.options.throwOnError, [
+          state.error as TError,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        throw state.error
+      }
+
+      return Reflect.get(target, prop, receiver)
+    },
+  }) as typeof state
 }

@@ -7,6 +7,9 @@ export default defineConfig({
   plugins: [solid()],
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
+    alias: {
+      'solid-js/web': '@solidjs/web',
+    },
     conditions: ['@tanstack/custom-condition'],
   },
   environments: {
@@ -15,6 +18,9 @@ export default defineConfig({
         conditions: ['@tanstack/custom-condition'],
       },
     },
+  },
+  ssr: {
+    noExternal: ['@solidjs/testing-library'],
   },
   test: {
     name: packageJson.name,
@@ -30,5 +36,10 @@ export default defineConfig({
     },
     typecheck: { enabled: true },
     restoreMocks: true,
+    server: {
+      deps: {
+        inline: ['@solidjs/testing-library'],
+      },
+    },
   },
 })
