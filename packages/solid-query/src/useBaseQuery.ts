@@ -1,21 +1,22 @@
 // Had to disable the lint rule because isServer type is defined as false
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
-import { hydrate, notifyManager, shouldThrowError } from '@tanstack/query-core'
-import { isServer } from 'solid-js/web'
+import { notifyManager, shouldThrowError } from '@tanstack/query-core'
+import { isServer } from '@solidjs/web'
 import {
-  createComputed,
   createMemo,
-  createResource,
-  createSignal,
-  on,
+  createStore,
+  isPending,
+  latest,
   onCleanup,
+  reconcile,
+  refresh,
+  snapshot,
 } from 'solid-js'
-import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions } from './types'
-import type { Accessor, Signal } from 'solid-js'
+import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
   Query,
@@ -47,15 +48,15 @@ function reconcileFn<TData, TError>(
         if (error instanceof Error) {
           console.warn(
             `Unable to correctly reconcile data for query key: ${queryHash}. ` +
-              `Possibly because the query data contains data structures that aren't supported ` +
-              `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
-              `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
+            `Possibly because the query data contains data structures that aren't supported ` +
+            `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
+            `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
           )
         }
       }
     }
   }
-  const newData = reconcile(data, { key: reconcileOption })(store.data)
+  const newData = reconcile(data, reconcileOption)(store.data)
   return { ...result, data: newData } as typeof result
 }
 
@@ -75,7 +76,7 @@ const hydratableObserverResult = <
 ) => {
   if (!isServer) return result
   const obj: any = {
-    ...unwrap(result),
+    ...snapshot(result),
     // During SSR, functions cannot be serialized, so we need to remove them
     // This is safe because we will add these functions back when the query is hydrated
     refetch: undefined,
@@ -138,9 +139,8 @@ export function useBaseQuery<
     }
     return defaultOptions
   })
-  const initialOptions = defaultedOptions()
 
-  const [observer, setObserver] = createSignal(
+  const observer = createMemo(() =>
     new Observer(client(), defaultedOptions()),
   )
 
@@ -183,7 +183,7 @@ export function useBaseQuery<
       observerResult = result
       queueMicrotask(() => {
         if (unsubscribe) {
-          refetch()
+          refresh(queryResource)
         }
       })
     })
@@ -204,25 +204,6 @@ export function useBaseQuery<
     })
   }
 
-  function createDeepSignal<T>(): Signal<T> {
-    return [
-      () => state,
-      (v: any) => {
-        const unwrapped = unwrap(state)
-        if (typeof v === 'function') {
-          v = v(unwrapped)
-        }
-        // Hydration data exists on first load after SSR,
-        // and should be removed from the observer result
-        if (v?.hydrationData) {
-          const { hydrationData, ...rest } = v
-          v = rest
-        }
-        setStateWithReconciliation(v)
-      },
-    ] as Signal<T>
-  }
-
   /**
    * Unsubscribe is set lazily, so that we can subscribe after hydration when needed.
    */
@@ -236,13 +217,15 @@ export function useBaseQuery<
     but the resource is still in a loading state
   */
   let resolver: ((value: ResourceData) => void) | null = null
-  const [queryResource, { refetch }] = createResource<ResourceData | undefined>(
+  const queryResource = createMemo<ResourceData>(
     () => {
       const obs = observer()
       return new Promise((resolve, reject) => {
         resolver = resolve
         if (isServer) {
-          unsubscribe = createServerSubscriber(resolve, reject)
+          unsubscribe = createServerSubscriber((data) => {
+            resolve(data as ResourceData)
+          }, reject)
         } else if (!unsubscribe && !isRestoring()) {
           unsubscribe = createClientSubscriber()
         }
@@ -270,81 +253,39 @@ export function useBaseQuery<
         setStateWithReconciliation(observerResult)
       })
     },
-    {
-      storage: createDeepSignal,
-
-      get deferStream() {
-        return options().deferStream
-      },
-
-      /**
-       * If this resource was populated on the server (either sync render, or streamed in over time), onHydrated
-       * will be called. This is the point at which we can hydrate the query cache state, and setup the query subscriber.
-       *
-       * Leveraging onHydrated allows us to plug into the async and streaming support that solidjs resources already support.
-       *
-       * Note that this is only invoked on the client, for queries that were originally run on the server.
-       */
-      onHydrated(_k, info) {
-        if (info.value && 'hydrationData' in info.value) {
-          hydrate(client(), {
-            // @ts-expect-error - hydrationData is not correctly typed internally
-            queries: [{ ...info.value.hydrationData }],
-          })
-        }
-
-        if (unsubscribe) return
-        /**
-         * Do not refetch query on mount if query was fetched on server,
-         * even if `staleTime` is not set.
-         */
-        const newOptions = { ...initialOptions }
-        if (
-          (initialOptions.staleTime || !initialOptions.initialData) &&
-          info.value
-        ) {
-          newOptions.refetchOnMount = false
-        }
-        // Setting the options as an immutable object to prevent
-        // wonky behavior with observer subscriptions
-        observer().setOptions(newOptions)
-        setStateWithReconciliation(observer().getOptimisticResult(newOptions))
-        unsubscribe = createClientSubscriber()
-      },
-    },
   )
 
-  createComputed(
-    on(
-      client,
-      (c) => {
-        if (unsubscribe) {
-          unsubscribe()
-        }
-        const newObserver = new Observer(c, defaultedOptions())
-        unsubscribe = createClientSubscriber()
-        setObserver(newObserver)
-      },
-      {
-        defer: true,
-      },
-    ),
-  )
+  // createComputed(
+  //   on(
+  //     client,
+  //     (c) => {
+  //       if (unsubscribe) {
+  //         unsubscribe()
+  //       }
+  //       const newObserver = new Observer(c, defaultedOptions())
+  //       unsubscribe = createClientSubscriber()
+  //       setObserver(newObserver)
+  //     },
+  //     {
+  //       defer: true,
+  //     },
+  //   ),
+  // )
 
-  createComputed(
-    on(
-      isRestoring,
-      (restoring) => {
-        if (!restoring && !isServer) {
-          refetch()
-        }
-      },
-      { defer: true },
-    ),
-  )
+  // createComputed(
+  //   on(
+  //     isRestoring,
+  //     (restoring) => {
+  //       if (!restoring && !isServer) {
+  //         refetch()
+  //       }
+  //     },
+  //     { defer: true },
+  //   ),
+  // )
 
   onCleanup(() => {
-    if (isServer && queryResource.loading) {
+    if (isServer && isPending(queryResource)) {
       unsubscribeQueued = true
       return
     }
@@ -358,17 +299,17 @@ export function useBaseQuery<
     }
   })
 
-  createComputed(
-    on(
-      [observer, defaultedOptions],
-      ([obs, opts]) => {
-        obs.setOptions(opts)
-        setStateWithReconciliation(obs.getOptimisticResult(opts))
-        refetch()
-      },
-      { defer: true },
-    ),
-  )
+  // createComputed(
+  //   on(
+  //     [observer, defaultedOptions],
+  //     ([obs, opts]) => {
+  //       obs.setOptions(opts)
+  //       setStateWithReconciliation(obs.getOptimisticResult(opts))
+  //       refetch()
+  //     },
+  //     { defer: true },
+  //   ),
+  // )
 
   const handler = {
     get(
@@ -377,9 +318,9 @@ export function useBaseQuery<
     ): any {
       if (prop === 'data') {
         if (state.data !== undefined) {
-          return queryResource.latest?.data
+          return latest(queryResource);
         }
-        return queryResource()?.data
+        return queryResource().data
       }
       return Reflect.get(target, prop)
     },

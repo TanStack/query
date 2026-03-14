@@ -25,7 +25,6 @@ import {
   sleep,
 } from '@tanstack/query-test-utils'
 import {
-  IsRestoringProvider,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -42,6 +41,7 @@ import type {
 } from '..'
 import type { Mock } from 'vitest'
 import type { JSX } from 'solid-js'
+import { IsRestoringContext } from '../isRestoring'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -6248,9 +6248,9 @@ describe('useQuery', () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <IsRestoringProvider value={isRestoring}>
+        <IsRestoringContext value={isRestoring}>
           <Page />
-        </IsRestoringProvider>
+        </IsRestoringContext>
       </QueryClientProvider>
     ))
 

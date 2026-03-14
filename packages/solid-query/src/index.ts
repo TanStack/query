@@ -116,4 +116,4 @@ export { useMutationState } from './useMutationState'
 export { useQueries } from './useQueries'
 /** @deprecated Use useQueries instead */
 export const createQueries = useQueries
-export { useIsRestoring, IsRestoringProvider } from './isRestoring'
+export { useIsRestoring } from './isRestoring'

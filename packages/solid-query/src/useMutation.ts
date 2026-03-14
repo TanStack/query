@@ -1,6 +1,5 @@
-import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
-import { createComputed, createMemo, on, onCleanup } from 'solid-js'
-import { createStore } from 'solid-js/store'
+import { MutationObserver, noop } from '@tanstack/query-core'
+import { createMemo, createStore, onCleanup } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import type { DefaultError } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
@@ -47,29 +46,27 @@ export function useMutation<
     mutateAsync: observer.getCurrentResult().mutate,
   })
 
-  createComputed(() => {
-    observer.setOptions(options())
-  })
+  // createComputed(() => {
+  //   observer.setOptions(options())
+  // })
 
-  createComputed(
-    on(
-      () => state.status,
-      () => {
-        if (
-          state.isError &&
-          shouldThrowError(observer.options.throwOnError, [state.error])
-        ) {
-          throw state.error
-        }
-      },
-    ),
-  )
+  // createComputed(
+  //   on(
+  //     () => state.status,
+  //     () => {
+  //       if (
+  //         state.isError &&
+  //         shouldThrowError(observer.options.throwOnError, [state.error])
+  //       ) {
+  //         throw state.error
+  //       }
+  //     },
+  //   ),
+  // )
 
   const unsubscribe = observer.subscribe((result) => {
-    setState({
-      ...result,
-      mutate,
-      mutateAsync: result.mutate,
+    setState(s => {
+      s = { ...s, ...result, mutate, mutateAsync: result.mutate };
     })
   })
 
