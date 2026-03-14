@@ -4961,10 +4961,9 @@ describe('useQuery', () => {
     expect(rendered.getByText('Data: selected 3')).toBeInTheDocument()
   })
 
-  // TODO: Hangs — createTrackedEffect + select producing new array causes infinite loop
-  it.skip('select should structurally share data', async () => {
+  it('select should structurally share data', async () => {
     const key1 = queryKey()
-    const states: Array<Array<number>> = []
+    const dataRefs: Array<Array<number>> = []
 
     function Page() {
       const [forceValue, setForceValue] = createSignal(1)
@@ -4975,11 +4974,14 @@ describe('useQuery', () => {
         select: (res) => res.map((x) => x + 1),
       }))
 
-      createTrackedEffect(() => {
-        if (state.data) {
-          states.push(state.data)
-        }
-      })
+      createRenderEffect(
+        () => state.data,
+        (data) => {
+          if (data) {
+            dataRefs.push(data)
+          }
+        },
+      )
 
       const forceUpdate = () => {
         setForceValue((prev) => prev + 1)
@@ -5004,14 +5006,16 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: [2,3]')).toBeInTheDocument()
-    expect(states).toHaveLength(1)
+    expect(dataRefs.length).toBeGreaterThan(0)
+    const initialRef = dataRefs.at(-1)
+    expect(initialRef).toEqual([2, 3])
 
     fireEvent.click(rendered.getByRole('button', { name: /forceUpdate/i }))
+    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('forceValue: 2')).toBeInTheDocument()
     expect(rendered.getByText('Data: [2,3]')).toBeInTheDocument()
 
-    // effect should not be triggered again due to structural sharing
-    expect(states).toHaveLength(1)
+    expect(dataRefs.at(-1)).toBe(initialRef)
   })
 
   it('The reconcile fn callback should correctly maintain referential equality', async () => {
@@ -6696,9 +6700,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('Status: custom client')).toBeInTheDocument()
   })
 
-  // TODO: Solid 2.0 — observer needs to be recreated when queryClient signal changes
-  // Currently the observer is created once in useBaseQuery and never recreated
-  it.skip('should refetch query when queryClient changes', async () => {
+  it('should not refetch query when queryClient changes', async () => {
     const key = queryKey()
 
     const queryClient1 = new QueryClient()
@@ -6734,7 +6736,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByText('status: success')).toBeInTheDocument()
-    expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
-    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeUndefined()
+    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 })

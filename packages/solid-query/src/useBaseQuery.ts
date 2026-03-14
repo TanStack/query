@@ -153,13 +153,10 @@ export function useBaseQuery<
 
   const observer = new Observer(client(), defaultedOptions())
 
-  // Update the observer's options when they change reactively.
-  // This handles cases like `enabled` toggling without recreating the observer.
-  const trackedDefaultedOptions = createMemo(() => {
-    const opts = defaultedOptions()
-    observer.setOptions(opts)
-    return opts
-  })
+  // Track options reactively; apply them with listeners disabled to avoid
+  // feedback loops when option identities (e.g. inline select functions)
+  // change across refresh cycles.
+  const trackedDefaultedOptions = createMemo(() => defaultedOptions())
 
   let observerResult = observer.getOptimisticResult(defaultedOptions())
   const [state, setState] =
@@ -196,10 +193,16 @@ export function useBaseQuery<
 
   const createClientSubscriber = () => {
     return observer.subscribe((result) => {
+      const previousResult = observerResult
       observerResult = result
       setStateWithReconciliation(result)
       queueMicrotask(() => {
-        if (unsubscribe && !disposed) {
+        if (
+          unsubscribe &&
+          !disposed &&
+          (previousResult.isLoading !== result.isLoading ||
+            previousResult.isError !== result.isError)
+        ) {
           try {
             refresh(queryResource)
           } catch {
@@ -242,7 +245,8 @@ export function useBaseQuery<
   let resolver: ((value: ResourceData) => void) | null = null
   const queryResource = createMemo<ResourceData>(() => {
     // Read trackedDefaultedOptions to ensure this memo re-runs when options change
-    trackedDefaultedOptions()
+    const opts = trackedDefaultedOptions()
+    observer.setOptions(opts)
     return new Promise((resolve, reject) => {
       resolver = resolve
       if (isServer) {
@@ -255,7 +259,7 @@ export function useBaseQuery<
       observer.updateResult()
       // Get the latest result after updateResult - observerResult may be stale
       // (e.g. after query key change, the observer now points to a new query)
-      const currentResult = observer.getOptimisticResult(defaultedOptions())
+      const currentResult = observer.getOptimisticResult(opts)
       observerResult = currentResult
 
       if (
