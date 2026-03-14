@@ -3362,7 +3362,7 @@ describe('useQuery', () => {
         setActTimeout(() => {
           setCount(1)
         }, 10)
-      }, [])
+      })
 
       return null
     }

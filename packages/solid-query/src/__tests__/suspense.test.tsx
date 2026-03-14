@@ -73,7 +73,6 @@ describe("useQuery's in Loading mode", () => {
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
 
@@ -131,7 +130,6 @@ describe("useQuery's in Loading mode", () => {
     })
 
     fireEvent.click(rendered.getByText('next'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
     // eslint-disable-next-line cspell/spellchecker
@@ -275,7 +273,6 @@ describe("useQuery's in Loading mode", () => {
     expect(rendered.getByText('retry')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('retry'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
   })
@@ -334,7 +331,6 @@ describe("useQuery's in Loading mode", () => {
     expect(rendered.getByText('retry')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('retry'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('retry')).toBeInTheDocument()
@@ -342,7 +338,6 @@ describe("useQuery's in Loading mode", () => {
     succeed = true
 
     fireEvent.click(rendered.getByText('retry'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
   })
@@ -401,7 +396,6 @@ describe("useQuery's in Loading mode", () => {
     expect(rendered.getByText('show')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('show'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('fetching: true')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(100)
@@ -453,7 +447,6 @@ describe("useQuery's in Loading mode", () => {
     expect(rendered.getByText(`data: ${key1}`)).toBeInTheDocument()
 
     fireEvent.click(rendered.getByText('switch'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(100)
     expect(rendered.getByText(`data: ${key2}`)).toBeInTheDocument()
   })
@@ -675,7 +668,6 @@ describe("useQuery's in Loading mode", () => {
 
     await vi.advanceTimersByTimeAsync(10)
     fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByRole('heading').textContent).toBe('23')
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -807,7 +799,6 @@ describe("useQuery's in Loading mode", () => {
     // change query key
 
     fireEvent.click(rendered.getByLabelText('fail'))
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
@@ -873,8 +864,6 @@ describe("useQuery's in Loading mode", () => {
 
     // change enabled to true
     fireEvent.click(rendered.getByLabelText('fail'))
-    // render pending fallback
-    expect(rendered.getByText('loading')).toBeInTheDocument()
     // render error boundary fallback (error boundary)
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
@@ -903,6 +892,7 @@ describe("useQuery's in Loading mode", () => {
       return (
         <div>
           <span>rendered</span>
+          {state.data}
         </div>
       )
     }

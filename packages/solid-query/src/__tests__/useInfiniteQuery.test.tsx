@@ -247,7 +247,7 @@ describe('useInfiniteQuery', () => {
             isFetchingNextPage: state.isFetchingNextPage,
             isSuccess: state.isSuccess,
             isPlaceholderData: state.isPlaceholderData,
-          })
+          } as Partial<UseInfiniteQueryResult<InfiniteData<string>>>)
         },
       )
 
