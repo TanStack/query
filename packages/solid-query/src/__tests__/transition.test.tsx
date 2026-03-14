@@ -37,8 +37,7 @@ describe("useQuery's in Loading mode with transitions", () => {
         <div>
           <button
             aria-label="toggle"
-            onClick={() => setShowSignal((value) => !value)
-            }
+            onClick={() => setShowSignal((value) => !value)}
           >
             {showSignal() ? 'Hide' : 'Show'}
           </button>
