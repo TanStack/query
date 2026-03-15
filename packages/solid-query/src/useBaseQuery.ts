@@ -180,10 +180,9 @@ export function useBaseQuery<
   const trackedDefaultedOptions = createMemo(() => defaultedOptions())
 
   let observerResult = observer.getOptimisticResult(defaultedOptions())
-  const [state, setState] =
-    createStore<QueryObserverResult<TData, TError>>(
-      _stripFnsForSSR(observerResult),
-    )
+  const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
+    _stripFnsForSSR(observerResult),
+  )
 
   const createServerSubscriber = (
     resolve: (
