@@ -3,7 +3,7 @@ import {
   persistQueryClientSubscribe,
 } from '@tanstack/query-persist-client-core'
 import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
-import { IsRestoringProvider, QueryClientProvider } from '@tanstack/solid-query'
+import { IsRestoringContext, QueryClientProvider } from '@tanstack/solid-query'
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 import type { OmitKeyof, QueryClientProviderProps } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
@@ -35,7 +35,7 @@ export const PersistQueryClientProvider = (
   })
 
   createEffect(() => {
-    let unsubscribe = () => {}
+    let unsubscribe = () => { }
     if (!isRestoring()) {
       unsubscribe = persistQueryClientSubscribe(options())
     }
@@ -44,9 +44,9 @@ export const PersistQueryClientProvider = (
 
   return (
     <QueryClientProvider client={props.client}>
-      <IsRestoringProvider value={isRestoring}>
+      <IsRestoringContext value={isRestoring}>
         {props.children}
-      </IsRestoringProvider>
+      </IsRestoringContext>
     </QueryClientProvider>
   )
 }

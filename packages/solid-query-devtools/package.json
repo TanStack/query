@@ -66,14 +66,15 @@
   },
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.10",
+    "@solidjs/web": "2.0.0-beta.2",
     "@tanstack/solid-query": "workspace:*",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "^1.9.7",
+    "solid-js": "2.0.0-beta.2",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.11.6"
+    "vite-plugin-solid": "3.0.0-next.2"
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:^",
-    "solid-js": "^1.6.0"
+    "solid-js": "^1.6.0 || >=2.0.0-beta.0 <2.0.0"
   }
 }

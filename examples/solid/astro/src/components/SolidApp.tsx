@@ -13,7 +13,7 @@ import {
   createSignal,
   useContext,
 } from 'solid-js'
-import { isServer } from 'solid-js/web'
+import { isServer } from '@solidjs/web'
 import { getSearchParams, properCase } from '../utils'
 import { Link } from './Link'
 

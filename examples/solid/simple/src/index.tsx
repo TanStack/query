@@ -6,7 +6,7 @@ import {
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { Match, Switch } from 'solid-js'
-import { render } from 'solid-js/web'
+import { render } from '@solidjs/web'
 
 const queryClient = new QueryClient()
 

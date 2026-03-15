@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/solid-query'
 import { Suspense, createSignal } from 'solid-js'
-import { NoHydration } from 'solid-js/web'
+import { NoHydration } from '@solidjs/web'
 import { Title } from '@solidjs/meta'
 import type { UseQueryResult } from '@tanstack/solid-query'
 import { fetchUser } from '~/utils/api'

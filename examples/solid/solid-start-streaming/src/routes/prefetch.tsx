@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/solid-query'
-import { isServer } from 'solid-js/web'
+import { isServer } from '@solidjs/web'
 import { Title } from '@solidjs/meta'
 import { UserInfo, userInfoQueryOpts } from '~/components/user-info'
 

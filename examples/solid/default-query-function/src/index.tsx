@@ -6,7 +6,7 @@ import {
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Match, Show, Switch, createSignal } from 'solid-js'
-import { render } from 'solid-js/web'
+import { render } from '@solidjs/web'
 import type { Setter } from 'solid-js'
 import type { QueryFunction } from '@tanstack/solid-query'
 

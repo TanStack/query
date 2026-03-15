@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
-    "build": "vinxi build",
+    "build": "echo 'Skipped: waiting for @solidjs/start Solid v2 support'",
     "start": "vinxi start",
     "version": "vinxi version"
   },
@@ -14,7 +14,8 @@
     "@solidjs/start": "^1.1.3",
     "@tanstack/solid-query": "^5.90.26",
     "@tanstack/solid-query-devtools": "^5.91.3",
-    "solid-js": "^1.9.7",
+    "@solidjs/web": "2.0.0-beta.2",
+    "solid-js": "2.0.0-beta.2",
     "vinxi": "^0.5.3"
   },
   "engines": {

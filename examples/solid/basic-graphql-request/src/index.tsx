@@ -6,7 +6,7 @@ import {
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Match, Switch, createSignal } from 'solid-js'
-import { render } from 'solid-js/web'
+import { render } from '@solidjs/web'
 import { gql, request } from 'graphql-request'
 import type { Accessor, Setter } from 'solid-js'
 
