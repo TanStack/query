@@ -133,7 +133,7 @@ others:
     {
       title: 'Hey API',
       url: 'https://heyapi.dev/openapi-ts/plugins/tanstack-query',
-      description: 'The OpenAPI to TypeScript codegen. Generate clients, SDKs, validators, and more.',
+      description: 'OpenAPI to TypeScript codegen. Production-ready SDKs, Zod schemas, TanStack Query hooks, and 20+ plugins. Used by Vercel, OpenCode, and PayPal.',
     },
     {
       title: 'Kubb',
