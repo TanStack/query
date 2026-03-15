@@ -2284,6 +2284,9 @@ importers:
 
   integrations/solid-vite:
     dependencies:
+      '@solidjs/web':
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2(@solidjs/signals@0.12.0)(solid-js@2.0.0-beta.2)
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../../packages/solid-query
@@ -2291,14 +2294,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/solid-query-devtools
       solid-js:
-        specifier: ^1.9.7
-        version: 1.9.11
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2
       vite:
         specifier: ^6.4.1
         version: 6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
       vite-plugin-solid:
-        specifier: ^2.11.6
-        version: 2.11.10(@testing-library/jest-dom@6.9.1)(solid-js@1.9.11)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+        specifier: 3.0.0-next.2
+        version: 3.0.0-next.2(@testing-library/jest-dom@6.9.1)(solid-js@2.0.0-beta.2)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
 
   integrations/svelte-vite:
     devDependencies:
@@ -2876,6 +2879,12 @@ importers:
         specifier: workspace:*
         version: link:../query-persist-client-core
     devDependencies:
+      '@babel/core':
+        specifier: ^7.28.0
+        version: 7.29.0
+      '@babel/preset-typescript':
+        specifier: ^7.18.6
+        version: 7.28.5(@babel/core@7.29.0)
       '@solidjs/testing-library':
         specifier: ^0.8.10
         version: 0.8.10(@solidjs/router@0.15.4(solid-js@2.0.0-beta.2))(solid-js@2.0.0-beta.2)
@@ -2888,6 +2897,9 @@ importers:
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../solid-query
+      babel-preset-solid:
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2(@babel/core@7.29.0)(solid-js@2.0.0-beta.2)
       npm-run-all2:
         specifier: ^5.0.0
         version: 5.0.2
