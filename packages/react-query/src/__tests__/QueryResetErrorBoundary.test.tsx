@@ -11,6 +11,7 @@ import {
   useQuery,
   useSuspenseQueries,
   useSuspenseQuery,
+  useTrackQueryHash,
 } from '..'
 import { renderWithClient } from './utils'
 
@@ -937,6 +938,241 @@ describe('QueryErrorResetBoundary', () => {
       expect(rendered.getByText('loading')).toBeInTheDocument()
       await act(() => vi.advanceTimersByTimeAsync(10))
       expect(rendered.getByText('data')).toBeInTheDocument()
+
+      consoleMock.mockRestore()
+    })
+  })
+
+  describe('Scoped Registry', () => {
+    it('should isolate resets between different boundaries', async () => {
+      const consoleMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const key1 = queryKey()
+      const key2 = queryKey()
+      let count1 = 0
+      let count2 = 0
+
+      function Comp1() {
+        useQuery({
+          queryKey: key1,
+          queryFn: async () => {
+            await sleep(10)
+            count1++
+            throw new Error('fail1')
+          },
+          retry: false,
+          throwOnError: true,
+        })
+        return null
+      }
+
+      function Comp2() {
+        useQuery({
+          queryKey: key2,
+          queryFn: async () => {
+            await sleep(10)
+            count2++
+            throw new Error('fail2')
+          },
+          retry: false,
+          throwOnError: true,
+        })
+        return null
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                fallbackRender={({ resetErrorBoundary }) => (
+                  <div>
+                    <button onClick={resetErrorBoundary}>reset1</button>
+                  </div>
+                )}
+              >
+                <React.Suspense fallback="loading1">
+                  <Comp1 />
+                </React.Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                fallbackRender={({ resetErrorBoundary }) => (
+                  <div>
+                    <button onClick={resetErrorBoundary}>reset2</button>
+                  </div>
+                )}
+              >
+                <React.Suspense fallback="loading2">
+                  <Comp2 />
+                </React.Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
+        </>,
+      )
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('reset1')).toBeInTheDocument()
+      expect(rendered.getByText('reset2')).toBeInTheDocument()
+      expect(count1).toBe(1)
+      expect(count2).toBe(1)
+
+      fireEvent.click(rendered.getByText('reset1'))
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(count1).toBe(2)
+      expect(count2).toBe(1)
+
+      consoleMock.mockRestore()
+    })
+
+    it('should clear registry after reset', async () => {
+      const consoleMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const key = queryKey()
+      let count = 0
+
+      function Comp() {
+        useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            count++
+            throw new Error('fail')
+          },
+          retry: false,
+          throwOnError: true,
+        })
+        return null
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={reset}
+              fallbackRender={({ resetErrorBoundary }) => (
+                <div>
+                  <button onClick={resetErrorBoundary}>reset</button>
+                </div>
+              )}
+            >
+              <React.Suspense fallback="loading">
+                <Comp />
+              </React.Suspense>
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>,
+      )
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(rendered.getByText('reset')).toBeInTheDocument()
+      expect(count).toBe(1)
+
+      fireEvent.click(rendered.getByText('reset'))
+      await vi.advanceTimersByTimeAsync(11)
+      expect(count).toBe(2)
+
+      consoleMock.mockRestore()
+    })
+
+    it('should handle StrictMode double registration gracefully', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Comp() {
+        useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            count++
+            return 'ok'
+          },
+        })
+        return null
+      }
+
+      renderWithClient(
+        queryClient,
+        <React.StrictMode>
+          <QueryErrorResetBoundary>
+            <Comp />
+          </QueryErrorResetBoundary>
+        </React.StrictMode>,
+      )
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(count).toBeGreaterThanOrEqual(1)
+    })
+
+    it('should support tracking queries outside the boundary via useTrackQueryHash', async () => {
+      const consoleMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+      const key = queryKey()
+      let count = 0
+
+      function Child() {
+        const { data } = useSuspenseQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            count++
+            if (count === 1) {
+              throw new Error('fail')
+            }
+            return 'ok'
+          },
+          retry: false,
+        })
+        return <div>{data}</div>
+      }
+
+      function TrackedChild() {
+        const hash = queryClient
+          .getQueryCache()
+          .build(queryClient, { queryKey: key }).queryHash
+        useTrackQueryHash({ queryHash: hash })
+        return null
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={reset}
+              fallbackRender={({ resetErrorBoundary }) => (
+                <button onClick={resetErrorBoundary}>retry</button>
+              )}
+            >
+              <React.Suspense fallback="loading">
+                <TrackedChild />
+                <Child />
+              </React.Suspense>
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>,
+      )
+
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(rendered.getByText('retry')).toBeInTheDocument()
+      expect(count).toBe(1)
+
+      fireEvent.click(rendered.getByText('retry'))
+      await act(() => vi.advanceTimersByTimeAsync(11))
+      expect(count).toBe(2)
+      expect(rendered.getByText('ok')).toBeInTheDocument()
 
       consoleMock.mockRestore()
     })
