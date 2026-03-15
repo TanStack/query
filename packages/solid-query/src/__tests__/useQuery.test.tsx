@@ -33,6 +33,7 @@ import {
   keepPreviousData,
   useQuery,
 } from '..'
+import { IsRestoringContext } from '../isRestoring'
 import { Blink, mockOnlineManagerIsOnline, setActTimeout } from './utils'
 import type {
   DefinedUseQueryResult,
@@ -43,7 +44,6 @@ import type {
 } from '..'
 import type { Mock } from 'vitest'
 import type { JSX } from 'solid-js'
-import { IsRestoringContext } from '../isRestoring'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -1015,7 +1015,7 @@ describe('useQuery', () => {
           if (s.status === 'pending')
             states.push({ status: 'pending', data: undefined })
           else if (s.status === 'error')
-            states.push({ status: 'error', error: s.error as Error })
+            states.push({ status: 'error', error: s.error })
         },
       )
       return null
@@ -1234,7 +1234,7 @@ describe('useQuery', () => {
         }),
         () => {
           snapshots.push(
-            state.data ? (snapshot(state.data) as typeof result1) : undefined,
+            state.data ? (snapshot(state.data)) : undefined,
           )
           if (state.data) {
             itemRefs.push({ item0: state.data[0], item1: state.data[1] })

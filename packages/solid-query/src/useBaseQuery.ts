@@ -362,7 +362,7 @@ export function useBaseQuery<
       }
 
       // Always pass through error-related props without throwing
-      if (errorPassthroughProps.has(prop as string)) {
+      if (errorPassthroughProps.has(prop)) {
         return Reflect.get(target, prop, receiver)
       }
 
@@ -371,7 +371,7 @@ export function useBaseQuery<
         state.isError &&
         !state.isFetching &&
         shouldThrowError(observer.options.throwOnError, [
-          state.error as TError,
+          state.error,
           observer.getCurrentQuery(),
         ])
       ) {
@@ -380,5 +380,5 @@ export function useBaseQuery<
 
       return Reflect.get(target, prop, receiver)
     },
-  }) as typeof state
+  })
 }
