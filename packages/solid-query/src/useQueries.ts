@@ -1,16 +1,5 @@
 import { QueriesObserver, noop } from '@tanstack/query-core'
-import { createStore, unwrap } from 'solid-js/store'
-import {
-  batch,
-  createComputed,
-  createMemo,
-  createRenderEffect,
-  createResource,
-  mergeProps,
-  on,
-  onCleanup,
-  onMount,
-} from 'solid-js'
+import { createMemo, createStore, merge, onCleanup, reconcile } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { SolidQueryOptions, UseQueryResult } from './types'
@@ -122,7 +111,7 @@ type GetResults<T> =
                   UseQueryResult
 
 /**
- * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
+ * QueriesOptions reducer recursively snapshots function arguments to infer/enforce type param
  */
 type QueriesOptions<
   T extends Array<any>,
@@ -201,18 +190,15 @@ export function useQueries<
 
   const defaultedQueries = createMemo(() =>
     queriesOptions().queries.map((options) =>
-      mergeProps(
-        client().defaultQueryOptions(options as QueryObserverOptions),
-        {
-          get _optimisticResults() {
-            return isRestoring() ? 'isRestoring' : 'optimistic'
-          },
+      merge(client().defaultQueryOptions(options as QueryObserverOptions), {
+        get _optimisticResults() {
+          return isRestoring() ? 'isRestoring' : 'optimistic'
         },
-      ),
+      }),
     ),
   )
 
-  const observer = new QueriesObserver(
+  const observer = new QueriesObserver<TCombinedResult>(
     client(),
     defaultedQueries(),
     queriesOptions().combine
@@ -222,122 +208,55 @@ export function useQueries<
       : undefined,
   )
 
-  const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(
-      defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
-    )[1](),
+  // Get initial optimistic result
+  const [, getCombinedResult] = observer.getOptimisticResult(
+    defaultedQueries(),
+    (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
   )
 
-  createRenderEffect(
-    on(
-      () => queriesOptions().queries.length,
-      () =>
+  const initialResult = getCombinedResult()
+
+  // Store the combined result in a reactive store
+  const [state, setState] = createStore<Array<QueryObserverResult>>(
+    (Array.isArray(initialResult)
+      ? initialResult
+      : [initialResult]) as Array<QueryObserverResult>,
+  )
+
+  // Subscribe to the observer for updates
+  const unsubscribe = isRestoring()
+    ? noop
+    : observer.subscribe((result) => {
         setState(
-          observer.getOptimisticResult(
-            defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .combine,
-          )[1](),
-        ),
-    ),
-  )
-
-  const dataResources = createMemo(
-    on(
-      () => state.length,
-      () =>
-        state.map((queryRes) => {
-          const dataPromise = () =>
-            new Promise((resolve) => {
-              if (queryRes.isFetching && queryRes.isLoading) return
-              resolve(unwrap(queryRes.data))
-            })
-          return createResource(dataPromise)
-        }),
-    ),
-  )
-
-  batch(() => {
-    const dataResources_ = dataResources()
-    for (let index = 0; index < dataResources_.length; index++) {
-      const dataResource = dataResources_[index]!
-      dataResource[1].mutate(() => unwrap(state[index]!.data))
-      dataResource[1].refetch()
-    }
-  })
-
-  let taskQueue: Array<() => void> = []
-  const subscribeToObserver = () =>
-    observer.subscribe((result) => {
-      taskQueue.push(() => {
-        batch(() => {
-          const dataResources_ = dataResources()
-          for (let index = 0; index < dataResources_.length; index++) {
-            const dataResource = dataResources_[index]!
-            const unwrappedResult = { ...unwrap(result[index]) }
-            // @ts-expect-error typescript pedantry regarding the possible range of index
-            setState(index, unwrap(unwrappedResult))
-            dataResource[1].mutate(() => unwrap(state[index]!.data))
-            dataResource[1].refetch()
-          }
-        })
+          reconcile(
+            [...result] as Array<QueryObserverResult>,
+            // Use a key function that returns undefined so reconcile
+            // uses positional matching and recursively updates nested properties
+            () => undefined,
+          ),
+        )
       })
 
-      queueMicrotask(() => {
-        const taskToRun = taskQueue.pop()
-        if (taskToRun) taskToRun()
-        taskQueue = []
-      })
-    })
-
-  let unsubscribe: () => void = noop
-  createComputed<() => void>((cleanup) => {
-    cleanup?.()
-    unsubscribe = isRestoring() ? noop : subscribeToObserver()
-    // cleanup needs to be scheduled after synchronous effects take place
-    return () => queueMicrotask(unsubscribe)
+  onCleanup(() => {
+    unsubscribe()
   })
-  onCleanup(unsubscribe)
 
-  onMount(() => {
+  // Update observer queries when options change reactively
+  const trackedDefaultedQueries = createMemo(() => {
+    const queries = defaultedQueries()
     observer.setQueries(
-      defaultedQueries(),
+      queries,
       queriesOptions().combine
         ? ({
             combine: queriesOptions().combine,
           } as QueriesObserverOptions<TCombinedResult>)
         : undefined,
     )
+    return queries
   })
 
-  createComputed(() => {
-    observer.setQueries(
-      defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
-  })
+  // Force read of trackedDefaultedQueries to ensure it runs
+  void trackedDefaultedQueries
 
-  const handler = (index: number) => ({
-    get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
-      if (prop === 'data') {
-        return dataResources()[index]![0]()
-      }
-      return Reflect.get(target, prop)
-    },
-  })
-
-  const getProxies = () =>
-    state.map((s, index) => {
-      return new Proxy(s, handler(index))
-    })
-
-  const [proxyState, setProxyState] = createStore(getProxies())
-  createRenderEffect(() => setProxyState(getProxies()))
-
-  return proxyState as TCombinedResult
+  return state as unknown as TCombinedResult
 }

@@ -1,4 +1,4 @@
-import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
+import { createEffect, createMemo, onCleanup, onSettled } from 'solid-js'
 import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
@@ -66,22 +66,34 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
     hideDisabledQueries,
     theme: props.theme,
   })
-  createEffect(() => {
-    devtools.setClient(client())
-  })
-  createEffect(() => {
-    devtools.setOnClose(props.onClose ?? (() => {}))
-  })
+  createEffect(
+    () => client(),
+    (c) => {
+      devtools.setClient(c)
+    },
+  )
+  createEffect(
+    () => props.onClose,
+    (onClose) => {
+      devtools.setOnClose(onClose ?? (() => {}))
+    },
+  )
 
-  createEffect(() => {
-    devtools.setErrorTypes(props.errorTypes || [])
-  })
+  createEffect(
+    () => props.errorTypes,
+    (errorTypes2) => {
+      devtools.setErrorTypes(errorTypes2 || [])
+    },
+  )
 
-  createEffect(() => {
-    devtools.setTheme(props.theme || 'system')
-  })
+  createEffect(
+    () => props.theme,
+    (theme) => {
+      devtools.setTheme(theme || 'system')
+    },
+  )
 
-  onMount(() => {
+  onSettled(() => {
     devtools.mount(ref)
     onCleanup(() => devtools.unmount())
   })

@@ -1,21 +1,20 @@
 // Had to disable the lint rule because isServer type is defined as false
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
-import { hydrate, notifyManager, shouldThrowError } from '@tanstack/query-core'
-import { isServer } from 'solid-js/web'
+import { notifyManager, shouldThrowError } from '@tanstack/query-core'
 import {
-  createComputed,
   createMemo,
-  createResource,
-  createSignal,
-  on,
+  createStore,
+  isPending,
   onCleanup,
+  reconcile,
+  refresh,
+  snapshot,
 } from 'solid-js'
-import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions } from './types'
-import type { Accessor, Signal } from 'solid-js'
+import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
   Query,
@@ -23,6 +22,29 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+
+const isServer = typeof window === 'undefined'
+
+/**
+ * During SSR, Solid's store is serialized by seroval which cannot handle
+ * functions.  Strip `refetch`, `fetchNextPage`, and `fetchPreviousPage`
+ * from the observer result before it enters the store so serialization
+ * succeeds.  On the client this is a no-op (returns the object as-is).
+ */
+function _stripFnsForSSR<TData, TError>(
+  obj: QueryObserverResult<TData, TError>,
+): QueryObserverResult<TData, TError> {
+  if (!isServer) return obj
+  const out: Record<string, unknown> = {}
+  for (const k of Object.keys(obj)) {
+    if (k === 'refetch' || k === 'fetchNextPage' || k === 'fetchPreviousPage') {
+      out[k] = undefined
+    } else {
+      out[k] = (obj as any)[k]
+    }
+  }
+  return out as unknown as QueryObserverResult<TData, TError>
+}
 
 function reconcileFn<TData, TError>(
   store: QueryObserverResult<TData, TError>,
@@ -33,11 +55,15 @@ function reconcileFn<TData, TError>(
     | ((oldData: TData | undefined, newData: TData) => TData),
   queryHash?: string,
 ): QueryObserverResult<TData, TError> {
-  if (reconcileOption === false) return result
   if (typeof reconcileOption === 'function') {
     const newData = reconcileOption(store.data, result.data as TData)
     return { ...result, data: newData } as typeof result
   }
+
+  if (reconcileOption === false) return result
+
+  const key = reconcileOption
+
   let data = result.data
   if (store.data === undefined) {
     try {
@@ -55,8 +81,16 @@ function reconcileFn<TData, TError>(
       }
     }
   }
-  const newData = reconcile(data, { key: reconcileOption })(store.data)
-  return { ...result, data: newData } as typeof result
+  // reconcile() in Solid 2.0 mutates in place and returns void.
+  // We apply it to store.data so the store's nested signals update.
+  // On first load (store.data is undefined), there's nothing to reconcile against,
+  // so we just return the data as-is.
+  if (store.data !== undefined && data !== undefined) {
+    reconcile(data, key)(store.data)
+    // Return result with the existing store.data reference (now reconciled in place)
+    return { ...result, data: store.data } as typeof result
+  }
+  return { ...result, data } as typeof result
 }
 
 /**
@@ -75,7 +109,7 @@ const hydratableObserverResult = <
 ) => {
   if (!isServer) return result
   const obj: any = {
-    ...unwrap(result),
+    ...snapshot(result),
     // During SSR, functions cannot be serialized, so we need to remove them
     // This is safe because we will add these functions back when the query is hydrated
     refetch: undefined,
@@ -138,15 +172,18 @@ export function useBaseQuery<
     }
     return defaultOptions
   })
-  const initialOptions = defaultedOptions()
 
-  const [observer, setObserver] = createSignal(
-    new Observer(client(), defaultedOptions()),
+  const observer = new Observer(client(), defaultedOptions())
+
+  // Track options reactively; apply them with listeners disabled to avoid
+  // feedback loops when option identities (e.g. inline select functions)
+  // change across refresh cycles.
+  const trackedDefaultedOptions = createMemo(() => defaultedOptions())
+
+  let observerResult = observer.getOptimisticResult(defaultedOptions())
+  const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
+    _stripFnsForSSR(observerResult),
   )
-
-  let observerResult = observer().getOptimisticResult(defaultedOptions())
-  const [state, setState] =
-    createStore<QueryObserverResult<TData, TError>>(observerResult)
 
   const createServerSubscriber = (
     resolve: (
@@ -154,9 +191,9 @@ export function useBaseQuery<
     ) => void,
     reject: (reason?: any) => void,
   ) => {
-    return observer().subscribe((result) => {
+    return observer.subscribe((result) => {
       notifyManager.batchCalls(() => {
-        const query = observer().getCurrentQuery()
+        const query = observer.getCurrentQuery()
         const unwrappedResult = hydratableObserverResult(query, result)
 
         if (result.data !== undefined && unwrappedResult.isError) {
@@ -178,55 +215,49 @@ export function useBaseQuery<
   }
 
   const createClientSubscriber = () => {
-    const obs = observer()
-    return obs.subscribe((result) => {
+    return observer.subscribe((result) => {
+      const previousResult = observerResult
       observerResult = result
+      setStateWithReconciliation(result)
       queueMicrotask(() => {
-        if (unsubscribe) {
-          refetch()
+        if (
+          unsubscribe &&
+          !disposed &&
+          (previousResult.isLoading !== result.isLoading ||
+            previousResult.isError !== result.isError)
+        ) {
+          try {
+            refresh(queryResource)
+          } catch {
+            // NotReadyError is expected when refreshing a memo that returns
+            // a Promise. The Loading boundary handles this during rendering,
+            // but when refresh is called from a microtask there is no boundary.
+          }
         }
       })
     })
   }
 
   function setStateWithReconciliation(res: typeof observerResult) {
-    const opts = observer().options
-    // @ts-expect-error - Reconcile option is not correctly typed internally
-    const reconcileOptions = opts.reconcile
+    const opts = observer.options
+    const reconcileOptions = (opts as any).reconcile
+    const sanitized = _stripFnsForSSR(res)
 
     setState((store) => {
       return reconcileFn(
         store,
-        res,
+        sanitized,
         reconcileOptions === undefined ? false : reconcileOptions,
         opts.queryHash,
       )
     })
   }
 
-  function createDeepSignal<T>(): Signal<T> {
-    return [
-      () => state,
-      (v: any) => {
-        const unwrapped = unwrap(state)
-        if (typeof v === 'function') {
-          v = v(unwrapped)
-        }
-        // Hydration data exists on first load after SSR,
-        // and should be removed from the observer result
-        if (v?.hydrationData) {
-          const { hydrationData, ...rest } = v
-          v = rest
-        }
-        setStateWithReconciliation(v)
-      },
-    ] as Signal<T>
-  }
-
   /**
    * Unsubscribe is set lazily, so that we can subscribe after hydration when needed.
    */
   let unsubscribe: (() => void) | null = null
+  let disposed = false
 
   /*
     Fixes #7275
@@ -236,115 +267,80 @@ export function useBaseQuery<
     but the resource is still in a loading state
   */
   let resolver: ((value: ResourceData) => void) | null = null
-  const [queryResource, { refetch }] = createResource<ResourceData | undefined>(
-    () => {
-      const obs = observer()
-      return new Promise((resolve, reject) => {
-        resolver = resolve
-        if (isServer) {
-          unsubscribe = createServerSubscriber(resolve, reject)
-        } else if (!unsubscribe && !isRestoring()) {
-          unsubscribe = createClientSubscriber()
-        }
-        obs.updateResult()
-
-        if (
-          observerResult.isError &&
-          !observerResult.isFetching &&
-          !isRestoring() &&
-          shouldThrowError(obs.options.throwOnError, [
-            observerResult.error,
-            obs.getCurrentQuery(),
-          ])
-        ) {
-          setStateWithReconciliation(observerResult)
-          return reject(observerResult.error)
-        }
-        if (!observerResult.isLoading) {
-          resolver = null
-          return resolve(
-            hydratableObserverResult(obs.getCurrentQuery(), observerResult),
-          )
-        }
-
-        setStateWithReconciliation(observerResult)
-      })
-    },
-    {
-      storage: createDeepSignal,
-
-      get deferStream() {
-        return options().deferStream
-      },
-
-      /**
-       * If this resource was populated on the server (either sync render, or streamed in over time), onHydrated
-       * will be called. This is the point at which we can hydrate the query cache state, and setup the query subscriber.
-       *
-       * Leveraging onHydrated allows us to plug into the async and streaming support that solidjs resources already support.
-       *
-       * Note that this is only invoked on the client, for queries that were originally run on the server.
-       */
-      onHydrated(_k, info) {
-        if (info.value && 'hydrationData' in info.value) {
-          hydrate(client(), {
-            // @ts-expect-error - hydrationData is not correctly typed internally
-            queries: [{ ...info.value.hydrationData }],
-          })
-        }
-
-        if (unsubscribe) return
-        /**
-         * Do not refetch query on mount if query was fetched on server,
-         * even if `staleTime` is not set.
-         */
-        const newOptions = { ...initialOptions }
-        if (
-          (initialOptions.staleTime || !initialOptions.initialData) &&
-          info.value
-        ) {
-          newOptions.refetchOnMount = false
-        }
-        // Setting the options as an immutable object to prevent
-        // wonky behavior with observer subscriptions
-        observer().setOptions(newOptions)
-        setStateWithReconciliation(observer().getOptimisticResult(newOptions))
+  const queryResource = createMemo<ResourceData>(() => {
+    // Read trackedDefaultedOptions to ensure this memo re-runs when options change
+    const opts = trackedDefaultedOptions()
+    observer.setOptions(opts)
+    return new Promise((resolve, reject) => {
+      resolver = resolve
+      if (isServer) {
+        unsubscribe = createServerSubscriber((data) => {
+          resolve(data as ResourceData)
+        }, reject)
+      } else if (!unsubscribe && !isRestoring()) {
         unsubscribe = createClientSubscriber()
-      },
-    },
-  )
+      }
+      observer.updateResult()
+      // Get the latest result after updateResult - observerResult may be stale
+      // (e.g. after query key change, the observer now points to a new query)
+      const currentResult = observer.getOptimisticResult(opts)
+      observerResult = currentResult
 
-  createComputed(
-    on(
-      client,
-      (c) => {
-        if (unsubscribe) {
-          unsubscribe()
-        }
-        const newObserver = new Observer(c, defaultedOptions())
-        unsubscribe = createClientSubscriber()
-        setObserver(newObserver)
-      },
-      {
-        defer: true,
-      },
-    ),
-  )
+      if (
+        currentResult.isError &&
+        !currentResult.isFetching &&
+        !isRestoring() &&
+        shouldThrowError(observer.options.throwOnError, [
+          currentResult.error,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        setStateWithReconciliation(currentResult)
+        return reject(currentResult.error)
+      }
+      if (!currentResult.isLoading) {
+        resolver = null
+        return resolve(
+          hydratableObserverResult(observer.getCurrentQuery(), currentResult),
+        )
+      }
 
-  createComputed(
-    on(
-      isRestoring,
-      (restoring) => {
-        if (!restoring && !isServer) {
-          refetch()
-        }
-      },
-      { defer: true },
-    ),
-  )
+      setStateWithReconciliation(currentResult)
+    })
+  })
+
+  // createComputed(
+  //   on(
+  //     client,
+  //     (c) => {
+  //       if (unsubscribe) {
+  //         unsubscribe()
+  //       }
+  //       const newObserver = new Observer(c, defaultedOptions())
+  //       unsubscribe = createClientSubscriber()
+  //       setObserver(newObserver)
+  //     },
+  //     {
+  //       defer: true,
+  //     },
+  //   ),
+  // )
+
+  // createComputed(
+  //   on(
+  //     isRestoring,
+  //     (restoring) => {
+  //       if (!restoring && !isServer) {
+  //         refetch()
+  //       }
+  //     },
+  //     { defer: true },
+  //   ),
+  // )
 
   onCleanup(() => {
-    if (isServer && queryResource.loading) {
+    disposed = true
+    if (isServer && isPending(queryResource)) {
       unsubscribeQueued = true
       return
     }
@@ -358,32 +354,55 @@ export function useBaseQuery<
     }
   })
 
-  createComputed(
-    on(
-      [observer, defaultedOptions],
-      ([obs, opts]) => {
-        obs.setOptions(opts)
-        setStateWithReconciliation(obs.getOptimisticResult(opts))
-        refetch()
-      },
-      { defer: true },
-    ),
-  )
+  // createComputed(
+  //   on(
+  //     [observer, defaultedOptions],
+  //     ([obs, opts]) => {
+  //       obs.setOptions(opts)
+  //       setStateWithReconciliation(obs.getOptimisticResult(opts))
+  //       refetch()
+  //     },
+  //     { defer: true },
+  //   ),
+  // )
 
-  const handler = {
-    get(
-      target: QueryObserverResult<TData, TError>,
-      prop: keyof QueryObserverResult<TData, TError>,
-    ): any {
-      if (prop === 'data') {
-        if (state.data !== undefined) {
-          return queryResource.latest?.data
-        }
-        return queryResource()?.data
+  // Properties that should never throw — these let users access error info
+  // even outside an ErrorBoundary.
+  const errorPassthroughProps = new Set([
+    'error',
+    'isError',
+    'failureCount',
+    'failureReason',
+    'errorUpdateCount',
+    'errorUpdatedAt',
+  ])
+
+  // Return a proxy that throws on property access when throwOnError is enabled
+  return new Proxy(state, {
+    get(target, prop, receiver) {
+      // Always pass through symbols (needed for store internals, iteration, etc.)
+      if (typeof prop === 'symbol') {
+        return Reflect.get(target, prop, receiver)
       }
-      return Reflect.get(target, prop)
-    },
-  }
 
-  return new Proxy(state, handler)
+      // Always pass through error-related props without throwing
+      if (errorPassthroughProps.has(prop)) {
+        return Reflect.get(target, prop, receiver)
+      }
+
+      // Check throwOnError condition before returning the value
+      if (
+        state.isError &&
+        !state.isFetching &&
+        shouldThrowError(observer.options.throwOnError, [
+          state.error,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        throw state.error
+      }
+
+      return Reflect.get(target, prop, receiver)
+    },
+  })
 }

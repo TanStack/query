@@ -5,8 +5,8 @@ import {
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import { For, Match, Show, Switch, createSignal } from 'solid-js'
-import { render } from 'solid-js/web'
+import { For, Loading, Match, Show, Switch, createSignal } from 'solid-js'
+import { render } from '@solidjs/web'
 import type { Setter } from 'solid-js'
 import type { QueryFunction } from '@tanstack/solid-query'
 
@@ -46,9 +46,11 @@ function App() {
           loading sequences)
         </strong>
       </p>
-      <Show when={postId() > -1} fallback={<Posts setPostId={setPostId} />}>
-        <Post postId={postId()} setPostId={setPostId} />
-      </Show>
+      <Loading fallback={<div>Loading...</div>}>
+        <Show when={postId() > -1} fallback={<Posts setPostId={setPostId} />}>
+          <Post postId={postId()} setPostId={setPostId} />
+        </Show>
+      </Loading>
     </QueryClientProvider>
   )
 }
@@ -70,26 +72,32 @@ function Posts(props: { setPostId: Setter<number> }) {
             <>
               <div>
                 <For each={state.data}>
-                  {(post) => (
-                    <p>
-                      <a
-                        onClick={() => props.setPostId(post.id)}
-                        href="#"
-                        style={
-                          // We can use the queryCache here to show bold links for
-                          // ones that are cached
-                          queryClient.getQueryData(['post', post.id])
-                            ? {
-                                'font-weight': 'bold',
-                                color: 'green',
-                              }
-                            : {}
-                        }
-                      >
-                        {post.title}
-                      </a>
-                    </p>
-                  )}
+                  {(postAccessor) => {
+                    const post =
+                      typeof postAccessor === 'function'
+                        ? (postAccessor as any)()
+                        : postAccessor
+                    return (
+                      <p>
+                        <a
+                          onClick={() => props.setPostId(post.id)}
+                          href="#"
+                          style={
+                            // We can use the queryCache here to show bold links for
+                            // ones that are cached
+                            queryClient.getQueryData(['post', post.id])
+                              ? {
+                                  'font-weight': 'bold',
+                                  color: 'green',
+                                }
+                              : {}
+                          }
+                        >
+                          {post.title}
+                        </a>
+                      </p>
+                    )
+                  }}
                 </For>
               </div>
               <div>{state.isFetching ? 'Background Updating...' : ' '}</div>

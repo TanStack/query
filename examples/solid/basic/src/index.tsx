@@ -5,8 +5,8 @@ import {
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import { For, Match, Switch, createSignal } from 'solid-js'
-import { render } from 'solid-js/web'
+import { For, Loading, Match, Switch, createSignal } from 'solid-js'
+import { render } from '@solidjs/web'
 import type { Component, Setter } from 'solid-js'
 
 const queryClient = new QueryClient({
@@ -49,26 +49,30 @@ function Posts(props: { setPostId: Setter<number> }) {
             <>
               <div>
                 <For each={state.data}>
-                  {(post) => (
-                    <p>
-                      <a
-                        onClick={() => props.setPostId(post.id)}
-                        href="#"
-                        style={
-                          // We can access the query data here to show bold links for
-                          // ones that are cached
-                          queryClient.getQueryData(['post', post.id])
-                            ? {
-                                'font-weight': 'bold',
-                                color: 'green',
-                              }
-                            : {}
-                        }
-                      >
-                        {post.title}
-                      </a>
-                    </p>
-                  )}
+                  {(post) => {
+                    const p =
+                      typeof post === 'function' ? (post as () => Post)() : post
+                    return (
+                      <p>
+                        <a
+                          onClick={() => props.setPostId(p.id)}
+                          href="#"
+                          style={
+                            // We can access the query data here to show bold links for
+                            // ones that are cached
+                            queryClient.getQueryData(['post', p.id])
+                              ? {
+                                  'font-weight': 'bold',
+                                  color: 'green',
+                                }
+                              : {}
+                          }
+                        >
+                          {p.title}
+                        </a>
+                      </p>
+                    )
+                  }}
                 </For>
               </div>
               <div>{state.isFetching ? 'Background Updating...' : ' '}</div>
@@ -142,11 +146,13 @@ const App: Component = () => {
           loading sequences)
         </strong>
       </p>
-      {postId() > -1 ? (
-        <Post postId={postId()} setPostId={setPostId} />
-      ) : (
-        <Posts setPostId={setPostId} />
-      )}
+      <Loading fallback={<div>Loading...</div>}>
+        {postId() > -1 ? (
+          <Post postId={postId()} setPostId={setPostId} />
+        ) : (
+          <Posts setPostId={setPostId} />
+        )}
+      </Loading>
     </QueryClientProvider>
   )
 }

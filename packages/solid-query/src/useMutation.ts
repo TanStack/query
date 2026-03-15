@@ -1,6 +1,10 @@
 import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
-import { createComputed, createMemo, on, onCleanup } from 'solid-js'
-import { createStore } from 'solid-js/store'
+import {
+  createMemo,
+  createRenderEffect,
+  createStore,
+  onCleanup,
+} from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import type { DefaultError } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
@@ -30,6 +34,11 @@ export function useMutation<
     TOnMutateResult
   >(client(), options())
 
+  // Track options changes and update observer
+  createMemo(() => {
+    observer.setOptions(options())
+  })
+
   const mutate: UseMutateFunction<
     TData,
     TError,
@@ -47,33 +56,34 @@ export function useMutation<
     mutateAsync: observer.getCurrentResult().mutate,
   })
 
-  createComputed(() => {
-    observer.setOptions(options())
-  })
-
-  createComputed(
-    on(
-      () => state.status,
-      () => {
-        if (
-          state.isError &&
-          shouldThrowError(observer.options.throwOnError, [state.error])
-        ) {
-          throw state.error
-        }
-      },
-    ),
-  )
-
   const unsubscribe = observer.subscribe((result) => {
-    setState({
+    setState(() => ({
       ...result,
       mutate,
       mutateAsync: result.mutate,
-    })
+    }))
   })
 
   onCleanup(unsubscribe)
+
+  // Use createRenderEffect to throw errors when throwOnError is set.
+  // The throw must happen in the compute function (first arg), not the effect
+  // function, so that the error goes through notifyStatus and gets wrapped as
+  // a StatusError with a source — which is required for <Errored> boundaries
+  // to capture it via CollectionQueue.notify.
+  createRenderEffect(
+    () => {
+      const isError = state.isError
+      const error = state.error
+      if (
+        isError &&
+        shouldThrowError(observer.options.throwOnError, [error as TError])
+      ) {
+        throw error
+      }
+    },
+    () => {},
+  )
 
   return state
 }

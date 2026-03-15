@@ -1,12 +1,12 @@
 import {
   createMemo,
   createSignal,
-  onMount,
+  omit,
+  onSettled,
   sharedConfig,
-  splitProps,
   untrack,
 } from 'solid-js'
-import { isServer } from 'solid-js/web'
+import { isServer } from '@solidjs/web'
 import type { Component, ComponentProps, JSX } from 'solid-js'
 
 /*
@@ -28,10 +28,12 @@ export default function clientOnly<T extends Component<any>>(
   return (props: ComponentProps<T>) => {
     let Comp: T | undefined
     let m: boolean
-    const [, rest] = splitProps(props, ['fallback'])
-    if ((Comp = comp()) && !sharedConfig.context) return Comp(rest)
-    const [mounted, setMounted] = createSignal(!sharedConfig.context)
-    onMount(() => setMounted(true))
+    const rest = omit(props, 'fallback')
+    if ((Comp = comp()) && !sharedConfig.hydrating) return Comp(rest)
+    const [mounted, setMounted] = createSignal(!sharedConfig.hydrating)
+    onSettled(() => {
+      setMounted(true)
+    })
     return createMemo(
       () => (
         (Comp = comp()),

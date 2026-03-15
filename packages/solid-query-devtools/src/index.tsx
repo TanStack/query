@@ -1,4 +1,4 @@
-import { isDev } from 'solid-js/web'
+import { isDev } from '@solidjs/web'
 import clientOnly from './clientOnly'
 import type SolidQueryDevtoolsComp from './devtools'
 import type SolidQueryDevtoolsCompPanel from './devtoolsPanel'

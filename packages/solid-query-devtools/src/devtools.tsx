@@ -1,4 +1,4 @@
-import { createEffect, createMemo, onCleanup, onMount } from 'solid-js'
+import { createEffect, createMemo, onCleanup, onSettled } from 'solid-js'
 import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type {
@@ -72,37 +72,53 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     theme: props.theme,
   })
 
-  createEffect(() => {
-    devtools.setClient(client())
-  })
+  createEffect(
+    () => client(),
+    (c) => {
+      devtools.setClient(c)
+    },
+  )
 
-  createEffect(() => {
-    const buttonPos = props.buttonPosition
-    if (buttonPos) {
-      devtools.setButtonPosition(buttonPos)
-    }
-  })
+  createEffect(
+    () => props.buttonPosition,
+    (buttonPos) => {
+      if (buttonPos) {
+        devtools.setButtonPosition(buttonPos)
+      }
+    },
+  )
 
-  createEffect(() => {
-    const pos = props.position
-    if (pos) {
-      devtools.setPosition(pos)
-    }
-  })
+  createEffect(
+    () => props.position,
+    (pos) => {
+      if (pos) {
+        devtools.setPosition(pos)
+      }
+    },
+  )
 
-  createEffect(() => {
-    devtools.setInitialIsOpen(props.initialIsOpen || false)
-  })
+  createEffect(
+    () => props.initialIsOpen,
+    (initialIsOpen) => {
+      devtools.setInitialIsOpen(initialIsOpen || false)
+    },
+  )
 
-  createEffect(() => {
-    devtools.setErrorTypes(props.errorTypes || [])
-  })
+  createEffect(
+    () => props.errorTypes,
+    (errorTypes) => {
+      devtools.setErrorTypes(errorTypes || [])
+    },
+  )
 
-  createEffect(() => {
-    devtools.setTheme(props.theme || 'system')
-  })
+  createEffect(
+    () => props.theme,
+    (theme) => {
+      devtools.setTheme(theme || 'system')
+    },
+  )
 
-  onMount(() => {
+  onSettled(() => {
     devtools.mount(ref)
     onCleanup(() => devtools.unmount())
   })

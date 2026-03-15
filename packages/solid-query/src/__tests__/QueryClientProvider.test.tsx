@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { Loading } from 'solid-js'
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '..'
 
 describe('QueryClientProvider', () => {
@@ -37,7 +38,9 @@ describe('QueryClientProvider', () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <Page />
+        <Loading>
+          <Page />
+        </Loading>
       </QueryClientProvider>
     ))
 
@@ -91,10 +94,14 @@ describe('QueryClientProvider', () => {
     const rendered = render(() => (
       <>
         <QueryClientProvider client={queryClient1}>
-          <Page1 />
+          <Loading>
+            <Page1 />
+          </Loading>
         </QueryClientProvider>
         <QueryClientProvider client={queryClient2}>
-          <Page2 />
+          <Loading>
+            <Page2 />
+          </Loading>
         </QueryClientProvider>
       </>
     ))
@@ -140,7 +147,9 @@ describe('QueryClientProvider', () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <Page />
+        <Loading>
+          <Page />
+        </Loading>
       </QueryClientProvider>
     ))
 

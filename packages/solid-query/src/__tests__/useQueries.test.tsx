@@ -9,7 +9,7 @@ import {
 } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
-import { createRenderEffect, createSignal } from 'solid-js'
+import { createSignal, createTrackedEffect, deep } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueriesObserver,
@@ -63,7 +63,8 @@ describe('useQueries', () => {
         ],
       }))
 
-      createRenderEffect(() => {
+      createTrackedEffect(() => {
+        deep(result)
         results.push([{ ...result[0] }, { ...result[1] }])
       })
 
@@ -84,6 +85,7 @@ describe('useQueries', () => {
     ))
 
     await vi.advanceTimersByTimeAsync(100)
+    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('data1: 1, data2: 2')).toBeInTheDocument()
 
     expect(results.length).toBe(3)

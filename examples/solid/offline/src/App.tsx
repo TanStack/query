@@ -1,4 +1,4 @@
-import { For, Match, Show, Switch, createSignal } from 'solid-js'
+import { For, Loading, Match, Show, Switch, createSignal } from 'solid-js'
 import { MutationCache, QueryClient, useQuery } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client'
@@ -64,7 +64,9 @@ export default function App() {
         })
       }}
     >
-      <Movies />
+      <Loading fallback={<div>Loading...</div>}>
+        <Movies />
+      </Loading>
       <SolidQueryDevtools initialIsOpen />
     </PersistQueryClientProvider>
   )
@@ -111,19 +113,25 @@ function List(props: { onSelectMovie: (movieId: string) => void }) {
           </p>
           <ul>
             <For each={moviesQuery.data!.movies}>
-              {(movie) => (
-                <li>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      props.onSelectMovie(movie.id)
-                    }}
-                  >
-                    {movie.title}
-                  </a>
-                </li>
-              )}
+              {(movieAccessor) => {
+                const movie =
+                  typeof movieAccessor === 'function'
+                    ? (movieAccessor as any)()
+                    : movieAccessor
+                return (
+                  <li>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        props.onSelectMovie(movie.id)
+                      }}
+                    >
+                      {movie.title}
+                    </a>
+                  </li>
+                )
+              }}
             </For>
           </ul>
           <div>
