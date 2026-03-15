@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 export { focusManager } from './focusManager'
+export { environmentManager } from './environmentManager'
 export {
   defaultShouldDehydrateMutation,
   defaultShouldDehydrateQuery,
