@@ -35,7 +35,7 @@ export const PersistQueryClientProvider = (
   })
 
   createEffect(() => {
-    let unsubscribe = () => { }
+    let unsubscribe = () => {}
     if (!isRestoring()) {
       unsubscribe = persistQueryClientSubscribe(options())
     }
