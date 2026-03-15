@@ -60,7 +60,8 @@ export default defineConfig(() => {
       const nonSolidPlugins = tsup_option.esbuildPlugins.filter(
         (p) => !p.name.includes('solid'),
       )
-      const hasSolidPlugin = nonSolidPlugins.length < tsup_option.esbuildPlugins.length
+      const hasSolidPlugin =
+        nonSolidPlugins.length < tsup_option.esbuildPlugins.length
       if (hasSolidPlugin) {
         tsup_option.esbuildPlugins = [
           solidV2Plugin({ generate: 'dom' }),
