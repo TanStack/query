@@ -65,9 +65,12 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-typescript": "^7.18.6",
     "@solidjs/testing-library": "^0.8.10",
     "@solidjs/web": "2.0.0-beta.2",
     "@tanstack/solid-query": "workspace:*",
+    "babel-preset-solid": "2.0.0-beta.2",
     "npm-run-all2": "^5.0.0",
     "solid-js": "2.0.0-beta.2",
     "tsup-preset-solid": "^2.2.0",
