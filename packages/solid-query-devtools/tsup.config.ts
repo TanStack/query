@@ -43,6 +43,12 @@ const preset_options = {
   },
   cjs: true,
   drop_console: true,
+  modify_esbuild_options(esbuildOptions: any, permutation: any) {
+    if (permutation.type.dev) {
+      esbuildOptions.conditions = ['development']
+    }
+    return esbuildOptions
+  },
 }
 
 export default defineConfig(() => {

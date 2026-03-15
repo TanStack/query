@@ -54,6 +54,14 @@ export default defineConfig(() => {
     tsup_option.experimentalDts = true
     delete tsup_option.dts
 
+    // Externalize @solidjs/web so that `isServer` is resolved at runtime by
+    // the consuming bundler or Node.js rather than being inlined as `false`
+    // from the browser build during our tsup compilation.
+    tsup_option.external = [
+      ...(Array.isArray(tsup_option.external) ? tsup_option.external : []),
+      '@solidjs/web',
+    ]
+
     // Replace the default solid esbuild plugin (which uses babel-preset-solid v1)
     // with our custom one that uses babel-preset-solid v2 for Solid v2 compatibility.
     if (tsup_option.esbuildPlugins) {

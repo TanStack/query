@@ -24,6 +24,27 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 
+/**
+ * During SSR, Solid's store is serialized by seroval which cannot handle
+ * functions.  Strip `refetch`, `fetchNextPage`, and `fetchPreviousPage`
+ * from the observer result before it enters the store so serialization
+ * succeeds.  On the client this is a no-op (returns the object as-is).
+ */
+function _stripFnsForSSR<TData, TError>(
+  obj: QueryObserverResult<TData, TError>,
+): QueryObserverResult<TData, TError> {
+  if (!isServer) return obj
+  const out: Record<string, unknown> = {}
+  for (const k of Object.keys(obj)) {
+    if (k === 'refetch' || k === 'fetchNextPage' || k === 'fetchPreviousPage') {
+      out[k] = undefined
+    } else {
+      out[k] = (obj as any)[k]
+    }
+  }
+  return out as unknown as QueryObserverResult<TData, TError>
+}
+
 function reconcileFn<TData, TError>(
   store: QueryObserverResult<TData, TError>,
   result: QueryObserverResult<TData, TError>,
@@ -160,7 +181,9 @@ export function useBaseQuery<
 
   let observerResult = observer.getOptimisticResult(defaultedOptions())
   const [state, setState] =
-    createStore<QueryObserverResult<TData, TError>>(observerResult)
+    createStore<QueryObserverResult<TData, TError>>(
+      _stripFnsForSSR(observerResult),
+    )
 
   const createServerSubscriber = (
     resolve: (
@@ -218,11 +241,12 @@ export function useBaseQuery<
   function setStateWithReconciliation(res: typeof observerResult) {
     const opts = observer.options
     const reconcileOptions = (opts as any).reconcile
+    const sanitized = _stripFnsForSSR(res)
 
     setState((store) => {
       return reconcileFn(
         store,
-        res,
+        sanitized,
         reconcileOptions === undefined ? false : reconcileOptions,
         opts.queryHash,
       )
