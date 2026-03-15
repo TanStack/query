@@ -2,7 +2,6 @@
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
 import { notifyManager, shouldThrowError } from '@tanstack/query-core'
-import { isServer } from '@solidjs/web'
 import {
   createMemo,
   createStore,
@@ -23,6 +22,8 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+
+const isServer = typeof window === 'undefined'
 
 /**
  * During SSR, Solid's store is serialized by seroval which cannot handle
@@ -72,9 +73,9 @@ function reconcileFn<TData, TError>(
         if (error instanceof Error) {
           console.warn(
             `Unable to correctly reconcile data for query key: ${queryHash}. ` +
-              `Possibly because the query data contains data structures that aren't supported ` +
-              `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
-              `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
+            `Possibly because the query data contains data structures that aren't supported ` +
+            `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
+            `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
           )
         }
       }
