@@ -24,23 +24,29 @@ export const PersistQueryClientProvider = (
     queryClient: props.client,
   }))
 
-  createEffect(() => {
-    setIsRestoring(true)
-    persistQueryClientRestore(options())
-      .then(() => props.onSuccess?.())
-      .catch(() => props.onError?.())
-      .finally(() => {
-        setIsRestoring(false)
-      })
-  })
+  createEffect(
+    () => {
+      setIsRestoring(true)
+      persistQueryClientRestore(options())
+        .then(() => props.onSuccess?.())
+        .catch(() => props.onError?.())
+        .finally(() => {
+          setIsRestoring(false)
+        })
+    },
+    () => {},
+  )
 
-  createEffect(() => {
-    let unsubscribe = () => {}
-    if (!isRestoring()) {
-      unsubscribe = persistQueryClientSubscribe(options())
-    }
-    onCleanup(() => unsubscribe())
-  })
+  createEffect(
+    () => {
+      let unsubscribe = () => {}
+      if (!isRestoring()) {
+        unsubscribe = persistQueryClientSubscribe(options())
+      }
+      onCleanup(() => unsubscribe())
+    },
+    () => {},
+  )
 
   return (
     <QueryClientProvider client={props.client}>

@@ -5,7 +5,7 @@ import {
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import { Match, Switch } from 'solid-js'
+import { Loading, Match, Switch } from 'solid-js'
 import { render } from '@solidjs/web'
 
 const queryClient = new QueryClient()
@@ -14,7 +14,9 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <SolidQueryDevtools />
-      <Example />
+      <Loading fallback={<div>Loading...</div>}>
+        <Example />
+      </Loading>
     </QueryClientProvider>
   )
 }

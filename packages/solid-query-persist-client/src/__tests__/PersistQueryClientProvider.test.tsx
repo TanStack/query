@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { render, screen } from '@solidjs/testing-library'
 import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-import { createEffect, createSignal, onMount } from 'solid-js'
+import { createEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
@@ -81,12 +81,15 @@ describe('PersistQueryClientProvider', () => {
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'fetched'),
       }))
-      createEffect(() =>
-        states.push({
-          status: state.status,
-          fetchStatus: state.fetchStatus,
-          data: state.data,
-        }),
+      createEffect(
+        () => {
+          states.push({
+            status: state.status,
+            fetchStatus: state.fetchStatus,
+            data: state.data,
+          })
+        },
+        () => {},
       )
 
       return (
@@ -165,12 +168,15 @@ describe('PersistQueryClientProvider', () => {
         ],
       }))
 
-      createEffect(() =>
-        states.push({
-          status: state.status,
-          fetchStatus: state.fetchStatus,
-          data: state.data,
-        }),
+      createEffect(
+        () => {
+          states.push({
+            status: state.status,
+            fetchStatus: state.fetchStatus,
+            data: state.data,
+          })
+        },
+        () => {},
       )
 
       return (
@@ -249,12 +255,15 @@ describe('PersistQueryClientProvider', () => {
         initialDataUpdatedAt: 1,
       }))
 
-      createEffect(() =>
-        states.push({
-          status: state.status,
-          fetchStatus: state.fetchStatus,
-          data: state.data,
-        }),
+      createEffect(
+        () => {
+          states.push({
+            status: state.status,
+            fetchStatus: state.fetchStatus,
+            data: state.data,
+          })
+        },
+        () => {},
       )
 
       return (
@@ -336,12 +345,15 @@ describe('PersistQueryClientProvider', () => {
         staleTime: Infinity,
       }))
 
-      createEffect(() =>
-        states.push({
-          status: state.status,
-          fetchStatus: state.fetchStatus,
-          data: state.data,
-        }),
+      createEffect(
+        () => {
+          states.push({
+            status: state.status,
+            fetchStatus: state.fetchStatus,
+            data: state.data,
+          })
+        },
+        () => {},
       )
 
       return (
@@ -527,7 +539,7 @@ describe('PersistQueryClientProvider', () => {
         }),
       )
 
-      onMount(() => {
+      queueMicrotask(() => {
         setClient(
           new QueryClient({
             defaultOptions: {
@@ -553,12 +565,15 @@ describe('PersistQueryClientProvider', () => {
     function Page() {
       const state = useQuery(() => ({ queryKey: key }))
 
-      createEffect(() =>
-        states.push({
-          status: state.status,
-          fetchStatus: state.fetchStatus,
-          data: state.data as string | undefined,
-        }),
+      createEffect(
+        () => {
+          states.push({
+            status: state.status,
+            fetchStatus: state.fetchStatus,
+            data: state.data as string | undefined,
+          })
+        },
+        () => {},
       )
 
       return (

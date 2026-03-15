@@ -2861,7 +2861,10 @@ importers:
     devDependencies:
       '@solidjs/testing-library':
         specifier: ^0.8.10
-        version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.11))(solid-js@1.9.11)
+        version: 0.8.10(@solidjs/router@0.15.4(solid-js@2.0.0-beta.2))(solid-js@2.0.0-beta.2)
+      '@solidjs/web':
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2(@solidjs/signals@0.12.0)(solid-js@2.0.0-beta.2)
       '@tanstack/query-test-utils':
         specifier: workspace:*
         version: link:../query-test-utils
@@ -2872,14 +2875,14 @@ importers:
         specifier: ^5.0.0
         version: 5.0.2
       solid-js:
-        specifier: ^1.9.7
-        version: 1.9.11
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.27.3)(solid-js@1.9.11)(tsup@8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.6)(typescript@5.9.3)(yaml@2.8.2))
+        version: 2.2.0(esbuild@0.27.3)(solid-js@2.0.0-beta.2)(tsup@8.5.1(@microsoft/api-extractor@7.47.7(@types/node@22.19.15))(jiti@2.6.1)(postcss@8.5.6)(typescript@5.9.3)(yaml@2.8.2))
       vite-plugin-solid:
-        specifier: ^2.11.6
-        version: 2.11.10(@testing-library/jest-dom@6.9.1)(solid-js@1.9.11)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+        specifier: 3.0.0-next.2
+        version: 3.0.0-next.2(@testing-library/jest-dom@6.9.1)(solid-js@2.0.0-beta.2)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
 
   packages/svelte-query:
     dependencies:
@@ -20329,11 +20332,6 @@ snapshots:
     dependencies:
       solid-js: 2.0.0-beta.2
 
-  '@solidjs/router@0.15.4(solid-js@1.9.11)':
-    dependencies:
-      solid-js: 1.9.11
-    optional: true
-
   '@solidjs/router@0.15.4(solid-js@2.0.0-beta.2)':
     dependencies:
       solid-js: 2.0.0-beta.2
@@ -20363,13 +20361,6 @@ snapshots:
       - solid-js
       - supports-color
       - vite
-
-  '@solidjs/testing-library@0.8.10(@solidjs/router@0.15.4(solid-js@1.9.11))(solid-js@1.9.11)':
-    dependencies:
-      '@testing-library/dom': 10.4.1
-      solid-js: 1.9.11
-    optionalDependencies:
-      '@solidjs/router': 0.15.4(solid-js@1.9.11)
 
   '@solidjs/testing-library@0.8.10(@solidjs/router@0.15.4(solid-js@2.0.0-beta.2))(solid-js@2.0.0-beta.2)':
     dependencies:
