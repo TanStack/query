@@ -75,7 +75,7 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   createEffect(
     () => props.onClose,
     (onClose) => {
-      devtools.setOnClose(onClose ?? (() => { }))
+      devtools.setOnClose(onClose ?? (() => {}))
     },
   )
 
