@@ -389,7 +389,7 @@ export class QueryObserver<
     this.#currentRefetchInterval = nextInterval
 
     if (
-      isServer ||
+      (isServer && !this.options.refetchIntervalOnServer) ||
       resolveEnabled(this.options.enabled, this.#currentQuery) === false ||
       !isValidTimeout(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
