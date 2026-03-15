@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { render, screen } from '@solidjs/testing-library'
 import { QueryClient, useQueries, useQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-import { createEffect, createSignal } from 'solid-js'
+import { Loading, createEffect, createSignal } from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 import type {
@@ -101,12 +101,14 @@ describe('PersistQueryClientProvider', () => {
     }
 
     render(() => (
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister }}
-      >
-        <Page />
-      </PersistQueryClientProvider>
+      <Loading>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister }}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+      </Loading>
     ))
 
     expect(screen.getByText('fetchStatus: idle')).toBeInTheDocument()
@@ -188,12 +190,14 @@ describe('PersistQueryClientProvider', () => {
     }
 
     render(() => (
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister }}
-      >
-        <Page />
-      </PersistQueryClientProvider>
+      <Loading>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister }}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+      </Loading>
     ))
 
     expect(screen.getByText('fetchStatus: idle')).toBeInTheDocument()
@@ -275,12 +279,14 @@ describe('PersistQueryClientProvider', () => {
     }
 
     render(() => (
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister }}
-      >
-        <Page />
-      </PersistQueryClientProvider>
+      <Loading>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister }}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+      </Loading>
     ))
 
     expect(screen.getByText('initial')).toBeInTheDocument()
@@ -365,12 +371,14 @@ describe('PersistQueryClientProvider', () => {
     }
 
     render(() => (
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister }}
-      >
-        <Page />
-      </PersistQueryClientProvider>
+      <Loading>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister }}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+      </Loading>
     ))
 
     expect(screen.getByText('data: null')).toBeInTheDocument()
@@ -430,13 +438,15 @@ describe('PersistQueryClientProvider', () => {
     const onSuccess = vi.fn()
 
     render(() => (
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister }}
-        onSuccess={onSuccess}
-      >
-        <Page />
-      </PersistQueryClientProvider>
+      <Loading>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister }}
+          onSuccess={onSuccess}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+      </Loading>
     ))
 
     expect(onSuccess).toHaveBeenCalledTimes(0)
@@ -475,14 +485,16 @@ describe('PersistQueryClientProvider', () => {
     }
 
     render(() => (
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister }}
-        onSuccess={onSuccess}
-        onError={onError}
-      >
-        <Page />
-      </PersistQueryClientProvider>
+      <Loading>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister }}
+          onSuccess={onSuccess}
+          onError={onError}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+      </Loading>
     ))
 
     await vi.advanceTimersByTimeAsync(10)
@@ -584,7 +596,11 @@ describe('PersistQueryClientProvider', () => {
       )
     }
 
-    render(() => <App />)
+    render(() => (
+      <Loading>
+        <App />
+      </Loading>
+    ))
 
     await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('queryFn2')).toBeInTheDocument()

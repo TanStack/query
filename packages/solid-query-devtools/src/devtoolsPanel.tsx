@@ -75,14 +75,14 @@ export default function SolidQueryDevtoolsPanel(props: DevtoolsPanelOptions) {
   createEffect(
     () => props.onClose,
     (onClose) => {
-      devtools.setOnClose(onClose ?? (() => {}))
+      devtools.setOnClose(onClose ?? (() => { }))
     },
   )
 
   createEffect(
     () => props.errorTypes,
-    (errorTypes) => {
-      devtools.setErrorTypes(errorTypes || [])
+    (errorTypes2) => {
+      devtools.setErrorTypes(errorTypes2 || [])
     },
   )
 

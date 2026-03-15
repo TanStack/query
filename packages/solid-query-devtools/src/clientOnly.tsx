@@ -1,9 +1,9 @@
 import {
   createMemo,
   createSignal,
+  omit,
   onSettled,
   sharedConfig,
-  omit,
   untrack,
 } from 'solid-js'
 import { isServer } from '@solidjs/web'
