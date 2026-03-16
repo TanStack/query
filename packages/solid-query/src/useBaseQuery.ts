@@ -73,9 +73,9 @@ function reconcileFn<TData, TError>(
         if (error instanceof Error) {
           console.warn(
             `Unable to correctly reconcile data for query key: ${queryHash}. ` +
-            `Possibly because the query data contains data structures that aren't supported ` +
-            `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
-            `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
+              `Possibly because the query data contains data structures that aren't supported ` +
+              `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
+              `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
           )
         }
       }
@@ -267,50 +267,54 @@ export function useBaseQuery<
     but the resource is still in a loading state
   */
   let resolver: ((value: ResourceData) => void) | null = null
-  const queryResource = createMemo<ResourceData>(() => {
-    // Read trackedDefaultedOptions to ensure this memo re-runs when options change
-    const opts = trackedDefaultedOptions()
-    // Read isRestoring unconditionally so the memo re-runs when it changes
-    const restoring = isRestoring()
-    observer.setOptions(opts)
-    return new Promise((resolve, reject) => {
-      resolver = resolve
-      if (isServer) {
-        unsubscribe = createServerSubscriber((data) => {
-          resolve(data as ResourceData)
-        }, reject)
-      } else if (!unsubscribe && !restoring) {
-        unsubscribe = createClientSubscriber()
-      }
-      observer.updateResult()
-      // Get the latest result after updateResult - observerResult may be stale
-      // (e.g. after query key change, the observer now points to a new query)
-      const currentResult = observer.getOptimisticResult(opts)
-      observerResult = currentResult
+  const queryResource = createMemo<ResourceData>(
+    () => {
+      // Read trackedDefaultedOptions to ensure this memo re-runs when options change
+      const opts = trackedDefaultedOptions()
+      // Read isRestoring unconditionally so the memo re-runs when it changes
+      const restoring = isRestoring()
+      observer.setOptions(opts)
+      return new Promise((resolve, reject) => {
+        resolver = resolve
+        if (isServer) {
+          unsubscribe = createServerSubscriber((data) => {
+            resolve(data as ResourceData)
+          }, reject)
+        } else if (!unsubscribe && !restoring) {
+          unsubscribe = createClientSubscriber()
+        }
+        observer.updateResult()
+        // Get the latest result after updateResult - observerResult may be stale
+        // (e.g. after query key change, the observer now points to a new query)
+        const currentResult = observer.getOptimisticResult(opts)
+        observerResult = currentResult
 
-      if (
-        currentResult.isError &&
-        !currentResult.isFetching &&
-        !restoring &&
-        shouldThrowError(observer.options.throwOnError, [
-          currentResult.error,
-          observer.getCurrentQuery(),
-        ])
-      ) {
-        setStateWithReconciliation(currentResult)
-        return reject(currentResult.error)
-      }
-      if (!currentResult.isLoading) {
-        resolver = null
-        setStateWithReconciliation(currentResult)
-        return resolve(
-          hydratableObserverResult(observer.getCurrentQuery(), currentResult),
-        )
-      }
+        if (
+          currentResult.isError &&
+          !currentResult.isFetching &&
+          !restoring &&
+          shouldThrowError(observer.options.throwOnError, [
+            currentResult.error,
+            observer.getCurrentQuery(),
+          ])
+        ) {
+          setStateWithReconciliation(currentResult)
+          return reject(currentResult.error)
+        }
+        if (!currentResult.isLoading) {
+          resolver = null
+          setStateWithReconciliation(currentResult)
+          return resolve(
+            hydratableObserverResult(observer.getCurrentQuery(), currentResult),
+          )
+        }
 
-      setStateWithReconciliation(currentResult)
-    })
-  }, observerResult, { ssrSource: 'client' })
+        setStateWithReconciliation(currentResult)
+      })
+    },
+    observerResult,
+    { ssrSource: 'client' },
+  )
 
   onCleanup(() => {
     disposed = true
