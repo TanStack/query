@@ -603,6 +603,8 @@ describe('PersistQueryClientProvider', () => {
     ))
 
     await vi.advanceTimersByTimeAsync(10)
+    expect(screen.getByText('hydrated')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
     expect(screen.getByText('queryFn2')).toBeInTheDocument()
 
     expect(queryFn1).toHaveBeenCalledTimes(0)

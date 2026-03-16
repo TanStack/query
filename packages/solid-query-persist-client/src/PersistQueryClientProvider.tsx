@@ -18,6 +18,7 @@ export const PersistQueryClientProvider = (
   props: PersistQueryClientProviderProps,
 ): JSX.Element => {
   const [isRestoring, setIsRestoring] = createSignal(true)
+  let didRestore = false
 
   const options = createMemo(() => ({
     ...props.persistOptions,
@@ -26,13 +27,16 @@ export const PersistQueryClientProvider = (
 
   createEffect(
     () => {
-      setIsRestoring(true)
-      persistQueryClientRestore(options())
-        .then(() => props.onSuccess?.())
-        .catch(() => props.onError?.())
-        .finally(() => {
-          setIsRestoring(false)
-        })
+      const opts = options()
+      if (!didRestore) {
+        didRestore = true
+        persistQueryClientRestore(opts)
+          .then(() => props.onSuccess?.())
+          .catch(() => props.onError?.())
+          .finally(() => {
+            setIsRestoring(false)
+          })
+      }
     },
     () => {},
   )
