@@ -270,6 +270,8 @@ export function useBaseQuery<
   const queryResource = createMemo<ResourceData>(() => {
     // Read trackedDefaultedOptions to ensure this memo re-runs when options change
     const opts = trackedDefaultedOptions()
+    // Read isRestoring unconditionally so the memo re-runs when it changes
+    const restoring = isRestoring()
     observer.setOptions(opts)
     return new Promise((resolve, reject) => {
       resolver = resolve
@@ -277,7 +279,7 @@ export function useBaseQuery<
         unsubscribe = createServerSubscriber((data) => {
           resolve(data as ResourceData)
         }, reject)
-      } else if (!unsubscribe && !isRestoring()) {
+      } else if (!unsubscribe && !restoring) {
         unsubscribe = createClientSubscriber()
       }
       observer.updateResult()
@@ -289,7 +291,7 @@ export function useBaseQuery<
       if (
         currentResult.isError &&
         !currentResult.isFetching &&
-        !isRestoring() &&
+        !restoring &&
         shouldThrowError(observer.options.throwOnError, [
           currentResult.error,
           observer.getCurrentQuery(),
@@ -300,6 +302,7 @@ export function useBaseQuery<
       }
       if (!currentResult.isLoading) {
         resolver = null
+        setStateWithReconciliation(currentResult)
         return resolve(
           hydratableObserverResult(observer.getCurrentQuery(), currentResult),
         )
@@ -308,35 +311,6 @@ export function useBaseQuery<
       setStateWithReconciliation(currentResult)
     })
   })
-
-  // createComputed(
-  //   on(
-  //     client,
-  //     (c) => {
-  //       if (unsubscribe) {
-  //         unsubscribe()
-  //       }
-  //       const newObserver = new Observer(c, defaultedOptions())
-  //       unsubscribe = createClientSubscriber()
-  //       setObserver(newObserver)
-  //     },
-  //     {
-  //       defer: true,
-  //     },
-  //   ),
-  // )
-
-  // createComputed(
-  //   on(
-  //     isRestoring,
-  //     (restoring) => {
-  //       if (!restoring && !isServer) {
-  //         refetch()
-  //       }
-  //     },
-  //     { defer: true },
-  //   ),
-  // )
 
   onCleanup(() => {
     disposed = true
@@ -353,18 +327,6 @@ export function useBaseQuery<
       resolver = null
     }
   })
-
-  // createComputed(
-  //   on(
-  //     [observer, defaultedOptions],
-  //     ([obs, opts]) => {
-  //       obs.setOptions(opts)
-  //       setStateWithReconciliation(obs.getOptimisticResult(opts))
-  //       refetch()
-  //     },
-  //     { defer: true },
-  //   ),
-  // )
 
   // Properties that should never throw — these let users access error info
   // even outside an ErrorBoundary.

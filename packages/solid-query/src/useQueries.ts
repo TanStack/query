@@ -1,5 +1,12 @@
 import { QueriesObserver, noop } from '@tanstack/query-core'
-import { createMemo, createStore, merge, onCleanup, reconcile } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createStore,
+  merge,
+  onCleanup,
+  reconcile,
+} from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { SolidQueryOptions, UseQueryResult } from './types'
@@ -223,19 +230,27 @@ export function useQueries<
       : [initialResult]) as Array<QueryObserverResult>,
   )
 
-  // Subscribe to the observer for updates
-  const unsubscribe = isRestoring()
-    ? noop
-    : observer.subscribe((result) => {
-        setState(
-          reconcile(
-            [...result] as Array<QueryObserverResult>,
-            // Use a key function that returns undefined so reconcile
-            // uses positional matching and recursively updates nested properties
-            () => undefined,
-          ),
-        )
-      })
+  // Subscribe to the observer for updates reactively.
+  // When isRestoring is true (persist client is restoring), we defer
+  // subscription until restoring completes.
+  let unsubscribe: () => void = noop
+  createEffect(
+    () => {
+      if (!isRestoring()) {
+        unsubscribe = observer.subscribe((result) => {
+          setState(
+            reconcile(
+              [...result] as Array<QueryObserverResult>,
+              // Use a key function that returns undefined so reconcile
+              // uses positional matching and recursively updates nested properties
+              () => undefined,
+            ),
+          )
+        })
+      }
+    },
+    () => {},
+  )
 
   onCleanup(() => {
     unsubscribe()
