@@ -4,6 +4,7 @@ import * as React from 'react'
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
+  DefaultError,
   Mutation,
   MutationCache,
   MutationFilters,
@@ -22,25 +23,55 @@ export function useIsMutating(
   ).length
 }
 
-type MutationStateOptions<TResult = MutationState> = {
+type MutationStateOptions<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TContext = unknown,
+  TResult = MutationState<TData, TError, TVariables, TContext>,
+> = {
   filters?: MutationFilters
-  select?: (mutation: Mutation) => TResult
+  select?: (
+    mutation: Mutation<TData, TError, TVariables, TContext>,
+  ) => TResult
 }
 
-function getResult<TResult = MutationState>(
+function getResult<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TContext = unknown,
+  TResult = MutationState<TData, TError, TVariables, TContext>,
+>(
   mutationCache: MutationCache,
-  options: MutationStateOptions<TResult>,
+  options: MutationStateOptions<TData, TError, TVariables, TContext, TResult>,
 ): Array<TResult> {
   return mutationCache
     .findAll(options.filters)
     .map(
       (mutation): TResult =>
-        (options.select ? options.select(mutation) : mutation.state) as TResult,
+        (options.select
+          ? options.select(
+              mutation as unknown as Mutation<TData, TError, TVariables, TContext>,
+            )
+          : mutation.state) as TResult,
     )
 }
 
-export function useMutationState<TResult = MutationState>(
-  options: MutationStateOptions<TResult> = {},
+export function useMutationState<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TContext = unknown,
+  TResult = MutationState<TData, TError, TVariables, TContext>,
+>(
+  options: MutationStateOptions<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    TResult
+  > = {},
   queryClient?: QueryClient,
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
