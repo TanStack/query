@@ -4257,7 +4257,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  it('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
+  it('should init to status:pending, fetchStatus:idle when enabled is false', () => {
     const key = queryKey()
 
     function Page() {
@@ -5399,7 +5399,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should only call the query hash function once', async () => {
+  it('should only call the query hash function once', () => {
     const key = queryKey()
 
     let hashes = 0

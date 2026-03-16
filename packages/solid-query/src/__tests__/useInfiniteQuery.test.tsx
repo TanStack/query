@@ -1124,7 +1124,7 @@ describe('useInfiniteQuery', () => {
       createRenderEffect(
         () => ({
           hasNextPage: state.hasNextPage,
-          data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
+          data: JSON.parse(JSON.stringify(state.data)),
           isFetching: state.isFetching,
           isFetchingNextPage: state.isFetchingNextPage,
           isSuccess: state.isSuccess,
@@ -1577,9 +1577,7 @@ describe('useInfiniteQuery', () => {
         () => {
           states.push({
             hasNextPage: state.hasNextPage,
-            data: state.data
-              ? JSON.parse(JSON.stringify(state.data))
-              : undefined,
+            data: JSON.parse(JSON.stringify(state.data)),
             isFetching: state.isFetching,
             isFetchingNextPage: state.isFetchingNextPage,
             isSuccess: state.isSuccess,

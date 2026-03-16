@@ -24,6 +24,15 @@
       "entry": ["src/v4/**/*.cjs", "src/v5/**/*.cjs"],
       "ignore": ["**/__testfixtures__/**"]
     },
+    "packages/solid-query": {
+      "ignoreDependencies": ["@solidjs/web", "esbuild"]
+    },
+    "packages/solid-query-devtools": {
+      "ignoreDependencies": ["esbuild"]
+    },
+    "packages/solid-query-persist-client": {
+      "ignoreDependencies": ["@solidjs/web", "esbuild"]
+    },
     "packages/vue-query": {
       "ignore": ["**/__mocks__/**"],
       "ignoreDependencies": ["vue2", "vue2.7"]
