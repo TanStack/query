@@ -2,13 +2,11 @@ name: Release
 
 on:
   push:
-    branches: [main, alpha, beta, rc, v4]
-  repository_dispatch:
-    types: [release]
+    branches: [main, v4, '*-pre', '*-maint']
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -21,52 +19,67 @@ permissions:
 jobs:
   release:
     name: Release
-    if: github.repository_owner == 'TanStack'
+    if: "!contains(github.event.head_commit.message, 'ci: changeset release')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
+      - name: Check for changesets
+        id: changesets
+        run: |
+          CHANGESET_FILES=$(ls .changeset/*.md 2>/dev/null | grep -v README.md || true)
+          if [ -z "$CHANGESET_FILES" ]; then
+            echo "has_changesets=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changesets=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Start Nx Agents
+        if: steps.changesets.outputs.has_changesets == 'true'
         run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
       - name: Setup Tools
         uses: TanStack/config/.github/setup@main
       - name: Run Tests
+        if: steps.changesets.outputs.has_changesets == 'true'
         run: pnpm run test:ci
       - name: Stop Nx Agents
-        if: ${{ always() }}
+        if: ${{ always() && steps.changesets.outputs.has_changesets == 'true' }}
         run: npx nx-cloud stop-all-agents
-      # - name: Check for Changesets marked as major
-      #   id: major
-      #   run: |
-      #     echo "found=false" >> $GITHUB_OUTPUT
-      #     regex="(major)"
-      #     shopt -s nullglob
-      #     for file in .changeset/*.md; do
-      #       if [[ $(cat $file) =~ $regex ]]; then
-      #         echo "found=true" >> $GITHUB_OUTPUT
-      #       fi
-      #     done
-      - name: Run Changesets (version or publish)
-        id: changesets
-        uses: changesets/action@v1.7.0
-        with:
-          version: pnpm run changeset:version
-          publish: pnpm run changeset:publish
-          commit: 'ci: Version Packages'
-          title: 'ci: Version Packages'
-      # - name: Auto-merge Changesets PR
-      #   if: steps.changesets.outputs.hasChangesets == 'true' && steps.major.outputs.found == 'false'
-      #   run: |
-      #     gh pr merge --squash "$PR_NUMBER"
-      #     gh api --method POST /repos/$REPO/dispatches -f 'event_type=release'
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     REPO: ${{ github.repository }}
-      #     PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
-      - name: Comment on PRs about release
-        if: steps.changesets.outputs.published == 'true'
-        uses: TanStack/config/.github/comment-on-release@main
-        with:
-          published-packages: ${{ steps.changesets.outputs.publishedPackages }}
+      - name: Version Packages
+        run: pnpm run changeset:version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit and Push Version Changes
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git commit -m "ci: changeset release"; then
+            git push
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Determine dist-tag
+        if: steps.commit.outputs.committed == 'true'
+        id: dist-tag
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+          if [[ "$BRANCH" == *-pre ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$BRANCH" == *-maint ]]; then
+            echo "tag=maint" >> "$GITHUB_OUTPUT"
+          elif [[ "$BRANCH" == "v4" ]]; then
+            echo "tag=v4" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Publish Packages
+        if: steps.commit.outputs.committed == 'true'
+        run: pnpm run changeset:publish ${{ steps.dist-tag.outputs.tag && format('--tag {0}', steps.dist-tag.outputs.tag) }}
+      - name: Create GitHub Release
+        if: steps.commit.outputs.committed == 'true'
+        run: node scripts/create-github-release.mjs ${{ steps.dist-tag.outputs.prerelease == 'true' && '--prerelease' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
