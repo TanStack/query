@@ -102,7 +102,7 @@ export const tanstackViteConfig = (options: Options) => {
         formats: cjs ? ['es', 'cjs'] : ['es'],
         fileName: () => '[name].mjs',
       },
-      rollupOptions: {
+      rolldownOptions: {
         output: {
           preserveModules: true,
           preserveModulesRoot: 'src',

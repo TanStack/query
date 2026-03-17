@@ -48,7 +48,7 @@
     "@svitejs/changesets-changelog-github-compact": "^1.2.0",
     "@tanstack/eslint-config": "0.3.2",
     "@tanstack/typedoc-config": "0.3.1",
-    "@tanstack/vite-config": "0.4.3",
+    "@tanstack/vite-config": "0.5.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@types/node": "^22.15.3",
     "@types/react": "^19.2.7",
@@ -80,8 +80,8 @@
     "typescript58": "npm:typescript@5.8",
     "typescript59": "npm:typescript@5.9",
     "typescript60": "npm:typescript@6.0.1-rc",
-    "vite": "^6.4.1",
-    "vitest": "^4.0.18"
+    "vite": "^8.0.0",
+    "vitest": "^4.1.0"
   },
   "pnpm": {
     "overrides": {
@@ -100,7 +100,7 @@
       "@typescript-eslint/utils": "8.56.1",
       "@typescript-eslint/visitor-keys": "8.56.1",
       "typescript-eslint": "8.56.1",
-      "vite": "^6.4.1",
+      "vite": "^8.0.0",
       "esbuild": "^0.27.2"
     }
   }
