@@ -42,8 +42,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
-        with:
-          fetch-depth: 0
       - name: Setup Tools
         uses: TanStack/config/.github/setup@main
       - name: Build Packages
@@ -66,8 +64,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
-        with:
-          fetch-depth: 0
       - name: Check Provenance
         uses: danielroe/provenance-action@v0.1.1
         with:
