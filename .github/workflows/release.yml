@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [main, v4, '*-pre', '*-maint']
+    branches: [main, 'v[0-9]', '*-pre', '*-maint']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -71,8 +71,8 @@ jobs:
             echo "prerelease=true" >> "$GITHUB_OUTPUT"
           elif [[ "$BRANCH" == *-maint ]]; then
             echo "tag=maint" >> "$GITHUB_OUTPUT"
-          elif [[ "$BRANCH" == "v4" ]]; then
-            echo "tag=v4" >> "$GITHUB_OUTPUT"
+          elif [[ "$BRANCH" =~ ^v[0-9]+$ ]]; then
+            echo "tag=$BRANCH" >> "$GITHUB_OUTPUT"
           fi
       - name: Publish Packages
         if: steps.commit.outputs.committed == 'true'
