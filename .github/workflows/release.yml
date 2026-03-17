@@ -25,13 +25,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
       - name: Start Nx Agents
         run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
       - name: Setup Tools
-        uses: tanstack/config/.github/setup@main
+        uses: TanStack/config/.github/setup@main
       - name: Run Tests
         run: pnpm run test:ci
       - name: Stop Nx Agents
@@ -50,7 +50,7 @@ jobs:
       #     done
       - name: Run Changesets (version or publish)
         id: changesets
-        uses: changesets/action@v1.5.3
+        uses: changesets/action@v1.7.0
         with:
           version: pnpm run changeset:version
           publish: pnpm run changeset:publish
@@ -69,6 +69,6 @@ jobs:
       #     PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
       - name: Comment on PRs about release
         if: steps.changesets.outputs.published == 'true'
-        uses: tanstack/config/.github/comment-on-release@main
+        uses: TanStack/config/.github/comment-on-release@main
         with:
           published-packages: ${{ steps.changesets.outputs.publishedPackages }}
