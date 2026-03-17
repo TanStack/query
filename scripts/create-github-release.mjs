@@ -165,7 +165,7 @@ for (const line of commits) {
   const message = conventionalMatch ? conventionalMatch[3] : subject
 
   // Only include user-facing change types
-  if (['feat', 'fix', 'perf', 'refactor', 'build', 'chore'].includes(type))
+  if (!['feat', 'fix', 'perf', 'refactor', 'build', 'chore'].includes(type))
     continue
 
   // Extract PR number if present
