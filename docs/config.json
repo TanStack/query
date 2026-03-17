@@ -1249,7 +1249,7 @@
             },
             {
               "label": "hydration",
-              "to": "framework/react/reference/functions/HydrationBoundary"
+              "to": "framework/preact/reference/functions/HydrationBoundary"
             }
           ]
         }
