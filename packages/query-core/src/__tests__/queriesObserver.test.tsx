@@ -38,6 +38,28 @@ describe('queriesObserver', () => {
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
+  test('should return current queries via getQueries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ])
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    const queries = observer.getQueries()
+
+    expect(queries).toHaveLength(2)
+    expect(queries[0]?.queryKey).toEqual(key1)
+    expect(queries[1]?.queryKey).toEqual(key2)
+
+    unsubscribe()
+  })
+
   test('should update when a query updates', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
