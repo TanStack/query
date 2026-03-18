@@ -412,6 +412,28 @@ describe('injectMutation', () => {
       expect(boundaryFn).toHaveBeenCalledTimes(1)
       expect(boundaryFn).toHaveBeenCalledWith(err)
     })
+
+    test('should throw when throwOnError is true and mutate is used', async () => {
+      const { mutate } = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationKey: ['fake'],
+          mutationFn: () => {
+            return Promise.reject(
+              new Error('Expected mock error. All is well!'),
+            )
+          },
+          throwOnError: true,
+        }))
+      })
+
+      TestBed.tick()
+
+      mutate()
+
+      await expect(vi.advanceTimersByTimeAsync(0)).rejects.toThrow(
+        'Expected mock error. All is well!',
+      )
+    })
   })
 
   test('should throw when throwOnError is true', async () => {

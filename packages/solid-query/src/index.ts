@@ -76,6 +76,7 @@ export type {
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
 export { useMutation } from './useMutation'
+export { mutationOptions } from './mutationOptions'
 export const createMutation = useMutation
 export { useIsMutating } from './useIsMutating'
 export { useIsMutating as createIsMutating } from './useIsMutating'
