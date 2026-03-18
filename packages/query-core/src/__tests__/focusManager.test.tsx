@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { FocusManager } from '../focusManager'
-import { setIsServer } from './utils'
 
 describe('focusManager', () => {
   let focusManager: FocusManager
@@ -55,17 +54,26 @@ describe('focusManager', () => {
   })
 
   test('cleanup (removeEventListener) should not be called if window is not defined', () => {
-    const restoreIsServer = setIsServer(true)
-
+    const windowSpy = vi.spyOn(globalThis, 'window', 'get')
+    windowSpy.mockImplementation(
+      () => undefined as unknown as Window & typeof globalThis,
+    )
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
-    const unsubscribe = focusManager.subscribe(() => undefined)
+    const subscribe = () => focusManager.subscribe(() => undefined)
+    let firstUnsubscribe: (() => void) | undefined
 
-    unsubscribe()
+    expect(() => {
+      firstUnsubscribe = subscribe()
+    }).not.toThrow()
+    const secondUnsubscribe = subscribe()
+
+    firstUnsubscribe?.()
+    secondUnsubscribe()
 
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
 
-    restoreIsServer()
+    windowSpy.mockRestore()
   })
 
   test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {

@@ -7,6 +7,8 @@ In this guide you'll learn how to use React Query with server rendering.
 
 See the guide on [Prefetching & Router Integration](./prefetching.md) for some background. You might also want to check out the [Performance & Request Waterfalls guide](./request-waterfalls.md) before that.
 
+For deeper examples on hydration + prefetching (including code splitting), see the [Dependent Queries & Code Splitting](./prefetching.md#dependent-queries-code-splitting) section.
+
 For advanced server rendering patterns, such as streaming, Server Components and the new Next.js app router, see the [Advanced Server Rendering guide](./advanced-ssr.md).
 
 If you just want to see some code, you can skip ahead to the [Full Next.js pages router example](#full-nextjs-pages-router-example) or the [Full Remix example](#full-remix-example) below.
@@ -15,7 +17,7 @@ If you just want to see some code, you can skip ahead to the [Full Next.js pages
 
 So what is server rendering anyway? The rest of this guide will assume you are familiar with the concept, but let's spend some time to look at how it relates to React Query. Server rendering is the act of generating the initial html on the server, so that the user has some content to look at as soon as the page loads. This can happen on demand when a page is requested (SSR). It can also happen ahead of time either because a previous request was cached, or at build time (SSG).
 
-If you've read the Request Waterfalls guide, you might remember this:
+If you've read the [Performance & Request Waterfalls guide](./request-waterfalls.md), you might remember this:
 
 ```
 1. |-> Markup (without content)
@@ -386,7 +388,7 @@ With Remix, this is a little bit more involved, we recommend checking out the [u
 
 ## Prefetching dependent queries
 
-Over in the Prefetching guide we learned how to [prefetch dependent queries](./prefetching.md#dependent-queries--code-splitting), but how do we do this in framework loaders? Consider the following code, taken from the [Dependent Queries guide](./dependent-queries.md):
+Over in the Prefetching guide we learned how to [prefetch dependent queries](./prefetching.md#dependent-queries-code-splitting), but how do we do this in framework loaders? Consider the following code, taken from the [Dependent Queries guide](./dependent-queries.md):
 
 ```tsx
 // Get the user
