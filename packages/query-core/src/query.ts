@@ -260,9 +260,13 @@ export class Query<
     this.cancel({ silent: true })
   }
 
+  get resetState(): QueryState<TData, TError> {
+    return this.#initialState
+  }
+
   reset(): void {
     this.destroy()
-    this.setState(this.#initialState)
+    this.setState(this.resetState)
   }
 
   isActive(): boolean {

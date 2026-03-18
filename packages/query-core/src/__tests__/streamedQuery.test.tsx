@@ -539,6 +539,58 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
+  test('should keep error state on reset refetch when initialData is defined', async () => {
+    const key = queryKey()
+    let shouldError = false
+    const error = new Error('stream failed')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      initialData: ['initial'],
+      retry: false,
+      queryFn: streamedQuery({
+        refetchMode: 'reset',
+        streamFn: async function* () {
+          if (shouldError) {
+            throw error
+          }
+
+          yield 0
+        },
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: ['initial', 0],
+    })
+
+    shouldError = true
+
+    const refetchPromise = observer.refetch()
+
+    await vi.advanceTimersByTimeAsync(0)
+    await expect(refetchPromise).resolves.toMatchObject({
+      status: 'error',
+      error,
+      data: ['initial'],
+    })
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+      fetchStatus: 'idle',
+      data: ['initial'],
+      error,
+    })
+
+    unsubscribe()
+  })
+
   test('should not call reducer twice when refetchMode is replace', async () => {
     const key = queryKey()
     const arr: Array<number> = []
