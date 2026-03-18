@@ -1,6 +1,6 @@
 ---
 id: queries
 title: Queries
-ref: docs/framework/react/guides/queries
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+ref: docs/framework/react/guides/queries.md
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---

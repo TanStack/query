@@ -1,8 +1,8 @@
 ---
 id: infinite-queries
 title: Infinite Queries
-ref: docs/framework/react/guides/infinite-queries
-replace: { 'React': 'Preact', 'react-query': 'preact-query' }
+ref: docs/framework/react/guides/infinite-queries.md
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---
 
 [//]: # 'Example'
