@@ -80,6 +80,6 @@
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:^",
-    "solid-js": "^1.6.0 || >=2.0.0-beta.0 <2.0.0"
+    "solid-js": ">=2.0.0-beta.0 <3.0.0"
   }
 }

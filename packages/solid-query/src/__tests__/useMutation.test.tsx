@@ -528,6 +528,8 @@ describe('useMutation', () => {
       rendered.getByText('error: null, status: idle, isPaused: false'),
     ).toBeInTheDocument()
 
+    window.dispatchEvent(new Event('offline'))
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -537,8 +539,8 @@ describe('useMutation', () => {
 
     expect(count).toBe(0)
 
-    onlineMock.mockReturnValue(true)
-    queryClient.getMutationCache().resumePausedMutations()
+    onlineMock.mockRestore()
+    window.dispatchEvent(new Event('online'))
 
     await vi.advanceTimersByTimeAsync(6)
     expect(
@@ -546,7 +548,6 @@ describe('useMutation', () => {
     ).toBeInTheDocument()
 
     expect(count).toBe(2)
-    onlineMock.mockRestore()
   })
 
   it('should call onMutate even if paused', async () => {
@@ -585,6 +586,8 @@ describe('useMutation', () => {
       rendered.getByText('data: null, status: idle, isPaused: false'),
     ).toBeInTheDocument()
 
+    window.dispatchEvent(new Event('offline'))
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(
@@ -598,8 +601,8 @@ describe('useMutation', () => {
       mutationKey: undefined,
     })
 
-    onlineMock.mockReturnValue(true)
-    queryClient.getMutationCache().resumePausedMutations()
+    onlineMock.mockRestore()
+    window.dispatchEvent(new Event('online'))
     await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
@@ -607,8 +610,6 @@ describe('useMutation', () => {
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(count).toBe(1)
-
-    onlineMock.mockRestore()
   })
 
   it('should optimistically go to paused state if offline', async () => {
@@ -650,6 +651,7 @@ describe('useMutation', () => {
     ))
 
     rendered.getByText('data: null, status: idle, isPaused: false')
+    window.dispatchEvent(new Event('offline'))
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(0)
     expect(
@@ -660,15 +662,13 @@ describe('useMutation', () => {
     expect(states[0]).toBe('idle, false')
     expect(states[1]).toBe('pending, true')
 
-    onlineMock.mockReturnValue(true)
-    queryClient.getMutationCache().resumePausedMutations()
+    onlineMock.mockRestore()
+    window.dispatchEvent(new Event('online'))
 
     await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
     ).toBeInTheDocument()
-
-    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
@@ -709,6 +709,7 @@ describe('useMutation', () => {
     ))
 
     expect(rendered.getByText('status: idle')).toBeInTheDocument()
+    window.dispatchEvent(new Event('offline'))
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(16)
     await vi.advanceTimersByTimeAsync(0)
@@ -726,8 +727,8 @@ describe('useMutation', () => {
       failureReason: new Error('oops'),
     })
 
-    onlineMock.mockReturnValue(true)
-    queryClient.getMutationCache().resumePausedMutations()
+    onlineMock.mockRestore()
+    window.dispatchEvent(new Event('online'))
 
     await vi.advanceTimersByTimeAsync(11)
     await vi.advanceTimersByTimeAsync(0)
@@ -742,8 +743,6 @@ describe('useMutation', () => {
       failureReason: null,
       data: 'data2',
     })
-
-    onlineMock.mockRestore()
   })
 
   // eslint-disable-next-line vitest/expect-expect
