@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 5.91.0
+
+### Minor Changes
+
+- feat(solid-query): add 'mutationOptions' ([#10138](https://github.com/TanStack/query/pull/10138))
+
 ## 5.90.26
 
 ### Patch Changes
