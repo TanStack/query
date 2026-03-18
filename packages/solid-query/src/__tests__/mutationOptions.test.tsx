@@ -50,8 +50,8 @@ describe('mutationOptions', () => {
       const isMutating = useIsMutating()
       const { mutate } = useMutation(() => mutationOpts)
 
-      createRenderEffect(() => {
-        isMutatingArray.push(isMutating())
+      createRenderEffect(isMutating, (count) => {
+        isMutatingArray.push(count)
       })
 
       return (
@@ -87,8 +87,8 @@ describe('mutationOptions', () => {
       const isMutating = useIsMutating()
       const { mutate } = useMutation(() => mutationOpts)
 
-      createRenderEffect(() => {
-        isMutatingArray.push(isMutating())
+      createRenderEffect(isMutating, (count) => {
+        isMutatingArray.push(count)
       })
 
       return (
@@ -129,8 +129,8 @@ describe('mutationOptions', () => {
       const { mutate: mutate1 } = useMutation(() => mutationOpts1)
       const { mutate: mutate2 } = useMutation(() => mutationOpts2)
 
-      createRenderEffect(() => {
-        isMutatingArray.push(isMutating())
+      createRenderEffect(isMutating, (count) => {
+        isMutatingArray.push(count)
       })
 
       return (
@@ -174,8 +174,8 @@ describe('mutationOptions', () => {
       const { mutate: mutate1 } = useMutation(() => mutationOpts1)
       const { mutate: mutate2 } = useMutation(() => mutationOpts2)
 
-      createRenderEffect(() => {
-        isMutatingArray.push(isMutating())
+      createRenderEffect(isMutating, (count) => {
+        isMutatingArray.push(count)
       })
 
       return (
@@ -403,9 +403,12 @@ describe('mutationOptions', () => {
         filters: { mutationKey: mutationOpts.mutationKey, status: 'success' },
       }))
 
-      createEffect(() => {
-        mutationStateArray.push(states())
-      })
+      createEffect(
+        () => [...states()],
+        (snapshot) => {
+          mutationStateArray.push(snapshot)
+        },
+      )
 
       return (
         <div>
@@ -442,9 +445,12 @@ describe('mutationOptions', () => {
         filters: { status: 'success' },
       }))
 
-      createEffect(() => {
-        mutationStateArray.push(states())
-      })
+      createEffect(
+        () => [...states()],
+        (snapshot) => {
+          mutationStateArray.push(snapshot)
+        },
+      )
 
       return (
         <div>
@@ -486,9 +492,12 @@ describe('mutationOptions', () => {
         filters: { status: 'success' },
       }))
 
-      createEffect(() => {
-        mutationStateArray.push(states())
-      })
+      createEffect(
+        () => [...states()],
+        (snapshot) => {
+          mutationStateArray.push(snapshot)
+        },
+      )
 
       return (
         <div>
@@ -533,9 +542,12 @@ describe('mutationOptions', () => {
         filters: { mutationKey: mutationOpts1.mutationKey, status: 'success' },
       }))
 
-      createEffect(() => {
-        mutationStateArray.push(states())
-      })
+      createEffect(
+        () => [...states()],
+        (snapshot) => {
+          mutationStateArray.push(snapshot)
+        },
+      )
 
       return (
         <div>
