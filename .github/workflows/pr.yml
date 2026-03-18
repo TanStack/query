@@ -44,7 +44,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.2
       - name: Setup Tools
-        uses: TanStack/config/.github/setup@870eafc5da7a319f8cb0bc0cb146f53cffd5bf50
+        uses: TanStack/config/.github/setup@main
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
@@ -76,6 +76,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.2
       - name: Setup Tools
-        uses: TanStack/config/.github/setup@870eafc5da7a319f8cb0bc0cb146f53cffd5bf50
+        uses: TanStack/config/.github/setup@main
       - name: Changeset Preview
         uses: TanStack/config/.github/changeset-preview@main
