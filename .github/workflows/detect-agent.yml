@@ -1,0 +1,19 @@
+name: Detect Agent
+
+on:
+  pull_request_target:
+    types: [opened]
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  detect:
+    if: github.event_name != 'workflow_dispatch'
+    uses: bombshell-dev/automation/.github/workflows/detect-agent.yml@a1553cebd9318d416f6a8e9f38f363b6aaa19c72
+
+  backfill:
+    if: github.event_name == 'workflow_dispatch'
+    uses: bombshell-dev/automation/.github/workflows/detect-agent-backfill.yml@a1553cebd9318d416f6a8e9f38f363b6aaa19c72
