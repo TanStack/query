@@ -4,6 +4,7 @@
 import { notifyManager, shouldThrowError } from '@tanstack/query-core'
 import {
   createMemo,
+  createRenderEffect,
   createStore,
   isPending,
   onCleanup,
@@ -175,10 +176,16 @@ export function useBaseQuery<
 
   const observer = new Observer(client(), defaultedOptions())
 
-  // Track options reactively; apply them with listeners disabled to avoid
-  // feedback loops when option identities (e.g. inline select functions)
-  // change across refresh cycles.
+  // Track options reactively so the queryResource memo re-runs on change.
   const trackedDefaultedOptions = createMemo(() => defaultedOptions())
+
+  // Apply options in an effect to avoid store writes inside the memo.
+  // setOptions triggers updateResult → notify → subscription → setState,
+  // which must run in an effect context in Solid v2.
+  createRenderEffect(
+    () => trackedDefaultedOptions(),
+    (opts) => { observer.setOptions(opts) },
+  )
 
   let observerResult = observer.getOptimisticResult(defaultedOptions())
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
@@ -273,7 +280,7 @@ export function useBaseQuery<
       const opts = trackedDefaultedOptions()
       // Read isRestoring unconditionally so the memo re-runs when it changes
       const restoring = isRestoring()
-      observer.setOptions(opts)
+
       return new Promise((resolve, reject) => {
         resolver = resolve
         if (isServer) {
@@ -283,9 +290,8 @@ export function useBaseQuery<
         } else if (!unsubscribe && !restoring) {
           unsubscribe = createClientSubscriber()
         }
-        observer.updateResult()
-        // Get the latest result after updateResult - observerResult may be stale
-        // (e.g. after query key change, the observer now points to a new query)
+        // Use getOptimisticResult instead of updateResult to keep the memo
+        // free of store writes (updateResult triggers notify → setState).
         const currentResult = observer.getOptimisticResult(opts)
         observerResult = currentResult
 
@@ -293,7 +299,7 @@ export function useBaseQuery<
           currentResult.isError &&
           !currentResult.isFetching &&
           !restoring &&
-          shouldThrowError(observer.options.throwOnError, [
+          shouldThrowError(opts.throwOnError, [
             currentResult.error,
             observer.getCurrentQuery(),
           ])
@@ -309,7 +315,8 @@ export function useBaseQuery<
           )
         }
 
-        setStateWithReconciliation(currentResult)
+        // Defer the loading-state store write so it runs outside the memo.
+        queueMicrotask(() => setStateWithReconciliation(currentResult))
       })
     },
     observerResult,
