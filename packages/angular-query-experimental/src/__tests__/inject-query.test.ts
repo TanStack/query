@@ -25,7 +25,13 @@ import {
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
-import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
+import {
+  QueryCache,
+  QueryClient,
+  injectQuery,
+  provideIsRestoring,
+  provideTanStackQuery,
+} from '..'
 import { setSignalInputs } from './test-utils'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
 
@@ -537,6 +543,43 @@ describe('injectQuery', () => {
     expect(fixture.componentInstance.query.data()).toEqual(
       'signal-input-required-test',
     )
+  })
+
+  describe('isRestoring', () => {
+    test('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
+      const key = queryKey()
+      const queryFn = vi
+        .fn()
+        .mockImplementation(() => sleep(10).then(() => 'data'))
+
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+          provideIsRestoring(signal(true).asReadonly()),
+        ],
+      })
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: key,
+          queryFn,
+        })),
+      )
+
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('idle')
+      expect(query.data()).toBeUndefined()
+      expect(queryFn).toHaveBeenCalledTimes(0)
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('idle')
+      expect(query.data()).toBeUndefined()
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
   })
 
   describe('injection context', () => {
