@@ -85,6 +85,7 @@
     "eslint-config-preact": "^2.0.0",
     "npm-run-all2": "^5.0.0",
     "preact": "^10.28.0",
+    "typescript": "5.9.3",
     "typescript-eslint": "^8.54.0"
   },
   "peerDependencies": {
