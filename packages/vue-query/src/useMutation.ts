@@ -20,6 +20,7 @@ import type {
   MutateOptions,
   MutationObserverOptions,
   MutationObserverResult,
+  OmitKeyof,
 } from '@tanstack/query-core'
 import type { MaybeRefDeep, ShallowOption } from './types'
 import type { QueryClient } from './queryClient'
@@ -31,7 +32,10 @@ type MutationResult<TData, TError, TVariables, TOnMutateResult> =
   >
 
 type UseMutationOptionsBase<TData, TError, TVariables, TOnMutateResult> =
-  MutationObserverOptions<TData, TError, TVariables, TOnMutateResult> &
+  OmitKeyof<
+    MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
+    '_defaulted'
+  > &
     ShallowOption
 
 export type UseMutationOptions<
