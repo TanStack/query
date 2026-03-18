@@ -32,8 +32,6 @@ jobs:
         run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
       - name: Setup Tools
         uses: TanStack/config/.github/setup@main
-      - name: Debug TypeScript Tooling
-        run: pnpm -r list --depth 1 typescript typescript-eslint @typescript-eslint/parser svelte-check
       - name: Run Tests
         run: pnpm run test:ci
       - name: Stop Nx Agents

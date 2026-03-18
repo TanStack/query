@@ -32,8 +32,6 @@ jobs:
         uses: nrwl/nx-set-shas@v4.4.0
         with:
           main-branch-name: main
-      - name: Debug TypeScript Tooling
-        run: pnpm -r list --depth 1 typescript typescript-eslint @typescript-eslint/parser svelte-check
       - name: Run Checks
         run: pnpm run test:pr
       - name: Stop Nx Agents
