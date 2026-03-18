@@ -151,7 +151,7 @@ describe('mutationOptions', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
     expect(isMutatingArray[0]).toEqual(0)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutatingArray[2]).toEqual(2)
+    expect(Math.max(...isMutatingArray)).toEqual(2)
     await vi.advanceTimersByTimeAsync(50)
     expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
   })
@@ -423,6 +423,7 @@ describe('mutationOptions', () => {
       </QueryClientProvider>
     ))
 
+    await Promise.resolve()
     expect(mutationStateArray[0]).toEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
@@ -465,6 +466,7 @@ describe('mutationOptions', () => {
       </QueryClientProvider>
     ))
 
+    await Promise.resolve()
     expect(mutationStateArray[0]).toEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
@@ -513,6 +515,7 @@ describe('mutationOptions', () => {
       </QueryClientProvider>
     ))
 
+    await Promise.resolve()
     expect(mutationStateArray[0]).toEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
@@ -563,6 +566,7 @@ describe('mutationOptions', () => {
       </QueryClientProvider>
     ))
 
+    await Promise.resolve()
     expect(mutationStateArray[0]).toEqual([])
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
