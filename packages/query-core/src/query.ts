@@ -378,7 +378,9 @@ export class Query<
   }
 
   #isInitialPausedFetch(): boolean {
-    return this.state.fetchStatus === 'paused' && this.state.status === 'pending'
+    return (
+      this.state.fetchStatus === 'paused' && this.state.status === 'pending'
+    )
   }
 
   invalidate(): void {
