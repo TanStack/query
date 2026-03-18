@@ -46,6 +46,9 @@ jobs:
       - name: Stop Nx Agents
         if: ${{ always() && steps.changesets.outputs.has_changesets == 'true' }}
         run: npx nx-cloud stop-all-agents
+      - name: Enter Pre-Release Mode
+        if: "contains(github.ref_name, '-pre') && !hashFiles('.changeset/pre.json')"
+        run: pnpm changeset pre enter pre
       - name: Version Packages
         run: pnpm run changeset:version
         env:
