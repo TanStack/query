@@ -32,6 +32,8 @@ jobs:
         uses: nrwl/nx-set-shas@v4.4.0
         with:
           main-branch-name: main
+      - name: Debug TypeScript Tooling
+        run: pnpm -r list --depth 1 typescript typescript-eslint @typescript-eslint/parser svelte-check
       - name: Run Checks
         run: pnpm run test:pr
       - name: Stop Nx Agents
@@ -44,7 +46,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.2
       - name: Setup Tools
-        uses: TanStack/config/.github/setup@main
+        uses: TanStack/config/.github/setup@870eafc5da7a319f8cb0bc0cb146f53cffd5bf50
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
@@ -76,6 +78,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.2
       - name: Setup Tools
-        uses: TanStack/config/.github/setup@main
+        uses: TanStack/config/.github/setup@870eafc5da7a319f8cb0bc0cb146f53cffd5bf50
       - name: Changeset Preview
         uses: TanStack/config/.github/changeset-preview@main
