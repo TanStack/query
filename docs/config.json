@@ -914,6 +914,10 @@
           "to": "reference/onlineManager"
         },
         {
+          "label": "environmentManager",
+          "to": "reference/environmentManager"
+        },
+        {
           "label": "notifyManager",
           "to": "reference/notifyManager"
         },
@@ -1249,7 +1253,7 @@
             },
             {
               "label": "hydration",
-              "to": "framework/react/reference/functions/HydrationBoundary"
+              "to": "framework/preact/reference/functions/HydrationBoundary"
             }
           ]
         }

@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.91.0
+
+### Minor Changes
+
+- feat: environmentManager ([#10199](https://github.com/TanStack/query/pull/10199))
+
 ## 5.90.20
 
 ### Patch Changes

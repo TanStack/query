@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, test } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { createInfiniteQuery, infiniteQueryOptions } from '../../src/index.js'
+import { createInfiniteQuery, infiniteQueryOptions } from '../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('queryOptions', () => {

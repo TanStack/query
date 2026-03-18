@@ -192,7 +192,19 @@ export const ASTUtils = {
       return []
     }
 
-    const references = scope.references
+    const collectReferences = (
+      currentScope: TSESLint.Scope.Scope,
+    ): Array<TSESLint.Scope.Reference> => {
+      const references = [...currentScope.references]
+
+      for (const childScope of currentScope.childScopes) {
+        references.push(...collectReferences(childScope))
+      }
+
+      return references
+    }
+
+    const references = collectReferences(scope)
       .filter((x) => x.isRead() && !scope.set.has(x.identifier.name))
       .map((x) => {
         const referenceNode = ASTUtils.traverseUpOnly(x.identifier, [
