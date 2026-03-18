@@ -73,13 +73,15 @@ jobs:
             echo "tag=maint" >> "$GITHUB_OUTPUT"
           elif [[ "$BRANCH" =~ ^v[0-9]+$ ]]; then
             echo "tag=$BRANCH" >> "$GITHUB_OUTPUT"
+          else
+            echo "latest=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Publish Packages
         if: steps.commit.outputs.committed == 'true'
         run: pnpm run changeset:publish ${{ steps.dist-tag.outputs.tag && format('--tag {0}', steps.dist-tag.outputs.tag) }}
       - name: Create GitHub Release
         if: steps.commit.outputs.committed == 'true'
-        run: node scripts/create-github-release.mjs ${{ steps.dist-tag.outputs.prerelease == 'true' && '--prerelease' }}
+        run: node scripts/create-github-release.mjs ${{ steps.dist-tag.outputs.prerelease == 'true' && '--prerelease' }} ${{ steps.dist-tag.outputs.latest == 'true' && '--latest' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

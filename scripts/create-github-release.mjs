@@ -211,6 +211,7 @@ const tagName = `release-${date}-${time}`
 const titleDate = `${date} ${now.toISOString().slice(11, 16)}`
 
 const isPrerelease = process.argv.includes('--prerelease')
+const isLatest = process.argv.includes('--latest')
 
 const body = `Release ${titleDate}
 
@@ -239,7 +240,7 @@ if (!tagExists) {
 }
 
 const prereleaseFlag = isPrerelease ? '--prerelease' : ''
-const latestFlag = isPrerelease ? '' : ' --latest'
+const latestFlag = isLatest ? ' --latest' : ''
 const tmpFile = path.join(tmpdir(), `release-notes-${tagName}.md`)
 fs.writeFileSync(tmpFile, body)
 
