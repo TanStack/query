@@ -184,7 +184,9 @@ export function useBaseQuery<
   // which must run in an effect context in Solid v2.
   createRenderEffect(
     () => trackedDefaultedOptions(),
-    (opts) => { observer.setOptions(opts) },
+    (opts) => {
+      observer.setOptions(opts)
+    },
   )
 
   let observerResult = observer.getOptimisticResult(defaultedOptions())
