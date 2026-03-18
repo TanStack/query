@@ -1,5 +1,14 @@
 # @tanstack/vue-query
 
+## 5.92.10
+
+### Patch Changes
+
+- fix(vue-query/useMutation): add missing '\_defaulted' omit in 'UseMutationOptionsBase' ([#10215](https://github.com/TanStack/query/pull/10215))
+
+- Updated dependencies [[`6fa901b`](https://github.com/TanStack/query/commit/6fa901b97a22a80d0fca3f6ed86237ff0cbdd13b)]:
+  - @tanstack/query-core@5.91.0
+
 ## 5.92.9
 
 ### Patch Changes
