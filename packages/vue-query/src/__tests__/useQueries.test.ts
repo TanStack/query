@@ -398,6 +398,29 @@ describe('useQueries', () => {
     expect(queriesState.value[1].data).toBe('posts-1')
   })
 
+  test('should warn when used outside of setup function in development mode', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    try {
+      useQueries({
+        queries: [
+          {
+            queryKey: ['outsideScope'],
+            queryFn: () => sleep(0).then(() => 'data'),
+          },
+        ],
+      })
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    } finally {
+      warnSpy.mockRestore()
+      vi.unstubAllEnvs()
+    }
+  })
+
   test('should work with options getter and be reactive', async () => {
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')

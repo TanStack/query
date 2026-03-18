@@ -1,5 +1,36 @@
 # @tanstack/solid-query
 
+## 5.91.1
+
+### Patch Changes
+
+- Updated dependencies [[`6fa901b`](https://github.com/TanStack/query/commit/6fa901b97a22a80d0fca3f6ed86237ff0cbdd13b)]:
+  - @tanstack/query-core@5.91.0
+
+## 5.91.0
+
+### Minor Changes
+
+- feat(solid-query): add 'mutationOptions' ([#10138](https://github.com/TanStack/query/pull/10138))
+
+## 5.90.26
+
+### Patch Changes
+
+- fix(solid-router): should only have useQueryClient/useIsRestoring due to context read ([#10262](https://github.com/TanStack/query/pull/10262))
+
+## 5.90.25
+
+### Patch Changes
+
+- fix: allow both create/use for solid ([#10260](https://github.com/TanStack/query/pull/10260))
+
+## 5.90.24
+
+### Patch Changes
+
+- fix: forward generic parameters in deprecated type aliases ([#10093](https://github.com/TanStack/query/pull/10093))
+
 ## 5.90.23
 
 ### Patch Changes
