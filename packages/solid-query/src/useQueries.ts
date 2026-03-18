@@ -193,6 +193,15 @@ export function useQueries<
       | readonly [...QueriesOptions<T>]
       | readonly [...{ [K in keyof T]: GetOptions<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
+    /**
+     * Set this to `false` to disable structural sharing between query results.
+     * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
+     * Only applies when `combine` is provided.
+     * Defaults to `true`.
+     */
+    structuralSharing?:
+      | boolean
+      | ((oldData: unknown | undefined, newData: unknown) => unknown)
   }>,
   queryClient?: Accessor<QueryClient>,
 ): TCombinedResult {
@@ -218,6 +227,7 @@ export function useQueries<
     queriesOptions().combine
       ? ({
           combine: queriesOptions().combine,
+          structuralSharing: queriesOptions().structuralSharing,
         } as QueriesObserverOptions<TCombinedResult>)
       : undefined,
   )
@@ -225,7 +235,7 @@ export function useQueries<
   const [state, setState] = createStore<TCombinedResult>(
     observer.getOptimisticResult(
       defaultedQueries(),
-      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+      queriesOptions() as QueriesObserverOptions<TCombinedResult>,
     )[1](),
   )
 
@@ -236,8 +246,7 @@ export function useQueries<
         setState(
           observer.getOptimisticResult(
             defaultedQueries(),
-            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
-              .combine,
+            queriesOptions() as QueriesObserverOptions<TCombinedResult>,
           )[1](),
         ),
     ),
@@ -303,22 +312,14 @@ export function useQueries<
   onMount(() => {
     observer.setQueries(
       defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
+      queriesOptions() as QueriesObserverOptions<TCombinedResult>,
     )
   })
 
   createComputed(() => {
     observer.setQueries(
       defaultedQueries(),
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
+      queriesOptions() as QueriesObserverOptions<TCombinedResult>,
     )
   })
 

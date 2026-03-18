@@ -300,6 +300,7 @@ describe('queriesObserver', () => {
           { queryKey: key1, queryFn: queryFn1 },
         ],
         undefined,
+        undefined,
       )[0],
     )
 
@@ -414,6 +415,7 @@ describe('queriesObserver', () => {
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
       combine,
+      undefined,
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -426,6 +428,7 @@ describe('queriesObserver', () => {
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       newQueries,
       combine,
+      undefined,
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -461,6 +464,7 @@ describe('queriesObserver', () => {
         { queryKey: key2, queryFn: queryFn2 },
       ],
       combine,
+      undefined,
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -470,6 +474,7 @@ describe('queriesObserver', () => {
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       newQueries,
       combine,
+      undefined,
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -497,6 +502,7 @@ describe('queriesObserver', () => {
     const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
       [{ queryKey: key1, queryFn: queryFn1 }],
       combine,
+      undefined,
     )
     const initialCombined = getInitialCombined(initialRaw)
 
@@ -505,6 +511,7 @@ describe('queriesObserver', () => {
     const [newRaw, getNewCombined] = observer.getOptimisticResult(
       [{ queryKey: key2, queryFn: queryFn2 }],
       combine,
+      undefined,
     )
     const newCombined = getNewCombined(newRaw)
 
@@ -530,6 +537,7 @@ describe('queriesObserver', () => {
         { queryKey: key2, queryFn: queryFn2 },
       ],
       undefined,
+      false,
     )
 
     const trackedResults = trackResult()
@@ -545,5 +553,267 @@ describe('queriesObserver', () => {
     expect(trackPropSpy).toHaveBeenCalledTimes(3)
 
     trackPropSpy.mockRestore()
+  })
+
+  test('should not use structural sharing when structuralSharing is false', () => {
+    const key1 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+
+    queryClient.setQueryData(key1, 'cached-1')
+
+    // Create a combine function that returns a new object with a nested array
+    const nestedArray = ['a', 'b', 'c']
+    const combine = vi.fn((_results: Array<QueryObserverResult>) => ({
+      nested: nestedArray,
+    }))
+
+    const observer = new QueriesObserver<{
+      nested: Array<string>
+    }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], {
+      combine,
+      structuralSharing: false,
+    })
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine,
+      false,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    // Create a new combine function reference to trigger re-combine
+    // but with the same nested array content
+    const combine2 = vi.fn((_results: Array<QueryObserverResult>) => ({
+      nested: ['a', 'b', 'c'], // Same content, different reference
+    }))
+
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine2,
+      false,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    // With structuralSharing: false, even though the nested array has the same content,
+    // the reference should NOT be preserved (no replaceEqualDeep optimization)
+    expect(newCombined.nested).toEqual(initialCombined.nested)
+    expect(newCombined.nested).not.toBe(initialCombined.nested)
+  })
+
+  test('should use structural sharing when structuralSharing is true', () => {
+    const key1 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+
+    queryClient.setQueryData(key1, 'cached-1')
+
+    // Create a combine function that returns a new object with a nested array
+    const combine = vi.fn((_results: Array<QueryObserverResult>) => ({
+      nested: ['a', 'b', 'c'],
+    }))
+
+    const observer = new QueriesObserver<{
+      nested: Array<string>
+    }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], {
+      combine,
+      structuralSharing: true,
+    })
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine,
+      true,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    // Create a new combine function reference to trigger re-combine
+    // but with the same nested array content
+    const combine2 = vi.fn((_results: Array<QueryObserverResult>) => ({
+      nested: ['a', 'b', 'c'], // Same content, different reference
+    }))
+
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine2,
+      true,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    // With structuralSharing: true, replaceEqualDeep should preserve the reference
+    // since the nested array has the same content
+    expect(newCombined.nested).toEqual(initialCombined.nested)
+    expect(newCombined.nested).toBe(initialCombined.nested)
+  })
+
+  test('should use custom structuralSharing function when provided', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+      data: results.map((r) => r.data),
+    }))
+
+    const customStructuralSharing = vi.fn(
+      (_oldData: unknown, newData: unknown) => {
+        // Custom logic: always return the new data but with a marker
+        return { ...(newData as object), customShared: true }
+      },
+    )
+
+    const key1 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+
+    queryClient.setQueryData(key1, 'cached-1')
+
+    const observer = new QueriesObserver<{
+      count: number
+      data: Array<unknown>
+      customShared?: boolean
+    }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], {
+      combine,
+      structuralSharing: customStructuralSharing,
+    })
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine,
+      customStructuralSharing,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    expect(initialCombined.count).toBe(1)
+    expect(initialCombined.customShared).toBe(true)
+    expect(customStructuralSharing).toHaveBeenCalledTimes(1)
+  })
+
+  test('should pass old and new data to custom structuralSharing function', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+      data: results.map((r) => r.data),
+    }))
+
+    const customStructuralSharing = vi.fn(
+      (_oldData: unknown, newData: unknown) => {
+        // Return new data with reference to old data for testing
+        return newData
+      },
+    )
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    queryClient.setQueryData(key1, 'cached-1')
+
+    const observer = new QueriesObserver<{
+      count: number
+      data: Array<unknown>
+    }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], {
+      combine,
+      structuralSharing: customStructuralSharing,
+    })
+
+    // First call
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine,
+      customStructuralSharing,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+
+    expect(initialCombined.count).toBe(1)
+
+    // Second call with different queries - should trigger combine again
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      [
+        { queryKey: key1, queryFn: queryFn1 },
+        { queryKey: key2, queryFn: queryFn2 },
+      ],
+      combine,
+      customStructuralSharing,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    expect(newCombined.count).toBe(2)
+    // Custom structural sharing function should have been called twice
+    expect(customStructuralSharing).toHaveBeenCalledTimes(2)
+    // First call should have undefined as oldData (no previous combined result)
+    expect(customStructuralSharing).toHaveBeenNthCalledWith(
+      1,
+      undefined,
+      expect.objectContaining({ count: 1 }),
+    )
+    // Second call should have the previous combined result as oldData
+    expect(customStructuralSharing).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ count: 1 }),
+      expect.objectContaining({ count: 2 }),
+    )
+  })
+
+  test('should retain references with custom structuralSharing function', () => {
+    // This test verifies that a custom structuralSharing function can retain references
+    const existingArray = [1, 2, 3]
+
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+      data: results.map((r) => r.data),
+      existingArray,
+    }))
+
+    const customStructuralSharing = vi.fn(
+      (oldData: unknown, newData: unknown) => {
+        const oldTyped = oldData as
+          | { existingArray?: Array<number> }
+          | undefined
+        const newTyped = newData as { existingArray: Array<number> }
+        // Retain the existingArray reference from old data if it deeply equals
+        if (
+          oldTyped?.existingArray &&
+          JSON.stringify(oldTyped.existingArray) ===
+            JSON.stringify(newTyped.existingArray)
+        ) {
+          return { ...newTyped, existingArray: oldTyped.existingArray }
+        }
+        return newTyped
+      },
+    )
+
+    const key1 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+
+    queryClient.setQueryData(key1, 'cached-1')
+
+    const observer = new QueriesObserver<{
+      count: number
+      data: Array<unknown>
+      existingArray: Array<number>
+    }>(queryClient, [{ queryKey: key1, queryFn: queryFn1 }], {
+      combine,
+      structuralSharing: customStructuralSharing,
+    })
+
+    const [initialRaw, getInitialCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine,
+      customStructuralSharing,
+    )
+    const initialCombined = getInitialCombined(initialRaw)
+    const initialArrayRef = initialCombined.existingArray
+
+    // Trigger a re-combine by changing the combine function reference
+    const combine2 = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+      data: results.map((r) => r.data),
+      existingArray, // Same array content
+    }))
+
+    const [newRaw, getNewCombined] = observer.getOptimisticResult(
+      [{ queryKey: key1, queryFn: queryFn1 }],
+      combine2,
+      customStructuralSharing,
+    )
+    const newCombined = getNewCombined(newRaw)
+
+    // The existingArray reference should be retained from the old data
+    expect(newCombined.existingArray).toBe(initialArrayRef)
   })
 })
