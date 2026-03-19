@@ -1,5 +1,23 @@
 # @tanstack/solid-query-persist-client
 
+## 5.90.28
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
+- Updated dependencies [[`248975e`](https://github.com/TanStack/query/commit/248975e896f585f6eaa505c796e73fcf7bfd1eec)]:
+  - @tanstack/query-persist-client-core@5.92.4
+  - @tanstack/solid-query@5.91.3
+
+## 5.90.27
+
+### Patch Changes
+
+- Updated dependencies [[`a89aab9`](https://github.com/TanStack/query/commit/a89aab975581c25c113a26c8af486b4cafad272a)]:
+  - @tanstack/solid-query@5.91.2
+  - @tanstack/query-persist-client-core@5.92.3
+
 ## 5.90.26
 
 ### Patch Changes
