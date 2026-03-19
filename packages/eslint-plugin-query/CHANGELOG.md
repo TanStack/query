@@ -1,5 +1,11 @@
 # @tanstack/eslint-plugin-query
 
+## 5.91.5
+
+### Patch Changes
+
+- Fix `exhaustive-deps` to detect dependencies used inside nested `queryFn` callbacks/control flow, and avoid false positives when those dependencies are already present in complex `queryKey` expressions. ([#10258](https://github.com/TanStack/query/pull/10258))
+
 ## 5.91.4
 
 ### Patch Changes
