@@ -42,8 +42,8 @@ export const ASTUtils = {
     properties: Array<TSESTree.ObjectLiteralElement>,
     key: string,
   ): TSESTree.Property | undefined {
-    return properties.find(
-      (x): x is TSESTree.Property => ASTUtils.isPropertyWithIdentifierKey(x, key),
+    return properties.find((x): x is TSESTree.Property =>
+      ASTUtils.isPropertyWithIdentifierKey(x, key),
     )
   },
   getNestedIdentifiers(node: TSESTree.Node): Array<TSESTree.Identifier> {
