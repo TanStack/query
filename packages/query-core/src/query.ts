@@ -359,7 +359,7 @@ export class Query<
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
         if (this.#retryer) {
-          if (this.#abortSignalConsumed) {
+          if (this.#abortSignalConsumed || this.#isInitialPausedFetch()) {
             this.#retryer.cancel({ revert: true })
           } else {
             this.#retryer.cancelRetry()
@@ -375,6 +375,12 @@ export class Query<
 
   getObserversCount(): number {
     return this.observers.length
+  }
+
+  #isInitialPausedFetch(): boolean {
+    return (
+      this.state.fetchStatus === 'paused' && this.state.status === 'pending'
+    )
   }
 
   invalidate(): void {
