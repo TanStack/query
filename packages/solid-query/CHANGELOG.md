@@ -1,5 +1,14 @@
 # @tanstack/solid-query
 
+## 5.91.2
+
+### Patch Changes
+
+- fix(core): cancel paused initial fetch when last observer unsubscribes ([#10291](https://github.com/TanStack/query/pull/10291))
+
+- Updated dependencies [[`a89aab9`](https://github.com/TanStack/query/commit/a89aab975581c25c113a26c8af486b4cafad272a)]:
+  - @tanstack/query-core@5.91.1
+
 ## 5.91.1
 
 ### Patch Changes
