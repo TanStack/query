@@ -260,9 +260,13 @@ export class Query<
     this.cancel({ silent: true })
   }
 
+  get resetState(): QueryState<TData, TError> {
+    return this.#initialState
+  }
+
   reset(): void {
     this.destroy()
-    this.setState(this.#initialState)
+    this.setState(this.resetState)
   }
 
   isActive(): boolean {
@@ -276,10 +280,11 @@ export class Query<
       return !this.isActive()
     }
     // if a query has no observers, it should still be considered disabled if it never attempted a fetch
-    return (
-      this.options.queryFn === skipToken ||
-      this.state.dataUpdateCount + this.state.errorUpdateCount === 0
-    )
+    return this.options.queryFn === skipToken || !this.isFetched()
+  }
+
+  isFetched() {
+    return this.state.dataUpdateCount + this.state.errorUpdateCount > 0
   }
 
   isStatic(): boolean {
