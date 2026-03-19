@@ -280,10 +280,10 @@ export class Query<
       return !this.isActive()
     }
     // if a query has no observers, it should still be considered disabled if it never attempted a fetch
-    return this.options.queryFn === skipToken || !this.isFetched
+    return this.options.queryFn === skipToken || !this.isFetched()
   }
 
-  get isFetched() {
+  isFetched() {
     return this.state.dataUpdateCount + this.state.errorUpdateCount > 0
   }
 

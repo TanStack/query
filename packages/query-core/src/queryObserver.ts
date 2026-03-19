@@ -576,7 +576,7 @@ export class QueryObserver<
       failureCount: newState.fetchFailureCount,
       failureReason: newState.fetchFailureReason,
       errorUpdateCount: newState.errorUpdateCount,
-      isFetched: query.isFetched,
+      isFetched: query.isFetched(),
       isFetchedAfterMount:
         newState.dataUpdateCount > queryInitialState.dataUpdateCount ||
         newState.errorUpdateCount > queryInitialState.errorUpdateCount,
