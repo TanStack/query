@@ -1,5 +1,16 @@
 # @tanstack/solid-query-devtools
 
+## 6.0.0-alpha.0
+
+### Major Changes
+
+- Support Solid 2.0 ([#10272](https://github.com/TanStack/query/pull/10272))
+
+### Patch Changes
+
+- Updated dependencies [[`4a27c6c`](https://github.com/TanStack/query/commit/4a27c6c1810956509e0e38c95f4f3fdc0b9b6f55)]:
+  - @tanstack/solid-query@6.0.0-alpha.0
+
 ## 5.91.3
 
 ### Patch Changes

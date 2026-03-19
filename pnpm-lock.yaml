@@ -1512,10 +1512,10 @@ importers:
         specifier: 2.0.0-beta.2
         version: 2.0.0-beta.2(@solidjs/signals@0.12.0)(solid-js@2.0.0-beta.2)
       '@tanstack/solid-query':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^5.5.6
@@ -1536,10 +1536,10 @@ importers:
         specifier: 2.0.0-beta.2
         version: 2.0.0-beta.2(@solidjs/signals@0.12.0)(solid-js@2.0.0-beta.2)
       '@tanstack/solid-query':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: 2.0.0-beta.2
@@ -1561,10 +1561,10 @@ importers:
         specifier: 2.0.0-beta.2
         version: 2.0.0-beta.2(@solidjs/signals@0.12.0)(solid-js@2.0.0-beta.2)
       '@tanstack/solid-query':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -1592,10 +1592,10 @@ importers:
         specifier: 2.0.0-beta.2
         version: 2.0.0-beta.2(@solidjs/signals@0.12.0)(solid-js@2.0.0-beta.2)
       '@tanstack/solid-query':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: 2.0.0-beta.2
@@ -1620,13 +1620,13 @@ importers:
         specifier: ^5.90.27
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/solid-query':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query-devtools
       '@tanstack/solid-query-persist-client':
-        specifier: ^5.90.28
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query-persist-client
       msw:
         specifier: ^2.6.6
@@ -1651,10 +1651,10 @@ importers:
         specifier: 2.0.0-beta.2
         version: 2.0.0-beta.2(@solidjs/signals@0.12.0)(solid-js@2.0.0-beta.2)
       '@tanstack/solid-query':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: 2.0.0-beta.2
@@ -1688,10 +1688,10 @@ importers:
         specifier: 2.0.0-beta.2
         version: 2.0.0-beta.2(@solidjs/signals@0.12.0)(solid-js@2.0.0-beta.2)
       '@tanstack/solid-query':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.91.3
+        specifier: ^6.0.0-alpha.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: 2.0.0-beta.2

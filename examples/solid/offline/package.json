@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@tanstack/query-async-storage-persister": "^5.90.27",
-    "@tanstack/solid-query": "^5.91.3",
-    "@tanstack/solid-query-devtools": "^5.91.3",
-    "@tanstack/solid-query-persist-client": "^5.90.28",
+    "@tanstack/solid-query": "^6.0.0-alpha.0",
+    "@tanstack/solid-query-devtools": "^6.0.0-alpha.0",
+    "@tanstack/solid-query-persist-client": "^6.0.0-alpha.0",
     "msw": "^2.6.6",
     "@solidjs/web": "2.0.0-beta.2",
     "solid-js": "2.0.0-beta.2"
