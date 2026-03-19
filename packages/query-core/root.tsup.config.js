@@ -1,1 +1,1 @@
-../../scripts/getTsupConfig.js
+export * from '../../scripts/getTsupConfig.js'

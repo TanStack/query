@@ -28,9 +28,7 @@ export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
     readonly clearInterval: (intervalId: TTimerId | undefined) => void
   }
 
-export const defaultTimeoutProvider: TimeoutProvider<
-  ReturnType<typeof setTimeout>
-> = {
+export const defaultTimeoutProvider: TimeoutProvider = {
   // We need the wrapper function syntax below instead of direct references to
   // global setTimeout etc.
   //
@@ -41,11 +39,18 @@ export const defaultTimeoutProvider: TimeoutProvider<
   // replace the global setTimeout (like tests) won't work since we'll already
   // have a hard reference to the original implementation at the time when this
   // file was imported.
-  setTimeout: (callback, delay) => setTimeout(callback, delay),
-  clearTimeout: (timeoutId) => clearTimeout(timeoutId),
+  //
+  // We cast the return values to `ManagedTimerId` to avoid leaking
+  // `ReturnType<typeof setTimeout>` into declaration files. When `@types/node`
+  // is present during compilation, `ReturnType<typeof setTimeout>` resolves to
+  // `NodeJS.Timeout`, which would inject Node.js types into browser consumers.
+  setTimeout: (callback, delay) =>
+    setTimeout(callback, delay) as unknown as ManagedTimerId,
+  clearTimeout: (timeoutId) => clearTimeout(timeoutId as any),
 
-  setInterval: (callback, delay) => setInterval(callback, delay),
-  clearInterval: (intervalId) => clearInterval(intervalId),
+  setInterval: (callback, delay) =>
+    setInterval(callback, delay) as unknown as ManagedTimerId,
+  clearInterval: (intervalId) => clearInterval(intervalId as any),
 }
 
 /**
