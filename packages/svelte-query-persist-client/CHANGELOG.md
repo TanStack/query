@@ -1,5 +1,15 @@
 # @tanstack/svelte-query-persist-client
 
+## 6.0.25
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
+- Updated dependencies [[`248975e`](https://github.com/TanStack/query/commit/248975e896f585f6eaa505c796e73fcf7bfd1eec)]:
+  - @tanstack/query-persist-client-core@5.92.4
+  - @tanstack/svelte-query@6.1.3
+
 ## 6.0.24
 
 ### Patch Changes

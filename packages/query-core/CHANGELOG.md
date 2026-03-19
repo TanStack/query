@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.91.2
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
 ## 5.91.1
 
 ### Patch Changes
