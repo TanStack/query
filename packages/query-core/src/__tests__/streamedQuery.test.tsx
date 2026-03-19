@@ -591,6 +591,62 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
+  test('should treat a fetch after an initial error as a refetch for reset mode', async () => {
+    const key = queryKey()
+    let shouldError = true
+    const error = new Error('stream failed')
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      retry: false,
+      queryFn: streamedQuery({
+        refetchMode: 'reset',
+        streamFn: async function* () {
+          if (shouldError) {
+            throw error
+          }
+
+          yield* createAsyncNumberGenerator(1)
+        },
+      }),
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+      fetchStatus: 'idle',
+      data: undefined,
+      error,
+    })
+
+    shouldError = false
+
+    void observer.refetch()
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+      error: null,
+    })
+
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: [0],
+      error: null,
+    })
+
+    unsubscribe()
+  })
+
   test('should not call reducer twice when refetchMode is replace', async () => {
     const key = queryKey()
     const arr: Array<number> = []
