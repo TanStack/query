@@ -856,6 +856,17 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
+    {
+      name: 'should pass when queryFn is ternary with both branches having deps in queryKey',
+      code: normalizeIndent`
+        function useThing(condition, a, b) {
+          return useQuery({
+            queryKey: ['thing', a, b],
+            queryFn: condition ? () => fetchA(a) : () => fetchB(b)
+          })
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -1757,6 +1768,126 @@ ruleTester.run('exhaustive-deps', rule, {
                   return useQuery({
                     queryKey: ['thing', api],
                     queryFn: () => api.fetch()
+                  })
+                }
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fix correctly when queryKey has trailing comma',
+      code: normalizeIndent`
+        function useThing(dep) {
+          return useQuery({
+            queryKey: ['thing',],
+            queryFn: () => dep
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'dep' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+                function useThing(dep) {
+                  return useQuery({
+                    queryKey: ['thing', dep],
+                    queryFn: () => dep
+                  })
+                }
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fix correctly when queryKey is empty with whitespace',
+      code: normalizeIndent`
+        function useThing(dep) {
+          return useQuery({
+            queryKey: [ ],
+            queryFn: () => dep
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'dep' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+                function useThing(dep) {
+                  return useQuery({
+                    queryKey: [dep],
+                    queryFn: () => dep
+                  })
+                }
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fail when dep in alternate branch of ternary queryFn is missing',
+      code: normalizeIndent`
+        function useThing(condition, a, b) {
+          return useQuery({
+            queryKey: ['thing', a],
+            queryFn: condition ? () => fetchA(a) : () => fetchB(b)
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'b' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+                function useThing(condition, a, b) {
+                  return useQuery({
+                    queryKey: ['thing', a, b],
+                    queryFn: condition ? () => fetchA(a) : () => fetchB(b)
+                  })
+                }
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fail when dep in consequent branch of ternary queryFn is missing',
+      code: normalizeIndent`
+        function useThing(condition, a, b) {
+          return useQuery({
+            queryKey: ['thing', b],
+            queryFn: condition ? () => fetchA(a) : () => fetchB(b)
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'a' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+                function useThing(condition, a, b) {
+                  return useQuery({
+                    queryKey: ['thing', b, a],
+                    queryFn: condition ? () => fetchA(a) : () => fetchB(b)
                   })
                 }
               `,

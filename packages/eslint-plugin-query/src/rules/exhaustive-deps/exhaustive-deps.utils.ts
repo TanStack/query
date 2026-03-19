@@ -61,8 +61,8 @@ export const ExhaustiveDepsUtils = {
   },
 
   /**
-   * Given required refs and existing entries, compute missing dependency paths
-   * respecting allowlisted variables and types. Mirrors the rule's previous logic.
+   * Given required refs and existing queryKey entries, compute missing dependency paths
+   * respecting allowlisted variables and types.
    */
   computeFilteredMissingPaths(params: {
     requiredRefs: Array<{
@@ -93,12 +93,19 @@ export const ExhaustiveDepsUtils = {
       missingPaths.add(path)
     }
 
+    // Collapse descendants: if a root is already missing, drop deeper paths
+    for (const path of missingPaths) {
+      const root = path.split('.')[0]
+      if (root !== path && root !== undefined && missingPaths.has(root)) {
+        missingPaths.delete(path)
+      }
+    }
+
     return Array.from(missingPaths)
   },
 
   /**
-   * Extract existing queryKey identifiers and full member paths from a queryKey node
-   * Returns two sets:
+   * Extract existing queryKey deps as root identifiers and full member paths.
    */
   collectQueryKeyDeps(params: {
     sourceCode: Readonly<TSESLint.SourceCode>
@@ -378,12 +385,9 @@ export const ExhaustiveDepsUtils = {
   collectTypeIdentifiers(typeNode: TSESTree.TypeNode, out: Set<string>): void {
     switch (typeNode.type) {
       case AST_NODE_TYPES.TSTypeReference: {
-        const addFromTypeName = (tn: TSESTree.EntityName) => {
-          if (tn.type === AST_NODE_TYPES.Identifier) {
-            out.add(tn.name)
-          }
+        if (typeNode.typeName.type === AST_NODE_TYPES.Identifier) {
+          out.add(typeNode.typeName.name)
         }
-        addFromTypeName(typeNode.typeName)
         break
       }
       case AST_NODE_TYPES.TSUnionType:
@@ -407,20 +411,28 @@ export const ExhaustiveDepsUtils = {
   },
 
   /**
-   * Gets the function expression from a queryFn property, handling conditional expressions.
+   * Gets the function expression nodes from a queryFn property, handling conditional expressions.
+   * When neither branch is skipToken, returns both branches so all deps are scanned.
    */
-  getQueryFnFunctionExpression(queryFn: TSESTree.Property): TSESTree.Node {
+  getQueryFnNodes(queryFn: TSESTree.Property): Array<TSESTree.Node> {
     if (queryFn.value.type !== AST_NODE_TYPES.ConditionalExpression) {
-      return queryFn.value
+      return [queryFn.value]
     }
 
     if (
       queryFn.value.consequent.type === AST_NODE_TYPES.Identifier &&
       queryFn.value.consequent.name === 'skipToken'
     ) {
-      return queryFn.value.alternate
+      return [queryFn.value.alternate]
     }
 
-    return queryFn.value.consequent
+    if (
+      queryFn.value.alternate.type === AST_NODE_TYPES.Identifier &&
+      queryFn.value.alternate.name === 'skipToken'
+    ) {
+      return [queryFn.value.consequent]
+    }
+
+    return [queryFn.value.consequent, queryFn.value.alternate]
   },
 }

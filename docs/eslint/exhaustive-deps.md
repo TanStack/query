@@ -38,9 +38,14 @@ const Component = ({ todoId }) => {
 ```tsx
 const todos = createTodos()
 const todoQueries = {
-  detail: (id) => ({ queryKey: ['todo', id], queryFn: () => todos.getTodo(id) }),
+  detail: (id) => ({
+    queryKey: ['todo', id],
+    queryFn: () => todos.getTodo(id),
+  }),
 }
+```
 
+```tsx
 // with { allowlist: { variables: ["todos"] }}
 const Component = ({ todoId }) => {
   const todos = useTodos()
@@ -49,7 +54,9 @@ const Component = ({ todoId }) => {
     queryFn: () => todos.getTodo(todoId),
   })
 }
+```
 
+```tsx
 // with { allowlist: { types: ["TodosClient"] }}
 class TodosClient { ... }
 const Component = ({ todoId }) => {
