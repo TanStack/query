@@ -59,24 +59,81 @@ export const ExhaustiveDepsUtils = {
       !ExhaustiveDepsUtils.isInstanceOfKind(reference.identifier.parent)
     )
   },
-  isInstanceOfKind(node: TSESTree.Node) {
-    return (
-      node.type === AST_NODE_TYPES.BinaryExpression &&
-      node.operator === 'instanceof'
-    )
+
+  /**
+   * Given required refs and existing entries, compute missing dependency paths
+   * respecting allowlisted variables and types. Mirrors the rule's previous logic.
+   */
+  computeFilteredMissingPaths(params: {
+    requiredRefs: Array<{
+      path: string
+      root: string
+      allowlistedByType: boolean
+    }>
+    allowlistedVariables: Set<string>
+    existingRootIdentifiers: Set<string>
+    existingFullPaths: Set<string>
+  }): Array<string> {
+    const {
+      requiredRefs,
+      allowlistedVariables,
+      existingRootIdentifiers,
+      existingFullPaths,
+    } = params
+
+    const missingPaths = new Set<string>()
+
+    for (const { root, path, allowlistedByType } of requiredRefs) {
+      // If root itself is present in the key, it covers all members
+      if (existingRootIdentifiers.has(root)) continue
+      if (allowlistedVariables.has(root)) continue
+      if (existingFullPaths.has(path)) continue
+      if (allowlistedByType) continue
+
+      missingPaths.add(path)
+    }
+
+    return Array.from(missingPaths)
   },
 
+  /**
+   * Extract existing queryKey identifiers and full member paths from a queryKey node
+   * Returns two sets:
+   */
   collectQueryKeyDeps(params: {
     sourceCode: Readonly<TSESLint.SourceCode>
     scopeManager: TSESLint.Scope.ScopeManager
     queryKeyNode: TSESTree.Node
-  }): Set<string> {
+  }): { roots: Set<string>; paths: Set<string> } {
     const { sourceCode, scopeManager, queryKeyNode } = params
-    const deps = new Set<string>()
+    const roots = new Set<string>()
+    const paths = new Set<string>()
     const visitorKeys = sourceCode.visitorKeys
 
-    function add(identifier: TSESTree.Identifier) {
-      deps.add(ASTUtils.mapKeyNodeToBaseText(identifier, sourceCode))
+    function addRoot(name: string) {
+      const cleaned = ExhaustiveDepsUtils.normalizeChain(name)
+      roots.add(cleaned)
+      paths.add(cleaned)
+    }
+    function addFull(text: string) {
+      const cleaned = ExhaustiveDepsUtils.normalizeChain(text)
+      paths.add(cleaned)
+    }
+    function addRefPath(
+      refPath: {
+        path: string
+        root: string
+        coversRootMembers: boolean
+      } | null,
+    ) {
+      if (!refPath) return
+
+      if (refPath.coversRootMembers) {
+        addRoot(refPath.root)
+        return
+      }
+
+      addFull(refPath.path)
     }
 
     function visitChildren(node: TSESTree.Node): void {
@@ -106,9 +163,15 @@ export const ExhaustiveDepsUtils = {
       if (!node) return
 
       switch (node.type) {
-        case AST_NODE_TYPES.Identifier:
-          add(node)
+        case AST_NODE_TYPES.Identifier: {
+          addRefPath(
+            ExhaustiveDepsUtils.computeRefPath({
+              identifier: node,
+              sourceCode: sourceCode,
+            }),
+          )
           return
+        }
         case AST_NODE_TYPES.ArrowFunctionExpression:
         case AST_NODE_TYPES.FunctionExpression:
           for (const reference of ExhaustiveDepsUtils.collectExternalRefsInFunction(
@@ -117,9 +180,16 @@ export const ExhaustiveDepsUtils = {
               scopeManager: scopeManager,
             },
           )) {
-            if (reference.identifier.type === AST_NODE_TYPES.Identifier) {
-              add(reference.identifier)
+            if (reference.identifier.type !== AST_NODE_TYPES.Identifier) {
+              continue
             }
+
+            addRefPath(
+              ExhaustiveDepsUtils.computeRefPath({
+                identifier: reference.identifier,
+                sourceCode: sourceCode,
+              }),
+            )
           }
           return
         case AST_NODE_TYPES.Property:
@@ -131,7 +201,7 @@ export const ExhaustiveDepsUtils = {
             node.parent.callee === node &&
             node.object.type === AST_NODE_TYPES.Identifier
           ) {
-            deps.add(node.object.name)
+            addRoot(node.object.name)
           } else {
             visit(node.object)
           }
@@ -153,7 +223,7 @@ export const ExhaustiveDepsUtils = {
 
     visit(queryKeyNode)
 
-    return deps
+    return { roots, paths }
   },
 
   isNode(value: unknown): value is TSESTree.Node {
@@ -163,6 +233,97 @@ export const ExhaustiveDepsUtils = {
       'type' in value &&
       typeof value.type === 'string'
     )
+  },
+
+  /**
+   * Checks whether the resolved variable is allowlisted by its type annotation
+   */
+  variableIsAllowlistedByType(params: {
+    allowlistedTypes: Set<string>
+    variable: TSESLint.Scope.Variable | null
+  }): boolean {
+    const { allowlistedTypes, variable } = params
+    if (allowlistedTypes.size === 0) return false
+    if (!variable) return false
+
+    for (const id of variable.identifiers) {
+      if (id.typeAnnotation) {
+        const typeIdentifiers = new Set<string>()
+        ExhaustiveDepsUtils.collectTypeIdentifiers(
+          id.typeAnnotation.typeAnnotation,
+          typeIdentifiers,
+        )
+        for (const typeIdentifier of typeIdentifiers) {
+          if (allowlistedTypes.has(typeIdentifier)) return true
+        }
+      }
+    }
+
+    return false
+  },
+  isInstanceOfKind(node: TSESTree.Node) {
+    return (
+      node.type === AST_NODE_TYPES.BinaryExpression &&
+      node.operator === 'instanceof'
+    )
+  },
+
+  /**
+   * Normalizes a chain by removing optional chaining operators
+   *
+   * Example: `a?.b.c!` -> `a.b.c`
+   */
+  normalizeChain(text: string): string {
+    return text.replace(/(?:\?(\.)|!)/g, '$1')
+  },
+
+  /**
+   * Computes the reference path for an identifier
+   *
+   * Example: `a.b.c!` -> `{ path: 'a.b.c', root: 'a' }`
+   */
+  computeRefPath(params: {
+    identifier: TSESTree.Identifier
+    sourceCode: Readonly<TSESLint.SourceCode>
+  }): { path: string; root: string; coversRootMembers: boolean } | null {
+    const { identifier, sourceCode } = params
+
+    const fullChainNode = ASTUtils.traverseUpOnly(identifier, [
+      AST_NODE_TYPES.MemberExpression,
+      AST_NODE_TYPES.TSNonNullExpression,
+      AST_NODE_TYPES.Identifier,
+    ])
+
+    const fullText = ExhaustiveDepsUtils.normalizeChain(
+      sourceCode.getText(fullChainNode),
+    )
+
+    const parent = fullChainNode.parent
+    let dependencyPath = fullText
+    let coversRootMembers = fullText === identifier.name
+
+    if (
+      parent &&
+      parent.type === AST_NODE_TYPES.CallExpression &&
+      parent.callee === fullChainNode
+    ) {
+      const segments = fullText.split('.')
+      if (segments.length > 1) {
+        dependencyPath = segments.slice(0, -1).join('.')
+      }
+
+      coversRootMembers = false
+    }
+
+    dependencyPath =
+      dependencyPath.split('.')[0] === '' ? identifier.name : dependencyPath
+    const root = dependencyPath.split('.')[0]
+
+    return {
+      path: dependencyPath,
+      root: root ?? identifier.name,
+      coversRootMembers: coversRootMembers && dependencyPath === root,
+    }
   },
 
   collectExternalRefsInFunction(params: {
@@ -209,5 +370,57 @@ export const ExhaustiveDepsUtils = {
     collect(functionScope)
 
     return externalRefs
+  },
+
+  /**
+   * Recursively collects type identifiers from a type annotation
+   */
+  collectTypeIdentifiers(typeNode: TSESTree.TypeNode, out: Set<string>): void {
+    switch (typeNode.type) {
+      case AST_NODE_TYPES.TSTypeReference: {
+        const addFromTypeName = (tn: TSESTree.EntityName) => {
+          if (tn.type === AST_NODE_TYPES.Identifier) {
+            out.add(tn.name)
+          }
+        }
+        addFromTypeName(typeNode.typeName)
+        break
+      }
+      case AST_NODE_TYPES.TSUnionType:
+      case AST_NODE_TYPES.TSIntersectionType: {
+        typeNode.types.forEach((t) =>
+          ExhaustiveDepsUtils.collectTypeIdentifiers(t, out),
+        )
+        break
+      }
+      case AST_NODE_TYPES.TSArrayType: {
+        ExhaustiveDepsUtils.collectTypeIdentifiers(typeNode.elementType, out)
+        break
+      }
+      case AST_NODE_TYPES.TSTupleType: {
+        typeNode.elementTypes.forEach((et) =>
+          ExhaustiveDepsUtils.collectTypeIdentifiers(et, out),
+        )
+        break
+      }
+    }
+  },
+
+  /**
+   * Gets the function expression from a queryFn property, handling conditional expressions.
+   */
+  getQueryFnFunctionExpression(queryFn: TSESTree.Property): TSESTree.Node {
+    if (queryFn.value.type !== AST_NODE_TYPES.ConditionalExpression) {
+      return queryFn.value
+    }
+
+    if (
+      queryFn.value.consequent.type === AST_NODE_TYPES.Identifier &&
+      queryFn.value.consequent.name === 'skipToken'
+    ) {
+      return queryFn.value.alternate
+    }
+
+    return queryFn.value.consequent
   },
 }
