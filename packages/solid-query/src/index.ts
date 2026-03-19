@@ -84,4 +84,4 @@ export { useMutationState } from './useMutationState'
 export { useMutationState as createMutationState } from './useMutationState'
 export { useQueries } from './useQueries'
 export const createQueries = useQueries
-export { useIsRestoring, IsRestoringProvider } from './isRestoring'
+export { useIsRestoring, IsRestoringContext } from './isRestoring'

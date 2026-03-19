@@ -7,6 +7,9 @@ export default defineConfig({
   plugins: [solid()],
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
+    alias: {
+      'solid-js/web': '@solidjs/web',
+    },
     conditions: ['@tanstack/custom-condition'],
   },
   environments: {
@@ -22,6 +25,11 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
+    server: {
+      deps: {
+        inline: ['@solidjs/testing-library'],
+      },
+    },
     coverage: {
       enabled: true,
       provider: 'istanbul',

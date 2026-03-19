@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
-  ErrorBoundary,
-  createEffect,
+  Errored,
   createRenderEffect,
   createSignal,
+  createTrackedEffect,
+  deep,
 } from 'solid-js'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -58,6 +59,7 @@ describe('useMutation', () => {
     expect(rendered.getByRole('heading').textContent).toBe('mutation')
 
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
+    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByRole('heading').textContent).toBe('empty')
   })
 
@@ -99,12 +101,14 @@ describe('useMutation', () => {
     )
 
     fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
+    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.queryByRole('heading')).toBeNull()
 
     consoleMock.mockRestore()
   })
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
+    let countRef = 0
     const [count, setCount] = createSignal(0)
     const onSuccessMock = vi.fn()
     const onSettledMock = vi.fn()
@@ -125,8 +129,9 @@ describe('useMutation', () => {
           <h1>{count()}</h1>
           <button
             onClick={() => {
-              setCount((c) => c + 1)
-              return mutation.mutate({ count: count() })
+              countRef++
+              setCount(countRef)
+              return mutation.mutate({ count: countRef })
             }}
           >
             mutate
@@ -187,8 +192,9 @@ describe('useMutation', () => {
           <h2>Failed because {mutation.failureReason?.message ?? 'null'}</h2>
           <button
             onClick={() => {
-              setCount((c) => c + 1)
-              return mutation.mutate({ count: count() })
+              const newCount = count() + 1
+              setCount(newCount)
+              return mutation.mutate({ count: newCount })
             }}
           >
             mutate
@@ -227,6 +233,7 @@ describe('useMutation', () => {
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
     const onErrorMock = vi.fn()
     const onSettledMock = vi.fn()
+    let countRef = 0
     const [count, setCount] = createSignal(0)
 
     function Page() {
@@ -251,8 +258,9 @@ describe('useMutation', () => {
           <h1>{count()}</h1>
           <button
             onClick={() => {
-              setCount((c) => c + 1)
-              return mutation.mutate({ count: count() })
+              countRef++
+              setCount(countRef)
+              return mutation.mutate({ count: countRef })
             }}
           >
             mutate
@@ -312,7 +320,7 @@ describe('useMutation', () => {
         },
       }))
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
@@ -364,7 +372,7 @@ describe('useMutation', () => {
         },
       }))
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         const { mutateAsync } = mutation
         setActTimeout(async () => {
           try {
@@ -416,11 +424,14 @@ describe('useMutation', () => {
         mutationKey: key,
       }))
 
-      createRenderEffect(() => {
-        states.push({ ...mutation })
-      })
+      createRenderEffect(
+        () => deep(mutation as any),
+        () => {
+          states.push({ ...mutation } as UseMutationResult<any, any, any, any>)
+        },
+      )
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         const { mutate } = mutation
         setActTimeout(() => {
           mutate('todo')
@@ -457,7 +468,7 @@ describe('useMutation', () => {
         retryDelay: 5,
       }))
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         const { mutate } = mutation
         setActTimeout(() => {
           mutate('todo')
@@ -520,6 +531,7 @@ describe('useMutation', () => {
     window.dispatchEvent(new Event('offline'))
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(
       rendered.getByText('error: null, status: pending, isPaused: true'),
@@ -530,7 +542,7 @@ describe('useMutation', () => {
     onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
-    await vi.advanceTimersByTimeAsync(5)
+    await vi.advanceTimersByTimeAsync(6)
     expect(
       rendered.getByText('error: oops, status: error, isPaused: false'),
     ).toBeInTheDocument()
@@ -591,8 +603,7 @@ describe('useMutation', () => {
 
     onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
-
-    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
     ).toBeInTheDocument()
@@ -615,9 +626,12 @@ describe('useMutation', () => {
         },
       }))
 
-      createRenderEffect(() => {
-        states.push(`${mutation.status}, ${mutation.isPaused}`)
-      })
+      createRenderEffect(
+        () => deep(mutation as any),
+        () => {
+          states.push(`${mutation.status}, ${mutation.isPaused}`)
+        },
+      )
 
       return (
         <div>
@@ -637,7 +651,9 @@ describe('useMutation', () => {
     ))
 
     rendered.getByText('data: null, status: idle, isPaused: false')
+    window.dispatchEvent(new Event('offline'))
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(0)
     expect(
       rendered.getByText('data: null, status: pending, isPaused: true'),
     ).toBeInTheDocument()
@@ -646,81 +662,66 @@ describe('useMutation', () => {
     expect(states[0]).toBe('idle, false')
     expect(states[1]).toBe('pending, true')
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
-    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(11)
     expect(
       rendered.getByText('data: 1, status: success, isPaused: false'),
     ).toBeInTheDocument()
-
-    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
+    const key = queryKey()
 
     let count = 0
-    const states: Array<UseMutationResult<any, any, any, any>> = []
 
     function Page() {
       const mutation = useMutation(() => ({
+        mutationKey: key,
         mutationFn: async (_text: string) => {
-          await sleep(1)
+          await sleep(10)
           count++
           return count > 1
-            ? Promise.resolve('data')
+            ? Promise.resolve(`data${count}`)
             : Promise.reject(new Error('oops'))
         },
         retry: 1,
         retryDelay: 5,
-        networkMode: 'offlineFirst',
+        networkMode: 'offlineFirst' as const,
       }))
 
-      createRenderEffect(() => {
-        states.push({ ...mutation })
-      })
-
-      createEffect(() => {
-        const { mutate } = mutation
-        setActTimeout(() => {
-          window.dispatchEvent(new Event('offline'))
-          mutate('todo')
-        }, 10)
-      })
-
-      return null
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('todo')}>mutate</button>
+          <div>status: {mutation.status}</div>
+          <div>isPaused: {String(mutation.isPaused)}</div>
+          <div>data: {mutation.data ?? 'null'}</div>
+        </div>
+      )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
+    expect(rendered.getByText('status: idle')).toBeInTheDocument()
+    window.dispatchEvent(new Event('offline'))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(16)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('isPaused: true')).toBeInTheDocument()
 
-    expect(states.length).toBe(4)
-    expect(states[0]).toMatchObject({
-      isPending: false,
-      isPaused: false,
-      failureCount: 0,
-      failureReason: null,
-    })
-    expect(states[1]).toMatchObject({
-      isPending: true,
-      isPaused: false,
-      failureCount: 0,
-      failureReason: null,
-    })
-    expect(states[2]).toMatchObject({
-      isPending: true,
-      isPaused: false,
-      failureCount: 1,
-      failureReason: new Error('oops'),
-    })
-    expect(states[3]).toMatchObject({
-      isPending: true,
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey: key }).length,
+    ).toBe(1)
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
+    ).toMatchObject({
+      status: 'pending',
       isPaused: true,
       failureCount: 1,
       failureReason: new Error('oops'),
@@ -729,21 +730,18 @@ describe('useMutation', () => {
     onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
-    await vi.advanceTimersByTimeAsync(1)
+    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('data: data2')).toBeInTheDocument()
 
-    expect(states.length).toBe(6)
-    expect(states[4]).toMatchObject({
-      isPending: true,
-      isPaused: false,
-      failureCount: 1,
-      failureReason: new Error('oops'),
-    })
-    expect(states[5]).toMatchObject({
-      isPending: false,
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
+    ).toMatchObject({
+      status: 'success',
       isPaused: false,
       failureCount: 0,
       failureReason: null,
-      data: 'data',
+      data: 'data2',
     })
   })
 
@@ -796,7 +794,7 @@ describe('useMutation', () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <ErrorBoundary
+        <Errored
           fallback={() => (
             <div>
               <span>error</span>
@@ -804,7 +802,7 @@ describe('useMutation', () => {
           )}
         >
           <Page />
-        </ErrorBoundary>
+        </Errored>
       </QueryClientProvider>
     ))
 
@@ -844,7 +842,7 @@ describe('useMutation', () => {
 
     const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
-        <ErrorBoundary
+        <Errored
           fallback={() => (
             <div>
               <span>error boundary</span>
@@ -852,7 +850,7 @@ describe('useMutation', () => {
           )}
         >
           <Page />
-        </ErrorBoundary>
+        </Errored>
       </QueryClientProvider>
     ))
 

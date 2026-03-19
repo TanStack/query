@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@solidjs/testing-library'
-import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
+import {
+  Show,
+  createRenderEffect,
+  createSignal,
+  createTrackedEffect,
+} from 'solid-js'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryCache,
@@ -62,8 +67,13 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /setReady/i }))
+    // Flush the setTimeout(0) used by notifyManager's scheduler so the
+    // cache subscription fires and useIsFetching updates.
+    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
+    // Advance past the 50ms query sleep, plus flush the completion notification
     await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
   })
 
@@ -79,8 +89,8 @@ describe('useIsFetching', () => {
     function IsFetching() {
       const isFetching = useIsFetching()
 
-      createRenderEffect(() => {
-        isFetchingArray.push(isFetching())
+      createRenderEffect(isFetching, (i) => {
+        isFetchingArray.push(i)
       })
 
       return null
@@ -107,7 +117,7 @@ describe('useIsFetching', () => {
     function Page() {
       const [renderSecond, setRenderSecond] = createSignal(false)
 
-      createEffect(() => {
+      createTrackedEffect(() => {
         setActTimeout(() => {
           setRenderSecond(true)
         }, 100)
@@ -167,8 +177,8 @@ describe('useIsFetching', () => {
         queryKey: key1,
       }))
 
-      createRenderEffect(() => {
-        isFetchingArray.push(isFetching())
+      createRenderEffect(isFetching, (i) => {
+        isFetchingArray.push(i)
       })
 
       return (
@@ -194,6 +204,9 @@ describe('useIsFetching', () => {
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /setStarted/i }))
+    // Flush the setTimeout(0) used by notifyManager's scheduler so the
+    // cache subscription fires and useIsFetching updates.
+    await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(20)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
