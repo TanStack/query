@@ -1,5 +1,11 @@
 # @tanstack/preact-query
 
+## 5.94.3
+
+### Patch Changes
+
+- fix: stop node types from leaking into browser ([#10302](https://github.com/TanStack/query/pull/10302))
+
 ## 5.94.2
 
 ### Patch Changes
