@@ -1,4 +1,4 @@
-import { createEffect, createMemo, onCleanup, onSettled } from 'solid-js'
+import { createEffect, createMemo, onCleanup } from 'solid-js'
 import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type {
@@ -118,9 +118,20 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     },
   )
 
-  onSettled(() => {
+  let isMounted = false
+  let isDisposed = false
+
+  queueMicrotask(() => {
+    if (isDisposed) return
     devtools.mount(ref)
-    onCleanup(() => devtools.unmount())
+    isMounted = true
+  })
+
+  onCleanup(() => {
+    isDisposed = true
+    if (isMounted) {
+      devtools.unmount()
+    }
   })
 
   return <div class="tsqd-parent-container" ref={ref}></div>
