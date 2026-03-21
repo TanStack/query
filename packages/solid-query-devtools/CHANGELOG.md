@@ -1,5 +1,14 @@
 # @tanstack/solid-query-devtools
 
+## 6.0.0-alpha.1
+
+### Patch Changes
+
+- chore: bumps solid v2 to beta.4 ([#10307](https://github.com/TanStack/query/pull/10307))
+
+- Updated dependencies [[`a314457`](https://github.com/TanStack/query/commit/a3144571305c4accc779179011067667b6688925)]:
+  - @tanstack/solid-query@6.0.0-alpha.1
+
 ## 6.0.0-alpha.0
 
 ### Major Changes

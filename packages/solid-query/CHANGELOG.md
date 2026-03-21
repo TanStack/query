@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 6.0.0-alpha.1
+
+### Patch Changes
+
+- chore: bumps solid v2 to beta.4 ([#10307](https://github.com/TanStack/query/pull/10307))
+
 ## 6.0.0-alpha.0
 
 ### Major Changes
