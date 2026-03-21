@@ -359,7 +359,7 @@ The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent
 
 ### Separate hydration exports have been removed
 
-With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
+With version [3.22.0](https://github.com/TanStack/query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
 
 ```tsx
 - import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query/hydration' // [!code --]
@@ -423,7 +423,7 @@ With v4, React Query introduces a new `networkMode` to tackle all these issues. 
 
 ### Tracked Queries per default
 
-React Query defaults to "tracking" query properties, which should give you a nice boost in render optimization. The feature has existed since [v3.6.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.6.0) and has now become the default behavior with v4.
+React Query defaults to "tracking" query properties, which should give you a nice boost in render optimization. The feature has existed since [v3.6.0](https://github.com/TanStack/query/releases/tag/v3.6.0) and has now become the default behavior with v4.
 
 ### Bailing out of updates with setQueryData
 

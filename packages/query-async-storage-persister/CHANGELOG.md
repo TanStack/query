@@ -1,5 +1,31 @@
 # @tanstack/query-async-storage-persister
 
+## 5.90.27
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
+- Updated dependencies [[`248975e`](https://github.com/TanStack/query/commit/248975e896f585f6eaa505c796e73fcf7bfd1eec)]:
+  - @tanstack/query-persist-client-core@5.92.4
+  - @tanstack/query-core@5.91.2
+
+## 5.90.26
+
+### Patch Changes
+
+- Updated dependencies [[`a89aab9`](https://github.com/TanStack/query/commit/a89aab975581c25c113a26c8af486b4cafad272a)]:
+  - @tanstack/query-core@5.91.1
+  - @tanstack/query-persist-client-core@5.92.3
+
+## 5.90.25
+
+### Patch Changes
+
+- Updated dependencies [[`6fa901b`](https://github.com/TanStack/query/commit/6fa901b97a22a80d0fca3f6ed86237ff0cbdd13b)]:
+  - @tanstack/query-core@5.91.0
+  - @tanstack/query-persist-client-core@5.92.2
+
 ## 5.90.24
 
 ### Patch Changes

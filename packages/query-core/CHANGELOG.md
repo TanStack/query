@@ -1,5 +1,23 @@
 # @tanstack/query-core
 
+## 5.91.2
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
+## 5.91.1
+
+### Patch Changes
+
+- fix(core): cancel paused initial fetch when last observer unsubscribes ([#10291](https://github.com/TanStack/query/pull/10291))
+
+## 5.91.0
+
+### Minor Changes
+
+- feat: environmentManager ([#10199](https://github.com/TanStack/query/pull/10199))
+
 ## 5.90.20
 
 ### Patch Changes
