@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
 ## 5.91.2
 
 ### Patch Changes
