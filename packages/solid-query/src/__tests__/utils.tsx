@@ -14,7 +14,7 @@ export function Blink(
   createTrackedEffect(() => {
     setShouldShow(true)
     const timeout = setActTimeout(() => setShouldShow(false), props.duration)
-    return (() => clearTimeout(timeout))
+    return () => clearTimeout(timeout)
   })
 
   return (
