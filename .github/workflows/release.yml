@@ -27,6 +27,8 @@ jobs:
           fetch-depth: 0
       - name: Setup Tools
         uses: TanStack/config/.github/setup@main
+      - name: Run Build
+        run: pnpm run build:all
       - name: Determine dist-tag
         id: dist-tag
         run: |
