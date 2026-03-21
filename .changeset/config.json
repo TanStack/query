@@ -13,6 +13,9 @@
       "@tanstack/angular-query-experimental",
       "@tanstack/angular-query-persist-client",
       "@tanstack/eslint-plugin-query",
+      "@tanstack/preact-query",
+      "@tanstack/preact-query-devtools",
+      "@tanstack/preact-query-persist-client",
       "@tanstack/query-async-storage-persister",
       "@tanstack/query-broadcast-client-experimental",
       "@tanstack/query-core",
@@ -26,10 +29,7 @@
       "@tanstack/solid-query",
       "@tanstack/solid-query-devtools",
       "@tanstack/solid-query-persist-client",
-      "@tanstack/vue-query",
-      "@tanstack/preact-query",
-      "@tanstack/preact-query-devtools",
-      "@tanstack/preact-query-persist-client"
+      "@tanstack/vue-query"
     ],
     [
       "@tanstack/vue-query-devtools",

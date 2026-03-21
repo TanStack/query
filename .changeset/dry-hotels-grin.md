@@ -20,6 +20,9 @@
 '@tanstack/svelte-query-persist-client': patch
 '@tanstack/vue-query': patch
 '@tanstack/vue-query-devtools': patch
+'@tanstack/preact-query': patch
+'@tanstack/preact-query-devtools': patch
+'@tanstack/preact-query-persist-client': patch
 ---
 
 chore: fixed version
