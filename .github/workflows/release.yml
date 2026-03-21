@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [main, "v[0-9]", "*-pre", "*-maint"]
+    branches: [main, 'v[0-9]', '*-pre', '*-maint']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -49,8 +49,8 @@ jobs:
         with:
           version: pnpm run changeset:version
           publish: pnpm run changeset:publish ${{ steps.dist-tag.outputs.tag && format('--tag {0}', steps.dist-tag.outputs.tag) }}
-          title: "ci: Version Packages"
-          commit: "ci: changeset release"
+          title: 'ci: Version Packages'
+          commit: 'ci: changeset release'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create GitHub Release
