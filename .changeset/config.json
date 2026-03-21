@@ -26,7 +26,10 @@
       "@tanstack/solid-query",
       "@tanstack/solid-query-devtools",
       "@tanstack/solid-query-persist-client",
-      "@tanstack/vue-query"
+      "@tanstack/vue-query",
+      "@tanstack/preact-query",
+      "@tanstack/preact-query-devtools",
+      "@tanstack/preact-query-persist-client"
     ],
     [
       "@tanstack/vue-query-devtools",
