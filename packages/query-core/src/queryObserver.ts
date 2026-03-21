@@ -590,6 +590,7 @@ export class QueryObserver<
       refetch: this.refetch,
       promise: this.#currentThenable,
       isEnabled: resolveEnabled(options.enabled, query) !== false,
+      queryKey: query.queryKey,
     }
 
     const nextResult = result as QueryObserverResult<TData, TError>
