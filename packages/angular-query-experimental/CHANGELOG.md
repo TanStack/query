@@ -1,5 +1,14 @@
 # @tanstack/angular-query-experimental
 
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+- Updated dependencies [[`4b6536d`](https://github.com/TanStack/query/commit/4b6536dfce99036f4e37f52943c6fed3ad0e0a18)]:
+  - @tanstack/query-core@5.94.5
+
 ## 5.94.4
 
 ### Patch Changes

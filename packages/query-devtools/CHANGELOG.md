@@ -1,5 +1,11 @@
 # @tanstack/query-devtools
 
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
 ## 5.94.4
 
 ### Patch Changes
