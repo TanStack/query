@@ -1,5 +1,15 @@
 # @tanstack/angular-query-persist-client
 
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
+- Updated dependencies [[`4c75210`](https://github.com/TanStack/query/commit/4c75210ce8235fe3d39b67e1029eff11278927cc)]:
+  - @tanstack/angular-query-experimental@5.94.4
+  - @tanstack/query-persist-client-core@5.94.4
+
 ## 5.62.32
 
 ### Patch Changes
