@@ -19,6 +19,7 @@ import {
   createTrackedEffect,
   reconcile,
   snapshot,
+  untrack,
 } from 'solid-js'
 import { fireEvent, render } from '@solidjs/testing-library'
 import {

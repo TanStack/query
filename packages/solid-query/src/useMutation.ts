@@ -4,6 +4,7 @@ import {
   createRenderEffect,
   createStore,
   onCleanup,
+  untrack,
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import type { DefaultError } from '@tanstack/query-core'
@@ -27,12 +28,13 @@ export function useMutation<
 ): UseMutationResult<TData, TError, TVariables, TOnMutateResult> {
   const client = createMemo(() => useQueryClient(queryClient?.()))
 
-  const observer = new MutationObserver<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  >(client(), options())
+  const observer = untrack(
+    () =>
+      new MutationObserver<TData, TError, TVariables, TOnMutateResult>(
+        client(),
+        options(),
+      ),
+  )
 
   // Track options changes and update observer
   createMemo(() => {
@@ -48,12 +50,13 @@ export function useMutation<
     observer.mutate(variables, mutateOptions).catch(noop)
   }
 
+  const initialResult = untrack(() => observer.getCurrentResult())
   const [state, setState] = createStore<
     UseMutationResult<TData, TError, TVariables, TOnMutateResult>
   >({
-    ...observer.getCurrentResult(),
+    ...initialResult,
     mutate,
-    mutateAsync: observer.getCurrentResult().mutate,
+    mutateAsync: initialResult.mutate,
   })
 
   const unsubscribe = observer.subscribe((result) => {
