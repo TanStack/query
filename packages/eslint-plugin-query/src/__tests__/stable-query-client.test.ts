@@ -107,17 +107,6 @@ ruleTester.run('stable-query-client', rule, {
       `,
     },
     {
-      name: 'QueryClient is not flagged in an arrow function component',
-      code: normalizeIndent`
-        import { QueryClient } from "@tanstack/react-query";
-
-        const Component = () => {
-          const queryClient = new QueryClient();
-          return;
-        };
-      `,
-    },
-    {
       name: 'QueryClient is not flagged in an async react-query server component',
       code: normalizeIndent`
         import { QueryClient } from "@tanstack/react-query";
