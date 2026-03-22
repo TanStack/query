@@ -1,5 +1,13 @@
 # @tanstack/query-sync-storage-persister
 
+## 5.95.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.95.0
+  - @tanstack/query-persist-client-core@5.95.0
+
 ## 5.94.5
 
 ### Patch Changes
