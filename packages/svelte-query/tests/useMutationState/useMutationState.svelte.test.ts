@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { sleep } from '@tanstack/query-test-utils'
 import BaseExample from './BaseExample.svelte'
+import SelectExample from './SelectExample.svelte'
+import type { Mutation } from '@tanstack/query-core'
 
 describe('useMutationState', () => {
   beforeEach(() => {
@@ -77,6 +79,32 @@ describe('useMutationState', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(errorMutationFn).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('Data: ["error"]')).toBeInTheDocument()
+  })
+
+  test('should return selected value when using select option', async () => {
+    const mutationKey = ['select']
+
+    const rendered = render(SelectExample, {
+      props: {
+        mutationOpts: () => ({
+          mutationKey,
+          mutationFn: () => sleep(10).then(() => 'data'),
+        }),
+        mutationStateOpts: {
+          filters: { mutationKey },
+          select: (mutation: Mutation) => mutation.state.status,
+        },
+      },
+    })
+
+    expect(rendered.getByText('Variables: []')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(rendered.getByText('Variables: ["pending"]')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Variables: ["success"]')).toBeInTheDocument()
   })
 
   test('Can select specific mutation using mutation key', async () => {

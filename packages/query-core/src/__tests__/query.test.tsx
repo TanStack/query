@@ -188,6 +188,49 @@ describe('query', () => {
     }
   })
 
+  it('should cancel a paused initial fetch when the last observer unsubscribes', async () => {
+    const key = queryKey()
+    const onlineMock = mockOnlineManagerIsOnline(false)
+    let count = 0
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: async ({ signal: _signal }) => {
+        count++
+        await sleep(10)
+        return `data${count}`
+      },
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+    const query = queryCache.find({ queryKey: key })!
+
+    expect(query.state).toMatchObject({
+      fetchStatus: 'paused',
+      status: 'pending',
+    })
+
+    unsubscribe()
+
+    expect(query.state).toMatchObject({
+      fetchStatus: 'idle',
+      status: 'pending',
+    })
+
+    onlineMock.mockReturnValue(true)
+    queryClient.getQueryCache().onOnline()
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(query.state).toMatchObject({
+      fetchStatus: 'idle',
+      status: 'pending',
+    })
+    expect(count).toBe(0)
+
+    onlineMock.mockRestore()
+  })
+
   test('should not throw a CancelledError when fetchQuery is in progress and the last observer unsubscribes when AbortSignal is consumed', async () => {
     const key = queryKey()
 

@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { isServer, noop, notifyManager } from '@tanstack/query-core'
+import { environmentManager, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -155,7 +155,7 @@ export function useBaseQuery<
 
   if (
     defaultedOptions.experimental_prefetchInRender &&
-    !isServer &&
+    !environmentManager.isServer() &&
     willFetch(result, isRestoring)
   ) {
     const promise = isNewCacheEntry

@@ -1,10 +1,10 @@
 import { focusManager } from './focusManager'
+import { environmentManager } from './environmentManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
 import { pendingThenable } from './thenable'
 import {
-  isServer,
   isValidTimeout,
   noop,
   replaceData,
@@ -358,7 +358,11 @@ export class QueryObserver<
       this.#currentQuery,
     )
 
-    if (isServer || this.#currentResult.isStale || !isValidTimeout(staleTime)) {
+    if (
+      environmentManager.isServer() ||
+      this.#currentResult.isStale ||
+      !isValidTimeout(staleTime)
+    ) {
       return
     }
 
@@ -389,7 +393,7 @@ export class QueryObserver<
     this.#currentRefetchInterval = nextInterval
 
     if (
-      isServer ||
+      environmentManager.isServer() ||
       resolveEnabled(this.options.enabled, this.#currentQuery) === false ||
       !isValidTimeout(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
@@ -572,7 +576,7 @@ export class QueryObserver<
       failureCount: newState.fetchFailureCount,
       failureReason: newState.fetchFailureReason,
       errorUpdateCount: newState.errorUpdateCount,
-      isFetched: newState.dataUpdateCount > 0 || newState.errorUpdateCount > 0,
+      isFetched: query.isFetched(),
       isFetchedAfterMount:
         newState.dataUpdateCount > queryInitialState.dataUpdateCount ||
         newState.errorUpdateCount > queryInitialState.errorUpdateCount,
