@@ -1,5 +1,65 @@
 # @tanstack/query-async-storage-persister
 
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+- Updated dependencies [[`4b6536d`](https://github.com/TanStack/query/commit/4b6536dfce99036f4e37f52943c6fed3ad0e0a18)]:
+  - @tanstack/query-core@5.94.5
+  - @tanstack/query-persist-client-core@5.94.5
+
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
+- Updated dependencies [[`4c75210`](https://github.com/TanStack/query/commit/4c75210ce8235fe3d39b67e1029eff11278927cc)]:
+  - @tanstack/query-core@5.94.4
+  - @tanstack/query-persist-client-core@5.94.4
+
+## 5.90.27
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
+- Updated dependencies [[`248975e`](https://github.com/TanStack/query/commit/248975e896f585f6eaa505c796e73fcf7bfd1eec)]:
+  - @tanstack/query-persist-client-core@5.92.4
+  - @tanstack/query-core@5.91.2
+
+## 5.90.26
+
+### Patch Changes
+
+- Updated dependencies [[`a89aab9`](https://github.com/TanStack/query/commit/a89aab975581c25c113a26c8af486b4cafad272a)]:
+  - @tanstack/query-core@5.91.1
+  - @tanstack/query-persist-client-core@5.92.3
+
+## 5.90.25
+
+### Patch Changes
+
+- Updated dependencies [[`6fa901b`](https://github.com/TanStack/query/commit/6fa901b97a22a80d0fca3f6ed86237ff0cbdd13b)]:
+  - @tanstack/query-core@5.91.0
+  - @tanstack/query-persist-client-core@5.92.2
+
+## 5.90.24
+
+### Patch Changes
+
+- Updated dependencies [[`e505568`](https://github.com/TanStack/query/commit/e505568f4d51c8281d38e9687091094b7d32a405)]:
+  - @tanstack/query-persist-client-core@5.92.1
+
+## 5.90.23
+
+### Patch Changes
+
+- Updated dependencies [[`978fc52`](https://github.com/TanStack/query/commit/978fc52728a8b9eb33f0a82f4ddf42a95815bd7f)]:
+  - @tanstack/query-persist-client-core@5.92.0
+
 ## 5.90.22
 
 ### Patch Changes

@@ -1,5 +1,23 @@
 # @tanstack/eslint-plugin-query
 
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
+## 5.91.5
+
+### Patch Changes
+
+- Fix `exhaustive-deps` to detect dependencies used inside nested `queryFn` callbacks/control flow, and avoid false positives when those dependencies are already present in complex `queryKey` expressions. ([#10258](https://github.com/TanStack/query/pull/10258))
+
 ## 5.91.4
 
 ### Patch Changes

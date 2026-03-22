@@ -1,0 +1,1045 @@
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { act, fireEvent } from '@testing-library/preact'
+import { Suspense } from 'preact/compat'
+import { useReducer, useState } from 'preact/hooks'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import {
+  QueryCache,
+  QueryClient,
+  QueryErrorResetBoundary,
+  skipToken,
+  useQueryErrorResetBoundary,
+  useSuspenseInfiniteQuery,
+  useSuspenseQuery,
+} from '..'
+import type {
+  InfiniteData,
+  UseSuspenseInfiniteQueryResult,
+  UseSuspenseQueryResult,
+} from '..'
+import { ErrorBoundary } from './ErrorBoundary'
+import { renderWithClient } from './utils'
+
+describe('useSuspenseQuery', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  const queryCache = new QueryCache()
+  const queryClient = new QueryClient({ queryCache })
+
+  /**
+   * Preact Suspense handles the rerenders differently than React.
+   * This test only checks for 4 renders (vs. React -> 6)
+   * so, instead of state change reacting and updating (and also losing the state)
+   * we abstract out the suspense
+   */
+  it('should render correctly when state is lifted above Suspense', async () => {
+    const states: Array<UseSuspenseQueryResult<number>> = []
+
+    let count = 0
+    let renders = 0
+
+    function TestApp() {
+      // State lives here, ABOVE the Suspense boundary, so it does not get reset
+      const [stateKey, setStateKey] = useState(queryKey())
+
+      return (
+        <>
+          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          <Suspense fallback="loading">
+            <Page stateKey={stateKey} />
+          </Suspense>
+        </>
+      )
+    }
+
+    function Page({ stateKey }: { stateKey: Array<string> }) {
+      renders++
+      const state = useSuspenseQuery({
+        queryKey: stateKey,
+        queryFn: () => sleep(10).then(() => ++count),
+      })
+
+      states.push(state)
+
+      return <div>data: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <TestApp />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByLabelText('toggle'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+
+    /**
+     * In this pattern, renders will likely be 4 (2 for each successful mount)
+     * Instead of React's 6 (where strict-mode changes the number of renders)
+     */
+    expect(renders).toBe(4)
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 1, status: 'success' })
+    expect(states[1]).toMatchObject({ data: 2, status: 'success' })
+  })
+
+  it('should return the correct states for a successful infinite query', async () => {
+    const key = queryKey()
+    const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
+      []
+
+    function Page({ multiplier }: { multiplier: number }) {
+      const state = useSuspenseInfiniteQuery({
+        queryKey: [`${key}_${multiplier}`],
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => pageParam * multiplier),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
+      })
+
+      states.push(state)
+
+      return <div>data: {state.data?.pages.join(',')}</div>
+    }
+
+    function TestApp() {
+      const [multiplier, setMultiplier] = useState(1)
+
+      return (
+        <>
+          <button onClick={() => setMultiplier(2)}>next</button>
+          <Suspense fallback="loading">
+            <Page multiplier={multiplier} />
+          </Suspense>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <TestApp />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+
+    expect(states.length).toBe(1)
+    expect(states[0]).toMatchObject({
+      data: { pages: [1], pageParams: [1] },
+      status: 'success',
+    })
+
+    fireEvent.click(rendered.getByText('next'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+
+    expect(states.length).toBe(2)
+    expect(states[1]).toMatchObject({
+      data: { pages: [2], pageParams: [1] },
+      status: 'success',
+    })
+  })
+
+  it('should not call the queryFn twice when used in Suspense mode', async () => {
+    const key = queryKey()
+
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+    function Page() {
+      useSuspenseQuery({ queryKey: [key], queryFn })
+
+      return <>rendered</>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should remove query instance when component unmounted', async () => {
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'data'),
+      })
+
+      return <>rendered</>
+    }
+
+    function App() {
+      const [show, setShow] = useState(false)
+
+      return (
+        <>
+          <Suspense fallback="loading">{show && <Page />}</Suspense>
+          <button
+            aria-label="toggle"
+            onClick={() => setShow((prev) => !prev)}
+          />
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
+    expect(queryCache.find({ queryKey: key })).toBeFalsy()
+
+    fireEvent.click(rendered.getByLabelText('toggle'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
+
+    expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(1)
+
+    fireEvent.click(rendered.getByLabelText('toggle'))
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
+    expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
+    expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(0)
+  })
+
+  // https://github.com/tannerlinsley/react-query/issues/468
+  it('should reset error state if new component instances are mounted', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    let succeed = false
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (!succeed) throw new Error('Suspense Error Bingo')
+            return 'data'
+          }),
+        retryDelay: 10,
+      })
+
+      return <div>rendered</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ resetErrorBoundary }) => (
+              <div>
+                <div>error boundary</div>
+                <button
+                  onClick={() => {
+                    succeed = true
+                    resetErrorBoundary()
+                  }}
+                >
+                  retry
+                </button>
+              </div>
+            )}
+          >
+            <Suspense fallback="loading">
+              <Page />
+            </Suspense>
+          </ErrorBoundary>
+        )}
+      </QueryErrorResetBoundary>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(70)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('retry')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('retry'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
+
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should retry fetch if the reset error boundary has been reset', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    let succeed = false
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (!succeed) throw new Error('Suspense Error Bingo')
+            return 'data'
+          }),
+        retry: false,
+      })
+      return <div>rendered</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ resetErrorBoundary }) => (
+              <div>
+                <div>error boundary</div>
+                <button
+                  onClick={() => {
+                    resetErrorBoundary()
+                  }}
+                >
+                  retry
+                </button>
+              </div>
+            )}
+          >
+            <Suspense fallback="loading">
+              <Page />
+            </Suspense>
+          </ErrorBoundary>
+        )}
+      </QueryErrorResetBoundary>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('retry')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('retry'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('retry')).toBeInTheDocument()
+
+    succeed = true
+
+    fireEvent.click(rendered.getByText('retry'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
+
+    consoleMock.mockRestore()
+  })
+
+  it('should set staleTime when having passed a function', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Component() {
+      const result = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => ++count),
+        staleTime: () => 60 * 1000,
+      })
+      return (
+        <div>
+          <span>data: {result.data}</span>
+        </div>
+      )
+    }
+
+    function Page() {
+      return (
+        <Suspense fallback="loading">
+          <Component />
+        </Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+
+    expect(
+      typeof queryClient.getQueryCache().find({ queryKey: key })?.observers[0]
+        ?.options.staleTime,
+    ).toBe('function')
+  })
+
+  it('should suspend when switching to a new query', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Component(props: { queryKey: Array<string> }) {
+      const result = useSuspenseQuery({
+        queryKey: props.queryKey,
+        queryFn: () => sleep(10).then(() => props.queryKey),
+        retry: false,
+      })
+      return <div>data: {result.data}</div>
+    }
+
+    function Page() {
+      const [key, setKey] = useState(key1)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              setKey(key2)
+            }}
+          >
+            switch
+          </button>
+          <Suspense fallback="loading">
+            <Component queryKey={key} />
+          </Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText(`data: ${key1}`)).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('switch'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText(`data: ${key2}`)).toBeInTheDocument()
+  })
+
+  it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    let succeed = false
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (!succeed) throw new Error('Suspense Error Bingo')
+            return 'data'
+          }),
+        retry: false,
+      })
+      return <div>rendered</div>
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={({ resetErrorBoundary }) => (
+            <div>
+              <div>error boundary</div>
+              <button
+                onClick={() => {
+                  resetErrorBoundary()
+                }}
+              >
+                retry
+              </button>
+            </div>
+          )}
+        >
+          <Suspense fallback="loading">
+            <Page />
+          </Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('retry')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByText('retry'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    expect(rendered.getByText('retry')).toBeInTheDocument()
+
+    succeed = true
+
+    fireEvent.click(rendered.getByText('retry'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw errors to the error boundary by default', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Suspense Error a1x'))),
+        retry: false,
+      })
+      return <div>rendered</div>
+    }
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallbackRender={() => (
+            <div>
+              <div>error boundary</div>
+            </div>
+          )}
+        >
+          <Suspense fallback="loading">
+            <Page />
+          </Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw select errors to the error boundary by default', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => ({ a: { b: 'c' } })),
+        select: () => {
+          throw new Error('foo')
+        },
+      })
+      return <div>rendered</div>
+    }
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallbackRender={() => (
+            <div>
+              <div>error boundary</div>
+            </div>
+          )}
+        >
+          <Suspense fallback="loading">
+            <Page />
+          </Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
+    consoleMock.mockRestore()
+  })
+
+  it('should error caught in error boundary without infinite loop', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page({ succeed }: { succeed: boolean }) {
+      const [nonce] = useState(0)
+      const queryKeys = [`${key}-${succeed}`]
+      const result = useSuspenseQuery({
+        queryKey: queryKeys,
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (!succeed) throw new Error('Suspense Error Bingo')
+            return nonce
+          }),
+        retry: false,
+      })
+      return (
+        <div>
+          <span>rendered</span> <span>{result.data}</span>
+        </div>
+      )
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      const [succeed, setSucceed] = useState(true)
+
+      return (
+        <div>
+          <button
+            aria-label="set-fail"
+            onClick={() => {
+              setSucceed(false)
+            }}
+          />
+          <button
+            aria-label="fail"
+            onClick={() => {
+              queryClient.resetQueries()
+            }}
+          />
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={() => <div>error boundary</div>}
+          >
+            <Suspense fallback="loading">
+              <Page succeed={succeed} />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // render suspense fallback (loading)
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    // resolve promise -> render Page (rendered)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
+
+    // change query result to error by updating state above Suspense
+    fireEvent.click(rendered.getByLabelText('set-fail'))
+
+    // reset query -> and throw error
+    fireEvent.click(rendered.getByLabelText('fail'))
+    // render error boundary fallback (error boundary)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should error caught in error boundary without infinite loop when query keys changed', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    let succeed = true
+
+    function Child({ keyVal }: { keyVal: number }) {
+      const queryKeys = [keyVal, succeed]
+
+      const result = useSuspenseQuery({
+        queryKey: queryKeys,
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (!succeed) throw new Error('Suspense Error Bingo')
+            return 'data'
+          }),
+        retry: false,
+      })
+
+      if (result.error) {
+        throw result.error
+      }
+
+      return (
+        <div>
+          <span>rendered</span> <span>{result.data}</span>
+        </div>
+      )
+    }
+
+    function Page() {
+      const [key, rerender] = useReducer((x) => x + 1, 0)
+
+      return (
+        <div>
+          <button aria-label="fail" onClick={rerender}>
+            fail
+          </button>
+          <Suspense fallback="loading">
+            <Child keyVal={key} />
+          </Suspense>
+        </div>
+      )
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={() => <div>error boundary</div>}
+        >
+          <Page />
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // render suspense fallback (loading)
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    // resolve promise -> render Page (rendered)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
+
+    // change promise result to error
+    succeed = false
+
+    // change query key (state is above Suspense)
+    fireEvent.click(rendered.getByLabelText('fail'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    // render error boundary fallback (error boundary)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
+    const key = queryKey()
+    let state: UseSuspenseQueryResult<number, Error | null> | null = null
+
+    let count = 0
+    let renders = 0
+
+    function Page() {
+      renders++
+
+      state = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => ++count),
+        gcTime: 0,
+      })
+
+      return (
+        <div>
+          <span>rendered</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('rendered')).toBeInTheDocument()
+
+    expect(state).toMatchObject({
+      data: 1,
+      status: 'success',
+    })
+    // reducing 1 for strict mode render
+    expect(renders).toBe(2)
+  })
+
+  it('should not throw background errors to the error boundary', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    let succeed = true
+    const key = queryKey()
+
+    function Page() {
+      const result = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () =>
+          sleep(10).then(() => {
+            if (!succeed) throw new Error('Suspense Error Bingo')
+            return 'data'
+          }),
+        retry: false,
+      })
+
+      return (
+        <div>
+          <span>
+            rendered {result.data} {result.status}
+          </span>
+          <button onClick={() => result.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={() => <div>error boundary</div>}
+        >
+          <Suspense fallback="loading">
+            <Page />
+          </Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // render suspense fallback (loading)
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    // resolve promise -> render Page (rendered)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('rendered data success')).toBeInTheDocument()
+
+    // change promise result to error
+    succeed = false
+
+    // refetch
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    // we are now in error state but still have data to show
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('rendered data error')).toBeInTheDocument()
+
+    consoleMock.mockRestore()
+  })
+
+  it('should still suspense if queryClient has placeholderData config', async () => {
+    const key = queryKey()
+    const queryClientWithPlaceholder = new QueryClient({
+      defaultOptions: {
+        queries: {
+          placeholderData: (previousData: any) => previousData,
+        },
+      },
+    })
+    const states: Array<UseSuspenseQueryResult<number>> = []
+
+    let count = 0
+
+    function TestApp() {
+      // State lives here, ABOVE the Suspense boundary, so it does not get reset
+      const [stateKey, setStateKey] = useState(key)
+
+      return (
+        <>
+          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          <Suspense fallback="loading">
+            <Page stateKey={stateKey} />
+          </Suspense>
+        </>
+      )
+    }
+
+    function Page({ stateKey }: { stateKey: Array<string> }) {
+      const state = useSuspenseQuery({
+        queryKey: stateKey,
+        queryFn: async () => sleep(10).then(() => ++count),
+      })
+
+      states.push(state)
+
+      return <div>data: {String(state.data)}</div>
+    }
+
+    const rendered = renderWithClient(queryClientWithPlaceholder, <TestApp />)
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 1')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByLabelText('toggle'))
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('data: 2')).toBeInTheDocument()
+  })
+
+  it('should log an error when skipToken is passed as queryFn', () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        // @ts-expect-error
+        // eslint-disable-next-line
+        queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
+      })
+
+      return null
+    }
+
+    function App() {
+      return (
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      )
+    }
+
+    renderWithClient(queryClient, <App />)
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'skipToken is not allowed for useSuspenseQuery',
+    )
+    consoleErrorSpy.mockRestore()
+  })
+
+  it('should properly refresh data when refetchInterval is set', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Page() {
+      const state = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => ++count),
+        refetchInterval: 10,
+      })
+
+      return <div>count: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
+    expect(rendered.getByText('count: 1')).toBeInTheDocument()
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(21)
+    })
+    expect(rendered.getByText('count: 2')).toBeInTheDocument()
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(21)
+    })
+    expect(rendered.getByText('count: 3')).toBeInTheDocument()
+
+    expect(count).toBeGreaterThanOrEqual(3)
+  })
+
+  it('should log an error when skipToken is used in development environment', () => {
+    const envCopy = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: skipToken as any,
+      })
+
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'skipToken is not allowed for useSuspenseQuery',
+    )
+
+    consoleErrorSpy.mockRestore()
+    process.env.NODE_ENV = envCopy
+  })
+
+  it('should not log an error when skipToken is used in production environment', () => {
+    const envCopy = process.env.NODE_ENV
+    process.env.NODE_ENV = 'production'
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: skipToken as any,
+      })
+
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+
+    expect(consoleErrorSpy).not.toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
+    process.env.NODE_ENV = envCopy
+  })
+})

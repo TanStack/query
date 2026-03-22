@@ -25,7 +25,13 @@ import {
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
-import { QueryCache, QueryClient, injectQuery, provideTanStackQuery } from '..'
+import {
+  QueryCache,
+  QueryClient,
+  injectQuery,
+  provideIsRestoring,
+  provideTanStackQuery,
+} from '..'
 import { setSignalInputs } from './test-utils'
 import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
 
@@ -365,10 +371,10 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('success')
   })
 
-  test('should properly execute dependant queries', async () => {
+  test('should properly execute dependent queries', async () => {
     const query1 = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
-        queryKey: ['dependant1'],
+        queryKey: ['dependent1'],
         queryFn: () => sleep(10).then(() => 'Some data'),
       }))
     })
@@ -380,7 +386,7 @@ describe('injectQuery', () => {
     const query2 = TestBed.runInInjectionContext(() => {
       return injectQuery(
         computed(() => ({
-          queryKey: ['dependant2'],
+          queryKey: ['dependent2'],
           queryFn: dependentQueryFn,
           enabled: !!query1.data(),
         })),
@@ -402,7 +408,7 @@ describe('injectQuery', () => {
     expect(query2.status()).toStrictEqual('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['dependant2'] }),
+      expect.objectContaining({ queryKey: ['dependent2'] }),
     )
   })
 
@@ -537,6 +543,43 @@ describe('injectQuery', () => {
     expect(fixture.componentInstance.query.data()).toEqual(
       'signal-input-required-test',
     )
+  })
+
+  describe('isRestoring', () => {
+    test('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
+      const key = queryKey()
+      const queryFn = vi
+        .fn()
+        .mockImplementation(() => sleep(10).then(() => 'data'))
+
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+          provideIsRestoring(signal(true).asReadonly()),
+        ],
+      })
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: key,
+          queryFn,
+        })),
+      )
+
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('idle')
+      expect(query.data()).toBeUndefined()
+      expect(queryFn).toHaveBeenCalledTimes(0)
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('idle')
+      expect(query.data()).toBeUndefined()
+      expect(queryFn).toHaveBeenCalledTimes(0)
+    })
   })
 
   describe('injection context', () => {

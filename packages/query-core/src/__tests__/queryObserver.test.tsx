@@ -1378,6 +1378,31 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('should reject promise when experimental_prefetchInRender is disabled and thenable is pending', async () => {
+    const key = queryKey()
+    const queryClient2 = new QueryClient({
+      defaultOptions: {
+        queries: {
+          experimental_prefetchInRender: false,
+        },
+      },
+    })
+    const observer = new QueryObserver(queryClient2, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      enabled: false,
+    })
+
+    const result = observer.getCurrentResult()
+    const tracked = observer.trackResult(result)
+
+    await expect(tracked.promise).rejects.toThrow(
+      'experimental_prefetchInRender feature flag is not enabled',
+    )
+
+    queryClient2.clear()
+  })
+
   test('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
     const key = queryKey()
     const queryFn = vi.fn(() => 'data')
@@ -1508,6 +1533,32 @@ describe('queryObserver', () => {
 
     const result = observer.getCurrentResult()
     expect(result.isEnabled).toBe(true)
+  })
+
+  test('should update currentResult when getOptimisticResult is called with changed data', () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    const defaultedOptions = queryClient.defaultQueryOptions({
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    // First render: no data yet
+    const initialResult = observer.getOptimisticResult(defaultedOptions)
+    expect(initialResult.data).toBeUndefined()
+
+    // Another component sets data (e.g., dependent query resolved)
+    queryClient.setQueryData(key, 'updated')
+
+    // Re-render: getOptimisticResult should pick up the new data and update currentResult
+    const updatedResult = observer.getOptimisticResult(defaultedOptions)
+    expect(updatedResult.data).toBe('updated')
+    expect(observer.getCurrentResult().data).toBe('updated')
   })
 
   describe('StrictMode behavior', () => {

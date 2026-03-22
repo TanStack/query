@@ -86,25 +86,27 @@ export const rule = createRule({
           }),
         )
 
-        const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyNode).map(
-          (identifier) =>
-            ASTUtils.mapKeyNodeToBaseText(identifier, context.sourceCode),
-        )
+        const queryKeyDeps = ExhaustiveDepsUtils.collectQueryKeyDeps({
+          sourceCode: context.sourceCode,
+          scopeManager,
+          queryKeyNode,
+        })
 
         const missingRefs = relevantRefs
           .map((ref) => ({
             ref: ref,
-            text: ASTUtils.mapKeyNodeToBaseText(
-              ref.identifier,
-              context.sourceCode,
-            ),
+            text: ASTUtils.isAncestorIsCallee(ref.identifier)
+              ? ref.identifier.name
+              : ASTUtils.mapKeyNodeToBaseText(
+                  ref.identifier,
+                  context.sourceCode,
+                ),
           }))
           .filter(({ ref, text }) => {
             return (
               !ref.isTypeReference &&
-              !ASTUtils.isAncestorIsCallee(ref.identifier) &&
-              !existingKeys.some((existingKey) => existingKey === text) &&
-              !existingKeys.includes(text.split(/[?.]/)[0] ?? '')
+              !queryKeyDeps.has(text) &&
+              !queryKeyDeps.has(text.split(/[?.]/)[0] ?? '')
             )
           })
           .map(({ ref, text }) => ({
@@ -116,9 +118,7 @@ export const rule = createRule({
 
         if (uniqueMissingRefs.length > 0) {
           const missingAsText = uniqueMissingRefs
-            .map((ref) =>
-              ASTUtils.mapKeyNodeToText(ref.identifier, context.sourceCode),
-            )
+            .map((ref) => ref.text)
             .join(', ')
 
           const queryKeyValue = context.sourceCode.getText(queryKeyNode)

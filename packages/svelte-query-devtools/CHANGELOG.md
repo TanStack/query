@@ -1,5 +1,25 @@
 # @tanstack/svelte-query-devtools
 
+## 6.1.7
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+- Updated dependencies [[`4b6536d`](https://github.com/TanStack/query/commit/4b6536dfce99036f4e37f52943c6fed3ad0e0a18)]:
+  - @tanstack/query-devtools@5.94.5
+  - @tanstack/svelte-query@6.1.7
+
+## 6.1.6
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
+- Updated dependencies [[`4c75210`](https://github.com/TanStack/query/commit/4c75210ce8235fe3d39b67e1029eff11278927cc)]:
+  - @tanstack/query-devtools@5.94.4
+  - @tanstack/svelte-query@6.1.6
+
 ## 6.0.4
 
 ### Patch Changes

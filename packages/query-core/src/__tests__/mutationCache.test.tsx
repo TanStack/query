@@ -445,4 +445,43 @@ describe('mutationCache', () => {
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('remove', () => {
+    test('should remove only the target mutation from scope when multiple scoped mutations exist', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      const mutation1 = testCache.build(testClient, {
+        scope: { id: 'scope1' },
+        mutationFn: () => Promise.resolve('data1'),
+      })
+      const mutation2 = testCache.build(testClient, {
+        scope: { id: 'scope1' },
+        mutationFn: () => Promise.resolve('data2'),
+      })
+
+      expect(testCache.getAll()).toHaveLength(2)
+
+      testCache.remove(mutation1)
+
+      expect(testCache.getAll()).toHaveLength(1)
+      expect(testCache.getAll()).toEqual([mutation2])
+    })
+
+    test('should delete scope when removing the only mutation in that scope', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      const mutation = testCache.build(testClient, {
+        scope: { id: 'scope1' },
+        mutationFn: () => Promise.resolve('data'),
+      })
+
+      expect(testCache.getAll()).toHaveLength(1)
+
+      testCache.remove(mutation)
+
+      expect(testCache.getAll()).toHaveLength(0)
+    })
+  })
 })

@@ -386,6 +386,24 @@ describe('useMutation', () => {
     })
   })
 
+  test('should warn when used outside of setup function in development mode', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    try {
+      useMutation({
+        mutationFn: (params: string) => sleep(0).then(() => params),
+      })
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    } finally {
+      warnSpy.mockRestore()
+      vi.unstubAllEnvs()
+    }
+  })
+
   describe('throwOnError', () => {
     test('should evaluate throwOnError when mutation is expected to throw', async () => {
       const err = new Error('Expected mock error. All is well!')
@@ -401,6 +419,28 @@ describe('useMutation', () => {
 
       expect(boundaryFn).toHaveBeenCalledTimes(1)
       expect(boundaryFn).toHaveBeenCalledWith(err)
+    })
+
+    test('should throw from error watcher when throwOnError returns true', async () => {
+      const throwOnErrorFn = vi.fn().mockReturnValue(true)
+      const { mutate } = useMutation({
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        throwOnError: throwOnErrorFn,
+      })
+
+      mutate()
+
+      // Suppress the Unhandled Rejection caused by watcher throw in Vue 3
+      const rejectionHandler = () => {}
+      process.on('unhandledRejection', rejectionHandler)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      process.off('unhandledRejection', rejectionHandler)
+
+      expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
+      expect(throwOnErrorFn).toHaveBeenCalledWith(Error('Some error'))
     })
   })
 })

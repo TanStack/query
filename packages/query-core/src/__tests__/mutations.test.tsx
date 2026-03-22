@@ -1171,4 +1171,30 @@ describe('mutations', () => {
       expect(unhandledRejectionFn).toHaveBeenNthCalledWith(4, newSettledError)
     })
   })
+
+  test('should not remove mutation when one observer is removed but another still exists', async () => {
+    const observer1 = new MutationObserver(queryClient, {
+      gcTime: 10,
+      mutationFn: () => sleep(10).then(() => 'data'),
+    })
+    const unsubscribe1 = observer1.subscribe(() => undefined)
+
+    observer1.mutate()
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+
+    const mutation = queryClient.getMutationCache().getAll()[0]!
+    const observer2 = new MutationObserver(queryClient, {
+      gcTime: 10,
+      mutationFn: () => sleep(10).then(() => 'data'),
+    })
+    mutation.addObserver(observer2)
+
+    unsubscribe1()
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+  })
 })

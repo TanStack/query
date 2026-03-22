@@ -74,7 +74,7 @@ export interface DevtoolsPanelOptions {
    * @example { height: '100%' }
    * @example { height: '100%', width: '100%' }
    */
-  style?: React.CSSProperties
+  style?: Partial<CSSStyleDeclaration>
 
   /**
    * Callback function that is called when the devtools panel is closed

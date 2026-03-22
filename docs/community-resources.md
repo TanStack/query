@@ -133,7 +133,7 @@ others:
     {
       title: 'Hey API',
       url: 'https://heyapi.dev/openapi-ts/plugins/tanstack-query',
-      description: 'The OpenAPI to TypeScript codegen. Generate clients, SDKs, validators, and more.',
+      description: 'OpenAPI to TypeScript codegen. Production-ready SDKs, Zod schemas, TanStack Query hooks, and 20+ plugins. Used by Vercel, OpenCode, and PayPal.',
     },
     {
       title: 'Kubb',
@@ -174,6 +174,11 @@ others:
       title: 'Rapini',
       url: 'https://github.com/rametta/rapini',
       description: '🥬 OpenAPI to React Query (or SWR) & Axios',
+    },
+    {
+      title: 'Tanstack Query Visualizer',
+      url: 'https://tanstack-query-visualizer.sofi.coop/',
+      description: 'An interactive sandbox that visualizes the relationship between mutations and query keys.',
     },
     {
       title: 'ts-rest',

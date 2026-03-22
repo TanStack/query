@@ -58,7 +58,7 @@ export function pendingThenable<T>(): PendingThenable<T> {
   function finalize(data: Fulfilled<T> | Rejected) {
     Object.assign(thenable, data)
 
-    // clear pending props props to avoid calling them twice
+    // clear pending props to avoid calling them twice
     delete (thenable as Partial<PendingThenable<T>>).resolve
     delete (thenable as Partial<PendingThenable<T>>).reject
   }
