@@ -104,6 +104,17 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'should ignore type parameters used only in queryFn return type',
+      code: normalizeIndent`
+        function useThing<TData>() {
+          return useQuery({
+            queryKey: ['thing'],
+            queryFn: (): Promise<TData> => Promise.reject(new Error('nope')),
+          })
+        }
+      `,
+    },
+    {
       name: 'should add "...args" to deps',
       code: `
         function foo(...args) {}
@@ -442,7 +453,7 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should pass when queryKey uses a direct conditional expression',
       code: normalizeIndent`
-        function Component(cond, a, b) {
+        function Component({ cond, a, b }) {
           useQuery({
             queryKey: ['thing', cond ? a : b],
             queryFn: () => (cond ? a : b),
@@ -453,7 +464,7 @@ ruleTester.run('exhaustive-deps', rule, {
     {
       name: 'should pass when queryKey uses a direct binary expression',
       code: normalizeIndent`
-        function Component(a, b) {
+        function Component({ a, b }) {
           useQuery({
             queryKey: ['thing', a + b],
             queryFn: () => a + b,
@@ -806,6 +817,19 @@ ruleTester.run('exhaustive-deps', rule, {
           return useQuery({
             queryKey: ['thing', api.createKey()],
             queryFn: () => api.fetch()
+          })
+        }
+      `,
+    },
+    {
+      name: 'should pass when queryKey has call expression with identifier callee',
+      code: normalizeIndent`
+        function useThing(dep) {
+          const makeKeyPart = (value) => value
+
+          return useQuery({
+            queryKey: ['thing', makeKeyPart(dep)],
+            queryFn: () => makeKeyPart(dep)
           })
         }
       `,

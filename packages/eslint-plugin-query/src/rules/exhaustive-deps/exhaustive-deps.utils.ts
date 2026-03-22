@@ -14,7 +14,7 @@ export const ExhaustiveDepsUtils = {
     const component = ASTUtils.getFunctionAncestor(sourceCode, node)
     const queryFnScope = scopeManager.acquire(node)
 
-    if (queryFnScope === null) {
+    if (queryFnScope === null || reference.isValueReference === false) {
       return false
     }
 
@@ -215,12 +215,13 @@ export const ExhaustiveDepsUtils = {
           return
         case AST_NODE_TYPES.CallExpression:
           node.arguments.forEach((argument) => visit(argument))
-          if (
-            node.callee.type === AST_NODE_TYPES.MemberExpression ||
-            node.callee.type === AST_NODE_TYPES.ChainExpression ||
-            node.callee.type === AST_NODE_TYPES.TSNonNullExpression
-          ) {
-            visit(node.callee)
+          switch (node.callee.type) {
+            case AST_NODE_TYPES.Identifier:
+            case AST_NODE_TYPES.MemberExpression:
+            case AST_NODE_TYPES.ChainExpression:
+            case AST_NODE_TYPES.TSNonNullExpression:
+              visit(node.callee)
+              break
           }
           return
       }
