@@ -1,5 +1,43 @@
 # @tanstack/angular-query-persist-client
 
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+- Updated dependencies [[`4b6536d`](https://github.com/TanStack/query/commit/4b6536dfce99036f4e37f52943c6fed3ad0e0a18)]:
+  - @tanstack/angular-query-experimental@5.94.5
+  - @tanstack/query-persist-client-core@5.94.5
+
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
+- Updated dependencies [[`4c75210`](https://github.com/TanStack/query/commit/4c75210ce8235fe3d39b67e1029eff11278927cc)]:
+  - @tanstack/angular-query-experimental@5.94.4
+  - @tanstack/query-persist-client-core@5.94.4
+
+## 5.62.32
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
+- Updated dependencies [[`248975e`](https://github.com/TanStack/query/commit/248975e896f585f6eaa505c796e73fcf7bfd1eec)]:
+  - @tanstack/angular-query-experimental@5.90.28
+  - @tanstack/query-persist-client-core@5.92.4
+
+## 5.62.31
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.90.27
+  - @tanstack/query-persist-client-core@5.92.3
+
 ## 5.62.30
 
 ### Patch Changes

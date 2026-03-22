@@ -4,5 +4,6 @@
     "incremental": false,
     "composite": false,
     "rootDir": "../../"
-  }
+  },
+  "exclude": ["src/__tests__"]
 }
