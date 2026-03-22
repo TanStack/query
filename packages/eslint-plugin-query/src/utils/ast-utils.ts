@@ -42,10 +42,9 @@ export const ASTUtils = {
     properties: Array<TSESTree.ObjectLiteralElement>,
     key: string,
   ): TSESTree.Property | undefined {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-    return properties.find((x) =>
+    return properties.find((x): x is TSESTree.Property =>
       ASTUtils.isPropertyWithIdentifierKey(x, key),
-    ) as TSESTree.Property | undefined
+    )
   },
   getNestedIdentifiers(node: TSESTree.Node): Array<TSESTree.Identifier> {
     const identifiers: Array<TSESTree.Identifier> = []
@@ -131,28 +130,6 @@ export const ASTUtils = {
     }
 
     return identifiers
-  },
-  isAncestorIsCallee(identifier: TSESTree.Node) {
-    let previousNode = identifier
-    let currentNode = identifier.parent
-
-    while (currentNode !== undefined) {
-      if (
-        currentNode.type === AST_NODE_TYPES.CallExpression &&
-        currentNode.callee === previousNode
-      ) {
-        return true
-      }
-
-      if (currentNode.type !== AST_NODE_TYPES.MemberExpression) {
-        return false
-      }
-
-      previousNode = currentNode
-      currentNode = currentNode.parent
-    }
-
-    return false
   },
   traverseUpOnly(
     identifier: TSESTree.Node,
