@@ -35,7 +35,6 @@ jobs:
           BRANCH="${GITHUB_REF_NAME}"
           if [[ "$BRANCH" == *-pre ]]; then
             echo "prerelease=true" >> "$GITHUB_OUTPUT"
-            echo "tag=pre" >> "$GITHUB_OUTPUT"
           elif [[ "$BRANCH" == *-maint ]]; then
             echo "tag=maint" >> "$GITHUB_OUTPUT"
           elif [[ "$BRANCH" =~ ^v[0-9]+$ ]]; then
