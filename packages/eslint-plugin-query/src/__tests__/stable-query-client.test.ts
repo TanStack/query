@@ -106,6 +106,28 @@ ruleTester.run('stable-query-client', rule, {
         }
       `,
     },
+    {
+      name: 'QueryClient is not flagged in an arrow function component',
+      code: normalizeIndent`
+        import { QueryClient } from "@tanstack/react-query";
+
+        const Component = () => {
+          const queryClient = new QueryClient();
+          return;
+        };
+      `,
+    },
+    {
+      name: 'QueryClient is not flagged in an async react-query server component',
+      code: normalizeIndent`
+        import { QueryClient } from "@tanstack/react-query";
+
+        async function ServerComponent() {
+          const queryClient = new QueryClient();
+          return;
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -186,6 +208,19 @@ ruleTester.run('stable-query-client', rule, {
           return;
         }
       `,
+      errors: [{ messageId: 'unstable' }],
+    },
+    {
+      name: 'QueryClient with destructuring pattern reports error without autofix',
+      code: normalizeIndent`
+        import { QueryClient } from "@tanstack/react-query";
+
+        function Component() {
+          const { defaultOptions } = new QueryClient();
+          return;
+        }
+      `,
+      output: null,
       errors: [{ messageId: 'unstable' }],
     },
   ],
