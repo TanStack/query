@@ -9,6 +9,7 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
+import { useIsHydrating } from './IsHydratingProvider'
 import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
@@ -50,9 +51,16 @@ export function useBaseQuery<
   }
 
   const isRestoring = useIsRestoring()
+  const hydratingQueries = useIsHydrating()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const client = useQueryClient(queryClient)
   const defaultedOptions = client.defaultQueryOptions(options)
+
+  // Check if this query is pending hydration
+  if (hydratingQueries.has(defaultedOptions.queryHash)) {
+    defaultedOptions._isHydrating = true
+  }
+
   ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
     defaultedOptions,
   )
