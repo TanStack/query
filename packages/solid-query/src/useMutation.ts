@@ -37,9 +37,12 @@ export function useMutation<
   )
 
   // Track options changes and update observer
-  createMemo(() => {
-    observer.setOptions(options())
-  })
+  createRenderEffect(
+    () => options(),
+    (opts) => {
+      observer.setOptions(opts)
+    },
+  )
 
   const mutate: UseMutateFunction<
     TData,
