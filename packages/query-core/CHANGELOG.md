@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.95.2
+
+### Patch Changes
+
+- fix(timeoutManager): make sure NodeJs.Timout doesn't leak ([#10325](https://github.com/TanStack/query/pull/10325))
+
 ## 5.95.1
 
 ### Patch Changes
