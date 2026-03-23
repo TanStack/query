@@ -67,6 +67,10 @@ export function formatDateTime(value: string | number | Date, locale?: string) {
   return new Date(value).toLocaleString(sanitizeLocale(locale))
 }
 
+export function formatTime(value: string | number | Date, locale?: string) {
+  return new Date(value).toLocaleTimeString(sanitizeLocale(locale))
+}
+
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
     ? 'fetching'

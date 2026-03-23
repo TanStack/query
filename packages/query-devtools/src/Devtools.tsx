@@ -22,6 +22,7 @@ import {
   convertRemToPixels,
   displayValue,
   formatDateTime,
+  formatTime,
   getMutationStatusColor,
   getQueryStatusColor,
   getQueryStatusColorByLabel,
@@ -1861,6 +1862,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
 }
 
 const QueryDetails = () => {
+  const locale = useLocale()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -2053,7 +2055,7 @@ const QueryDetails = () => {
           <div class="tsqd-query-details-last-updated">
             <span>Last Updated:</span>
             <span>
-              {new Date(activeQueryState()!.dataUpdatedAt).toLocaleTimeString()}
+              {formatTime(activeQueryState()!.dataUpdatedAt, locale.locale())}
             </span>
           </div>
         </div>
@@ -2395,6 +2397,7 @@ const QueryDetails = () => {
 }
 
 const MutationDetails = () => {
+  const locale = useLocale()
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -2495,9 +2498,7 @@ const MutationDetails = () => {
           <div class="tsqd-query-details-last-updated">
             <span>Submitted At:</span>
             <span>
-              {new Date(
-                activeMutation()!.state.submittedAt,
-              ).toLocaleTimeString()}
+              {formatTime(activeMutation()!.state.submittedAt, locale.locale())}
             </span>
           </div>
         </div>
