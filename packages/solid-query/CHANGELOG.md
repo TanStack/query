@@ -1,5 +1,11 @@
 # @tanstack/solid-query
 
+## 6.0.0-alpha.2
+
+### Patch Changes
+
+- refactor: solid 2 reactivity compliance ([#10316](https://github.com/TanStack/query/pull/10316))
+
 ## 6.0.0-alpha.1
 
 ### Patch Changes

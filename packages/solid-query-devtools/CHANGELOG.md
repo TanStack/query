@@ -1,5 +1,14 @@
 # @tanstack/solid-query-devtools
 
+## 6.0.0-alpha.2
+
+### Patch Changes
+
+- refactor: solid 2 reactivity compliance ([#10316](https://github.com/TanStack/query/pull/10316))
+
+- Updated dependencies [[`76fa68e`](https://github.com/TanStack/query/commit/76fa68efba82d5b8a52b7eef189e785641180409)]:
+  - @tanstack/solid-query@6.0.0-alpha.2
+
 ## 6.0.0-alpha.1
 
 ### Patch Changes

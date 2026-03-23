@@ -28,5 +28,5 @@
     "@tanstack/vue-query": "5.92.12",
     "@tanstack/vue-query-devtools": "6.1.5"
   },
-  "changesets": ["slimy-mice-relate", "whole-coins-count"]
+  "changesets": ["legal-signs-call", "slimy-mice-relate", "whole-coins-count"]
 }
