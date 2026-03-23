@@ -149,6 +149,8 @@ export function useBaseQuery<
     return state.refetch(...args)
   }
 
+  let suspenseFetchCount = 0
+
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>(
       (resolve, reject) => {
@@ -164,9 +166,14 @@ export function useBaseQuery<
             )
             if (optimisticResult.isStale) {
               stopWatch()
-              observer
-                .fetchOptimistic(defaultedOptions.value)
-                .then(resolve, (error: TError) => {
+              suspenseFetchCount += 1
+              observer.fetchOptimistic(defaultedOptions.value).then(
+                (result) => {
+                  suspenseFetchCount -= 1
+                  resolve(result)
+                },
+                (error: TError) => {
+                  suspenseFetchCount -= 1
                   if (
                     shouldThrowError(defaultedOptions.value.throwOnError, [
                       error,
@@ -177,7 +184,8 @@ export function useBaseQuery<
                   } else {
                     resolve(observer.getCurrentResult())
                   }
-                })
+                },
+              )
             } else {
               stopWatch()
               resolve(optimisticResult)
@@ -196,15 +204,15 @@ export function useBaseQuery<
   watch(
     () => state.error,
     (error) => {
-      if (
-        state.isError &&
-        !state.isFetching &&
-        shouldThrowError(defaultedOptions.value.throwOnError, [
-          error as TError,
-          observer.getCurrentQuery(),
-        ])
-      ) {
-        throw error
+      if (state.isError && !state.isFetching) {
+        const shouldThrow = shouldThrowError(
+          defaultedOptions.value.throwOnError,
+          [error as TError, observer.getCurrentQuery()],
+        )
+
+        if (shouldThrow && suspenseFetchCount === 0) {
+          throw error
+        }
       }
     },
   )
