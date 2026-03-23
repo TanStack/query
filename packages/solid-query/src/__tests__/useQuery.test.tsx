@@ -19,6 +19,7 @@ import {
   createTrackedEffect,
   reconcile,
   snapshot,
+  untrack,
 } from 'solid-js'
 import { fireEvent, render } from '@solidjs/testing-library'
 import {
@@ -1153,7 +1154,7 @@ describe('useQuery', () => {
         }
       })
 
-      const { refetch } = state
+      const refetch = untrack(() => state.refetch)
 
       return (
         <div>
@@ -1240,7 +1241,7 @@ describe('useQuery', () => {
         },
       )
 
-      const { refetch } = state
+      const refetch = untrack(() => state.refetch)
 
       return (
         <div>
@@ -2263,12 +2264,12 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status } = useQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'test'),
       }))
 
-      return <div>status: {status}</div>
+      return <div>status: {state.status}</div>
     }
 
     const rendered = render(() => (
@@ -2289,7 +2290,7 @@ describe('useQuery', () => {
       .mockReturnValue('data')
 
     function Page() {
-      const { data = 'default' } = useQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn,
         enabled: false,
@@ -2297,7 +2298,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <h1>{data}</h1>
+          <h1>{state.data ?? 'default'}</h1>
         </div>
       )
     }
@@ -4234,13 +4235,13 @@ describe('useQuery', () => {
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
-      const { fetchStatus } = useQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn,
         enabled: false,
       }))
 
-      return <div>fetchStatus: {fetchStatus}</div>
+      return <div>fetchStatus: {state.fetchStatus}</div>
     }
 
     const rendered = render(() => (
@@ -5337,7 +5338,7 @@ describe('useQuery', () => {
         },
       )
 
-      const { refetch } = state
+      const refetch = untrack(() => state.refetch)
 
       return (
         <div>

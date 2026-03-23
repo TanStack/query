@@ -11,6 +11,7 @@ import {
   reconcile,
   refresh,
   snapshot,
+  untrack,
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
@@ -174,7 +175,7 @@ export function useBaseQuery<
     return defaultOptions
   })
 
-  const observer = new Observer(client(), defaultedOptions())
+  const observer = untrack(() => new Observer(client(), defaultedOptions()))
 
   // Track options reactively so the queryResource memo re-runs on change.
   const trackedDefaultedOptions = createMemo(() => defaultedOptions())
@@ -189,7 +190,10 @@ export function useBaseQuery<
     },
   )
 
-  let observerResult = observer.getOptimisticResult(defaultedOptions())
+  let observerResult = untrack(() =>
+    observer.getOptimisticResult(defaultedOptions()),
+  )
+
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     _stripFnsForSSR(observerResult),
   )
