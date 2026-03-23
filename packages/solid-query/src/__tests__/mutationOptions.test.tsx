@@ -48,7 +48,7 @@ describe('mutationOptions', () => {
 
     function Mutation() {
       const isMutating = useIsMutating()
-      const { mutate } = useMutation(() => mutationOpts)
+      const mutation = useMutation(() => mutationOpts)
 
       createRenderEffect(isMutating, (count) => {
         isMutatingArray.push(count)
@@ -56,7 +56,7 @@ describe('mutationOptions', () => {
 
       return (
         <div>
-          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => mutation.mutate()}>mutate</button>
         </div>
       )
     }
@@ -85,7 +85,7 @@ describe('mutationOptions', () => {
 
     function Mutation() {
       const isMutating = useIsMutating()
-      const { mutate } = useMutation(() => mutationOpts)
+      const mutation = useMutation(() => mutationOpts)
 
       createRenderEffect(isMutating, (count) => {
         isMutatingArray.push(count)
@@ -93,7 +93,7 @@ describe('mutationOptions', () => {
 
       return (
         <div>
-          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => mutation.mutate()}>mutate</button>
         </div>
       )
     }
@@ -126,8 +126,8 @@ describe('mutationOptions', () => {
 
     function Mutation() {
       const isMutating = useIsMutating()
-      const { mutate: mutate1 } = useMutation(() => mutationOpts1)
-      const { mutate: mutate2 } = useMutation(() => mutationOpts2)
+      const mutation1 = useMutation(() => mutationOpts1)
+      const mutation2 = useMutation(() => mutationOpts2)
 
       createRenderEffect(isMutating, (count) => {
         isMutatingArray.push(count)
@@ -135,8 +135,8 @@ describe('mutationOptions', () => {
 
       return (
         <div>
-          <button onClick={() => mutate1()}>mutate1</button>
-          <button onClick={() => mutate2()}>mutate2</button>
+          <button onClick={() => mutation1.mutate()}>mutate1</button>
+          <button onClick={() => mutation2.mutate()}>mutate2</button>
         </div>
       )
     }
@@ -171,8 +171,8 @@ describe('mutationOptions', () => {
       const isMutating = useIsMutating(() => ({
         mutationKey: mutationOpts1.mutationKey,
       }))
-      const { mutate: mutate1 } = useMutation(() => mutationOpts1)
-      const { mutate: mutate2 } = useMutation(() => mutationOpts2)
+      const mutation1 = useMutation(() => mutationOpts1)
+      const mutation2 = useMutation(() => mutationOpts2)
 
       createRenderEffect(isMutating, (count) => {
         isMutatingArray.push(count)
@@ -180,8 +180,8 @@ describe('mutationOptions', () => {
 
       return (
         <div>
-          <button onClick={() => mutate1()}>mutate1</button>
-          <button onClick={() => mutate2()}>mutate2</button>
+          <button onClick={() => mutation1.mutate()}>mutate1</button>
+          <button onClick={() => mutation2.mutate()}>mutate2</button>
         </div>
       )
     }
@@ -211,11 +211,11 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const { mutate } = useMutation(() => mutationOpts)
+      const mutation = useMutation(() => mutationOpts)
 
       return (
         <div>
-          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => mutation.mutate()}>mutate</button>
         </div>
       )
     }
@@ -252,11 +252,11 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const { mutate } = useMutation(() => mutationOpts)
+      const mutation = useMutation(() => mutationOpts)
 
       return (
         <div>
-          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => mutation.mutate()}>mutate</button>
         </div>
       )
     }
@@ -297,13 +297,13 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const { mutate: mutate1 } = useMutation(() => mutationOpts1)
-      const { mutate: mutate2 } = useMutation(() => mutationOpts2)
+      const mutation1 = useMutation(() => mutationOpts1)
+      const mutation2 = useMutation(() => mutationOpts2)
 
       return (
         <div>
-          <button onClick={() => mutate1()}>mutate1</button>
-          <button onClick={() => mutate2()}>mutate2</button>
+          <button onClick={() => mutation1.mutate()}>mutate1</button>
+          <button onClick={() => mutation2.mutate()}>mutate2</button>
         </div>
       )
     }
@@ -345,13 +345,13 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const { mutate: mutate1 } = useMutation(() => mutationOpts1)
-      const { mutate: mutate2 } = useMutation(() => mutationOpts2)
+      const mutation1 = useMutation(() => mutationOpts1)
+      const mutation2 = useMutation(() => mutationOpts2)
 
       return (
         <div>
-          <button onClick={() => mutate1()}>mutate1</button>
-          <button onClick={() => mutate2()}>mutate2</button>
+          <button onClick={() => mutation1.mutate()}>mutate1</button>
+          <button onClick={() => mutation2.mutate()}>mutate2</button>
         </div>
       )
     }
@@ -398,7 +398,7 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const { mutate } = useMutation(() => mutationOpts)
+      const mutation = useMutation(() => mutationOpts)
       const states = useMutationState(() => ({
         filters: { mutationKey: mutationOpts.mutationKey, status: 'success' },
       }))
@@ -412,7 +412,7 @@ describe('mutationOptions', () => {
 
       return (
         <div>
-          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => mutation.mutate()}>mutate</button>
         </div>
       )
     }
@@ -441,7 +441,7 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const { mutate } = useMutation(() => mutationOpts)
+      const mutation = useMutation(() => mutationOpts)
       const states = useMutationState(() => ({
         filters: { status: 'success' },
       }))
@@ -455,7 +455,7 @@ describe('mutationOptions', () => {
 
       return (
         <div>
-          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => mutation.mutate()}>mutate</button>
         </div>
       )
     }
@@ -488,8 +488,8 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const { mutate: mutate1 } = useMutation(() => mutationOpts1)
-      const { mutate: mutate2 } = useMutation(() => mutationOpts2)
+      const mutation1 = useMutation(() => mutationOpts1)
+      const mutation2 = useMutation(() => mutationOpts2)
       const states = useMutationState(() => ({
         filters: { status: 'success' },
       }))
@@ -503,8 +503,8 @@ describe('mutationOptions', () => {
 
       return (
         <div>
-          <button onClick={() => mutate1()}>mutate1</button>
-          <button onClick={() => mutate2()}>mutate2</button>
+          <button onClick={() => mutation1.mutate()}>mutate1</button>
+          <button onClick={() => mutation2.mutate()}>mutate2</button>
         </div>
       )
     }
@@ -539,8 +539,8 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const { mutate: mutate1 } = useMutation(() => mutationOpts1)
-      const { mutate: mutate2 } = useMutation(() => mutationOpts2)
+      const mutation1 = useMutation(() => mutationOpts1)
+      const mutation2 = useMutation(() => mutationOpts2)
       const states = useMutationState(() => ({
         filters: { mutationKey: mutationOpts1.mutationKey, status: 'success' },
       }))
@@ -554,8 +554,8 @@ describe('mutationOptions', () => {
 
       return (
         <div>
-          <button onClick={() => mutate1()}>mutate1</button>
-          <button onClick={() => mutate2()}>mutate2</button>
+          <button onClick={() => mutation1.mutate()}>mutate1</button>
+          <button onClick={() => mutation2.mutate()}>mutate2</button>
         </div>
       )
     }

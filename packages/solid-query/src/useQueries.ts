@@ -6,6 +6,7 @@ import {
   merge,
   onCleanup,
   reconcile,
+  untrack,
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
@@ -205,20 +206,25 @@ export function useQueries<
     ),
   )
 
-  const observer = new QueriesObserver<TCombinedResult>(
-    client(),
-    defaultedQueries(),
-    queriesOptions().combine
-      ? ({
-          combine: queriesOptions().combine,
-        } as QueriesObserverOptions<TCombinedResult>)
-      : undefined,
+  const observer = untrack(
+    () =>
+      new QueriesObserver<TCombinedResult>(
+        client(),
+        defaultedQueries(),
+        queriesOptions().combine
+          ? ({
+              combine: queriesOptions().combine,
+            } as QueriesObserverOptions<TCombinedResult>)
+          : undefined,
+      ),
   )
 
   // Get initial optimistic result
-  const [, getCombinedResult] = observer.getOptimisticResult(
-    defaultedQueries(),
-    (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+  const [, getCombinedResult] = untrack(() =>
+    observer.getOptimisticResult(
+      defaultedQueries(),
+      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+    ),
   )
 
   const initialResult = getCombinedResult()
