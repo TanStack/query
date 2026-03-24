@@ -269,7 +269,7 @@ const hasOwn = Object.prototype.hasOwnProperty
  */
 export function replaceEqualDeep<T>(a: unknown, b: T, depth?: number): T
 export function replaceEqualDeep(a: any, b: any, depth = 0): any {
-  if (a === b) {
+  if (Object.is(a, b)) {
     return a
   }
 
@@ -292,7 +292,7 @@ export function replaceEqualDeep(a: any, b: any, depth = 0): any {
     const aItem = a[key]
     const bItem = b[key]
 
-    if (aItem === bItem) {
+    if (Object.is(aItem, bItem)) {
       copy[key] = aItem
       if (array ? i < aSize : hasOwn.call(a, key)) equalItems++
       continue

@@ -416,6 +416,12 @@ describe('core/utils', () => {
 
       expect(next).toBe(current)
     })
+
+    it('should return the previous object reference when values contain NaN', () => {
+      const prev = { value: NaN }
+      const next = { value: NaN }
+      expect(replaceEqualDeep(prev, next)).toBe(prev)
+    })
   })
 
   describe('matchMutation', () => {
