@@ -73,7 +73,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
 }
 
 function isInfiniteQuery(query: Query): boolean {
-  const options = query.options as any
+  const options = query.options
   return 'initialPageParam' in options
 }
 
@@ -255,14 +255,14 @@ export function hydrate(
           })
         }
       } else {
-        const queryOptions: any = {
+        const queryOptions = {
           ...client.getDefaultOptions().hydrate?.queries,
           ...options?.defaultOptions?.queries,
           queryKey,
           queryHash,
           meta,
           behavior: queryType === 'infiniteQuery'
-          ? (infiniteQueryBehavior() as QueryBehavior<unknown, unknown, unknown>)
+          ? (infiniteQueryBehavior() as QueryBehavior<unknown, DefaultError, unknown>)
           : undefined,
         }
 
