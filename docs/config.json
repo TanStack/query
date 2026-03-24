@@ -247,6 +247,10 @@
               "to": "framework/react/guides/window-focus-refetching"
             },
             {
+              "label": "Polling",
+              "to": "framework/react/guides/polling"
+            },
+            {
               "label": "Disabling/Pausing Queries",
               "to": "framework/react/guides/disabling-queries"
             },
