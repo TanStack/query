@@ -417,9 +417,19 @@ describe('core/utils', () => {
       expect(next).toBe(current)
     })
 
-    it('should return the previous object reference when values contain NaN', () => {
+    it('preserves reference when objects contain NaN', () => {
       const prev = { value: NaN }
       const next = { value: NaN }
+      expect(replaceEqualDeep(prev, next)).toBe(prev)
+    })
+
+    it('handles top-level NaN equality', () => {
+      expect(Number.isNaN(replaceEqualDeep(NaN, NaN))).toBe(true)
+    })
+
+    it('preserves reference for arrays containing NaN', () => {
+      const prev = [NaN, { a: 1 }]
+      const next = [NaN, { a: 1 }]
       expect(replaceEqualDeep(prev, next)).toBe(prev)
     })
   })
