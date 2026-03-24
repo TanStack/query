@@ -142,4 +142,4 @@ For more on network modes, see [Network Mode](./network-mode.md).
 
 ## Note on deduplication
 
-Multiple components mounting the same query key with `refetchInterval` do not stack their timers. The cache has one interval per query, so two components both using `refetchInterval: 5000` on the same key produce one request every 5 seconds, not two.
+Each `QueryObserver` — each component using `useQuery` with `refetchInterval` — runs its own timer. Two components subscribed to the same key with `refetchInterval: 5000` each fire their timer every 5 seconds. What's deduplicated is concurrent in-flight fetches: if two timers fire at overlapping moments, React Query won't issue two parallel network requests for the same key. The second fetch is held until the first settles. In practice, two components on the same polling interval produce one request per cycle, but the timers are observer-level, not query-level.
