@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { computed, reactive } from 'vue-demi'
+import { computed, reactive, ref } from 'vue-demi'
 import { sleep } from '@tanstack/query-test-utils'
+import { skipToken } from '..'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type { InfiniteData } from '@tanstack/query-core'
@@ -126,5 +127,26 @@ describe('Discriminated union return type', () => {
     if (query.isSuccess) {
       expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
+  })
+
+  it('should infer pageParam from computed queryFn with conditional skipToken', () => {
+    const enabled = ref(false)
+
+    useInfiniteQuery({
+      queryKey: ['infiniteQuery', enabled],
+      queryFn: computed(() =>
+        enabled.value
+          ? ({ pageParam }) => {
+              expectTypeOf(pageParam).toEqualTypeOf<number>()
+              return sleep(0).then(() => 'Some data')
+            }
+          : skipToken,
+      ),
+      initialPageParam: 1,
+      getNextPageParam: (_lastPage, _allPages, lastPageParam) => {
+        expectTypeOf(lastPageParam).toEqualTypeOf<number>()
+        return lastPageParam + 1
+      },
+    })
   })
 })
