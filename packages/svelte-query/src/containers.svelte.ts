@@ -88,6 +88,9 @@ export function createRawRef<T extends {} | Array<unknown>>(
     const existingKeys = Object.keys(out)
     const newKeys = Object.keys(newValue)
     const keysToRemove = existingKeys.filter((key) => !newKeys.includes(key))
+    if (Array.isArray(out)) {
+      keysToRemove.sort((a, b) => Number(b) - Number(a))
+    }
     for (const key of keysToRemove) {
       // @ts-expect-error
       delete out[key]

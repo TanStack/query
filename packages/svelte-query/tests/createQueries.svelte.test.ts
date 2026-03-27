@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { QueryClient, createQueries } from '../src/index.js'
-import { promiseWithResolvers, withEffectRoot } from './utils.svelte.js'
+import { promiseWithResolvers, ref, withEffectRoot } from './utils.svelte.js'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -60,6 +60,34 @@ describe('createQueries', () => {
       ])
       expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
       expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
+    }),
+  )
+
+  it(
+    'should support removing multiple queries in one update',
+    withEffectRoot(async () => {
+      const queryIds = ref([1, 2, 3, 4])
+
+      const result = createQueries(
+        () => ({
+          queries: queryIds.value.map((id) => ({
+            queryKey: ['multi-remove', id] as const,
+            queryFn: () => Promise.resolve(id),
+          })),
+        }),
+        () => queryClient,
+      )
+
+      await vi.waitFor(() =>
+        expect(result.map((query) => query.data)).toEqual([1, 2, 3, 4]),
+      )
+
+      queryIds.value = [1, 2]
+
+      await vi.waitFor(() => expect(result).toHaveLength(2))
+      await vi.waitFor(() =>
+        expect(result.map((query) => query.data)).toEqual([1, 2]),
+      )
     }),
   )
 
