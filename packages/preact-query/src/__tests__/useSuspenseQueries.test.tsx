@@ -500,7 +500,7 @@ describe('useSuspenseQueries 2', () => {
     function Page({ count, isPending }: { count: number; isPending: boolean }) {
       const { data } = useSuspenseQuery({
         queryKey: [key, count],
-        queryFn: () => sleep(10).then(() => 'data' + count),
+        queryFn: () => sleep(10).then(() => `data${count}`),
       })
 
       return <div>{isPending ? 'pending' : data}</div>
@@ -560,7 +560,7 @@ describe('useSuspenseQueries 2', () => {
         queryFn: () =>
           sleep(10).then(() => {
             queryFnCount++
-            return 'data' + count
+            return `data${count}`
           }),
       })
 
@@ -601,7 +601,7 @@ describe('useSuspenseQueries 2', () => {
     function Page({ count, isPending }: { count: number; isPending: boolean }) {
       const { data } = useSuspenseQuery({
         queryKey: [key, count],
-        queryFn: () => sleep(10).then(() => 'data' + count),
+        queryFn: () => sleep(10).then(() => `data${count}`),
       })
 
       return (

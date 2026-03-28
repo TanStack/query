@@ -190,7 +190,7 @@ describe('useQueries', () => {
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
+              return parseInt(a, 10)
             },
           },
         ],
@@ -219,7 +219,7 @@ describe('useQueries', () => {
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
+              return parseInt(a, 10)
             },
             placeholderData: 'string',
             // @ts-expect-error (initialData: string)
@@ -302,7 +302,7 @@ describe('useQueries', () => {
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
+              return parseInt(a, 10)
             },
           },
         ],
@@ -362,7 +362,7 @@ describe('useQueries', () => {
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
+              return parseInt(a, 10)
             },
             placeholderData: 'string',
             // @ts-expect-error (initialData: string)
@@ -404,7 +404,7 @@ describe('useQueries', () => {
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
-              return parseInt(a)
+              return parseInt(a, 10)
             },
           }),
         ],
@@ -556,7 +556,7 @@ describe('useQueries', () => {
           {
             queryKey: key4,
             queryFn: () => 'string',
-            select: (a: string) => parseInt(a),
+            select: (a: string) => parseInt(a, 10),
           },
           {
             queryKey: key5,
@@ -596,12 +596,12 @@ describe('useQueries', () => {
           {
             queryKey: key4,
             queryFn: () => 'string',
-            select: (a: string) => parseInt(a),
+            select: (a: string) => parseInt(a, 10),
           },
           {
             queryKey: key5,
             queryFn: () => 'string',
-            select: (a: string) => parseInt(a),
+            select: (a: string) => parseInt(a, 10),
             throwOnError,
           },
         ],
@@ -1138,14 +1138,14 @@ describe('useQueries', () => {
               queryKey: key1,
               queryFn: async () => {
                 await sleep(5)
-                return Promise.resolve('first result ' + count)
+                return Promise.resolve(`first result ${count}`)
               },
             },
             {
               queryKey: key2,
               queryFn: async () => {
                 await sleep(50)
-                return Promise.resolve('second result ' + count)
+                return Promise.resolve(`second result ${count}`)
               },
             },
           ],
@@ -1330,14 +1330,14 @@ describe('useQueries', () => {
               queryKey: key1,
               queryFn: async () => {
                 await sleep(10)
-                return 'first result:' + value
+                return `first result:${value}`
               },
             },
             {
               queryKey: key2,
               queryFn: async () => {
                 await sleep(20)
-                return 'second result:' + value
+                return `second result:${value}`
               },
             },
           ],
