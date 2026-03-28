@@ -96,7 +96,7 @@ ruleTester.run('stable-query-client', rule, {
       `,
     },
     {
-      name: 'QueryClient is invoked in an async (react server) component',
+      name: 'QueryClient is not flagged when imported from a non-react-query package in an async component',
       code: normalizeIndent`
         import { QueryClient } from "@tanstack/solid-query";
 
