@@ -84,6 +84,9 @@ export function createRawRef<T extends {} | Array<unknown>>(
     },
   })
 
+  /**
+   * Replaces the proxy-backed top-level keys in place while preserving the original reference.
+   */
   function update(newValue: T) {
     const existingKeys = Object.keys(out)
     const newKeys = Object.keys(newValue)
