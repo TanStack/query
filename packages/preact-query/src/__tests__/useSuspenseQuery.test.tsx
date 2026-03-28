@@ -918,7 +918,6 @@ describe('useSuspenseQuery', () => {
       useSuspenseQuery({
         queryKey: key,
         // @ts-expect-error
-        // eslint-disable-next-line
         queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
       })
 
