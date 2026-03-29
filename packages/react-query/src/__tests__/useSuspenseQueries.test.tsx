@@ -108,7 +108,7 @@ describe('useSuspenseQueries', () => {
   })
 
   it('should not suspend on mount if query has been already fetched', () => {
-    const key = [1] as const
+    const key = queryKey()
     const queryFn = () => sleep(1000).then(() => 1)
 
     queryClient.setQueryData(key, queryFn)

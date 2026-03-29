@@ -103,14 +103,16 @@ describe('useSuspenseQueries', () => {
       </Suspense>,
     )
 
-    await act(() => vi.advanceTimersByTimeAsync(1000))
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000)
+    })
 
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([1, 2])
   })
 
   it('should not suspend on mount if query has been already fetched', () => {
-    const key = [1] as const
+    const key = queryKey()
     const queryFn = () => sleep(1000).then(() => 1)
 
     queryClient.setQueryData(key, queryFn)
@@ -182,7 +184,9 @@ describe('useSuspenseQueries', () => {
       </Suspense>,
     )
 
-    await vi.advanceTimersByTimeAsync(1000)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000)
+    })
 
     expect(onSuspend).toHaveBeenCalled()
     // the test for onQueriesResolution is React-specific and not applicable to Preact
@@ -224,7 +228,9 @@ describe('useSuspenseQueries', () => {
       </Suspense>,
     )
 
-    await act(() => vi.advanceTimersByTimeAsync(1000))
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000)
+    })
 
     rerender(
       <Suspense fallback={<SuspenseFallback />}>
@@ -232,7 +238,9 @@ describe('useSuspenseQueries', () => {
       </Suspense>,
     )
 
-    await act(() => vi.advanceTimersByTimeAsync(1000))
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000)
+    })
 
     expect(onSuspend).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenCalledTimes(2)
