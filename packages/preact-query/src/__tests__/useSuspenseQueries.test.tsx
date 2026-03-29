@@ -1,6 +1,5 @@
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent, render } from '@testing-library/preact'
-import type { FunctionalComponent } from 'preact'
 import { Suspense, startTransition, useTransition } from 'preact/compat'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import {
@@ -24,33 +23,18 @@ import type { UseSuspenseQueryOptions } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
 
-type NumberQueryOptions = UseSuspenseQueryOptions<number>
-
-const QUERY_DURATION = 1000
-
-const createQuery: (id: number) => NumberQueryOptions = (id) => ({
-  queryKey: [id],
-  queryFn: () => sleep(QUERY_DURATION).then(() => id),
-})
-const resolveQueries = async () => {
-  await vi.advanceTimersByTimeAsync(QUERY_DURATION)
-}
-
-const queryClient = new QueryClient()
-
 describe('useSuspenseQueries', () => {
+  let queryClient: QueryClient
   const onSuspend = vi.fn()
   const onQueriesResolution = vi.fn()
 
-  beforeAll(() => {
+  beforeEach(() => {
     vi.useFakeTimers()
-  })
-
-  afterAll(() => {
-    vi.useRealTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    vi.useRealTimers()
     queryClient.clear()
     onSuspend.mockClear()
     onQueriesResolution.mockClear()
@@ -64,89 +48,183 @@ describe('useSuspenseQueries', () => {
     return <div>loading</div>
   }
 
-  const withSuspenseWrapper = <T extends object>(
-    Component: FunctionalComponent<T>,
-  ) => {
-    function SuspendedComponent(props: T) {
-      return (
-        <Suspense fallback={<SuspenseFallback />}>
-          <Component {...props} />
-        </Suspense>
+  it('should suspend on mount', () => {
+    function Page() {
+      const queriesResults = useSuspenseQueries(
+        {
+          queries: [1, 2].map((id) => ({
+            queryKey: [id],
+            queryFn: () => sleep(1000).then(() => id),
+          })),
+          combine: (results) => results.map((r) => r.data),
+        },
+        queryClient,
       )
+
+      useEffect(() => {
+        onQueriesResolution(queriesResults)
+      }, [queriesResults])
+
+      return null
     }
 
-    return SuspendedComponent
-  }
-
-  function QueriesContainer({
-    queries,
-  }: {
-    queries: Array<NumberQueryOptions>
-  }) {
-    const queriesResults = useSuspenseQueries(
-      { queries, combine: (results) => results.map((r) => r.data) },
-      queryClient,
+    render(
+      <Suspense fallback={<SuspenseFallback />}>
+        <Page />
+      </Suspense>,
     )
-
-    useEffect(() => {
-      onQueriesResolution(queriesResults)
-    }, [queriesResults])
-
-    return null
-  }
-
-  const TestComponent = withSuspenseWrapper(QueriesContainer)
-
-  it('should suspend on mount', () => {
-    render(<TestComponent queries={[1, 2].map(createQuery)} />)
 
     expect(onSuspend).toHaveBeenCalledOnce()
   })
 
   it('should resolve queries', async () => {
-    render(<TestComponent queries={[1, 2].map(createQuery)} />)
+    function Page() {
+      const queriesResults = useSuspenseQueries(
+        {
+          queries: [1, 2].map((id) => ({
+            queryKey: [id],
+            queryFn: () => sleep(1000).then(() => id),
+          })),
+          combine: (results) => results.map((r) => r.data),
+        },
+        queryClient,
+      )
 
-    await act(resolveQueries)
+      useEffect(() => {
+        onQueriesResolution(queriesResults)
+      }, [queriesResults])
+
+      return null
+    }
+
+    render(
+      <Suspense fallback={<SuspenseFallback />}>
+        <Page />
+      </Suspense>,
+    )
+
+    await act(() => vi.advanceTimersByTimeAsync(1000))
 
     expect(onQueriesResolution).toHaveBeenCalledTimes(1)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([1, 2])
   })
 
   it('should not suspend on mount if query has been already fetched', () => {
-    const query = createQuery(1)
+    const key = [1] as const
+    const queryFn = () => sleep(1000).then(() => 1)
 
-    queryClient.setQueryData(query.queryKey, query.queryFn)
+    queryClient.setQueryData(key, queryFn)
 
-    render(<TestComponent queries={[query]} />)
+    function Page() {
+      const queriesResults = useSuspenseQueries(
+        {
+          queries: [{ queryKey: key, queryFn }],
+          combine: (results) => results.map((r) => r.data),
+        },
+        queryClient,
+      )
+
+      useEffect(() => {
+        onQueriesResolution(queriesResults)
+      }, [queriesResults])
+
+      return null
+    }
+
+    render(
+      <Suspense fallback={<SuspenseFallback />}>
+        <Page />
+      </Suspense>,
+    )
 
     expect(onSuspend).not.toHaveBeenCalled()
   })
 
   it('should not break suspense when queries change without resolving', async () => {
-    const initQueries = [1, 2].map(createQuery)
-    const nextQueries = [3, 4, 5, 6].map(createQuery)
+    const initQueries = [1, 2].map((id) => ({
+      queryKey: [id],
+      queryFn: () => sleep(1000).then(() => id),
+    }))
+    const nextQueries = [3, 4, 5, 6].map((id) => ({
+      queryKey: [id],
+      queryFn: () => sleep(1000).then(() => id),
+    }))
 
-    const { rerender } = render(<TestComponent queries={initQueries} />)
+    function Page({ queries }: { queries: Array<UseSuspenseQueryOptions<number>> }) {
+      const queriesResults = useSuspenseQueries(
+        {
+          queries,
+          combine: (results) => results.map((r) => r.data),
+        },
+        queryClient,
+      )
 
-    rerender(<TestComponent queries={nextQueries} />)
+      useEffect(() => {
+        onQueriesResolution(queriesResults)
+      }, [queriesResults])
 
-    await act(resolveQueries)
+      return null
+    }
+
+    const { rerender } = render(
+      <Suspense fallback={<SuspenseFallback />}>
+        <Page queries={initQueries} />
+      </Suspense>,
+    )
+
+    rerender(
+      <Suspense fallback={<SuspenseFallback />}>
+        <Page queries={nextQueries} />
+      </Suspense>,
+    )
+
+    await vi.advanceTimersByTimeAsync(1000)
 
     expect(onSuspend).toHaveBeenCalled()
     // the test for onQueriesResolution is React-specific and not applicable to Preact
   })
 
   it('should suspend only once per queries change', async () => {
-    const initQueries = [1, 2].map(createQuery)
-    const nextQueries = [3, 4, 5, 6].map(createQuery)
+    const initQueries = [1, 2].map((id) => ({
+      queryKey: [id],
+      queryFn: () => sleep(1000).then(() => id),
+    }))
+    const nextQueries = [3, 4, 5, 6].map((id) => ({
+      queryKey: [id],
+      queryFn: () => sleep(1000).then(() => id),
+    }))
 
-    const { rerender } = render(<TestComponent queries={initQueries} />)
+    function Page({ queries }: { queries: Array<UseSuspenseQueryOptions<number>> }) {
+      const queriesResults = useSuspenseQueries(
+        {
+          queries,
+          combine: (results) => results.map((r) => r.data),
+        },
+        queryClient,
+      )
 
-    await act(resolveQueries)
+      useEffect(() => {
+        onQueriesResolution(queriesResults)
+      }, [queriesResults])
 
-    rerender(<TestComponent queries={nextQueries} />)
+      return null
+    }
 
-    await act(resolveQueries)
+    const { rerender } = render(
+      <Suspense fallback={<SuspenseFallback />}>
+        <Page queries={initQueries} />
+      </Suspense>,
+    )
+
+    await act(() => vi.advanceTimersByTimeAsync(1000))
+
+    rerender(
+      <Suspense fallback={<SuspenseFallback />}>
+        <Page queries={nextQueries} />
+      </Suspense>,
+    )
+
+    await act(() => vi.advanceTimersByTimeAsync(1000))
 
     expect(onSuspend).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenCalledTimes(2)
@@ -263,12 +341,16 @@ describe('useSuspenseQueries', () => {
 })
 
 describe('useSuspenseQueries 2', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
 
   it('should suspend all queries in parallel', async () => {
