@@ -150,7 +150,11 @@ describe('useSuspenseQueries', () => {
       queryFn: () => sleep(1000).then(() => id),
     }))
 
-    function Page({ queries }: { queries: Array<UseSuspenseQueryOptions<number>> }) {
+    function Page({
+      queries,
+    }: {
+      queries: Array<UseSuspenseQueryOptions<number>>
+    }) {
       const queriesResults = useSuspenseQueries(
         {
           queries,
@@ -194,7 +198,11 @@ describe('useSuspenseQueries', () => {
       queryFn: () => sleep(1000).then(() => id),
     }))
 
-    function Page({ queries }: { queries: Array<UseSuspenseQueryOptions<number>> }) {
+    function Page({
+      queries,
+    }: {
+      queries: Array<UseSuspenseQueryOptions<number>>
+    }) {
       const queriesResults = useSuspenseQueries(
         {
           queries,
