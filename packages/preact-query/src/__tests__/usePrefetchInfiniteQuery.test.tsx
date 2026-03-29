@@ -25,7 +25,7 @@ const generateInfiniteQueryOptions = (
       .mockImplementation(async () => {
         const currentPageData = data[currentPage]
         if (!currentPageData) {
-          throw new Error('No data defined for page ' + currentPage)
+          throw new Error(`No data defined for page ${currentPage}`)
         }
 
         await sleep(10)
