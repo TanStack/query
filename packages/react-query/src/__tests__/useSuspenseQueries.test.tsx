@@ -1040,7 +1040,7 @@ describe('useSuspenseQueries 2', () => {
     expect(queryFn1).toHaveBeenCalledTimes(0)
 
     // key2 background refetch completes
-    await act(() => vi.advanceTimersByTimeAsync(11))
+    await vi.advanceTimersByTimeAsync(11)
 
     expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
@@ -1049,7 +1049,7 @@ describe('useSuspenseQueries 2', () => {
     expect(queryFn1).toHaveBeenCalledTimes(0)
 
     // after key2 refetch completes, key1 is still fresh with no refetch triggered
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByText('data1: cached1')).toBeInTheDocument()
     expect(rendered.getByText('data2: data2')).toBeInTheDocument()
@@ -1108,7 +1108,7 @@ describe('useSuspenseQueries 2', () => {
     expect(queryFn2).toHaveBeenCalledTimes(0)
 
     // key1 background refetch completes
-    await act(() => vi.advanceTimersByTimeAsync(11))
+    await vi.advanceTimersByTimeAsync(11)
 
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: cached2')).toBeInTheDocument()
@@ -1117,7 +1117,7 @@ describe('useSuspenseQueries 2', () => {
     expect(queryFn2).toHaveBeenCalledTimes(0)
 
     // after key1 refetch completes, key2 is still fresh with no refetch triggered
-    await act(() => vi.advanceTimersByTimeAsync(10))
+    await vi.advanceTimersByTimeAsync(10)
 
     expect(rendered.getByText('data1: data1')).toBeInTheDocument()
     expect(rendered.getByText('data2: cached2')).toBeInTheDocument()
