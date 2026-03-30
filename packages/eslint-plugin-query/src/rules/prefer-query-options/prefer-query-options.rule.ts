@@ -104,7 +104,9 @@ export const rule = createRule({
       },
 
       CallExpression: (node) => {
-        if (ASTUtils.isIdentifierWithOneOfNames(node.callee, queryOptionsBuilders)) {
+        if (
+          ASTUtils.isIdentifierWithOneOfNames(node.callee, queryOptionsBuilders)
+        ) {
           return
         }
 
