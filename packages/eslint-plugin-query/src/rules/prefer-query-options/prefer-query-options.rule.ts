@@ -121,7 +121,10 @@ export const rule = createRule({
             return
           }
 
-          if (queriesHooks.includes(importedName) && ASTUtils.isObjectExpression(options)) {
+          if (
+            queriesHooks.includes(importedName) &&
+            ASTUtils.isObjectExpression(options)
+          ) {
             const queries = ASTUtils.findPropertyWithIdentifierKey(
               options.properties,
               'queries',
@@ -296,14 +299,19 @@ function isTanstackQueryClient(
     source.type === AST_NODE_TYPES.CallExpression &&
     ASTUtils.isIdentifier(source.callee)
   ) {
-    return getTanstackImportName(context, helpers, source.callee) === 'useQueryClient'
+    return (
+      getTanstackImportName(context, helpers, source.callee) ===
+      'useQueryClient'
+    )
   }
 
   if (
     source.type === AST_NODE_TYPES.NewExpression &&
     ASTUtils.isIdentifier(source.callee)
   ) {
-    return getTanstackImportName(context, helpers, source.callee) === 'QueryClient'
+    return (
+      getTanstackImportName(context, helpers, source.callee) === 'QueryClient'
+    )
   }
 
   return false
@@ -320,8 +328,8 @@ function getTanstackImportName(
 
   const definition = context.sourceCode
     .getScope(node)
-    .references.find((reference) => reference.identifier === node)
-    ?.resolved?.defs[0]?.node
+    .references.find((reference) => reference.identifier === node)?.resolved
+    ?.defs[0]?.node
 
   if (
     definition?.type !== AST_NODE_TYPES.ImportSpecifier ||
