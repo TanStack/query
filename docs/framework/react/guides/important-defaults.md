@@ -14,7 +14,7 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
   - set `staleTime` to `Infinity` to never trigger a refetch until the Query is [invalidated manually](./query-invalidation.md).
   - set `staleTime` to `'static'` to **never** trigger a refetch, even if the Query is [invalidated manually](./query-invalidation.md).
 
-> `'static'` and `Infinity` look similar but behave differently when `refetchOnMount`, `refetchOnWindowFocus`, or `refetchOnReconnect` are set to `"always"`. With `staleTime: Infinity`, those `"always"` triggers still fire. With `staleTime: 'static'`, they don't. The query stays frozen until you explicitly call `queryClient.resetQueries()`. Use `'static'` for data that cannot change while the app is running: feature flags fetched at boot, user permissions loaded at login, static reference tables. Use `Infinity` when you still want manual invalidation to work.
+> `'static'` and `Infinity` both prevent staleness-based refetches, but `'static'` is stricter: `queryClient.invalidateQueries()` can invalidate a query with `staleTime: Infinity`, but has no effect on `staleTime: 'static'`. `refetchOnMount`, `refetchOnWindowFocus`, and `refetchOnReconnect` set to `"always"` are also blocked by `'static'`. Use `'static'` for data that cannot change while the app is running: feature flags fetched at boot, user permissions loaded at login, static reference tables. Use `Infinity` when you still want manual invalidation to work.
 
 - Stale queries are refetched automatically in the background when:
   - New instances of the query mount
