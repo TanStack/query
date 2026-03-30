@@ -12,6 +12,13 @@ const errors: Array<{ file: string; line: number; text: string }> = []
 
 const files = await glob(['packages/*/build/**/*.d.ts', 'packages/*/build/**/*.d.cts'])
 
+if (files.length === 0) {
+  console.error(
+    'ERROR: No declaration files found under packages/*/build. Ensure the build step produced .d.ts outputs before verification.',
+  )
+  process.exit(1)
+}
+
 for (const file of files) {
   const content = readFileSync(file, 'utf-8')
   const lines = content.split('\n')
