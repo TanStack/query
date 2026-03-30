@@ -2,4 +2,7 @@
 
 import rootConfig from './root.eslint.config.js'
 
-export default [...rootConfig]
+/** @type {import('eslint').Linter.Config[]} */
+const config = [...rootConfig]
+
+export default config

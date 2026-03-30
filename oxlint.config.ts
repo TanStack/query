@@ -60,7 +60,7 @@ export default defineConfig({
         'no-nonoctal-decimal-escape': 'error',
         'no-regex-spaces': 'error',
         'no-self-assign': 'error',
-        'no-shadow': 'warn',
+        'no-shadow': 'allow',
         'no-shadow-restricted-names': 'error',
         'no-sparse-arrays': 'error',
         'no-unsafe-finally': 'error',
