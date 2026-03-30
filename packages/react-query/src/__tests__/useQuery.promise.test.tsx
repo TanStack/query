@@ -17,6 +17,7 @@ import {
 } from '..'
 import { QueryCache } from '../index'
 
+// eslint-disable-next-line vitest/valid-describe-callback -- vitest 3-arg describe with options
 describe('useQuery().promise', { timeout: 10_000 }, () => {
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({

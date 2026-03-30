@@ -170,10 +170,10 @@ describe('useMutation', () => {
       )
     })
 
-    expect(
-      (relevantMutation?.options.mutationKey as Array<MutationKeyTest>)[0]
-        ?.otherObject.name === 'someOtherObjectName',
-    ).toBe(true)
+    expect(relevantMutation).toBeDefined()
+    const key = relevantMutation!.options
+      .mutationKey as Array<MutationKeyTest>
+    expect(key[0]?.otherObject.name).toBe('someOtherObjectName')
   })
 
   test('should allow for non-options object (mutationFn or mutationKey) passed as arg1 & arg2 to trigger reactive updates', async () => {

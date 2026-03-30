@@ -4,6 +4,13 @@
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
+import oxlint from 'eslint-plugin-oxlint'
+import { createJiti } from 'jiti'
+
+const jiti = createJiti(import.meta.url)
+const oxlintConfig = /** @type {*} */ (
+  await jiti.import('./oxlint.config.ts')
+).default
 
 export default [
   ...tanstackConfig,
@@ -48,6 +55,14 @@ export default [
     },
   },
   {
+    name: 'tanstack/linter-options',
+    linterOptions: {
+      // eslint-disable comments are shared with oxlint — don't warn
+      // about directives ESLint considers unused
+      reportUnusedDisableDirectives: 'off',
+    },
+  },
+  {
     files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
     plugins: { vitest },
     rules: {
@@ -61,4 +76,6 @@ export default [
     },
     settings: { vitest: { typecheck: true } },
   },
+  // Must be last — disables ESLint rules that oxlint already covers
+  ...oxlint.buildFromOxlintConfig(oxlintConfig),
 ]

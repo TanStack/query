@@ -10,8 +10,9 @@
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
     "test": "pnpm run test:ci",
-    "test:pr": "nx affected --targets=test:sherif,test:knip,test:docs,test:eslint,test:lib,test:types,test:build,build",
-    "test:ci": "nx run-many --targets=test:sherif,test:knip,test:docs,test:eslint,test:lib,test:types,test:build,build",
+    "test:pr": "nx affected --targets=test:sherif,test:knip,test:docs,test:oxlint,test:eslint,test:lib,test:types,test:build,build",
+    "test:ci": "nx run-many --targets=test:sherif,test:knip,test:docs,test:oxlint,test:eslint,test:lib,test:types,test:build,build",
+    "test:oxlint": "oxlint -c oxlint.config.ts --quiet .",
     "test:eslint": "nx affected --target=test:eslint",
     "test:sherif": "sherif -i typescript -p \"./integrations/*\" -p \"./examples/*\"",
     "test:size": "size-limit",
@@ -35,6 +36,7 @@
     "includedScripts": [
       "test:docs",
       "test:knip",
+      "test:oxlint",
       "test:sherif",
       "test:size"
     ]
@@ -57,11 +59,14 @@
     "@vitest/eslint-plugin": "^1.4.0",
     "esbuild-plugin-file-path-extensions": "^2.1.4",
     "eslint": "^9.36.0",
+    "eslint-plugin-oxlint": "^1.57.0",
     "eslint-plugin-react-hooks": "^6.1.1",
+    "jiti": "^2.6.1",
     "jsdom": "^27.0.0",
     "knip": "^6.0.2",
     "markdown-link-extractor": "^4.0.2",
     "nx": "22.1.3",
+    "oxlint": "^1.57.0",
     "premove": "^4.0.0",
     "prettier": "^3.7.4",
     "prettier-plugin-svelte": "^3.4.0",
