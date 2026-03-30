@@ -27,6 +27,7 @@ describe('Server Side Rendering', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
 
   it('should not trigger fetch', () => {
