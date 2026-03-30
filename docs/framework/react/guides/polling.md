@@ -17,7 +17,7 @@ useQuery({
 
 [//]: # 'Example1'
 
-Polling is independent of `staleTime`. A query can be fresh and still poll on schedule — `staleTime` controls when background refetches triggered by *mounting* or *window focus* happen. `refetchInterval` fires on its own clock regardless.
+Polling is independent of `staleTime`. A query can be fresh and still poll on schedule; see [Important Defaults](./important-defaults.md) for how `staleTime` interacts with other refetch behaviors. `refetchInterval` fires on its own clock regardless of freshness.
 
 ## Adapting the interval to query state
 
@@ -58,74 +58,30 @@ useQuery({
 
 [//]: # 'Example3'
 
-## Disabling window-focus refetching in non-browser UIs
+## Pausing polling
 
-In a fullscreen game, kiosk app, or any UI where the window is always technically "active," focus events don't map to user intent. Relying on them for freshness typically causes a burst of requests whenever the user alt-tabs.
-
-Disable focus-based refetching globally and use `refetchInterval` instead:
+Pass a function to `refetchInterval` and close over component state to control when polling runs:
 
 [//]: # 'Example4'
 
 ```tsx
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      refetchInterval: 60_000,
-    },
+useQuery({
+  queryKey: ['prices', tokenAddress],
+  queryFn: () => fetchPrice(tokenAddress),
+  refetchInterval: () => {
+    if (!tokenAddress || isPaused) return false
+    return 15_000
   },
 })
 ```
 
 [//]: # 'Example4'
 
-If you need to tie polling to your own notion of "active" (for example, a game session), wire up `focusManager.setEventListener` with your own signal:
-
-[//]: # 'Example5'
-
-```tsx
-import { focusManager } from '@tanstack/react-query'
-
-focusManager.setEventListener((handleFocus) => {
-  const onActive = () => handleFocus(true)
-  const onIdle = () => handleFocus(false)
-
-  gameSession.on('active', onActive)
-  gameSession.on('idle', onIdle)
-
-  return () => {
-    gameSession.off('active', onActive)
-    gameSession.off('idle', onIdle)
-  }
-})
-```
-
-[//]: # 'Example5'
-
-See [Window Focus Refetching](./window-focus-refetching.md) for the full `focusManager` API.
-
-## Pausing polling
-
-Set `enabled: false` to stop polling when conditions aren't met. Any running interval is cleared immediately, and it restarts when `enabled` becomes `true` again:
-
-[//]: # 'Example6'
-
-```tsx
-useQuery({
-  queryKey: ['prices', tokenAddress],
-  queryFn: () => fetchPrice(tokenAddress),
-  refetchInterval: 15_000,
-  enabled: !!tokenAddress && !isPaused,
-})
-```
-
-[//]: # 'Example6'
-
 ## Polling with offline support
 
-By default, queries skip fetches when the browser reports no network connection. If your app runs in environments where `navigator.onLine` is unreliable — embedded browsers, Electron, some WebViews — set `networkMode: 'always'` to ignore the online check:
+TanStack Query detects connectivity by listening to the browser's `online` and `offline` events. In environments where those events don't fire reliably (Electron, some embedded WebViews), set `networkMode: 'always'` to skip the connectivity check:
 
-[//]: # 'Example7'
+[//]: # 'Example5'
 
 ```tsx
 useQuery({
@@ -136,10 +92,14 @@ useQuery({
 })
 ```
 
-[//]: # 'Example7'
+[//]: # 'Example5'
 
 For more on network modes, see [Network Mode](./network-mode.md).
 
 ## Note on deduplication
 
-Each `QueryObserver` — each component using `useQuery` with `refetchInterval` — runs its own timer. Two components subscribed to the same key with `refetchInterval: 5000` each fire their timer every 5 seconds. What's deduplicated is concurrent in-flight fetches: if two timers fire at overlapping moments, React Query won't issue two parallel network requests for the same key. The second fetch is held until the first settles. In practice, two components on the same polling interval produce one request per cycle, but the timers are observer-level, not query-level.
+Each `QueryObserver` (each component using `useQuery` with `refetchInterval`) runs its own timer. Two components subscribed to the same key with `refetchInterval: 5000` each fire their timer every 5 seconds. What gets deduplicated is concurrent in-flight fetches: if two timers fire at the same time, only one network request goes out. The timers are observer-level; the deduplication is query-level.
+
+## Non-browser environments
+
+For non-browser runtimes like React Native, the standard `online`/`offline` and focus events aren't available. The [React Native guide](../react-native.md) covers how to connect `focusManager` and `onlineManager` to native app state APIs.
