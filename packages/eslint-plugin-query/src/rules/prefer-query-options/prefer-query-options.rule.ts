@@ -2,7 +2,7 @@ import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { getDocsUrl } from '../../utils/get-docs-url'
-import type { TSESTree } from '@typescript-eslint/utils'
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 import type { ExtraRuleDocs } from '../../types'
 
 export const name = 'prefer-query-options'
@@ -51,6 +51,9 @@ const queryClientFilterMethods = [
 const queryOptionsBuilders = ['queryOptions', 'infiniteQueryOptions']
 
 const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
+type Helpers = {
+  isTanstackQueryImport: (node: TSESTree.Identifier) => boolean
+}
 
 export const rule = createRule({
   name,
@@ -72,8 +75,6 @@ export const rule = createRule({
   defaultOptions: [],
 
   create: detectTanstackQueryImports((context, _, helpers) => {
-    const queryClientVariables = new Set<string>()
-
     function reportInlineQueryOptions(node: TSESTree.Node): void {
       if (ASTUtils.isObjectExpression(node) && hasInlineQueryOptions(node)) {
         context.report({
@@ -93,40 +94,34 @@ export const rule = createRule({
     }
 
     return {
-      VariableDeclarator: (node) => {
-        if (
-          node.id.type === AST_NODE_TYPES.Identifier &&
-          node.init !== null &&
-          isTanstackQueryClient(node.init, helpers, queryClientVariables)
-        ) {
-          queryClientVariables.add(node.id.name)
-        }
-      },
-
       CallExpression: (node) => {
-        if (ASTUtils.isIdentifierWithOneOfNames(node.callee, queryOptionsBuilders)) {
-          return
-        }
+        if (ASTUtils.isIdentifier(node.callee)) {
+          const importedName = getTanstackImportName(
+            context,
+            helpers,
+            node.callee,
+          )
 
-        if (
-          ASTUtils.isIdentifier(node.callee) &&
-          helpers.isTanstackQueryImport(node.callee)
-        ) {
+          if (importedName === null) {
+            return
+          }
+
+          if (queryOptionsBuilders.includes(importedName)) {
+            return
+          }
+
           const options = node.arguments[0]
 
           if (options === undefined) {
             return
           }
 
-          if (ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks)) {
+          if (queryHooks.includes(importedName)) {
             reportInlineQueryOptions(options)
             return
           }
 
-          if (
-            ASTUtils.isIdentifierWithOneOfNames(node.callee, queriesHooks) &&
-            ASTUtils.isObjectExpression(options)
-          ) {
+          if (queriesHooks.includes(importedName) && ASTUtils.isObjectExpression(options)) {
             const queries = ASTUtils.findPropertyWithIdentifierKey(
               options.properties,
               'queries',
@@ -141,7 +136,7 @@ export const rule = createRule({
             return
           }
 
-          if (ASTUtils.isIdentifierWithOneOfNames(node.callee, filterHooks)) {
+          if (filterHooks.includes(importedName)) {
             reportInlineFilterQueryKey(options)
           }
 
@@ -151,11 +146,7 @@ export const rule = createRule({
         if (
           node.callee.type !== AST_NODE_TYPES.MemberExpression ||
           !ASTUtils.isIdentifier(node.callee.property) ||
-          !isTanstackQueryClient(
-            node.callee.object,
-            helpers,
-            queryClientVariables,
-          )
+          !isTanstackQueryClient(node.callee.object, context, helpers)
         ) {
           return
         }
@@ -174,7 +165,7 @@ export const rule = createRule({
 
         if (
           queryClientQueryKeyMethods.includes(method) &&
-          options.type === AST_NODE_TYPES.ArrayExpression
+          isInlineArrayExpression(options)
         ) {
           context.report({
             node: options,
@@ -201,10 +192,16 @@ function hasInlineQueryOptions(node: TSESTree.ObjectExpression): boolean {
 }
 
 function hasInlineFilterQueryKey(node: TSESTree.ObjectExpression): boolean {
-  return (
-    ASTUtils.findPropertyWithIdentifierKey(node.properties, 'queryKey')?.value
-      .type === AST_NODE_TYPES.ArrayExpression
-  )
+  const queryKey = ASTUtils.findPropertyWithIdentifierKey(
+    node.properties,
+    'queryKey',
+  )?.value
+
+  return queryKey !== undefined && isInlineArrayExpression(queryKey)
+}
+
+function isInlineArrayExpression(node: TSESTree.Node): boolean {
+  return unwrapTypeAssertions(node).type === AST_NODE_TYPES.ArrayExpression
 }
 
 function getReturnedObjectExpressions(
@@ -290,32 +287,95 @@ function getQueryObjects(
 
 function isTanstackQueryClient(
   node: TSESTree.Node,
-  helpers: {
-    isTanstackQueryImport: (node: TSESTree.Identifier) => boolean
-  },
-  queryClientVariables: Set<string>,
+  context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
+  helpers: Helpers,
 ): boolean {
-  if (node.type === AST_NODE_TYPES.Identifier) {
-    return queryClientVariables.has(node.name)
+  const source = resolveQueryClientSource(node, context)
+
+  if (
+    source.type === AST_NODE_TYPES.CallExpression &&
+    ASTUtils.isIdentifier(source.callee)
+  ) {
+    return getTanstackImportName(context, helpers, source.callee) === 'useQueryClient'
   }
 
   if (
-    node.type === AST_NODE_TYPES.CallExpression &&
-    ASTUtils.isIdentifierWithName(node.callee, 'useQueryClient')
+    source.type === AST_NODE_TYPES.NewExpression &&
+    ASTUtils.isIdentifier(source.callee)
   ) {
-    return helpers.isTanstackQueryImport(node.callee)
-  }
-
-  if (
-    node.type === AST_NODE_TYPES.NewExpression &&
-    ASTUtils.isIdentifierWithName(node.callee, 'QueryClient')
-  ) {
-    return helpers.isTanstackQueryImport(node.callee)
-  }
-
-  if (node.type === AST_NODE_TYPES.ChainExpression) {
-    return isTanstackQueryClient(node.expression, helpers, queryClientVariables)
+    return getTanstackImportName(context, helpers, source.callee) === 'QueryClient'
   }
 
   return false
+}
+
+function getTanstackImportName(
+  context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
+  helpers: Helpers,
+  node: TSESTree.Identifier,
+): string | null {
+  if (!helpers.isTanstackQueryImport(node)) {
+    return null
+  }
+
+  const definition = context.sourceCode
+    .getScope(node)
+    .references.find((reference) => reference.identifier === node)
+    ?.resolved?.defs[0]?.node
+
+  if (
+    definition?.type !== AST_NODE_TYPES.ImportSpecifier ||
+    definition.imported.type !== AST_NODE_TYPES.Identifier
+  ) {
+    return null
+  }
+
+  return definition.imported.name
+}
+
+function resolveQueryClientSource(
+  node: TSESTree.Node,
+  context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
+): TSESTree.Node {
+  const visitedNodes = new Set<TSESTree.Node>()
+
+  while (!visitedNodes.has(node)) {
+    visitedNodes.add(node)
+
+    if (node.type === AST_NODE_TYPES.ChainExpression) {
+      node = node.expression
+      continue
+    }
+
+    node = unwrapTypeAssertions(node)
+
+    if (node.type !== AST_NODE_TYPES.Identifier) {
+      return node
+    }
+
+    const expression = ASTUtils.getReferencedExpressionByIdentifier({
+      context,
+      node,
+    })
+
+    if (expression === null) {
+      return node
+    }
+
+    node = expression
+  }
+
+  return node
+}
+
+function unwrapTypeAssertions(node: TSESTree.Node): TSESTree.Node {
+  while (
+    node.type === AST_NODE_TYPES.TSAsExpression ||
+    node.type === AST_NODE_TYPES.TSSatisfiesExpression ||
+    node.type === AST_NODE_TYPES.TSTypeAssertion
+  ) {
+    node = node.expression
+  }
+
+  return node
 }

@@ -24,7 +24,7 @@ function Component({ id }) {
 ```tsx
 /* eslint "@tanstack/query/prefer-query-options": "error" */
 
-function useFooQuery() {
+function useFooQuery(id) {
   return useQuery({
     queryKey: ['get', id],
     queryFn: () => Api.get(`/foo/${id}`),
@@ -37,13 +37,15 @@ Examples of **correct** code for this rule:
 ```tsx
 /* eslint "@tanstack/query/prefer-query-options": "error" */
 
-const options = queryOptions({
-  queryKey: ['get', id],
-  queryFn: () => Api.get(`/foo/${id}`),
-})
+function getFooOptions(id) {
+  return queryOptions({
+    queryKey: ['get', id],
+    queryFn: () => Api.get(`/foo/${id}`),
+  })
+}
 
 function Component({ id }) {
-  const query = useQuery(options)
+  const query = useQuery(getFooOptions(id))
   // ...
 }
 ```
@@ -51,13 +53,15 @@ function Component({ id }) {
 ```tsx
 /* eslint "@tanstack/query/prefer-query-options": "error" */
 
-const options = queryOptions({
-  queryKey: ['get', id],
-  queryFn: () => Api.get(`/foo/${id}`),
-})
+function getFooOptions(id) {
+  return queryOptions({
+    queryKey: ['get', id],
+    queryFn: () => Api.get(`/foo/${id}`),
+  })
+}
 
-function useFooQuery() {
-  return useQuery({ ...options, select: (data) => data.foo })
+function useFooQuery(id) {
+  return useQuery({ ...getFooOptions(id), select: (data) => data.foo })
 }
 ```
 
@@ -68,23 +72,33 @@ Examples of **incorrect** `queryKey` references for this rule:
 ```tsx
 /* eslint "@tanstack/query/prefer-query-options": "error" */
 
-const todoOptions = queryOptions({
-  queryKey: ['todo', id],
-  queryFn: () => api.getTodo(id),
-})
+function todoOptions(id) {
+  return queryOptions({
+    queryKey: ['todo', id],
+    queryFn: () => api.getTodo(id),
+  })
+}
 
-queryClient.getQueryData(['todo', id])
+function Component({ id }) {
+  const queryClient = useQueryClient()
+  return queryClient.getQueryData(['todo', id])
+}
 ```
 
 ```tsx
 /* eslint "@tanstack/query/prefer-query-options": "error" */
 
-const todoOptions = queryOptions({
-  queryKey: ['todo', id],
-  queryFn: () => api.getTodo(id),
-})
+function todoOptions(id) {
+  return queryOptions({
+    queryKey: ['todo', id],
+    queryFn: () => api.getTodo(id),
+  })
+}
 
-queryClient.invalidateQueries({ queryKey: ['todo', id] })
+function Component({ id }) {
+  const queryClient = useQueryClient()
+  return queryClient.invalidateQueries({ queryKey: ['todo', id] })
+}
 ```
 
 Examples of **correct** `queryKey` references for this rule:
@@ -92,23 +106,33 @@ Examples of **correct** `queryKey` references for this rule:
 ```tsx
 /* eslint "@tanstack/query/prefer-query-options": "error" */
 
-const todoOptions = queryOptions({
-  queryKey: ['todo', id],
-  queryFn: () => api.getTodo(id),
-})
+function todoOptions(id) {
+  return queryOptions({
+    queryKey: ['todo', id],
+    queryFn: () => api.getTodo(id),
+  })
+}
 
-queryClient.getQueryData(todoOptions.queryKey)
+function Component({ id }) {
+  const queryClient = useQueryClient()
+  return queryClient.getQueryData(todoOptions(id).queryKey)
+}
 ```
 
 ```tsx
 /* eslint "@tanstack/query/prefer-query-options": "error" */
 
-const todoOptions = queryOptions({
-  queryKey: ['todo', id],
-  queryFn: () => api.getTodo(id),
-})
+function todoOptions(id) {
+  return queryOptions({
+    queryKey: ['todo', id],
+    queryFn: () => api.getTodo(id),
+  })
+}
 
-queryClient.invalidateQueries({ queryKey: todoOptions.queryKey })
+function Component({ id }) {
+  const queryClient = useQueryClient()
+  return queryClient.invalidateQueries({ queryKey: todoOptions(id).queryKey })
+}
 ```
 
 ## When Not To Use It

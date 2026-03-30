@@ -201,6 +201,25 @@ describe('prefer-query-options', () => {
           `,
         },
         {
+          name: 'shadowed queryClient parameter is ignored',
+          code: normalizeIndent`
+            import { useQueryClient } from '@tanstack/react-query'
+
+            function Component() {
+              const queryClient = useQueryClient()
+
+              function run(queryClient) {
+                queryClient.fetchQuery({
+                  queryKey: ['todos'],
+                  queryFn: () => fetchTodos(),
+                })
+              }
+
+              return null
+            }
+          `,
+        },
+        {
           name: 'non-queryClient fetchQuery call is ignored',
           code: normalizeIndent`
             import { useQuery } from '@tanstack/react-query'
@@ -325,6 +344,21 @@ describe('prefer-query-options', () => {
 
             function Component() {
               const query = useQuery({
+                queryKey: ['todos'],
+                queryFn: () => fetchTodos(),
+              })
+              return null
+            }
+          `,
+          errors: [{ messageId: 'preferQueryOptions' }],
+        },
+        {
+          name: 'aliased useQuery with inline queryKey + queryFn',
+          code: normalizeIndent`
+            import { useQuery as useTanstackQuery } from '@tanstack/react-query'
+
+            function Component() {
+              const query = useTanstackQuery({
                 queryKey: ['todos'],
                 queryFn: () => fetchTodos(),
               })
@@ -551,6 +585,36 @@ describe('prefer-query-options', () => {
           errors: [{ messageId: 'preferQueryOptions' }],
         },
         {
+          name: 'aliased useQueryClient tracks query client variables',
+          code: normalizeIndent`
+            import { useQueryClient as getClient } from '@tanstack/react-query'
+
+            function Component() {
+              const client = getClient()
+              client.fetchQuery({
+                queryKey: ['todos'],
+                queryFn: () => fetchTodos(),
+              })
+              return null
+            }
+          `,
+          errors: [{ messageId: 'preferQueryOptions' }],
+        },
+        {
+          name: 'aliased QueryClient tracks query client instances',
+          code: normalizeIndent`
+            import { QueryClient as Client } from '@tanstack/react-query'
+
+            const queryClient = new Client()
+
+            queryClient.fetchQuery({
+              queryKey: ['todos'],
+              queryFn: () => fetchTodos(),
+            })
+          `,
+          errors: [{ messageId: 'preferQueryOptions' }],
+        },
+        {
           name: 'qc.getQueryData with inline queryKey',
           code: normalizeIndent`
             import { useQueryClient } from '@tanstack/react-query'
@@ -708,6 +772,32 @@ describe('prefer-query-options', () => {
           errors: [{ messageId: 'preferQueryOptionsQueryKey' }],
         },
         {
+          name: 'queryClient.getQueryData with inline queryKey as const',
+          code: normalizeIndent`
+            import { useQueryClient } from '@tanstack/react-query'
+
+            function Component() {
+              const queryClient = useQueryClient()
+              const data = queryClient.getQueryData(['todos'] as const)
+              return null
+            }
+          `,
+          errors: [{ messageId: 'preferQueryOptionsQueryKey' }],
+        },
+        {
+          name: 'queryClient.getQueryData with inline queryKey satisfies',
+          code: normalizeIndent`
+            import { useQueryClient } from '@tanstack/react-query'
+
+            function Component() {
+              const queryClient = useQueryClient()
+              const data = queryClient.getQueryData((['todos']) satisfies readonly string[])
+              return null
+            }
+          `,
+          errors: [{ messageId: 'preferQueryOptionsQueryKey' }],
+        },
+        {
           name: 'queryClient.setQueryData with inline queryKey',
           code: normalizeIndent`
             import { useQueryClient } from '@tanstack/react-query'
@@ -775,6 +865,34 @@ describe('prefer-query-options', () => {
             function Component() {
               const queryClient = useQueryClient()
               queryClient.invalidateQueries({ queryKey: ['todos'] })
+              return null
+            }
+          `,
+          errors: [{ messageId: 'preferQueryOptionsQueryKey' }],
+        },
+        {
+          name: 'queryClient.invalidateQueries with inline queryKey as const in filters',
+          code: normalizeIndent`
+            import { useQueryClient } from '@tanstack/react-query'
+
+            function Component() {
+              const queryClient = useQueryClient()
+              queryClient.invalidateQueries({ queryKey: ['todos'] as const })
+              return null
+            }
+          `,
+          errors: [{ messageId: 'preferQueryOptionsQueryKey' }],
+        },
+        {
+          name: 'queryClient.invalidateQueries with inline queryKey satisfies in filters',
+          code: normalizeIndent`
+            import { useQueryClient } from '@tanstack/react-query'
+
+            function Component() {
+              const queryClient = useQueryClient()
+              queryClient.invalidateQueries({
+                queryKey: (['todos']) satisfies readonly string[],
+              })
               return null
             }
           `,
