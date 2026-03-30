@@ -49,6 +49,6 @@ if (errors.length > 0) {
   process.exit(1)
 } else {
   console.log(
-    `Verified ${files.length} .d.ts files — no build tool type leaks found.`,
+    `Verified ${files.length} declaration files (.d.ts/.d.cts) — no build tool type leaks found.`,
   )
 }
