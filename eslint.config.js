@@ -8,9 +8,8 @@ import oxlint from 'eslint-plugin-oxlint'
 import { createJiti } from 'jiti'
 
 const jiti = createJiti(import.meta.url)
-const oxlintConfig = /** @type {*} */ (
-  await jiti.import('./oxlint.config.ts')
-).default
+const oxlintConfig = /** @type {*} */ (await jiti.import('./oxlint.config.ts'))
+  .default
 
 /** @type {import('eslint').Linter.Config[]} */
 const config = [

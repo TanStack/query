@@ -171,8 +171,7 @@ describe('useMutation', () => {
     })
 
     expect(relevantMutation).toBeDefined()
-    const key = relevantMutation!.options
-      .mutationKey as Array<MutationKeyTest>
+    const key = relevantMutation!.options.mutationKey as Array<MutationKeyTest>
     expect(key[0]?.otherObject.name).toBe('someOtherObjectName')
   })
 
