@@ -43,16 +43,19 @@ const generateInfiniteQueryOptions = (
 }
 
 describe('usePrefetchInfiniteQuery', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   function Suspended<T = unknown>(props: {
     queryOpts: UseSuspenseInfiniteQueryOptions<
