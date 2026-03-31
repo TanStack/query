@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import React from 'react'
+import * as React from 'react'
 import { act, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
