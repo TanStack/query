@@ -8,6 +8,7 @@ export {
   dehydrate,
   hydrate,
 } from './hydration'
+export { pendingThenable } from './thenable'
 export { InfiniteQueryObserver } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
 export type { MutationCacheNotifyEvent } from './mutationCache'

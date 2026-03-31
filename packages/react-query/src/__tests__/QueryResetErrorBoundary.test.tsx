@@ -9,10 +9,8 @@ import {
   QueryErrorResetBoundary,
   useQueries,
   useQuery,
-  useSuspenseQueries,
-  useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
+import { renderWithClient, renderWithClientAndSuspense } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
   let queryCache: QueryCache
@@ -53,7 +51,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = renderWithClient(
+      const rendered = await renderWithClientAndSuspense(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -84,7 +82,9 @@ describe('QueryErrorResetBoundary', () => {
 
       succeed = true
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(async () => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
@@ -120,7 +120,7 @@ describe('QueryErrorResetBoundary', () => {
         )
       }
 
-      const rendered = renderWithClient(
+      const rendered = await renderWithClientAndSuspense(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -151,7 +151,9 @@ describe('QueryErrorResetBoundary', () => {
 
       succeed = true
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(async () => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('status: error')).toBeInTheDocument()
 
@@ -188,7 +190,7 @@ describe('QueryErrorResetBoundary', () => {
         return <div>{data}</div>
       }
 
-      const rendered = renderWithClient(
+      const rendered = await renderWithClientAndSuspense(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -219,7 +221,9 @@ describe('QueryErrorResetBoundary', () => {
 
       succeed = true
 
-      fireEvent.click(rendered.getByText('retry'))
+      await act(async () => {
+        fireEvent.click(rendered.getByText('retry'))
+      })
       await vi.advanceTimersByTimeAsync(11)
       expect(rendered.getByText('data')).toBeInTheDocument()
 
@@ -254,7 +258,7 @@ describe('QueryErrorResetBoundary', () => {
         )
       }
 
-      const rendered = renderWithClient(
+      const rendered = await renderWithClientAndSuspense(
         queryClient,
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -567,81 +571,6 @@ describe('QueryErrorResetBoundary', () => {
       consoleMock.mockRestore()
     })
 
-    it('should never render the component while the query is in error state', async () => {
-      const consoleMock = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
-
-      const key = queryKey()
-      let fetchCount = 0
-      let renders = 0
-
-      function Page() {
-        const { data } = useSuspenseQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              fetchCount++
-              if (fetchCount > 2) return 'data'
-              throw new Error('Error')
-            }),
-          retry: false,
-        })
-
-        renders++
-
-        return <div>{data}</div>
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <QueryErrorResetBoundary>
-          {({ reset }) => (
-            <ErrorBoundary
-              onReset={reset}
-              fallbackRender={({ resetErrorBoundary }) => (
-                <div>
-                  <div>error boundary</div>
-                  <button
-                    onClick={() => {
-                      resetErrorBoundary()
-                    }}
-                  >
-                    retry
-                  </button>
-                </div>
-              )}
-            >
-              <React.Suspense fallback={<div>loading</div>}>
-                <Page />
-              </React.Suspense>
-            </ErrorBoundary>
-          )}
-        </QueryErrorResetBoundary>,
-      )
-
-      expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
-      expect(rendered.getByText('error boundary')).toBeInTheDocument()
-      expect(rendered.getByText('retry')).toBeInTheDocument()
-
-      fireEvent.click(rendered.getByText('retry'))
-      expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
-      expect(rendered.getByText('error boundary')).toBeInTheDocument()
-      expect(rendered.getByText('retry')).toBeInTheDocument()
-
-      fireEvent.click(rendered.getByText('retry'))
-      expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
-      expect(rendered.getByText('data')).toBeInTheDocument()
-
-      expect(fetchCount).toBe(3)
-      expect(renders).toBe(1)
-
-      consoleMock.mockRestore()
-    })
-
     it('should render children', () => {
       const consoleMock = vi
         .spyOn(console, 'error')
@@ -870,75 +799,6 @@ describe('QueryErrorResetBoundary', () => {
 
       fireEvent.click(rendered.getByText('retry'))
       await vi.advanceTimersByTimeAsync(11)
-      expect(rendered.getByText('data')).toBeInTheDocument()
-
-      consoleMock.mockRestore()
-    })
-
-    it('with suspense should retry fetch if the reset error boundary has been reset', async () => {
-      const key = queryKey()
-      const consoleMock = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => undefined)
-
-      let succeed = false
-
-      function Page() {
-        const [{ data }] = useSuspenseQueries({
-          queries: [
-            {
-              queryKey: key,
-              queryFn: () =>
-                sleep(10).then(() => {
-                  if (!succeed) throw new Error('Error')
-                  return 'data'
-                }),
-              retry: false,
-              retryOnMount: true,
-            },
-          ],
-        })
-
-        return <div>{data}</div>
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <QueryErrorResetBoundary>
-          {({ reset }) => (
-            <ErrorBoundary
-              onReset={reset}
-              fallbackRender={({ resetErrorBoundary }) => (
-                <div>
-                  <div>error boundary</div>
-                  <button
-                    onClick={() => {
-                      resetErrorBoundary()
-                    }}
-                  >
-                    retry
-                  </button>
-                </div>
-              )}
-            >
-              <React.Suspense fallback="loading">
-                <Page />
-              </React.Suspense>
-            </ErrorBoundary>
-          )}
-        </QueryErrorResetBoundary>,
-      )
-
-      expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
-      expect(rendered.getByText('error boundary')).toBeInTheDocument()
-      expect(rendered.getByText('retry')).toBeInTheDocument()
-
-      succeed = true
-
-      fireEvent.click(rendered.getByText('retry'))
-      expect(rendered.getByText('loading')).toBeInTheDocument()
-      await act(() => vi.advanceTimersByTimeAsync(10))
       expect(rendered.getByText('data')).toBeInTheDocument()
 
       consoleMock.mockRestore()

@@ -9,20 +9,22 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { useIsRestoring } from './IsRestoringProvider'
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
+  use,
   willFetch,
 } from './suspense'
+import { useIsRestoring } from './IsRestoringProvider'
+import type { UseBaseQueryOptions } from './types'
 import type {
   QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { UseBaseQueryOptions } from './types'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -125,7 +127,7 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    use(getSuspensePromise(defaultedOptions, observer, errorResetBoundary))
   }
 
   // Handle error boundary

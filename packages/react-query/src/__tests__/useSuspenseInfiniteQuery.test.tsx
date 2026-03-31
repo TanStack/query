@@ -8,7 +8,7 @@ import {
   skipToken,
   useSuspenseInfiniteQuery,
 } from '..'
-import { renderWithClient } from './utils'
+import { renderWithClient, renderWithClientAndSuspense } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryResult } from '..'
 
 describe('useSuspenseInfiniteQuery', () => {
@@ -51,7 +51,7 @@ describe('useSuspenseInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
@@ -68,7 +68,9 @@ describe('useSuspenseInfiniteQuery', () => {
       status: 'success',
     })
 
-    fireEvent.click(rendered.getByText('next'))
+    await act(async () => {
+      fireEvent.click(rendered.getByText('next'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 2')).toBeInTheDocument()

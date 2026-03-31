@@ -12,7 +12,7 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient } from './utils'
+import { renderWithClient, renderWithClientAndSuspense } from './utils'
 import type {
   InfiniteData,
   UseSuspenseInfiniteQueryResult,
@@ -61,7 +61,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
@@ -72,7 +72,9 @@ describe('useSuspenseQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByLabelText('toggle'))
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('toggle'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
@@ -108,7 +110,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
@@ -125,7 +127,9 @@ describe('useSuspenseQuery', () => {
       status: 'success',
     })
 
-    fireEvent.click(rendered.getByText('next'))
+    await act(async () => {
+      fireEvent.click(rendered.getByText('next'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
@@ -148,7 +152,7 @@ describe('useSuspenseQuery', () => {
       return <>rendered</>
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
@@ -188,20 +192,24 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
 
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
     expect(queryCache.find({ queryKey: key })).toBeFalsy()
 
-    fireEvent.click(rendered.getByLabelText('toggle'))
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('toggle'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(1)
 
-    fireEvent.click(rendered.getByLabelText('toggle'))
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('toggle'))
+    })
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
@@ -231,7 +239,7 @@ describe('useSuspenseQuery', () => {
       return <div>rendered</div>
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClient,
       <QueryErrorResetBoundary>
         {({ reset }) => (
@@ -264,7 +272,9 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('retry')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('retry'))
+    await act(async () => {
+      fireEvent.click(rendered.getByText('retry'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered')).toBeInTheDocument()
@@ -297,7 +307,7 @@ describe('useSuspenseQuery', () => {
       return <div>rendered</div>
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClient,
       <QueryErrorResetBoundary>
         {({ reset }) => (
@@ -329,7 +339,9 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('retry')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('retry'))
+    await act(async () => {
+      fireEvent.click(rendered.getByText('retry'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
@@ -337,7 +349,9 @@ describe('useSuspenseQuery', () => {
 
     succeed = true
 
-    fireEvent.click(rendered.getByText('retry'))
+    await act(async () => {
+      fireEvent.click(rendered.getByText('retry'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered')).toBeInTheDocument()
@@ -370,7 +384,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    const rendered = await renderWithClientAndSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -413,13 +427,15 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    const rendered = await renderWithClientAndSuspense(queryClient, <Page />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText(`data: ${key1}`)).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('switch'))
+    await act(async () => {
+      fireEvent.click(rendered.getByText('switch'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText(`data: ${key2}`)).toBeInTheDocument()
@@ -471,14 +487,16 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('retry')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByText('retry'))
+    await act(async () => {
+      fireEvent.click(rendered.getByText('retry'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
@@ -486,7 +504,9 @@ describe('useSuspenseQuery', () => {
 
     succeed = true
 
-    fireEvent.click(rendered.getByText('retry'))
+    await act(async () => {
+      fireEvent.click(rendered.getByText('retry'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('rendered')).toBeInTheDocument()
@@ -526,7 +546,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -568,7 +588,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -621,7 +641,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
 
     // render suspense fallback (loading)
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -633,7 +653,9 @@ describe('useSuspenseQuery', () => {
     succeed = false
 
     // reset query -> and throw error
-    fireEvent.click(rendered.getByLabelText('fail'))
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('fail'))
+    })
     // render error boundary fallback (error boundary)
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
@@ -693,7 +715,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
 
     // render suspense fallback (loading)
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -705,7 +727,9 @@ describe('useSuspenseQuery', () => {
     succeed = false
 
     // change query key
-    fireEvent.click(rendered.getByLabelText('fail'))
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('fail'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     // render error boundary fallback (error boundary)
     await act(() => vi.advanceTimersByTimeAsync(10))
@@ -741,7 +765,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
@@ -800,7 +824,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = await renderWithClientAndSuspense(queryClient, <App />)
 
     // render suspense fallback (loading)
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -812,7 +836,9 @@ describe('useSuspenseQuery', () => {
     succeed = false
 
     // refetch
-    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    await act(async () => {
+      fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    })
     // we are now in error state but still have data to show
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('rendered data error')).toBeInTheDocument()
@@ -851,7 +877,7 @@ describe('useSuspenseQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClientWithPlaceholder,
       <React.Suspense fallback="loading">
         <Page />
@@ -862,7 +888,9 @@ describe('useSuspenseQuery', () => {
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
-    fireEvent.click(rendered.getByLabelText('toggle'))
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('toggle'))
+    })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
@@ -915,7 +943,7 @@ describe('useSuspenseQuery', () => {
       return <div>count: {state.data}</div>
     }
 
-    const rendered = renderWithClient(
+    const rendered = await renderWithClientAndSuspense(
       queryClient,
       <React.Suspense fallback="loading">
         <Page />

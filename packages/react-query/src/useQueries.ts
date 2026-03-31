@@ -6,6 +6,7 @@ import {
   QueryObserver,
   noop,
   notifyManager,
+  pendingThenable,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './IsRestoringProvider'
@@ -17,14 +18,10 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
+  use,
 } from './suspense'
-import type {
-  DefinedUseQueryResult,
-  UseQueryOptions,
-  UseQueryResult,
-} from './types'
 import type {
   DefaultError,
   OmitKeyof,
@@ -36,6 +33,11 @@ import type {
   QueryObserverOptions,
   ThrowOnError,
 } from '@tanstack/query-core'
+import type {
+  DefinedUseQueryResult,
+  UseQueryOptions,
+  UseQueryResult,
+} from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed
@@ -289,20 +291,37 @@ export function useQueries<
     shouldSuspend(defaultedQueries[index], result),
   )
 
-  const suspensePromises = shouldAtLeastOneSuspend
+  const suspendedQueries = shouldAtLeastOneSuspend
     ? optimisticResult.flatMap((result, index) => {
         const opts = defaultedQueries[index]
+        const queryObserver =
+          (opts && observer.getObservers()[index]) ||
+          (opts ? new QueryObserver(client, opts) : undefined)
 
-        if (opts && shouldSuspend(opts, result)) {
-          const queryObserver = new QueryObserver(client, opts)
-          return fetchOptimistic(opts, queryObserver, errorResetBoundary)
+        if (opts && queryObserver && shouldSuspend(opts, result)) {
+          return [
+            {
+              queryHash: opts.queryHash,
+              promise: getSuspensePromise(
+                opts,
+                queryObserver,
+                errorResetBoundary,
+              ),
+            },
+          ]
         }
         return []
       })
     : []
 
-  if (suspensePromises.length > 0) {
-    throw Promise.all(suspensePromises)
+  if (suspendedQueries.length > 0) {
+    use(
+      getCombinedSuspensePromise(
+        observer,
+        suspendedQueries.map((entry) => entry.queryHash),
+        suspendedQueries.map((entry) => entry.promise),
+      ),
+    )
   }
   const firstSingleResultWhichShouldThrow = optimisticResult.find(
     (result, index) => {
@@ -325,4 +344,43 @@ export function useQueries<
   }
 
   return getCombinedResult(trackResult())
+}
+
+const suspenseQueriesPromiseCache = new WeakMap<
+  QueriesObserver<any>,
+  {
+    queryHashes: Array<string>
+    promise: Promise<Array<unknown>>
+  }
+>()
+
+function getCombinedSuspensePromise(
+  observer: QueriesObserver<any>,
+  queryHashes: Array<string>,
+  suspensePromises: Array<Promise<unknown>>,
+) {
+  if (suspensePromises.length === 1) {
+    return suspensePromises[0]!
+  }
+
+  const cached = suspenseQueriesPromiseCache.get(observer)
+
+  if (
+    cached &&
+    cached.queryHashes.length === queryHashes.length &&
+    cached.queryHashes.every((hash, index) => hash === queryHashes[index])
+  ) {
+    return cached.promise
+  }
+
+  const promise = pendingThenable<Array<unknown>>()
+
+  Promise.all(suspensePromises).then(promise.resolve, promise.reject)
+
+  suspenseQueriesPromiseCache.set(observer, {
+    queryHashes,
+    promise,
+  })
+
+  return promise
 }
