@@ -404,6 +404,10 @@
               "to": "framework/solid/guides/window-focus-refetching"
             },
             {
+              "label": "Polling",
+              "to": "framework/solid/guides/polling"
+            },
+            {
               "label": "Disabling/Pausing Queries",
               "to": "framework/solid/guides/disabling-queries"
             },
@@ -539,6 +543,10 @@
             {
               "label": "Window Focus Refetching",
               "to": "framework/vue/guides/window-focus-refetching"
+            },
+            {
+              "label": "Polling",
+              "to": "framework/vue/guides/polling"
             },
             {
               "label": "Disabling/Pausing Queries",
