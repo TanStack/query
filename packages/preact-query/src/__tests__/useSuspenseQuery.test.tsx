@@ -22,16 +22,19 @@ import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
 
 describe('useSuspenseQuery', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   /**
    * Preact Suspense handles the rerenders differently than React.
