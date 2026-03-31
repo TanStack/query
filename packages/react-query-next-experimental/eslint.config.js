@@ -4,7 +4,8 @@ import pluginReact from '@eslint-react/eslint-plugin'
 import reactHooks from 'eslint-plugin-react-hooks'
 import rootConfig from './root.eslint.config.js'
 
-export default [
+/** @type {import('eslint').Linter.Config[]} */
+const config = [
   ...rootConfig,
   // @ts-expect-error wtf
   ...reactHooks.configs['recommended-latest'],
@@ -20,3 +21,5 @@ export default [
     },
   },
 ]
+
+export default config

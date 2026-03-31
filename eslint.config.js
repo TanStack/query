@@ -1,16 +1,24 @@
 // @ts-check
 
-// @ts-ignore Needed due to moduleResolution Node vs Bundler
 import { tanstackConfig } from '@tanstack/eslint-config'
 import pluginCspell from '@cspell/eslint-plugin'
+import unusedImports from 'eslint-plugin-unused-imports'
 import vitest from '@vitest/eslint-plugin'
+import oxlint from 'eslint-plugin-oxlint'
+import { createJiti } from 'jiti'
 
-export default [
+const jiti = createJiti(import.meta.url)
+const oxlintConfig = /** @type {*} */ (await jiti.import('./oxlint.config.ts'))
+  .default
+
+/** @type {import('eslint').Linter.Config[]} */
+const config = [
   ...tanstackConfig,
   {
     name: 'tanstack/temp',
     plugins: {
       cspell: pluginCspell,
+      'unused-imports': unusedImports,
     },
     rules: {
       'cspell/spellchecker': [
@@ -44,7 +52,19 @@ export default [
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'no-case-declarations': 'off',
+      'no-shadow': 'off',
+      'pnpm/enforce-catalog': 'off',
+      'pnpm/json-enforce-catalog': 'off',
       'prefer-const': 'off',
+      'unused-imports/no-unused-imports': 'warn',
+    },
+  },
+  {
+    name: 'tanstack/linter-options',
+    linterOptions: {
+      // eslint-disable comments are shared with oxlint — don't warn
+      // about directives ESLint considers unused
+      reportUnusedDisableDirectives: 'off',
     },
   },
   {
@@ -61,4 +81,8 @@ export default [
     },
     settings: { vitest: { typecheck: true } },
   },
+  // Must be last — disables ESLint rules that oxlint already covers
+  ...oxlint.buildFromOxlintConfig(oxlintConfig),
 ]
+
+export default config

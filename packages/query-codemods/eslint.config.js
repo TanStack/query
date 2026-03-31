@@ -2,7 +2,8 @@
 
 import rootConfig from './root.eslint.config.js'
 
-export default [
+/** @type {import('eslint').Linter.Config[]} */
+const config = [
   ...rootConfig,
   {
     rules: {
@@ -16,3 +17,5 @@ export default [
     },
   },
 ]
+
+export default config
