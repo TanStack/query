@@ -12,6 +12,7 @@ import {
 import {
   ensureSuspenseTimers,
   fetchOptimistic,
+  getSuspensePromise,
   shouldSuspend,
   use,
   willFetch,
@@ -126,10 +127,7 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
-    // Do the same thing as the effect right above because the effect won't run
-    // when we suspend but also, the component won't re-mount so our observer would
-    // be out of date.
-    use(fetchOptimistic(defaultedOptions, observer, errorResetBoundary))
+    use(getSuspensePromise(defaultedOptions, observer, errorResetBoundary))
   }
 
   // Handle error boundary

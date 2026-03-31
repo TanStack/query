@@ -47,39 +47,40 @@ export const ensureSuspenseTimers = (
   }
 }
 
+const fallbackUse = <T>(
+  thenable: Promise<T> & {
+    status?: 'pending' | 'fulfilled' | 'rejected'
+    value?: T
+    reason?: unknown
+  },
+): T => {
+  switch (thenable.status) {
+    case 'pending':
+      throw thenable
+    case 'fulfilled':
+      return thenable.value as T
+    case 'rejected':
+      throw thenable.reason
+    default:
+      thenable.status = 'pending'
+      thenable.then(
+        (v) => {
+          thenable.status = 'fulfilled'
+          thenable.value = v
+        },
+        (e) => {
+          thenable.status = 'rejected'
+          thenable.reason = e
+        },
+      )
+      throw thenable
+  }
+}
+
 export const use =
   // React18 doesn't have `use`
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  React.use ||
-  (<T>(
-    thenable: Promise<T> & {
-      status?: 'pending' | 'fulfilled' | 'rejected'
-      value?: T
-      reason?: unknown
-    },
-  ): T => {
-    switch (thenable.status) {
-      case 'pending':
-        throw thenable
-      case 'fulfilled':
-        return thenable.value as T
-      case 'rejected':
-        throw thenable.reason
-      default:
-        thenable.status = 'pending'
-        thenable.then(
-          (v) => {
-            thenable.status = 'fulfilled'
-            thenable.value = v
-          },
-          (e) => {
-            thenable.status = 'rejected'
-            thenable.reason = e
-          },
-        )
-        throw thenable
-    }
-  })
+  React.use || fallbackUse
 
 export const willFetch = (
   result: QueryObserverResult<any, any>,
@@ -110,6 +111,58 @@ export const fetchOptimistic = <
   observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) =>
-  observer.fetchOptimistic(defaultedOptions).catch(() => {
-    errorResetBoundary.clearReset()
+  observer
+    .fetchOptimistic(defaultedOptions)
+    .catch((error) => {
+      errorResetBoundary.clearReset()
+      throw error
+    })
+    .finally(() => {
+      observer.updateResult()
+    })
+
+export const getSuspensePromise = <
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey,
+>(
+  defaultedOptions: DefaultedQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
+  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  errorResetBoundary: QueryErrorResetBoundaryValue,
+) => {
+  const queryHash = defaultedOptions.queryHash
+  const cached = suspenseObserverPromiseCache.get(observer)
+
+  if (cached?.queryHash === queryHash) {
+    return cached.promise as Promise<QueryObserverResult<TData, TError>>
+  }
+
+  const promise = fetchOptimistic(
+    defaultedOptions,
+    observer,
+    errorResetBoundary,
+  )
+
+  suspenseObserverPromiseCache.set(observer, {
+    queryHash,
+    promise,
   })
+
+  return promise
+}
+
+const suspenseObserverPromiseCache = new WeakMap<
+  QueryObserver<any, any, any, any, any>,
+  {
+    queryHash: string
+    promise: Promise<QueryObserverResult<any, any>>
+  }
+>()
