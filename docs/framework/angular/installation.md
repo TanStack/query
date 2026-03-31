@@ -7,7 +7,7 @@ title: Installation
 
 ### NPM
 
-_Angular Query is compatible with Angular v16 and higher_
+_Angular Query is compatible with Angular v19 and higher_
 
 ```bash
 npm i @tanstack/angular-query-experimental
@@ -30,5 +30,9 @@ or
 ```bash
 bun add @tanstack/angular-query-experimental
 ```
+
+To use [Devtools](./devtools), install `@tanstack/angular-query-devtools`.
+
+For [SSR with dehydration / hydration](./guides/ssr), `provideTanStackQuery` sets up serialization and hydration automatically; see the SSR guide.
 
 > Wanna give it a spin before you download? Try out the [simple](./examples/simple) or [basic](./examples/basic) examples!

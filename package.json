@@ -101,7 +101,8 @@
       "@typescript-eslint/visitor-keys": "8.56.1",
       "typescript-eslint": "8.56.1",
       "vite": "^6.4.1",
-      "esbuild": "^0.27.2"
+      "esbuild": "^0.27.2",
+      "@angular/build>vite": "7.1.11"
     }
   }
 }

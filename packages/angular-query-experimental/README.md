@@ -25,11 +25,12 @@ Visit https://tanstack.com/query/latest/docs/framework/angular/overview
 - Paginated + Cursor-based Queries
 - Load-More + Infinite Scroll Queries w/ Scroll Recovery
 - Request Cancellation
-- Dedicated Devtools
+- Dedicated Devtools (see the [Angular Devtools guide](https://tanstack.com/query/latest/docs/framework/angular/devtools))
+- Built-in SSR dehydration and client hydration when using `provideTanStackQuery` (see the [SSR guide](https://tanstack.com/query/latest/docs/framework/angular/guides/ssr))
 
 # Quick Start
 
-> The Angular adapter for TanStack Query requires Angular 16 or higher.
+> The Angular adapter for TanStack Query requires Angular 19 or higher.
 
 1. Install `angular-query`
 
@@ -66,6 +67,8 @@ bootstrapApplication(AppComponent, {
 })
 ```
 
+`provideTanStackQuery` returns a single [`EnvironmentProviders`](https://angular.dev/api/core/EnvironmentProviders) value for **application / environment** config — not for [`@Component({ providers })`](https://angular.dev/api/core/Component#providers).
+
 or in a NgModule-based app
 
 ```ts
@@ -78,9 +81,10 @@ import {
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule],
-  providers: [provideTanStackQuery(new QueryClient())],
+  providers: [provideTanStackQuery(new QueryClient()), provideHttpClient()],
   bootstrap: [AppComponent],
 })
+export class AppModule {}
 ```
 
 3. Inject query

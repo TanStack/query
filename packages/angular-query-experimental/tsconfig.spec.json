@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["vitest/globals", "node"],
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    "declaration": false,
+    "declarationMap": false,
+    "composite": false
+  },
+  "files": ["test-setup.ts"],
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.test-d.ts",
+    "../query-test-utils/src/**/*.ts"
+  ]
+}

@@ -78,13 +78,6 @@ export type DefinedInitialDataInfiniteOptions<
     | undefined
 }
 
-/**
- * Allows to share and re-use infinite query options in a type-safe way.
- *
- * The `queryKey` will be tagged with the type from `queryFn`.
- * @param options - The infinite query options to tag with the type from `queryFn`.
- * @returns The tagged infinite query options.
- */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -109,13 +102,6 @@ export function infiniteQueryOptions<
   queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 }
 
-/**
- * Allows to share and re-use infinite query options in a type-safe way.
- *
- * The `queryKey` will be tagged with the type from `queryFn`.
- * @param options - The infinite query options to tag with the type from `queryFn`.
- * @returns The tagged infinite query options.
- */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -140,13 +126,6 @@ export function infiniteQueryOptions<
   queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
 }
 
-/**
- * Allows to share and re-use infinite query options in a type-safe way.
- *
- * The `queryKey` will be tagged with the type from `queryFn`.
- * @param options - The infinite query options to tag with the type from `queryFn`.
- * @returns The tagged infinite query options.
- */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,

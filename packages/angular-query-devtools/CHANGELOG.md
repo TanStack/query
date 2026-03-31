@@ -1,0 +1,1 @@
+# @tanstack/angular-query-devtools

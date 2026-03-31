@@ -31,7 +31,6 @@
     "compile": "tsc --build",
     "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "npm-run-all --serial test:types:*",
-    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
     "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
@@ -54,29 +53,7 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.mjs"
     },
-    "./package.json": "./package.json",
-    "./inject-queries-experimental": {
-      "types": "./dist/inject-queries-experimental/index.d.ts",
-      "default": "./dist/inject-queries-experimental/index.mjs"
-    },
-    "./devtools": {
-      "types": "./dist/devtools/index.d.ts",
-      "development": "./dist/devtools/index.mjs",
-      "default": "./dist/devtools/stub.mjs"
-    },
-    "./devtools/production": {
-      "types": "./dist/devtools/production/index.d.ts",
-      "default": "./dist/devtools/index.mjs"
-    },
-    "./devtools-panel": {
-      "types": "./dist/devtools-panel/index.d.ts",
-      "development": "./dist/devtools-panel/index.mjs",
-      "default": "./dist/devtools-panel/stub.mjs"
-    },
-    "./devtools-panel/production": {
-      "types": "./dist/devtools-panel/production/index.d.ts",
-      "default": "./dist/devtools-panel/index.mjs"
-    }
+    "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
@@ -88,24 +65,35 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.3.1",
+    "@analogjs/vitest-angular": "^2.3.1",
+    "@angular/build": "^20.0.0",
     "@angular/common": "^20.0.0",
     "@angular/compiler": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-server": "^20.0.0",
+    "@angular/router": "^20.0.0",
     "@tanstack/query-test-utils": "workspace:*",
     "@testing-library/angular": "^18.0.0",
     "npm-run-all2": "^5.0.0",
     "rxjs": "^7.8.2",
+    "typescript": "5.8.3",
     "vite-plugin-dts": "4.2.3",
     "vite-plugin-externalize-deps": "^0.9.0",
-    "vite-tsconfig-paths": "^5.1.4"
-  },
-  "optionalDependencies": {
-    "@tanstack/query-devtools": "workspace:*"
+    "vite-tsconfig-paths": "^5.1.4",
+    "zone.js": "^0.16.0"
   },
   "peerDependencies": {
-    "@angular/common": ">=16.0.0",
-    "@angular/core": ">=16.0.0"
+    "@angular/common": ">=19.0.0",
+    "@angular/core": ">=19.0.0",
+    "@angular/platform-server": ">=19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular/platform-server": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "directory": "dist",

@@ -77,6 +77,8 @@ export class Example {
   template: ` <list-component (endReached)="fetchNextPage()" /> `,
 })
 export class Example {
+  projectsService = inject(ProjectsService)
+
   query = injectInfiniteQuery(() => ({
     queryKey: ['projects'],
     queryFn: async ({ pageParam }) => {

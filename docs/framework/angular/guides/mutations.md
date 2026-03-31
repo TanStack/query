@@ -243,12 +243,15 @@ queryClient.setMutationDefaults(['addTodo'], {
   retry: 3,
 })
 
-class someComponent {
+@Component({
+  // ...
+})
+class SomeComponent {
   // Start mutation in some component:
   mutation = injectMutation(() => ({ mutationKey: ['addTodo'] }))
 
   someMethod() {
-    mutation.mutate({ title: 'title' })
+    this.mutation.mutate({ title: 'title' })
   }
 }
 

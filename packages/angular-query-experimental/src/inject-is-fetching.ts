@@ -23,10 +23,10 @@ export interface InjectIsFetchingOptions {
  * Injects a signal that tracks the number of queries that your application is loading or
  * fetching in the background.
  *
- * Can be used for app-wide loading indicators
+ * Can be used for app-wide loading indicators.
  * @param filters - The filters to apply to the query.
- * @param options - Additional configuration
- * @returns signal with number of loading or fetching queries.
+ * @param options - Additional configuration.
+ * @returns A read-only signal with the number of loading or fetching queries.
  */
 export function injectIsFetching(
   filters?: QueryFilters,
@@ -39,20 +39,15 @@ export function injectIsFetching(
   const queryClient = injector.get(QueryClient)
 
   const cache = queryClient.getQueryCache()
-  // isFetching is the prev value initialized on mount *
-  let isFetching = queryClient.isFetching(filters)
-
-  const result = signal(isFetching)
+  const result = signal(queryClient.isFetching(filters))
 
   const unsubscribe = ngZone.runOutsideAngular(() =>
     cache.subscribe(
       notifyManager.batchCalls(() => {
         const newIsFetching = queryClient.isFetching(filters)
-        if (isFetching !== newIsFetching) {
-          // * and update with each change
-          isFetching = newIsFetching
+        if (result() !== newIsFetching) {
           ngZone.run(() => {
-            result.set(isFetching)
+            result.set(newIsFetching)
           })
         }
       }),
@@ -61,5 +56,5 @@ export function injectIsFetching(
 
   destroyRef.onDestroy(unsubscribe)
 
-  return result
+  return result.asReadonly()
 }

@@ -9,7 +9,7 @@ title: queryFeature
 function queryFeature<TFeatureKind>(kind, providers): QueryFeature<TFeatureKind>;
 ```
 
-Defined in: [providers.ts:146](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L146)
+Defined in: [providers.ts:150](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L150)
 
 Helper function to create an object that represents a Query feature.
 
@@ -17,7 +17,7 @@ Helper function to create an object that represents a Query feature.
 
 ### TFeatureKind
 
-`TFeatureKind` *extends* `"Devtools"` \| `"PersistQueryClient"`
+`TFeatureKind` *extends* `QueryFeatureKind`
 
 ## Parameters
 
@@ -25,9 +25,13 @@ Helper function to create an object that represents a Query feature.
 
 `TFeatureKind`
 
+The feature kind identifier.
+
 ### providers
 
-`Provider`[]
+`EnvironmentProviders`
+
+The providers contributed by the feature.
 
 ## Returns
 

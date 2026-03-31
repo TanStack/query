@@ -9,7 +9,7 @@ title: QueriesResults
 type QueriesResults<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? CreateQueryResult[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetCreateQueryResult<Head>] : T extends [infer Head, ...(infer Tails)] ? QueriesResults<[...Tails], [...TResults, GetCreateQueryResult<Head>], [...TDepth, 1]> : { [K in keyof T]: GetCreateQueryResult<T[K]> };
 ```
 
-Defined in: [inject-queries.ts:186](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-queries.ts#L186)
+Defined in: [inject-queries.ts:220](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-queries.ts#L220)
 
 QueriesResults reducer recursively maps type param to results
 

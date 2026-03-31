@@ -39,12 +39,15 @@ export { injectMutation } from './inject-mutation'
 export type { InjectMutationStateOptions } from './inject-mutation-state'
 export { injectMutationState } from './inject-mutation-state'
 
-export type { QueriesOptions, QueriesResults } from './inject-queries'
+export type {
+  InjectQueriesOptions,
+  QueriesOptions,
+  QueriesResults,
+} from './inject-queries'
+export { injectQueries } from './inject-queries'
 
 export type { InjectQueryOptions } from './inject-query'
 export { injectQuery } from './inject-query'
-
-export { injectQueryClient } from './inject-query-client'
 
 export type {
   DevtoolsFeature,
@@ -53,8 +56,7 @@ export type {
   QueryFeatures,
 } from './providers'
 export {
-  provideAngularQuery,
-  provideQueryClient,
   provideTanStackQuery,
   queryFeature,
+  withHydrationKey,
 } from './providers'

@@ -16,28 +16,31 @@ await generateReferenceDocs({
       ],
       tsconfig: resolve(
         __dirname,
-        '../packages/angular-query-experimental/tsconfig.json',
+        '../packages/angular-query-experimental/tsconfig.docs.json',
       ),
       outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
-      exclude: ['./packages/query-core/**/*'],
+      exclude: [
+        './packages/query-core/**/*',
+        './packages/angular-query-experimental/vite.config.ts',
+      ],
     },
     {
       name: 'svelte-query',
       entryPoints: [
         resolve(__dirname, '../packages/svelte-query/src/index.ts'),
       ],
-      tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.json'),
+      tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.docs.json'),
       outputDir: resolve(__dirname, '../docs/framework/svelte/reference'),
-      exclude: ['./packages/query-core/**/*'],
+      exclude: ['./packages/query-core/**/*', './packages/svelte-query/vite.config.ts'],
     },
     {
       name: 'preact-query',
       entryPoints: [
         resolve(__dirname, '../packages/preact-query/src/index.ts'),
       ],
-      tsconfig: resolve(__dirname, '../packages/preact-query/tsconfig.json'),
+      tsconfig: resolve(__dirname, '../packages/preact-query/tsconfig.docs.json'),
       outputDir: resolve(__dirname, '../docs/framework/preact/reference'),
-      exclude: ['./packages/query-core/**/*'],
+      exclude: ['./packages/query-core/**/*', './packages/preact-query/vite.config.ts'],
     },
   ],
 })

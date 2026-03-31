@@ -1,6 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { skipToken } from '..'
-import { injectQueries } from '../inject-queries'
+import { injectQueries, skipToken } from '..'
 import { queryOptions } from '../query-options'
 import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
 import type { Signal } from '@angular/core'
@@ -173,5 +172,90 @@ describe('InjectQueries config object overload', () => {
         ]
       >
     >()
+  })
+})
+
+describe('InjectQueries combine', () => {
+  it('should provide the correct type for the combine function', () => {
+    injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(1),
+        },
+        {
+          queryKey: ['key2'],
+          queryFn: () => Promise.resolve(true),
+        },
+      ],
+      combine: (results) => {
+        expectTypeOf(results[0].data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(results[0].refetch).toBeCallableWith()
+        expectTypeOf(results[1].data).toEqualTypeOf<boolean | undefined>()
+        expectTypeOf(results[1].refetch).toBeCallableWith()
+      },
+    }))
+  })
+
+  it('should provide the correct types on the combined result with initial data', () => {
+    injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(1),
+          initialData: 1,
+        },
+      ],
+      combine: (results) => {
+        expectTypeOf(results[0].data).toEqualTypeOf<number>()
+        expectTypeOf(results[0].refetch).toBeCallableWith()
+      },
+    }))
+  })
+
+  it('should provide the correct result type', () => {
+    const queryResults = injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(1),
+        },
+        {
+          queryKey: ['key2'],
+          queryFn: () => Promise.resolve(true),
+        },
+      ],
+      combine: (results) => ({
+        data: {
+          1: results[0].data,
+          2: results[1].data,
+        },
+        fn: () => {},
+      }),
+    }))
+
+    expectTypeOf(queryResults).branded.toEqualTypeOf<
+      Signal<{
+        data: {
+          1: number | undefined
+          2: boolean | undefined
+        }
+        fn: () => void
+      }>
+    >()
+  })
+
+  it('should provide the correct types on the result with initial data', () => {
+    const queryResults = injectQueries(() => ({
+      queries: [
+        {
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(1),
+          initialData: 1,
+        },
+      ],
+    }))
+
+    expectTypeOf(queryResults()[0].data()).toEqualTypeOf<number>()
   })
 })
