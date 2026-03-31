@@ -111,9 +111,15 @@ export const fetchOptimistic = <
   observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) =>
-  observer.fetchOptimistic(defaultedOptions).catch(() => {
-    errorResetBoundary.clearReset()
-  })
+  observer
+    .fetchOptimistic(defaultedOptions)
+    .catch((error) => {
+      errorResetBoundary.clearReset()
+      throw error
+    })
+    .finally(() => {
+      observer.updateResult()
+    })
 
 export const getSuspensePromise = <
   TQueryFnData,
@@ -157,6 +163,6 @@ const suspenseObserverPromiseCache = new WeakMap<
   QueryObserver<any, any, any, any, any>,
   {
     queryHash: string
-    promise: Promise<void | QueryObserverResult<any, any>>
+    promise: Promise<QueryObserverResult<any, any>>
   }
 >()
