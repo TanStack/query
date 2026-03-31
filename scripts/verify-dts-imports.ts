@@ -10,7 +10,10 @@ const FORBIDDEN_PATTERNS = [
 
 const errors: Array<{ file: string; line: number; text: string }> = []
 
-const files = await glob(['packages/*/build/**/*.d.ts', 'packages/*/build/**/*.d.cts'])
+const files = await glob([
+  'packages/*/build/**/*.d.ts',
+  'packages/*/build/**/*.d.cts',
+])
 
 if (files.length === 0) {
   console.error(
@@ -33,9 +36,7 @@ for (const file of files) {
 }
 
 if (errors.length > 0) {
-  console.error(
-    'ERROR: Build tool types leaked into published .d.ts files:\n',
-  )
+  console.error('ERROR: Build tool types leaked into published .d.ts files:\n')
   for (const error of errors) {
     console.error(`  ${error.file}:${error.line}`)
     console.error(`    ${error.text}\n`)
