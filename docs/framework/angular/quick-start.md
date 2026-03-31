@@ -35,7 +35,7 @@ import {
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule],
-  providers: [provideTanStackQuery(new QueryClient())],
+  providers: [provideTanStackQuery(new QueryClient()), provideHttpClient()],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

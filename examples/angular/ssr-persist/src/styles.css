@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background: #faf8f2;
+  color: #1b1f23;
+}
+
+button {
+  font: inherit;
+}

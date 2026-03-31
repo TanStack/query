@@ -11,9 +11,9 @@ function injectIsMutating(filters?, options?): Signal<number>;
 
 Defined in: [inject-is-mutating.ts:30](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/inject-is-mutating.ts#L30)
 
-Injects a signal that tracks the number of mutations that your application is fetching.
+Injects a signal that tracks the number of mutations that are currently pending in your application.
 
-Can be used for app-wide loading indicators
+Can be used for app-wide loading indicators.
 
 ## Parameters
 
@@ -21,16 +21,16 @@ Can be used for app-wide loading indicators
 
 `MutationFilters`\<`unknown`, `Error`, `unknown`, `unknown`\>
 
-The filters to apply to the query.
+The filters to apply to the mutations.
 
 ### options?
 
 [`InjectIsMutatingOptions`](../interfaces/InjectIsMutatingOptions.md)
 
-Additional configuration
+Additional configuration.
 
 ## Returns
 
 `Signal`\<`number`\>
 
-A read-only signal with the number of fetching mutations.
+A read-only signal with the number of pending mutations.

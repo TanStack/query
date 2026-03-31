@@ -15,5 +15,5 @@
     "strictTemplates": true
   },
   "include": ["src", "scripts", "test-setup.ts", "*.config.*", "package.json"],
-  "references": [{ "path": "../query-core" }, { "path": "../query-devtools" }]
+  "references": [{ "path": "../query-core" }]
 }

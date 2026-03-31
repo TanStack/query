@@ -1,17 +1,21 @@
 import {
   ApplicationRef,
+  ChangeDetectionStrategy,
   Component,
   Injector,
+  NgZone,
   input,
+  inputBinding,
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { By } from '@angular/platform-browser'
+import { render } from '@testing-library/angular'
 import { sleep } from '@tanstack/query-test-utils'
+import { firstValueFrom } from 'rxjs'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
-import { expectSignals, setFixtureSignalInputs } from './test-utils'
+import { expectSignals } from './test-utils'
 
 describe('injectMutation', () => {
   let queryClient: QueryClient
@@ -307,6 +311,7 @@ describe('injectMutation', () => {
         <button (click)="mutate()"></button>
         <span>{{ mutation.data() }}</span>
       `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class FakeComponent {
       name = input.required<string>()
@@ -321,19 +326,26 @@ describe('injectMutation', () => {
       }
     }
 
-    const fixture = TestBed.createComponent(FakeComponent)
-    const { debugElement } = fixture
-    setFixtureSignalInputs(fixture, { name: 'value' })
+    const name = signal('value')
+    const rendered = await render(FakeComponent, {
+      bindings: [inputBinding('name', name.asReadonly())],
+    })
 
-    const button = debugElement.query(By.css('button'))
-    button.triggerEventHandler('click')
+    const fixture = rendered.fixture
+
+    const hostButton = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement
+    hostButton.click()
 
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    const text = debugElement.query(By.css('span')).nativeElement.textContent
-    expect(text).toEqual('value')
-    const mutation = mutationCache.find({ mutationKey: ['fake', 'value'] })
+    const span = fixture.nativeElement.querySelector('span') as HTMLSpanElement
+    expect(span.textContent).toEqual('value')
+    const mutation = mutationCache.find({
+      mutationKey: ['fake', 'value'],
+    })
     expect(mutation).toBeDefined()
     expect(mutation!.options.mutationKey).toStrictEqual(['fake', 'value'])
   })
@@ -347,6 +359,7 @@ describe('injectMutation', () => {
         <button (click)="mutate()"></button>
         <span>{{ mutation.data() }}</span>
       `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class FakeComponent {
       name = input.required<string>()
@@ -359,28 +372,36 @@ describe('injectMutation', () => {
       mutate(): void {
         this.mutation.mutate()
       }
+
     }
 
-    const fixture = TestBed.createComponent(FakeComponent)
-    const { debugElement } = fixture
-    setFixtureSignalInputs(fixture, { name: 'value' })
+    const name = signal('value')
+    const rendered = await render(FakeComponent, {
+      bindings: [inputBinding('name', name.asReadonly())],
+    })
 
-    const button = debugElement.query(By.css('button'))
-    const span = debugElement.query(By.css('span'))
+    const fixture = rendered.fixture
 
-    button.triggerEventHandler('click')
+    let button = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement
+    button.click()
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    expect(span.nativeElement.textContent).toEqual('value')
+    let span = fixture.nativeElement.querySelector('span') as HTMLSpanElement
+    expect(span.textContent).toEqual('value')
 
-    setFixtureSignalInputs(fixture, { name: 'updatedValue' })
+    name.set('updatedValue')
+    fixture.detectChanges()
 
-    button.triggerEventHandler('click')
+    button = fixture.nativeElement.querySelector('button') as HTMLButtonElement
+    button.click()
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    expect(span.nativeElement.textContent).toEqual('updatedValue')
+    span = fixture.nativeElement.querySelector('span') as HTMLSpanElement
+    expect(span.textContent).toEqual('updatedValue')
 
     const mutations = mutationCache.findAll()
     expect(mutations.length).toBe(2)
@@ -413,26 +434,34 @@ describe('injectMutation', () => {
       expect(boundaryFn).toHaveBeenCalledWith(err)
     })
 
-    test('should throw when throwOnError is true and mutate is used', async () => {
-      const { mutate } = TestBed.runInInjectionContext(() => {
-        return injectMutation(() => ({
-          mutationKey: ['fake'],
-          mutationFn: () => {
-            return Promise.reject(
-              new Error('Expected mock error. All is well!'),
-            )
-          },
-          throwOnError: true,
-        }))
+    test('should emit zone error when throwOnError is true and mutate is used', async () => {
+      const err = new Error('Expected mock error. All is well!')
+      const zone = TestBed.inject(NgZone)
+      const zoneErrorEmitSpy = vi.spyOn(zone.onError, 'emit')
+      const runSpy = vi.spyOn(zone, 'run').mockImplementation((callback: any) => {
+        try {
+          return callback()
+        } catch {
+          return undefined
+        }
       })
 
-      TestBed.tick()
+      const { mutate } = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationKey: ['fake'],
+          mutationFn: () => {
+            return sleep(0).then(() => Promise.reject(err))
+          },
+          throwOnError: true,
+        })),
+      )
 
       mutate()
 
-      await expect(vi.advanceTimersByTimeAsync(0)).rejects.toThrow(
-        'Expected mock error. All is well!',
-      )
+      await vi.runAllTimersAsync()
+
+      expect(zoneErrorEmitSpy).toHaveBeenCalledWith(err)
+      expect(runSpy).toHaveBeenCalled()
     })
   })
 
@@ -647,12 +676,13 @@ describe('injectMutation', () => {
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (data: string) => `final: ${data}`, // Synchronous resolution
+          mutationFn: async (data: string) => {
+            await sleep(50)
+            return `final: ${data}`
+          },
           onMutate: async (variables) => {
             onMutateCalled = true
-            const previousData = queryClient.getQueryData(testQueryKey)
             queryClient.setQueryData(testQueryKey, `optimistic: ${variables}`)
-            return { previousData }
           },
           onSuccess: (data) => {
             onSuccessCalled = true
@@ -661,19 +691,30 @@ describe('injectMutation', () => {
         })),
       )
 
-      // Start mutation
-      mutation.mutate('test')
-
-      // Synchronize pending effects
+      // Run effects
       TestBed.tick()
 
-      const stablePromise = app.whenStable()
+      // Start mutation
+      expect(queryClient.getQueryData(testQueryKey)).toBe('initial')
+      mutation.mutate('test')
+
       // Flush microtasks to allow TanStack Query's scheduled notifications to process
       await Promise.resolve()
-      await vi.advanceTimersByTimeAsync(1)
+
+      // Check for optimistic update in the same macro task
+      expect(onMutateCalled).toBe(true)
+      expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic: test')
+
+      // Check stability before the mutation completes, waiting for the next macro task
+      await vi.advanceTimersByTimeAsync(0)
+      expect(mutation.isPending()).toBe(true)
+      expect(await firstValueFrom(app.isStable)).toBe(false)
+
+      // Wait for the mutation to complete
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(60)
       await stablePromise
 
-      expect(onMutateCalled).toBe(true)
       expect(onSuccessCalled).toBe(true)
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('final: test')

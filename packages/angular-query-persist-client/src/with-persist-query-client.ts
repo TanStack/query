@@ -5,9 +5,10 @@ import {
 } from '@tanstack/angular-query-experimental'
 import {
   DestroyRef,
-  ENVIRONMENT_INITIALIZER,
   PLATFORM_ID,
   inject,
+  makeEnvironmentProviders,
+  provideEnvironmentInitializer,
   signal,
 } from '@angular/core'
 import { isPlatformBrowser } from '@angular/common'
@@ -15,74 +16,121 @@ import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,
 } from '@tanstack/query-persist-client-core'
-import type { PersistQueryClientOptions as PersistQueryClientOptionsCore } from '@tanstack/query-persist-client-core'
 import type { PersistQueryClientFeature } from '@tanstack/angular-query-experimental'
+import type {
+  PersistQueryClientUserOptions,
+  WithPersistQueryClientFn,
+  WithPersistQueryClientOptions,
+} from './with-persist-query-client.types'
 
-type PersistQueryClientOptions = {
-  persistOptions: Omit<PersistQueryClientOptionsCore, 'queryClient'>
-  onSuccess?: () => Promise<unknown> | unknown
-  onError?: () => Promise<unknown> | unknown
+export type {
+  PersistQueryClientUserOptions,
+  WithPersistQueryClientFn,
+  WithPersistQueryClientOptions,
+} from './with-persist-query-client.types'
+
+/**
+ * @param input - Static options object or factory callback
+ * @param withOptions - When `input` is a function, optional `deps` for injection
+ * @param injectDep - `inject` from the current initializer context
+ * @returns Resolved persistence options
+ */
+function resolvePersistOptions(
+  input: PersistQueryClientUserOptions | WithPersistQueryClientFn,
+  withOptions: WithPersistQueryClientOptions | undefined,
+  injectDep: <T>(token: any) => T,
+): PersistQueryClientUserOptions {
+  if (typeof input === 'function') {
+    const deps = withOptions?.deps ?? []
+    const depValues = deps.map((token) => injectDep(token))
+    return input(...depValues)
+  }
+  return input
 }
 
 /**
  * Enables persistence.
- *
- * **Example**
+ * **Example (static options)** — avoid browser-only globals at module scope when the same config runs on the server; prefer the factory form below for `localStorage`.
  *
  * ```ts
- * const localStoragePersister = createAsyncStoragePersister({
- *  storage: window.localStorage,
+ * withPersistQueryClient({
+ *   persistOptions: { persister },
+ *   onSuccess: () => console.log('Restored.'),
  * })
- *
- * export const appConfig: ApplicationConfig = {
- *   providers: [
- *     provideTanStackQuery(
- *       new QueryClient(),
- *       withPersistQueryClient({
- *         persistOptions: {
- *           persister: localStoragePersister,
- *         },
- *         onSuccess: () => console.log('Restoration completed successfully.'),
- *       })
- *     ),
- *   ],
- * };
  * ```
- * @param persistQueryClientOptions - persistence options and optional onSuccess and onError callbacks which get called when the restoration process is complete.
+ *
+ * **Example (factory, browser only, optional deps)** — same as `withDevtools`: the function runs only in the browser, so you can safely use `localStorage`.
+ *
+ * ```ts
+ * withPersistQueryClient(() => ({
+ *   persistOptions: {
+ *     persister: createAsyncStoragePersister({ storage: localStorage }),
+ *   },
+ * }))
+ * ```
+ *
+ * ```ts
+ * withPersistQueryClient(
+ *   (storage: StorageService) => ({
+ *     persistOptions: { persister: storage.createPersister() },
+ *   }),
+ *   { deps: [StorageService] },
+ * )
+ * ```
+ * @param factoryOrOptions - Either a callback (runs only in the browser) or a static options object.
+ * @param withOptions - When using a callback, optional `deps` passed as arguments (like `useFactory`).
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  */
 export function withPersistQueryClient(
-  persistQueryClientOptions: PersistQueryClientOptions,
+  factoryOrOptions: WithPersistQueryClientFn,
+  withOptions?: WithPersistQueryClientOptions,
+): PersistQueryClientFeature
+export function withPersistQueryClient(
+  options: PersistQueryClientUserOptions,
+): PersistQueryClientFeature
+/**
+ * @param factoryOrOptions - See overload documentation.
+ * @param withOptions - See overload documentation.
+ * @returns Persist query client feature providers.
+ */
+export function withPersistQueryClient(
+  factoryOrOptions:
+    | PersistQueryClientUserOptions
+    | WithPersistQueryClientFn,
+  withOptions?: WithPersistQueryClientOptions,
 ): PersistQueryClientFeature {
   const isRestoring = signal(true)
-  const providers = [
+  return queryFeature('PersistQueryClient', makeEnvironmentProviders([
     provideIsRestoring(isRestoring.asReadonly()),
-    {
-      // Do not use provideEnvironmentInitializer while Angular < v19 is supported
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue: () => {
-        if (!isPlatformBrowser(inject(PLATFORM_ID))) return
-        const destroyRef = inject(DestroyRef)
-        const queryClient = inject(QueryClient)
+    provideEnvironmentInitializer(() => {
+      if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+        isRestoring.set(false)
+        return
+      }
 
-        const { onSuccess, onError, persistOptions } = persistQueryClientOptions
-        const options = { queryClient, ...persistOptions }
-        persistQueryClientRestore(options)
-          .then(() => {
-            onSuccess?.()
-          })
-          .catch(() => {
-            onError?.()
-          })
-          .finally(() => {
-            isRestoring.set(false)
-            const cleanup = persistQueryClientSubscribe(options)
-            destroyRef.onDestroy(cleanup)
-          })
-      },
-    },
-  ]
-  return queryFeature('PersistQueryClient', providers)
+      const destroyRef = inject(DestroyRef)
+      const queryClient = inject(QueryClient)
+
+      const { onSuccess, onError, persistOptions } = resolvePersistOptions(
+        factoryOrOptions,
+        withOptions,
+        inject,
+      )
+
+      const options = { queryClient, ...persistOptions }
+
+      void persistQueryClientRestore(options).then(() => {
+        return onSuccess?.()
+      }).catch(() => {
+        return onError?.()
+      }).finally(() => {
+        if (destroyRef.destroyed) return
+
+        isRestoring.set(false)
+        const cleanup = persistQueryClientSubscribe(options)
+        destroyRef.onDestroy(cleanup)
+      })
+    }),
+  ]))
 }

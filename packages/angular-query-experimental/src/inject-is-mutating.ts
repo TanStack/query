@@ -20,12 +20,12 @@ export interface InjectIsMutatingOptions {
 }
 
 /**
- * Injects a signal that tracks the number of mutations that your application is fetching.
+ * Injects a signal that tracks the number of mutations that are currently pending in your application.
  *
- * Can be used for app-wide loading indicators
- * @param filters - The filters to apply to the query.
- * @param options - Additional configuration
- * @returns A read-only signal with the number of fetching mutations.
+ * Can be used for app-wide loading indicators.
+ * @param filters - The filters to apply to the mutations.
+ * @param options - Additional configuration.
+ * @returns A read-only signal with the number of pending mutations.
  */
 export function injectIsMutating(
   filters?: MutationFilters,

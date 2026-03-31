@@ -14,7 +14,7 @@ Defined in: [inject-is-fetching.ts:31](https://github.com/TanStack/query/blob/ma
 Injects a signal that tracks the number of queries that your application is loading or
 fetching in the background.
 
-Can be used for app-wide loading indicators
+Can be used for app-wide loading indicators.
 
 ## Parameters
 
@@ -28,10 +28,10 @@ The filters to apply to the query.
 
 [`InjectIsFetchingOptions`](../interfaces/InjectIsFetchingOptions.md)
 
-Additional configuration
+Additional configuration.
 
 ## Returns
 
 `Signal`\<`number`\>
 
-signal with number of loading or fetching queries.
+A read-only signal with the number of loading or fetching queries.

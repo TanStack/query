@@ -1,6 +1,6 @@
-'package: angular-query-devtools-experimental':
+'package: angular-query-devtools':
   - changed-files:
-      - any-glob-to-any-file: 'packages/angular-query-devtools-experimental/**/*'
+      - any-glob-to-any-file: 'packages/angular-query-devtools/**/*'
 'package: angular-query-experimental':
   - changed-files:
       - any-glob-to-any-file: 'packages/angular-query-experimental/**/*'

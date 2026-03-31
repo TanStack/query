@@ -33,6 +33,18 @@ describe('initialData', () => {
       expectTypeOf(data).toEqualTypeOf<Signal<{ wow: boolean }>>()
     })
 
+    it('should support selection function with select', () => {
+      const options = injectQuery(() => ({
+        queryKey: ['key'],
+        queryFn: () => '1',
+        select: (data) => {
+          expectTypeOf(data).toEqualTypeOf<string>()
+          return parseInt(data)
+        },
+      }))
+      expectTypeOf(options.data).toEqualTypeOf<Signal<number | undefined>>()
+    })
+
     it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
       const options = queryOptions({
         queryKey: ['key'],

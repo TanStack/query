@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts/spec",
+    "target": "ES2022",
+    "types": ["vitest/globals", "node"],
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    "declaration": false,
+    "declarationMap": false,
+    "composite": false
+  },
+  "files": ["test-setup.ts"],
+  "include": ["src"]
+}

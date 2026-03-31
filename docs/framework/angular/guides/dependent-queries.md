@@ -10,14 +10,14 @@ replace: { 'useQuery': 'injectQuery', 'useQueries': 'injectQueries' }
 ```ts
 // Get the user
 userQuery = injectQuery(() => ({
-  queryKey: ['user', email],
-  queryFn: getUserByEmail,
+  queryKey: ['user', this.email()],
+  queryFn: this.getUserByEmail,
 }))
 
 // Then get the user's projects
 projectsQuery = injectQuery(() => ({
   queryKey: ['projects', this.userQuery.data()?.id],
-  queryFn: getProjectsByUser,
+  queryFn: this.getProjectsByUser,
   // The query will not execute until the user id exists
   enabled: !!this.userQuery.data()?.id,
 }))
@@ -26,8 +26,24 @@ projectsQuery = injectQuery(() => ({
 [//]: # 'Example'
 [//]: # 'Example2'
 
+Dynamic parallel query - `injectQueries` can depend on a previous query also, here's how to achieve this:
+
 ```ts
-// injectQueries is under development for Angular Query
+// Get the users ids
+userIdsQuery = injectQuery(() => ({
+  queryKey: ['users'],
+  queryFn: getUsersData,
+  select: (users) => users.map((user) => user.id),
+}))
+
+// Then get the users' messages
+usersMessages = injectQueries(() => ({
+  queries:
+    this.userIdsQuery.data()?.map((id) => ({
+      queryKey: ['messages', id],
+      queryFn: () => getMessagesByUsers(id),
+    })) ?? [],
+}))
 ```
 
 [//]: # 'Example2'

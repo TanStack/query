@@ -1,12 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   QueryClient,
+  injectQueries,
   injectQuery,
   provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import {
   Component,
+  InjectionToken,
   effect,
   provideZonelessChangeDetection,
 } from '@angular/core'
@@ -23,6 +25,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  vi.restoreAllMocks()
   vi.useRealTimers()
 })
 
@@ -146,9 +149,117 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test.todo(
-    '(Once injectQueries is functional) verify that injectQueries transitions to an idle state',
-  )
+  test('restores cache for injectQueries and keeps it idle while restoring', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const states: Array<
+      Array<{
+        status: string
+        fetchStatus: string
+        data: string | undefined
+      }>
+    > = []
+
+    const queryClient = new QueryClient()
+    queryClient.prefetchQuery({
+      queryKey: key1,
+      queryFn: () => sleep(10).then(() => 'hydrated-1'),
+    })
+    queryClient.prefetchQuery({
+      queryKey: key2,
+      queryFn: () => sleep(10).then(() => 'hydrated-2'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const persister = createMockPersister()
+
+    persistQueryClientSave({ queryClient, persister })
+    await vi.advanceTimersByTimeAsync(0)
+
+    queryClient.clear()
+
+    @Component({
+      template: `
+        <div>
+          <h1>{{ formattedData() }}</h1>
+          <h2>fetchStatus: {{ formattedFetchStatus() }}</h2>
+        </div>
+      `,
+    })
+    class Page {
+      state = injectQueries(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(10).then(() => 'fetched-1'),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(10).then(() => 'fetched-2'),
+          },
+        ],
+      }))
+
+      _ = effect(() => {
+        states.push(
+          this.state().map((query) => ({
+            status: query.status(),
+            fetchStatus: query.fetchStatus(),
+            data: query.data(),
+          })),
+        )
+      })
+
+      formattedData() {
+        return this.state()
+          .map((query) => query.data() ?? 'null')
+          .join(',')
+      }
+
+      formattedFetchStatus() {
+        return this.state()
+          .map((query) => query.fetchStatus())
+          .join(',')
+      }
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          queryClient,
+          withPersistQueryClient({ persistOptions: { persister } }),
+        ),
+      ],
+    })
+
+    expect(rendered.getByText('fetchStatus: idle,idle')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('hydrated-1,hydrated-2')).toBeInTheDocument()
+    expect(
+      rendered.getByText('fetchStatus: fetching,fetching'),
+    ).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched-1,fetched-2')).toBeInTheDocument()
+    expect(rendered.getByText('fetchStatus: idle,idle')).toBeInTheDocument()
+
+    expect(states[0]).toMatchObject([
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+    ])
+    expect(states).toContainEqual([
+      { status: 'success', fetchStatus: 'fetching', data: 'hydrated-1' },
+      { status: 'success', fetchStatus: 'fetching', data: 'hydrated-2' },
+    ])
+    expect(states[states.length - 1]).toMatchObject([
+      { status: 'success', fetchStatus: 'idle', data: 'fetched-1' },
+      { status: 'success', fetchStatus: 'idle', data: 'fetched-2' },
+    ])
+  })
 
   test('should show initialData while restoring', async () => {
     const key = queryKey()
@@ -377,6 +488,75 @@ describe('withPersistQueryClient', () => {
     expect(rendered.getByText('fetched')).toBeInTheDocument()
   })
 
+  test('should await onSuccess before refetching or subscribing', async () => {
+    const key = queryKey()
+    const queryClient = new QueryClient()
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const persister = createMockPersister()
+    persistQueryClientSave({ queryClient, persister })
+    await vi.advanceTimersByTimeAsync(0)
+
+    queryClient.clear()
+
+    const fetchSpy = vi.fn(() => sleep(10).then(() => 'fetched'))
+    const onSuccess = vi.fn(async () => {
+      await sleep(20)
+    })
+
+    @Component({
+      template: `
+        <div>
+          <h1>{{ state.data() ?? 'null' }}</h1>
+          <h2>fetchStatus: {{ state.fetchStatus() }}</h2>
+        </div>
+      `,
+    })
+    class Page {
+      state = injectQuery(() => ({
+        queryKey: key,
+        queryFn: fetchSpy,
+      }))
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          queryClient,
+          withPersistQueryClient({
+            persistOptions: { persister },
+            onSuccess,
+          }),
+        ),
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(fetchSpy).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(19)
+    rendered.fixture.detectChanges()
+    expect(fetchSpy).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(1)
+    rendered.fixture.detectChanges()
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('hydrated')).toBeInTheDocument()
+    expect(rendered.getByText('fetchStatus: fetching')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
+  })
+
   test('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
     const onErrorMock = vi
@@ -430,5 +610,122 @@ describe('withPersistQueryClient', () => {
     expect(onErrorMock).toHaveBeenCalledTimes(1)
     expect(onErrorMock).toHaveBeenNthCalledWith(1, error)
     onErrorMock.mockRestore()
+  })
+
+  test('should await onError before starting queries after restore failure', async () => {
+    const key = queryKey()
+    const onErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const queryClient = new QueryClient()
+    const removeClient = vi.fn()
+    const [, persister] = createMockErrorPersister(removeClient)
+    const fetchSpy = vi.fn(() => sleep(10).then(() => 'fetched'))
+    const onError = vi.fn(async () => {
+      await sleep(20)
+    })
+
+    @Component({
+      template: `
+        <div>
+          <h1>{{ state.data() ?? 'null' }}</h1>
+          <h2>fetchStatus: {{ state.fetchStatus() }}</h2>
+        </div>
+      `,
+    })
+    class Page {
+      state = injectQuery(() => ({
+        queryKey: key,
+        queryFn: fetchSpy,
+      }))
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(
+          queryClient,
+          withPersistQueryClient({
+            persistOptions: { persister },
+            onError,
+          }),
+        ),
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(onError).toHaveBeenCalledTimes(1)
+    expect(fetchSpy).toHaveBeenCalledTimes(0)
+    expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(19)
+    rendered.fixture.detectChanges()
+    expect(fetchSpy).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(1)
+    rendered.fixture.detectChanges()
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('fetchStatus: fetching')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
+
+    onErrorMock.mockRestore()
+  })
+
+  test('factory form with deps receives injected token and restores cache', async () => {
+    const key = queryKey()
+    const holder = { persister: createMockPersister() }
+    const HOLDER = new InjectionToken<{ persister: Persister }>(
+      'persist-test-holder',
+    )
+
+    const queryClient = new QueryClient()
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+
+    persistQueryClientSave({ queryClient, persister: holder.persister })
+    await vi.advanceTimersByTimeAsync(0)
+
+    queryClient.clear()
+
+    @Component({
+      template: `
+        <div>
+          <h1>{{ state.data() }}</h1>
+        </div>
+      `,
+    })
+    class Page {
+      state = injectQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'fetched'),
+      }))
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: HOLDER, useValue: holder },
+        provideTanStackQuery(
+          queryClient,
+          withPersistQueryClient(
+            (h) => ({
+              persistOptions: { persister: h.persister },
+            }),
+            { deps: [HOLDER] },
+          ),
+        ),
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('hydrated')).toBeInTheDocument()
   })
 })

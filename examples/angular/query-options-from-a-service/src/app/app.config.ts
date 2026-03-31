@@ -5,7 +5,7 @@ import {
   provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 
-import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
+import { withDevtools } from '@tanstack/angular-query-devtools'
 import { routes } from './app.routes'
 import type { ApplicationConfig } from '@angular/core'
 
