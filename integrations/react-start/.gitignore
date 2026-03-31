@@ -1,0 +1,4 @@
+dist
+.vinxi
+.output
+src/routeTree.gen.ts

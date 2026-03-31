@@ -1,0 +1,25 @@
+{
+  "name": "react-start-integration",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "workspace:*",
+    "@tanstack/react-router": "^1.166.1",
+    "@tanstack/react-router-ssr-query": "^1.166.1",
+    "@tanstack/react-start": "^1.166.1",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "5.9.3",
+    "vite": "^6.4.1"
+  }
+}
