@@ -69,3 +69,5 @@ useQuery(() => ({
 ```
 
 [//]: # 'Example5'
+[//]: # 'ReactNative'
+[//]: # 'ReactNative'

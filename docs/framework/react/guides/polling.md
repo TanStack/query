@@ -100,6 +100,10 @@ For more on network modes, see [Network Mode](./network-mode.md).
 
 Each `QueryObserver` (each component using `useQuery` with `refetchInterval`) runs its own timer. Two components subscribed to the same key with `refetchInterval: 5000` each fire their timer every 5 seconds. What gets deduplicated is concurrent in-flight fetches: if two timers fire at the same time, only one network request goes out. The timers are observer-level; the deduplication is query-level.
 
+[//]: # 'ReactNative'
+
 ## Non-browser environments
 
 For non-browser runtimes like React Native, the standard `online`/`offline` and focus events aren't available. The [React Native guide](../react-native.md) covers how to connect `focusManager` and `onlineManager` to native app state APIs.
+
+[//]: # 'ReactNative'
