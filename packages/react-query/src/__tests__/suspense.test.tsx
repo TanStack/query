@@ -3,10 +3,7 @@ import { act } from '@testing-library/react'
 import { Suspense } from 'react'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useSuspenseQuery } from '..'
-import {
-  renderWithClientAndSuspense,
-  rerenderWithSuspense,
-} from './utils'
+import { renderWithClientAndSuspense, rerenderWithSuspense } from './utils'
 import type { StaleTime } from '@tanstack/query-core'
 import type { QueryKey } from '..'
 

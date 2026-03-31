@@ -803,6 +803,5 @@ describe('QueryErrorResetBoundary', () => {
 
       consoleMock.mockRestore()
     })
-
   })
 })

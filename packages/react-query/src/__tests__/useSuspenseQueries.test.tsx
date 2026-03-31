@@ -18,10 +18,7 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import {
-  renderWithClientAndSuspense,
-  rerenderWithSuspense,
-} from './utils'
+import { renderWithClientAndSuspense, rerenderWithSuspense } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
 
 describe('useSuspenseQueries', () => {
