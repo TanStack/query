@@ -73,6 +73,18 @@ describe('prefer-query-options', () => {
           `,
         },
         {
+          name: 'useQuery with imported queryOptions function call is allowed',
+          code: normalizeIndent`
+            import { useQuery } from '@tanstack/react-query'
+            import { getFooOptions } from './foo'
+
+            function Component({ id }) {
+              const query = useQuery(getFooOptions(id))
+              return null
+            }
+          `,
+        },
+        {
           name: 'useQuery spreading queryOptions result is allowed',
           code: normalizeIndent`
             import { useQuery, queryOptions } from '@tanstack/react-query'
