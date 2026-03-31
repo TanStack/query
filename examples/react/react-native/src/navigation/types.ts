@@ -1,4 +1,4 @@
-import { Movie } from '../lib/api'
+import type { Movie } from '../lib/api'
 
 export type MoviesStackNavigator = {
   MoviesList: undefined

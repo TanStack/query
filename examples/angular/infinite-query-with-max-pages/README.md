@@ -1,6 +1,6 @@
-# Angular Query infinite query example
+# TanStack Query Angular infinite query example
 
 To run this example:
 
-- `npm install` or `yarn` or `pnpm i` or `bun i`
-- `npm run start` or `yarn start` or `pnpm start` or `bun start`
+- `pnpm install`
+- `pnpm start`

@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.39.0",
+  "version": "5.96.0",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/react-query"
   },
   "homepage": "https://tanstack.com/query",
@@ -14,12 +14,34 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "scripts": {
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "compile": "tsc --build",
+    "test:eslint": "eslint --concurrency=auto ./src",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build tsconfig.legacy.json",
+    "test:types:tscurrent": "tsc --build",
+    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict && attw --pack",
+    "build": "pnpm build:tsup && pnpm build:codemods",
+    "build:tsup": "tsup --tsconfig tsconfig.prod.json",
+    "build:codemods": "cpy ../query-codemods/* ./build/codemods"
+  },
   "type": "module",
   "types": "build/legacy/index.d.ts",
   "main": "build/legacy/index.cjs",
   "module": "build/legacy/index.js",
+  "react-native": "src/index.ts",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "import": {
         "types": "./build/modern/index.d.ts",
         "default": "./build/modern/index.js"
@@ -32,21 +54,10 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
-  "scripts": {
-    "clean": "rimraf ./build && rimraf ./coverage",
-    "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
-    "test:lib": "vitest --retry=3",
-    "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
-    "build": "pnpm build:tsup && pnpm build:codemods",
-    "build:tsup": "tsup",
-    "build:codemods": "cpy ../query-codemods/* ./build/codemods"
-  },
   "files": [
     "build",
     "src",
+    "!src/__tests__",
     "!build/codemods/node_modules",
     "!build/codemods/vite.config.ts",
     "!build/codemods/**/__testfixtures__",
@@ -56,15 +67,20 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "npm:types-react@rc",
-    "@types/react-dom": "npm:types-react-dom@rc",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint-plugin-react-compiler": "^0.0.0-experimental-c8b3f72-20240517",
-    "react": "19.0.0-rc-4c2e457c7c-20240522",
-    "react-dom": "19.0.0-rc-4c2e457c7c-20240522",
-    "react-error-boundary": "^4.0.13"
+    "@tanstack/query-persist-client-core": "workspace:*",
+    "@tanstack/query-test-utils": "workspace:*",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/react-render-stream": "^2.0.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "cpy-cli": "^5.0.0",
+    "npm-run-all2": "^5.0.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "react-error-boundary": "^4.1.2"
   },
   "peerDependencies": {
-    "react": "^18.0.0"
+    "react": "^18 || ^19"
   }
 }

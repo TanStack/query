@@ -1,14 +1,31 @@
 import { defineConfig, mergeConfig } from 'vitest/config'
-import { tanstackBuildConfig } from '@tanstack/config/build'
+import { tanstackViteConfig } from '@tanstack/vite-config'
+
 import packageJson from './package.json'
 
 const config = defineConfig({
+  // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
+  resolve: {
+    conditions: ['@tanstack/custom-condition'],
+  },
+  environments: {
+    ssr: {
+      resolve: {
+        conditions: ['@tanstack/custom-condition'],
+      },
+    },
+  },
   test: {
     name: packageJson.name,
     dir: './src',
     watch: false,
     globals: true,
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    coverage: {
+      enabled: true,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+      exclude: ['src/__tests__/**'],
+    },
     typecheck: { enabled: true },
     restoreMocks: true,
   },
@@ -16,7 +33,7 @@ const config = defineConfig({
 
 export default mergeConfig(
   config,
-  tanstackBuildConfig({
+  tanstackViteConfig({
     entry: './src/index.ts',
     srcDir: './src',
     exclude: ['./src/__tests__'],

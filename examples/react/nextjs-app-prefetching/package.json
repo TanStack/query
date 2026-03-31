@@ -1,0 +1,22 @@
+{
+  "name": "@tanstack/query-example-react-nextjs-app-prefetching",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.96.0",
+    "@tanstack/react-query-devtools": "^5.96.0",
+    "next": "^16.0.7",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "5.8.3"
+  }
+}

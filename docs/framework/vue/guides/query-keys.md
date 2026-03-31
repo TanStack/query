@@ -6,10 +6,15 @@ ref: docs/framework/react/guides/query-keys.md
 
 [//]: # 'Example5'
 
-```js
-function useTodos(todoId) {
+```ts
+import type { Ref } from 'vue'
+
+function useTodos(todoId: Ref<string>) {
   const queryKey = ['todos', todoId]
-  return useQuery(queryKey, () => fetchTodoById(todoId.value))
+  return useQuery({
+    queryKey,
+    queryFn: () => fetchTodoById(todoId.value),
+  })
 }
 ```
 

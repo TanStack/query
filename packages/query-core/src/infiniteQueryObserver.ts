@@ -4,6 +4,7 @@ import {
   hasPreviousPage,
   infiniteQueryBehavior,
 } from './infiniteQueryBehavior'
+import type { Subscribable } from './subscribable'
 import type {
   DefaultError,
   DefaultedInfiniteQueryObserverOptions,
@@ -16,7 +17,6 @@ import type {
   QueryKey,
 } from './types'
 import type { QueryClient } from './queryClient'
-import type { NotifyOptions, ObserverFetchOptions } from './queryObserver'
 import type { Query } from './query'
 
 type InfiniteQueryObserverListener<TData, TError> = (
@@ -27,28 +27,43 @@ export class InfiniteQueryObserver<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends QueryObserver<
   TQueryFnData,
   TError,
   TData,
-  InfiniteData<TQueryData, TPageParam>,
+  InfiniteData<TQueryFnData, TPageParam>,
   TQueryKey
 > {
   // Type override
-  subscribe!: (
-    listener?: InfiniteQueryObserverListener<TData, TError>,
-  ) => () => void
+  subscribe!: Subscribable<
+    InfiniteQueryObserverListener<TData, TError>
+  >['subscribe']
 
   // Type override
-  getCurrentResult!: () => InfiniteQueryObserverResult<TData, TError>
+  getCurrentResult!: ReplaceReturnType<
+    QueryObserver<
+      TQueryFnData,
+      TError,
+      TData,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TQueryKey
+    >['getCurrentResult'],
+    InfiniteQueryObserverResult<TData, TError>
+  >
 
   // Type override
-  protected fetch!: (
-    fetchOptions: ObserverFetchOptions,
-  ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  protected fetch!: ReplaceReturnType<
+    QueryObserver<
+      TQueryFnData,
+      TError,
+      TData,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TQueryKey
+    >['fetch'],
+    Promise<InfiniteQueryObserverResult<TData, TError>>
+  >
 
   constructor(
     client: QueryClient,
@@ -56,7 +71,6 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -75,19 +89,14 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
-    notifyOptions?: NotifyOptions,
   ): void {
-    super.setOptions(
-      {
-        ...options,
-        behavior: infiniteQueryBehavior(),
-      },
-      notifyOptions,
-    )
+    super.setOptions({
+      ...options,
+      behavior: infiniteQueryBehavior(),
+    })
   }
 
   getOptimisticResult(
@@ -95,7 +104,6 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -133,14 +141,13 @@ export class InfiniteQueryObserver<
     query: Query<
       TQueryFnData,
       TError,
-      InfiniteData<TQueryData, TPageParam>,
+      InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey
     >,
     options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
       TQueryKey,
       TPageParam
     >,
@@ -176,3 +183,8 @@ export class InfiniteQueryObserver<
     return result as InfiniteQueryObserverResult<TData, TError>
   }
 }
+
+type ReplaceReturnType<
+  TFunction extends (...args: Array<any>) => unknown,
+  TReturn,
+> = (...args: Parameters<TFunction>) => TReturn

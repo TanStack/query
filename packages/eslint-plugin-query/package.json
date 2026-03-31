@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.35.6",
+  "version": "5.96.0",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/eslint-plugin-query"
   },
   "homepage": "https://tanstack.com/query",
@@ -14,45 +14,66 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "scripts": {
+    "clean": "premove ./dist ./coverage ./dist-ts",
+    "compile": "tsc --build",
+    "test:eslint": "eslint --concurrency=auto ./src",
+    "test:types": "npm-run-all --serial test:types:*",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build",
+    "test:types:tscurrent": "tsc --build",
+    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict && attw --pack",
+    "build": "tsup --tsconfig tsconfig.prod.json"
+  },
   "type": "module",
-  "types": "dist/esm/index.d.ts",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.js",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
+  "react-native": "src/index.ts",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
       },
       "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
       }
     },
     "./package.json": "./package.json"
   },
-  "scripts": {
-    "clean": "rimraf ./dist && rimraf ./coverage",
-    "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
-    "test:lib": "vitest",
-    "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
-    "build": "vite build"
-  },
+  "sideEffects": false,
   "files": [
-    "dist",
-    "src"
+    "build",
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^6.20.0"
+    "@typescript-eslint/utils": "^8.48.0"
   },
   "devDependencies": {
-    "@typescript-eslint/rule-tester": "^6.20.0",
-    "eslint": "^8.56.0"
+    "@typescript-eslint/parser": "^8.48.0",
+    "@typescript-eslint/rule-tester": "^8.48.0",
+    "combinate": "^1.1.11",
+    "eslint": "^9.36.0",
+    "npm-run-all2": "^5.0.0"
   },
   "peerDependencies": {
-    "eslint": "^8.0.0"
+    "eslint": "^8.57.0 || ^9.0.0",
+    "typescript": "^5.4.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   }
 }

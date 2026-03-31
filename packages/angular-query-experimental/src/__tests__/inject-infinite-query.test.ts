@@ -1,13 +1,9 @@
 import { TestBed } from '@angular/core/testing'
-import { QueryClient } from '@tanstack/query-core'
-import { afterEach } from 'vitest'
-import { injectInfiniteQuery } from '../inject-infinite-query'
-import { provideAngularQuery } from '../providers'
-import { expectSignals, infiniteFetcher } from './test-utils'
-
-const QUERY_DURATION = 1000
-
-const resolveQueries = () => vi.advanceTimersByTimeAsync(QUERY_DURATION)
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { Injector, provideZonelessChangeDetection } from '@angular/core'
+import { sleep } from '@tanstack/query-test-utils'
+import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
+import { expectSignals } from './test-utils'
 
 describe('injectInfiniteQuery', () => {
   let queryClient: QueryClient
@@ -16,7 +12,10 @@ describe('injectInfiniteQuery', () => {
     queryClient = new QueryClient()
     vi.useFakeTimers()
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
     })
   })
 
@@ -28,7 +27,8 @@ describe('injectInfiniteQuery', () => {
     const query = TestBed.runInInjectionContext(() => {
       return injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
-        queryFn: infiniteFetcher,
+        queryFn: ({ pageParam }) =>
+          sleep(10).then(() => 'data on page ' + pageParam),
         initialPageParam: 0,
         getNextPageParam: () => 12,
       }))
@@ -39,7 +39,7 @@ describe('injectInfiniteQuery', () => {
       status: 'pending',
     })
 
-    await resolveQueries()
+    await vi.advanceTimersByTimeAsync(11)
 
     expectSignals(query, {
       data: {
@@ -51,7 +51,7 @@ describe('injectInfiniteQuery', () => {
 
     void query.fetchNextPage()
 
-    await resolveQueries()
+    await vi.advanceTimersByTimeAsync(11)
 
     expectSignals(query, {
       data: {
@@ -59,6 +59,37 @@ describe('injectInfiniteQuery', () => {
         pages: ['data on page 0', 'data on page 12'],
       },
       status: 'success',
+    })
+  })
+
+  describe('injection context', () => {
+    test('throws NG0203 with descriptive error outside injection context', () => {
+      expect(() => {
+        injectInfiniteQuery(() => ({
+          queryKey: ['injectionContextError'],
+          queryFn: ({ pageParam }) =>
+            sleep(0).then(() => 'data on page ' + pageParam),
+          initialPageParam: 0,
+          getNextPageParam: () => 12,
+        }))
+      }).toThrowError(/NG0203(.*?)injectInfiniteQuery/)
+    })
+
+    test('can be used outside injection context when passing an injector', () => {
+      const query = injectInfiniteQuery(
+        () => ({
+          queryKey: ['manualInjector'],
+          queryFn: ({ pageParam }) =>
+            sleep(0).then(() => 'data on page ' + pageParam),
+          initialPageParam: 0,
+          getNextPageParam: () => 12,
+        }),
+        {
+          injector: TestBed.inject(Injector),
+        },
+      )
+
+      expect(query.status()).toBe('pending')
     })
   })
 })

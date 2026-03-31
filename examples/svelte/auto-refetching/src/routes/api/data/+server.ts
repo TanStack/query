@@ -15,6 +15,6 @@ export const GET: RequestHandler = async ({ url }) => {
   } else if (clear) {
     list.items = []
   }
-  await new Promise((r) => setTimeout(r, 1000))
+  await new Promise((r) => setTimeout(r, 200))
   return json(list, { status: 200 })
 }

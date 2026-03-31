@@ -1,0 +1,35 @@
+<div>
+  <h1>Auto Refetch with stale-time set to {{ intervalMs() }}ms</h1>
+  <p>
+    This example is best experienced on your own machine, where you can open
+    multiple tabs to the same localhost server and see your changes propagate
+    between the two.
+  </p>
+  <label>
+    Query Interval speed (ms):
+    <input [value]="intervalMs()" (input)="inputChange($event)" />
+    <span
+      [ngStyle]="{
+        display: 'inline-block',
+        marginLeft: '.5rem',
+        width: '10px',
+        height: '10px',
+        background: tasks.isFetching() ? 'green' : 'transparent',
+        transition: !tasks.isFetching() ? 'all .3s ease' : 'none',
+        borderRadius: '100%',
+        transform: 'scale(2)',
+      }"
+    ></span>
+  </label>
+  <h2>Todo List</h2>
+
+  <input placeholder="Enter something" (keydown.enter)="addItem($event)" />
+  <ul>
+    @for (item of tasks.data(); track item) {
+      <li>{{ item }}</li>
+    }
+  </ul>
+  <div>
+    <button (click)="clearTasks()">Clear All</button>
+  </div>
+</div>

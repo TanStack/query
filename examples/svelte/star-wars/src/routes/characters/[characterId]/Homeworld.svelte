@@ -1,21 +1,25 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
+  import { getPlanet } from '$lib/api'
 
-  export let homeworldId: string
+  let { homeworldId }: { homeworldId: string } = $props()
 
-  const getHomeworld = async () => {
-    const res = await fetch(`https://swapi.dev/api/planets/${homeworldId}/`)
-    return await res.json()
-  }
-
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['homeworld', homeworldId],
-    queryFn: getHomeworld,
-  })
+    queryFn: () => getPlanet(homeworldId),
+  }))
 </script>
 
-{#if $query.status === 'success'}
+{#if query.status === 'pending'}
+  <span>Loading...</span>
+{/if}
+
+{#if query.status === 'error'}
+  <span>Error :(</span>
+{/if}
+
+{#if query.status === 'success'}
   <span>
-    {$query.data.name}
+    {query.data.name}
   </span>
 {/if}

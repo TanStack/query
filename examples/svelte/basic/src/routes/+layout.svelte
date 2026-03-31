@@ -1,8 +1,12 @@
 <script lang="ts">
   import '../app.css'
   import { browser } from '$app/environment'
-  import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
+  import { QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+  import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client'
+  import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+
+  const { children } = $props()
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -11,11 +15,15 @@
       },
     },
   })
+
+  const persister = createAsyncStoragePersister({
+    storage: browser ? window.localStorage : null,
+  })
 </script>
 
-<QueryClientProvider client={queryClient}>
+<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
   <main>
-    <slot />
+    {@render children()}
   </main>
   <SvelteQueryDevtools />
-</QueryClientProvider>
+</PersistQueryClientProvider>

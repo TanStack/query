@@ -1,4 +1,14 @@
-import type { Ref, UnwrapRef } from 'vue-demi'
+import type {
+  DefaultError,
+  DehydrateOptions,
+  HydrateOptions,
+  MutationCache,
+  MutationObserverOptions,
+  OmitKeyof,
+  QueryCache,
+  QueryObserverOptions,
+} from '@tanstack/query-core'
+import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null
 type UnwrapLeaf =
@@ -12,7 +22,7 @@ type UnwrapLeaf =
   | Set<any>
   | WeakSet<any>
 
-export type MaybeRef<T> = Ref<T> | T
+export type MaybeRef<T> = Ref<T> | ComputedRef<T> | T
 
 export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
 
@@ -28,11 +38,12 @@ export type MaybeRefDeep<T> = MaybeRef<
 
 export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
 
-export type Equal<TTargetA, TTargetB> = (<T>() => T extends TTargetA
-  ? 1
-  : 2) extends <T>() => T extends TTargetB ? 1 : 2
-  ? true
-  : false
+export type Equal<TTargetA, TTargetB> =
+  (<T>() => T extends TTargetA ? 1 : 2) extends <T>() => T extends TTargetB
+    ? 1
+    : 2
+    ? true
+    : false
 
 export type DeepUnwrapRef<T> = T extends UnwrapLeaf
   ? T
@@ -44,6 +55,24 @@ export type DeepUnwrapRef<T> = T extends UnwrapLeaf
         }
       : UnwrapRef<T>
 
-export type DistributiveOmit<T, TKeyOfAny extends keyof any> = T extends any
-  ? Omit<T, TKeyOfAny>
-  : never
+export type ShallowOption = {
+  /**
+   * Return data in a shallow ref object (it is `false` by default). It can be set to `true` to return data in a shallow ref object, which can improve performance if your data does not need to be deeply reactive.
+   */
+  shallow?: boolean
+}
+
+export interface DefaultOptions<TError = DefaultError> {
+  queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'> &
+    ShallowOption
+  mutations?: MutationObserverOptions<unknown, TError, unknown, unknown> &
+    ShallowOption
+  hydrate?: HydrateOptions['defaultOptions']
+  dehydrate?: DehydrateOptions
+}
+
+export interface QueryClientConfig {
+  queryCache?: QueryCache
+  mutationCache?: MutationCache
+  defaultOptions?: DefaultOptions
+}

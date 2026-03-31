@@ -41,7 +41,7 @@ broadcastQueryClient({ queryClient, broadcastChannel })
 An object of options:
 
 ```tsx
-interface broadcastQueryClient {
+interface BroadcastQueryClientOptions {
   /** The QueryClient to sync */
   queryClient: QueryClient
   /** This is the unique channel name that will be used
@@ -56,6 +56,6 @@ The default options are:
 
 ```tsx
 {
-  broadcastChannel = 'react-query',
+  broadcastChannel = 'tanstack-query',
 }
 ```

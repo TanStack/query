@@ -1,4 +1,9 @@
-import { addToEnd, addToStart, skipToken } from './utils'
+import {
+  addConsumeAwareSignal,
+  addToEnd,
+  addToStart,
+  ensureQueryFn,
+} from './utils'
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
@@ -13,46 +18,24 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 ): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
   return {
     onFetch: (context, query) => {
-      const fetchFn = async () => {
-        const options = context.options as InfiniteQueryPageParamsOptions<TData>
-        const direction = context.fetchOptions?.meta?.fetchMore?.direction
-        const oldPages = context.state.data?.pages || []
-        const oldPageParams = context.state.data?.pageParams || []
-        const empty = { pages: [], pageParams: [] }
-        let cancelled = false
+      const options = context.options as InfiniteQueryPageParamsOptions<TData>
+      const direction = context.fetchOptions?.meta?.fetchMore?.direction
+      const oldPages = context.state.data?.pages || []
+      const oldPageParams = context.state.data?.pageParams || []
+      let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
+      let currentPage = 0
 
+      const fetchFn = async () => {
+        let cancelled = false
         const addSignalProperty = (object: unknown) => {
-          Object.defineProperty(object, 'signal', {
-            enumerable: true,
-            get: () => {
-              if (context.signal.aborted) {
-                cancelled = true
-              } else {
-                context.signal.addEventListener('abort', () => {
-                  cancelled = true
-                })
-              }
-              return context.signal
-            },
-          })
+          addConsumeAwareSignal(
+            object,
+            () => context.signal,
+            () => (cancelled = true),
+          )
         }
 
-        // Get query function
-        const queryFn =
-          context.options.queryFn && context.options.queryFn !== skipToken
-            ? context.options.queryFn
-            : () => {
-                if (process.env.NODE_ENV !== 'production') {
-                  if (context.options.queryFn === skipToken) {
-                    console.error(
-                      `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${context.options.queryHash}'`,
-                    )
-                  }
-                }
-                return Promise.reject(
-                  new Error(`Missing queryFn: '${context.options.queryHash}'`),
-                )
-              }
+        const queryFn = ensureQueryFn(context.options, context.fetchOptions)
 
         // Create function to fetch a page
         const fetchPage = async (
@@ -68,21 +51,24 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.resolve(data)
           }
 
-          const queryFnContext: OmitKeyof<
-            QueryFunctionContext<QueryKey, unknown>,
-            'signal'
-          > = {
-            queryKey: context.queryKey,
-            pageParam: param,
-            direction: previous ? 'backward' : 'forward',
-            meta: context.options.meta,
+          const createQueryFnContext = () => {
+            const queryFnContext: OmitKeyof<
+              QueryFunctionContext<QueryKey, unknown>,
+              'signal'
+            > = {
+              client: context.client,
+              queryKey: context.queryKey,
+              pageParam: param,
+              direction: previous ? 'backward' : 'forward',
+              meta: context.options.meta,
+            }
+            addSignalProperty(queryFnContext)
+            return queryFnContext as QueryFunctionContext<QueryKey, unknown>
           }
 
-          addSignalProperty(queryFnContext)
+          const queryFnContext = createQueryFnContext()
 
-          const page = await queryFn(
-            queryFnContext as QueryFunctionContext<QueryKey, unknown>,
-          )
+          const page = await queryFn(queryFnContext)
 
           const { maxPages } = context.options
           const addTo = previous ? addToStart : addToEnd
@@ -92,8 +78,6 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             pageParams: addTo(data.pageParams, param, maxPages),
           }
         }
-
-        let result: InfiniteData<unknown>
 
         // fetch next / previous page?
         if (direction && oldPages.length) {
@@ -107,19 +91,20 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 
           result = await fetchPage(oldData, param, previous)
         } else {
-          // Fetch first page
-          result = await fetchPage(
-            empty,
-            oldPageParams[0] ?? options.initialPageParam,
-          )
-
           const remainingPages = pages ?? oldPages.length
 
-          // Fetch remaining pages
-          for (let i = 1; i < remainingPages; i++) {
-            const param = getNextPageParam(options, result)
+          // Fetch all pages
+          do {
+            const param =
+              currentPage === 0
+                ? (oldPageParams[0] ?? options.initialPageParam)
+                : getNextPageParam(options, result)
+            if (currentPage > 0 && param == null) {
+              break
+            }
             result = await fetchPage(result, param)
-          }
+            currentPage++
+          } while (currentPage < remainingPages)
         }
 
         return result
@@ -129,6 +114,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           return context.options.persister?.(
             fetchFn as any,
             {
+              client: context.client,
               queryKey: context.queryKey,
               meta: context.options.meta,
               signal: context.signal,
@@ -148,24 +134,23 @@ function getNextPageParam(
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
   const lastIndex = pages.length - 1
-  return options.getNextPageParam(
-    pages[lastIndex],
-    pages,
-    pageParams[lastIndex],
-    pageParams,
-  )
+  return pages.length > 0
+    ? options.getNextPageParam(
+        pages[lastIndex],
+        pages,
+        pageParams[lastIndex],
+        pageParams,
+      )
+    : undefined
 }
 
 function getPreviousPageParam(
   options: InfiniteQueryPageParamsOptions<any>,
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
-  return options.getPreviousPageParam?.(
-    pages[0],
-    pages,
-    pageParams[0],
-    pageParams,
-  )
+  return pages.length > 0
+    ? options.getPreviousPageParam?.(pages[0], pages, pageParams[0], pageParams)
+    : undefined
 }
 
 /**

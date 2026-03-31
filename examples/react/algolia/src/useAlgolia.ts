@@ -1,4 +1,4 @@
-import { useInfiniteQuery, skipToken } from '@tanstack/react-query'
+import { skipToken, useInfiniteQuery } from '@tanstack/react-query'
 import { search } from './algolia'
 
 export type UseAlgoliaOptions = {
@@ -23,7 +23,7 @@ export default function useAlgolia<TData>({
           search<TData>({ indexName, query, pageParam, hitsPerPage })
       : skipToken,
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage?.nextPage,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
     staleTime,
     gcTime,
   })

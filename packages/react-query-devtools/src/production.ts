@@ -1,5 +1,7 @@
 'use client'
 
-import * as devtools from './devtools'
+import * as Devtools from './ReactQueryDevtools'
+import * as DevtoolsPanel from './ReactQueryDevtoolsPanel'
 
-export const ReactQueryDevtools = devtools.ReactQueryDevtools
+export const ReactQueryDevtools = Devtools.ReactQueryDevtools
+export const ReactQueryDevtoolsPanel = DevtoolsPanel.ReactQueryDevtoolsPanel

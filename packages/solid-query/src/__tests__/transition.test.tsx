@@ -1,18 +1,29 @@
-import { describe, it } from 'vitest'
-import { fireEvent, render, waitFor } from '@solidjs/testing-library'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render } from '@solidjs/testing-library'
 import { Show, Suspense, createSignal, startTransition } from 'solid-js'
-import { QueryCache, QueryClientProvider, createQuery } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { QueryCache, QueryClient, QueryClientProvider, useQuery } from '..'
 
-describe("createQuery's in Suspense mode with transitions", () => {
-  const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache })
+describe("useQuery's in Suspense mode with transitions", () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    queryClient.clear()
+  })
 
   it('should render the content when the transition is done', async () => {
     const key = queryKey()
 
     function Suspended() {
-      const state = createQuery(() => ({
+      const state = useQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -50,11 +61,12 @@ describe("createQuery's in Suspense mode with transitions", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => rendered.getByText('Show'))
+    expect(rendered.getByText('Show')).toBeInTheDocument()
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await waitFor(() => rendered.getByText('Message'))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Message')).toBeInTheDocument()
     // verify that the button also updated. See https://github.com/solidjs/solid/issues/1249
-    await waitFor(() => rendered.getByText('Hide'))
+    expect(rendered.getByText('Hide')).toBeInTheDocument()
   })
 })

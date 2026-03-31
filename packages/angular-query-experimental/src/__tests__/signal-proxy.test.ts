@@ -1,5 +1,5 @@
 import { isSignal, signal } from '@angular/core'
-import { describe } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { signalProxy } from '../signal-proxy'
 
 describe('signalProxy', () => {

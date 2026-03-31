@@ -3,12 +3,20 @@ import { getDocsUrl } from '../../utils/get-docs-url'
 import { ASTUtils } from '../../utils/ast-utils'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { NoRestDestructuringUtils } from './no-rest-destructuring.utils'
+import type { ExtraRuleDocs } from '../../types'
 
 export const name = 'no-rest-destructuring'
 
-const queryHooks = ['useQuery', 'useQueries', 'useInfiniteQuery']
+const queryHooks = [
+  'useQuery',
+  'useQueries',
+  'useInfiniteQuery',
+  'useSuspenseQuery',
+  'useSuspenseQueries',
+  'useSuspenseInfiniteQuery',
+]
 
-const createRule = ESLintUtils.RuleCreator(getDocsUrl)
+const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
 export const rule = createRule({
   name,
@@ -16,7 +24,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description: 'Disallows rest destructuring in queries',
-      recommended: 'warn' as any,
+      recommended: 'warn',
     },
     messages: {
       objectRestDestructure: `Object rest destructuring on a query will observe all changes to the query, leading to excessive re-renders.`,
@@ -26,30 +34,45 @@ export const rule = createRule({
   defaultOptions: [],
 
   create: detectTanstackQueryImports((context, _, helpers) => {
+    const queryResultVariables = new Set<string>()
+
     return {
       CallExpression: (node) => {
         if (
           !ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) ||
-          !helpers.isTanstackQueryImport(node.callee) ||
-          node.parent.type !== AST_NODE_TYPES.VariableDeclarator
+          node.parent.type !== AST_NODE_TYPES.VariableDeclarator ||
+          !helpers.isTanstackQueryImport(node.callee)
         ) {
           return
         }
 
         const returnValue = node.parent.id
-        if (node.callee.name !== 'useQueries') {
+
+        if (
+          node.callee.name !== 'useQueries' &&
+          node.callee.name !== 'useSuspenseQueries'
+        ) {
           if (NoRestDestructuringUtils.isObjectRestDestructuring(returnValue)) {
-            context.report({
+            return context.report({
               node: node.parent,
               messageId: 'objectRestDestructure',
             })
           }
+
+          if (returnValue.type === AST_NODE_TYPES.Identifier) {
+            queryResultVariables.add(returnValue.name)
+          }
+
           return
         }
 
         if (returnValue.type !== AST_NODE_TYPES.ArrayPattern) {
+          if (returnValue.type === AST_NODE_TYPES.Identifier) {
+            queryResultVariables.add(returnValue.name)
+          }
           return
         }
+
         returnValue.elements.forEach((queryResult) => {
           if (queryResult === null) {
             return
@@ -61,6 +84,31 @@ export const rule = createRule({
             })
           }
         })
+      },
+
+      VariableDeclarator: (node) => {
+        if (
+          node.init?.type === AST_NODE_TYPES.Identifier &&
+          queryResultVariables.has(node.init.name) &&
+          NoRestDestructuringUtils.isObjectRestDestructuring(node.id)
+        ) {
+          context.report({
+            node,
+            messageId: 'objectRestDestructure',
+          })
+        }
+      },
+
+      SpreadElement: (node) => {
+        if (
+          node.argument.type === AST_NODE_TYPES.Identifier &&
+          queryResultVariables.has(node.argument.name)
+        ) {
+          context.report({
+            node,
+            messageId: 'objectRestDestructure',
+          })
+        }
       },
     }
   }),

@@ -1,5 +1,5 @@
-import algoliasearch from 'algoliasearch'
-import { Hit } from '@algolia/client-search'
+import { searchClient } from '@algolia/client-search'
+import type { Hit } from '@algolia/client-search'
 
 // From Algolia example
 // https://github.com/algolia/react-instantsearch
@@ -19,17 +19,16 @@ export async function search<TData>({
   pageParam,
   hitsPerPage = 10,
 }: SearchOptions): Promise<{
-  hits: Hit<TData>[]
+  hits: Array<Hit<TData>>
   nextPage: number | undefined
 }> {
-  const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY)
-  const index = client.initIndex(indexName)
+  const client = searchClient(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY)
 
-  console.log('alogolia:search', { indexName, query, pageParam, hitsPerPage })
+  console.log('algolia:search', { indexName, query, pageParam, hitsPerPage })
 
-  const { hits, page, nbPages } = await index.search<TData>(query, {
-    page: pageParam,
-    hitsPerPage,
+  const { hits, page, nbPages } = await client.searchSingleIndex<TData>({
+    indexName,
+    searchParams: { query, page: pageParam, hitsPerPage },
   })
 
   const nextPage = page + 1 < nbPages ? page + 1 : undefined

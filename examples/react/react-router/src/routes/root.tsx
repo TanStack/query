@@ -1,21 +1,20 @@
 import {
-  Outlet,
-  useLoaderData,
   Link,
   NavLink,
+  Outlet,
+  useLoaderData,
   useNavigation,
   useSubmit,
-  LoaderFunctionArgs,
 } from 'react-router-dom'
 import { useDebounce } from 'rooks'
-
-import { getContacts } from '../contacts'
 import {
-  useSuspenseQuery,
-  useIsFetching,
-  type QueryClient,
   queryOptions,
+  useIsFetching,
+  useSuspenseQuery,
 } from '@tanstack/react-query'
+import { getContacts } from '../contacts'
+import type { QueryClient } from '@tanstack/react-query'
+import type { LoaderFunctionArgs } from 'react-router-dom'
 
 const contactListQuery = (q?: string) =>
   queryOptions({

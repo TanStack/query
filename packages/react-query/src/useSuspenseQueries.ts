@@ -1,4 +1,5 @@
 'use client'
+import { skipToken } from '@tanstack/query-core'
 import { useQueries } from './useQueries'
 import { defaultThrowOnError } from './suspense'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
@@ -6,12 +7,14 @@ import type {
   DefaultError,
   QueryClient,
   QueryFunction,
-  SkipToken,
   ThrowOnError,
 } from '@tanstack/query-core'
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
+
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQueries = symbol
 
 type GetUseSuspenseQueryOptions<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
@@ -36,7 +39,7 @@ type GetUseSuspenseQueryOptions<T> =
                 T extends {
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                      | SkipToken
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -49,7 +52,7 @@ type GetUseSuspenseQueryOptions<T> =
                 : T extends {
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                        | SkipToken
+                        | SkipTokenForUseQueries
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
                   ? UseSuspenseQueryOptions<
@@ -78,7 +81,9 @@ type GetUseSuspenseQueryResult<T> =
               ? UseSuspenseQueryResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any> | SkipToken
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -89,7 +94,7 @@ type GetUseSuspenseQueryResult<T> =
                 : T extends {
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, any>
-                        | SkipToken
+                        | SkipTokenForUseQueries
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
                   ? UseSuspenseQueryResult<
@@ -155,23 +160,20 @@ export type SuspenseQueriesResults<
             [...TResults, GetUseSuspenseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              UseSuspenseQueryOptions<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              UseSuspenseQueryResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<UseSuspenseQueryResult>
+        : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> }
+
+export function useSuspenseQueries<
+  T extends Array<any>,
+  TCombinedResult = SuspenseQueriesResults<T>,
+>(
+  options: {
+    queries:
+      | readonly [...SuspenseQueriesOptions<T>]
+      | readonly [...{ [K in keyof T]: GetUseSuspenseQueryOptions<T[K]> }]
+    combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
+  },
+  queryClient?: QueryClient,
+): TCombinedResult
 
 export function useSuspenseQueries<
   T extends Array<any>,
@@ -182,18 +184,28 @@ export function useSuspenseQueries<
     combine?: (result: SuspenseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): TCombinedResult {
+): TCombinedResult
+
+export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
   return useQueries(
     {
       ...options,
-      queries: options.queries.map((query) => ({
-        ...query,
-        suspense: true,
-        throwOnError: defaultThrowOnError,
-        enabled: true,
-        placeholderData: undefined,
-      })),
-    } as any,
+      queries: options.queries.map((query: any) => {
+        if (process.env.NODE_ENV !== 'production') {
+          if (query.queryFn === skipToken) {
+            console.error('skipToken is not allowed for useSuspenseQueries')
+          }
+        }
+
+        return {
+          ...query,
+          suspense: true,
+          throwOnError: defaultThrowOnError,
+          enabled: true,
+          placeholderData: undefined,
+        }
+      }),
+    },
     queryClient,
   )
 }

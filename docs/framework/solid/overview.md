@@ -11,6 +11,7 @@ SolidJS has been gaining popularity as a fast, reactive, and declarative library
 
 ```tsx
 import { createResource, ErrorBoundary, Suspense } from 'solid-js'
+import { render } from 'solid-js/web'
 
 function App() {
   const [repository] = createResource(async () => {
@@ -26,7 +27,7 @@ function App() {
       <ErrorBoundary fallback={<div>Something went wrong!</div>}>
         {/* Suspense will trigger a loading state while the data is being fetched */}
         <Suspense fallback={<div>Loading...</div>}>
-          <div>{repository().updated_at}</div>
+          <div>{repository()?.updated_at}</div>
         </Suspense>
       </ErrorBoundary>
     </div>
@@ -72,13 +73,13 @@ In the example below, you can see Solid Query in its most basic and simple form 
 ```tsx
 import { ErrorBoundary, Suspense } from 'solid-js'
 import {
-  createQuery,
+  useQuery,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/solid-query'
 
 function App() {
-  const repositoryQuery = createQuery(() => ({
+  const repositoryQuery = useQuery(() => ({
     queryKey: ['TanStack Query'],
     queryFn: async () => {
       const result = await fetch('https://api.github.com/repos/TanStack/query')
@@ -100,7 +101,7 @@ function App() {
             The `data` property on a query is a SolidJS resource  
             so it will work with Suspense and transitions out of the box! 
           */}
-          <div>{repositoryQuery.data.updated_at}</div>
+          <div>{repositoryQuery.data?.updated_at}</div>
         </Suspense>
       </ErrorBoundary>
     </div>

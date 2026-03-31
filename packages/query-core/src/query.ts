@@ -1,7 +1,17 @@
-import { noop, replaceData, skipToken, timeUntilStale } from './utils'
+import {
+  ensureQueryFn,
+  noop,
+  replaceData,
+  resolveEnabled,
+  resolveStaleTime,
+  skipToken,
+  timeUntilStale,
+} from './utils'
 import { notifyManager } from './notifyManager'
-import { canFetch, createRetryer, isCancelledError } from './retryer'
+import { CancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
+import type { QueryCache } from './queryCache'
+import type { QueryClient } from './queryClient'
 import type {
   CancelOptions,
   DefaultError,
@@ -14,8 +24,8 @@ import type {
   QueryOptions,
   QueryStatus,
   SetDataOptions,
+  StaleTime,
 } from './types'
-import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
 
@@ -27,7 +37,7 @@ interface QueryConfig<
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > {
-  cache: QueryCache
+  client: QueryClient
   queryKey: TQueryKey
   queryHash: string
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -60,6 +70,7 @@ export interface FetchContext<
   fetchOptions?: FetchOptions
   signal: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
+  client: QueryClient
   queryKey: TQueryKey
   state: QueryState<TData, TError>
 }
@@ -82,9 +93,10 @@ export interface FetchMeta {
   fetchMore?: { direction: FetchDirection }
 }
 
-export interface FetchOptions {
+export interface FetchOptions<TData = unknown> {
   cancelRefetch?: boolean
   meta?: FetchMeta
+  initialPromise?: Promise<TData>
 }
 
 interface FailedAction<TError> {
@@ -154,11 +166,11 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  isFetchingOptimistic?: boolean
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
+  #client: QueryClient
   #retryer?: Retryer<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -171,15 +183,20 @@ export class Query<
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
-    this.#cache = config.cache
+    this.#client = config.client
+    this.#cache = this.#client.getQueryCache()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.#initialState = config.state || getDefaultState(this.options)
-    this.state = this.#initialState
+    this.#initialState = getDefaultState(this.options)
+    this.state = config.state ?? this.#initialState
     this.scheduleGc()
   }
   get meta(): QueryMeta | undefined {
     return this.options.meta
+  }
+
+  get promise(): Promise<TData> | undefined {
+    return this.#retryer?.promise
   }
 
   setOptions(
@@ -188,6 +205,17 @@ export class Query<
     this.options = { ...this.#defaultOptions, ...options }
 
     this.updateGcTime(this.options.gcTime)
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (this.state && this.state.data === undefined) {
+      const defaultState = getDefaultState(this.options)
+      if (defaultState.data !== undefined) {
+        this.setState(
+          successState(defaultState.data, defaultState.dataUpdatedAt),
+        )
+        this.#initialState = defaultState
+      }
+    }
   }
 
   protected optionalRemove() {
@@ -232,39 +260,71 @@ export class Query<
     this.cancel({ silent: true })
   }
 
+  get resetState(): QueryState<TData, TError> {
+    return this.#initialState
+  }
+
   reset(): void {
     this.destroy()
-    this.setState(this.#initialState)
+    this.setState(this.resetState)
   }
 
   isActive(): boolean {
-    return this.observers.some((observer) => observer.options.enabled !== false)
+    return this.observers.some(
+      (observer) => resolveEnabled(observer.options.enabled, this) !== false,
+    )
   }
 
   isDisabled(): boolean {
-    return this.getObserversCount() > 0 && !this.isActive()
+    if (this.getObserversCount() > 0) {
+      return !this.isActive()
+    }
+    // if a query has no observers, it should still be considered disabled if it never attempted a fetch
+    return this.options.queryFn === skipToken || !this.isFetched()
+  }
+
+  isFetched() {
+    return this.state.dataUpdateCount + this.state.errorUpdateCount > 0
+  }
+
+  isStatic(): boolean {
+    if (this.getObserversCount() > 0) {
+      return this.observers.some(
+        (observer) =>
+          resolveStaleTime(observer.options.staleTime, this) === 'static',
+      )
+    }
+
+    return false
   }
 
   isStale(): boolean {
-    if (this.state.isInvalidated) {
-      return true
-    }
-
+    // check observers first, their `isStale` has the source of truth
+    // calculated with `isStaleByTime` and it takes `enabled` into account
     if (this.getObserversCount() > 0) {
       return this.observers.some(
         (observer) => observer.getCurrentResult().isStale,
       )
     }
 
-    return this.state.data === undefined
+    return this.state.data === undefined || this.state.isInvalidated
   }
 
-  isStaleByTime(staleTime = 0): boolean {
-    return (
-      this.state.isInvalidated ||
-      this.state.data === undefined ||
-      !timeUntilStale(this.state.dataUpdatedAt, staleTime)
-    )
+  isStaleByTime(staleTime: StaleTime = 0): boolean {
+    // no data is always stale
+    if (this.state.data === undefined) {
+      return true
+    }
+    // static is never stale
+    if (staleTime === 'static') {
+      return false
+    }
+    // if the query is invalidated, it is stale
+    if (this.state.isInvalidated) {
+      return true
+    }
+
+    return !timeUntilStale(this.state.dataUpdatedAt, staleTime)
   }
 
   onFocus(): void {
@@ -304,7 +364,7 @@ export class Query<
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
         if (this.#retryer) {
-          if (this.#abortSignalConsumed) {
+          if (this.#abortSignalConsumed || this.#isInitialPausedFetch()) {
             this.#retryer.cancel({ revert: true })
           } else {
             this.#retryer.cancelRetry()
@@ -322,17 +382,29 @@ export class Query<
     return this.observers.length
   }
 
+  #isInitialPausedFetch(): boolean {
+    return (
+      this.state.fetchStatus === 'paused' && this.state.status === 'pending'
+    )
+  }
+
   invalidate(): void {
     if (!this.state.isInvalidated) {
       this.#dispatch({ type: 'invalidate' })
     }
   }
 
-  fetch(
+  async fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    fetchOptions?: FetchOptions,
+    fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
-    if (this.state.fetchStatus !== 'idle') {
+    if (
+      this.state.fetchStatus !== 'idle' &&
+      // If the promise in the retryer is already rejected, we have to definitely
+      // re-start the fetch; there is a chance that the query is still in a
+      // pending state when that happens
+      this.#retryer?.status() !== 'rejected'
+    ) {
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetch
         this.cancel({ silent: true })
@@ -368,15 +440,6 @@ export class Query<
 
     const abortController = new AbortController()
 
-    // Create query function context
-    const queryFnContext: OmitKeyof<
-      QueryFunctionContext<TQueryKey>,
-      'signal'
-    > = {
-      queryKey: this.queryKey,
-      meta: this.meta,
-    }
-
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
     // is read.
@@ -390,56 +453,64 @@ export class Query<
       })
     }
 
-    addSignalProperty(queryFnContext)
-
     // Create fetch function
     const fetchFn = () => {
-      if (process.env.NODE_ENV !== 'production') {
-        if (this.options.queryFn === skipToken) {
-          console.error(
-            `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${this.options.queryHash}'`,
-          )
+      const queryFn = ensureQueryFn(this.options, fetchOptions)
+
+      // Create query function context
+      const createQueryFnContext = (): QueryFunctionContext<TQueryKey> => {
+        const queryFnContext: OmitKeyof<
+          QueryFunctionContext<TQueryKey>,
+          'signal'
+        > = {
+          client: this.#client,
+          queryKey: this.queryKey,
+          meta: this.meta,
         }
+        addSignalProperty(queryFnContext)
+        return queryFnContext as QueryFunctionContext<TQueryKey>
       }
 
-      if (!this.options.queryFn || this.options.queryFn === skipToken) {
-        return Promise.reject(
-          new Error(`Missing queryFn: '${this.options.queryHash}'`),
-        )
-      }
+      const queryFnContext = createQueryFnContext()
 
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(
-          this.options.queryFn,
-          queryFnContext as QueryFunctionContext<TQueryKey>,
+          queryFn,
+          queryFnContext,
           this as unknown as Query,
         )
       }
 
-      return this.options.queryFn(
-        queryFnContext as QueryFunctionContext<TQueryKey>,
-      )
+      return queryFn(queryFnContext)
     }
 
     // Trigger behavior hook
-    const context: OmitKeyof<
-      FetchContext<TQueryFnData, TError, TData, TQueryKey>,
-      'signal'
-    > = {
-      fetchOptions,
-      options: this.options,
-      queryKey: this.queryKey,
-      state: this.state,
-      fetchFn,
+    const createFetchContext = (): FetchContext<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey
+    > => {
+      const context: OmitKeyof<
+        FetchContext<TQueryFnData, TError, TData, TQueryKey>,
+        'signal'
+      > = {
+        fetchOptions,
+        options: this.options,
+        queryKey: this.queryKey,
+        client: this.#client,
+        state: this.state,
+        fetchFn,
+      }
+
+      addSignalProperty(context)
+      return context as FetchContext<TQueryFnData, TError, TData, TQueryKey>
     }
 
-    addSignalProperty(context)
+    const context = createFetchContext()
 
-    this.options.behavior?.onFetch(
-      context as FetchContext<TQueryFnData, TError, TData, TQueryKey>,
-      this as unknown as Query,
-    )
+    this.options.behavior?.onFetch(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state
@@ -452,67 +523,21 @@ export class Query<
       this.#dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
     }
 
-    const onError = (error: TError | { silent?: boolean }) => {
-      // Optimistically update state if needed
-      if (!(isCancelledError(error) && error.silent)) {
-        this.#dispatch({
-          type: 'error',
-          error: error as TError,
-        })
-      }
-
-      if (!isCancelledError(error)) {
-        // Notify cache callback
-        this.#cache.config.onError?.(
-          error as any,
-          this as Query<any, any, any, any>,
-        )
-        this.#cache.config.onSettled?.(
-          this.state.data,
-          error as any,
-          this as Query<any, any, any, any>,
-        )
-      }
-
-      if (!this.isFetchingOptimistic) {
-        // Schedule query gc after fetching
-        this.scheduleGc()
-      }
-      this.isFetchingOptimistic = false
-    }
-
     // Try to fetch the data
     this.#retryer = createRetryer({
+      initialPromise: fetchOptions?.initialPromise as
+        | Promise<TData>
+        | undefined,
       fn: context.fetchFn as () => Promise<TData>,
-      abort: abortController.abort.bind(abortController),
-      onSuccess: (data) => {
-        if (data === undefined) {
-          if (process.env.NODE_ENV !== 'production') {
-            console.error(
-              `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
-            )
-          }
-          onError(new Error(`${this.queryHash} data is undefined`) as any)
-          return
+      onCancel: (error) => {
+        if (error instanceof CancelledError && error.revert) {
+          this.setState({
+            ...this.#revertState,
+            fetchStatus: 'idle' as const,
+          })
         }
-
-        this.setData(data)
-
-        // Notify cache callback
-        this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
-        this.#cache.config.onSettled?.(
-          data,
-          this.state.error as any,
-          this as Query<any, any, any, any>,
-        )
-
-        if (!this.isFetchingOptimistic) {
-          // Schedule query gc after fetching
-          this.scheduleGc()
-        }
-        this.isFetchingOptimistic = false
+        abortController.abort()
       },
-      onError,
       onFail: (failureCount, error) => {
         this.#dispatch({ type: 'failed', failureCount, error })
       },
@@ -528,7 +553,66 @@ export class Query<
       canRun: () => true,
     })
 
-    return this.#retryer.start()
+    try {
+      const data = await this.#retryer.start()
+      // this is more of a runtime guard
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (data === undefined) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(
+            `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
+          )
+        }
+        throw new Error(`${this.queryHash} data is undefined`)
+      }
+
+      this.setData(data)
+
+      // Notify cache callback
+      this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+      this.#cache.config.onSettled?.(
+        data,
+        this.state.error as any,
+        this as Query<any, any, any, any>,
+      )
+      return data
+    } catch (error) {
+      if (error instanceof CancelledError) {
+        if (error.silent) {
+          // silent cancellation implies a new fetch is going to be started,
+          // so we piggyback onto that promise
+          return this.#retryer.promise
+        } else if (error.revert) {
+          // transform error into reverted state data
+          // if the initial fetch was cancelled, we have no data, so we have
+          // to get reject with a CancelledError
+          if (this.state.data === undefined) {
+            throw error
+          }
+          return this.state.data
+        }
+      }
+      this.#dispatch({
+        type: 'error',
+        error: error as TError,
+      })
+
+      // Notify cache callback
+      this.#cache.config.onError?.(
+        error as any,
+        this as Query<any, any, any, any>,
+      )
+      this.#cache.config.onSettled?.(
+        this.state.data,
+        error as any,
+        this as Query<any, any, any, any>,
+      )
+
+      throw error // rethrow the error for further handling
+    } finally {
+      // Schedule query gc after fetching
+      this.scheduleGc()
+    }
   }
 
   #dispatch(action: Action<TData, TError>): void {
@@ -559,36 +643,35 @@ export class Query<
             fetchMeta: action.meta ?? null,
           }
         case 'success':
-          return {
+          const newState = {
             ...state,
-            data: action.data,
+            ...successState(action.data, action.dataUpdatedAt),
             dataUpdateCount: state.dataUpdateCount + 1,
-            dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
-            error: null,
-            isInvalidated: false,
-            status: 'success',
             ...(!action.manual && {
-              fetchStatus: 'idle',
+              fetchStatus: 'idle' as const,
               fetchFailureCount: 0,
               fetchFailureReason: null,
             }),
           }
+          // If fetching ends successfully, we don't need revertState as a fallback anymore.
+          // For manual updates, capture the state to revert to it in case of a cancellation.
+          this.#revertState = action.manual ? newState : undefined
+
+          return newState
         case 'error':
-          const error = action.error as unknown
-
-          if (isCancelledError(error) && error.revert && this.#revertState) {
-            return { ...this.#revertState, fetchStatus: 'idle' }
-          }
-
+          const error = action.error
           return {
             ...state,
-            error: error as TError,
+            error,
             errorUpdateCount: state.errorUpdateCount + 1,
             errorUpdatedAt: Date.now(),
             fetchFailureCount: state.fetchFailureCount + 1,
-            fetchFailureReason: error as TError,
+            fetchFailureReason: error,
             fetchStatus: 'idle',
             status: 'error',
+            // flag existing data as invalidated if we get a background error
+            // note that "no data" always means stale so we can set unconditionally here
+            isInvalidated: true,
           }
         case 'invalidate':
           return {
@@ -636,6 +719,16 @@ export function fetchState<
   } as const
 }
 
+function successState<TData>(data: TData | undefined, dataUpdatedAt?: number) {
+  return {
+    data,
+    dataUpdatedAt: dataUpdatedAt ?? Date.now(),
+    error: null,
+    isInvalidated: false,
+    status: 'success' as const,
+  }
+}
+
 function getDefaultState<
   TQueryFnData,
   TError,
@@ -653,14 +746,14 @@ function getDefaultState<
 
   const initialDataUpdatedAt = hasData
     ? typeof options.initialDataUpdatedAt === 'function'
-      ? (options.initialDataUpdatedAt as () => number | undefined)()
+      ? options.initialDataUpdatedAt()
       : options.initialDataUpdatedAt
     : 0
 
   return {
     data,
     dataUpdateCount: 0,
-    dataUpdatedAt: hasData ? initialDataUpdatedAt ?? Date.now() : 0,
+    dataUpdatedAt: hasData ? (initialDataUpdatedAt ?? Date.now()) : 0,
     error: null,
     errorUpdateCount: 0,
     errorUpdatedAt: 0,

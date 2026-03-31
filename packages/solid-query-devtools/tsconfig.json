@@ -1,14 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": ".",
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    ".eslintrc.cjs",
-    "tsup.config.js",
-    "vite.config.ts"
-  ]
+  "include": ["src", "*.config.*", "package.json"],
+  "references": [{ "path": "../query-devtools" }, { "path": "../solid-query" }]
 }

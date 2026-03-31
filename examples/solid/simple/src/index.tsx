@@ -1,8 +1,8 @@
 /* @refresh reload */
 import {
-  createQuery,
   QueryClient,
   QueryClientProvider,
+  useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { Match, Switch } from 'solid-js'
@@ -20,16 +20,13 @@ export default function App() {
 }
 
 function Example() {
-  const state = createQuery(() => ({
+  const state = useQuery(() => ({
     queryKey: ['repoData'],
     queryFn: async () => {
       const response = await fetch(
-        'https://api.github.com/repos/tannerlinsley/react-query',
-        {
-          method: 'GET',
-        },
+        'https://api.github.com/repos/TanStack/query',
       )
-      return response.json()
+      return await response.json()
     },
   }))
 
@@ -52,4 +49,7 @@ function Example() {
     </Switch>
   )
 }
-render(() => <App />, document.getElementById('root') as HTMLElement)
+const root = document.getElementById('root')
+if (!root) throw new Error('Missing #root element')
+
+render(() => <App />, root)

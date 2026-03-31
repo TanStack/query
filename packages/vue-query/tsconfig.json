@@ -1,11 +1,9 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    ".eslintrc.cjs",
-    "test-setup.ts",
-    "tsup.config.js",
-    "vite.config.ts"
-  ]
+  "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": "."
+  },
+  "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
+  "references": [{ "path": "../query-core" }]
 }

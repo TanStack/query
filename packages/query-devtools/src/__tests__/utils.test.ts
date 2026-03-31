@@ -4,7 +4,7 @@ import { deleteNestedDataByPath, updateNestedDataByPath } from '../utils'
 describe('Utils tests', () => {
   describe('updatedNestedDataByPath', () => {
     describe('array', () => {
-      it('should update data correctly', async () => {
+      it('should update data correctly', () => {
         const oldData = ['one', 'two', 'three']
 
         const newData = updateNestedDataByPath(oldData, ['1'], 'new')
@@ -29,7 +29,7 @@ describe('Utils tests', () => {
     })
 
     describe('object', () => {
-      it('should update data correctly', async () => {
+      it('should update data correctly', () => {
         const oldData = { title: 'Hello world', id: 1, createdAt: '2021-01-01' }
 
         const newData = updateNestedDataByPath(
@@ -58,7 +58,7 @@ describe('Utils tests', () => {
     })
 
     describe('set', () => {
-      it('should update data correctly', async () => {
+      it('should update data correctly', () => {
         const oldData = new Set([123, 321, 'hello', 'world'])
 
         const newData = updateNestedDataByPath(oldData, ['2'], 'hi')
@@ -85,13 +85,13 @@ describe('Utils tests', () => {
     })
 
     describe('map', () => {
-      it('should update data correctly', async () => {
+      it('should update data correctly', () => {
         const oldData = new Map([
           ['en', 'hello'],
           ['fr', 'bonjour'],
         ])
 
-        /* eslint-disable @cspell/spellchecker */
+        /* eslint-disable cspell/spellchecker */
         const newData = updateNestedDataByPath(oldData, ['fr'], 'salut')
 
         expect(newData).not.toBe(oldData) // should not be the same reference
@@ -113,8 +113,8 @@ describe('Utils tests', () => {
     })
 
     describe('nested data', () => {
-      it('should update data correctly', async () => {
-        /* eslint-disable @cspell/spellchecker */
+      it('should update data correctly', () => {
+        /* eslint-disable cspell/spellchecker */
         const oldData = new Map([
           [
             'pumpkin-pie',
@@ -377,7 +377,7 @@ describe('Utils tests', () => {
   })
 
   describe('deleteNestedDataByPath', () => {
-    it('should delete item from array correctly', async () => {
+    it('should delete item from array correctly', () => {
       const oldData = ['one', 'two', 'three']
 
       const newData = deleteNestedDataByPath(oldData, ['1'])
@@ -399,7 +399,7 @@ describe('Utils tests', () => {
       `)
     })
 
-    it('should delete item from object correctly', async () => {
+    it('should delete item from object correctly', () => {
       const oldData = { title: 'Hello world', id: 1, createdAt: '2021-01-01' }
 
       const newData = deleteNestedDataByPath(oldData, ['createdAt'])
@@ -472,8 +472,8 @@ describe('Utils tests', () => {
     })
 
     describe('nested data', () => {
-      it('should delete nested items correctly', async () => {
-        /* eslint-disable @cspell/spellchecker */
+      it('should delete nested items correctly', () => {
+        /* eslint-disable cspell/spellchecker */
         const oldData = new Map([
           [
             'pumpkin-pie',

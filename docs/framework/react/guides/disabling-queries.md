@@ -3,7 +3,7 @@ id: disabling-queries
 title: Disabling/Pausing Queries
 ---
 
-If you ever want to disable a query from automatically running, you can use the `enabled = false` option.
+If you ever want to disable a query from automatically running, you can use the `enabled = false` option. The enabled option also accepts a callback that returns a boolean.
 
 When `enabled` is `false`:
 
@@ -14,7 +14,7 @@ When `enabled` is `false`:
 - The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
 - `refetch` returned from `useQuery` can be used to manually trigger the query to fetch. However, it will not work with `skipToken`.
 
-> Typescript users may prefer to use [skipToken](#typesafe-disabling-of-queries-using-skiptoken) as an alternative to `enabled = false`.
+> TypeScript users may prefer to use [skipToken](#typesafe-disabling-of-queries-using-skiptoken) as an alternative to `enabled = false`.
 
 [//]: # 'Example'
 
@@ -31,13 +31,11 @@ function Todos() {
       <button onClick={() => refetch()}>Fetch Todos</button>
 
       {data ? (
-        <>
-          <ul>
-            {data.map((todo) => (
-              <li key={todo.id}>{todo.title}</li>
-            ))}
-          </ul>
-        </>
+        <ul>
+          {data.map((todo) => (
+            <li key={todo.id}>{todo.title}</li>
+          ))}
+        </ul>
       ) : isError ? (
         <span>Error: {error.message}</span>
       ) : isLoading ? (
@@ -97,13 +95,15 @@ so it will only be true if the query is currently fetching for the first time.
 
 ## Typesafe disabling of queries using `skipToken`
 
-If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
+If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want the query to be type safe.
 
-> IMPORTANT: `refetch` from `useQuery` will not work with `skipToken`. Other than that, `skipToken` works the same as `enabled: false`.
+> **IMPORTANT**: `refetch` from `useQuery` will not work with `skipToken`. Calling `refetch()` on a query that uses `skipToken` will result in a `Missing queryFn` error because there is no valid query function to execute. If you need to manually trigger queries, consider using `enabled: false` instead, which allows `refetch()` to work properly. Other than this limitation, `skipToken` works the same as `enabled: false`.
 
 [//]: # 'Example3'
 
 ```tsx
+import { skipToken, useQuery } from '@tanstack/react-query'
+
 function Todos() {
   const [filter, setFilter] = React.useState<string | undefined>()
 

@@ -5,7 +5,7 @@ title: Advanced Server Rendering
 
 Welcome to the Advanced Server Rendering guide, where you will learn all about using React Query with streaming, Server Components and the Next.js app router.
 
-You might want to read the [Server Rendering & Hydration guide](../ssr) before this one as it teaches the basics for using React Query with SSR, and [Performance & Request Waterfalls](../request-waterfalls) as well as [Prefetching & Router Integration](../prefetching) also contains valuable background.
+You might want to read the [Server Rendering & Hydration guide](./ssr.md) before this one as it teaches the basics for using React Query with SSR, and [Performance & Request Waterfalls](./request-waterfalls.md) as well as [Prefetching & Router Integration](./prefetching.md) also contains valuable background.
 
 Before we start, let's note that while the `initialData` approach outlined in the SSR guide also works with Server Components, we'll focus this guide on the hydration APIs.
 
@@ -13,7 +13,7 @@ Before we start, let's note that while the `initialData` approach outlined in th
 
 We won't cover Server Components in depth here, but the short version is that they are components that are guaranteed to _only_ run on the server, both for the initial page view and **also on page transitions**. This is similar to how Next.js `getServerSideProps`/`getStaticProps` and Remix `loader` works, as these also always run on the server but while those can only return data, Server Components can do a lot more. The data part is central to React Query however, so let's focus on that.
 
-How do we take what we learned in the Server Rendering guide about [passing data prefetched in framework loaders to the app](../ssr#using-the-hydration-apis) and apply that to Server Components and the Next.js app router? The best way to start thinking about this is to consider Server Components as "just" another framework loader.
+How do we take what we learned in the Server Rendering guide about [passing data prefetched in framework loaders to the app](./ssr.md#using-the-hydration-apis) and apply that to Server Components and the Next.js app router? The best way to start thinking about this is to consider Server Components as "just" another framework loader.
 
 ### A quick note on terminology
 
@@ -26,11 +26,15 @@ One way to think of this is that even though Server Components also _render_, th
 The first step of any React Query setup is always to create a `queryClient` and wrap your application in a `QueryClientProvider`. With Server Components, this looks mostly the same across frameworks, one difference being the filename conventions:
 
 ```tsx
-// In Next.js, this file would be called: app/providers.jsx
+// In Next.js, this file would be called: app/providers.tsx
 'use client'
 
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  isServer,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -47,12 +51,12 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (typeof window === 'undefined') {
+  if (isServer) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
     // Browser: make a new query client if we don't already have one
-    // This is very important so we don't re-make a new client if React
+    // This is very important, so we don't re-make a new client if React
     // suspends during the initial render. This may not be needed if we
     // have a suspense boundary BELOW the creation of the query client
     if (!browserQueryClient) browserQueryClient = makeQueryClient()
@@ -60,7 +64,7 @@ function getQueryClient() {
   }
 }
 
-export default function Providers({ children }) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial
@@ -74,10 +78,14 @@ export default function Providers({ children }) {
 ```
 
 ```tsx
-// In Next.js, this file would be called: app/layout.jsx
+// In Next.js, this file would be called: app/layout.tsx
 import Providers from './providers'
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
       <head />
@@ -93,10 +101,10 @@ This part is pretty similar to what we did in the SSR guide, we just need to spl
 
 ### Prefetching and de/hydrating data
 
-Let's next look at how to actually prefetch data and dehydrate and hydrate it. This is what it looked like using the **Next.js pages router**:
+Next, let’s look at how to actually prefetch data, then dehydrate and hydrate it. This is what it looked like using the **Next.js Pages Router**:
 
 ```tsx
-// pages/posts.jsx
+// pages/posts.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -153,7 +161,7 @@ export default function PostsRoute({ dehydratedState }) {
 Converting this to the app router actually looks pretty similar, we just need to move things around a bit. First, we'll create a Server Component to do the prefetching part:
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -182,13 +190,16 @@ export default async function PostsPage() {
 Next, we'll look at what the Client Component part looks like:
 
 ```tsx
-// app/posts/posts.jsx
+// app/posts/posts.tsx
 'use client'
 
 export default function Posts() {
   // This useQuery could just as well happen in some deeper
   // child to <Posts>, data will be available immediately either way
-  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
+  const { data } = useQuery({
+    queryKey: ['posts'],
+    queryFn: () => getPosts(),
+  })
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix.
@@ -207,12 +218,14 @@ In the SSR guide, we noted that you could get rid of the boilerplate of having `
 
 > NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js 13 docs.
 
+> NOTE: If you encounter an error `Only plain objects, and a few built-ins, can be passed to Server Actions. Classes or null prototypes are not supported.` make sure that you're **not** passing to queryFn a function reference, instead call the function because queryFn args has a bunch of properties and not all of it would be serializable. see [Server Action only works when queryFn isn't a reference](https://github.com/TanStack/query/issues/6264).
+
 ### Nesting Server Components
 
 A nice thing about Server Components is that they can be nested and exist on many levels in the React tree, making it possible to prefetch data closer to where it's actually used instead of only at the top of the application (just like Remix loaders). This can be as simple as a Server Component rendering another Server Component (we'll leave the Client Components out in this example for brevity):
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -237,7 +250,7 @@ export default async function PostsPage() {
   )
 }
 
-// app/posts/comments-server.jsx
+// app/posts/comments-server.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -281,7 +294,7 @@ As more frameworks start supporting Server Components, they might have other rou
 In the example above, we create a new `queryClient` for each Server Component that fetches data. This is the recommended approach, but if you want to, you can alternatively create a single one that is reused across all Server Components:
 
 ```tsx
-// app/getQueryClient.jsx
+// app/getQueryClient.tsx
 import { QueryClient } from '@tanstack/react-query'
 import { cache } from 'react'
 
@@ -301,7 +314,7 @@ Next.js already dedupes requests that utilize `fetch()`, but if you are using so
 With Server Components, it's important to think about data ownership and revalidation. To explain why, let's look at a modified example from above:
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -354,9 +367,189 @@ The Next.js app router automatically streams any part of the application that is
 
 With the prefetching patterns described above, React Query is perfectly compatible with this form of streaming. As the data for each Suspense boundary resolves, Next.js can render and stream the finished content to the browser. This works even if you are using `useQuery` as outlined above because the suspending actually happens when you `await` the prefetch.
 
-Note that right now, you have to await all prefetches for this to work. This means all prefetches are considered critical content and will block that Suspense boundary.
+As of React Query v5.40.0, you don't have to `await` all prefetches for this to work, as `pending` Queries can also be dehydrated and sent to the client. This lets you kick off prefetches as early as possible without letting them block an entire Suspense boundary, and streams the _data_ to the client as the query finishes. This can be useful for example if you want to prefetch some content that is only visible after some user interaction, or say if you want to `await` and render the first page of an infinite query, but start prefetching page 2 without blocking rendering.
 
-As an aside, in the future it might be possible to skip the await for "optional" prefetches that are not critical for this Suspense boundary. This would let you kick off prefetches as early as possible without letting them block an entire Suspense boundary, and streaming the _data_ to the client as the query finishes. This could be useful for example if you want to prefetch some content that is only visible after some user interaction, or say if you want to await and render the first page of an infinite query, but start prefetching page 2 without blocking rendering.
+To make this work, we have to instruct the `queryClient` to also `dehydrate` pending Queries. We can do this globally, or by passing that option directly to `dehydrate`.
+
+We will also need to move the `getQueryClient()` function out of our `app/providers.tsx` file as we want to use it in our server component and our client provider.
+
+```tsx
+// app/get-query-client.ts
+import {
+  isServer,
+  QueryClient,
+  defaultShouldDehydrateQuery,
+} from '@tanstack/react-query'
+
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+      },
+      dehydrate: {
+        // include pending queries in dehydration
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) ||
+          query.state.status === 'pending',
+        shouldRedactErrors: (error) => {
+          // We should not catch Next.js server errors
+          // as that's how Next.js detects dynamic pages
+          // so we cannot redact them.
+          // Next.js also automatically redacts errors for us
+          // with better digests.
+          return false
+        },
+      },
+    },
+  })
+}
+
+let browserQueryClient: QueryClient | undefined = undefined
+
+export function getQueryClient() {
+  if (isServer) {
+    // Server: always make a new query client
+    return makeQueryClient()
+  } else {
+    // Browser: make a new query client if we don't already have one
+    // This is very important, so we don't re-make a new client if React
+    // suspends during the initial render. This may not be needed if we
+    // have a suspense boundary BELOW the creation of the query client
+    if (!browserQueryClient) browserQueryClient = makeQueryClient()
+    return browserQueryClient
+  }
+}
+```
+
+> Note: This works in NextJs and Server Components because React can serialize Promises over the wire when you pass them down to Client Components.
+
+Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `await` prefetches anymore:
+
+```tsx
+// app/posts/page.tsx
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { getQueryClient } from './get-query-client'
+import Posts from './posts'
+
+// the function doesn't need to be `async` because we don't `await` anything
+export default function PostsPage() {
+  const queryClient = getQueryClient()
+
+  // look ma, no await
+  queryClient.prefetchQuery({
+    queryKey: ['posts'],
+    queryFn: getPosts,
+  })
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Posts />
+    </HydrationBoundary>
+  )
+}
+```
+
+On the client, the Promise will be put into the QueryCache for us. That means we can now call `useSuspenseQuery` inside the `Posts` component to "use" that Promise (which was created on the Server):
+
+```tsx
+// app/posts/posts.tsx
+'use client'
+
+export default function Posts() {
+  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: getPosts })
+
+  // ...
+}
+```
+
+> Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
+
+If you're using non-JSON data types and serialize the query results on the server, you can specify the `dehydrate.serializeData` and `hydrate.deserializeData` options to serialize and deserialize the data on each side of the boundary to ensure the data in the cache is the same format both on the server and the client:
+
+```tsx
+// app/get-query-client.ts
+import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
+import { deserialize, serialize } from './transformer'
+
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      // ...
+      hydrate: {
+        deserializeData: deserialize,
+      },
+      dehydrate: {
+        serializeData: serialize,
+      },
+    },
+  })
+}
+
+// ...
+```
+
+```tsx
+// app/posts/page.tsx
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query'
+import { getQueryClient } from './get-query-client'
+import { serialize } from './transformer'
+import Posts from './posts'
+
+export default function PostsPage() {
+  const queryClient = getQueryClient()
+
+  // look ma, no await
+  queryClient.prefetchQuery({
+    queryKey: ['posts'],
+    queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
+  })
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Posts />
+    </HydrationBoundary>
+  )
+}
+```
+
+```tsx
+// app/posts/posts.tsx
+'use client'
+
+export default function Posts() {
+  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: getPosts })
+
+  // ...
+}
+```
+
+Now, your `getPosts` function can return e.g. `Temporal` datetime objects and the data will be serialized and deserialized on the client, assuming your transformer can serialize and deserialize those data types.
+
+For more information, check out the [Next.js App with Prefetching Example](../examples/nextjs-app-prefetching).
+
+### Using the Persist Adapter with Streaming
+
+If you're using the persist adapter with the [Streaming with Server Components](#streaming-with-server-components) feature, you need to be careful not to save promises to storage. Since pending queries can be dehydrated and streamed to the client, you should configure the persister to only persist successful queries:
+
+```tsx
+<PersistQueryClientProvider
+  client={queryClient}
+  persistOptions={{
+    persister,
+    // We don't want to save promises into the storage, so we only persist successful queries
+    dehydrateOptions: { shouldDehydrateQuery: defaultShouldDehydrateQuery },
+  }}
+>
+  {children}
+</PersistQueryClientProvider>
+```
+
+This ensures that only successfully resolved queries are persisted to storage, preventing serialization issues with pending promises.
 
 ## Experimental streaming without prefetching in Next.js
 
@@ -370,7 +563,11 @@ To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 // app/providers.tsx
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  isServer,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
 
@@ -389,13 +586,13 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (typeof window === 'undefined') {
+  if (isServer) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
     // Browser: make a new query client if we don't already have one
-    // This is very important so we don't re-make a new client if React
-    // supsends during the initial render. This may not be needed if we
+    // This is very important, so we don't re-make a new client if React
+    // suspends during the initial render. This may not be needed if we
     // have a suspense boundary BELOW the creation of the query client
     if (!browserQueryClient) browserQueryClient = makeQueryClient()
     return browserQueryClient
@@ -419,11 +616,11 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../../examples/nextjs-suspense-streaming).
+For more information, check out the [NextJs Suspense Streaming Example](../examples/nextjs-suspense-streaming).
 
 The big upside is that you no longer need to prefetch queries manually to have SSR work, and it even still streams in the result! This gives you phenomenal DX and lower code complexity.
 
-The downside is easiest to explain if we look back at [the complex request waterfall example](../request-waterfalls#code-splitting) in the Performance & Request Waterfalls guide. Server Components with prefetching effectively eliminates the request waterfalls both for the initial page load **and** any subsequent navigation. This prefetch-less approach however will only flatten the waterfalls on the initial page load but ends up the same deep waterfall as the original example on page navigations:
+The downside is easiest to explain if we look back at [the complex request waterfall example](./request-waterfalls.md#code-splitting) in the Performance & Request Waterfalls guide. Server Components with prefetching effectively eliminates the request waterfalls both for the initial page load **and** any subsequent navigation. This prefetch-less approach however will only flatten the waterfalls on the initial page load but ends up the same deep waterfall as the original example on page navigations:
 
 ```
 1. |> JS for <Feed>
@@ -443,3 +640,11 @@ If you value DX/iteration/shipping speed with low code complexity over performan
 Server Components and streaming are still fairly new concepts and we are still figuring out how React Query fits in and what improvements we can make to the API. We welcome suggestions, feedback and bug reports!
 
 Similarly, it would be impossible to teach all the intricacies of this new paradigm all in one guide, on the first try. If you are missing some piece of information here or have suggestions on how to improve this content, also get in touch, or even better, click the "Edit on GitHub" button below and help us out.
+
+[//]: # 'Materials'
+
+## Further reading
+
+To understand if your application can benefit from React Query when also using Server Components, see the article [You Might Not Need React Query](https://tkdodo.eu/blog/you-might-not-need-react-query).
+
+[//]: # 'Materials'

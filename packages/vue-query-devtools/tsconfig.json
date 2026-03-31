@@ -1,4 +1,9 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts", "src/**/*.vue", ".eslintrc.cjs", "vite.config.ts"]
+  "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": "."
+  },
+  "include": ["src", "*.config.*", "package.json"],
+  "references": [{ "path": "../vue-query" }, { "path": "../query-devtools" }]
 }

@@ -1,17 +1,9 @@
-import {
-  ActionFunctionArgs,
-  Form,
-  Link,
-  LoaderFunctionArgs,
-  useFetcher,
-  useLoaderData,
-} from 'react-router-dom'
-import { Contact, getContact, updateContact } from '../contacts'
-import {
-  QueryClient,
-  queryOptions,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
+import { Form, Link, useFetcher, useLoaderData } from 'react-router-dom'
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
+import { getContact, updateContact } from '../contacts'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router-dom'
+import type { Contact } from '../contacts'
+import type { QueryClient } from '@tanstack/react-query'
 
 export const contactDetailQuery = (id: string) =>
   queryOptions({
@@ -41,7 +33,7 @@ export const loader =
 export const action =
   (queryClient: QueryClient) =>
   async ({ request, params }: ActionFunctionArgs) => {
-    let formData = await request.formData()
+    const formData = await request.formData()
     if (!params.contactId) {
       throw new Error('No contact ID provided')
     }
@@ -94,7 +86,6 @@ export default function Contact() {
             method="post"
             action="destroy"
             onSubmit={(event) => {
-              // eslint-disable-next-line no-restricted-globals
               if (!confirm('Please confirm you want to delete this record.')) {
                 event.preventDefault()
               }

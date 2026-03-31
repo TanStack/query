@@ -5,19 +5,18 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "test:types": "tsc"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.38.0",
-    "@tanstack/solid-query-devtools": "^5.38.0",
-    "graphql": "^16.8.1",
-    "graphql-request": "^7.0.1",
-    "solid-js": "^1.8.17"
+    "@tanstack/solid-query": "^5.96.0",
+    "@tanstack/solid-query-devtools": "^5.96.0",
+    "graphql": "^16.9.0",
+    "graphql-request": "^7.1.2",
+    "solid-js": "^1.9.7"
   },
   "devDependencies": {
-    "typescript": "5.3.3",
-    "vite": "^5.2.11",
-    "vite-plugin-solid": "^2.10.2"
+    "typescript": "5.8.3",
+    "vite": "^6.4.1",
+    "vite-plugin-solid": "^2.11.6"
   }
 }

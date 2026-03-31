@@ -2,30 +2,26 @@ import {
   For,
   Show,
   batch,
-  createContext,
   createEffect,
   createMemo,
   createSignal,
   on,
   onCleanup,
   onMount,
-  useContext,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import * as goober from 'goober'
 import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
-import { createLocalStorage } from '@solid-primitives/storage'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
-import { Portal, clearDelegatedEvents, delegateEvents } from 'solid-js/web'
+import { Portal } from 'solid-js/web'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
   displayValue,
   getMutationStatusColor,
-  getPreferredColorScheme,
   getQueryStatusColor,
   getQueryStatusColorByLabel,
   getQueryStatusLabel,
@@ -55,25 +51,31 @@ import {
   XCircle,
 } from './icons'
 import Explorer from './Explorer'
+import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
-  QueryDevtoolsContext,
-  ThemeContext,
-  useQueryDevtoolsContext,
-  useTheme,
-} from './Context'
+  BUTTON_POSITION,
+  DEFAULT_HEIGHT,
+  DEFAULT_MUTATION_SORT_FN_NAME,
+  DEFAULT_SORT_FN_NAME,
+  DEFAULT_SORT_ORDER,
+  DEFAULT_WIDTH,
+  INITIAL_IS_OPEN,
+  POSITION,
+  firstBreakpoint,
+  secondBreakpoint,
+  thirdBreakpoint,
+} from './constants'
 import type {
-  DevToolsErrorType,
-  DevtoolsButtonPosition,
+  DevtoolsErrorType,
   DevtoolsPosition,
   QueryDevtoolsProps,
-} from './Context'
+} from './contexts'
 import type {
   Mutation,
   MutationCache,
   Query,
   QueryCache,
   QueryCacheNotifyEvent,
-  QueryState,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
 import type { Accessor, Component, JSX, Setter } from 'solid-js'
@@ -83,25 +85,18 @@ interface DevtoolsPanelProps {
   setLocalStore: StorageSetter<string, unknown>
 }
 
+interface ContentViewProps {
+  localStore: StorageObject<string>
+  setLocalStore: StorageSetter<string, unknown>
+  showPanelViewOnly?: boolean
+  onClose?: () => unknown
+}
+
 interface QueryStatusProps {
   label: string
   color: 'green' | 'yellow' | 'gray' | 'blue' | 'purple' | 'red'
   count: number
 }
-
-const firstBreakpoint = 1024
-const secondBreakpoint = 796
-const thirdBreakpoint = 700
-
-const BUTTON_POSITION: DevtoolsButtonPosition = 'bottom-right'
-const POSITION: DevtoolsPosition = 'bottom'
-const THEME_PREFERENCE = 'system'
-const INITIAL_IS_OPEN = false
-const DEFAULT_HEIGHT = 500
-const DEFAULT_WIDTH = 500
-const DEFAULT_SORT_FN_NAME = Object.keys(sortFns)[0]
-const DEFAULT_SORT_ORDER = 1
-const DEFAULT_MUTATION_SORT_FN_NAME = Object.keys(mutationSortFns)[0]
 
 const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
   null,
@@ -116,217 +111,25 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
 }
 
-interface PiPProviderProps {
-  children: JSX.Element
-  localStore: StorageObject<string>
-  setLocalStore: StorageSetter<string, unknown>
-}
-
-type PiPContextType = {
-  pipWindow: Window | null
-  requestPipWindow: (width: number, height: number) => Promise<void>
-  closePipWindow: () => void
-}
-
-const PiPContext = createContext<Accessor<PiPContextType> | undefined>(
-  undefined,
-)
-
-const PiPProvider = (props: PiPProviderProps) => {
-  // Expose pipWindow that is currently active
-  const [pipWindow, setPipWindow] = createSignal<Window | null>(null)
-
-  // Close pipWindow programmatically
-  const closePipWindow = () => {
-    const w = pipWindow()
-    if (w != null) {
-      w.close()
-      setPipWindow(null)
-    }
-  }
-
-  // Open new pipWindow
-  const requestPipWindow = async (width: number, height: number) => {
-    // We don't want to allow multiple requests.
-    if (pipWindow() != null) {
-      return
-    }
-
-    const pip = window.open(
-      '',
-      'TSQD-Devtools-Panel',
-      `width=${width},height=${height},popup`,
-    )
-
-    if (!pip) {
-      throw new Error(
-        'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
-      )
-    }
-
-    // Remove existing styles
-    pip.document.head.innerHTML = ''
-    // Remove existing body
-    pip.document.body.innerHTML = ''
-    // Clear Delegated Events
-    clearDelegatedEvents(pip.document)
-
-    pip.document.title = 'TanStack Query Devtools'
-    pip.document.body.style.margin = '0'
-
-    // Detect when window is closed by user
-    pip.addEventListener('pagehide', () => {
-      props.setLocalStore('pip_open', 'false')
-      setPipWindow(null)
-    })
-
-    // It is important to copy all parent window styles. Otherwise, there would be no CSS available at all
-    // https://developer.chrome.com/docs/web-platform/document-picture-in-picture/#copy-style-sheets-to-the-picture-in-picture-window
-    ;[
-      ...(useQueryDevtoolsContext().shadowDOMTarget || document).styleSheets,
-    ].forEach((styleSheet) => {
-      try {
-        const cssRules = [...styleSheet.cssRules]
-          .map((rule) => rule.cssText)
-          .join('')
-        const style = document.createElement('style')
-        const style_node = styleSheet.ownerNode
-        let style_id = ''
-
-        if (style_node && 'id' in style_node) {
-          style_id = style_node.id
-        }
-
-        if (style_id) {
-          style.setAttribute('id', style_id)
-        }
-        style.textContent = cssRules
-        pip.document.head.appendChild(style)
-      } catch (e) {
-        const link = document.createElement('link')
-        if (styleSheet.href == null) {
-          return
-        }
-
-        link.rel = 'stylesheet'
-        link.type = styleSheet.type
-        link.media = styleSheet.media.toString()
-        link.href = styleSheet.href
-        pip.document.head.appendChild(link)
-      }
-    })
-    delegateEvents(
-      [
-        'focusin',
-        'focusout',
-        'pointermove',
-        'keydown',
-        'pointerdown',
-        'pointerup',
-        'click',
-        'mousedown',
-        'input',
-      ],
-      pip.document,
-    )
-    props.setLocalStore('pip_open', 'true')
-    setPipWindow(pip)
-  }
-
-  createEffect(() => {
-    const pip_open = (props.localStore.pip_open ?? 'false') as 'true' | 'false'
-    if (pip_open === 'true') {
-      requestPipWindow(
-        Number(window.innerWidth),
-        Number(props.localStore.height || DEFAULT_HEIGHT),
-      )
-    }
-  })
-
-  createEffect(() => {
-    // Setup mutation observer for goober styles with id `_goober
-    const gooberStyles = (
-      useQueryDevtoolsContext().shadowDOMTarget || document
-    ).querySelector('#_goober')
-    const w = pipWindow()
-    if (gooberStyles && w) {
-      const observer = new MutationObserver(() => {
-        const pip_style = (
-          useQueryDevtoolsContext().shadowDOMTarget || w.document
-        ).querySelector('#_goober')
-        if (pip_style) {
-          pip_style.textContent = gooberStyles.textContent
-        }
-      })
-      observer.observe(gooberStyles, {
-        childList: true, // observe direct children
-        subtree: true, // and lower descendants too
-        characterDataOldValue: true, // pass old data to callback
-      })
-      onCleanup(() => {
-        observer.disconnect()
-      })
-    }
-  })
-
-  const value = createMemo(() => ({
-    pipWindow: pipWindow(),
-    requestPipWindow,
-    closePipWindow,
-  }))
-
-  return (
-    <PiPContext.Provider value={value}>{props.children}</PiPContext.Provider>
-  )
-}
-
-const usePiPWindow = () => {
-  const context = createMemo(() => {
-    const ctx = useContext(PiPContext)
-    if (!ctx) {
-      throw new Error('usePiPWindow must be used within a PiPProvider')
-    }
-    return ctx()
-  })
-  return context
-}
-
-const DevtoolsComponent: DevtoolsComponentType = (props) => {
-  const [localStore, setLocalStore] = createLocalStorage({
-    prefix: 'TanstackQueryDevtools',
-  })
-
-  const colorScheme = getPreferredColorScheme()
-
-  const theme = createMemo(() => {
-    const preference = (localStore.theme_preference || THEME_PREFERENCE) as
-      | 'system'
-      | 'dark'
-      | 'light'
-    if (preference !== 'system') return preference
-    return colorScheme()
-  })
-
-  return (
-    <QueryDevtoolsContext.Provider value={props}>
-      <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
-        <ThemeContext.Provider value={theme}>
-          <Devtools localStore={localStore} setLocalStore={setLocalStore} />
-        </ThemeContext.Provider>
-      </PiPProvider>
-    </QueryDevtoolsContext.Provider>
-  )
-}
-
-export default DevtoolsComponent
-
-const Devtools: Component<DevtoolsPanelProps> = (props) => {
+export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
+  })
+  const onlineManager = createMemo(
+    () => useQueryDevtoolsContext().onlineManager,
+  )
+  onMount(() => {
+    const unsubscribe = onlineManager().subscribe((online) => {
+      setOffline(!online)
+    })
+
+    onCleanup(() => {
+      unsubscribe()
+    })
   })
 
   const pip = usePiPWindow()
@@ -393,10 +196,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
       <Show when={pip().pipWindow && pip_open() == 'true'}>
         <Portal mount={pip().pipWindow?.document.body}>
           <PiPPanel>
-            <ContentView
-              localStore={props.localStore}
-              setLocalStore={props.setLocalStore}
-            />
+            <ContentView {...props} />
           </PiPPanel>
         </Portal>
       </Show>
@@ -444,7 +244,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
       >
         <TransitionGroup name="tsqd-panel-transition">
           <Show when={isOpen() && !pip().pipWindow && pip_open() == 'false'}>
-            <DevtoolsPanel
+            <DraggablePanel
               localStore={props.localStore}
               setLocalStore={props.setLocalStore}
             />
@@ -463,6 +263,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
                 <TanstackLogo />
               </div>
               <button
+                type="button"
                 aria-label="Open Tanstack query devtools"
                 onClick={() => props.setLocalStore('open', 'true')}
                 class="tsqd-open-btn"
@@ -547,13 +348,79 @@ const PiPPanel: Component<{
   )
 }
 
-const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
+export const ParentPanel: Component<{
+  children: JSX.Element
+}> = (props) => {
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
     : goober.css
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
+  })
+
+  let panelRef!: HTMLDivElement
+
+  onMount(() => {
+    createResizeObserver(panelRef, ({ width }, el) => {
+      if (el === panelRef) {
+        setPanelWidth(width)
+      }
+    })
+  })
+
+  const getPanelDynamicStyles = () => {
+    const { colors } = tokens
+    const t = (light: string, dark: string) =>
+      theme() === 'dark' ? dark : light
+    if (panelWidth() < secondBreakpoint) {
+      return css`
+        flex-direction: column;
+        background-color: ${t(colors.gray[300], colors.gray[600])};
+      `
+    }
+    return css`
+      flex-direction: row;
+      background-color: ${t(colors.gray[200], colors.darkGray[900])};
+    `
+  }
+
+  return (
+    <div
+      style={{
+        '--tsqd-font-size': '16px',
+      }}
+      ref={panelRef}
+      class={cx(
+        styles().parentPanel,
+        getPanelDynamicStyles(),
+        {
+          [css`
+            min-width: min-content;
+          `]: panelWidth() < thirdBreakpoint,
+        },
+        'tsqd-main-panel',
+      )}
+    >
+      {props.children}
+    </div>
+  )
+}
+
+const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
+  const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
+  })
+
+  let closeBtnRef!: HTMLButtonElement
+
+  // Focus the close button when the panel opens for screen reader accessibility
+  onMount(() => {
+    closeBtnRef.focus()
   })
 
   const [isResizing, setIsResizing] = createSignal(false)
@@ -619,7 +486,7 @@ const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         setIsResizing(false)
       }
       document.removeEventListener('mousemove', runDrag, false)
-      document.removeEventListener('mouseUp', unsubscribe, false)
+      document.removeEventListener('mouseup', unsubscribe, false)
     }
 
     document.addEventListener('mousemove', runDrag, false)
@@ -722,14 +589,73 @@ const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       aria-label="Tanstack query devtools"
     >
       <div
+        role="separator"
+        aria-orientation={
+          position() === 'top' || position() === 'bottom'
+            ? 'horizontal'
+            : 'vertical'
+        }
+        aria-label="Resize devtools panel"
+        aria-valuemin={
+          position() === 'top' || position() === 'bottom'
+            ? convertRemToPixels(3.5)
+            : convertRemToPixels(12)
+        }
+        aria-valuenow={
+          position() === 'top' || position() === 'bottom'
+            ? Number(props.localStore.height || DEFAULT_HEIGHT)
+            : Number(props.localStore.width || DEFAULT_WIDTH)
+        }
+        tabindex="0"
         class={cx(
           styles().dragHandle,
           styles()[`dragHandle-position-${position()}`],
           'tsqd-drag-handle',
         )}
         onMouseDown={handleDragStart}
+        onKeyDown={(e) => {
+          const step = 10
+          const minHeight = convertRemToPixels(3.5)
+          const minWidth = convertRemToPixels(12)
+          if (position() === 'top' || position() === 'bottom') {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+              e.preventDefault()
+              const currentHeight = Number(
+                props.localStore.height || DEFAULT_HEIGHT,
+              )
+              const delta =
+                position() === 'bottom'
+                  ? e.key === 'ArrowUp'
+                    ? step
+                    : -step
+                  : e.key === 'ArrowDown'
+                    ? step
+                    : -step
+              const newHeight = Math.max(minHeight, currentHeight + delta)
+              props.setLocalStore('height', String(newHeight))
+            }
+          } else {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+              e.preventDefault()
+              const currentWidth = Number(
+                props.localStore.width || DEFAULT_WIDTH,
+              )
+              const delta =
+                position() === 'right'
+                  ? e.key === 'ArrowLeft'
+                    ? step
+                    : -step
+                  : e.key === 'ArrowRight'
+                    ? step
+                    : -step
+              const newWidth = Math.max(minWidth, currentWidth + delta)
+              props.setLocalStore('width', String(newWidth))
+            }
+          }
+        }}
       ></div>
       <button
+        ref={closeBtnRef}
         aria-label="Close tanstack query devtools"
         class={cx(
           styles().closeBtn,
@@ -740,18 +666,14 @@ const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       >
         <ChevronDown />
       </button>
-      <ContentView
-        localStore={props.localStore}
-        setLocalStore={props.setLocalStore}
-      />
+      <ContentView {...props} />
     </aside>
   )
 }
 
-const ContentView: Component<DevtoolsPanelProps> = (props) => {
+export const ContentView: Component<ContentViewProps> = (props) => {
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
-
   let containerRef!: HTMLDivElement
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
@@ -802,16 +724,27 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
 
   const queries = createMemo(
     on(
-      () => [queryCount(), props.localStore.filter, sort(), sortOrder()],
+      () => [
+        queryCount(),
+        props.localStore.filter,
+        sort(),
+        sortOrder(),
+        props.localStore.hideDisabledQueries,
+      ],
       () => {
         const curr = query_cache().getAll()
 
-        const filtered = props.localStore.filter
+        let filtered = props.localStore.filter
           ? curr.filter(
               (item) =>
                 rankItem(item.queryHash, props.localStore.filter || '').passed,
             )
           : [...curr]
+
+        // Filter out disabled queries if hideDisabledQueries is enabled
+        if (props.localStore.hideDisabledQueries === 'true') {
+          filtered = filtered.filter((item) => !item.isDisabled())
+        }
 
         const sorted = sortFn()
           ? filtered.sort((a, b) => sortFn()!(a, b) * sortOrder())
@@ -900,8 +833,12 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             <button
               class={cx(styles().logo, 'tsqd-text-logo-container')}
               onClick={() => {
-                if (!pip().pipWindow) {
+                if (!pip().pipWindow && !props.showPanelViewOnly) {
                   props.setLocalStore('open', 'false')
+                  return
+                }
+                if (props.onClose) {
+                  props.onClose()
                 }
               }}
               aria-label="Close Tanstack query devtools"
@@ -924,6 +861,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             <RadioGroup.Root
               class={cx(styles().viewToggle)}
               value={selectedView()}
+              aria-label="Toggle between queries and mutations view"
               onChange={(value) => {
                 setSelectedView(value as 'queries' | 'mutations')
                 setSelectedQueryHash(null)
@@ -997,6 +935,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                 <select
                   value={sort()}
                   name="tsqd-queries-filter-sort"
+                  aria-label="Sort queries by"
                   onChange={(e) => {
                     props.setLocalStore('sort', e.currentTarget.value)
                   }}
@@ -1010,6 +949,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                 <select
                   value={mutationSort()}
                   name="tsqd-mutations-filter-sort"
+                  aria-label="Sort mutations by"
                   onChange={(e) => {
                     props.setLocalStore('mutationSort', e.currentTarget.value)
                   }}
@@ -1073,8 +1013,10 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             <button
               onClick={() => {
                 if (selectedView() === 'queries') {
+                  sendDevToolsEvent({ type: 'CLEAR_QUERY_CACHE' })
                   query_cache().clear()
                 } else {
+                  sendDevToolsEvent({ type: 'CLEAR_MUTATION_CACHE' })
                   mutation_cache().clear()
                 }
               }}
@@ -1090,13 +1032,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             </button>
             <button
               onClick={() => {
-                if (offline()) {
-                  onlineManager().setOnline(true)
-                  setOffline(false)
-                } else {
-                  onlineManager().setOnline(false)
-                  setOffline(true)
-                }
+                onlineManager().setOnline(!onlineManager().isOnline())
               }}
               class={cx(
                 styles().actionsBtn,
@@ -1118,7 +1054,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             >
               {offline() ? <Offline /> : <Wifi />}
             </button>
-            <Show when={!pip().pipWindow}>
+            <Show when={!pip().pipWindow && !pip().disabled}>
               <button
                 onClick={() => {
                   pip().requestPipWindow(
@@ -1132,7 +1068,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                   'tsqd-action-open-pip',
                 )}
                 aria-label="Open in picture-in-picture mode"
-                title={`Open in picture-in-picture mode`}
+                title="Open in picture-in-picture mode"
               >
                 <PiPIcon />
               </button>
@@ -1145,6 +1081,8 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                   'tsqd-actions-btn',
                   'tsqd-action-settings',
                 )}
+                aria-label="Open settings menu"
+                title="Open settings menu"
               >
                 <Settings />
               </DropdownMenu.Trigger>
@@ -1167,90 +1105,88 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                   >
                     Settings
                   </div>
-                  <DropdownMenu.Sub overlap gutter={8} shift={-4}>
-                    <DropdownMenu.SubTrigger
-                      class={cx(
-                        styles().settingsSubTrigger,
-                        'tsqd-settings-menu-sub-trigger',
-                        'tsqd-settings-menu-sub-trigger-position',
-                      )}
-                    >
-                      <span>Position</span>
-                      <ChevronDown />
-                    </DropdownMenu.SubTrigger>
-                    <DropdownMenu.Portal
-                      ref={(el) => setComputedVariables(el as HTMLDivElement)}
-                      mount={
-                        pip().pipWindow
-                          ? pip().pipWindow!.document.body
-                          : document.body
-                      }
-                    >
-                      <DropdownMenu.SubContent
+                  <Show when={!props.showPanelViewOnly}>
+                    <DropdownMenu.Sub overlap gutter={8} shift={-4}>
+                      <DropdownMenu.SubTrigger
                         class={cx(
-                          styles().settingsMenu,
-                          'tsqd-settings-submenu',
+                          styles().settingsSubTrigger,
+                          'tsqd-settings-menu-sub-trigger',
+                          'tsqd-settings-menu-sub-trigger-position',
                         )}
                       >
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            setDevtoolsPosition('top')
-                          }}
-                          as="button"
+                        <span>Position</span>
+                        <ChevronDown />
+                      </DropdownMenu.SubTrigger>
+                      <DropdownMenu.Portal
+                        ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                        mount={
+                          pip().pipWindow
+                            ? pip().pipWindow!.document.body
+                            : document.body
+                        }
+                      >
+                        <DropdownMenu.SubContent
                           class={cx(
-                            styles().settingsSubButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-top',
+                            styles().settingsMenu,
+                            'tsqd-settings-submenu',
                           )}
                         >
-                          <span>Top</span>
-                          <ArrowUp />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            setDevtoolsPosition('bottom')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-bottom',
-                          )}
-                        >
-                          <span>Bottom</span>
-                          <ArrowDown />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            setDevtoolsPosition('left')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-left',
-                          )}
-                        >
-                          <span>Left</span>
-                          <ArrowLeft />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            setDevtoolsPosition('right')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-right',
-                          )}
-                        >
-                          <span>Right</span>
-                          <ArrowRight />
-                        </DropdownMenu.Item>
-                      </DropdownMenu.SubContent>
-                    </DropdownMenu.Portal>
-                  </DropdownMenu.Sub>
+                          <DropdownMenu.RadioGroup
+                            aria-label="Position settings"
+                            value={props.localStore.position}
+                            onChange={(value) =>
+                              setDevtoolsPosition(value as DevtoolsPosition)
+                            }
+                          >
+                            <DropdownMenu.RadioItem
+                              value="top"
+                              class={cx(
+                                styles().settingsSubButton,
+                                'tsqd-settings-menu-position-btn',
+                                'tsqd-settings-menu-position-btn-top',
+                              )}
+                            >
+                              <span>Top</span>
+                              <ArrowUp />
+                            </DropdownMenu.RadioItem>
+                            <DropdownMenu.RadioItem
+                              value="bottom"
+                              class={cx(
+                                styles().settingsSubButton,
+                                'tsqd-settings-menu-position-btn',
+                                'tsqd-settings-menu-position-btn-bottom',
+                              )}
+                            >
+                              <span>Bottom</span>
+                              <ArrowDown />
+                            </DropdownMenu.RadioItem>
+                            <DropdownMenu.RadioItem
+                              value="left"
+                              class={cx(
+                                styles().settingsSubButton,
+                                'tsqd-settings-menu-position-btn',
+                                'tsqd-settings-menu-position-btn-left',
+                              )}
+                            >
+                              <span>Left</span>
+                              <ArrowLeft />
+                            </DropdownMenu.RadioItem>
+                            <DropdownMenu.RadioItem
+                              value="right"
+                              class={cx(
+                                styles().settingsSubButton,
+                                'tsqd-settings-menu-position-btn',
+                                'tsqd-settings-menu-position-btn-right',
+                              )}
+                            >
+                              <span>Right</span>
+                              <ArrowRight />
+                            </DropdownMenu.RadioItem>
+                          </DropdownMenu.RadioGroup>
+                        </DropdownMenu.SubContent>
+                      </DropdownMenu.Portal>
+                    </DropdownMenu.Sub>
+                  </Show>
                   <DropdownMenu.Sub overlap gutter={8} shift={-4}>
                     <DropdownMenu.SubTrigger
                       class={cx(
@@ -1276,54 +1212,117 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                           'tsqd-settings-submenu',
                         )}
                       >
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            props.setLocalStore('theme_preference', 'light')
+                        <DropdownMenu.RadioGroup
+                          value={props.localStore.theme_preference}
+                          onChange={(value) => {
+                            props.setLocalStore('theme_preference', value)
                           }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            props.localStore.theme_preference === 'light' &&
-                              styles().themeSelectedButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-top',
-                          )}
+                          aria-label="Theme preference"
                         >
-                          <span>Light</span>
-                          <Sun />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            props.setLocalStore('theme_preference', 'dark')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            props.localStore.theme_preference === 'dark' &&
-                              styles().themeSelectedButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-bottom',
-                          )}
+                          <DropdownMenu.RadioItem
+                            value="light"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-top',
+                            )}
+                          >
+                            <span>Light</span>
+                            <Sun />
+                          </DropdownMenu.RadioItem>
+                          <DropdownMenu.RadioItem
+                            value="dark"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-bottom',
+                            )}
+                          >
+                            <span>Dark</span>
+                            <Moon />
+                          </DropdownMenu.RadioItem>
+                          <DropdownMenu.RadioItem
+                            value="system"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-left',
+                            )}
+                          >
+                            <span>System</span>
+                            <Monitor />
+                          </DropdownMenu.RadioItem>
+                        </DropdownMenu.RadioGroup>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
+                  <DropdownMenu.Sub overlap gutter={8} shift={-4}>
+                    <DropdownMenu.SubTrigger
+                      class={cx(
+                        styles().settingsSubTrigger,
+                        'tsqd-settings-menu-sub-trigger',
+                        'tsqd-settings-menu-sub-trigger-disabled-queries',
+                      )}
+                    >
+                      <span>Disabled Queries</span>
+                      <ChevronDown />
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal
+                      ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                      mount={
+                        pip().pipWindow
+                          ? pip().pipWindow!.document.body
+                          : document.body
+                      }
+                    >
+                      <DropdownMenu.SubContent
+                        class={cx(
+                          styles().settingsMenu,
+                          'tsqd-settings-submenu',
+                        )}
+                      >
+                        <DropdownMenu.RadioGroup
+                          value={props.localStore.hideDisabledQueries}
+                          aria-label="Hide disabled queries setting"
+                          onChange={(value) =>
+                            props.setLocalStore('hideDisabledQueries', value)
+                          }
                         >
-                          <span>Dark</span>
-                          <Moon />
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item
-                          onSelect={() => {
-                            props.setLocalStore('theme_preference', 'system')
-                          }}
-                          as="button"
-                          class={cx(
-                            styles().settingsSubButton,
-                            props.localStore.theme_preference === 'system' &&
-                              styles().themeSelectedButton,
-                            'tsqd-settings-menu-position-btn',
-                            'tsqd-settings-menu-position-btn-left',
-                          )}
-                        >
-                          <span>System</span>
-                          <Monitor />
-                        </DropdownMenu.Item>
+                          <DropdownMenu.RadioItem
+                            value="false"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-show',
+                            )}
+                          >
+                            <span>Show</span>
+                            <Show
+                              when={
+                                props.localStore.hideDisabledQueries !== 'true'
+                              }
+                            >
+                              <CheckCircle />
+                            </Show>
+                          </DropdownMenu.RadioItem>
+                          <DropdownMenu.RadioItem
+                            value="true"
+                            class={cx(
+                              styles().settingsSubButton,
+                              'tsqd-settings-menu-position-btn',
+                              'tsqd-settings-menu-position-btn-hide',
+                            )}
+                          >
+                            <span>Hide</span>
+                            <Show
+                              when={
+                                props.localStore.hideDisabledQueries === 'true'
+                              }
+                            >
+                              <CheckCircle />
+                            </Show>
+                          </DropdownMenu.RadioItem>
+                        </DropdownMenu.RadioGroup>
                       </DropdownMenu.SubContent>
                     </DropdownMenu.Portal>
                   </DropdownMenu.Sub>
@@ -1404,6 +1403,17 @@ const QueryRow: Component<{ query: Query }> = (props) => {
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
+  const isStatic = createSubscribeToQueryCacheBatcher(
+    (queryCache) =>
+      queryCache()
+        .find({
+          queryKey: props.query.queryKey,
+        })
+        ?.isStatic() ?? false,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
+  )
+
   const isStale = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
       queryCache()
@@ -1467,7 +1477,7 @@ const QueryRow: Component<{ query: Query }> = (props) => {
             styles().selectedQueryRow,
           'tsqd-query-row',
         )}
-        aria-label={`Query key ${props.query.queryHash}`}
+        aria-label={`Query key ${props.query.queryHash}${isDisabled() ? ', disabled' : ''}${isStatic() ? ', static' : ''}`}
       >
         <div
           class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
@@ -1476,7 +1486,14 @@ const QueryRow: Component<{ query: Query }> = (props) => {
         </div>
         <code class="tsqd-query-hash">{props.query.queryHash}</code>
         <Show when={isDisabled()}>
-          <div class="tsqd-query-disabled-indicator">disabled</div>
+          <div class="tsqd-query-disabled-indicator" aria-hidden="true">
+            disabled
+          </div>
+        </Show>
+        <Show when={isStatic()}>
+          <div class="tsqd-query-static-indicator" aria-hidden="true">
+            static
+          </div>
         </Show>
       </button>
     </Show>
@@ -1747,7 +1764,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
         return false
       }
     }
-    if (panelWidth() < thirdBreakpoint) {
+    if (panelWidth() < secondBreakpoint) {
       return false
     }
 
@@ -1765,13 +1782,17 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
       }}
       disabled={showLabel()}
       ref={tagRef}
+      aria-label={`${props.label}: ${props.count}`}
       class={cx(
         styles().queryStatusTag,
         !showLabel() &&
           css`
             cursor: pointer;
             &:hover {
-              background: ${t(colors.gray[200], colors.darkGray[400])}${alpha[80]};
+              background: ${t(
+                  colors.gray[200],
+                  colors.darkGray[400],
+                )}${alpha[80]};
             }
           `,
         'tsqd-query-status-tag',
@@ -1793,6 +1814,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
         </div>
       </Show>
       <span
+        aria-hidden="true"
         class={cx(
           css`
             width: ${tokens.size[1.5]};
@@ -1849,6 +1871,8 @@ const QueryDetails = () => {
   const queryClient = useQueryDevtoolsContext().client
 
   const [restoringLoading, setRestoringLoading] = createSignal(false)
+  const [dataMode, setDataMode] = createSignal<'view' | 'edit'>('view')
+  const [dataEditError, setDataEditError] = createSignal<boolean>(false)
 
   const errorTypes = createMemo(() => {
     return useQueryDevtoolsContext().errorTypes || []
@@ -1912,39 +1936,59 @@ const QueryDetails = () => {
   const color = createMemo(() => getQueryStatusColorByLabel(statusLabel()))
 
   const handleRefetch = () => {
+    sendDevToolsEvent({ type: 'REFETCH', queryHash: activeQuery()?.queryHash })
     const promise = activeQuery()?.fetch()
     promise?.catch(() => {})
   }
 
-  const triggerError = (errorType?: DevToolsErrorType) => {
+  const triggerError = (errorType?: DevtoolsErrorType) => {
+    const activeQueryVal = activeQuery()
+    if (!activeQueryVal) return
+    sendDevToolsEvent({
+      type: 'TRIGGER_ERROR',
+      queryHash: activeQueryVal.queryHash,
+      metadata: { error: errorType?.name },
+    })
     const error =
-      errorType?.initializer(activeQuery()!) ??
+      errorType?.initializer(activeQueryVal) ??
       new Error('Unknown error from devtools')
 
-    const __previousQueryOptions = activeQuery()!.options
+    const __previousQueryOptions = activeQueryVal.options
 
-    activeQuery()!.setState({
+    activeQueryVal.setState({
+      data: undefined,
       status: 'error',
       error,
       fetchMeta: {
-        ...activeQuery()!.state.fetchMeta,
+        ...activeQueryVal.state.fetchMeta,
         __previousQueryOptions,
       } as any,
-    } as QueryState<unknown, Error>)
+    })
   }
 
   const restoreQueryAfterLoadingOrError = () => {
-    const activeQueryVal = activeQuery()!
+    const activeQueryVal = activeQuery()
+    if (!activeQueryVal) return
+
+    sendDevToolsEvent({
+      type: 'RESTORE_LOADING',
+      queryHash: activeQueryVal.queryHash,
+    })
     const previousState = activeQueryVal.state
-    const previousOptions = (activeQueryVal.state.fetchMeta as any)
-      .__previousQueryOptions
+    const previousOptions = activeQueryVal.state.fetchMeta
+      ? (activeQueryVal.state.fetchMeta as any).__previousQueryOptions
+      : null
+
     activeQueryVal.cancel({ silent: true })
     activeQueryVal.setState({
       ...previousState,
       fetchStatus: 'idle',
       fetchMeta: null,
     })
-    activeQueryVal.fetch(previousOptions)
+
+    if (previousOptions) {
+      activeQueryVal.fetch(previousOptions)
+    }
   }
 
   createEffect(() => {
@@ -1973,7 +2017,11 @@ const QueryDetails = () => {
       <div
         class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
       >
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Query Details
         </div>
         <div
@@ -1988,6 +2036,8 @@ const QueryDetails = () => {
             </pre>
             <span
               class={cx(styles().queryDetailsStatus, getQueryStatusColors())}
+              role="status"
+              aria-live="polite"
             >
               {statusLabel()}
             </span>
@@ -2003,7 +2053,11 @@ const QueryDetails = () => {
             </span>
           </div>
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Actions
         </div>
         <div
@@ -2024,6 +2078,7 @@ const QueryDetails = () => {
             disabled={statusLabel() === 'fetching'}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.blue[600], colors.blue[400])};
               `}
@@ -2038,10 +2093,17 @@ const QueryDetails = () => {
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-invalidate',
             )}
-            onClick={() => queryClient.invalidateQueries(activeQuery())}
+            onClick={() => {
+              sendDevToolsEvent({
+                type: 'INVALIDATE',
+                queryHash: activeQuery()?.queryHash,
+              })
+              queryClient.invalidateQueries(activeQuery())
+            }}
             disabled={queryStatus() === 'pending'}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.yellow[600], colors.yellow[400])};
               `}
@@ -2056,10 +2118,17 @@ const QueryDetails = () => {
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-reset',
             )}
-            onClick={() => queryClient.resetQueries(activeQuery())}
+            onClick={() => {
+              sendDevToolsEvent({
+                type: 'RESET',
+                queryHash: activeQuery()?.queryHash,
+              })
+              queryClient.resetQueries(activeQuery())
+            }}
             disabled={queryStatus() === 'pending'}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.gray[600], colors.gray[400])};
               `}
@@ -2075,12 +2144,17 @@ const QueryDetails = () => {
               'tsqd-query-details-action-remove',
             )}
             onClick={() => {
+              sendDevToolsEvent({
+                type: 'REMOVE',
+                queryHash: activeQuery()?.queryHash,
+              })
               queryClient.removeQueries(activeQuery())
               setSelectedQueryHash(null)
             }}
             disabled={statusLabel() === 'fetching'}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.pink[500], colors.pink[400])};
               `}
@@ -2103,6 +2177,10 @@ const QueryDetails = () => {
               } else {
                 const activeQueryVal = activeQuery()
                 if (!activeQueryVal) return
+                sendDevToolsEvent({
+                  type: 'TRIGGER_LOADING',
+                  queryHash: activeQueryVal.queryHash,
+                })
                 const __previousQueryOptions = activeQueryVal.options
                 // Trigger a fetch in order to trigger suspense as well.
                 activeQueryVal.fetch({
@@ -2121,11 +2199,12 @@ const QueryDetails = () => {
                     ...activeQueryVal.state.fetchMeta,
                     __previousQueryOptions,
                   } as any,
-                } as QueryState<unknown, Error>)
+                })
               }
             }}
           >
             <span
+              aria-hidden="true"
               class={css`
                 background-color: ${t(colors.cyan[500], colors.cyan[400])};
               `}
@@ -2145,12 +2224,17 @@ const QueryDetails = () => {
                 if (!activeQuery()!.state.error) {
                   triggerError()
                 } else {
+                  sendDevToolsEvent({
+                    type: 'RESTORE_ERROR',
+                    queryHash: activeQuery()?.queryHash,
+                  })
                   queryClient.resetQueries(activeQuery())
                 }
               }}
               disabled={queryStatus() === 'pending'}
             >
               <span
+                aria-hidden="true"
                 class={css`
                   background-color: ${t(colors.red[500], colors.red[400])};
                 `}
@@ -2169,6 +2253,7 @@ const QueryDetails = () => {
               )}
             >
               <span
+                aria-hidden="true"
                 class={css`
                   background-color: ${tokens.colors.red[400]};
                 `}
@@ -2176,6 +2261,7 @@ const QueryDetails = () => {
               Trigger Error
               <select
                 disabled={queryStatus() === 'pending'}
+                aria-label="Select error type to trigger"
                 onChange={(e) => {
                   const errorType = errorTypes().find(
                     (et) => et.name === e.currentTarget.value,
@@ -2195,24 +2281,96 @@ const QueryDetails = () => {
             </div>
           </Show>
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
-          Data Explorer
-        </div>
         <div
-          style={{
-            padding: tokens.size[2],
-          }}
-          class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
         >
-          <Explorer
-            label="Data"
-            defaultExpanded={['Data']}
-            value={activeQueryStateData()}
-            editable={true}
-            activeQuery={activeQuery()}
-          />
+          Data {dataMode() === 'view' ? 'Explorer' : 'Editor'}
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <Show when={dataMode() === 'view'}>
+          <div
+            style={{
+              padding: tokens.size[2],
+            }}
+            class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
+          >
+            <Explorer
+              label="Data"
+              defaultExpanded={['Data']}
+              value={activeQueryStateData()}
+              editable={true}
+              onEdit={() => setDataMode('edit')}
+              activeQuery={activeQuery()}
+            />
+          </div>
+        </Show>
+        <Show when={dataMode() === 'edit'}>
+          <form
+            class={cx(
+              styles().devtoolsEditForm,
+              'tsqd-query-details-data-editor',
+            )}
+            onSubmit={(e) => {
+              e.preventDefault()
+              const formData = new FormData(e.currentTarget)
+              const data = formData.get('data') as string
+              try {
+                const parsedData = JSON.parse(data)
+                activeQuery()!.setState({
+                  ...activeQuery()!.state,
+                  data: parsedData,
+                })
+                setDataMode('view')
+              } catch (error) {
+                setDataEditError(true)
+              }
+            }}
+          >
+            <textarea
+              name="data"
+              aria-label="Edit query data as JSON"
+              class={styles().devtoolsEditTextarea}
+              onFocus={() => setDataEditError(false)}
+              data-error={dataEditError()}
+              value={JSON.stringify(activeQueryStateData(), null, 2)}
+            ></textarea>
+            <div class={styles().devtoolsEditFormActions}>
+              <span class={styles().devtoolsEditFormError}>
+                {dataEditError() ? 'Invalid Value' : ''}
+              </span>
+              <div class={styles().devtoolsEditFormActionContainer}>
+                <button
+                  class={cx(
+                    styles().devtoolsEditFormAction,
+                    css`
+                      color: ${t(colors.gray[600], colors.gray[300])};
+                    `,
+                  )}
+                  type="button"
+                  onClick={() => setDataMode('view')}
+                >
+                  Cancel
+                </button>
+                <button
+                  class={cx(
+                    styles().devtoolsEditFormAction,
+                    css`
+                      color: ${t(colors.blue[600], colors.blue[400])};
+                    `,
+                  )}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </form>
+        </Show>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Query Explorer
         </div>
         <div
@@ -2297,7 +2455,11 @@ const MutationDetails = () => {
       <div
         class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
       >
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Mutation Details
         </div>
         <div
@@ -2319,6 +2481,8 @@ const MutationDetails = () => {
             </pre>
             <span
               class={cx(styles().queryDetailsStatus, getQueryStatusColors())}
+              role="status"
+              aria-live="polite"
             >
               <Show when={color() === 'purple'}>pending</Show>
               <Show when={color() !== 'purple'}>{status()}</Show>
@@ -2333,7 +2497,11 @@ const MutationDetails = () => {
             </span>
           </div>
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Variables Details
         </div>
         <div
@@ -2348,7 +2516,11 @@ const MutationDetails = () => {
             value={activeMutation()!.state.variables}
           />
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Context Details
         </div>
         <div
@@ -2363,7 +2535,11 @@ const MutationDetails = () => {
             value={activeMutation()!.state.context}
           />
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Data Explorer
         </div>
         <div
@@ -2378,7 +2554,11 @@ const MutationDetails = () => {
             value={activeMutation()!.state.data}
           />
         </div>
-        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+        <div
+          role="heading"
+          aria-level="2"
+          class={cx(styles().detailsHeader, 'tsqd-query-details-header')}
+        >
           Mutations Explorer
         </div>
         <div
@@ -2514,6 +2694,37 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   return value
 }
 
+type DevToolsActionType =
+  | 'REFETCH'
+  | 'INVALIDATE'
+  | 'RESET'
+  | 'REMOVE'
+  | 'TRIGGER_ERROR'
+  | 'RESTORE_ERROR'
+  | 'TRIGGER_LOADING'
+  | 'RESTORE_LOADING'
+  | 'CLEAR_MUTATION_CACHE'
+  | 'CLEAR_QUERY_CACHE'
+
+const DEV_TOOLS_EVENT = '@tanstack/query-devtools-event'
+
+const sendDevToolsEvent = ({
+  type,
+  queryHash,
+  metadata,
+}: {
+  type: DevToolsActionType
+  queryHash?: string
+  metadata?: Record<string, unknown>
+}) => {
+  const event = new CustomEvent(DEV_TOOLS_EVENT, {
+    detail: { type, queryHash, metadata },
+    bubbles: true,
+    cancelable: true,
+  })
+  window.dispatchEvent(event)
+}
+
 const stylesFactory = (
   theme: 'light' | 'dark',
   css: (typeof goober)['css'],
@@ -2581,6 +2792,32 @@ const stylesFactory = (
       position: fixed;
       z-index: 9999;
       display: flex;
+      gap: ${tokens.size[0.5]};
+      & * {
+        box-sizing: border-box;
+        text-transform: none;
+      }
+
+      & *::-webkit-scrollbar {
+        width: 7px;
+      }
+
+      & *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      & *::-webkit-scrollbar-thumb {
+        background: ${t(colors.gray[300], colors.darkGray[200])};
+      }
+
+      & *::-webkit-scrollbar-thumb:hover {
+        background: ${t(colors.gray[400], colors.darkGray[300])};
+      }
+    `,
+    parentPanel: css`
+      z-index: 9999;
+      display: flex;
+      height: 100%;
       gap: ${tokens.size[0.5]};
       & * {
         box-sizing: border-box;
@@ -2776,6 +3013,15 @@ const stylesFactory = (
       position: absolute;
       transition: background-color 0.125s ease;
       &:hover {
+        background-color: ${colors.purple[400]}${t('', alpha[90])};
+      }
+      &:focus {
+        outline: none;
+        background-color: ${colors.purple[400]}${t('', alpha[90])};
+      }
+      &:focus-visible {
+        outline: 2px solid ${colors.blue[800]};
+        outline-offset: -2px;
         background-color: ${colors.purple[400]}${t('', alpha[90])};
       }
       z-index: 4;
@@ -3134,7 +3380,8 @@ const stylesFactory = (
         min-height: ${tokens.size[6]};
         flex: 1;
         padding: ${tokens.size[1]} ${tokens.size[2]};
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           'Liberation Mono', 'Courier New', monospace;
         border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
         text-align: left;
@@ -3150,6 +3397,17 @@ const stylesFactory = (
         color: ${t(colors.gray[800], colors.gray[300])};
         background-color: ${t(colors.gray[300], colors.darkGray[600])};
         border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
+        font-size: ${font.size.xs};
+      }
+
+      & .tsqd-query-static-indicator {
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        padding: 0 ${tokens.size[2]};
+        color: ${t(colors.teal[800], colors.teal[300])};
+        background-color: ${t(colors.teal[100], colors.teal[900])};
+        border-bottom: 1px solid ${t(colors.teal[300], colors.teal[700])};
         font-size: ${font.size.xs};
       }
     `,
@@ -3200,11 +3458,16 @@ const stylesFactory = (
       }
 
       & code {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           'Liberation Mono', 'Courier New', monospace;
         margin: 0;
         font-size: ${font.size.xs};
         line-height: ${font.lineHeight.xs};
+        max-width: 100%;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
       }
 
       & pre {
@@ -3380,15 +3643,15 @@ const stylesFactory = (
         outline-offset: 2px;
         outline: 2px solid ${colors.blue[800]};
       }
-    `,
-    themeSelectedButton: css`
-      background-color: ${t(colors.purple[100], colors.purple[900])};
-      color: ${t(colors.purple[700], colors.purple[300])};
-      & svg {
-        color: ${t(colors.purple[700], colors.purple[300])};
-      }
-      &:hover {
+      &[data-checked] {
         background-color: ${t(colors.purple[100], colors.purple[900])};
+        color: ${t(colors.purple[700], colors.purple[300])};
+        & svg {
+          color: ${t(colors.purple[700], colors.purple[300])};
+        }
+        &:hover {
+          background-color: ${t(colors.purple[100], colors.purple[900])};
+        }
       }
     `,
     viewToggle: css`
@@ -3439,6 +3702,74 @@ const stylesFactory = (
         & label {
           padding: 0 ${tokens.size[2]} 0 ${tokens.size[1.5]};
         }
+      }
+    `,
+    devtoolsEditForm: css`
+      padding: ${size[2]};
+      & > [data-error='true'] {
+        outline: 2px solid ${t(colors.red[200], colors.red[800])};
+        outline-offset: 2px;
+        border-radius: ${border.radius.xs};
+      }
+    `,
+    devtoolsEditTextarea: css`
+      width: 100%;
+      max-height: 500px;
+      font-family: 'Fira Code', monospace;
+      font-size: ${font.size.xs};
+      border-radius: ${border.radius.sm};
+      field-sizing: content;
+      padding: ${size[2]};
+      background-color: ${t(colors.gray[100], colors.darkGray[800])};
+      color: ${t(colors.gray[900], colors.gray[100])};
+      border: 1px solid ${t(colors.gray[200], colors.gray[700])};
+      resize: none;
+      &:focus {
+        outline-offset: 2px;
+        border-radius: ${border.radius.xs};
+        outline: 2px solid ${t(colors.blue[200], colors.blue[800])};
+      }
+    `,
+    devtoolsEditFormActions: css`
+      display: flex;
+      justify-content: space-between;
+      gap: ${size[2]};
+      align-items: center;
+      padding-top: ${size[1]};
+      font-size: ${font.size.xs};
+    `,
+    devtoolsEditFormError: css`
+      color: ${t(colors.red[700], colors.red[500])};
+    `,
+    devtoolsEditFormActionContainer: css`
+      display: flex;
+      gap: ${size[2]};
+    `,
+    devtoolsEditFormAction: css`
+      font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
+      font-size: ${font.size.xs};
+      padding: ${size[1]} ${tokens.size[2]};
+      display: flex;
+      border-radius: ${border.radius.sm};
+      background-color: ${t(colors.gray[100], colors.darkGray[600])};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
+      align-items: center;
+      gap: ${size[2]};
+      font-weight: ${font.weight.medium};
+      line-height: ${font.lineHeight.xs};
+      cursor: pointer;
+      &:focus-visible {
+        outline-offset: 2px;
+        border-radius: ${border.radius.xs};
+        outline: 2px solid ${colors.blue[800]};
+      }
+      &:hover {
+        background-color: ${t(colors.gray[200], colors.darkGray[500])};
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
     `,
   }

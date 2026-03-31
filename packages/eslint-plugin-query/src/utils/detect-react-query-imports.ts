@@ -55,7 +55,8 @@ export function detectTanstackQueryImports(create: EnhancedCreate): Create {
       ImportDeclaration(node) {
         if (
           node.specifiers.length > 0 &&
-          node.importKind === 'value' &&
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          (node.importKind === 'value' || node.importKind === undefined) &&
           node.source.value.startsWith('@tanstack/') &&
           node.source.value.endsWith('-query')
         ) {
@@ -80,9 +81,11 @@ export function detectTanstackQueryImports(create: EnhancedCreate): Create {
           detectionInstructions[instruction]?.(node)
         }
 
+        const ruleInstruction = ruleInstructions[instruction]
+
         // TODO: canReportErrors()
-        if (ruleInstructions[instruction]) {
-          return ruleInstructions[instruction]?.(node)
+        if (ruleInstruction) {
+          return ruleInstruction(node)
         }
 
         return undefined

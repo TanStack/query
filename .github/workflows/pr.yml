@@ -1,9 +1,7 @@
-name: pr
+name: PR
 
 on:
   pull_request:
-    paths-ignore:
-      - 'media/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -12,36 +10,72 @@ concurrency:
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 jobs:
-  main:
-    name: Nx Cloud - Main Job
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
       - name: Start Nx Agents
         run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Setup Tools
+        uses: TanStack/config/.github/setup@main
       - name: Get base and head commits for `nx affected`
-        uses: nrwl/nx-set-shas@v3
+        uses: nrwl/nx-set-shas@v4.4.0
         with:
-          main-branch-name: 'main'
-      - name: Run Tests
-        run: pnpm run test:pr --parallel=3
+          main-branch-name: main
+      - name: Run Checks
+        run: pnpm run test:pr
       - name: Stop Nx Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+  preview:
+    name: Preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+      - name: Setup Tools
+        uses: TanStack/config/.github/setup@main
+      - name: Build Packages
+        run: pnpm run build:all
+      - name: Publish Previews
+        run: pnpx pkg-pr-new publish --pnpm --compact './packages/*' --template './examples/*/*'
+      - name: Determine commit SHA
+        id: determine-sha
+        run: |
+          echo "COMMIT_SHA=${{ github.event.pull_request.head.sha || github.sha }}" >> $GITHUB_ENV
+      - name: Size Limit
+        uses: andresz1/size-limit-action@94bc357df29c36c8f8d50ea497c3e225c3c95d1d
         with:
-          directory: packages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_step: install
+          build_script: build:all
+  provenance:
+    name: Provenance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+      - name: Check Provenance
+        uses: danielroe/provenance-action@v0.1.1
+        with:
+          fail-on-downgrade: true
+  version-preview:
+    name: Version Preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+      - name: Setup Tools
+        uses: TanStack/config/.github/setup@main
+      - name: Changeset Preview
+        uses: TanStack/config/.github/changeset-preview@main

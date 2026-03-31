@@ -1,16 +1,33 @@
-import type { Mutation } from './mutation'
-import type { Query } from './query'
+import { timeoutManager } from './timeoutManager'
 import type {
+  DefaultError,
+  Enabled,
   FetchStatus,
   MutationKey,
   MutationStatus,
+  QueryFunction,
   QueryKey,
   QueryOptions,
+  StaleTime,
+  StaleTimeFunction,
 } from './types'
+import type { Mutation } from './mutation'
+import type { FetchOptions, Query } from './query'
 
 // TYPES
 
-export interface QueryFilters {
+type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
+  ...infer R,
+  unknown,
+]
+  ? readonly [...R]
+  : never
+
+type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
+  ? readonly []
+  : TuplePrefixes<DropLast<T>> | T
+
+export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
   /**
    * Filter to active queries, inactive queries or all queries
    */
@@ -26,7 +43,7 @@ export interface QueryFilters {
   /**
    * Include queries matching this query key
    */
-  queryKey?: QueryKey
+  queryKey?: TQueryKey | TuplePrefixes<TQueryKey>
   /**
    * Include or exclude stale queries
    */
@@ -37,7 +54,12 @@ export interface QueryFilters {
   fetchStatus?: FetchStatus
 }
 
-export interface MutationFilters {
+export interface MutationFilters<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TOnMutateResult = unknown,
+> {
   /**
    * Match mutation key exactly
    */
@@ -45,11 +67,13 @@ export interface MutationFilters {
   /**
    * Include mutations matching this predicate function
    */
-  predicate?: (mutation: Mutation<any, any, any>) => boolean
+  predicate?: (
+    mutation: Mutation<TData, TError, TVariables, TOnMutateResult>,
+  ) => boolean
   /**
    * Include mutations matching this mutation key
    */
-  mutationKey?: MutationKey
+  mutationKey?: TuplePrefixes<MutationKey>
   /**
    * Filter by mutation status
    */
@@ -62,11 +86,14 @@ export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 // UTILS
 
+/** @deprecated
+ * use `environmentManager.isServer()` instead.
+ */
 export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 
-export function noop(): undefined {
-  return undefined
-}
+export function noop(): void
+export function noop(): undefined
+export function noop() {}
 
 export function functionalUpdate<TInput, TOutput>(
   updater: Updater<TInput, TOutput>,
@@ -83,6 +110,32 @@ export function isValidTimeout(value: unknown): value is number {
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
+}
+
+export function resolveStaleTime<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  staleTime:
+    | undefined
+    | StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+): StaleTime | undefined {
+  return typeof staleTime === 'function' ? staleTime(query) : staleTime
+}
+
+export function resolveEnabled<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  enabled: undefined | Enabled<TQueryFnData, TError, TData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+): boolean | undefined {
+  return typeof enabled === 'function' ? enabled(query) : enabled
 }
 
 export function matchQuery(
@@ -201,55 +254,66 @@ export function partialMatchKey(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    return !Object.keys(b).some((key) => !partialMatchKey(a[key], b[key]))
+    return Object.keys(b).every((key) => partialMatchKey(a[key], b[key]))
   }
 
   return false
 }
+
+const hasOwn = Object.prototype.hasOwnProperty
 
 /**
  * This function returns `a` if `b` is deeply equal.
  * If not, it will replace any deeply equal children of `b` with those of `a`.
  * This can be used for structural sharing between JSON values for example.
  */
-export function replaceEqualDeep<T>(a: unknown, b: T): T
-export function replaceEqualDeep(a: any, b: any): any {
+export function replaceEqualDeep<T>(a: unknown, b: T, depth?: number): T
+export function replaceEqualDeep(a: any, b: any, depth = 0): any {
   if (a === b) {
     return a
   }
 
+  if (depth > 500) return b
+
   const array = isPlainArray(a) && isPlainArray(b)
 
-  if (array || (isPlainObject(a) && isPlainObject(b))) {
-    const aItems = array ? a : Object.keys(a)
-    const aSize = aItems.length
-    const bItems = array ? b : Object.keys(b)
-    const bSize = bItems.length
-    const copy: any = array ? [] : {}
+  if (!array && !(isPlainObject(a) && isPlainObject(b))) return b
 
-    let equalItems = 0
+  const aItems = array ? a : Object.keys(a)
+  const aSize = aItems.length
+  const bItems = array ? b : Object.keys(b)
+  const bSize = bItems.length
+  const copy: any = array ? new Array(bSize) : {}
 
-    for (let i = 0; i < bSize; i++) {
-      const key = array ? i : bItems[i]
-      if (
-        ((!array && aItems.includes(key)) || array) &&
-        a[key] === undefined &&
-        b[key] === undefined
-      ) {
-        copy[key] = undefined
-        equalItems++
-      } else {
-        copy[key] = replaceEqualDeep(a[key], b[key])
-        if (copy[key] === a[key] && a[key] !== undefined) {
-          equalItems++
-        }
-      }
+  let equalItems = 0
+
+  for (let i = 0; i < bSize; i++) {
+    const key: any = array ? i : bItems[i]
+    const aItem = a[key]
+    const bItem = b[key]
+
+    if (aItem === bItem) {
+      copy[key] = aItem
+      if (array ? i < aSize : hasOwn.call(a, key)) equalItems++
+      continue
     }
 
-    return aSize === bSize && equalItems === aSize ? a : copy
+    if (
+      aItem === null ||
+      bItem === null ||
+      typeof aItem !== 'object' ||
+      typeof bItem !== 'object'
+    ) {
+      copy[key] = bItem
+      continue
+    }
+
+    const v = replaceEqualDeep(aItem, bItem, depth + 1)
+    copy[key] = v
+    if (v === aItem) equalItems++
   }
 
-  return b
+  return aSize === bSize && equalItems === aSize ? a : copy
 }
 
 /**
@@ -272,12 +336,12 @@ export function shallowEqualObjects<T extends Record<string, any>>(
   return true
 }
 
-export function isPlainArray(value: unknown) {
+export function isPlainArray(value: unknown): value is Array<unknown> {
   return Array.isArray(value) && value.length === Object.keys(value).length
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object
-export function isPlainObject(o: any): o is Object {
+export function isPlainObject(o: any): o is Record<PropertyKey, unknown> {
   if (!hasObjectPrototype(o)) {
     return false
   }
@@ -312,9 +376,9 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function sleep(ms: number): Promise<void> {
+export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve) => {
-    setTimeout(resolve, ms)
+    timeoutManager.setTimeout(resolve, timeout)
   })
 }
 
@@ -325,6 +389,18 @@ export function replaceData<
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data) as TData
   } else if (options.structuralSharing !== false) {
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        return replaceEqualDeep(prevData, data)
+      } catch (error) {
+        console.error(
+          `Structural sharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
+        )
+
+        // Prevent the replaceEqualDeep from being called again down below.
+        throw error
+      }
+    }
     // Structurally share data between prev and new data if needed
     return replaceEqualDeep(prevData, data)
   }
@@ -349,3 +425,78 @@ export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
 
 export const skipToken = Symbol()
 export type SkipToken = typeof skipToken
+
+export function ensureQueryFn<
+  TQueryFnData = unknown,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: {
+    queryFn?: QueryFunction<TQueryFnData, TQueryKey> | SkipToken
+    queryHash?: string
+  },
+  fetchOptions?: FetchOptions<TQueryFnData>,
+): QueryFunction<TQueryFnData, TQueryKey> {
+  if (process.env.NODE_ENV !== 'production') {
+    if (options.queryFn === skipToken) {
+      console.error(
+        `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${options.queryHash}'`,
+      )
+    }
+  }
+
+  // if we attempt to retry a fetch that was triggered from an initialPromise
+  // when we don't have a queryFn yet, we can't retry, so we just return the already rejected initialPromise
+  // if an observer has already mounted, we will be able to retry with that queryFn
+  if (!options.queryFn && fetchOptions?.initialPromise) {
+    return () => fetchOptions.initialPromise!
+  }
+
+  if (!options.queryFn || options.queryFn === skipToken) {
+    return () =>
+      Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
+  }
+
+  return options.queryFn
+}
+
+export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
+  throwOnError: boolean | T | undefined,
+  params: Parameters<T>,
+): boolean {
+  // Allow throwOnError function to override throwing behavior on a per-error basis
+  if (typeof throwOnError === 'function') {
+    return throwOnError(...params)
+  }
+
+  return !!throwOnError
+}
+
+export function addConsumeAwareSignal<T>(
+  object: T,
+  getSignal: () => AbortSignal,
+  onCancelled: VoidFunction,
+): T & { signal: AbortSignal } {
+  let consumed = false
+  let signal: AbortSignal | undefined
+
+  Object.defineProperty(object, 'signal', {
+    enumerable: true,
+    get: () => {
+      signal ??= getSignal()
+      if (consumed) {
+        return signal
+      }
+
+      consumed = true
+      if (signal.aborted) {
+        onCancelled()
+      } else {
+        signal.addEventListener('abort', onCancelled, { once: true })
+      }
+
+      return signal
+    },
+  })
+
+  return object as T & { signal: AbortSignal }
+}

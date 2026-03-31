@@ -1,22 +1,14 @@
-import { assertType, describe, expectTypeOf } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
-import { dataTagSymbol } from '@tanstack/query-core'
-import { queryOptions } from '../query-options'
-import { injectQuery } from '../inject-query'
+import { assertType, describe, expectTypeOf, test } from 'vitest'
+import { QueryClient, dataTagSymbol, injectQuery, queryOptions } from '..'
 import type { Signal } from '@angular/core'
 
 describe('queryOptions', () => {
   test('should not allow excess properties', () => {
-    return queryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(5),
-      // @ts-expect-error this is a good error, because stallTime does not exist!
-      stallTime: 1000,
-    })
+    expectTypeOf(queryOptions).parameter(0).not.toHaveProperty('stallTime')
   })
 
   test('should infer types for callbacks', () => {
-    return queryOptions({
+    queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
       staleTime: 1000,
@@ -24,6 +16,29 @@ describe('queryOptions', () => {
         expectTypeOf(data).toEqualTypeOf<number>()
       },
     })
+  })
+
+  test('should allow undefined response in initialData', () => {
+    const options = (id: string | null) =>
+      queryOptions({
+        queryKey: ['todo', id],
+        queryFn: () =>
+          Promise.resolve({
+            id: '1',
+            title: 'Do Laundry',
+          }),
+        initialData: () =>
+          !id
+            ? undefined
+            : {
+                id,
+                title: 'Initial Data',
+              },
+      })
+
+    expectTypeOf(options(null).initialData).returns.toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
   })
 })
 

@@ -2,16 +2,17 @@ import { provideHttpClient, withFetch } from '@angular/common/http'
 import { provideRouter, withComponentInputBinding } from '@angular/router'
 import {
   QueryClient,
-  provideAngularQuery,
+  provideTanStackQuery,
 } from '@tanstack/angular-query-experimental'
 
+import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
 import { routes } from './app.routes'
 import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAngularQuery(new QueryClient()),
     provideHttpClient(withFetch()),
+    provideTanStackQuery(new QueryClient(), withDevtools()),
     provideRouter(routes, withComponentInputBinding()),
   ],
 }

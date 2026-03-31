@@ -1,16 +1,21 @@
-import { Component, input, signal } from '@angular/core'
-import { QueryClient } from '@tanstack/query-core'
+import {
+  Component,
+  Injector,
+  input,
+  provideZonelessChangeDetection,
+  signal,
+} from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { injectMutation } from '../inject-mutation'
-import { injectMutationState } from '../inject-mutation-state'
-import { provideAngularQuery } from '../providers'
-import { setFixtureSignalInputs, successMutator } from './test-utils'
-
-const MUTATION_DURATION = 1000
-
-const resolveMutations = () => vi.advanceTimersByTimeAsync(MUTATION_DURATION)
+import { sleep } from '@tanstack/query-test-utils'
+import {
+  QueryClient,
+  injectMutation,
+  injectMutationState,
+  provideTanStackQuery,
+} from '..'
+import { setFixtureSignalInputs } from './test-utils'
 
 describe('injectMutationState', () => {
   let queryClient: QueryClient
@@ -19,7 +24,10 @@ describe('injectMutationState', () => {
     queryClient = new QueryClient()
     vi.useFakeTimers()
     TestBed.configureTestingModule({
-      providers: [provideAngularQuery(queryClient)],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
     })
   })
 
@@ -28,14 +36,14 @@ describe('injectMutationState', () => {
   })
 
   describe('injectMutationState', () => {
-    test('should return variables after calling mutate', async () => {
+    test('should return variables after calling mutate 1', () => {
       const mutationKey = ['mutation']
       const variables = 'foo123'
 
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationKey: mutationKey,
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
         }))
       })
 
@@ -51,7 +59,7 @@ describe('injectMutationState', () => {
       expect(mutationState()).toEqual([variables])
     })
 
-    test('reactive options should update injectMutationState', async () => {
+    test('reactive options should update injectMutationState', () => {
       const mutationKey1 = ['mutation1']
       const mutationKey2 = ['mutation2']
       const variables1 = 'foo123'
@@ -61,11 +69,11 @@ describe('injectMutationState', () => {
         return [
           injectMutation(() => ({
             mutationKey: mutationKey1,
-            mutationFn: (params: string) => successMutator(params),
+            mutationFn: (params: string) => sleep(0).then(() => params),
           })),
           injectMutation(() => ({
             mutationKey: mutationKey2,
-            mutationFn: (params: string) => successMutator(params),
+            mutationFn: (params: string) => sleep(0).then(() => params),
           })),
         ]
       })
@@ -85,11 +93,10 @@ describe('injectMutationState', () => {
       expect(mutationState()).toEqual([variables1])
 
       filterKey.set(mutationKey2)
-      TestBed.flushEffects()
       expect(mutationState()).toEqual([variables2])
     })
 
-    test('should return variables after calling mutate', async () => {
+    test('should return variables after calling mutate 2', () => {
       queryClient.clear()
       const mutationKey = ['mutation']
       const variables = 'bar234'
@@ -97,7 +104,7 @@ describe('injectMutationState', () => {
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationKey: mutationKey,
-          mutationFn: (params: string) => successMutator(params),
+          mutationFn: (params: string) => sleep(0).then(() => params),
         }))
       })
 
@@ -119,11 +126,12 @@ describe('injectMutationState', () => {
         return [
           injectMutation(() => ({
             mutationKey: mutationKey1,
-            mutationFn: () => Promise.resolve('myValue'),
+            mutationFn: () => sleep(10).then(() => 'myValue'),
           })),
           injectMutation(() => ({
             mutationKey: mutationKey1,
-            mutationFn: () => Promise.reject('myValue2'),
+            mutationFn: () =>
+              sleep(10).then(() => Promise.reject(new Error('myValue2'))),
           })),
         ]
       })
@@ -133,11 +141,10 @@ describe('injectMutationState', () => {
       @Component({
         selector: 'app-fake',
         template: `
-          @for (mutation of mutationState(); track mutation) {
+          @for (mutation of mutationState(); track $index) {
             <span>{{ mutation.status }}</span>
           }
         `,
-        standalone: true,
       })
       class FakeComponent {
         name = input.required<string>()
@@ -153,8 +160,7 @@ describe('injectMutationState', () => {
       const fixture = TestBed.createComponent(FakeComponent)
       const { debugElement } = fixture
       setFixtureSignalInputs(fixture, { name: fakeName })
-
-      fixture.detectChanges()
+      await vi.advanceTimersByTimeAsync(0)
 
       let spans = debugElement
         .queryAll(By.css('span'))
@@ -162,7 +168,7 @@ describe('injectMutationState', () => {
 
       expect(spans).toEqual(['pending', 'pending'])
 
-      await resolveMutations()
+      await vi.advanceTimersByTimeAsync(11)
       fixture.detectChanges()
 
       spans = debugElement
@@ -170,6 +176,23 @@ describe('injectMutationState', () => {
         .map((span) => span.nativeNode.textContent)
 
       expect(spans).toEqual(['success', 'error'])
+    })
+
+    describe('injection context', () => {
+      test('throws NG0203 with descriptive error outside injection context', () => {
+        expect(() => {
+          injectMutationState()
+        }).toThrowError(/NG0203(.*?)injectMutationState/)
+      })
+
+      test('can be used outside injection context when passing an injector', () => {
+        const injector = TestBed.inject(Injector)
+        expect(
+          injectMutationState(undefined, {
+            injector,
+          }),
+        ).not.toThrow()
+      })
     })
   })
 })

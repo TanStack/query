@@ -7,19 +7,19 @@ title: Quick Start
 
 [//]: # 'Example'
 
-If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](../examples/basic)
+If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](./examples/basic)
 
 ### Provide the client to your App
 
 ```ts
 import { provideHttpClient } from '@angular/common/http'
 import {
-  provideAngularQuery,
+  provideTanStackQuery,
   QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 bootstrapApplication(AppComponent, {
-  providers: [provideHttpClient(), provideAngularQuery(new QueryClient())],
+  providers: [provideHttpClient(), provideTanStackQuery(new QueryClient())],
 })
 ```
 
@@ -28,14 +28,14 @@ or in a NgModule-based app
 ```ts
 import { provideHttpClient } from '@angular/common/http'
 import {
-  provideAngularQuery,
+  provideTanStackQuery,
   QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule],
-  providers: [provideAngularQuery(new QueryClient())],
+  providers: [provideTanStackQuery(new QueryClient())],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
@@ -43,7 +43,7 @@ export class AppModule {}
 
 ### Component with query and mutation
 
-```ts
+```angular-ts
 import { Component, Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { lastValueFrom } from 'rxjs'
@@ -51,11 +51,10 @@ import { lastValueFrom } from 'rxjs'
 import {
   injectMutation,
   injectQuery,
-  injectQueryClient,
+  QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 @Component({
-  standalone: true,
   template: `
     <div>
       <button (click)="onAddTodo()">Add Todo</button>
@@ -70,21 +69,17 @@ import {
 })
 export class TodosComponent {
   todoService = inject(TodoService)
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 
   query = injectQuery(() => ({
     queryKey: ['todos'],
     queryFn: () => this.todoService.getTodos(),
   }))
 
-  mutation = injectMutation((client) => ({
+  mutation = injectMutation(() => ({
     mutationFn: (todo: Todo) => this.todoService.addTodo(todo),
     onSuccess: () => {
-      // Invalidate and refetch by using the client directly
-      client.invalidateQueries({ queryKey: ['todos'] })
-
-      // OR use the queryClient that is injected into the component
-      // this.queryClient.invalidateQueries({ queryKey: ['todos'] })
+      this.queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   }))
 

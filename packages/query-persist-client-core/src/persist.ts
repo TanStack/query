@@ -32,8 +32,7 @@ export interface PersistQueryClientRootOptions {
   buster?: string
 }
 
-export interface PersistedQueryClientRestoreOptions
-  extends PersistQueryClientRootOptions {
+export interface PersistedQueryClientRestoreOptions extends PersistQueryClientRootOptions {
   /** The max-allowed age of the cache in milliseconds.
    * If a persisted cache is found that is older than this
    * time, it will be discarded */
@@ -42,14 +41,14 @@ export interface PersistedQueryClientRestoreOptions
   hydrateOptions?: HydrateOptions
 }
 
-export interface PersistedQueryClientSaveOptions
-  extends PersistQueryClientRootOptions {
+export interface PersistedQueryClientSaveOptions extends PersistQueryClientRootOptions {
   /** The options passed to the dehydrate function */
   dehydrateOptions?: DehydrateOptions
 }
 
 export interface PersistQueryClientOptions
-  extends PersistedQueryClientRestoreOptions,
+  extends
+    PersistedQueryClientRestoreOptions,
     PersistedQueryClientSaveOptions,
     PersistQueryClientRootOptions {}
 
@@ -84,12 +83,12 @@ export async function persistQueryClientRestore({
         const expired = Date.now() - persistedClient.timestamp > maxAge
         const busted = persistedClient.buster !== buster
         if (expired || busted) {
-          persister.removeClient()
+          return persister.removeClient()
         } else {
           hydrate(queryClient, persistedClient.clientState, hydrateOptions)
         }
       } else {
-        persister.removeClient()
+        return persister.removeClient()
       }
     }
   } catch (err) {
@@ -99,7 +98,10 @@ export async function persistQueryClientRestore({
         'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.',
       )
     }
-    persister.removeClient()
+
+    await persister.removeClient()
+
+    throw err
   }
 }
 

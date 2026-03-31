@@ -33,10 +33,17 @@ const dehydratedState = dehydrate(queryClient, {
   - `shouldDehydrateQuery: (query: Query) => boolean`
     - Optional
     - Whether to dehydrate queries.
-    - The function, it is called for each query in the cache
+    - The function is called for each query in the cache
       - Return `true` to include this query in dehydration, or `false` otherwise
     - Defaults to only including successful queries
     - If you would like to extend the function while retaining the default behavior, import and execute `defaultShouldDehydrateQuery` as part of the return statement
+  - `serializeData?: (data: any) => any` A function to transform (serialize) data during dehydration.
+  - `shouldRedactErrors?: (error: unknown) => boolean`
+    - Optional
+    - Whether to redact errors from the server during dehydration.
+    - The function is called for each error in the cache
+      - Return `true` to redact this error, or `false` otherwise
+    - Defaults to redacting all errors
 
 **Returns**
 
@@ -45,7 +52,7 @@ const dehydratedState = dehydrate(queryClient, {
   - You **should not** rely on the exact format of this response, it is not part of the public API and can change at any time
   - This result is not in serialized form, you need to do that yourself if desired
 
-### limitations
+### Limitations
 
 Some storage systems (such as browser [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)) require values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `shouldDehydrateQuery`, e.g.:
 
@@ -83,12 +90,13 @@ hydrate(queryClient, dehydratedState, options)
     - Optional
     - `mutations: MutationOptions` The default mutation options to use for the hydrated mutations.
     - `queries: QueryOptions` The default query options to use for the hydrated queries.
-  - `queryClient?: QueryClient`,
+    - `deserializeData?: (data: any) => any` A function to transform (deserialize) data before it is put into the cache.
+  - `queryClient?: QueryClient`
     - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 ### Limitations
 
-If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them and they will be **silently** discarded.
+If the queries you're trying to hydrate already exist in the queryCache, `hydrate` will only overwrite them if the data is newer than the data present in the cache. Otherwise, it will **not** get applied.
 
 [//]: # 'HydrationBoundary'
 
@@ -104,6 +112,8 @@ function App() {
 }
 ```
 
+> Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
+
 **Options**
 
 - `state: DehydratedState`
@@ -112,7 +122,7 @@ function App() {
   - Optional
   - `defaultOptions: QueryOptions`
     - The default query options to use for the hydrated queries.
-  - `queryClient?: QueryClient`,
+  - `queryClient?: QueryClient`
     - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 [//]: # 'HydrationBoundary'

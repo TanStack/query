@@ -48,7 +48,7 @@ function App() {
 }
 ```
 
-```
+```tsx
 async function App() {
   const queryClient = new QueryClient()
   await queryClient.prefetchQuery(options)

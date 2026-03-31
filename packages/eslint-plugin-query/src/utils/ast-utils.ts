@@ -42,9 +42,9 @@ export const ASTUtils = {
     properties: Array<TSESTree.ObjectLiteralElement>,
     key: string,
   ): TSESTree.Property | undefined {
-    return properties.find((x) =>
+    return properties.find((x): x is TSESTree.Property =>
       ASTUtils.isPropertyWithIdentifierKey(x, key),
-    ) as TSESTree.Property | undefined
+    )
   },
   getNestedIdentifiers(node: TSESTree.Node): Array<TSESTree.Identifier> {
     const identifiers: Array<TSESTree.Identifier> = []
@@ -111,29 +111,25 @@ export const ASTUtils = {
       identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
     }
 
-    return identifiers
-  },
-  isAncestorIsCallee(identifier: TSESTree.Node) {
-    let previousNode = identifier
-    let currentNode = identifier.parent
-
-    while (currentNode !== undefined) {
-      if (
-        currentNode.type === AST_NODE_TYPES.CallExpression &&
-        currentNode.callee === previousNode
-      ) {
-        return true
-      }
-
-      if (currentNode.type !== AST_NODE_TYPES.MemberExpression) {
-        return false
-      }
-
-      previousNode = currentNode
-      currentNode = currentNode.parent
+    if (node.type === AST_NODE_TYPES.ArrowFunctionExpression) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
     }
 
-    return false
+    if (node.type === AST_NODE_TYPES.FunctionExpression) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.body))
+    }
+
+    if (node.type === AST_NODE_TYPES.BlockStatement) {
+      identifiers.push(
+        ...node.body.map((body) => ASTUtils.getNestedIdentifiers(body)).flat(),
+      )
+    }
+
+    if (node.type === AST_NODE_TYPES.ReturnStatement && node.argument) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
+    }
+
+    return identifiers
   },
   traverseUpOnly(
     identifier: TSESTree.Node,
@@ -173,7 +169,19 @@ export const ASTUtils = {
       return []
     }
 
-    const references = scope.references
+    const collectReferences = (
+      currentScope: TSESLint.Scope.Scope,
+    ): Array<TSESLint.Scope.Reference> => {
+      const references = [...currentScope.references]
+
+      for (const childScope of currentScope.childScopes) {
+        references.push(...collectReferences(childScope))
+      }
+
+      return references
+    }
+
+    const references = collectReferences(scope)
       .filter((x) => x.isRead() && !scope.set.has(x.identifier.name))
       .map((x) => {
         const referenceNode = ASTUtils.traverseUpOnly(x.identifier, [
@@ -205,8 +213,18 @@ export const ASTUtils = {
     return sourceCode.getText(
       ASTUtils.traverseUpOnly(node, [
         AST_NODE_TYPES.MemberExpression,
+        AST_NODE_TYPES.TSNonNullExpression,
         AST_NODE_TYPES.Identifier,
       ]),
+    )
+  },
+  mapKeyNodeToBaseText(
+    node: TSESTree.Node,
+    sourceCode: Readonly<TSESLint.SourceCode>,
+  ) {
+    return ASTUtils.mapKeyNodeToText(node, sourceCode).replace(
+      /(?:\?(\.)|!)/g,
+      '$1',
     )
   },
   isValidReactComponentOrHookName(
@@ -219,10 +237,17 @@ export const ASTUtils = {
     )
   },
   getFunctionAncestor(
-    context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
+    sourceCode: Readonly<TSESLint.SourceCode>,
+    node: TSESTree.Node,
   ) {
-    for (const ancestor of context.getAncestors()) {
-      if (ancestor.type === AST_NODE_TYPES.FunctionDeclaration) {
+    for (const ancestor of sourceCode.getAncestors(node)) {
+      if (
+        ASTUtils.isNodeOfOneOf(ancestor, [
+          AST_NODE_TYPES.FunctionDeclaration,
+          AST_NODE_TYPES.FunctionExpression,
+          AST_NODE_TYPES.ArrowFunctionExpression,
+        ])
+      ) {
         return ancestor
       }
 
@@ -247,10 +272,16 @@ export const ASTUtils = {
   }) {
     const { node, context } = params
 
-    const resolvedNode = context
-      .getScope()
-      .references.find((ref) => ref.identifier === node)?.resolved?.defs[0]
-      ?.node
+    // we need the fallbacks for backwards compat with eslint < 8.37.0
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const sourceCode = context.sourceCode ?? context.getSourceCode()
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const scope = context.sourceCode.getScope(node)
+      ? sourceCode.getScope(node)
+      : context.getScope()
+
+    const resolvedNode = scope.references.find((ref) => ref.identifier === node)
+      ?.resolved?.defs[0]?.node
 
     if (resolvedNode?.type !== AST_NODE_TYPES.VariableDeclarator) {
       return null

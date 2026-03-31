@@ -1,6 +1,6 @@
 import * as React from 'react'
-import type { DefaultError } from '@tanstack/query-core'
 import type {
+  DefaultError,
   DefaultedQueryObserverOptions,
   Query,
   QueryKey,
@@ -19,14 +19,30 @@ export const defaultThrowOnError = <
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
 ) => query.state.data === undefined
 
-export const ensureStaleTime = (
+export const ensureSuspenseTimers = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
 ) => {
   if (defaultedOptions.suspense) {
-    // Always set stale time when using suspense to prevent
-    // fetching again when directly mounting after suspending
-    if (typeof defaultedOptions.staleTime !== 'number') {
-      defaultedOptions.staleTime = 1000
+    // Handle staleTime to ensure minimum 1000ms in Suspense mode
+    // This prevents unnecessary refetching when components remount after suspending
+    const MIN_SUSPENSE_TIME_MS = 1000
+
+    const clamp = (value: number | 'static' | undefined) =>
+      value === 'static'
+        ? value
+        : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS)
+
+    const originalStaleTime = defaultedOptions.staleTime
+    defaultedOptions.staleTime =
+      typeof originalStaleTime === 'function'
+        ? (...args) => clamp(originalStaleTime(...args))
+        : clamp(originalStaleTime)
+
+    if (typeof defaultedOptions.gcTime === 'number') {
+      defaultedOptions.gcTime = Math.max(
+        defaultedOptions.gcTime,
+        MIN_SUSPENSE_TIME_MS,
+      )
     }
   }
 }

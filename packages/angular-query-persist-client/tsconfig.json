@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": ".",
+    "noFallthroughCasesInSwitch": true,
+    "useDefineForClassFields": false,
+    "target": "ES2022"
+  },
+  "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
+  "references": [
+    { "path": "../angular-query-experimental" },
+    { "path": "../query-persist-client-core" }
+  ]
+}

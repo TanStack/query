@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import { MoviesListScreen } from '../screens/MoviesListScreen'
 import { MovieDetailsScreen } from '../screens/MovieDetailsScreen'
-import { MoviesStackNavigator } from './types'
+import type { MoviesStackNavigator } from './types'
 
 const Stack = createStackNavigator<MoviesStackNavigator>()
 

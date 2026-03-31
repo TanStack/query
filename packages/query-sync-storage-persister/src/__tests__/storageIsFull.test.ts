@@ -6,8 +6,8 @@ import {
   dehydrate,
 } from '@tanstack/query-core'
 import { removeOldestQuery } from '@tanstack/query-persist-client-core'
+import { sleep } from '@tanstack/query-test-utils'
 import { createSyncStoragePersister } from '../index'
-import { sleep } from './utils'
 
 function getMockStorage(limitSize?: number) {
   const dataSet = new Map<string, string>()
@@ -40,7 +40,7 @@ function getMockStorage(limitSize?: number) {
   } as any as Storage
 }
 
-describe('create persister ', () => {
+describe('create persister', () => {
   test('basic store and recover', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()

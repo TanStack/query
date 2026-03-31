@@ -1,14 +1,36 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.38.0",
+  "version": "5.96.0",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanStack/query.git",
+    "directory": "packages/solid-query-devtools"
+  },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "scripts": {
+    "clean": "premove ./build ./coverage ./dist-ts",
+    "compile": "tsc --build",
+    "test:eslint": "eslint --concurrency=auto ./src",
+    "test:types": "npm run compile && npm-run-all --serial test:types:*",
+    "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
+    "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
+    "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build",
+    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build",
+    "test:build": "publint --strict && attw --pack",
+    "test:lib": "vitest --retry=3",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "build": "tsup --tsconfig tsconfig.prod.json",
+    "build:dev": "tsup --watch"
   },
   "type": "module",
   "main": "./build/index.cjs",
@@ -16,6 +38,7 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
+    "@tanstack/custom-condition": "./src/index.tsx",
     "solid": {
       "development": "./build/dev.jsx",
       "import": "./build/index.jsx"
@@ -33,27 +56,21 @@
     },
     "require": "./build/index.cjs"
   },
-  "scripts": {
-    "clean": "rimraf ./build && rimraf ./coverage",
-    "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
-    "build": "tsup",
-    "build:dev": "tsup --watch"
-  },
   "files": [
     "build",
-    "src"
+    "src",
+    "!src/__tests__"
   ],
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "solid-js": "^1.8.17",
-    "@tanstack/solid-query": "workspace:^",
+    "@solidjs/testing-library": "^0.8.10",
+    "@tanstack/solid-query": "workspace:*",
+    "npm-run-all2": "^5.0.0",
+    "solid-js": "^1.9.7",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.10.2"
+    "vite-plugin-solid": "^2.11.6"
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:^",

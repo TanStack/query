@@ -1,15 +1,23 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { hasInjectionContext, inject } from 'vue-demi'
+import * as VueDemi from 'vue-demi'
 import { useQueryClient } from '../useQueryClient'
 import { VUE_QUERY_CLIENT } from '../utils'
-import type { Mock } from 'vitest'
+
+vi.mock('vue-demi', async () => {
+  const actual = await vi.importActual<typeof VueDemi>('vue-demi')
+  return {
+    ...actual,
+    inject: vi.fn(),
+    hasInjectionContext: vi.fn(() => true),
+  }
+})
 
 describe('useQueryClient', () => {
-  const injectSpy = inject as Mock
-  const hasInjectionContextSpy = hasInjectionContext as Mock
+  const injectSpy = vi.mocked(VueDemi.inject)
+  const hasInjectionContextSpy = vi.mocked(VueDemi.hasInjectionContext)
 
   beforeEach(() => {
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   test('should return queryClient when it is provided in the context', () => {

@@ -3,7 +3,7 @@ import { skipToken } from '..'
 import { useQueries } from '../useQueries'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
-import type { UseQueryOptions } from '../types'
+import type { UseQueryOptions, UseQueryResult } from '../types'
 
 describe('UseQueries config object overload', () => {
   it('TData should always be defined when initialData is provided as an object', () => {
@@ -60,7 +60,7 @@ describe('UseQueries config object overload', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
 
-  it('it should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
+  it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
     const query1 = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(1),
@@ -136,8 +136,35 @@ describe('UseQueries config object overload', () => {
       ],
     })
 
-    const data = queryResults[0].data
+    const firstResult = queryResults[0]
 
-    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+    expectTypeOf(firstResult).toEqualTypeOf<UseQueryResult<number, Error>>()
+    expectTypeOf(firstResult.data).toEqualTypeOf<number | undefined>()
+  })
+
+  it('should return correct data for dynamic queries with mixed result types', () => {
+    const Queries1 = {
+      get: () =>
+        queryOptions({
+          queryKey: ['key1'],
+          queryFn: () => Promise.resolve(1),
+        }),
+    }
+    const Queries2 = {
+      get: () =>
+        queryOptions({
+          queryKey: ['key2'],
+          queryFn: () => Promise.resolve(true),
+        }),
+    }
+
+    const queries1List = [1, 2, 3].map(() => ({ ...Queries1.get() }))
+    const result = useQueries({
+      queries: [...queries1List, { ...Queries2.get() }],
+    })
+
+    expectTypeOf(result).toEqualTypeOf<
+      [...Array<UseQueryResult<number, Error>>, UseQueryResult<boolean, Error>]
+    >()
   })
 })

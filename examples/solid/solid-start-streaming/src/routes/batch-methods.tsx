@@ -1,4 +1,4 @@
-import { createQuery, notifyManager } from '@tanstack/solid-query'
+import { notifyManager, useQuery } from '@tanstack/solid-query'
 import { createSignal } from 'solid-js'
 import { QueryBoundary } from '~/components/query-boundary'
 
@@ -30,7 +30,7 @@ async function sayHello(name: string) {
 export default function BatchMethods() {
   const [count, setCount] = createSignal(0)
 
-  const hello = createQuery(() => ({
+  const hello = useQuery(() => ({
     queryKey: ['hello', count()] as const,
     queryFn: ({ queryKey: [_, count] }) => sayHello(`solid ${count}`),
   }))

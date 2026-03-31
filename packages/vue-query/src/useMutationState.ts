@@ -2,13 +2,13 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
-  readonly,
-  ref,
+  shallowReadonly,
+  shallowRef,
   watch,
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
-import type { DeepReadonly, Ref } from 'vue-demi'
+import type { Ref } from 'vue-demi'
 import type {
   MutationFilters as MF,
   Mutation,
@@ -21,7 +21,7 @@ import type { MutationCache } from './mutationCache'
 export type MutationFilters = MaybeRefDeep<MF>
 
 export function useIsMutating(
-  filters: MutationFilters = {},
+  filters: MutationFilters | (() => MutationFilters) = {},
   queryClient?: QueryClient,
 ): Ref<number> {
   if (process.env.NODE_ENV === 'development') {
@@ -37,7 +37,7 @@ export function useIsMutating(
   const mutationState = useMutationState(
     {
       filters: computed(() => ({
-        ...cloneDeepUnref(filters),
+        ...cloneDeepUnref(typeof filters === 'function' ? filters() : filters),
         status: 'pending' as const,
       })),
     },
@@ -66,24 +66,31 @@ function getResult<TResult = MutationState>(
 }
 
 export function useMutationState<TResult = MutationState>(
-  options: MutationStateOptions<TResult> = {},
+  options:
+    | MutationStateOptions<TResult>
+    | (() => MutationStateOptions<TResult>) = {},
   queryClient?: QueryClient,
-): DeepReadonly<Ref<Array<TResult>>> {
-  const filters = computed(() => cloneDeepUnref(options.filters))
+): Readonly<Ref<Array<TResult>>> {
+  const resolvedOptions = computed(() => {
+    const newOptions = typeof options === 'function' ? options() : options
+    return {
+      filters: cloneDeepUnref(newOptions.filters),
+      select: newOptions.select,
+    }
+  })
   const mutationCache = (queryClient || useQueryClient()).getMutationCache()
-  const state = ref(getResult(mutationCache, options)) as Ref<Array<TResult>>
+  const state = shallowRef(getResult(mutationCache, resolvedOptions.value))
   const unsubscribe = mutationCache.subscribe(() => {
-    const result = getResult(mutationCache, options)
-    state.value = result
+    state.value = getResult(mutationCache, resolvedOptions.value)
   })
 
-  watch(filters, () => {
-    state.value = getResult(mutationCache, options)
+  watch(resolvedOptions, () => {
+    state.value = getResult(mutationCache, resolvedOptions.value)
   })
 
   onScopeDispose(() => {
     unsubscribe()
   })
 
-  return readonly(state)
+  return shallowReadonly(state)
 }

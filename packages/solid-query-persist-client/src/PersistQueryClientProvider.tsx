@@ -11,6 +11,7 @@ import type { JSX } from 'solid-js'
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => void
+  onError?: () => void
 }
 
 export const PersistQueryClientProvider = (
@@ -25,13 +26,12 @@ export const PersistQueryClientProvider = (
 
   createEffect(() => {
     setIsRestoring(true)
-    persistQueryClientRestore(options()).then(async () => {
-      try {
-        await props.onSuccess?.()
-      } finally {
+    persistQueryClientRestore(options())
+      .then(() => props.onSuccess?.())
+      .catch(() => props.onError?.())
+      .finally(() => {
         setIsRestoring(false)
-      }
-    })
+      })
   })
 
   createEffect(() => {

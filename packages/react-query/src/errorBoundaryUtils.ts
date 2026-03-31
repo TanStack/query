@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react'
-import { shouldThrowError } from './utils'
+import { shouldThrowError } from '@tanstack/query-core'
 import type {
   DefaultedQueryObserverOptions,
   Query,
@@ -25,8 +25,18 @@ export const ensurePreventErrorBoundaryRetry = <
     TQueryKey
   >,
   errorResetBoundary: QueryErrorResetBoundaryValue,
+  query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ) => {
-  if (options.suspense || options.throwOnError) {
+  const throwOnError =
+    query?.state.error && typeof options.throwOnError === 'function'
+      ? shouldThrowError(options.throwOnError, [query.state.error, query])
+      : options.throwOnError
+
+  if (
+    options.suspense ||
+    options.experimental_prefetchInRender ||
+    throwOnError
+  ) {
     // Prevent retrying failed query if the error boundary has not been reset yet
     if (!errorResetBoundary.isReset()) {
       options.retryOnMount = false
@@ -53,17 +63,20 @@ export const getHasError = <
   errorResetBoundary,
   throwOnError,
   query,
+  suspense,
 }: {
   result: QueryObserverResult<TData, TError>
   errorResetBoundary: QueryErrorResetBoundaryValue
   throwOnError: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
+  suspense: boolean | undefined
 }) => {
   return (
     result.isError &&
     !errorResetBoundary.isReset() &&
     !result.isFetching &&
     query &&
-    shouldThrowError(throwOnError, [result.error, query])
+    ((suspense && result.data === undefined) ||
+      shouldThrowError(throwOnError, [result.error, query]))
   )
 }

@@ -60,7 +60,7 @@ query = injectQuery(() => ({
 
 [//]: # 'Example3'
 
-```tsx
+```ts
 import axios from 'axios'
 
 const query = injectQuery(() => ({
@@ -81,9 +81,8 @@ You might want to cancel a query manually. For example, if the request takes a l
 
 [//]: # 'Example7'
 
-```ts
+```angular-ts
 @Component({
-  standalone: true,
   template: `<button (click)="onCancel()">Cancel</button>`,
 })
 export class TodosComponent {
@@ -95,7 +94,7 @@ export class TodosComponent {
     },
   }))
 
-  queryClient = injectQueryClient()
+  queryClient = inject(QueryClient)
 
   onCancel() {
     this.queryClient.cancelQueries(['todos'])

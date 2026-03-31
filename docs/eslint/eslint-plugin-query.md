@@ -10,43 +10,117 @@ TanStack Query comes with its own ESLint plugin. This plugin is used to enforce 
 The plugin is a separate package that you need to install:
 
 ```bash
-$ npm i -D @tanstack/eslint-plugin-query
-# or
-$ pnpm add -D @tanstack/eslint-plugin-query
-# or
-$ yarn add -D @tanstack/eslint-plugin-query
-# or
-$ bun add -D @tanstack/eslint-plugin-query
+npm i -D @tanstack/eslint-plugin-query
 ```
 
-## Usage
+or
 
-To enable all of the recommended rules for our plugin, add `plugin:@tanstack/eslint-plugin-query/recommended` in extends:
+```bash
+pnpm add -D @tanstack/eslint-plugin-query
+```
+
+or
+
+```bash
+yarn add -D @tanstack/eslint-plugin-query
+```
+
+or
+
+```bash
+bun add -D @tanstack/eslint-plugin-query
+```
+
+## Flat Config (`eslint.config.js`)
+
+### Recommended setup
+
+To enable all of the recommended rules for our plugin, add the following config:
+
+```js
+import pluginQuery from '@tanstack/eslint-plugin-query'
+
+export default [
+  ...pluginQuery.configs['flat/recommended'],
+  // Any other config...
+]
+```
+
+### Recommended strict setup
+
+The `flat/recommended-strict` config extends `flat/recommended` with additional opinionated rules that enforce best practices more aggressively.
+
+```js
+import pluginQuery from '@tanstack/eslint-plugin-query'
+
+export default [
+  ...pluginQuery.configs['flat/recommended-strict'],
+  // Any other config...
+]
+```
+
+### Custom setup
+
+Alternatively, you can load the plugin and configure only the rules you want to use:
+
+```js
+import pluginQuery from '@tanstack/eslint-plugin-query'
+
+export default [
+  {
+    plugins: {
+      '@tanstack/query': pluginQuery,
+    },
+    rules: {
+      '@tanstack/query/exhaustive-deps': 'error',
+    },
+  },
+  // Any other config...
+]
+```
+
+## Legacy Config (`.eslintrc`)
+
+### Recommended setup
+
+To enable all of the recommended rules for our plugin, add `plugin:@tanstack/query/recommended` in extends:
 
 ```json
 {
-  "extends": ["plugin:@tanstack/eslint-plugin-query/recommended"]
+  "extends": ["plugin:@tanstack/query/recommended"]
 }
 ```
 
-### Alternative config
+### Recommended strict setup
 
-Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section of your `.eslintrc` configuration file:
+The `recommendedStrict` config extends `recommended` with additional opinionated rules:
 
 ```json
 {
-  "plugins": ["@tanstack/query"]
+  "extends": ["plugin:@tanstack/query/recommendedStrict"]
 }
 ```
 
-Then configure the rules you want to use under the rules section:
+### Custom setup
+
+Alternatively, add `@tanstack/query` to the plugins section, and configure the rules you want to use:
 
 ```json
 {
+  "plugins": ["@tanstack/query"],
   "rules": {
-    "@tanstack/query/exhaustive-deps": "error",
-    "@tanstack/query/no-rest-destructuring": "warn",
-    "@tanstack/query/stable-query-client": "error"
+    "@tanstack/query/exhaustive-deps": "error"
   }
 }
 ```
+
+## Rules
+
+- [@tanstack/query/exhaustive-deps](./exhaustive-deps.md)
+- [@tanstack/query/no-rest-destructuring](./no-rest-destructuring.md)
+- [@tanstack/query/stable-query-client](./stable-query-client.md)
+- [@tanstack/query/no-unstable-deps](./no-unstable-deps.md)
+- [@tanstack/query/infinite-query-property-order](./infinite-query-property-order.md)
+- [@tanstack/query/no-void-query-fn](./no-void-query-fn.md)
+- [@tanstack/query/mutation-property-order](./mutation-property-order.md)
+- [@tanstack/query/prefer-query-options](./prefer-query-options.md)

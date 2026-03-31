@@ -1,18 +1,24 @@
 /* @refresh reload */
 import {
-  createQuery,
   QueryClient,
   QueryClientProvider,
+  useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import type { Accessor, Setter } from 'solid-js'
-import { createSignal, For, Match, Switch } from 'solid-js'
+import { For, Match, Switch, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
-import { request, gql } from 'graphql-request'
+import { gql, request } from 'graphql-request'
+import type { Accessor, Setter } from 'solid-js'
 
 const endpoint = 'https://graphqlzero.almansi.me/api'
 
 const queryClient = new QueryClient()
+
+type Post = {
+  id: number
+  title: string
+  body: string
+}
 
 function App() {
   const [postId, setPostId] = createSignal(-1)
@@ -40,12 +46,12 @@ function App() {
 }
 
 function createPosts() {
-  return createQuery(() => ({
+  return useQuery(() => ({
     queryKey: ['posts'],
     queryFn: async () => {
       const {
         posts: { data },
-      } = await request<any>(
+      } = await request<{ posts: { data: Array<Post> } }>(
         endpoint,
         gql`
           query {
@@ -111,14 +117,14 @@ function Posts(props: { setPostId: Setter<number> }) {
 }
 
 function createPost(postId: Accessor<number>) {
-  return createQuery(() => ({
+  return useQuery(() => ({
     queryKey: ['post', postId()],
-    queryFn: async (context) => {
-      const { post } = await request<any>(
+    queryFn: async () => {
+      const { post } = await request<{ post: Post }>(
         endpoint,
         gql`
         query {
-          post(id: ${context.queryKey[1]}) {
+          post(id: ${postId()}) {
             id
             title
             body
@@ -129,7 +135,7 @@ function createPost(postId: Accessor<number>) {
 
       return post
     },
-    enabled: !!postId,
+    enabled: !!postId(),
   }))
 }
 
@@ -152,9 +158,9 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
         </Match>
         <Match when={state.data !== undefined}>
           <>
-            <h1>{state.data.title}</h1>
+            <h1>{state.data?.title}</h1>
             <div>
-              <p>{state.data.body}</p>
+              <p>{state.data?.body}</p>
             </div>
             <div>{state.isFetching ? 'Background Updating...' : ' '}</div>
           </>
@@ -164,4 +170,7 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
   )
 }
 
-render(() => <App />, document.getElementById('root') as HTMLElement)
+const root = document.getElementById('root')
+if (!root) throw new Error('Missing #root element')
+
+render(() => <App />, root)

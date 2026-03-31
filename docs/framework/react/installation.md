@@ -10,22 +10,40 @@ or a good ol' `<script>` via
 ### NPM
 
 ```bash
-$ npm i @tanstack/react-query
-# or
-$ pnpm add @tanstack/react-query
-# or
-$ yarn add @tanstack/react-query
-# or
-$ bun add @tanstack/react-query
+npm i @tanstack/react-query
 ```
+
+or
+
+```bash
+pnpm add @tanstack/react-query
+```
+
+or
+
+```bash
+yarn add @tanstack/react-query
+```
+
+or
+
+```bash
+bun add @tanstack/react-query
+```
+
+[//]: # 'Compatibility'
 
 React Query is compatible with React v18+ and works with ReactDOM and React Native.
 
-> Wanna give it a spin before you download? Try out the [simple](../examples/simple) or [basic](../examples/basic) examples!
+> Wanna give it a spin before you download? Try out the [simple](./examples/simple) or [basic](./examples/basic) examples!
+
+[//]: # 'Compatibility'
 
 ### CDN
 
 If you're not using a module bundler or package manager, you can also use this library via an ESM-compatible CDN such as [ESM.sh](https://esm.sh/). Simply add a `<script type="module">` tag to the bottom of your HTML file:
+
+[//]: # 'CDNExample'
 
 ```html
 <script type="module">
@@ -36,6 +54,8 @@ If you're not using a module bundler or package manager, you can also use this l
 ```
 
 > You can find instructions on how to use React without JSX [here](https://react.dev/reference/react/createElement#creating-an-element-without-jsx).
+
+[//]: # 'CDNExample'
 
 ### Requirements
 
@@ -54,14 +74,26 @@ Opera >= 77
 
 ### Recommendations
 
-It is recommended to also use our [ESLint Plugin Query](../../../eslint/eslint-plugin-query) to help you catch bugs and inconsistencies while you code. You can install it via:
+It is recommended to also use our [ESLint Plugin Query](../../eslint/eslint-plugin-query.md) to help you catch bugs and inconsistencies while you code. You can install it via:
 
 ```bash
-$ npm i -D @tanstack/eslint-plugin-query
-# or
-$ pnpm add -D @tanstack/eslint-plugin-query
-# or
-$ yarn add -D @tanstack/eslint-plugin-query
-# or
-$ bun add -D @tanstack/eslint-plugin-query
+npm i -D @tanstack/eslint-plugin-query
+```
+
+or
+
+```bash
+pnpm add -D @tanstack/eslint-plugin-query
+```
+
+or
+
+```bash
+yarn add -D @tanstack/eslint-plugin-query
+```
+
+or
+
+```bash
+bun add -D @tanstack/eslint-plugin-query
 ```

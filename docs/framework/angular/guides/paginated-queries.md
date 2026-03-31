@@ -22,7 +22,7 @@ const result = injectQuery(() => ({
 [//]: # 'Example'
 [//]: # 'Example2'
 
-```ts
+```angular-ts
 @Component({
   selector: 'pagination-example',
   template: `
@@ -70,7 +70,7 @@ const result = injectQuery(() => ({
 })
 export class PaginationExampleComponent {
   page = signal(0)
-  #queryClient = injectQueryClient()
+  #queryClient = inject(QueryClient)
 
   query = injectQuery(() => ({
     queryKey: ['projects', this.page()],

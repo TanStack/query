@@ -1,74 +1,79 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "defaultBase": "main",
-  "nxCloudAccessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ=",
+  "nxCloudId": "6412c827e6da5d7b4a0b1fe3",
   "useInferencePlugins": false,
   "parallel": 5,
   "namedInputs": {
     "sharedGlobals": [
-      "{workspaceRoot}/.eslintrc.cjs",
       "{workspaceRoot}/.nvmrc",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/scripts/getTsupConfig.js",
-      "{workspaceRoot}/tsconfig.json"
+      "{workspaceRoot}/scripts/*.js",
+      "{workspaceRoot}/tsconfig.json",
+      "{workspaceRoot}/eslint.config.js",
+      "{workspaceRoot}/pnpm-workspace.yaml"
     ],
     "default": [
       "sharedGlobals",
       "{projectRoot}/**/*",
       "!{projectRoot}/**/*.md"
     ],
-    "public": [
+    "production": [
       "default",
-      "{projectRoot}/build",
-      "{projectRoot}/dist",
-      "!{projectRoot}/.eslintrc.cjs",
-      "!{projectRoot}/tsconfig.eslint.json"
+      "!{projectRoot}/tests/**/*",
+      "!{projectRoot}/eslint.config.js"
     ]
   },
   "targetDefaults": {
-    "test:lib": {
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^public"],
-      "outputs": ["{projectRoot}/coverage"],
-      "cache": true
+    "compile": {
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": ["{projectRoot}/dist-ts"]
     },
-    "test:eslint": {
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^public"],
-      "cache": true
-    },
-    "test:types": {
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^public"],
-      "cache": true
-    },
-    "test:build": {
-      "dependsOn": ["build"],
-      "inputs": ["default", "^public"],
-      "cache": true
-    },
-    "test:attw": {
-      "dependsOn": ["build"],
-      "inputs": ["default", "^public"],
-      "cache": true
-    },
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^public"],
-      "outputs": ["{projectRoot}/build", "{projectRoot}/dist"],
-      "cache": true
+    "test:docs": {
+      "cache": true,
+      "inputs": ["{workspaceRoot}/docs/**/*"]
     },
     "test:knip": {
       "cache": true,
       "inputs": ["{workspaceRoot}/**/*"]
     },
-    "test:format": {
-      "cache": true,
-      "inputs": ["{workspaceRoot}/**/*"]
-    },
     "test:sherif": {
       "cache": true,
-      "inputs": ["{workspaceRoot}/**/*"]
+      "inputs": ["{workspaceRoot}/**/package.json"]
+    },
+    "test:size": {
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/package.json",
+        "{workspaceRoot}/.size-limit.json"
+      ]
+    },
+    "test:eslint": {
+      "cache": true,
+      "dependsOn": ["^compile"],
+      "inputs": ["default", "^production", "{workspaceRoot}/eslint.config.js"]
+    },
+    "test:lib": {
+      "cache": true,
+      "dependsOn": ["^compile"],
+      "inputs": ["default", "^production"],
+      "outputs": ["{projectRoot}/coverage"]
+    },
+    "test:types": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    },
+    "build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/build", "{projectRoot}/dist"]
+    },
+    "test:build": {
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": ["production"]
     }
   }
 }
