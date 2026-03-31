@@ -249,7 +249,9 @@ describe('Server Side Rendering', () => {
         queryFn,
       }).data
 
-      return <div>{String(profiles.find((profile) => profile.id === 1)?.id)}</div>
+      return (
+        <div>{String(profiles.find((profile) => profile.id === 1)?.id)}</div>
+      )
     }
 
     const markup = renderToString(
