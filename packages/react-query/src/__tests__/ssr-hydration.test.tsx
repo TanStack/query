@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import * as React from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
@@ -9,6 +10,7 @@ import {
   dehydrate,
   hydrate,
   useQuery,
+  useSuspenseQuery,
 } from '..'
 import { setIsServer } from './utils'
 
@@ -261,6 +263,70 @@ describe('Server side rendering with de/rehydration', () => {
     expect(el.innerHTML).toBe(
       'SuccessComponent - status:success fetching:false data:success!',
     )
+
+    unmount()
+    queryClient.clear()
+    consoleMock.mockRestore()
+  })
+
+  it('should not expose undefined data from useSuspenseQuery during hydration with prefetched data', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
+    function ProfilesComponent() {
+      const profiles = useSuspenseQuery({
+        queryKey: ['profiles'],
+        queryFn: () => fetchData([{ profileId: 1, isDefault: true }]),
+      }).data
+
+      const activeProfile = profiles.find((profile) => profile.isDefault)
+
+      return <>{activeProfile?.profileId}</>
+    }
+
+    setIsServer(true)
+
+    const prefetchClient = new QueryClient()
+    await prefetchClient.prefetchQuery({
+      queryKey: ['profiles'],
+      queryFn: () => fetchData([{ profileId: 1, isDefault: true }]),
+    })
+
+    const dehydratedStateServer = dehydrate(prefetchClient)
+    const renderClient = new QueryClient()
+    hydrate(renderClient, dehydratedStateServer)
+
+    const markup = ReactDOMServer.renderToString(
+      <QueryClientProvider client={renderClient}>
+        <React.Suspense fallback="loading">
+          <ProfilesComponent />
+        </React.Suspense>
+      </QueryClientProvider>,
+    )
+
+    const stringifiedState = JSON.stringify(dehydratedStateServer)
+    renderClient.clear()
+    setIsServer(false)
+
+    expect(markup).toContain('1')
+
+    const el = document.createElement('div')
+    el.innerHTML = markup
+
+    const queryClient = new QueryClient()
+    hydrate(queryClient, JSON.parse(stringifiedState))
+
+    const unmount = ReactHydrate(
+      <QueryClientProvider client={queryClient}>
+        <React.Suspense fallback="loading">
+          <ProfilesComponent />
+        </React.Suspense>
+      </QueryClientProvider>,
+      el,
+    )
+
+    expect(consoleMock).toHaveBeenCalledTimes(0)
+    expect(el.innerHTML).toContain('1')
 
     unmount()
     queryClient.clear()

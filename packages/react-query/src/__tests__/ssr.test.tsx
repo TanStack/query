@@ -12,6 +12,7 @@ import {
   useMutationState,
   useQueries,
   useQuery,
+  useSuspenseQuery,
 } from '..'
 import { setIsServer } from './utils'
 
@@ -236,6 +237,30 @@ describe('Server Side Rendering', () => {
     expect(markup).toContain('status2: success')
     expect(markup).toContain('data1: data1')
     expect(markup).toContain('data2: data2')
+  })
+
+  it('useSuspenseQuery should suspend on the server instead of exposing undefined data', () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => sleep(10).then(() => [{ id: 1 }]))
+
+    function Page() {
+      const profiles = useSuspenseQuery({
+        queryKey: key,
+        queryFn,
+      }).data
+
+      return <div>{String(profiles.find((profile) => profile.id === 1)?.id)}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <React.Suspense fallback="loading">
+          <Page />
+        </React.Suspense>
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('loading')
   })
 
   it('useMutation should return idle status', () => {
