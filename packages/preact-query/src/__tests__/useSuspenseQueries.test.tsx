@@ -354,20 +354,6 @@ describe('useSuspenseQueries', () => {
     // Without bug, it should be small (initial suspend + resolution = 2-3)
     expect(renderCount).toBeLessThan(10)
   })
-})
-
-describe('useSuspenseQueries 2', () => {
-  let queryClient: QueryClient
-
-  beforeEach(() => {
-    vi.useFakeTimers()
-    queryClient = new QueryClient()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-    queryClient.clear()
-  })
 
   it('should suspend all queries in parallel', async () => {
     const key1 = queryKey()

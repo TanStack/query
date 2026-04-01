@@ -40,6 +40,7 @@ describe('useQuery', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
