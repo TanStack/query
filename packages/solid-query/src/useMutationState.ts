@@ -11,14 +11,20 @@ import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 
 type MutationTypeFromResult<TResult> = [TResult] extends [
-  MutationState<infer TData, infer TError, infer TVariables, infer TOnMutateResult>
+  MutationState<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TOnMutateResult
+  >,
 ]
   ? Mutation<TData, TError, TVariables, TOnMutateResult>
   : Mutation
 
 type MutationStateOptions<
   TResult = MutationState,
-  TMutation extends Mutation<any, any, any, any> = MutationTypeFromResult<TResult>,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
 > = {
   filters?: MutationFilters
   select?: (mutation: TMutation) => TResult
@@ -26,7 +32,8 @@ type MutationStateOptions<
 
 function getResult<
   TResult = MutationState,
-  TMutation extends Mutation<any, any, any, any> = MutationTypeFromResult<TResult>,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
 >(
   mutationCache: MutationCache,
   options: MutationStateOptions<TResult, TMutation>,
@@ -45,7 +52,8 @@ function getResult<
 
 export function useMutationState<
   TResult = MutationState,
-  TMutation extends Mutation<any, any, any, any> = MutationTypeFromResult<TResult>,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
 >(
   options: Accessor<MutationStateOptions<TResult, TMutation>> = () => ({}),
   queryClient?: Accessor<QueryClient>,

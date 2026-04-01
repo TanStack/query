@@ -1,4 +1,8 @@
-import type { Mutation, MutationState, MutationStatus } from '@tanstack/query-core'
+import type {
+  Mutation,
+  MutationState,
+  MutationStatus,
+} from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
 
 import { useMutationState } from '../useMutationState'

@@ -137,7 +137,12 @@ export type CreateMutationResult<
 > = CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>
 
 type MutationTypeFromResult<TResult> = [TResult] extends [
-  MutationState<infer TData, infer TError, infer TVariables, infer TOnMutateResult>
+  MutationState<
+    infer TData,
+    infer TError,
+    infer TVariables,
+    infer TOnMutateResult
+  >,
 ]
   ? Mutation<TData, TError, TVariables, TOnMutateResult>
   : Mutation<unknown, DefaultError, unknown, unknown>
@@ -145,7 +150,8 @@ type MutationTypeFromResult<TResult> = [TResult] extends [
 /** Options for useMutationState */
 export type MutationStateOptions<
   TResult = MutationState,
-  TMutation extends Mutation<any, any, any, any> = MutationTypeFromResult<TResult>,
+  TMutation extends Mutation<any, any, any, any> =
+    MutationTypeFromResult<TResult>,
 > = {
   filters?: MutationFilters
   select?: (mutation: TMutation) => TResult
