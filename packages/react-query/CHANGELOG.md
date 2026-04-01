@@ -1,5 +1,15 @@
 # @tanstack/react-query
 
+## 4.44.0
+
+### Minor Changes
+
+- 006ce1a: feat(react-query): backport mutationOptions in v4
+
+### Patch Changes
+
+- @tanstack/query-core@4.44.0
+
 ## 4.43.0
 
 ### Minor Changes
