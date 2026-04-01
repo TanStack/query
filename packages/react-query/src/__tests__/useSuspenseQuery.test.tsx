@@ -273,6 +273,9 @@ describe('useSuspenseQuery', () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(70))
+    await act(async () => {
+      await flushMicrotasks()
+    })
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('retry')).toBeInTheDocument()
 
@@ -281,6 +284,9 @@ describe('useSuspenseQuery', () => {
     })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(async () => {
+      await flushMicrotasks()
+    })
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
     expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
@@ -340,6 +346,9 @@ describe('useSuspenseQuery', () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(async () => {
+      await flushMicrotasks()
+    })
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('retry')).toBeInTheDocument()
 
@@ -348,6 +357,9 @@ describe('useSuspenseQuery', () => {
     })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(async () => {
+      await flushMicrotasks()
+    })
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('retry')).toBeInTheDocument()
 
@@ -358,6 +370,9 @@ describe('useSuspenseQuery', () => {
     })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(async () => {
+      await flushMicrotasks()
+    })
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
     consoleMock.mockRestore()
@@ -495,6 +510,9 @@ describe('useSuspenseQuery', () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(async () => {
+      await flushMicrotasks()
+    })
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
     expect(rendered.getByText('retry')).toBeInTheDocument()
 
@@ -513,6 +531,9 @@ describe('useSuspenseQuery', () => {
     })
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(async () => {
+      await flushMicrotasks()
+    })
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
     consoleMock.mockRestore()
@@ -554,6 +575,9 @@ describe('useSuspenseQuery', () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))
+    await act(async () => {
+      await flushMicrotasks()
+    })
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
 
     consoleMock.mockRestore()

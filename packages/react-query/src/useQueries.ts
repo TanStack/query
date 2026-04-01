@@ -18,7 +18,7 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureSuspenseTimers,
-  getSuspensePromise,
+  setupSuspensePromise,
   shouldSuspend,
   use,
 } from './suspense'
@@ -294,19 +294,40 @@ export function useQueries<
   const suspendedQueries = shouldAtLeastOneSuspend
     ? optimisticResult.flatMap((result, index) => {
         const opts = defaultedQueries[index]
+        const currentQueryObserver = opts
+          ? observer.getObservers()[index]
+          : undefined
         const queryObserver =
-          (opts && observer.getObservers()[index]) ||
+          currentQueryObserver ||
           (opts ? new QueryObserver(client, opts) : undefined)
+        const query = queryObserver?.getCurrentQuery()
 
-        if (opts && queryObserver && shouldSuspend(opts, result)) {
+        if (opts && queryObserver) {
+          const shouldUseCurrentResult =
+            currentQueryObserver === queryObserver &&
+            query?.queryHash === opts.queryHash
+          const observerResult = shouldUseCurrentResult
+            ? result
+            : queryObserver.getOptimisticResult(opts)
+
+          if (!shouldSuspend(opts, observerResult)) {
+            return []
+          }
+
+          const promise = setupSuspensePromise(
+            queryObserver,
+            query,
+            false,
+            opts,
+            observerResult,
+            isRestoring,
+            errorResetBoundary,
+          )
+
           return [
             {
               queryHash: opts.queryHash,
-              promise: getSuspensePromise(
-                opts,
-                queryObserver,
-                errorResetBoundary,
-              ),
+              promise,
             },
           ]
         }

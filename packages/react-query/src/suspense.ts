@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { environmentManager } from '@tanstack/query-core'
+import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -7,7 +9,6 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
 export const defaultThrowOnError = <
   TQueryFnData = unknown,
@@ -94,75 +95,37 @@ export const shouldSuspend = (
   result: QueryObserverResult<any, any>,
 ) => defaultedOptions?.suspense && result.isPending
 
-export const fetchOptimistic = <
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey,
->(
-  defaultedOptions: DefaultedQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+export function setupSuspensePromise(
+  observer: QueryObserver<any, any, any, any, any>,
+  query: Query<any, any, any, any> | undefined,
+  isNewCacheEntry: boolean,
+  defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
+  result: QueryObserverResult<any, any>,
+  isRestoring: boolean,
   errorResetBoundary: QueryErrorResetBoundaryValue,
-) =>
-  observer
-    .fetchOptimistic(defaultedOptions)
-    .catch((error) => {
-      errorResetBoundary.clearReset()
-      throw error
-    })
-    .finally(() => {
-      observer.updateResult()
-    })
+) {
+  const suspends = shouldSuspend(defaultedOptions, result)
 
-export const getSuspensePromise = <
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey,
->(
-  defaultedOptions: DefaultedQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-  errorResetBoundary: QueryErrorResetBoundaryValue,
-) => {
-  const queryHash = defaultedOptions.queryHash
-  const cached = suspenseObserverPromiseCache.get(observer)
+  if (
+    suspends ||
+    (defaultedOptions.experimental_prefetchInRender &&
+      !environmentManager.isServer() &&
+      willFetch(result, isRestoring))
+  ) {
+    const promise =
+      isNewCacheEntry || suspends
+        ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
+          observer.fetchOptimistic(defaultedOptions)
+        : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
+          query?.promise
 
-  if (cached?.queryHash === queryHash) {
-    return cached.promise as Promise<QueryObserverResult<TData, TError>>
+    promise
+      ?.catch(() => errorResetBoundary.clearReset())
+      .finally(() => {
+        // `.updateResult()` will trigger `.#currentThenable` to finalize
+        observer.updateResult()
+      })
   }
 
-  const promise = fetchOptimistic(
-    defaultedOptions,
-    observer,
-    errorResetBoundary,
-  )
-
-  suspenseObserverPromiseCache.set(observer, {
-    queryHash,
-    promise,
-  })
-
-  return promise
+  return result.promise
 }
-
-const suspenseObserverPromiseCache = new WeakMap<
-  QueryObserver<any, any, any, any, any>,
-  {
-    queryHash: string
-    promise: Promise<QueryObserverResult<any, any>>
-  }
->()

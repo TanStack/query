@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { environmentManager, noop, notifyManager } from '@tanstack/query-core'
+import { noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -11,20 +11,18 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureSuspenseTimers,
-  fetchOptimistic,
-  getSuspensePromise,
+  setupSuspensePromise,
   shouldSuspend,
   use,
-  willFetch,
 } from './suspense'
 import { useIsRestoring } from './IsRestoringProvider'
-import type { UseBaseQueryOptions } from './types'
 import type {
   QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { UseBaseQueryOptions } from './types'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -125,9 +123,19 @@ export function useBaseQuery<
     observer.setOptions(defaultedOptions)
   }, [defaultedOptions, observer])
 
-  // Handle suspense
-  if (shouldSuspend(defaultedOptions, result)) {
-    use(getSuspensePromise(defaultedOptions, observer, errorResetBoundary))
+  const suspends = shouldSuspend(defaultedOptions, result)
+
+  const promise = setupSuspensePromise(
+    observer,
+    query,
+    isNewCacheEntry,
+    defaultedOptions,
+    result,
+    isRestoring,
+    errorResetBoundary,
+  )
+  if (suspends) {
+    use(promise)
   }
 
   // Handle error boundary
@@ -147,23 +155,6 @@ export function useBaseQuery<
     defaultedOptions,
     result,
   )
-
-  if (
-    defaultedOptions.experimental_prefetchInRender &&
-    !environmentManager.isServer() &&
-    willFetch(result, isRestoring)
-  ) {
-    const promise = isNewCacheEntry
-      ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
-        fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
-      : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-        query?.promise
-
-    promise?.catch(noop).finally(() => {
-      // `.updateResult()` will trigger `.#currentThenable` to finalize
-      observer.updateResult()
-    })
-  }
 
   // Handle result property usage tracking
   return !defaultedOptions.notifyOnChangeProps

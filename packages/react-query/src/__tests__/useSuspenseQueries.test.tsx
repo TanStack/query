@@ -228,6 +228,9 @@ describe('useSuspenseQueries', () => {
 
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(1000))
+    await act(async () => {
+      await flushMicrotasks()
+    })
 
     expect(onSuspend).toHaveBeenCalledTimes(2)
     expect(rendered.getByText('data: 3,4,5,6')).toBeInTheDocument()

@@ -648,7 +648,18 @@ export class QueryObserver<
       | QueryObserverResult<TData, TError>
       | undefined
 
-    const nextResult = this.createResult(this.#currentQuery, this.options)
+    const shouldFinalizeSuspenseResultBeforeMount =
+      !this.hasListeners() &&
+      this.options.suspense &&
+      this.#currentThenable.status === 'pending' &&
+      this.#currentQuery.state.fetchStatus === 'idle'
+
+    const nextResult = this.createResult(
+      this.#currentQuery,
+      shouldFinalizeSuspenseResultBeforeMount
+        ? { ...this.options, _optimisticResults: undefined }
+        : this.options,
+    )
 
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
