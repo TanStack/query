@@ -1519,8 +1519,8 @@ importers:
         specifier: ^0.9.4
         version: 0.9.8(prettier@3.8.1)(typescript@5.8.3)
       '@astrojs/node':
-        specifier: ^9.1.3
-        version: 9.5.5(astro@5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(typescript@5.8.3)(yaml@2.8.3))
+        specifier: ^10.0.0
+        version: 10.0.4(astro@5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(typescript@5.8.3)(yaml@2.8.3))
       '@astrojs/solid-js':
         specifier: ^5.0.7
         version: 5.1.3(@testing-library/jest-dom@6.9.1)(@types/node@22.19.15)(jiti@1.21.7)(lightningcss@1.32.0)(sass@1.90.0)(solid-js@1.9.12)(terser@5.46.1)(yaml@2.8.3)
@@ -3327,6 +3327,9 @@ packages:
   '@astrojs/internal-helpers@0.7.6':
     resolution: {integrity: sha512-GOle7smBWKfMSP8osUIGOlB5kaHdQLV3foCsf+5Q9Wsuu+C6Fs3Ez/ttXmhjZ1HkSgsogcM1RXSjjOVieHq16Q==}
 
+  '@astrojs/internal-helpers@0.8.0':
+    resolution: {integrity: sha512-J56GrhEiV+4dmrGLPNOl2pZjpHXAndWVyiVDYGDuw6MWKpBSEMLdFxHzeM/6sqaknw9M+HFfHZAcvi3OfT3D/w==}
+
   '@astrojs/language-server@2.16.6':
     resolution: {integrity: sha512-N990lu+HSFiG57owR0XBkr02BYMgiLCshLf+4QG4v6jjSWkBeQGnzqi+E1L08xFPPJ7eEeXnxPXGLaVv5pa4Ug==}
     hasBin: true
@@ -3342,10 +3345,10 @@ packages:
   '@astrojs/markdown-remark@6.3.11':
     resolution: {integrity: sha512-hcaxX/5aC6lQgHeGh1i+aauvSwIT6cfyFjKWvExYSxUhZZBBdvCliOtu06gbQyhbe0pGJNoNmqNlQZ5zYUuIyQ==}
 
-  '@astrojs/node@9.5.5':
-    resolution: {integrity: sha512-rtU2BGU5u3SfGURpANfMxVzCIoR86MkaN05ncza9rbtuMKJ/XnRJt/BbyVknDbOJ71hoci0SIsJwKcJR8vvi/A==}
+  '@astrojs/node@10.0.4':
+    resolution: {integrity: sha512-7pVgiVSscQHRC2WqjlXcnbbcKMYp2GXrYpmuvdGg5zgA8J1lFm2vmwVhHZFuZK3Ik5PzoxiDROaEgoDGLbfhLw==}
     peerDependencies:
-      astro: ^5.17.3
+      astro: ^6.0.0
 
   '@astrojs/prism@3.3.0':
     resolution: {integrity: sha512-q8VwfU/fDZNoDOf+r7jUnMC2//H2l0TuQ6FkGJL8vD8nw/q5KiL3DS1KKBI3QhI9UQhpJ5dc7AtqfbXWuOgLCQ==}
@@ -16656,6 +16659,10 @@ snapshots:
 
   '@astrojs/internal-helpers@0.7.6': {}
 
+  '@astrojs/internal-helpers@0.8.0':
+    dependencies:
+      picomatch: 4.0.4
+
   '@astrojs/language-server@2.16.6(prettier@3.8.1)(typescript@5.8.3)':
     dependencies:
       '@astrojs/compiler': 2.13.1
@@ -16707,9 +16714,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/node@9.5.5(astro@5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(typescript@5.8.3)(yaml@2.8.3))':
+  '@astrojs/node@10.0.4(astro@5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(typescript@5.8.3)(yaml@2.8.3))':
     dependencies:
-      '@astrojs/internal-helpers': 0.7.6
+      '@astrojs/internal-helpers': 0.8.0
       astro: 5.18.1(@types/node@22.19.15)(@vercel/functions@2.2.13)(db0@0.3.4)(idb-keyval@6.2.2)(ioredis@5.10.1)(jiti@1.21.7)(lightningcss@1.32.0)(rollup@4.60.1)(sass@1.90.0)(terser@5.46.1)(typescript@5.8.3)(yaml@2.8.3)
       send: 1.2.1
       server-destroy: 1.0.1
