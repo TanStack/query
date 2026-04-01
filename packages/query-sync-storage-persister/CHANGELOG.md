@@ -1,5 +1,11 @@
 # @tanstack/query-sync-storage-persister
 
+## 4.44.0
+
+### Patch Changes
+
+- @tanstack/query-persist-client-core@4.44.0
+
 ## 4.43.0
 
 ### Patch Changes
