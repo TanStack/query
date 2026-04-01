@@ -272,6 +272,7 @@ export class QueryObserver<
           this.trackProp('data')
           if (
             !this.options.experimental_prefetchInRender &&
+            !this.options.suspense &&
             this.#currentThenable.status === 'pending'
           ) {
             this.#currentThenable.reject(
@@ -594,7 +595,7 @@ export class QueryObserver<
 
     const nextResult = result as QueryObserverResult<TData, TError>
 
-    if (this.options.experimental_prefetchInRender) {
+    if (this.options.experimental_prefetchInRender || this.options.suspense) {
       const hasResultData = nextResult.data !== undefined
       const isErrorWithoutData = nextResult.status === 'error' && !hasResultData
       const finalizeThenableIfPossible = (thenable: PendingThenable<TData>) => {
