@@ -12,7 +12,11 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
-import { renderWithClient, renderWithClientAndSuspense } from './utils'
+import {
+  flushMicrotasks,
+  renderWithClient,
+  renderWithClientAndSuspense,
+} from './utils'
 import type {
   InfiniteData,
   UseSuspenseInfiniteQueryResult,
@@ -665,6 +669,45 @@ describe('useSuspenseQuery', () => {
     )
 
     consoleMock.mockRestore()
+  })
+
+  it('should suspend again after resetQueries with the same query key', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Page() {
+      const result = useSuspenseQuery({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => `data-${++count}`),
+      })
+
+      return (
+        <div>
+          <span>{result.data}</span>
+          <button aria-label="reset" onClick={() => queryClient.resetQueries()} />
+        </div>
+      )
+    }
+
+    const rendered = await renderWithClientAndSuspense(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data-1')).toBeInTheDocument()
+
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('reset'))
+      await vi.advanceTimersByTimeAsync(0)
+      await flushMicrotasks()
+    })
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data-2')).toBeInTheDocument()
   })
 
   it('should error caught in error boundary without infinite loop when query keys changed', async () => {

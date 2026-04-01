@@ -78,6 +78,10 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
+export async function flushMicrotasks() {
+  await Promise.resolve()
+}
+
 export function setIsServer(value: boolean) {
   environmentManager.setIsServer(() => value)
   return () => {

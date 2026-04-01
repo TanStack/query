@@ -18,7 +18,11 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { renderWithClientAndSuspense, rerenderWithSuspense } from './utils'
+import {
+  flushMicrotasks,
+  renderWithClientAndSuspense,
+  rerenderWithSuspense,
+} from './utils'
 import type { UseSuspenseQueryOptions } from '..'
 
 describe('useSuspenseQueries', () => {
@@ -227,6 +231,50 @@ describe('useSuspenseQueries', () => {
 
     expect(onSuspend).toHaveBeenCalledTimes(2)
     expect(rendered.getByText('data: 3,4,5,6')).toBeInTheDocument()
+  })
+
+  it('should suspend again after resetQueries with the same query keys', async () => {
+    let count = 0
+
+    function Page() {
+      const queriesResults = useSuspenseQueries(
+        {
+          queries: [1, 2].map((id) => ({
+            queryKey: [id],
+            queryFn: () => sleep(10).then(() => `${id}-${++count}`),
+          })),
+          combine: (results) => results.map((result) => result.data),
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <button aria-label="reset" onClick={() => queryClient.resetQueries()} />
+          <span>data: {queriesResults.join(',')}</span>
+        </div>
+      )
+    }
+
+    const rendered = await renderWithClientAndSuspense(
+      queryClient,
+      <React.Suspense fallback={<SuspenseFallback />}>
+        <Page />
+      </React.Suspense>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: 1-1,2-2')).toBeInTheDocument()
+
+    await act(async () => {
+      fireEvent.click(rendered.getByLabelText('reset'))
+      await vi.advanceTimersByTimeAsync(0)
+      await flushMicrotasks()
+    })
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: 1-3,2-4')).toBeInTheDocument()
   })
 
   it('should only call combine after resolving', async () => {
@@ -695,7 +743,7 @@ describe('useSuspenseQueries', () => {
     expect(rendered.getByText('loading')).toBeInTheDocument()
     await act(async () => {
       await vi.advanceTimersByTimeAsync(11)
-      await Promise.resolve()
+      await flushMicrotasks()
     })
     expect(rendered.getByText('data0')).toBeInTheDocument()
 
@@ -705,7 +753,7 @@ describe('useSuspenseQueries', () => {
     expect(rendered.getByText('pending')).toBeInTheDocument()
     await act(async () => {
       await vi.advanceTimersByTimeAsync(11)
-      await Promise.resolve()
+      await flushMicrotasks()
     })
     expect(rendered.getByText('data1')).toBeInTheDocument()
   })
