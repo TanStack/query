@@ -16,7 +16,7 @@
     mutationStateOpts,
   }: {
     mutationOpts: Accessor<CreateMutationOptions>
-    mutationStateOpts: MutationStateOptions<any>
+    mutationStateOpts: MutationStateOptions<any, any>
   } = $props()
 
   const queryClient = new QueryClient()
