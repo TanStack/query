@@ -32,9 +32,7 @@ function getResult<
     .map(
       (mutation): TResult =>
         (options.select
-          ? (options.select as unknown as (mutation: Mutation) => TResult)(
-              mutation,
-            )
+          ? options.select(mutation as TMutation)
           : mutation.state) as TResult,
     )
 }
