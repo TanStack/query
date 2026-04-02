@@ -36,12 +36,15 @@ watchEffect(() => {
   devtools.setTheme(props.theme)
 })
 
+let mounted = false
+
 onMounted(() => {
   devtools.mount(div.value as HTMLElement)
+  mounted = true
 })
 
 onScopeDispose(() => {
-  devtools.unmount()
+  if (mounted) devtools.unmount()
 })
 </script>
 
