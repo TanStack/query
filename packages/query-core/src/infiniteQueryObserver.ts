@@ -18,8 +18,8 @@ import type {
   InfiniteQueryObserverBaseResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
-  QueryObserverOptions,
   QueryKey,
+  QueryObserverOptions,
 } from './types'
 import type { QueryClient } from './queryClient'
 import type { Query } from './query'
@@ -51,14 +51,6 @@ export class InfiniteQueryObserver<
   subscribe!: Subscribable<
     InfiniteQueryObserverListener<TData, TError, TPageParam, TMode>
   >['subscribe']
-
-  fetchNextPage!: (
-    ...args: InfiniteQueryFetchNextPageArgs<TPageParam, TMode>
-  ) => Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
-
-  fetchPreviousPage!: (
-    ...args: InfiniteQueryFetchPreviousPageArgs<TPageParam, TMode>
-  ) => Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
 
   // Type override
   getCurrentResult!: ReplaceReturnType<
@@ -122,10 +114,8 @@ export class InfiniteQueryObserver<
 
   protected bindMethods(): void {
     super.bindMethods()
-    this.fetchNextPage =
-      this.#fetchNextPage.bind(this) as typeof this.fetchNextPage
-    this.fetchPreviousPage =
-      this.#fetchPreviousPage.bind(this) as typeof this.fetchPreviousPage
+    this.fetchNextPage = this.fetchNextPage.bind(this)
+    this.fetchPreviousPage = this.fetchPreviousPage.bind(this)
   }
 
   setOptions(
@@ -168,7 +158,10 @@ export class InfiniteQueryObserver<
     >
   }
 
-  #fetchNextPage(
+  fetchNextPage(
+    ...args: InfiniteQueryFetchNextPageArgs<TPageParam, TMode>
+  ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
+  fetchNextPage(
     options?: InfiniteQueryFetchNextPageOptions<TPageParam, TMode>,
   ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>> {
     const pageParam = (options as { pageParam?: TPageParam } | undefined)
@@ -186,7 +179,10 @@ export class InfiniteQueryObserver<
     })
   }
 
-  #fetchPreviousPage(
+  fetchPreviousPage(
+    ...args: InfiniteQueryFetchPreviousPageArgs<TPageParam, TMode>
+  ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
+  fetchPreviousPage(
     options?: InfiniteQueryFetchPreviousPageOptions<TPageParam, TMode>,
   ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>> {
     const pageParam = (options as { pageParam?: TPageParam } | undefined)
@@ -219,7 +215,7 @@ export class InfiniteQueryObserver<
       TQueryKey
     >,
   ): InfiniteQueryObserverResult<TData, TError, TPageParam, TMode> {
-    return this.#createResult(
+    return this.createInfiniteResult(
       query,
       options as unknown as InfiniteQueryObserverOptions<
         TQueryFnData,
@@ -231,8 +227,8 @@ export class InfiniteQueryObserver<
       >,
     )
   }
- 
-  #createResult(
+
+  private createInfiniteResult(
     query: Query<
       TQueryFnData,
       TError,
@@ -290,7 +286,12 @@ export class InfiniteQueryObserver<
         isRefetching && !isFetchingNextPage && !isFetchingPreviousPage,
     }
 
-    return result as InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
+    return result as InfiniteQueryObserverResult<
+      TData,
+      TError,
+      TPageParam,
+      TMode
+    >
   }
 }
 
