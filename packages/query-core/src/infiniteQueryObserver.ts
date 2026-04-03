@@ -11,9 +11,7 @@ import type {
   FetchPageDirectionMode,
   InfiniteData,
   InfiniteQueryFetchNextPageArgs,
-  InfiniteQueryFetchNextPageOptions,
   InfiniteQueryFetchPreviousPageArgs,
-  InfiniteQueryFetchPreviousPageOptions,
   InfiniteQueryMode,
   InfiniteQueryObserverBaseResult,
   InfiniteQueryObserverOptions,
@@ -162,17 +160,11 @@ export class InfiniteQueryObserver<
     ...args: InfiniteQueryFetchNextPageArgs<TPageParam, TMode>
   ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
   fetchNextPage(
-    options?: InfiniteQueryFetchNextPageOptions<TPageParam, TMode>,
+    ...args: Array<any>
   ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>> {
-    const pageParam = (options as { pageParam?: TPageParam } | undefined)
-      ?.pageParam
-    const fetchOptions = { ...(options ?? {}) } as Record<string, unknown>
-    delete fetchOptions.pageParam
+    const [{ pageParam, ...options } = {}] = args
     return this.fetch({
-      ...(fetchOptions as unknown as InfiniteQueryFetchNextPageOptions<
-        TPageParam,
-        TMode
-      >),
+      ...options,
       meta: {
         fetchMore: { direction: 'forward', pageParam },
       },
@@ -183,17 +175,11 @@ export class InfiniteQueryObserver<
     ...args: InfiniteQueryFetchPreviousPageArgs<TPageParam, TMode>
   ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
   fetchPreviousPage(
-    options?: InfiniteQueryFetchPreviousPageOptions<TPageParam, TMode>,
+    ...args: Array<any>
   ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>> {
-    const pageParam = (options as { pageParam?: TPageParam } | undefined)
-      ?.pageParam
-    const fetchOptions = { ...(options ?? {}) } as Record<string, unknown>
-    delete fetchOptions.pageParam
+    const [{ pageParam, ...options } = {}] = args
     return this.fetch({
-      ...(fetchOptions as unknown as InfiniteQueryFetchPreviousPageOptions<
-        TPageParam,
-        TMode
-      >),
+      ...options,
       meta: {
         fetchMore: { direction: 'backward', pageParam },
       },
