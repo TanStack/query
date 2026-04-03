@@ -434,8 +434,7 @@ export class QueryClient {
       TQueryFnData,
       TError,
       TData,
-      TPageParam,
-      TMode
+      TPageParam
     >(options.pages)
     return this.fetchQuery(options as any)
   }
@@ -545,8 +544,7 @@ export class QueryClient {
       TQueryFnData,
       TError,
       TData,
-      TPageParam,
-      TMode
+      TPageParam
     >(options.pages)
 
     return this.ensureQueryData(options as any)
