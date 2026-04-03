@@ -105,7 +105,7 @@ export function infiniteQueryBehavior<
 
           result = await fetchPage(oldData, param, previous)
         } else {
-          const remainingPages = pages ?? Math.max(oldPages.length, 1)
+          const remainingPages = pages ?? oldPages.length
 
           // Fetch all pages
           do {
