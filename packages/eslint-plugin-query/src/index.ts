@@ -8,45 +8,64 @@ export interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
   rules: Record<RuleKey, RuleModule<any, any, any>>
   configs: {
     recommended: ESLint.ConfigData
+    recommendedStrict: ESLint.ConfigData
     'flat/recommended': Array<Linter.Config>
+    'flat/recommended-strict': Array<Linter.Config>
   }
 }
 
-const plugin: Plugin = {
+const recommendedRules = {
+  '@tanstack/query/exhaustive-deps': 'error',
+  '@tanstack/query/no-rest-destructuring': 'warn',
+  '@tanstack/query/stable-query-client': 'error',
+  '@tanstack/query/no-unstable-deps': 'error',
+  '@tanstack/query/infinite-query-property-order': 'error',
+  '@tanstack/query/no-void-query-fn': 'error',
+  '@tanstack/query/mutation-property-order': 'error',
+} as const
+
+const recommendedStrictRules = {
+  ...recommendedRules,
+  '@tanstack/query/prefer-query-options': 'error',
+} as const
+
+export const plugin = {
   meta: {
     name: '@tanstack/eslint-plugin-query',
   },
-  configs: {} as Plugin['configs'],
-  rules,
-}
-
-// Assign configs here so we can reference `plugin`
-Object.assign(plugin.configs, {
-  recommended: {
-    plugins: ['@tanstack/query'],
-    rules: {
-      '@tanstack/query/exhaustive-deps': 'error',
-      '@tanstack/query/no-rest-destructuring': 'warn',
-      '@tanstack/query/stable-query-client': 'error',
-      '@tanstack/query/no-unstable-deps': 'error',
-      '@tanstack/query/infinite-query-property-order': 'error',
+  configs: {
+    recommended: {
+      plugins: ['@tanstack/query'],
+      rules: recommendedRules,
     },
+    recommendedStrict: {
+      plugins: ['@tanstack/query'],
+      rules: recommendedStrictRules,
+    },
+    'flat/recommended': [
+      {
+        name: 'tanstack/query/flat/recommended',
+        plugins: {
+          '@tanstack/query': {}, // Assigned after plugin object created
+        },
+        rules: recommendedRules,
+      },
+    ],
+    'flat/recommended-strict': [
+      {
+        name: 'tanstack/query/flat/recommended-strict',
+        plugins: {
+          '@tanstack/query': {}, // Assigned after plugin object created
+        },
+        rules: recommendedStrictRules,
+      },
+    ],
   },
-  'flat/recommended': [
-    {
-      name: 'tanstack/query/flat/recommended',
-      plugins: {
-        '@tanstack/query': plugin,
-      },
-      rules: {
-        '@tanstack/query/exhaustive-deps': 'error',
-        '@tanstack/query/no-rest-destructuring': 'warn',
-        '@tanstack/query/stable-query-client': 'error',
-        '@tanstack/query/no-unstable-deps': 'error',
-        '@tanstack/query/infinite-query-property-order': 'error',
-      },
-    },
-  ],
-})
+  rules,
+} satisfies Plugin
+
+plugin.configs['flat/recommended'][0]!.plugins['@tanstack/query'] = plugin
+plugin.configs['flat/recommended-strict'][0]!.plugins['@tanstack/query'] =
+  plugin
 
 export default plugin

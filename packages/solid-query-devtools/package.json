@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.66.0",
+  "version": "5.96.2",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/solid-query-devtools"
   },
   "homepage": "https://tanstack.com/query",
@@ -17,17 +17,18 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts",
     "compile": "tsc --build",
-    "test:eslint": "eslint ./src",
-    "test:types": "npm-run-all --serial test:types:*",
-    "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js --build",
-    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js --build",
-    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js --build",
-    "test:types:ts53": "node ../../node_modules/typescript53/lib/tsc.js --build",
+    "test:eslint": "eslint --concurrency=auto ./src",
+    "test:types": "npm run compile && npm-run-all --serial test:types:*",
     "test:types:ts54": "node ../../node_modules/typescript54/lib/tsc.js --build",
     "test:types:ts55": "node ../../node_modules/typescript55/lib/tsc.js --build",
     "test:types:ts56": "node ../../node_modules/typescript56/lib/tsc.js --build",
-    "test:types:ts57": "tsc --build",
+    "test:types:ts57": "node ../../node_modules/typescript57/lib/tsc.js --build",
+    "test:types:ts58": "node ../../node_modules/typescript58/lib/tsc.js --build",
+    "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build",
+    "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build",
     "test:build": "publint --strict && attw --pack",
+    "test:lib": "vitest --retry=3",
+    "test:lib:dev": "pnpm run test:lib --watch",
     "build": "tsup --tsconfig tsconfig.prod.json",
     "build:dev": "tsup --watch"
   },
@@ -37,6 +38,7 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
+    "@tanstack/custom-condition": "./src/index.tsx",
     "solid": {
       "development": "./build/dev.jsx",
       "import": "./build/index.jsx"
@@ -63,11 +65,12 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
+    "@solidjs/testing-library": "^0.8.10",
     "@tanstack/solid-query": "workspace:*",
-    "npm-run-all": "^4.1.5",
-    "solid-js": "^1.9.3",
+    "npm-run-all2": "^5.0.0",
+    "solid-js": "^1.9.7",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.10.2"
+    "vite-plugin-solid": "^2.11.6"
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:^",

@@ -1,4 +1,4 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueriesObserver,
   QueryClient,
@@ -18,12 +18,14 @@ import type {
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
-    queryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve(5),
-      // @ts-expect-error this is a good error, because stallTime does not exist!
-      stallTime: 1000,
-    })
+    assertType(
+      queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
+        // @ts-expect-error this is a good error, because stallTime does not exist!
+        stallTime: 1000,
+      }),
+    )
   })
   it('should infer types for callbacks', () => {
     queryOptions({
@@ -203,7 +205,7 @@ describe('queryOptions', () => {
   })
 
   it('should allow undefined response in initialData', () => {
-    return (id: string | null) =>
+    assertType((id: string | null) =>
       queryOptions({
         queryKey: ['todo', id],
         queryFn: () =>
@@ -218,14 +220,15 @@ describe('queryOptions', () => {
                 id,
                 title: 'Initial Data',
               },
-      })
+      }),
+    )
   })
 
   it('should allow optional initialData object', () => {
     const testFn = (id?: string) => {
       const options = queryOptions({
         queryKey: ['test'],
-        queryFn: async () => 'something string',
+        queryFn: () => Promise.resolve('something string'),
         initialData: id ? 'initial string' : undefined,
       })
       expectTypeOf(options.initialData).toMatchTypeOf<
@@ -248,7 +251,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(1),
     })
 
-    somethingWithQueryOptions(options)
+    assertType(somethingWithQueryOptions(options))
   })
 
   it('should return a custom query key type', () => {

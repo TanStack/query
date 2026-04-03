@@ -1,12 +1,12 @@
-import type { CreateQueryResult } from '@tanstack/solid-query'
-import { createQuery } from '@tanstack/solid-query'
-import { createSignal, Suspense } from 'solid-js'
-import { fetchUser } from '~/utils/api'
+import { useQuery } from '@tanstack/solid-query'
+import { Suspense, createSignal } from 'solid-js'
 import { NoHydration } from 'solid-js/web'
 import { Title } from '@solidjs/meta'
+import type { UseQueryResult } from '@tanstack/solid-query'
+import { fetchUser } from '~/utils/api'
 
 export default function Hydration() {
-  const query = createQuery(() => ({
+  const query = useQuery(() => ({
     queryKey: ['user'],
     queryFn: () => fetchUser({ sleep: 500 }),
     deferStream: true,
@@ -69,7 +69,7 @@ export default function Hydration() {
   )
 }
 
-type QueryState = CreateQueryResult<
+type QueryState = UseQueryResult<
   {
     id: string
     name: string

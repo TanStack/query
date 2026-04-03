@@ -130,6 +130,7 @@ export function createHydrationStreamProvider<TShape>() {
         .join(',')
 
       // Flush stream
+      // eslint-disable-next-line react-hooks/immutability
       stream.length = 0
 
       const html: Array<string> = [
@@ -168,6 +169,7 @@ export function createHydrationStreamProvider<TShape>() {
 
         onEntries(...winStream)
 
+        // eslint-disable-next-line react-hooks/immutability
         win[id] = {
           initialized: true,
           push: onEntries,

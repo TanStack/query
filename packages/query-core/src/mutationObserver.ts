@@ -6,6 +6,7 @@ import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
   MutateOptions,
+  MutationFunctionContext,
   MutationObserverOptions,
   MutationObserverResult,
 } from './types'
@@ -13,8 +14,8 @@ import type { Action, Mutation } from './mutation'
 
 // TYPES
 
-type MutationObserverListener<TData, TError, TVariables, TContext> = (
-  result: MutationObserverResult<TData, TError, TVariables, TContext>,
+type MutationObserverListener<TData, TError, TVariables, TOnMutateResult> = (
+  result: MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
 ) => void
 
 // CLASS
@@ -23,21 +24,30 @@ export class MutationObserver<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > extends Subscribable<
-  MutationObserverListener<TData, TError, TVariables, TContext>
+  MutationObserverListener<TData, TError, TVariables, TOnMutateResult>
 > {
-  options!: MutationObserverOptions<TData, TError, TVariables, TContext>
+  options!: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
 
   #client: QueryClient
-  #currentResult: MutationObserverResult<TData, TError, TVariables, TContext> =
-    undefined!
-  #currentMutation?: Mutation<TData, TError, TVariables, TContext>
-  #mutateOptions?: MutateOptions<TData, TError, TVariables, TContext>
+  #currentResult: MutationObserverResult<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  > = undefined!
+  #currentMutation?: Mutation<TData, TError, TVariables, TOnMutateResult>
+  #mutateOptions?: MutateOptions<TData, TError, TVariables, TOnMutateResult>
 
   constructor(
     client: QueryClient,
-    options: MutationObserverOptions<TData, TError, TVariables, TContext>,
+    options: MutationObserverOptions<
+      TData,
+      TError,
+      TVariables,
+      TOnMutateResult
+    >,
   ) {
     super()
 
@@ -53,10 +63,15 @@ export class MutationObserver<
   }
 
   setOptions(
-    options: MutationObserverOptions<TData, TError, TVariables, TContext>,
+    options: MutationObserverOptions<
+      TData,
+      TError,
+      TVariables,
+      TOnMutateResult
+    >,
   ) {
     const prevOptions = this.options as
-      | MutationObserverOptions<TData, TError, TVariables, TContext>
+      | MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
       | undefined
     this.options = this.#client.defaultMutationOptions(options)
     if (!shallowEqualObjects(this.options, prevOptions)) {
@@ -84,7 +99,9 @@ export class MutationObserver<
     }
   }
 
-  onMutationUpdate(action: Action<TData, TError, TVariables, TContext>): void {
+  onMutationUpdate(
+    action: Action<TData, TError, TVariables, TOnMutateResult>,
+  ): void {
     this.#updateResult()
 
     this.#notify(action)
@@ -94,7 +111,7 @@ export class MutationObserver<
     TData,
     TError,
     TVariables,
-    TContext
+    TOnMutateResult
   > {
     return this.#currentResult
   }
@@ -110,7 +127,7 @@ export class MutationObserver<
 
   mutate(
     variables: TVariables,
-    options?: MutateOptions<TData, TError, TVariables, TContext>,
+    options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
   ): Promise<TData> {
     this.#mutateOptions = options
 
@@ -128,7 +145,7 @@ export class MutationObserver<
   #updateResult(): void {
     const state =
       this.#currentMutation?.state ??
-      getDefaultState<TData, TError, TVariables, TContext>()
+      getDefaultState<TData, TError, TVariables, TOnMutateResult>()
 
     this.#currentResult = {
       ...state,
@@ -138,27 +155,66 @@ export class MutationObserver<
       isIdle: state.status === 'idle',
       mutate: this.mutate,
       reset: this.reset,
-    } as MutationObserverResult<TData, TError, TVariables, TContext>
+    } as MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
   }
 
-  #notify(action?: Action<TData, TError, TVariables, TContext>): void {
+  #notify(action?: Action<TData, TError, TVariables, TOnMutateResult>): void {
     notifyManager.batch(() => {
       // First trigger the mutate callbacks
       if (this.#mutateOptions && this.hasListeners()) {
         const variables = this.#currentResult.variables!
-        const context = this.#currentResult.context
+        const onMutateResult = this.#currentResult.context
+
+        const context = {
+          client: this.#client,
+          meta: this.options.meta,
+          mutationKey: this.options.mutationKey,
+        } satisfies MutationFunctionContext
 
         if (action?.type === 'success') {
-          this.#mutateOptions.onSuccess?.(action.data, variables, context!)
-          this.#mutateOptions.onSettled?.(action.data, null, variables, context)
+          try {
+            this.#mutateOptions.onSuccess?.(
+              action.data,
+              variables,
+              onMutateResult,
+              context,
+            )
+          } catch (e) {
+            void Promise.reject(e)
+          }
+          try {
+            this.#mutateOptions.onSettled?.(
+              action.data,
+              null,
+              variables,
+              onMutateResult,
+              context,
+            )
+          } catch (e) {
+            void Promise.reject(e)
+          }
         } else if (action?.type === 'error') {
-          this.#mutateOptions.onError?.(action.error, variables, context)
-          this.#mutateOptions.onSettled?.(
-            undefined,
-            action.error,
-            variables,
-            context,
-          )
+          try {
+            this.#mutateOptions.onError?.(
+              action.error,
+              variables,
+              onMutateResult,
+              context,
+            )
+          } catch (e) {
+            void Promise.reject(e)
+          }
+          try {
+            this.#mutateOptions.onSettled?.(
+              undefined,
+              action.error,
+              variables,
+              onMutateResult,
+              context,
+            )
+          } catch (e) {
+            void Promise.reject(e)
+          }
         }
       }
 

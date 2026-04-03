@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/query-codemods"
   },
   "homepage": "https://tanstack.com/query",
@@ -16,7 +16,7 @@
   },
   "scripts": {
     "clean": "premove ./coverage ./dist-ts",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch"
   },
@@ -32,7 +32,7 @@
     "!src/**/__tests__"
   ],
   "devDependencies": {
-    "@types/jscodeshift": "0.12.0",
-    "jscodeshift": "17.1.1"
+    "@types/jscodeshift": "17.3.0",
+    "jscodeshift": "17.3.0"
   }
 }

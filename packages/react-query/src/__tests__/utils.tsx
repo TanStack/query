@@ -1,9 +1,9 @@
 import { vi } from 'vitest'
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-import * as utils from '@tanstack/query-core'
-import { QueryClient, QueryClientProvider, onlineManager } from '..'
-import type { QueryClientConfig } from '..'
+import { environmentManager, isServer } from '@tanstack/query-core'
+import { QueryClientProvider, onlineManager } from '..'
+import type { QueryClient } from '..'
 import type { MockInstance } from 'vitest'
 
 export function renderWithClient(
@@ -42,32 +42,10 @@ export function Blink({
   return shouldShow ? <>{children}</> : <>off</>
 }
 
-export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  return new QueryClient(config)
-}
-
-export function mockVisibilityState(
-  value: DocumentVisibilityState,
-): MockInstance<() => DocumentVisibilityState> {
-  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
-}
-
 export function mockOnlineManagerIsOnline(
   value: boolean,
 ): MockInstance<() => boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
-}
-
-let queryKeyCount = 0
-export function queryKey(): Array<string> {
-  queryKeyCount++
-  return [`query_${queryKeyCount}`]
-}
-
-export function sleep(timeout: number): Promise<void> {
-  return new Promise((resolve, _reject) => {
-    setTimeout(resolve, timeout)
-  })
 }
 
 export function setActTimeout(fn: () => void, ms?: number) {
@@ -78,19 +56,9 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
-// This monkey-patches the isServer-value from utils,
-// so that we can pretend to be in a server environment
-export function setIsServer(isServer: boolean) {
-  const original = utils.isServer
-  Object.defineProperty(utils, 'isServer', {
-    get: () => isServer,
-  })
-
+export function setIsServer(value: boolean) {
+  environmentManager.setIsServer(() => value)
   return () => {
-    Object.defineProperty(utils, 'isServer', {
-      get: () => original,
-    })
+    environmentManager.setIsServer(() => isServer)
   }
 }
-
-export const doNotExecute = (_func: () => void) => true

@@ -2,11 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist-ts",
-    "rootDir": ".",
-    "baseUrl": ".",
-    "moduleResolution": "Bundler"
+    "rootDir": "."
   },
-  "include": ["src", "*.config.js", "*.config.ts", "package.json"],
+  "include": ["src", "*.config.*", "package.json"],
   "references": [
     { "path": "../query-core" },
     { "path": "../query-persist-client-core" }

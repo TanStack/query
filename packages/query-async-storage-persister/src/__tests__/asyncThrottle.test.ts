@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { sleep } from '@tanstack/query-test-utils'
 import { asyncThrottle } from '../asyncThrottle'
-import { sleep as delay } from './utils'
 
 describe('asyncThrottle', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('asyncThrottle', () => {
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
-        await delay(1)
+        await sleep(1)
         execTimeStamps.push(Date.now())
         if (complete) {
           complete(id)
@@ -49,7 +49,7 @@ describe('asyncThrottle', () => {
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
-        await delay(30)
+        await sleep(30)
         execTimeStamps.push(Date.now())
         if (complete) {
           complete(id)
@@ -81,7 +81,7 @@ describe('asyncThrottle', () => {
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
-        await delay(interval + 10)
+        await sleep(interval + 10)
         execTimeStamps.push(Date.now())
         if (complete) {
           complete(id)
@@ -112,7 +112,7 @@ describe('asyncThrottle', () => {
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
         if (id === 1) throw new Error('error')
-        await delay(1)
+        await sleep(1)
         if (complete) {
           complete(id)
         }

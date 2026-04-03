@@ -1,5 +1,3 @@
-import { Button, Link } from '@mui/material'
-import { makeStyles } from '@mui/styles'
 import { Route, Link as RouterLink, Routes } from 'react-router-dom'
 import Films from './Films'
 import Film from './Film'
@@ -8,22 +6,20 @@ import Character from './Character'
 import Home from './Home'
 
 export default function Layout() {
-  const classes = useStyles()
-
   return (
-    <div className="App">
-      <nav className={classes.menu}>
-        <Link component={RouterLink} to="/">
-          <Button color="primary">Home</Button>
-        </Link>
-        <Link component={RouterLink} to="/films">
-          <Button color="primary">Films</Button>
-        </Link>
-        <Link component={RouterLink} to="/characters">
-          <Button color="primary">Characters</Button>
-        </Link>
+    <div>
+      <nav className="bg-gray-300 w-full flex flex-row gap-6 justify-center items-center h-12">
+        <RouterLink to="/">
+          <span className="uppercase hover:underline">Home</span>
+        </RouterLink>
+        <RouterLink to="/films">
+          <span className="uppercase hover:underline">Films</span>
+        </RouterLink>
+        <RouterLink to="/characters">
+          <span className="uppercase hover:underline">Characters</span>
+        </RouterLink>
       </nav>
-      <main className={classes.main}>
+      <div className="p-2">
         <Routes>
           <Route exact path="/films" element={<Films />} />
           <Route exact path="/films/:filmId" element={<Film />} />
@@ -35,23 +31,7 @@ export default function Layout() {
           />
           <Route path="/" element={<Home />} />
         </Routes>
-      </main>
+      </div>
     </div>
   )
 }
-
-const useStyles = makeStyles((theme) => ({
-  main: {
-    margin: '0 auto',
-    padding: '16px',
-  },
-  menu: {
-    margin: '0 auto',
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: '#CCC',
-    '& button': {
-      margin: theme.spacing(1),
-    },
-  },
-}))

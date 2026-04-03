@@ -17,9 +17,9 @@ interface Response {
   templateUrl: './simple-example.component.html',
 })
 export class SimpleExampleComponent {
-  #http = inject(HttpClient)
+  readonly #http = inject(HttpClient)
 
-  query = injectQuery(() => ({
+  readonly query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(

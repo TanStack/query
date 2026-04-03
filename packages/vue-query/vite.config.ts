@@ -1,14 +1,20 @@
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
-import { dynamicAliases } from './root.vite.config'
 import packageJson from './package.json'
 
 export default defineConfig({
-  plugins: [vue(), tsconfigPaths({ ignoreConfigErrors: true })],
+  plugins: [vue()],
+  // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
-    alias: dynamicAliases,
+    conditions: ['@tanstack/custom-condition'],
+  },
+  environments: {
+    ssr: {
+      resolve: {
+        conditions: ['@tanstack/custom-condition'],
+      },
+    },
   },
   test: {
     name: packageJson.name,
@@ -16,7 +22,12 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    coverage: {
+      enabled: true,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+      exclude: ['src/__tests__/**'],
+    },
     typecheck: { enabled: true },
     onConsoleLog: function (log) {
       if (log.includes('Download the Vue Devtools extension')) {

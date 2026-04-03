@@ -4,10 +4,11 @@ import * as React from 'react'
 import {
   QueriesObserver,
   QueryObserver,
+  noop,
   notifyManager,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { useIsRestoring } from './isRestoring'
+import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
   ensurePreventErrorBoundaryRetry,
@@ -18,9 +19,7 @@ import {
   ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
-  willFetch,
 } from './suspense'
-import { noop } from './utils'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
@@ -203,23 +202,7 @@ export type QueriesResults<
             [...TResults, GetUseQueryResult<Head>],
             [...TDepth, 1]
           >
-        : T extends Array<
-              UseQueryOptionsForUseQueries<
-                infer TQueryFnData,
-                infer TError,
-                infer TData,
-                any
-              >
-            >
-          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-            Array<
-              UseQueryResult<
-                unknown extends TData ? TQueryFnData : TData,
-                unknown extends TError ? DefaultError : TError
-              >
-            >
-          : // Fallback
-            Array<UseQueryResult>
+        : { [K in keyof T]: GetUseQueryResult<T[K]> }
 
 export function useQueries<
   T extends Array<any>,
@@ -229,7 +212,9 @@ export function useQueries<
     queries,
     ...options
   }: {
-    queries: readonly [...QueriesOptions<T>]
+    queries:
+      | readonly [...QueriesOptions<T>]
+      | readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
     subscribed?: boolean
   },
@@ -256,9 +241,10 @@ export function useQueries<
     [queries, client, isRestoring],
   )
 
-  defaultedQueries.forEach((query) => {
-    ensureSuspenseTimers(query)
-    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
+  defaultedQueries.forEach((queryOptions) => {
+    ensureSuspenseTimers(queryOptions)
+    const query = client.getQueryCache().get(queryOptions.queryHash)
+    ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
   })
 
   useClearResetErrorBoundary(errorResetBoundary)
@@ -293,14 +279,9 @@ export function useQueries<
   )
 
   React.useEffect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
     observer.setQueries(
       defaultedQueries,
       options as QueriesObserverOptions<TCombinedResult>,
-      {
-        listeners: false,
-      },
     )
   }, [defaultedQueries, options, observer])
 
@@ -312,13 +293,9 @@ export function useQueries<
     ? optimisticResult.flatMap((result, index) => {
         const opts = defaultedQueries[index]
 
-        if (opts) {
+        if (opts && shouldSuspend(opts, result)) {
           const queryObserver = new QueryObserver(client, opts)
-          if (shouldSuspend(opts, result)) {
-            return fetchOptimistic(opts, queryObserver, errorResetBoundary)
-          } else if (willFetch(result, isRestoring)) {
-            void fetchOptimistic(opts, queryObserver, errorResetBoundary)
-          }
+          return fetchOptimistic(opts, queryObserver, errorResetBoundary)
         }
         return []
       })
@@ -337,7 +314,7 @@ export function useQueries<
           errorResetBoundary,
           throwOnError: query.throwOnError,
           query: client.getQueryCache().get(query.queryHash),
-          suspense: defaultedQueries[index]?.suspense,
+          suspense: query.suspense,
         })
       )
     },

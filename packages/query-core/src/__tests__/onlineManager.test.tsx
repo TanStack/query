@@ -1,11 +1,16 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { OnlineManager } from '../onlineManager'
-import { setIsServer, sleep } from './utils'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager
+
   beforeEach(() => {
+    vi.useFakeTimers()
     onlineManager = new OnlineManager()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   test('isOnline should return true if navigator is undefined', () => {
@@ -28,7 +33,7 @@ describe('onlineManager', () => {
     navigatorSpy.mockRestore()
   })
 
-  test('setEventListener should use online boolean arg', async () => {
+  test('setEventListener should use online boolean arg', () => {
     let count = 0
 
     const setup = (setOnline: (online: boolean) => void) => {
@@ -41,7 +46,7 @@ describe('onlineManager', () => {
 
     onlineManager.setEventListener(setup)
 
-    await sleep(30)
+    vi.advanceTimersByTime(20)
     expect(count).toEqual(1)
     expect(onlineManager.isOnline()).toBeFalsy()
   })
@@ -57,21 +62,24 @@ describe('onlineManager', () => {
     expect(remove2Spy).not.toHaveBeenCalled()
   })
 
-  test('cleanup (removeEventListener) should not be called if window is not defined', async () => {
-    const restoreIsServer = setIsServer(true)
-
+  test('cleanup (removeEventListener) should not be called if window is not defined', () => {
+    const windowSpy = vi.spyOn(globalThis, 'window', 'get')
+    windowSpy.mockImplementation(
+      () => undefined as unknown as Window & typeof globalThis,
+    )
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
     const unsubscribe = onlineManager.subscribe(() => undefined)
+    expect(unsubscribe).toBeInstanceOf(Function)
 
     unsubscribe()
 
     expect(removeEventListenerSpy).not.toHaveBeenCalled()
 
-    restoreIsServer()
+    windowSpy.mockRestore()
   })
 
-  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
@@ -88,7 +96,7 @@ describe('onlineManager', () => {
     globalThis.window.addEventListener = addEventListener
   })
 
-  test('it should replace default window listener when a new event listener is set', async () => {
+  test('it should replace default window listener when a new event listener is set', () => {
     const addEventListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
 
     const removeEventListenerSpy = vi.spyOn(

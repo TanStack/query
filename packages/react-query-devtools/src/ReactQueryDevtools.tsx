@@ -6,6 +6,7 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  Theme,
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
@@ -42,6 +43,15 @@ export interface DevtoolsOptions {
    * Use this so you can attach the devtool's styles to specific element in the DOM.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * Set this to true to hide disabled queries from the devtools panel.
+   */
+  hideDisabledQueries?: boolean
+  /**
+   * Set this to 'light', 'dark', or 'system' to change the theme of the devtools panel.
+   * Defaults to 'system'.
+   */
+  theme?: Theme
 }
 
 export function ReactQueryDevtools(
@@ -56,6 +66,8 @@ export function ReactQueryDevtools(
     errorTypes,
     styleNonce,
     shadowDOMTarget,
+    hideDisabledQueries,
+    theme,
   } = props
   const [devtools] = React.useState(
     new TanstackQueryDevtools({
@@ -69,6 +81,8 @@ export function ReactQueryDevtools(
       errorTypes,
       styleNonce,
       shadowDOMTarget,
+      hideDisabledQueries,
+      theme,
     }),
   )
 
@@ -97,6 +111,10 @@ export function ReactQueryDevtools(
   }, [errorTypes, devtools])
 
   React.useEffect(() => {
+    devtools.setTheme(theme)
+  }, [theme, devtools])
+
+  React.useEffect(() => {
     if (ref.current) {
       devtools.mount(ref.current)
     }
@@ -106,5 +124,5 @@ export function ReactQueryDevtools(
     }
   }, [devtools])
 
-  return <div className="tsqd-parent-container" ref={ref}></div>
+  return <div dir="ltr" className="tsqd-parent-container" ref={ref}></div>
 }

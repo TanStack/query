@@ -1,4 +1,9 @@
-import { addToEnd, addToStart, ensureQueryFn } from './utils'
+import {
+  addConsumeAwareSignal,
+  addToEnd,
+  addToStart,
+  ensureQueryFn,
+} from './utils'
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
@@ -23,19 +28,11 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
       const fetchFn = async () => {
         let cancelled = false
         const addSignalProperty = (object: unknown) => {
-          Object.defineProperty(object, 'signal', {
-            enumerable: true,
-            get: () => {
-              if (context.signal.aborted) {
-                cancelled = true
-              } else {
-                context.signal.addEventListener('abort', () => {
-                  cancelled = true
-                })
-              }
-              return context.signal
-            },
-          })
+          addConsumeAwareSignal(
+            object,
+            () => context.signal,
+            () => (cancelled = true),
+          )
         }
 
         const queryFn = ensureQueryFn(context.options, context.fetchOptions)
@@ -54,22 +51,24 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.resolve(data)
           }
 
-          const queryFnContext: OmitKeyof<
-            QueryFunctionContext<QueryKey, unknown>,
-            'signal'
-          > = {
-            client: context.client,
-            queryKey: context.queryKey,
-            pageParam: param,
-            direction: previous ? 'backward' : 'forward',
-            meta: context.options.meta,
+          const createQueryFnContext = () => {
+            const queryFnContext: OmitKeyof<
+              QueryFunctionContext<QueryKey, unknown>,
+              'signal'
+            > = {
+              client: context.client,
+              queryKey: context.queryKey,
+              pageParam: param,
+              direction: previous ? 'backward' : 'forward',
+              meta: context.options.meta,
+            }
+            addSignalProperty(queryFnContext)
+            return queryFnContext as QueryFunctionContext<QueryKey, unknown>
           }
 
-          addSignalProperty(queryFnContext)
+          const queryFnContext = createQueryFnContext()
 
-          const page = await queryFn(
-            queryFnContext as QueryFunctionContext<QueryKey, unknown>,
-          )
+          const page = await queryFn(queryFnContext)
 
           const { maxPages } = context.options
           const addTo = previous ? addToStart : addToEnd

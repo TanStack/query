@@ -10,7 +10,7 @@ describe('QueryCache', () => {
   })
 
   describe('find', () => {
-    test('should properly unwrap parameters', async () => {
+    test('should properly unwrap parameters', () => {
       const queryCache = new QueryCache()
 
       queryCache.find({
@@ -24,7 +24,7 @@ describe('QueryCache', () => {
   })
 
   describe('findAll', () => {
-    test('should properly unwrap two parameters', async () => {
+    test('should properly unwrap two parameters', () => {
       const queryCache = new QueryCache()
 
       queryCache.findAll({
@@ -36,7 +36,7 @@ describe('QueryCache', () => {
       })
     })
 
-    test('should default to empty filters', async () => {
+    test('should default to empty filters', () => {
       const queryCache = new QueryCache()
 
       queryCache.findAll()

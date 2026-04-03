@@ -46,6 +46,19 @@ export default [
 ]
 ```
 
+### Recommended strict setup
+
+The `flat/recommended-strict` config extends `flat/recommended` with additional opinionated rules that enforce best practices more aggressively.
+
+```js
+import pluginQuery from '@tanstack/eslint-plugin-query'
+
+export default [
+  ...pluginQuery.configs['flat/recommended-strict'],
+  // Any other config...
+]
+```
+
 ### Custom setup
 
 Alternatively, you can load the plugin and configure only the rules you want to use:
@@ -78,6 +91,16 @@ To enable all of the recommended rules for our plugin, add `plugin:@tanstack/que
 }
 ```
 
+### Recommended strict setup
+
+The `recommendedStrict` config extends `recommended` with additional opinionated rules:
+
+```json
+{
+  "extends": ["plugin:@tanstack/query/recommendedStrict"]
+}
+```
+
 ### Custom setup
 
 Alternatively, add `@tanstack/query` to the plugins section, and configure the rules you want to use:
@@ -93,8 +116,11 @@ Alternatively, add `@tanstack/query` to the plugins section, and configure the r
 
 ## Rules
 
-- [@tanstack/query/exhaustive-deps](../exhaustive-deps)
-- [@tanstack/query/no-rest-destructuring](../no-rest-destructuring)
-- [@tanstack/query/stable-query-client](../stable-query-client)
-- [@tanstack/query/no-unstable-deps](../no-unstable-deps)
-- [@tanstack/query/infinite-query-property-order](../infinite-query-property-order)
+- [@tanstack/query/exhaustive-deps](./exhaustive-deps.md)
+- [@tanstack/query/no-rest-destructuring](./no-rest-destructuring.md)
+- [@tanstack/query/stable-query-client](./stable-query-client.md)
+- [@tanstack/query/no-unstable-deps](./no-unstable-deps.md)
+- [@tanstack/query/infinite-query-property-order](./infinite-query-property-order.md)
+- [@tanstack/query/no-void-query-fn](./no-void-query-fn.md)
+- [@tanstack/query/mutation-property-order](./mutation-property-order.md)
+- [@tanstack/query/prefer-query-options](./prefer-query-options.md)

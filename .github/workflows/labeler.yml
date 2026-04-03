@@ -1,12 +1,19 @@
 name: Labeler
 
 on:
-  - pull_request_target
+  pull_request_target:
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
-  triage:
+  labeler:
+    name: Labeler
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v4.3.0
+      - name: Labeler
+        uses: actions/labeler@v6.0.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: labeler-config.yml

@@ -82,7 +82,7 @@ function Projects() {
       <div>
         <button
           onClick={() => fetchNextPage()}
-          disabled={!hasNextPage || isFetchingNextPage}
+          disabled={!hasNextPage || isFetching}
         >
           {isFetchingNextPage
             ? 'Loading more...'
@@ -110,7 +110,7 @@ To ensure a seamless querying process without conflicts, it's highly recommended
 [//]: # 'Example1'
 
 ```jsx
-<List onEndReached={() => !isFetchingNextPage && fetchNextPage()} />
+<List onEndReached={() => hasNextPage && !isFetching && fetchNextPage()} />
 ```
 
 [//]: # 'Example1'
@@ -257,3 +257,10 @@ return useInfiniteQuery({
 ```
 
 [//]: # 'Example9'
+[//]: # 'Materials'
+
+## Further reading
+
+To get a better understanding of how Infinite Queries work under the hood, see the article [How Infinite Queries work](https://tkdodo.eu/blog/how-infinite-queries-work).
+
+[//]: # 'Materials'

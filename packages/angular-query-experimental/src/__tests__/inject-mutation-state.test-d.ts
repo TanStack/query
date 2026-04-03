@@ -1,4 +1,4 @@
-import { describe, expectTypeOf } from 'vitest'
+import { describe, expectTypeOf, it } from 'vitest'
 import { injectMutationState } from '..'
 import type { MutationState, MutationStatus } from '..'
 

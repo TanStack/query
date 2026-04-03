@@ -1,4 +1,4 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, dataTagSymbol } from '@tanstack/query-core'
 import { reactive } from 'vue-demi'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -7,14 +7,16 @@ import type { InfiniteData } from '@tanstack/query-core'
 
 describe('infiniteQueryOptions', () => {
   it('should not allow excess properties', () => {
-    infiniteQueryOptions({
-      queryKey: ['key'],
-      queryFn: () => Promise.resolve('data'),
-      getNextPageParam: () => 1,
-      initialPageParam: 1,
-      // @ts-expect-error this is a good error, because stallTime does not exist!
-      stallTime: 1000,
-    })
+    assertType(
+      infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('data'),
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
+        // @ts-expect-error this is a good error, because stallTime does not exist!
+        stallTime: 1000,
+      }),
+    )
   })
   it('should infer types for callbacks', () => {
     infiniteQueryOptions({

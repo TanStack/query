@@ -10,7 +10,7 @@ You can configure retries both on a global level and an individual query level.
 - Setting `retry = false` will disable retries.
 - Setting `retry = 6` will retry failing requests 6 times before showing the final error thrown by the function.
 - Setting `retry = true` will infinitely retry failing requests.
-- Setting `retry = (failureCount, error) => ...` allows for custom logic based on why the request failed.
+- Setting `retry = (failureCount, error) => ...` allows for custom logic based on why the request failed. Note that `failureCount` starts at `0` for the first retry attempt.
 
 [//]: # 'Info'
 
@@ -78,3 +78,28 @@ const result = useQuery({
 ```
 
 [//]: # 'Example3'
+
+## Background Retry Behavior
+
+When using `refetchInterval` with `refetchIntervalInBackground: true`, retries will pause when the browser tab is inactive. This happens because retries respect the same focus behavior as regular refetches.
+
+If you need continuous retries in the background, consider disabling retries and implementing a custom refetch strategy:
+
+[//]: # 'Example4'
+
+```tsx
+const result = useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+  refetchInterval: (query) => {
+    // Refetch more frequently when in error state
+    return query.state.status === 'error' ? 5000 : 30000
+  },
+  refetchIntervalInBackground: true,
+  retry: false, // Disable built-in retries
+})
+```
+
+[//]: # 'Example4'
+
+This approach lets you control retry timing manually while keeping refetches active in the background.

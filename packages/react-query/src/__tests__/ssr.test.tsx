@@ -1,17 +1,40 @@
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
-import { describe, expect, it, vi } from 'vitest'
-import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
-import { createQueryClient, queryKey, setIsServer, sleep } from './utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+  useInfiniteQuery,
+  useIsFetching,
+  useMutation,
+  useMutationState,
+  useQueries,
+  useQuery,
+} from '..'
+import { setIsServer } from './utils'
 
 describe('Server Side Rendering', () => {
   setIsServer(true)
 
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    queryClient.clear()
+  })
+
   it('should not trigger fetch', () => {
-    const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -33,31 +56,26 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status pending')
     expect(queryFn).toHaveBeenCalledTimes(0)
-    queryCache.clear()
   })
 
   it('should add prefetched data to cache', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
-    const fetchFn = () => Promise.resolve('data')
-    const data = await queryClient.fetchQuery({
+
+    const promise = queryClient.fetchQuery({
       queryKey: key,
-      queryFn: fetchFn,
+      queryFn: () => sleep(10).then(() => 'data'),
     })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const data = await promise
+
     expect(data).toBe('data')
     expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
-    queryCache.clear()
   })
 
   it('should return existing data from the cache', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
-    const queryFn = vi.fn(() => {
-      sleep(10)
-      return 'data'
-    })
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -71,7 +89,8 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>
@@ -81,20 +100,16 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status success')
     expect(queryFn).toHaveBeenCalledTimes(1)
-    queryCache.clear()
   })
 
   it('should add initialData to the cache', () => {
     const key = queryKey()
 
-    const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
-
     function Page() {
       const [page, setPage] = React.useState(1)
       const { data } = useQuery({
         queryKey: [key, page],
-        queryFn: async () => page,
+        queryFn: () => sleep(10).then(() => page),
         initialData: 1,
       })
 
@@ -115,17 +130,11 @@ describe('Server Side Rendering', () => {
     const keys = queryCache.getAll().map((query) => query.queryKey)
 
     expect(keys).toEqual([[key, 1]])
-    queryCache.clear()
   })
 
   it('useInfiniteQuery should return the correct state', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
-    const queryFn = vi.fn(async () => {
-      await sleep(5)
-      return 'page 1'
-    })
+    const queryFn = vi.fn(() => sleep(10).then(() => 'page 1'))
 
     function Page() {
       const query = useInfiniteQuery({
@@ -135,15 +144,20 @@ describe('Server Side Rendering', () => {
         initialPageParam: 0,
       })
       return (
-        <ul>{query.data?.pages.map((page) => <li key={page}>{page}</li>)}</ul>
+        <ul>
+          {query.data?.pages.map((page) => (
+            <li key={page}>{page}</li>
+          ))}
+        </ul>
       )
     }
 
-    await queryClient.prefetchInfiniteQuery({
+    queryClient.prefetchInfiniteQuery({
       queryKey: key,
       queryFn,
       initialPageParam: 0,
     })
+    await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>
@@ -153,6 +167,108 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('page 1')
     expect(queryFn).toHaveBeenCalledTimes(1)
-    queryCache.clear()
+  })
+
+  it('useIsFetching should return 0 after prefetch completes', async () => {
+    const key = queryKey()
+    const queryFn = () => sleep(10).then(() => 'data')
+
+    function Page() {
+      const { data } = useQuery({ queryKey: key, queryFn })
+      const isFetching = useIsFetching()
+
+      return (
+        <div>
+          <div>{data}</div>
+          <div>{`isFetching: ${isFetching}`}</div>
+        </div>
+      )
+    }
+
+    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('data')
+    expect(markup).toContain('isFetching: 0')
+  })
+
+  it('useQueries should return existing data from the cache', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = () => sleep(10).then(() => 'data1')
+    const queryFn2 = () => sleep(10).then(() => 'data2')
+
+    function Page() {
+      const queries = useQueries({
+        queries: [
+          { queryKey: key1, queryFn: queryFn1 },
+          { queryKey: key2, queryFn: queryFn2 },
+        ],
+      })
+
+      return (
+        <div>
+          <div>{`status1: ${queries[0].status}`}</div>
+          <div>{`status2: ${queries[1].status}`}</div>
+          <div>{`data1: ${queries[0].data}`}</div>
+          <div>{`data2: ${queries[1].data}`}</div>
+        </div>
+      )
+    }
+
+    queryClient.prefetchQuery({ queryKey: key1, queryFn: queryFn1 })
+    queryClient.prefetchQuery({ queryKey: key2, queryFn: queryFn2 })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('status1: success')
+    expect(markup).toContain('status2: success')
+    expect(markup).toContain('data1: data1')
+    expect(markup).toContain('data2: data2')
+  })
+
+  it('useMutation should return idle status', () => {
+    function Page() {
+      const mutation = useMutation({
+        mutationFn: () => sleep(10).then(() => 'data'),
+      })
+
+      return <div>{`status: ${mutation.status}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('status: idle')
+  })
+
+  it('useMutationState should return empty array', () => {
+    function Page() {
+      const mutationState = useMutationState()
+
+      return <div>{`mutationState: ${mutationState.length}`}</div>
+    }
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    expect(markup).toContain('mutationState: 0')
   })
 })

@@ -20,6 +20,7 @@ dist-ts
 .env.test.local
 .env.production.local
 .next
+next-env.d.ts
 
 npm-debug.log*
 yarn-debug.log*
@@ -30,6 +31,9 @@ stats-hydration.json
 stats.json
 stats.html
 .vscode/settings.json
+.vscode/mcp.json
+.cursor/rules
+.github/instructions/nx.instructions.md
 
 *.log
 *.tsbuildinfo

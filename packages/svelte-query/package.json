@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/svelte-query",
-  "version": "5.66.0",
+  "version": "6.1.13",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "Lachlan Collins",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/svelte-query"
   },
   "homepage": "https://tanstack.com/query",
@@ -14,11 +14,16 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "keywords": [
+    "tanstack",
+    "query",
+    "svelte"
+  ],
   "scripts": {
     "clean": "premove ./dist ./coverage ./.svelte-kit ./dist-ts",
     "compile": "tsc --build",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
@@ -30,6 +35,7 @@
   "svelte": "./dist/index.js",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js",
       "import": "./dist/index.js"
@@ -46,14 +52,17 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.3.7",
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
-    "@testing-library/svelte": "^5.2.6",
-    "eslint-plugin-svelte": "^2.46.0",
-    "svelte": "^4.2.18",
-    "svelte-check": "^4.0.0"
+    "@sveltejs/package": "^2.4.0",
+    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "@tanstack/query-test-utils": "workspace:*",
+    "@testing-library/svelte": "^5.2.8",
+    "@typescript-eslint/parser": "^8.48.0",
+    "eslint-plugin-svelte": "^3.11.0",
+    "svelte": "^5.39.3",
+    "svelte-check": "^4.4.5",
+    "typescript": "5.9.3"
   },
   "peerDependencies": {
-    "svelte": "^3.54.0 || ^4.0.0 || ^5.0.0-next.0"
+    "svelte": "^5.25.0"
   }
 }

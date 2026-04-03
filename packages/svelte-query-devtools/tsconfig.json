@@ -2,17 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist-ts",
-    "rootDir": ".",
-    "baseUrl": ".",
-    "moduleResolution": "Bundler"
+    "rootDir": "."
   },
-  "include": [
-    "src/**/*.js",
-    "src/**/*.ts",
-    "src/**/*.svelte",
-    "*.config.js",
-    "*.config.ts",
-    "package.json"
-  ],
+  "include": ["src", "*.config.*", "package.json"],
   "references": [{ "path": "../query-devtools" }, { "path": "../svelte-query" }]
 }

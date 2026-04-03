@@ -8,6 +8,7 @@ export default [
   {
     plugins: { vitest },
     rules: {
+      ...vitest.configs.recommended.rules,
       'vitest/expect-expect': [
         'warn',
         {

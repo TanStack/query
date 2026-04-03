@@ -26,7 +26,6 @@ export function useSuspenseInfiniteQuery<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >,

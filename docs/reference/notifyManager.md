@@ -3,7 +3,7 @@ id: NotifyManager
 title: NotifyManager
 ---
 
-The `notifyManager` handles scheduling and batching callbacks in Tanstack Query.
+The `notifyManager` handles scheduling and batching callbacks in TanStack Query.
 
 It exposes the following methods:
 

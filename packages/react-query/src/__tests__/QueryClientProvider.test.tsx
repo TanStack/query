@@ -1,22 +1,33 @@
-import { describe, expect, test, vi } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
-import { QueryCache, QueryClientProvider, useQuery, useQueryClient } from '..'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { render } from '@testing-library/react'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+  useQueryClient,
+} from '..'
 
 describe('QueryClientProvider', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('sets a specific cache for all queries to use', async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = new QueryClient({ queryCache })
 
     function Page() {
       const { data } = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
       })
 
       return (
@@ -32,7 +43,8 @@ describe('QueryClientProvider', () => {
       </QueryClientProvider>,
     )
 
-    await waitFor(() => rendered.getByText('test'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('test')).toBeInTheDocument()
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
@@ -44,16 +56,13 @@ describe('QueryClientProvider', () => {
     const queryCache1 = new QueryCache()
     const queryCache2 = new QueryCache()
 
-    const queryClient1 = createQueryClient({ queryCache: queryCache1 })
-    const queryClient2 = createQueryClient({ queryCache: queryCache2 })
+    const queryClient1 = new QueryClient({ queryCache: queryCache1 })
+    const queryClient2 = new QueryClient({ queryCache: queryCache2 })
 
     function Page1() {
       const { data } = useQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test1'
-        },
+        queryFn: () => sleep(10).then(() => 'test1'),
       })
 
       return (
@@ -65,10 +74,7 @@ describe('QueryClientProvider', () => {
     function Page2() {
       const { data } = useQuery({
         queryKey: key2,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test2'
-        },
+        queryFn: () => sleep(10).then(() => 'test2'),
       })
 
       return (
@@ -89,8 +95,9 @@ describe('QueryClientProvider', () => {
       </>,
     )
 
-    await waitFor(() => rendered.getByText('test1'))
-    await waitFor(() => rendered.getByText('test2'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('test1')).toBeInTheDocument()
+    expect(rendered.getByText('test2')).toBeInTheDocument()
 
     expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
     expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
@@ -102,7 +109,7 @@ describe('QueryClientProvider', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = createQueryClient({
+    const queryClient = new QueryClient({
       queryCache,
       defaultOptions: {
         queries: {
@@ -114,10 +121,7 @@ describe('QueryClientProvider', () => {
     function Page() {
       const { data } = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
       })
 
       return (
@@ -133,7 +137,8 @@ describe('QueryClientProvider', () => {
       </QueryClientProvider>,
     )
 
-    await waitFor(() => rendered.getByText('test'))
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('test')).toBeInTheDocument()
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)

@@ -1,3 +1,4 @@
+import type { Snippet } from 'svelte'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -11,14 +12,13 @@ import type {
   MutationState,
   OmitKeyof,
   Override,
+  QueryClient,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Readable } from 'svelte/store'
 
-/** Allows a type to be either the base object or a store of that object */
-export type StoreOrVal<T> = T | Readable<T>
+export type Accessor<T> = () => T
 
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<
@@ -33,7 +33,7 @@ export type CreateBaseQueryOptions<
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Readable<QueryObserverResult<TData, TError>>
+> = QueryObserverResult<TData, TError>
 
 /** Options for createQuery */
 export type CreateQueryOptions<
@@ -54,14 +54,12 @@ export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = InfiniteQueryObserverOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryData,
   TQueryKey,
   TPageParam
 >
@@ -70,13 +68,13 @@ export type CreateInfiniteQueryOptions<
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Readable<InfiniteQueryObserverResult<TData, TError>>
+> = InfiniteQueryObserverResult<TData, TError>
 
 /** Options for createBaseQuery with initialData */
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Readable<DefinedQueryObserverResult<TData, TError>>
+> = DefinedQueryObserverResult<TData, TError>
 
 /** Options for createQuery with initialData */
 export type DefinedCreateQueryResult<
@@ -89,9 +87,9 @@ export type CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = OmitKeyof<
-  MutationObserverOptions<TData, TError, TVariables, TContext>,
+  MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
   '_defaulted'
 >
 
@@ -99,28 +97,35 @@ export type CreateMutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = (
-  ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
+  ...args: Parameters<
+    MutateFunction<TData, TError, TVariables, TOnMutateResult>
+  >
 ) => void
 
 export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
-  TContext = unknown,
-> = MutateFunction<TData, TError, TVariables, TContext>
+  TOnMutateResult = unknown,
+> = MutateFunction<TData, TError, TVariables, TOnMutateResult>
 
 export type CreateBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 > = Override<
-  MutationObserverResult<TData, TError, TVariables, TContext>,
-  { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
+  MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+  { mutate: CreateMutateFunction<TData, TError, TVariables, TOnMutateResult> }
 > & {
-  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
+  mutateAsync: CreateMutateAsyncFunction<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >
 }
 
 /** Result from createMutation */
@@ -128,8 +133,8 @@ export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
-  TContext = unknown,
-> = Readable<CreateBaseMutationResult<TData, TError, TVariables, TContext>>
+  TOnMutateResult = unknown,
+> = CreateBaseMutationResult<TData, TError, TVariables, TOnMutateResult>
 
 /** Options for useMutationState */
 export type MutationStateOptions<TResult = MutationState> = {
@@ -137,4 +142,9 @@ export type MutationStateOptions<TResult = MutationState> = {
   select?: (
     mutation: Mutation<unknown, DefaultError, unknown, unknown>,
   ) => TResult
+}
+
+export type QueryClientProviderProps = {
+  client: QueryClient
+  children: Snippet
 }

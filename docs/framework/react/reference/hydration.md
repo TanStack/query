@@ -38,6 +38,12 @@ const dehydratedState = dehydrate(queryClient, {
     - Defaults to only including successful queries
     - If you would like to extend the function while retaining the default behavior, import and execute `defaultShouldDehydrateQuery` as part of the return statement
   - `serializeData?: (data: any) => any` A function to transform (serialize) data during dehydration.
+  - `shouldRedactErrors?: (error: unknown) => boolean`
+    - Optional
+    - Whether to redact errors from the server during dehydration.
+    - The function is called for each error in the cache
+      - Return `true` to redact this error, or `false` otherwise
+    - Defaults to redacting all errors
 
 **Returns**
 
@@ -85,7 +91,7 @@ hydrate(queryClient, dehydratedState, options)
     - `mutations: MutationOptions` The default mutation options to use for the hydrated mutations.
     - `queries: QueryOptions` The default query options to use for the hydrated queries.
     - `deserializeData?: (data: any) => any` A function to transform (deserialize) data before it is put into the cache.
-  - `queryClient?: QueryClient`,
+  - `queryClient?: QueryClient`
     - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 ### Limitations
@@ -116,7 +122,7 @@ function App() {
   - Optional
   - `defaultOptions: QueryOptions`
     - The default query options to use for the hydrated queries.
-  - `queryClient?: QueryClient`,
+  - `queryClient?: QueryClient`
     - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 [//]: # 'HydrationBoundary'

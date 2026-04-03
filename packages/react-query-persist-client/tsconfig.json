@@ -3,17 +3,9 @@
   "compilerOptions": {
     "outDir": "./dist-ts",
     "rootDir": ".",
-    "baseUrl": ".",
-    "jsx": "react-jsx",
-    "moduleResolution": "Bundler"
+    "jsx": "react-jsx"
   },
-  "include": [
-    "src",
-    "test-setup.ts",
-    "*.config.js",
-    "*.config.ts",
-    "package.json"
-  ],
+  "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
   "references": [
     { "path": "../query-persist-client-core" },
     { "path": "../react-query" }

@@ -5,9 +5,8 @@
 **/coverage
 **/dist
 **/query-codemods/**/__testfixtures__
+.changeset/*.md
 pnpm-lock.yaml
 packages/**/tsup.config.bundled*.mjs
 **/tsconfig.vitest-temp.json
-
-# API Extractor report
-packages/angular-query-experimental/etc/*.md
+docs/framework/*/reference

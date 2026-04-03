@@ -1,5 +1,10 @@
-import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core'
-import { injectDevtoolsPanel } from '@tanstack/angular-query-devtools-experimental'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  viewChild,
+} from '@angular/core'
+import { injectDevtoolsPanel } from '@tanstack/angular-query-experimental/devtools-panel'
 import { ExampleQueryComponent } from './example-query.component'
 import type { ElementRef } from '@angular/core'
 
@@ -13,20 +18,24 @@ import type { ElementRef } from '@angular/core'
       In this example, the devtools panel is loaded programmatically when the
       button is clicked
     </p>
-    <button type="button" (click)="isOpen = !isOpen">
-      {{ isOpen ? 'Close' : 'Open' }} the devtools panel
+    <button type="button" (click)="toggleIsOpen()">
+      {{ isOpen() ? 'Close' : 'Open' }} the devtools panel
     </button>
-    @if (isOpen) {
+    @if (isOpen()) {
       <div #div style="height: 500px"></div>
     }
   `,
   imports: [ExampleQueryComponent],
 })
 export default class BasicDevtoolsPanelExampleComponent {
-  isOpen = false
-  divEl = viewChild<ElementRef>('div')
+  readonly isOpen = signal(false)
+  readonly divEl = viewChild<ElementRef>('div')
 
-  devtools = injectDevtoolsPanel(() => ({
+  toggleIsOpen() {
+    this.isOpen.update((prev) => !prev)
+  }
+
+  readonly devtools = injectDevtoolsPanel(() => ({
     hostElement: this.divEl(),
   }))
 }

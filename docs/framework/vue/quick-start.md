@@ -7,7 +7,7 @@ replace: { 'React': 'Vue', 'react-query': 'vue-query' }
 
 [//]: # 'Example'
 
-If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](../examples/basic)
+If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](./examples/basic)
 
 ```vue
 <script setup>

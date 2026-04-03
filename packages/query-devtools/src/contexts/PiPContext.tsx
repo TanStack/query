@@ -26,6 +26,8 @@ type PiPContextType = {
   disabled: boolean
 }
 
+class PipOpenError extends Error {}
+
 const PiPContext = createContext<Accessor<PiPContextType> | undefined>(
   undefined,
 )
@@ -57,7 +59,7 @@ export const PiPProvider = (props: PiPProviderProps) => {
     )
 
     if (!pip) {
-      throw new Error(
+      throw new PipOpenError(
         'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
       )
     }
@@ -134,10 +136,20 @@ export const PiPProvider = (props: PiPProviderProps) => {
   createEffect(() => {
     const pip_open = (props.localStore.pip_open ?? 'false') as 'true' | 'false'
     if (pip_open === 'true' && !props.disabled) {
-      requestPipWindow(
-        Number(window.innerWidth),
-        Number(props.localStore.height || PIP_DEFAULT_HEIGHT),
-      )
+      try {
+        requestPipWindow(
+          Number(window.innerWidth),
+          Number(props.localStore.height || PIP_DEFAULT_HEIGHT),
+        )
+      } catch (error) {
+        if (error instanceof PipOpenError) {
+          console.error(error.message)
+          props.setLocalStore('pip_open', 'false')
+          props.setLocalStore('open', 'false')
+          return
+        }
+        throw error
+      }
     }
   })
 

@@ -78,7 +78,7 @@ class MyComponent {
   template: `
     @if (query.isSuccess()) {
       @let data = query.data();
-      //    ^? data: number
+      // ^? data: number
     }
   `,
 })
@@ -104,7 +104,7 @@ class MyComponent {
 class MyComponent {
   query = injectQuery(() => ({
     queryKey: ['groups'],
-    queryFn: fetchGroups
+    queryFn: fetchGroups,
   }))
 }
 ```
@@ -153,7 +153,8 @@ import '@tanstack/angular-query-experimental'
 
 declare module '@tanstack/angular-query-experimental' {
   interface Register {
-    defaultError: AxiosError
+    // Use unknown so call sites must narrow explicitly.
+    defaultError: unknown
   }
 }
 
@@ -164,7 +165,7 @@ const query = injectQuery(() => ({
 
 computed(() => {
   const error = query.error()
-  //      ^? error: AxiosError | null
+  //      ^? error: unknown | null
 })
 ```
 

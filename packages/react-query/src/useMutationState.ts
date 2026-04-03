@@ -1,5 +1,3 @@
-/* eslint-disable react-compiler/react-compiler */
-
 'use client'
 import * as React from 'react'
 
@@ -48,7 +46,7 @@ export function useMutationState<TResult = MutationState>(
   const mutationCache = useQueryClient(queryClient).getMutationCache()
   const optionsRef = React.useRef(options)
   const result = React.useRef<Array<TResult>>(null)
-  if (!result.current) {
+  if (result.current === null) {
     result.current = getResult(mutationCache, options)
   }
 

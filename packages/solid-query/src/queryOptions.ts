@@ -1,12 +1,13 @@
 import type { DataTag, DefaultError, QueryKey } from '@tanstack/query-core'
-import type { FunctionedParams, SolidQueryOptions } from './types'
+import type { SolidQueryOptions } from './types'
+import type { Accessor } from 'solid-js'
 
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = FunctionedParams<
+> = Accessor<
   SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
     initialData?: undefined
   }
@@ -17,7 +18,7 @@ export type DefinedInitialDataOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = FunctionedParams<
+> = Accessor<
   SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
     initialData: TQueryFnData | (() => TQueryFnData)
   }
@@ -28,11 +29,6 @@ export function queryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TOptions extends ReturnType<
-    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  > = ReturnType<
-    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
 >(
   options: ReturnType<
     UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -40,7 +36,7 @@ export function queryOptions<
 ): ReturnType<
   UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
 > & {
-  queryKey: DataTag<TQueryKey, TQueryFnData>
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
 export function queryOptions<
@@ -48,11 +44,6 @@ export function queryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TOptions extends ReturnType<
-    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  > = ReturnType<
-    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
 >(
   options: ReturnType<
     DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -60,7 +51,7 @@ export function queryOptions<
 ): ReturnType<
   DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
 > & {
-  queryKey: DataTag<TQueryKey, TQueryFnData>
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
 }
 
 export function queryOptions(options: unknown) {

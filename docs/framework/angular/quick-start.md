@@ -7,7 +7,7 @@ title: Quick Start
 
 [//]: # 'Example'
 
-If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](../examples/basic)
+If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](./examples/basic)
 
 ### Provide the client to your App
 
@@ -51,11 +51,10 @@ import { lastValueFrom } from 'rxjs'
 import {
   injectMutation,
   injectQuery,
-  QueryClient
+  QueryClient,
 } from '@tanstack/angular-query-experimental'
 
 @Component({
-  standalone: true,
   template: `
     <div>
       <button (click)="onAddTodo()">Add Todo</button>

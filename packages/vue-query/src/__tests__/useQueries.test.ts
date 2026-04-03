@@ -1,32 +1,32 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, ref } from 'vue-demi'
+import { sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
-import {
-  flushPromises,
-  getSimpleFetcherWithReturnData,
-  rejectFetcher,
-  simpleFetcher,
-} from './test-utils'
 import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
 
 describe('useQueries', () => {
   beforeEach(() => {
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   test('should return result for each query', () => {
     const queries = [
       {
         queryKey: ['key1'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
         queryKey: ['key2'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
     const queriesState = useQueries({ queries })
@@ -51,16 +51,16 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key11'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
         queryKey: ['key12'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
     const queriesState = useQueries({ queries })
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesState.value).toMatchObject([
       {
@@ -82,16 +82,17 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key21'],
-        queryFn: rejectFetcher,
+        queryFn: () =>
+          sleep(0).then(() => Promise.reject(new Error('Some error'))),
       },
       {
         queryKey: ['key22'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
     const queriesState = useQueries({ queries })
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesState.value).toMatchObject([
       {
@@ -113,36 +114,36 @@ describe('useQueries', () => {
     const queries = ref([
       {
         queryKey: ['key31'],
-        queryFn: getSimpleFetcherWithReturnData('value31'),
+        queryFn: () => sleep(0).then(() => 'value31'),
       },
       {
         queryKey: ['key32'],
-        queryFn: getSimpleFetcherWithReturnData('value32'),
+        queryFn: () => sleep(0).then(() => 'value32'),
       },
       {
         queryKey: ['key33'],
-        queryFn: getSimpleFetcherWithReturnData('value33'),
+        queryFn: () => sleep(0).then(() => 'value33'),
       },
     ])
     const queriesState = useQueries({ queries })
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     queries.value.splice(
       0,
       queries.value.length,
       {
         queryKey: ['key31'],
-        queryFn: getSimpleFetcherWithReturnData('value31'),
+        queryFn: () => sleep(0).then(() => 'value31'),
       },
       {
         queryKey: ['key34'],
-        queryFn: getSimpleFetcherWithReturnData('value34'),
+        queryFn: () => sleep(0).then(() => 'value34'),
       },
     )
 
-    await flushPromises()
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesState.value.length).toEqual(2)
     expect(queriesState.value).toMatchObject([
@@ -172,15 +173,15 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key41'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
         queryKey: ['key42'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
     const queriesState = useQueries({ queries })
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesState.value).toMatchObject([
       {
@@ -203,16 +204,16 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key41'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
         queryKey: ['key42'],
-        queryFn: simpleFetcher,
+        queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
 
     useQueries({ queries }, queryClient)
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(useQueryClient).toHaveBeenCalledTimes(0)
   })
@@ -225,11 +226,11 @@ describe('useQueries', () => {
     const queries = [
       {
         queryKey: ['key41'],
-        queryFn: getSimpleFetcherWithReturnData(firstResult),
+        queryFn: () => sleep(0).then(() => firstResult),
       },
       {
         queryKey: ['key42'],
-        queryFn: getSimpleFetcherWithReturnData(secondResult),
+        queryFn: () => sleep(0).then(() => secondResult),
       },
     ]
 
@@ -245,7 +246,7 @@ describe('useQueries', () => {
       },
       queryClient,
     )
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(queriesResult.value).toMatchObject({
       combined: true,
@@ -254,7 +255,7 @@ describe('useQueries', () => {
   })
 
   test('should be `enabled` to accept getter function', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const checked = ref(false)
 
     useQueries({
@@ -271,13 +272,13 @@ describe('useQueries', () => {
 
     checked.value = true
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalled()
   })
 
   test('should allow getters for query keys', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
 
@@ -294,19 +295,19 @@ describe('useQueries', () => {
 
     key1.value = 'key3'
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key4'
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(3)
   })
 
   test('should allow arbitrarily nested getters for query keys', async () => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
     const key3 = ref('key3')
@@ -339,31 +340,146 @@ describe('useQueries', () => {
 
     key1.value = 'key1-updated'
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(2)
 
     key2.value = 'key2-updated'
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(3)
 
     key3.value = 'key3-updated'
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(4)
 
     key4.value = 'key4-updated'
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(5)
 
     key5.value = 'key5-updated'
 
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(6)
+  })
+
+  test('should refetch only the specific query without affecting others', async () => {
+    let userCount = 0
+    let postCount = 0
+
+    const queriesState = useQueries({
+      queries: [
+        {
+          queryKey: ['users'],
+          queryFn: () => sleep(10).then(() => `users-${++userCount}`),
+        },
+        {
+          queryKey: ['posts'],
+          queryFn: () => sleep(20).then(() => `posts-${++postCount}`),
+        },
+      ],
+    })
+
+    await vi.advanceTimersByTimeAsync(20)
+
+    expect(queriesState.value[0].data).toBe('users-1')
+    expect(queriesState.value[1].data).toBe('posts-1')
+
+    queriesState.value[0].refetch()
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(queriesState.value[0].data).toBe('users-2')
+    expect(queriesState.value[1].data).toBe('posts-1')
+  })
+
+  test('should warn when used outside of setup function in development mode', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    try {
+      useQueries({
+        queries: [
+          {
+            queryKey: ['outsideScope'],
+            queryFn: () => sleep(0).then(() => 'data'),
+          },
+        ],
+      })
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    } finally {
+      warnSpy.mockRestore()
+      vi.unstubAllEnvs()
+    }
+  })
+
+  test('should work with options getter and be reactive', async () => {
+    const fetchFn = vi.fn(() => 'foo')
+    const key1 = ref('key1')
+    const key2 = ref('key2')
+    const key3 = ref('key3')
+    const key4 = ref('key4')
+    const key5 = ref('key5')
+
+    useQueries({
+      queries: () => [
+        {
+          queryKey: [
+            'key',
+            key1,
+            key2.value,
+            { key: key3.value },
+            [{ foo: { bar: key4.value } }],
+            () => ({
+              foo: {
+                bar: {
+                  baz: key5.value,
+                },
+              },
+            }),
+          ],
+          queryFn: fetchFn,
+        },
+      ],
+    })
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+
+    key1.value = 'key1-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(2)
+
+    key2.value = 'key2-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(3)
+
+    key3.value = 'key3-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(4)
+
+    key4.value = 'key4-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(fetchFn).toHaveBeenCalledTimes(5)
+
+    key5.value = 'key5-updated'
+
+    await vi.advanceTimersByTimeAsync(0)
 
     expect(fetchFn).toHaveBeenCalledTimes(6)
   })

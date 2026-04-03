@@ -1,12 +1,12 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "5.66.0",
+  "version": "6.1.13",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TanStack/query.git",
+    "url": "git+https://github.com/TanStack/query.git",
     "directory": "packages/vue-query-devtools"
   },
   "homepage": "https://tanstack.com/query",
@@ -17,7 +17,7 @@
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts",
     "compile": "vue-tsc --build",
-    "test:eslint": "eslint ./src",
+    "test:eslint": "eslint --concurrency=auto ./src",
     "test:types": "vue-tsc --build",
     "test:build": "publint --strict && attw --pack",
     "build": "pnpm run compile && vite build"
@@ -28,10 +28,12 @@
   "main": "dist/esm/index.js",
   "exports": {
     ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
       "types": "./dist/esm/index.d.ts",
       "default": "./dist/esm/index.js"
     },
     "./production": {
+      "@tanstack/custom-condition": "./src/production.ts",
       "types": "./dist/esm/production.d.ts",
       "default": "./dist/esm/production.js"
     },
@@ -52,12 +54,12 @@
   },
   "devDependencies": {
     "@tanstack/vue-query": "workspace:*",
-    "@vitejs/plugin-vue": "^5.2.1",
-    "eslint-plugin-vue": "^9.27.0",
-    "typescript": "5.6.3",
-    "vite": "^5.3.5",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "eslint-plugin-vue": "^10.5.0",
+    "typescript": "5.8.3",
+    "vite": "^6.4.1",
     "vue": "^3.4.27",
-    "vue-tsc": "^2.1.10"
+    "vue-tsc": "^2.2.8"
   },
   "peerDependencies": {
     "@tanstack/vue-query": "workspace:^",

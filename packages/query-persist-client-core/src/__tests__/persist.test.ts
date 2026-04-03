@@ -1,15 +1,14 @@
 import { describe, expect, test, vi } from 'vitest'
-import { QueriesObserver } from '@tanstack/query-core'
-import { persistQueryClientSubscribe } from '../persist'
+import { QueriesObserver, QueryClient } from '@tanstack/query-core'
 import {
-  createMockPersister,
-  createQueryClient,
-  createSpyPersister,
-} from './utils'
+  persistQueryClientRestore,
+  persistQueryClientSubscribe,
+} from '../persist'
+import { createMockPersister, createSpyPersister } from './utils'
 
 describe('persistQueryClientSubscribe', () => {
   test('should persist mutations', async () => {
-    const queryClient = createQueryClient()
+    const queryClient = new QueryClient()
 
     const persister = createMockPersister()
 
@@ -20,7 +19,7 @@ describe('persistQueryClientSubscribe', () => {
     })
 
     queryClient.getMutationCache().build(queryClient, {
-      mutationFn: async (text: string) => text,
+      mutationFn: (text: string) => Promise.resolve(text),
     })
 
     const result = await persister.restoreClient()
@@ -32,8 +31,8 @@ describe('persistQueryClientSubscribe', () => {
 })
 
 describe('persistQueryClientSave', () => {
-  test('should not be triggered on observer type events', async () => {
-    const queryClient = createQueryClient()
+  test('should not be triggered on observer type events', () => {
+    const queryClient = new QueryClient()
 
     const persister = createSpyPersister()
 
@@ -61,5 +60,99 @@ describe('persistQueryClientSave', () => {
     expect(persister.persistClient).toHaveBeenCalledTimes(3)
 
     unsubscribe()
+  })
+})
+
+describe('persistQueryClientRestore', () => {
+  test('should rethrow exceptions in `restoreClient`', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const consoleWarn = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
+
+    const queryClient = new QueryClient()
+
+    const restoreError = new Error('Error restoring client')
+
+    const persister = createSpyPersister()
+
+    persister.restoreClient = () => Promise.reject(restoreError)
+
+    await expect(
+      persistQueryClientRestore({
+        queryClient,
+        persister,
+      }),
+    ).rejects.toBe(restoreError)
+
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleWarn).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
+
+    consoleMock.mockRestore()
+    consoleWarn.mockRestore()
+  })
+
+  test('should rethrow exceptions in `removeClient` before `restoreClient`', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const consoleWarn = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
+
+    const queryClient = new QueryClient()
+
+    const restoreError = new Error('Error restoring client')
+    const removeError = new Error('Error removing client')
+
+    const persister = createSpyPersister()
+
+    persister.restoreClient = () => Promise.reject(restoreError)
+    persister.removeClient = () => Promise.reject(removeError)
+
+    await expect(
+      persistQueryClientRestore({
+        queryClient,
+        persister,
+      }),
+    ).rejects.toBe(removeError)
+
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleWarn).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenNthCalledWith(1, restoreError)
+
+    consoleMock.mockRestore()
+    consoleWarn.mockRestore()
+  })
+
+  test('should rethrow error in `removeClient`', async () => {
+    const queryClient = new QueryClient()
+
+    const persister = createSpyPersister()
+    const removeError = new Error('Error removing client')
+
+    persister.removeClient = () => Promise.reject(removeError)
+    persister.restoreClient = () => {
+      return Promise.resolve({
+        buster: 'random-buster',
+        clientState: {
+          mutations: [],
+          queries: [],
+        },
+        timestamp: new Date().getTime(),
+      })
+    }
+
+    await expect(
+      persistQueryClientRestore({
+        queryClient,
+        persister,
+      }),
+    ).rejects.toBe(removeError)
   })
 })
