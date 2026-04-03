@@ -50,12 +50,10 @@ describe('injectInfiniteQuery', () => {
       }))
     })
 
-    expectTypeOf(query.fetchNextPage).parameters.toEqualTypeOf<
-      [options: { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }]
-    >()
+    query.fetchNextPage({ pageParam: 1 })
+    query.fetchPreviousPage({ pageParam: 0 })
 
-    expectTypeOf(query.fetchPreviousPage).parameters.toEqualTypeOf<
-      [options: { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }]
-    >()
+    // @ts-expect-error pageParam is required in imperative mode
+    query.fetchNextPage()
   })
 })

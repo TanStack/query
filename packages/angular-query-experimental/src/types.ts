@@ -5,6 +5,7 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
+  InfiniteQueryMode,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -79,13 +80,55 @@ export type CreateInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+> = TMode extends InfiniteQueryMode
+  ? CreateImperativeInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
+  : CreateDeclarativeInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
+
+export type CreateDeclarativeInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > = DistributiveOmit<
   InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
+  >,
+  'suspense'
+>
+
+export type CreateImperativeInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = DistributiveOmit<
+  InfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    InfiniteQueryMode
   >,
   'suspense'
 >
@@ -112,15 +155,21 @@ export type DefinedCreateQueryResult<
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+  MapToSignals<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
 
 export type DefinedCreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
   TDefinedInfiniteQueryObserver = DefinedInfiniteQueryObserverResult<
     TData,
-    TError
+    TError,
+    TPageParam,
+    TMode
   >,
 > = MapToSignals<TDefinedInfiniteQueryObserver>
 

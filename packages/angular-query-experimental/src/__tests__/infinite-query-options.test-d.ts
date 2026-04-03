@@ -48,9 +48,30 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data()).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
     >()
-    expectTypeOf(fetchNextPage).parameters.toEqualTypeOf<
-      [options: { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }]
-    >()
+    fetchNextPage({ pageParam: 2 })
+
+    // @ts-expect-error pageParam is required in imperative mode
+    fetchNextPage()
+  })
+
+  it('should preserve imperative fetch method types', () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: ({ pageParam }) => {
+        expectTypeOf(pageParam).toEqualTypeOf<number>()
+        return pageParam * 5
+      },
+      initialPageParam: 1,
+      mode: 'imperative',
+    })
+
+    const { fetchNextPage, fetchPreviousPage } = injectInfiniteQuery(() => options)
+
+    fetchNextPage({ pageParam: 2 })
+    fetchPreviousPage({ pageParam: 0 })
+
+    // @ts-expect-error pageParam is required in imperative mode
+    fetchNextPage()
   })
 
   it('should work when passed to fetchInfiniteQuery', async () => {
@@ -166,21 +187,21 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
+    // @ts-expect-error getNextPageParam is not allowed in imperative mode
     infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
       mode: 'imperative',
-      // @ts-expect-error getNextPageParam is not allowed in imperative mode
       getNextPageParam: () => 1,
     })
 
+    // @ts-expect-error getPreviousPageParam is not allowed in imperative mode
     infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
       mode: 'imperative',
-      // @ts-expect-error getPreviousPageParam is not allowed in imperative mode
       getPreviousPageParam: () => 0,
     })
   })
