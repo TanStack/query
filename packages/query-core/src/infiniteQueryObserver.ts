@@ -162,7 +162,8 @@ export class InfiniteQueryObserver<
   fetchNextPage(
     ...args: Array<any>
   ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>> {
-    const [{ pageParam, ...options } = {}] = args
+    const firstArg = args[0] ?? {}
+    const { pageParam, ...options } = firstArg
     return this.fetch({
       ...options,
       meta: {
@@ -177,7 +178,8 @@ export class InfiniteQueryObserver<
   fetchPreviousPage(
     ...args: Array<any>
   ): Promise<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>> {
-    const [{ pageParam, ...options } = {}] = args
+    const firstArg = args[0] ?? {}
+    const { pageParam, ...options } = firstArg
     return this.fetch({
       ...options,
       meta: {
