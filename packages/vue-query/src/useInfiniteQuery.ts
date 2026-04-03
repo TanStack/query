@@ -12,6 +12,7 @@ import type {
   QueryFunction,
   QueryKey,
   QueryObserver,
+  SkipToken,
 } from '@tanstack/query-core'
 
 import type { UseBaseQueryReturnType } from './useBaseQuery'
@@ -27,7 +28,6 @@ import type { QueryClient } from './queryClient'
 
 // Widen the type of the symbol to preserve contextual typing for
 // `computed(() => condition ? queryFn : skipToken)`.
-type SkipTokenForUseInfiniteQuery = symbol
 
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -59,7 +59,7 @@ export type UseInfiniteQueryOptions<
               TQueryFnData,
               DeepUnwrapRef<TQueryKey>,
               TPageParam
-            > | SkipTokenForUseInfiniteQuery
+            > | SkipToken
           >
       : MaybeRefDeep<
           InfiniteQueryObserverOptions<
