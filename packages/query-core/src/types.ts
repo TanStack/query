@@ -311,10 +311,12 @@ export interface InfiniteQueryPageParamsManualOptions<
 export type InfiniteQueryPageParamsOptions<
   TQueryFnData = unknown,
   TPageParam = unknown,
-  TMode extends InfiniteQueryMode | undefined = undefined,
-> = TMode extends InfiniteQueryMode
-  ? InfiniteQueryPageParamsManualOptions<TPageParam>
-  : InfiniteQueryPageParamsDeclarativeOptions<TQueryFnData, TPageParam>
+  TMode extends FetchPageDirectionMode = FetchPageDirectionMode,
+> = TMode extends FetchPageDirectionMode
+  ? TMode extends InfiniteQueryMode
+    ? InfiniteQueryPageParamsManualOptions<TPageParam>
+    : InfiniteQueryPageParamsDeclarativeOptions<TQueryFnData, TPageParam>
+  : never
 
 export type FetchPageDirectionMode = InfiniteQueryMode | undefined
 
@@ -483,7 +485,7 @@ export type DefaultedQueryObserverOptions<
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 >
 
-export type InfiniteQueryObserverOptions<
+export type InfiniteQueryObserverOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -500,7 +502,25 @@ export type InfiniteQueryObserverOptions<
 > &
   InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam, TMode>
 
-export type DefaultedInfiniteQueryObserverOptions<
+export type InfiniteQueryObserverOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+  TMode extends FetchPageDirectionMode = FetchPageDirectionMode,
+> = TMode extends FetchPageDirectionMode
+  ? InfiniteQueryObserverOptionsBase<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      TMode
+    >
+  : never
+
+export type DefaultedInfiniteQueryObserverOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -508,7 +528,7 @@ export type DefaultedInfiniteQueryObserverOptions<
   TPageParam = unknown,
   TMode extends FetchPageDirectionMode = undefined,
 > = WithRequired<
-  InfiniteQueryObserverOptions<
+  InfiniteQueryObserverOptionsBase<
     TQueryFnData,
     TError,
     TData,
@@ -518,6 +538,24 @@ export type DefaultedInfiniteQueryObserverOptions<
   >,
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 >
+
+export type DefaultedInfiniteQueryObserverOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+  TMode extends FetchPageDirectionMode = FetchPageDirectionMode,
+> = TMode extends FetchPageDirectionMode
+  ? DefaultedInfiniteQueryObserverOptionsBase<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      TMode
+    >
+  : never
 
 export interface FetchQueryOptions<
   TQueryFnData = unknown,
@@ -553,14 +591,14 @@ export interface EnsureQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
-export type EnsureInfiniteQueryDataOptions<
+export type EnsureInfiniteQueryDataOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
   TMode extends FetchPageDirectionMode = undefined,
-> = FetchInfiniteQueryOptions<
+> = FetchInfiniteQueryOptionsBase<
   TQueryFnData,
   TError,
   TData,
@@ -570,6 +608,24 @@ export type EnsureInfiniteQueryDataOptions<
 > & {
   revalidateIfStale?: boolean
 }
+
+export type EnsureInfiniteQueryDataOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+  TMode extends FetchPageDirectionMode = FetchPageDirectionMode,
+> = TMode extends FetchPageDirectionMode
+  ? EnsureInfiniteQueryDataOptionsBase<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      TMode
+    >
+  : never
 
 type FetchInfiniteQueryPagesDeclarative<
   TQueryFnData = unknown,
@@ -581,20 +637,41 @@ type FetchInfiniteQueryPagesDeclarative<
       getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
     }
 
+interface FetchInfiniteQueryPageParamsDeclarativeOptions<
+  TQueryFnData = unknown,
+  TPageParam = unknown,
+> extends InitialPageParam<TPageParam> {
+  mode?: never
+  getPreviousPageParam?: GetPreviousPageParamFunction<TPageParam, TQueryFnData>
+  getNextPageParam?: GetNextPageParamFunction<TPageParam, TQueryFnData>
+}
+
+type FetchInfiniteQueryPageParamsOptions<
+  TQueryFnData = unknown,
+  TPageParam = unknown,
+  TMode extends FetchPageDirectionMode = FetchPageDirectionMode,
+> = TMode extends FetchPageDirectionMode
+  ? TMode extends InfiniteQueryMode
+    ? InfiniteQueryPageParamsManualOptions<TPageParam>
+    : FetchInfiniteQueryPageParamsDeclarativeOptions<TQueryFnData, TPageParam>
+  : never
+
 type FetchInfiniteQueryPages<
   TQueryFnData = unknown,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = undefined,
-> = TMode extends InfiniteQueryMode
-  ? {
-      mode: InfiniteQueryMode
-      pages?: never
-      getNextPageParam?: never
-      getPreviousPageParam?: never
-    }
-  : FetchInfiniteQueryPagesDeclarative<TQueryFnData, TPageParam>
+  TMode extends FetchPageDirectionMode = FetchPageDirectionMode,
+> = TMode extends FetchPageDirectionMode
+  ? TMode extends InfiniteQueryMode
+    ? {
+        mode: InfiniteQueryMode
+        pages?: never
+        getNextPageParam?: never
+        getPreviousPageParam?: never
+      }
+    : FetchInfiniteQueryPagesDeclarative<TQueryFnData, TPageParam>
+  : never
 
-export type FetchInfiniteQueryOptions<
+export type FetchInfiniteQueryOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -611,8 +688,26 @@ export type FetchInfiniteQueryOptions<
   >,
   'initialPageParam'
 > &
-  InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam, TMode> &
+  FetchInfiniteQueryPageParamsOptions<TQueryFnData, TPageParam, TMode> &
   FetchInfiniteQueryPages<TQueryFnData, TPageParam, TMode>
+
+export type FetchInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+  TMode extends FetchPageDirectionMode = FetchPageDirectionMode,
+> = TMode extends FetchPageDirectionMode
+  ? FetchInfiniteQueryOptionsBase<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      TMode
+    >
+  : never
 
 export interface ResultOptions {
   throwOnError?: boolean

@@ -12,6 +12,8 @@ import type {
   InfiniteData,
   InfiniteQueryFetchNextPageArgs,
   InfiniteQueryFetchPreviousPageArgs,
+  InfiniteQueryMode,
+  InfiniteQueryObserverOptionsBase,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryKey,
@@ -75,6 +77,28 @@ export class InfiniteQueryObserver<
   constructor(
     client: QueryClient,
     options: InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      undefined
+    >,
+  )
+  constructor(
+    client: QueryClient,
+    options: InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      InfiniteQueryMode
+    >,
+  )
+  constructor(
+    client: QueryClient,
+    options: InfiniteQueryObserverOptionsBase<
       TQueryFnData,
       TError,
       TData,

@@ -20,7 +20,6 @@ import type {
   DefaultedQueryObserverOptions,
   EnsureInfiniteQueryDataOptions,
   EnsureQueryDataOptions,
-  FetchPageDirectionMode,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
   InferDataFromTag,
@@ -393,41 +392,7 @@ export class QueryClient {
       TError,
       TData,
       TQueryKey,
-      TPageParam,
-      undefined
-    >,
-  ): Promise<InfiniteData<TData, TPageParam>>
-  fetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: FetchInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam,
-      'manual'
-    >,
-  ): Promise<InfiniteData<TData, TPageParam>>
-  fetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-    TMode extends FetchPageDirectionMode = undefined,
-  >(
-    options: FetchInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam,
-      TMode
+      TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
     options.behavior = infiniteQueryBehavior<
@@ -451,41 +416,7 @@ export class QueryClient {
       TError,
       TData,
       TQueryKey,
-      TPageParam,
-      undefined
-    >,
-  ): Promise<void>
-  prefetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: FetchInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam,
-      'manual'
-    >,
-  ): Promise<void>
-  prefetchInfiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-    TMode extends FetchPageDirectionMode = undefined,
-  >(
-    options: FetchInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam,
-      TMode
+      TPageParam
     >,
   ): Promise<void> {
     return this.fetchInfiniteQuery(options as any)
@@ -505,41 +436,7 @@ export class QueryClient {
       TError,
       TData,
       TQueryKey,
-      TPageParam,
-      undefined
-    >,
-  ): Promise<InfiniteData<TData, TPageParam>>
-  ensureInfiniteQueryData<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: EnsureInfiniteQueryDataOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam,
-      'manual'
-    >,
-  ): Promise<InfiniteData<TData, TPageParam>>
-  ensureInfiniteQueryData<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-    TMode extends FetchPageDirectionMode = undefined,
-  >(
-    options: EnsureInfiniteQueryDataOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam,
-      TMode
+      TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
     options.behavior = infiniteQueryBehavior<

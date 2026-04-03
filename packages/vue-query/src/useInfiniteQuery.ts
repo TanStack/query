@@ -8,7 +8,7 @@ import type {
   DefaultError,
   InfiniteData,
   InfiniteQueryMode,
-  InfiniteQueryObserverOptions,
+  InfiniteQueryObserverOptionsBase,
   InfiniteQueryObserverResult,
   QueryKey,
   QueryObserver,
@@ -34,7 +34,7 @@ export type UseInfiniteQueryOptions<
   TMode extends InfiniteQueryMode | undefined = undefined,
 > = MaybeRef<
   {
-    [Property in keyof InfiniteQueryObserverOptions<
+    [Property in keyof InfiniteQueryObserverOptionsBase<
       TQueryFnData,
       TError,
       TData,
@@ -43,7 +43,7 @@ export type UseInfiniteQueryOptions<
       TMode
     >]: Property extends 'enabled'
       ? MaybeRefOrGetter<
-          InfiniteQueryObserverOptions<
+          InfiniteQueryObserverOptionsBase<
             TQueryFnData,
             TError,
             TData,
@@ -53,7 +53,7 @@ export type UseInfiniteQueryOptions<
           >[Property]
         >
       : MaybeRefDeep<
-          InfiniteQueryObserverOptions<
+          InfiniteQueryObserverOptionsBase<
             TQueryFnData,
             TError,
             TData,

@@ -12,6 +12,7 @@ import type {
   DefaultOptions,
   EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
+  FetchInfiniteQueryOptionsBase,
   FetchQueryOptions,
   InferDataFromTag,
   InferErrorFromTag,
@@ -401,16 +402,17 @@ export class QueryClient extends QC {
     TPageParam = unknown,
   >(
     options: MaybeRefDeep<
-      FetchInfiniteQueryOptions<
+      FetchInfiniteQueryOptionsBase<
         TQueryFnData,
         TError,
         TData,
         TQueryKey,
         TPageParam,
-        InfiniteQueryMode | undefined
+        undefined
       >
     >,
-  ): Promise<InfiniteData<TData, TPageParam>> {
+  ): Promise<InfiniteData<TData, TPageParam>>
+  fetchInfiniteQuery(options: any): Promise<any> {
     return super.fetchInfiniteQuery(cloneDeepUnref(options) as any)
   }
 
@@ -490,16 +492,17 @@ export class QueryClient extends QC {
     TPageParam = unknown,
   >(
     options: MaybeRefDeep<
-      FetchInfiniteQueryOptions<
+      FetchInfiniteQueryOptionsBase<
         TQueryFnData,
         TError,
         TData,
         TQueryKey,
         TPageParam,
-        InfiniteQueryMode | undefined
+        undefined
       >
     >,
-  ): Promise<void> {
+  ): Promise<void>
+  prefetchInfiniteQuery(options: any): Promise<any> {
     return super.prefetchInfiniteQuery(cloneDeepUnref(options) as any)
   }
 
