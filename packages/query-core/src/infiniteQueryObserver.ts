@@ -39,7 +39,7 @@ export class InfiniteQueryObserver<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 > extends QueryObserver<
   TQueryFnData,
   TError,
@@ -92,7 +92,7 @@ export class InfiniteQueryObserver<
       TData,
       TQueryKey,
       TPageParam,
-      'declarative'
+      undefined
     >,
   )
   constructor(

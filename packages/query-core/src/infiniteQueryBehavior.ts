@@ -19,7 +19,7 @@ export function infiniteQueryBehavior<
   TError,
   TData,
   TPageParam,
-  TMode extends 'declarative' | InfiniteQueryMode = 'declarative',
+  TMode extends InfiniteQueryMode | undefined = undefined,
 >(
   pages?: number,
 ): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {

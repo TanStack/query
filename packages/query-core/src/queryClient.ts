@@ -394,7 +394,7 @@ export class QueryClient {
       TData,
       TQueryKey,
       TPageParam,
-      'declarative'
+      undefined
     >,
   ): Promise<InfiniteData<TData, TPageParam>>
   fetchInfiniteQuery<
@@ -419,7 +419,7 @@ export class QueryClient {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
-    TMode extends FetchPageDirectionMode = 'declarative',
+    TMode extends FetchPageDirectionMode = undefined,
   >(
     options: FetchInfiniteQueryOptions<
       TQueryFnData,
@@ -453,7 +453,7 @@ export class QueryClient {
       TData,
       TQueryKey,
       TPageParam,
-      'declarative'
+      undefined
     >,
   ): Promise<void>
   prefetchInfiniteQuery<
@@ -478,7 +478,7 @@ export class QueryClient {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
-    TMode extends FetchPageDirectionMode = 'declarative',
+    TMode extends FetchPageDirectionMode = undefined,
   >(
     options: FetchInfiniteQueryOptions<
       TQueryFnData,
@@ -505,7 +505,7 @@ export class QueryClient {
       TData,
       TQueryKey,
       TPageParam,
-      'declarative'
+      undefined
     >,
   ): Promise<InfiniteData<TData, TPageParam>>
   ensureInfiniteQueryData<
@@ -530,7 +530,7 @@ export class QueryClient {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
-    TMode extends FetchPageDirectionMode = 'declarative',
+    TMode extends FetchPageDirectionMode = undefined,
   >(
     options: EnsureInfiniteQueryDataOptions<
       TQueryFnData,

@@ -107,7 +107,7 @@ export type UseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 > = DistributiveOmit<
   InfiniteQueryObserverOptions<
     TQueryFnData,
@@ -134,7 +134,7 @@ export type UseSuspenseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 > = DistributiveOmit<
   UseInfiniteQueryOptions<
     TQueryFnData,

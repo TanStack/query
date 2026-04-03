@@ -17,7 +17,7 @@ export type UndefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 > = UseInfiniteQueryOptions<
   TQueryFnData,
   TError,
@@ -40,7 +40,7 @@ export type UnusedSkipTokenInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 > = OmitKeyof<
   UseInfiniteQueryOptions<
     TQueryFnData,
@@ -71,7 +71,7 @@ export type DefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 > = UseInfiniteQueryOptions<
   TQueryFnData,
   TError,
@@ -92,7 +92,7 @@ export function infiniteQueryOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 >(
   options: DefinedInitialDataInfiniteOptions<
     TQueryFnData,
@@ -119,7 +119,7 @@ export function infiniteQueryOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 >(
   options: UnusedSkipTokenInfiniteOptions<
     TQueryFnData,
@@ -146,7 +146,7 @@ export function infiniteQueryOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 >(
   options: UndefinedInitialDataInfiniteOptions<
     TQueryFnData,

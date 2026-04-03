@@ -25,7 +25,7 @@ export function useInfiniteQuery<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 >(
   options: DefinedInitialDataInfiniteOptions<
     TQueryFnData,
@@ -44,7 +44,7 @@ export function useInfiniteQuery<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 >(
   options: UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
@@ -63,7 +63,7 @@ export function useInfiniteQuery<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = 'declarative',
+  TMode extends FetchPageDirectionMode = undefined,
 >(
   options: UseInfiniteQueryOptions<
     TQueryFnData,
