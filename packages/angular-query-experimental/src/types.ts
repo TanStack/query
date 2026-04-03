@@ -82,7 +82,7 @@ export type CreateInfiniteQueryOptions<
   TPageParam = unknown,
   TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
 > = TMode extends InfiniteQueryMode
-  ? CreateImperativeInfiniteQueryOptions<
+  ? CreateManualInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
@@ -115,7 +115,7 @@ export type CreateDeclarativeInfiniteQueryOptions<
   'suspense'
 >
 
-export type CreateImperativeInfiniteQueryOptions<
+export type CreateManualInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,

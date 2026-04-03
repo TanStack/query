@@ -7,7 +7,7 @@ import {
 import type {
   InfiniteData,
   InfiniteQueryPageParamsDeclarativeOptions,
-  InfiniteQueryPageParamsImperativeOptions,
+  InfiniteQueryPageParamsManualOptions,
   InfiniteQueryPageParamsOptions,
   OmitKeyof,
   QueryFunctionContext,
@@ -21,7 +21,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
   return {
     onFetch: (context, query) => {
       const options = context.options as
-        | InfiniteQueryPageParamsImperativeOptions<TPageParam>
+        | InfiniteQueryPageParamsManualOptions<TPageParam>
         | InfiniteQueryPageParamsDeclarativeOptions<TQueryFnData, TPageParam>
       const fetchMore = context.fetchOptions?.meta?.fetchMore
       const oldPages = context.state.data?.pages || []

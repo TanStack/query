@@ -98,26 +98,26 @@ describe('InfiniteQueryObserver', () => {
       InfiniteData<string>,
       ReturnType<typeof queryKey>,
       number,
-      'imperative'
+      'manual'
     >(queryClient, {
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => String(pageParam),
-      mode: 'imperative',
+      mode: 'manual',
       initialPageParam: 1,
     })
 
     observer.fetchNextPage({ pageParam: 2 })
     observer.fetchPreviousPage({ pageParam: 0, cancelRefetch: false })
 
-    // @ts-expect-error pageParam is required in imperative mode
+    // @ts-expect-error pageParam is required in manual mode
     observer.fetchNextPage()
 
-    // @ts-expect-error pageParam is required in imperative mode
+    // @ts-expect-error pageParam is required in manual mode
     observer.fetchPreviousPage()
   })
 
   it('should reject missing mode / getNextPageParam', () => {
-    // @ts-expect-error getNextPageParam is required unless mode is imperative
+    // @ts-expect-error getNextPageParam is required unless mode is manual
     new InfiniteQueryObserver(queryClient, {
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => String(pageParam),
@@ -125,35 +125,35 @@ describe('InfiniteQueryObserver', () => {
     })
   })
 
-  it('should reject page param getters in imperative mode', () => {
-    // @ts-expect-error getNextPageParam is not allowed in imperative mode
+  it('should reject page param getters in manual mode', () => {
+    // @ts-expect-error getNextPageParam is not allowed in manual mode
     new InfiniteQueryObserver<
       string,
       Error,
       InfiniteData<string>,
       ReturnType<typeof queryKey>,
       number,
-      'imperative'
+      'manual'
     >(queryClient, {
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => String(pageParam),
-      mode: 'imperative',
+      mode: 'manual',
       initialPageParam: 1,
       getNextPageParam: () => 2,
     })
 
-    // @ts-expect-error getPreviousPageParam is not allowed in imperative mode
+    // @ts-expect-error getPreviousPageParam is not allowed in manual mode
     new InfiniteQueryObserver<
       string,
       Error,
       InfiniteData<string>,
       ReturnType<typeof queryKey>,
       number,
-      'imperative'
+      'manual'
     >(queryClient, {
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => String(pageParam),
-      mode: 'imperative',
+      mode: 'manual',
       initialPageParam: 1,
       getPreviousPageParam: () => 0,
     })

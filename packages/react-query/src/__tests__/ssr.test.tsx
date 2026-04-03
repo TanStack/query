@@ -156,7 +156,7 @@ describe('Server Side Rendering', () => {
       queryKey: key,
       queryFn,
       initialPageParam: 0,
-      mode: 'imperative',
+      mode: 'manual',
     })
     await vi.advanceTimersByTimeAsync(10)
 

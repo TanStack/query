@@ -22,8 +22,8 @@ import type {
   DefinedInitialDataInfiniteOptions,
   DeclarativeDefinedInitialDataInfiniteOptions,
   DeclarativeUndefinedInitialDataInfiniteOptions,
-  ImperativeDefinedInitialDataInfiniteOptions,
-  ImperativeUndefinedInitialDataInfiniteOptions,
+  ManualDefinedInitialDataInfiniteOptions,
+  ManualUndefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infinite-query-options'
 
@@ -43,7 +43,7 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  injectInfiniteQueryFn: () => ImperativeDefinedInitialDataInfiniteOptions<
+  injectInfiniteQueryFn: () => ManualDefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
@@ -80,7 +80,7 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  injectInfiniteQueryFn: () => ImperativeUndefinedInitialDataInfiniteOptions<
+  injectInfiniteQueryFn: () => ManualUndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,

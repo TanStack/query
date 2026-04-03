@@ -34,7 +34,7 @@ describe('pageParam', () => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
       initialPageParam: 1,
-      mode: 'imperative',
+      mode: 'manual',
     })
   })
 
@@ -46,11 +46,11 @@ describe('pageParam', () => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
       initialPageParam: 1,
-      mode: 'imperative',
+      mode: 'manual',
     })
   })
 
-  it('should require pageParam on imperative fetch methods', () => {
+  it('should require pageParam on manual fetch methods', () => {
     const infiniteQuery = useInfiniteQuery({
       queryKey: ['key'],
       queryFn: ({ pageParam }) => {
@@ -58,13 +58,13 @@ describe('pageParam', () => {
         return pageParam * 5
       },
       initialPageParam: 1,
-      mode: 'imperative',
+      mode: 'manual',
     })
 
     infiniteQuery.fetchNextPage({ pageParam: 2 })
     infiniteQuery.fetchPreviousPage({ pageParam: 0 })
 
-    // @ts-expect-error pageParam is required in imperative mode
+    // @ts-expect-error pageParam is required in manual mode
     infiniteQuery.fetchNextPage()
   })
 })

@@ -40,20 +40,20 @@ describe('injectInfiniteQuery', () => {
     }
   })
 
-  test('should require pageParam on imperative fetch methods', () => {
+  test('should require pageParam on manual fetch methods', () => {
     const query = TestBed.runInInjectionContext(() => {
       return injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) => 'data on page ' + pageParam,
         initialPageParam: 0,
-        mode: 'imperative',
+        mode: 'manual',
       }))
     })
 
     query.fetchNextPage({ pageParam: 1 })
     query.fetchPreviousPage({ pageParam: 0 })
 
-    // @ts-expect-error pageParam is required in imperative mode
+    // @ts-expect-error pageParam is required in manual mode
     query.fetchNextPage()
   })
 })

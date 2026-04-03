@@ -73,7 +73,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  it('should preserve imperative fetch method types', () => {
+  it('should preserve manual fetch method types', () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: ({ pageParam }) => {
@@ -81,7 +81,7 @@ describe('infiniteQueryOptions', () => {
         return pageParam * 5
       },
       initialPageParam: 1,
-      mode: 'imperative',
+      mode: 'manual',
     })
 
     const query = useInfiniteQuery(() => options)
@@ -89,7 +89,7 @@ describe('infiniteQueryOptions', () => {
     query.fetchNextPage({ pageParam: 2 })
     query.fetchPreviousPage({ pageParam: 0 })
 
-    // @ts-expect-error pageParam is required in imperative mode
+    // @ts-expect-error pageParam is required in manual mode
     query.fetchNextPage()
   })
 })

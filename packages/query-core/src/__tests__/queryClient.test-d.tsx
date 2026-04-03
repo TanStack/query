@@ -189,30 +189,30 @@ describe('fetchInfiniteQuery', () => {
     })
   })
 
-  it('should allow imperative mode without page param getters', () => {
+  it('should allow manual mode without page param getters', () => {
     void new QueryClient().fetchInfiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
-      mode: 'imperative',
+      mode: 'manual',
       initialPageParam: 1,
     })
   })
 
-  it('should not allow imperative mode with page param getters or pages', () => {
-    // @ts-expect-error getNextPageParam is not allowed in imperative mode
+  it('should not allow manual mode with page param getters or pages', () => {
+    // @ts-expect-error getNextPageParam is not allowed in manual mode
     void new QueryClient().fetchInfiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
-      mode: 'imperative',
+      mode: 'manual',
       initialPageParam: 1,
       getNextPageParam: () => 1,
     })
 
-    // @ts-expect-error pages are not allowed in imperative mode
+    // @ts-expect-error pages are not allowed in manual mode
     void new QueryClient().fetchInfiniteQuery({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
-      mode: 'imperative',
+      mode: 'manual',
       initialPageParam: 1,
       pages: 2,
     })

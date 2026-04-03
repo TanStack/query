@@ -40,7 +40,7 @@ describe('infiniteQueryOptions', () => {
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
-      mode: 'imperative',
+      mode: 'manual',
     })
 
     const { data, fetchNextPage, fetchPreviousPage } = useInfiniteQuery(options)
@@ -52,7 +52,7 @@ describe('infiniteQueryOptions', () => {
     fetchNextPage({ pageParam: 2 })
     fetchPreviousPage({ pageParam: 0 })
 
-    // @ts-expect-error pageParam is required in imperative mode
+    // @ts-expect-error pageParam is required in manual mode
     fetchNextPage()
   })
   it('should work when passed to useSuspenseInfiniteQuery', () => {
@@ -72,7 +72,7 @@ describe('infiniteQueryOptions', () => {
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
-      mode: 'imperative',
+      mode: 'manual',
     })
 
     const data = await new QueryClient().fetchInfiniteQuery(options)
@@ -158,29 +158,29 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
   })
 
-  it('should reject missing mode / getNextPageParam and reject getters in imperative mode', () => {
-    // @ts-expect-error getNextPageParam is required unless mode is imperative
+  it('should reject missing mode / getNextPageParam and reject getters in manual mode', () => {
+    // @ts-expect-error getNextPageParam is required unless mode is manual
     infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
     })
 
-    // @ts-expect-error getNextPageParam is not allowed in imperative mode
+    // @ts-expect-error getNextPageParam is not allowed in manual mode
     infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
-      mode: 'imperative',
+      mode: 'manual',
       getNextPageParam: () => 1,
     })
 
-    // @ts-expect-error getPreviousPageParam is not allowed in imperative mode
+    // @ts-expect-error getPreviousPageParam is not allowed in manual mode
     infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
-      mode: 'imperative',
+      mode: 'manual',
       getPreviousPageParam: () => 0,
     })
   })

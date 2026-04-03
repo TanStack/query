@@ -70,7 +70,7 @@ describe('InfiniteQueryBehavior', () => {
           InfiniteData<number>,
           Error,
           number,
-          'imperative'
+          'manual'
         >
       | undefined
 
@@ -213,11 +213,11 @@ describe('InfiniteQueryBehavior', () => {
       InfiniteData<number>,
       typeof key,
       number,
-      'imperative'
+      'manual'
     >(queryClient, {
       queryKey: key,
       queryFn,
-      mode: 'imperative',
+      mode: 'manual',
       initialPageParam: 0,
     })
 
@@ -226,7 +226,7 @@ describe('InfiniteQueryBehavior', () => {
           InfiniteData<number>,
           Error,
           number,
-          'imperative'
+          'manual'
         >
       | undefined
 

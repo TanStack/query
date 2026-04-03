@@ -57,7 +57,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
 
-  test('Should preserve imperative fetch method types', () => {
+  test('Should preserve manual fetch method types', () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: ({ pageParam }) => {
@@ -65,7 +65,7 @@ describe('queryOptions', () => {
         return pageParam * 5
       },
       initialPageParam: 1,
-      mode: 'imperative',
+      mode: 'manual',
     })
 
     const query = createInfiniteQuery(() => options)
@@ -73,7 +73,7 @@ describe('queryOptions', () => {
     query.fetchNextPage({ pageParam: 2 })
     query.fetchPreviousPage({ pageParam: 0 })
 
-    // @ts-expect-error pageParam is required in imperative mode
+    // @ts-expect-error pageParam is required in manual mode
     query.fetchNextPage()
   })
 })

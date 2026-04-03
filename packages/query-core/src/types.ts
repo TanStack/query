@@ -281,7 +281,7 @@ export interface InitialPageParam<TPageParam = unknown> {
   initialPageParam: TPageParam
 }
 
-export type InfiniteQueryMode = 'imperative'
+export type InfiniteQueryMode = 'manual'
 
 export interface InfiniteQueryPageParamsDeclarativeOptions<
   TQueryFnData = unknown,
@@ -300,7 +300,7 @@ export interface InfiniteQueryPageParamsDeclarativeOptions<
   getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
 }
 
-export interface InfiniteQueryPageParamsImperativeOptions<
+export interface InfiniteQueryPageParamsManualOptions<
   TPageParam = unknown,
 > extends InitialPageParam<TPageParam> {
   mode: InfiniteQueryMode
@@ -313,14 +313,14 @@ export type InfiniteQueryPageParamsOptions<
   TPageParam = unknown,
   TMode extends InfiniteQueryMode | undefined = undefined,
 > = TMode extends InfiniteQueryMode
-  ? InfiniteQueryPageParamsImperativeOptions<TPageParam>
+  ? InfiniteQueryPageParamsManualOptions<TPageParam>
   : InfiniteQueryPageParamsDeclarativeOptions<TQueryFnData, TPageParam>
 
 export type FetchPageDirectionMode = InfiniteQueryMode | undefined
 
-export interface ImperativeFetchPageOptions<TPageParam> {
+export interface ManualFetchPageOptions<TPageParam> {
   /**
-   * The page param to pass to the query function for this imperative fetch.
+   * The page param to pass to the query function for this manual fetch.
    */
   pageParam: TPageParam
 }
@@ -670,14 +670,14 @@ export type InfiniteQueryFetchNextPageOptions<
   TPageParam = unknown,
   TMode extends FetchPageDirectionMode = undefined,
 > = TMode extends InfiniteQueryMode
-  ? ImperativeFetchPageOptions<TPageParam> & FetchNextPageOptions
+  ? ManualFetchPageOptions<TPageParam> & FetchNextPageOptions
   : FetchNextPageOptions
 
 export type InfiniteQueryFetchPreviousPageOptions<
   TPageParam = unknown,
   TMode extends FetchPageDirectionMode = undefined,
 > = TMode extends InfiniteQueryMode
-  ? ImperativeFetchPageOptions<TPageParam> & FetchPreviousPageOptions
+  ? ManualFetchPageOptions<TPageParam> & FetchPreviousPageOptions
   : FetchPreviousPageOptions
 
 export type InfiniteQueryFetchNextPageArgs<

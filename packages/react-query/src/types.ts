@@ -137,7 +137,7 @@ export type UseDeclarativeInfiniteQueryOptions<
   undefined
 >
 
-export type UseImperativeInfiniteQueryOptions<
+export type UseManualInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -166,7 +166,7 @@ export type UseInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >
-  | UseImperativeInfiniteQueryOptions<
+  | UseManualInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
@@ -207,7 +207,7 @@ export type UseSuspenseInfiniteQueryOptions<
       >
     })
   | (DistributiveOmit<
-      UseImperativeInfiniteQueryOptions<
+      UseManualInfiniteQueryOptions<
         TQueryFnData,
         TError,
         TData,
@@ -221,7 +221,7 @@ export type UseSuspenseInfiniteQueryOptions<
        * Defaults to `true`.
        */
       queryFn?: Exclude<
-        UseImperativeInfiniteQueryOptions<
+        UseManualInfiniteQueryOptions<
           TQueryFnData,
           TError,
           TData,
