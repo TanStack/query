@@ -178,7 +178,7 @@ export function hasPreviousPage(
   options: InfiniteQueryPageParamsOptions<any, any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
-  if (!data || !options.getPreviousPageParam) {
+  if (!data) {
     return false
   }
   return getPreviousPageParam(options, data) != null
