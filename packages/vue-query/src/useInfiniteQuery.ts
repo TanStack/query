@@ -167,10 +167,7 @@ export function useInfiniteQuery<
   queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError>
 
-export function useInfiniteQuery(
-  options: any,
-  queryClient?: QueryClient,
-): any {
+export function useInfiniteQuery(options: any, queryClient?: QueryClient): any {
   return useBaseQuery(
     InfiniteQueryObserver as typeof QueryObserver,
     options,

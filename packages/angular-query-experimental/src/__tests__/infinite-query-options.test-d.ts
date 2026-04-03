@@ -65,7 +65,9 @@ describe('infiniteQueryOptions', () => {
       mode: 'manual',
     })
 
-    const { fetchNextPage, fetchPreviousPage } = injectInfiniteQuery(() => options)
+    const { fetchNextPage, fetchPreviousPage } = injectInfiniteQuery(
+      () => options,
+    )
 
     fetchNextPage({ pageParam: 2 })
     fetchPreviousPage({ pageParam: 0 })

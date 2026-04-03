@@ -488,7 +488,9 @@ export class QueryClient {
       TMode
     >,
   ): Promise<void> {
-    return this.fetchInfiniteQuery(options as any).then(noop).catch(noop)
+    return this.fetchInfiniteQuery(options as any)
+      .then(noop)
+      .catch(noop)
   }
 
   ensureInfiniteQueryData<

@@ -14,10 +14,7 @@ import type {
   UseInfiniteQueryOptions,
 } from './types'
 
-type OptionalInitialData<
-  TQueryFnData,
-  TPageParam,
-> = {
+type OptionalInitialData<TQueryFnData, TPageParam> = {
   initialData?:
     | undefined
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
@@ -26,22 +23,17 @@ type OptionalInitialData<
       >
 }
 
-type RequiredInitialData<
-  TQueryFnData,
-  TPageParam,
-> = {
+type RequiredInitialData<TQueryFnData, TPageParam> = {
   initialData:
     | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
     | undefined
 }
 
-type WithoutSkipTokenQueryFn<TOptions extends { queryFn?: unknown }> = OmitKeyof<
-  TOptions,
-  'queryFn'
-> & {
-  queryFn?: Exclude<TOptions['queryFn'], SkipToken | undefined>
-}
+type WithoutSkipTokenQueryFn<TOptions extends { queryFn?: unknown }> =
+  OmitKeyof<TOptions, 'queryFn'> & {
+    queryFn?: Exclude<TOptions['queryFn'], SkipToken | undefined>
+  }
 
 type TaggedInfiniteQueryOptions<
   TOptions,

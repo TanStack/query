@@ -53,12 +53,7 @@ export function useInfiniteQuery<
     InfiniteQueryMode
   >,
   queryClient?: Accessor<QueryClient>,
-): DefinedUseInfiniteQueryResult<
-  TData,
-  TError,
-  TPageParam,
-  InfiniteQueryMode
->
+): DefinedUseInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,

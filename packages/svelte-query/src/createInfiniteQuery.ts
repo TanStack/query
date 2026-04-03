@@ -52,25 +52,14 @@ export function createInfiniteQuery<
     >
   >,
   queryClient?: Accessor<QueryClient>,
-): CreateInfiniteQueryResult<
-  TData,
-  TError,
-  TPageParam,
-  InfiniteQueryMode
->
+): CreateInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
 export function createInfiniteQuery(
   options: any,
   queryClient?: Accessor<QueryClient>,
 ): any {
   return createBaseQuery(
     options as Accessor<
-      CreateBaseQueryOptions<
-        any,
-        any,
-        any,
-        InfiniteData<any, any>,
-        any
-      >
+      CreateBaseQueryOptions<any, any, any, InfiniteData<any, any>, any>
     >,
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,

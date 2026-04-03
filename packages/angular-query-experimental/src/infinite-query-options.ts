@@ -31,12 +31,10 @@ type RequiredInitialData<TQueryFnData, TPageParam> = {
     | undefined
 }
 
-type WithoutSkipTokenQueryFn<TOptions extends { queryFn?: unknown }> = OmitKeyof<
-  TOptions,
-  'queryFn'
-> & {
-  queryFn?: Exclude<TOptions['queryFn'], SkipToken | undefined>
-}
+type WithoutSkipTokenQueryFn<TOptions extends { queryFn?: unknown }> =
+  OmitKeyof<TOptions, 'queryFn'> & {
+    queryFn?: Exclude<TOptions['queryFn'], SkipToken | undefined>
+  }
 
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
