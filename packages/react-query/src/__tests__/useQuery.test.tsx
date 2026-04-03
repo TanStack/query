@@ -40,6 +40,7 @@ describe('useQuery', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -5602,9 +5603,68 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should fetch if paused and we go online even if already unmounted (because not cancelled)', async () => {
+    it('online queries should not fetch if paused initial load and we go online after unmount', async () => {
       const key = queryKey()
       let count = 0
+
+      function Component() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async ({ signal: _signal }) => {
+            count++
+            await sleep(10)
+            return `signal${count}`
+          },
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+          </div>
+        )
+      }
+
+      function Page() {
+        const [show, setShow] = React.useState(true)
+
+        return (
+          <div>
+            {show && <Component />}
+            <button onClick={() => setShow(false)}>hide</button>
+          </div>
+        )
+      }
+
+      const onlineMock = mockOnlineManagerIsOnline(false)
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      rendered.getByText('status: pending, fetchStatus: paused')
+
+      fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
+
+      onlineMock.mockReturnValue(true)
+      queryClient.getQueryCache().onOnline()
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        fetchStatus: 'idle',
+        status: 'pending',
+      })
+
+      expect(count).toBe(0)
+
+      onlineMock.mockRestore()
+    })
+
+    it('online queries should re-fetch if paused and we go online even if already unmounted (because not cancelled)', async () => {
+      const key = queryKey()
+      let count = 0
+
+      queryClient.setQueryData(key, 'initial')
 
       function Component() {
         const state = useQuery({
@@ -5641,7 +5701,7 @@ describe('useQuery', () => {
 
       const rendered = renderWithClient(queryClient, <Page />)
 
-      rendered.getByText('status: pending, fetchStatus: paused')
+      rendered.getByText('status: success, fetchStatus: paused')
 
       fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
@@ -5715,17 +5775,16 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not fetch if paused and we go online if already unmounted when signal consumed', async () => {
+    it('online queries should fetch if paused and we go online even if already unmounted when refetch was not cancelled', async () => {
       const key = queryKey()
       let count = 0
 
       function Component() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async ({ signal: _signal }) => {
+          queryFn: async () => {
             count++
-            await sleep(10)
-            return `signal${count}`
+            return `data${count}`
           },
         })
 
@@ -5779,7 +5838,7 @@ describe('useQuery', () => {
         status: 'success',
       })
 
-      expect(count).toBe(1)
+      expect(count).toBe(2)
 
       onlineMock.mockRestore()
     })

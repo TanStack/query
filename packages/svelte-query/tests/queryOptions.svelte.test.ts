@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { queryOptions } from '../../src/index.js'
+import { queryOptions } from '../src/index.js'
 
 describe('queryOptions', () => {
   it('should return the object received as a parameter without any modification.', () => {

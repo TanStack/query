@@ -1378,6 +1378,31 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('should reject promise when experimental_prefetchInRender is disabled and thenable is pending', async () => {
+    const key = queryKey()
+    const queryClient2 = new QueryClient({
+      defaultOptions: {
+        queries: {
+          experimental_prefetchInRender: false,
+        },
+      },
+    })
+    const observer = new QueryObserver(queryClient2, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      enabled: false,
+    })
+
+    const result = observer.getCurrentResult()
+    const tracked = observer.trackResult(result)
+
+    await expect(tracked.promise).rejects.toThrow(
+      'experimental_prefetchInRender feature flag is not enabled',
+    )
+
+    queryClient2.clear()
+  })
+
   test('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
     const key = queryKey()
     const queryFn = vi.fn(() => 'data')
