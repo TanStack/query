@@ -55,21 +55,18 @@ export type UseInfiniteQueryOptions<
         >
       : Property extends 'queryFn'
         ? MaybeRefOrGetter<
-            QueryFunction<
+            | QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>, TPageParam>
+            | SkipToken
+          >
+        : MaybeRefDeep<
+            InfiniteQueryObserverOptions<
               TQueryFnData,
+              TError,
+              TData,
               DeepUnwrapRef<TQueryKey>,
               TPageParam
-            > | SkipToken
+            >[Property]
           >
-      : MaybeRefDeep<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            DeepUnwrapRef<TQueryKey>,
-            TPageParam
-          >[Property]
-        >
   } & ShallowOption
 >
 
