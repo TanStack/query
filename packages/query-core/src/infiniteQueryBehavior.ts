@@ -5,9 +5,8 @@ import {
   ensureQueryFn,
 } from './utils'
 import type {
+  FetchPageDirectionMode,
   InfiniteData,
-  InfiniteQueryPageParamsDeclarativeOptions,
-  InfiniteQueryPageParamsManualOptions,
   InfiniteQueryPageParamsOptions,
   OmitKeyof,
   QueryFunctionContext,
@@ -15,14 +14,22 @@ import type {
 } from './types'
 import type { QueryBehavior } from './query'
 
-export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
+export function infiniteQueryBehavior<
+  TQueryFnData,
+  TError,
+  TData,
+  TPageParam,
+  TMode extends FetchPageDirectionMode = FetchPageDirectionMode,
+>(
   pages?: number,
 ): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
   return {
     onFetch: (context, query) => {
-      const options = context.options as
-        | InfiniteQueryPageParamsManualOptions<TPageParam>
-        | InfiniteQueryPageParamsDeclarativeOptions<TQueryFnData, TPageParam>
+      const options = context.options as InfiniteQueryPageParamsOptions<
+        TQueryFnData,
+        TPageParam,
+        TMode
+      >
       const fetchMore = context.fetchOptions?.meta?.fetchMore
       const oldPages = context.state.data?.pages || []
       const oldPageParams = context.state.data?.pageParams || []
