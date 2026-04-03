@@ -4,24 +4,25 @@ import {
   addToStart,
   ensureQueryFn,
 } from './utils'
-import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
+  InfiniteQueryPageParamsDeclarativeOptions,
+  InfiniteQueryPageParamsImperativeOptions,
   InfiniteQueryPageParamsOptions,
   OmitKeyof,
   QueryFunctionContext,
   QueryKey,
 } from './types'
+import type { QueryBehavior } from './query'
 
 export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
   pages?: number,
 ): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
   return {
     onFetch: (context, query) => {
-      const options = context.options as InfiniteQueryPageParamsOptions<
-        TData,
-        TPageParam
-      >
+      const options = context.options as
+        | InfiniteQueryPageParamsImperativeOptions<TPageParam>
+        | InfiniteQueryPageParamsDeclarativeOptions<TQueryFnData, TPageParam>
       const fetchMore = context.fetchOptions?.meta?.fetchMore
       const oldPages = context.state.data?.pages || []
       const oldPageParams = context.state.data?.pageParams || []
@@ -102,7 +103,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           // Fetch all pages
           do {
             const param =
-              currentPage === 0
+              currentPage === 0 || !options.getNextPageParam
                 ? (oldPageParams[currentPage] ?? options.initialPageParam)
                 : getNextPageParam(options, result)
             if (currentPage > 0 && param == null) {
