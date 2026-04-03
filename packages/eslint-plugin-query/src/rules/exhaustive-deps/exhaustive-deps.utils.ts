@@ -282,7 +282,7 @@ export const ExhaustiveDepsUtils = {
    * Example: `a?.b.c!` -> `a.b.c`
    */
   normalizeChain(text: string): string {
-    return text.replace(/(?:\?(\.)|!)/g, '$1')
+    return text.replace(/(?:\?(\.)|!)/g, '$1').replace(/\s+/g, '')
   },
 
   /**

@@ -2160,6 +2160,20 @@ ruleTester.run('exhaustive-deps allowlist.variables', rule, {
         }
       `,
     },
+    {
+      name: 'should ignore allowlisted variable when member access spans multiple lines',
+      options: [{ allowlist: { variables: ['ignored'] } }],
+      code: normalizeIndent`
+        function useThing() {
+          const ignored = { run: () => Promise.resolve() }
+          return useQuery({
+            queryKey: ['thing'],
+            queryFn: () => ignored
+              .run()
+          })
+        }
+      `,
+    },
   ],
   invalid: [
     {

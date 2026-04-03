@@ -1,5 +1,19 @@
 # @tanstack/eslint-plugin-query
 
+## 5.96.2
+
+### Patch Changes
+
+- fix(eslint-plugin): normalize whitespace in allowList variable matching for multiline expressions ([#10337](https://github.com/TanStack/query/pull/10337))
+
+## 5.96.1
+
+## 5.96.0
+
+### Minor Changes
+
+- Add `prefer-query-options` rule and `recommendedStrict` config ([#10359](https://github.com/TanStack/query/pull/10359))
+
 ## 5.95.2
 
 ## 5.95.1
