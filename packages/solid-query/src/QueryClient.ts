@@ -2,6 +2,7 @@ import { QueryClient as QueryCoreClient } from '@tanstack/query-core'
 import type {
   DefaultOptions as CoreDefaultOptions,
   DefaultError,
+  InfiniteQueryMode,
   OmitKeyof,
   QueryClientConfig as QueryCoreClientConfig,
   InfiniteQueryObserverOptions as QueryCoreInfiniteQueryObserverOptions,
@@ -39,22 +40,24 @@ export interface QueryObserverOptions<
     | ((oldData: TData | undefined, newData: TData) => TData)
 }
 
-export interface InfiniteQueryObserverOptions<
+export type InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyof<
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = OmitKeyof<
   QueryCoreInfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   >,
   'structuralSharing'
-> {
+> & {
   /**
    * Set this to a reconciliation key to enable reconciliation between query results.
    * Set this to `false` to disable reconciliation between query results.

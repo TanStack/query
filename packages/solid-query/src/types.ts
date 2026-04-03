@@ -4,6 +4,7 @@ import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
+  InfiniteQueryMode,
   InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
@@ -87,22 +88,24 @@ export type DefinedUseQueryResult<
 > = DefinedUseBaseQueryResult<TData, TError>
 
 /* --- Create Infinite Queries Types --- */
-export interface SolidInfiniteQueryOptions<
+export type SolidInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyof<
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = OmitKeyof<
   InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   >,
   'queryKey' | 'suspense'
-> {
+> & {
   queryKey: TQueryKey
   /**
    * Only applicable while rendering queries on the server with streaming.
@@ -125,19 +128,31 @@ export type UseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = Accessor<
-  SolidInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+  SolidInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    TMode
+  >
 >
 
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = InfiniteQueryObserverResult<TData, TError>
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 
 export type DefinedUseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedInfiniteQueryObserverResult<TData, TError>
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = DefinedInfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 
 /* --- Create Mutation Types --- */
 export interface SolidMutationOptions<

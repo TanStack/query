@@ -5,12 +5,12 @@ import type { InfiniteData } from '@tanstack/query-core'
 
 describe('queryOptions', () => {
   test('Should not allow excess properties', () => {
+    // @ts-expect-error this is a good error, because stallTime does not exist!
     infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('data'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      // @ts-expect-error this is a good error, because stallTime does not exist!
       stallTime: 1000,
     })
   })
@@ -55,5 +55,25 @@ describe('queryOptions', () => {
     const data = await new QueryClient().fetchInfiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+  })
+
+  test('Should preserve imperative fetch method types', () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: ({ pageParam }) => {
+        expectTypeOf(pageParam).toEqualTypeOf<number>()
+        return pageParam * 5
+      },
+      initialPageParam: 1,
+      mode: 'imperative',
+    })
+
+    const query = createInfiniteQuery(() => options)
+
+    query.fetchNextPage({ pageParam: 2 })
+    query.fetchPreviousPage({ pageParam: 0 })
+
+    // @ts-expect-error pageParam is required in imperative mode
+    query.fetchNextPage()
   })
 })

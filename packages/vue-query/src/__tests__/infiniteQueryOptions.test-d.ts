@@ -110,4 +110,24 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<string, unknown> | undefined
     >()
   })
+
+  it('should preserve imperative fetch method types', () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: ({ pageParam }) => {
+        expectTypeOf(pageParam).toEqualTypeOf<number>()
+        return pageParam * 5
+      },
+      initialPageParam: 1,
+      mode: 'imperative',
+    })
+
+    const query = reactive(useInfiniteQuery(options))
+
+    query.fetchNextPage({ pageParam: 2 })
+    query.fetchPreviousPage({ pageParam: 0 })
+
+    // @ts-expect-error pageParam is required in imperative mode
+    query.fetchNextPage()
+  })
 })

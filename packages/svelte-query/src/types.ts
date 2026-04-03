@@ -2,6 +2,7 @@ import type { Snippet } from 'svelte'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
+  InfiniteQueryMode,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -56,19 +57,23 @@ export type CreateInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = InfiniteQueryObserverOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  TMode
 >
 
 /** Result from createInfiniteQuery */
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = InfiniteQueryObserverResult<TData, TError>
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 
 /** Options for createBaseQuery with initialData */
 export type DefinedCreateBaseQueryResult<
