@@ -48,6 +48,7 @@ describe('useQuery', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -473,7 +474,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
-          return 'data: ' + value
+          return `data: ${value}`
         },
 
         gcTime: 0,
@@ -769,7 +770,7 @@ describe('useQuery', () => {
         queryFn: async () => {
           await sleep(10)
           count++
-          return 'test' + count
+          return `test${count}`
         },
       })
 
@@ -3686,9 +3687,8 @@ describe('useQuery', () => {
           if (counter < 2) {
             counter++
             return Promise.reject(new Error('error'))
-          } else {
-            return Promise.resolve('data')
           }
+          return Promise.resolve('data')
         },
         retryDelay: 10,
       })
@@ -5062,9 +5062,8 @@ describe('useQuery', () => {
           await sleep(10)
           if (id % 2 === 1) {
             return Promise.reject(new Error('Error'))
-          } else {
-            return 'data'
           }
+          return 'data'
         },
         retry: false,
         retryOnMount: false,
@@ -5300,7 +5299,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
         })
 
@@ -5363,7 +5362,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
         })
 
@@ -5411,7 +5410,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
         })
 
@@ -5457,7 +5456,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
           initialData: 'initial',
         })
@@ -5505,7 +5504,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
           initialData: 'initial',
         })
@@ -5565,7 +5564,7 @@ describe('useQuery', () => {
           queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
-            throw new Error('failed' + count)
+            throw new Error(`failed${count}`)
           },
           retry: 2,
           retryDelay: 10,
@@ -5678,7 +5677,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
         })
 
@@ -5735,7 +5734,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
           refetchOnReconnect: false,
         })
@@ -5787,7 +5786,7 @@ describe('useQuery', () => {
       function Component() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: () => {
             count++
             return `data${count}`
           },
@@ -5862,7 +5861,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data ' + count
+            return `data ${count}`
           },
           networkMode: 'always',
         })
@@ -5898,7 +5897,7 @@ describe('useQuery', () => {
           queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
-            throw new Error('error ' + count)
+            throw new Error(`error ${count}`)
           },
           networkMode: 'always',
           retry: 1,
@@ -5942,7 +5941,7 @@ describe('useQuery', () => {
           queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
-            throw new Error('failed' + count)
+            throw new Error(`failed${count}`)
           },
           retry: 2,
           retryDelay: 1,
@@ -6067,7 +6066,7 @@ describe('useQuery', () => {
         renders++
         return (
           <div>
-            <span>{data ? 'has data' + data : 'no data'}</span>
+            <span>{data ? `has data${data}` : 'no data'}</span>
             <button
               onClick={() => queryClient.setQueryData<string>(key, 'new data')}
             >
@@ -6697,7 +6696,7 @@ describe('useQuery', () => {
     expect(results[3]).toMatchObject({
       status: 'error',
       fetchStatus: 'idle',
-      error: error,
+      error,
       errorUpdateCount: 2,
       isLoading: false,
       failureCount: 1,
