@@ -81,32 +81,22 @@ export type CreateInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
   TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
-> = TMode extends InfiniteQueryMode
-  ? CreateManualInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-  : DistributiveOmit<
-      InfiniteQueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam,
-        undefined
-      >,
-      'suspense'
-    >
+> = CreateInfiniteQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  TMode
+>
 
-export type CreateManualInfiniteQueryOptions<
+export type CreateInfiniteQueryOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = DistributiveOmit<
   InfiniteQueryObserverOptions<
     TQueryFnData,
@@ -114,7 +104,7 @@ export type CreateManualInfiniteQueryOptions<
     TData,
     TQueryKey,
     TPageParam,
-    InfiniteQueryMode
+    TMode
   >,
   'suspense'
 >

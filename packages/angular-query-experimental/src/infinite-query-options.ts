@@ -11,7 +11,7 @@ import type {
 } from '@tanstack/query-core'
 import type {
   CreateInfiniteQueryOptions,
-  CreateManualInfiniteQueryOptions,
+  CreateInfiniteQueryOptionsBase,
 } from './types'
 
 type OptionalInitialData<TQueryFnData, TPageParam> = {
@@ -58,12 +58,13 @@ export type ManualUndefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = CreateManualInfiniteQueryOptions<
+> = CreateInfiniteQueryOptionsBase<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  InfiniteQueryMode
 > &
   OptionalInitialData<TQueryFnData, TPageParam>
 
@@ -74,12 +75,13 @@ export type UnusedSkipTokenManualInfiniteOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = WithoutSkipTokenQueryFn<
-  CreateManualInfiniteQueryOptions<
+  CreateInfiniteQueryOptionsBase<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    InfiniteQueryMode
   >
 >
 
@@ -107,12 +109,13 @@ export type ManualDefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = CreateManualInfiniteQueryOptions<
+> = CreateInfiniteQueryOptionsBase<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  InfiniteQueryMode
 > &
   RequiredInitialData<TQueryFnData, TPageParam>
 
