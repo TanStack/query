@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { QueryClient, createQueries } from '../src/index.js'
-import { promiseWithResolvers, withEffectRoot } from './utils.svelte.js'
+import {
+  promiseWithResolvers,
+  ref,
+  withEffectRoot,
+} from './utils.svelte.js'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -824,6 +828,32 @@ describe('createQueries', () => {
         combined: true,
         res: 'first result,second result',
       })
+    }),
+  )
+
+  it(
+    'should handle removing multiple queries in a single update',
+    withEffectRoot(async () => {
+      const filters = ref([1, 2, 3, 4])
+
+      const results = createQueries(
+        () => ({
+          queries: filters.value.map((filter) => ({
+            queryKey: ['filter', filter],
+            queryFn: () => filter,
+          })),
+        }),
+        () => queryClient,
+      )
+
+      await vi.waitFor(() =>
+        expect(results.map((result) => result.data)).toEqual([1, 2, 3, 4]),
+      )
+
+      filters.value = filters.value.slice(0, 2)
+
+      await vi.waitFor(() => expect(results).toHaveLength(2))
+      expect(results.map((result) => result.data)).toEqual([1, 2])
     }),
   )
 
