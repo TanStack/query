@@ -3,8 +3,8 @@ import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
-  FetchPageDirectionMode,
   InfiniteData,
+  InfiniteQueryMode,
   QueryClient,
   QueryKey,
   QueryObserver,
@@ -15,8 +15,10 @@ import type {
   UseInfiniteQueryResult,
 } from './types'
 import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
+  DeclarativeDefinedInitialDataInfiniteOptions,
+  DeclarativeUndefinedInitialDataInfiniteOptions,
+  ImperativeDefinedInitialDataInfiniteOptions,
+  ImperativeUndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
 
 export function useInfiniteQuery<
@@ -25,18 +27,16 @@ export function useInfiniteQuery<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = undefined,
 >(
-  options: DefinedInitialDataInfiniteOptions<
+  options: DeclarativeDefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam,
-    TMode
+    TPageParam
   >,
   queryClient?: QueryClient,
-): DefinedUseInfiniteQueryResult<TData, TError>
+): DefinedUseInfiniteQueryResult<TData, TError, TPageParam, undefined>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -44,18 +44,16 @@ export function useInfiniteQuery<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = undefined,
 >(
-  options: UndefinedInitialDataInfiniteOptions<
+  options: ImperativeDefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam,
-    TMode
+    TPageParam
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): DefinedUseInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -63,18 +61,33 @@ export function useInfiniteQuery<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = undefined,
 >(
-  options: UseInfiniteQueryOptions<
+  options: DeclarativeUndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam,
-    TMode
+    TPageParam
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<TData, TError, TPageParam, undefined>
+
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: ImperativeUndefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
 
 export function useInfiniteQuery(
   options: UseInfiniteQueryOptions,

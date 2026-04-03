@@ -5,8 +5,8 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
-  FetchPageDirectionMode,
   FetchQueryOptions,
+  InfiniteQueryMode,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -101,13 +101,13 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
   any,
   any
 >
-export type UseInfiniteQueryOptions<
+type UseInfiniteQueryOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = undefined,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = DistributiveOmit<
   InfiniteQueryObserverOptions<
     TQueryFnData,
@@ -119,44 +119,121 @@ export type UseInfiniteQueryOptions<
   >,
   'suspense'
 > & {
-  /**
-   * Set this to `false` to unsubscribe this observer from updates to the query cache.
-   * Defaults to `true`.
-   */
   subscribed?: boolean
 }
 
-export type AnyUseSuspenseInfiniteQueryOptions =
-  UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
+export type UseDeclarativeInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = UseInfiniteQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  undefined
+>
+
+export type UseImperativeInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = UseInfiniteQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  InfiniteQueryMode
+>
+
+export type UseInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> =
+  | UseDeclarativeInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
+  | UseImperativeInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
+
 export type UseSuspenseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  TMode extends FetchPageDirectionMode = undefined,
-> = DistributiveOmit<
-  UseInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam,
-    TMode
-  >,
-  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
-> & {
-  queryFn?: Exclude<
-    UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >['queryFn'],
-    SkipToken
-  >
-}
+> =
+  | (DistributiveOmit<
+      UseDeclarativeInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >,
+      'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+    > & {
+      /**
+       * Set this to `false` to unsubscribe this observer from updates to the query cache.
+       * Defaults to `true`.
+       */
+      queryFn?: Exclude<
+        UseDeclarativeInfiniteQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >['queryFn'],
+        SkipToken
+      >
+    })
+  | (DistributiveOmit<
+      UseImperativeInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >,
+      'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+    > & {
+      /**
+       * Set this to `false` to unsubscribe this observer from updates to the query cache.
+       * Defaults to `true`.
+       */
+      queryFn?: Exclude<
+        UseImperativeInfiniteQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >['queryFn'],
+        SkipToken
+      >
+    })
+
+export type AnyUseSuspenseInfiniteQueryOptions =
+  UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
 
 export type UseBaseQueryResult<
   TData = unknown,
@@ -184,18 +261,24 @@ export type DefinedUseQueryResult<
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = InfiniteQueryObserverResult<TData, TError>
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 
 export type DefinedUseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedInfiniteQueryObserverResult<TData, TError>
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = DefinedInfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 
 export type UseSuspenseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = OmitKeyof<
-  DefinedInfiniteQueryObserverResult<TData, TError>,
+  DefinedInfiniteQueryObserverResult<TData, TError, TPageParam, TMode>,
   'isPlaceholderData' | 'promise'
 >
 

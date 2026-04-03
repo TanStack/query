@@ -166,21 +166,21 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
+    // @ts-expect-error getNextPageParam is not allowed in imperative mode
     infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
       mode: 'imperative',
-      // @ts-expect-error getNextPageParam is not allowed in imperative mode
       getNextPageParam: () => 1,
     })
 
+    // @ts-expect-error getPreviousPageParam is not allowed in imperative mode
     infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
       mode: 'imperative',
-      // @ts-expect-error getPreviousPageParam is not allowed in imperative mode
       getPreviousPageParam: () => 0,
     })
   })

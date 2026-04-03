@@ -136,6 +136,27 @@ describe('getNextPageParam / getPreviousPageParam', () => {
       InfiniteData<string, unknown> | undefined
     >()
   })
+
+  it('should infer async object page types for getNextPageParam', () => {
+    useInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: async ({ pageParam = 0 }) => {
+        return {
+          nextCursor: pageParam + 1,
+          data: `page-${pageParam}`,
+        }
+      },
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        expectTypeOf(lastPage).toEqualTypeOf<{
+          nextCursor: number
+          data: string
+        }>()
+        return lastPage.nextCursor
+      },
+      retry: false,
+    })
+  })
 })
 
 describe('error booleans', () => {
