@@ -89,31 +89,17 @@ export type CreateInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >
-  : CreateDeclarativeInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
+  : DistributiveOmit<
+      InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam,
+        undefined
+      >,
+      'suspense'
     >
-
-export type CreateDeclarativeInfiniteQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
-> = DistributiveOmit<
-  InfiniteQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam,
-    undefined
-  >,
-  'suspense'
->
 
 export type CreateManualInfiniteQueryOptions<
   TQueryFnData = unknown,

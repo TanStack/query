@@ -99,9 +99,10 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
   any,
   any,
   any,
+  any,
   any
 >
-type UseInfiniteQueryOptionsBase<
+export type UseInfiniteQueryOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -122,57 +123,21 @@ type UseInfiniteQueryOptionsBase<
   subscribed?: boolean
 }
 
-export type UseDeclarativeInfiniteQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
-> = UseInfiniteQueryOptionsBase<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam,
-  undefined
->
-
-export type UseManualInfiniteQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
-> = UseInfiniteQueryOptionsBase<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam,
-  InfiniteQueryMode
->
-
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> =
-  | UseDeclarativeInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-  | UseManualInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+> = UseInfiniteQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  TMode
+>
 
 export type UseSuspenseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -182,12 +147,13 @@ export type UseSuspenseInfiniteQueryOptions<
   TPageParam = unknown,
 > =
   | (DistributiveOmit<
-      UseDeclarativeInfiniteQueryOptions<
+      UseInfiniteQueryOptions<
         TQueryFnData,
         TError,
         TData,
         TQueryKey,
-        TPageParam
+        TPageParam,
+        undefined
       >,
       'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
     > & {
@@ -196,23 +162,25 @@ export type UseSuspenseInfiniteQueryOptions<
        * Defaults to `true`.
        */
       queryFn?: Exclude<
-        UseDeclarativeInfiniteQueryOptions<
+        UseInfiniteQueryOptions<
           TQueryFnData,
           TError,
           TData,
           TQueryKey,
-          TPageParam
+          TPageParam,
+          undefined
         >['queryFn'],
         SkipToken
       >
     })
   | (DistributiveOmit<
-      UseManualInfiniteQueryOptions<
+      UseInfiniteQueryOptionsBase<
         TQueryFnData,
         TError,
         TData,
         TQueryKey,
-        TPageParam
+        TPageParam,
+        InfiniteQueryMode
       >,
       'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
     > & {
@@ -221,12 +189,13 @@ export type UseSuspenseInfiniteQueryOptions<
        * Defaults to `true`.
        */
       queryFn?: Exclude<
-        UseManualInfiniteQueryOptions<
+        UseInfiniteQueryOptionsBase<
           TQueryFnData,
           TError,
           TData,
           TQueryKey,
-          TPageParam
+          TPageParam,
+          InfiniteQueryMode
         >['queryFn'],
         SkipToken
       >

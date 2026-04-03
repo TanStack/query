@@ -11,7 +11,6 @@ import type {
   InfiniteData,
   InfiniteQueryMode,
   QueryKey,
-  QueryObserver,
 } from '@tanstack/query-core'
 import type {
   CreateInfiniteQueryOptions,
@@ -20,8 +19,6 @@ import type {
 } from './types'
 import type {
   DefinedInitialDataInfiniteOptions,
-  DeclarativeDefinedInitialDataInfiniteOptions,
-  DeclarativeUndefinedInitialDataInfiniteOptions,
   ManualDefinedInitialDataInfiniteOptions,
   ManualUndefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
@@ -144,12 +141,13 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  injectInfiniteQueryFn: () => DeclarativeDefinedInitialDataInfiniteOptions<
+  injectInfiniteQueryFn: () => DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
   options?: InjectInfiniteQueryOptions,
 ): DefinedCreateInfiniteQueryResult<TData, TError, TPageParam, undefined>
@@ -256,12 +254,13 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  injectInfiniteQueryFn: () => DeclarativeUndefinedInitialDataInfiniteOptions<
+  injectInfiniteQueryFn: () => UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
   options?: InjectInfiniteQueryOptions,
 ): CreateInfiniteQueryResult<TData, TError, TPageParam, undefined>
@@ -444,13 +443,10 @@ export function injectInfiniteQuery<
 export function injectInfiniteQuery(
   injectInfiniteQueryFn: () => any,
   options?: InjectInfiniteQueryOptions,
-): any {
+) {
   !options?.injector && assertInInjectionContext(injectInfiniteQuery)
 
   return runInInjectionContext(options?.injector ?? inject(Injector), () =>
-    createBaseQuery(
-      injectInfiniteQueryFn as unknown as () => any,
-      InfiniteQueryObserver as typeof QueryObserver,
-    ),
-  ) as any
+    createBaseQuery(injectInfiniteQueryFn, InfiniteQueryObserver),
+  )
 }

@@ -2,6 +2,7 @@ import type {
   DataTag,
   DefaultError,
   InfiniteData,
+  InfiniteQueryMode,
   InitialDataFunction,
   NonUndefinedGuard,
   OmitKeyof,
@@ -9,9 +10,8 @@ import type {
   SkipToken,
 } from '@tanstack/query-core'
 import type {
-  UseDeclarativeInfiniteQueryOptions,
-  UseManualInfiniteQueryOptions,
   UseInfiniteQueryOptions,
+  UseInfiniteQueryOptionsBase,
 } from './types'
 
 type OptionalInitialData<TQueryFnData, TPageParam> = {
@@ -50,27 +50,14 @@ export type UndefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
 > = UseInfiniteQueryOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
-> &
-  OptionalInitialData<TQueryFnData, TPageParam>
-
-export type DeclarativeUndefinedInitialDataInfiniteOptions<
-  TQueryFnData,
-  TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
-> = UseDeclarativeInfiniteQueryOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam
+  TPageParam,
+  TMode
 > &
   OptionalInitialData<TQueryFnData, TPageParam>
 
@@ -80,30 +67,15 @@ export type ManualUndefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = UseManualInfiniteQueryOptions<
+> = UseInfiniteQueryOptionsBase<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  InfiniteQueryMode
 > &
   OptionalInitialData<TQueryFnData, TPageParam>
-
-export type UnusedSkipTokenDeclarativeInfiniteOptions<
-  TQueryFnData,
-  TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
-> = WithoutSkipTokenQueryFn<
-  UseDeclarativeInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  >
->
 
 export type UnusedSkipTokenManualInfiniteOptions<
   TQueryFnData,
@@ -112,12 +84,13 @@ export type UnusedSkipTokenManualInfiniteOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = WithoutSkipTokenQueryFn<
-  UseManualInfiniteQueryOptions<
+  UseInfiniteQueryOptionsBase<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    InfiniteQueryMode
   >
 >
 
@@ -127,21 +100,17 @@ export type UnusedSkipTokenInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> =
-  | UnusedSkipTokenDeclarativeInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-  | UnusedSkipTokenManualInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+> = WithoutSkipTokenQueryFn<
+  UseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    TMode
+  >
+>
 
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
@@ -149,34 +118,14 @@ export type DefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> =
-  | DeclarativeDefinedInitialDataInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-  | ManualDefinedInitialDataInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-
-export type DeclarativeDefinedInitialDataInfiniteOptions<
-  TQueryFnData,
-  TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
-> = UseDeclarativeInfiniteQueryOptions<
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+> = UseInfiniteQueryOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  TMode
 > &
   RequiredInitialData<TQueryFnData, TPageParam>
 
@@ -186,12 +135,13 @@ export type ManualDefinedInitialDataInfiniteOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = UseManualInfiniteQueryOptions<
+> = UseInfiniteQueryOptionsBase<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  InfiniteQueryMode
 > &
   RequiredInitialData<TQueryFnData, TPageParam>
 
@@ -202,19 +152,21 @@ export function infiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: DeclarativeDefinedInitialDataInfiniteOptions<
+  options: DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
-): DeclarativeDefinedInitialDataInfiniteOptions<
+): DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  undefined
 > &
   TaggedInfiniteQueryOptions<{}, TQueryKey, TQueryFnData, TError>
 
@@ -248,19 +200,21 @@ export function infiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UnusedSkipTokenDeclarativeInfiniteOptions<
+  options: UnusedSkipTokenInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
-): UnusedSkipTokenDeclarativeInfiniteOptions<
+): UnusedSkipTokenInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  undefined
 > &
   TaggedInfiniteQueryOptions<{}, TQueryKey, TQueryFnData, TError>
 
@@ -294,19 +248,21 @@ export function infiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: DeclarativeUndefinedInitialDataInfiniteOptions<
+  options: UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
-): DeclarativeUndefinedInitialDataInfiniteOptions<
+): UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey,
-  TPageParam
+  TPageParam,
+  undefined
 > &
   TaggedInfiniteQueryOptions<{}, TQueryKey, TQueryFnData, TError>
 

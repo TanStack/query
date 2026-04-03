@@ -15,10 +15,10 @@ import type {
   UseInfiniteQueryResult,
 } from './types'
 import type {
-  DeclarativeDefinedInitialDataInfiniteOptions,
-  DeclarativeUndefinedInitialDataInfiniteOptions,
+  DefinedInitialDataInfiniteOptions,
   ManualDefinedInitialDataInfiniteOptions,
   ManualUndefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
 
 export function useInfiniteQuery<
@@ -28,12 +28,13 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: DeclarativeDefinedInitialDataInfiniteOptions<
+  options: DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
   queryClient?: QueryClient,
 ): DefinedUseInfiniteQueryResult<TData, TError, TPageParam, undefined>
@@ -62,12 +63,13 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: DeclarativeUndefinedInitialDataInfiniteOptions<
+  options: UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
   queryClient?: QueryClient,
 ): UseInfiniteQueryResult<TData, TError, TPageParam, undefined>
