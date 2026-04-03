@@ -99,13 +99,13 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
   any,
   any
 >
-export interface UseInfiniteQueryOptions<
+export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyof<
+> = DistributiveOmit<
   InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
@@ -114,7 +114,7 @@ export interface UseInfiniteQueryOptions<
     TPageParam
   >,
   'suspense'
-> {
+> & {
   /**
    * Set this to `false` to unsubscribe this observer from updates to the query cache.
    * Defaults to `true`.
@@ -124,16 +124,16 @@ export interface UseInfiniteQueryOptions<
 
 export type AnyUseSuspenseInfiniteQueryOptions =
   UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
-export interface UseSuspenseInfiniteQueryOptions<
+export type UseSuspenseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyof<
+> = DistributiveOmit<
   UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
-> {
+> & {
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,

@@ -4,6 +4,7 @@ import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
+  DistributiveOmit,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -72,13 +73,13 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   >
 }
 
-export interface CreateInfiniteQueryOptions<
+export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyof<
+> = DistributiveOmit<
   InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
@@ -87,7 +88,7 @@ export interface CreateInfiniteQueryOptions<
     TPageParam
   >,
   'suspense'
-> {}
+>
 
 export type CreateBaseQueryResult<
   TData = unknown,

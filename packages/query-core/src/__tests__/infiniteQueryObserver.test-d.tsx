@@ -81,38 +81,81 @@ describe('InfiniteQueryObserver', () => {
       getNextPageParam: (page) => Number(page) + 1,
     })
 
-    expectTypeOf<typeof observer.fetchNextPage>()
-      .parameter(0)
-      .toEqualTypeOf<
-        { cancelRefetch?: boolean; throwOnError?: boolean } | undefined
-      >()
+    observer.fetchNextPage()
+    observer.fetchPreviousPage({ cancelRefetch: false })
 
-    expectTypeOf<typeof observer.fetchPreviousPage>()
-      .parameter(0)
-      .toEqualTypeOf<
-        { cancelRefetch?: boolean; throwOnError?: boolean } | undefined
-      >()
+    // @ts-expect-error pageParam is not allowed in declarative mode
+    observer.fetchNextPage({ pageParam: 2 })
+
+    // @ts-expect-error pageParam is not allowed in declarative mode
+    observer.fetchPreviousPage({ pageParam: 0 })
   })
 
   it('should require pageParam on fetchNextPage / fetchPreviousPage if getNextPageParam is missing', async () => {
-    const observer = new InfiniteQueryObserver(queryClient, {
+    const observer = new InfiniteQueryObserver<
+      string,
+      Error,
+      InfiniteData<string>,
+      ReturnType<typeof queryKey>,
+      number,
+      'imperative'
+    >(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      mode: 'imperative',
+      initialPageParam: 1,
+    })
+
+    observer.fetchNextPage({ pageParam: 2 })
+    observer.fetchPreviousPage({ pageParam: 0, cancelRefetch: false })
+
+    // @ts-expect-error pageParam is required in imperative mode
+    observer.fetchNextPage()
+
+    // @ts-expect-error pageParam is required in imperative mode
+    observer.fetchPreviousPage()
+  })
+
+  it('should reject missing mode / getNextPageParam', () => {
+    // @ts-expect-error getNextPageParam is required unless mode is imperative
+    new InfiniteQueryObserver(queryClient, {
       queryKey: queryKey(),
       queryFn: ({ pageParam }) => String(pageParam),
       initialPageParam: 1,
     })
+  })
 
-    expectTypeOf<typeof observer.fetchNextPage>()
-      .parameter(0)
-      .toEqualTypeOf<
-        | { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }
-        | undefined
-      >()
+  it('should reject page param getters in imperative mode', () => {
+    // @ts-expect-error getNextPageParam is not allowed in imperative mode
+    new InfiniteQueryObserver<
+      string,
+      Error,
+      InfiniteData<string>,
+      ReturnType<typeof queryKey>,
+      number,
+      'imperative'
+    >(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      mode: 'imperative',
+      initialPageParam: 1,
+      getNextPageParam: () => 2,
+    })
 
-    expectTypeOf<typeof observer.fetchPreviousPage>()
-      .parameter(0)
-      .toEqualTypeOf<
-        | { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }
-        | undefined
-      >()
+    // @ts-expect-error getPreviousPageParam is not allowed in imperative mode
+    new InfiniteQueryObserver<
+      string,
+      Error,
+      InfiniteData<string>,
+      ReturnType<typeof queryKey>,
+      number,
+      'imperative'
+    >(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      mode: 'imperative',
+      initialPageParam: 1,
+      getPreviousPageParam: () => 0,
+    })
   })
 })

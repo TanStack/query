@@ -3,6 +3,7 @@ import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
+  FetchPageDirectionMode,
   InfiniteData,
   QueryClient,
   QueryKey,
@@ -24,13 +25,15 @@ export function useInfiniteQuery<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends FetchPageDirectionMode = 'declarative',
 >(
   options: DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   >,
   queryClient?: QueryClient,
 ): DefinedUseInfiniteQueryResult<TData, TError>
@@ -41,13 +44,15 @@ export function useInfiniteQuery<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends FetchPageDirectionMode = 'declarative',
 >(
   options: UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   >,
   queryClient?: QueryClient,
 ): UseInfiniteQueryResult<TData, TError>
@@ -58,13 +63,15 @@ export function useInfiniteQuery<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends FetchPageDirectionMode = 'declarative',
 >(
   options: UseInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   >,
   queryClient?: QueryClient,
 ): UseInfiniteQueryResult<TData, TError>

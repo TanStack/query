@@ -39,4 +39,23 @@ describe('injectInfiniteQuery', () => {
       expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
   })
+
+  test('should require pageParam on imperative fetch methods', () => {
+    const query = TestBed.runInInjectionContext(() => {
+      return injectInfiniteQuery(() => ({
+        queryKey: ['infiniteQuery'],
+        queryFn: ({ pageParam }) => 'data on page ' + pageParam,
+        initialPageParam: 0,
+        mode: 'imperative',
+      }))
+    })
+
+    expectTypeOf(query.fetchNextPage).parameters.toEqualTypeOf<
+      [options: { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }]
+    >()
+
+    expectTypeOf(query.fetchPreviousPage).parameters.toEqualTypeOf<
+      [options: { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }]
+    >()
+  })
 })

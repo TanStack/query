@@ -38,15 +38,18 @@ describe('infiniteQueryOptions', () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
-      getNextPageParam: () => 1,
       initialPageParam: 1,
+      mode: 'imperative',
     })
 
-    const { data } = injectInfiniteQuery(() => options)
+    const { data, fetchNextPage } = injectInfiniteQuery(() => options)
 
     // known issue: type of pageParams is unknown when returned from useInfiniteQuery
     expectTypeOf(data()).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
+    >()
+    expectTypeOf(fetchNextPage).parameters.toEqualTypeOf<
+      [options: { pageParam: number; cancelRefetch?: boolean; throwOnError?: boolean }]
     >()
   })
 
@@ -54,8 +57,8 @@ describe('infiniteQueryOptions', () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
-      getNextPageParam: () => 1,
       initialPageParam: 1,
+      mode: 'imperative',
     })
 
     const data = await new QueryClient().fetchInfiniteQuery(options)
@@ -153,6 +156,33 @@ describe('infiniteQueryOptions', () => {
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
       queryClient.prefetchQuery(options),
     )
+  })
+
+  it('should reject missing mode / getNextPageParam and reject getters in imperative mode', () => {
+    // @ts-expect-error getNextPageParam is required unless mode is imperative
+    infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      initialPageParam: 1,
+    })
+
+    infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      initialPageParam: 1,
+      mode: 'imperative',
+      // @ts-expect-error getNextPageParam is not allowed in imperative mode
+      getNextPageParam: () => 1,
+    })
+
+    infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      initialPageParam: 1,
+      mode: 'imperative',
+      // @ts-expect-error getPreviousPageParam is not allowed in imperative mode
+      getPreviousPageParam: () => 0,
+    })
   })
 
   test('allow optional initialData function', () => {

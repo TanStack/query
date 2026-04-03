@@ -7,18 +7,29 @@ import {
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
+  InfiniteQueryMode,
   InfiniteQueryPageParamsOptions,
   OmitKeyof,
   QueryFunctionContext,
   QueryKey,
 } from './types'
 
-export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
+export function infiniteQueryBehavior<
+  TQueryFnData,
+  TError,
+  TData,
+  TPageParam,
+  TMode extends 'declarative' | InfiniteQueryMode = 'declarative',
+>(
   pages?: number,
 ): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
   return {
     onFetch: (context, query) => {
-      const options = context.options as InfiniteQueryPageParamsOptions<TData>
+      const options = context.options as InfiniteQueryPageParamsOptions<
+        TData,
+        TPageParam,
+        TMode
+      >
       const fetchMore = context.fetchOptions?.meta?.fetchMore
       const oldPages = context.state.data?.pages || []
       const oldPageParams = context.state.data?.pageParams || []
@@ -88,13 +99,14 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             pageParams: oldPageParams,
           }
           const param =
-            fetchMore.pageParam === undefined
-              ? pageParamFn(options, oldData)
-              : fetchMore.pageParam
+            options.mode === 'imperative' || fetchMore.pageParam === undefined
+              ? fetchMore.pageParam
+              : pageParamFn(options, oldData)
 
           result = await fetchPage(oldData, param, previous)
         } else {
-          const remainingPages = pages ?? oldPages.length
+          const remainingPages =
+            options.mode === 'imperative' ? 1 : (pages ?? oldPages.length)
 
           // Fetch all pages
           do {
@@ -133,12 +145,16 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 }
 
 function getNextPageParam(
-  options: InfiniteQueryPageParamsOptions<any>,
+  options: InfiniteQueryPageParamsOptions<any, any, any>,
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
+  if (options.mode === 'imperative') {
+    return undefined
+  }
+
   const lastIndex = pages.length - 1
   return pages.length > 0
-    ? options.getNextPageParam?.(
+    ? options.getNextPageParam(
         pages[lastIndex],
         pages,
         pageParams[lastIndex],
@@ -148,9 +164,13 @@ function getNextPageParam(
 }
 
 function getPreviousPageParam(
-  options: InfiniteQueryPageParamsOptions<any>,
+  options: InfiniteQueryPageParamsOptions<any, any, any>,
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
+  if (options.mode === 'imperative') {
+    return undefined
+  }
+
   return pages.length > 0
     ? options.getPreviousPageParam?.(pages[0], pages, pageParams[0], pageParams)
     : undefined
@@ -160,10 +180,10 @@ function getPreviousPageParam(
  * Checks if there is a next page.
  */
 export function hasNextPage(
-  options: InfiniteQueryPageParamsOptions<any, any>,
+  options: InfiniteQueryPageParamsOptions<any, any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
-  if (!data) return false
+  if (!data || options.mode === 'imperative') return false
   return getNextPageParam(options, data) != null
 }
 
@@ -171,9 +191,11 @@ export function hasNextPage(
  * Checks if there is a previous page.
  */
 export function hasPreviousPage(
-  options: InfiniteQueryPageParamsOptions<any, any>,
+  options: InfiniteQueryPageParamsOptions<any, any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
-  if (!data || !options.getPreviousPageParam) return false
+  if (!data || options.mode === 'imperative' || !options.getPreviousPageParam) {
+    return false
+  }
   return getPreviousPageParam(options, data) != null
 }

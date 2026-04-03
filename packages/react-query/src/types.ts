@@ -5,6 +5,7 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
+  FetchPageDirectionMode,
   FetchQueryOptions,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -100,22 +101,24 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
   any,
   any
 >
-export interface UseInfiniteQueryOptions<
+export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyof<
+  TMode extends FetchPageDirectionMode = 'declarative',
+> = DistributiveOmit<
   InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   >,
   'suspense'
-> {
+> & {
   /**
    * Set this to `false` to unsubscribe this observer from updates to the query cache.
    * Defaults to `true`.
@@ -125,16 +128,24 @@ export interface UseInfiniteQueryOptions<
 
 export type AnyUseSuspenseInfiniteQueryOptions =
   UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
-export interface UseSuspenseInfiniteQueryOptions<
+export type UseSuspenseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyof<
-  UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
+  TMode extends FetchPageDirectionMode = 'declarative',
+> = DistributiveOmit<
+  UseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam,
+    TMode
+  >,
   'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
-> {
+> & {
   queryFn?: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,

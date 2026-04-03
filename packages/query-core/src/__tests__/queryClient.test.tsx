@@ -810,7 +810,12 @@ describe('queryClient', () => {
           StrictData,
           StrictQueryKey,
           number
-        >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
+        >({
+          queryKey: key,
+          queryFn: fetchFn,
+          initialPageParam: 0,
+          mode: 'imperative',
+        }),
       ).resolves.toEqual(data)
     })
 
@@ -819,6 +824,7 @@ describe('queryClient', () => {
       const result = await queryClient.fetchInfiniteQuery({
         queryKey: key,
         initialPageParam: 10,
+        mode: 'imperative',
         queryFn: ({ pageParam }) => Number(pageParam),
       })
       const result2 = queryClient.getQueryData(key)
@@ -848,7 +854,12 @@ describe('queryClient', () => {
         StrictData,
         StrictQueryKey,
         number
-      >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 })
+      >({
+        queryKey: key,
+        queryFn: fetchFn,
+        initialPageParam: 0,
+        mode: 'imperative',
+      })
 
       const result = queryClient.getQueryData(key)
 
@@ -865,6 +876,7 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
         initialPageParam: 10,
+        mode: 'imperative',
       })
 
       const result = queryClient.getQueryData(key)

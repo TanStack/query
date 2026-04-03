@@ -66,7 +66,12 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     let observerResult:
-      | InfiniteQueryObserverResult<unknown, unknown>
+      | InfiniteQueryObserverResult<
+          InfiniteData<number>,
+          Error,
+          number,
+          'imperative'
+        >
       | undefined
 
     const unsubscribe = observer.subscribe((result) => {
@@ -202,14 +207,27 @@ describe('InfiniteQueryBehavior', () => {
       return pageParam
     })
 
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
+    const observer = new InfiniteQueryObserver<
+      number,
+      Error,
+      InfiniteData<number>,
+      typeof key,
+      number,
+      'imperative'
+    >(queryClient, {
       queryKey: key,
       queryFn,
+      mode: 'imperative',
       initialPageParam: 0,
     })
 
     let observerResult:
-      | InfiniteQueryObserverResult<unknown, unknown>
+      | InfiniteQueryObserverResult<
+          InfiniteData<number>,
+          Error,
+          number,
+          'imperative'
+        >
       | undefined
 
     const unsubscribe = observer.subscribe((result) => {
