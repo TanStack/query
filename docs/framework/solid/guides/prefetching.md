@@ -93,10 +93,12 @@ const queryClient = useQueryClient()
 const articleQuery = useQuery(() => ({
   queryKey: ['article', id],
   queryFn: (...args) => {
-    void queryClient.query({
-      queryKey: ['article-comments', id],
-      queryFn: getArticleCommentsById,
-    }).catch(noop)
+    void queryClient
+      .query({
+        queryKey: ['article-comments', id],
+        queryFn: getArticleCommentsById,
+      })
+      .catch(noop)
 
     return getArticleById(...args)
   },
@@ -111,10 +113,12 @@ import { createEffect } from 'solid-js'
 const queryClient = useQueryClient()
 
 createEffect(() => {
-  void queryClient.query({
-    queryKey: ['article-comments', id],
-    queryFn: getArticleCommentsById,
-  }).catch(noop)
+  void queryClient
+    .query({
+      queryKey: ['article-comments', id],
+      queryFn: getArticleCommentsById,
+    })
+    .catch(noop)
 })
 ```
 

@@ -23,30 +23,30 @@ await queryClient.query({ queryKey: ['posts'], queryFn: fetchPosts })
 
 Its available methods are:
 
-  - [`queryClient.query`](#queryclientquery)
-  - [`queryClient.infiniteQuery`](#queryclientinfinitequery)
-  - [`queryClient.getQueryData`](#queryclientgetquerydata)
-  - [`queryClient.getQueriesData`](#queryclientgetqueriesdata)
-  - [`queryClient.setQueryData`](#queryclientsetquerydata)
-  - [`queryClient.getQueryState`](#queryclientgetquerystate)
-  - [`queryClient.setQueriesData`](#queryclientsetqueriesdata)
-  - [`queryClient.invalidateQueries`](#queryclientinvalidatequeries)
-  - [`queryClient.refetchQueries`](#queryclientrefetchqueries)
-  - [`queryClient.cancelQueries`](#queryclientcancelqueries)
-  - [`queryClient.removeQueries`](#queryclientremovequeries)
-  - [`queryClient.resetQueries`](#queryclientresetqueries)
-  - [`queryClient.isFetching`](#queryclientisfetching)
-  - [`queryClient.isMutating`](#queryclientismutating)
-  - [`queryClient.getDefaultOptions`](#queryclientgetdefaultoptions)
-  - [`queryClient.setDefaultOptions`](#queryclientsetdefaultoptions)
-  - [`queryClient.getQueryDefaults`](#queryclientgetquerydefaults)
-  - [`queryClient.setQueryDefaults`](#queryclientsetquerydefaults)
-  - [`queryClient.getMutationDefaults`](#queryclientgetmutationdefaults)
-  - [`queryClient.setMutationDefaults`](#queryclientsetmutationdefaults)
-  - [`queryClient.getQueryCache`](#queryclientgetquerycache)
-  - [`queryClient.getMutationCache`](#queryclientgetmutationcache)
-  - [`queryClient.clear`](#queryclientclear)
-  - [`queryClient.resumePausedMutations`](#queryclientresumepausedmutations)
+- [`queryClient.query`](#queryclientquery)
+- [`queryClient.infiniteQuery`](#queryclientinfinitequery)
+- [`queryClient.getQueryData`](#queryclientgetquerydata)
+- [`queryClient.getQueriesData`](#queryclientgetqueriesdata)
+- [`queryClient.setQueryData`](#queryclientsetquerydata)
+- [`queryClient.getQueryState`](#queryclientgetquerystate)
+- [`queryClient.setQueriesData`](#queryclientsetqueriesdata)
+- [`queryClient.invalidateQueries`](#queryclientinvalidatequeries)
+- [`queryClient.refetchQueries`](#queryclientrefetchqueries)
+- [`queryClient.cancelQueries`](#queryclientcancelqueries)
+- [`queryClient.removeQueries`](#queryclientremovequeries)
+- [`queryClient.resetQueries`](#queryclientresetqueries)
+- [`queryClient.isFetching`](#queryclientisfetching)
+- [`queryClient.isMutating`](#queryclientismutating)
+- [`queryClient.getDefaultOptions`](#queryclientgetdefaultoptions)
+- [`queryClient.setDefaultOptions`](#queryclientsetdefaultoptions)
+- [`queryClient.getQueryDefaults`](#queryclientgetquerydefaults)
+- [`queryClient.setQueryDefaults`](#queryclientsetquerydefaults)
+- [`queryClient.getMutationDefaults`](#queryclientgetmutationdefaults)
+- [`queryClient.setMutationDefaults`](#queryclientsetmutationdefaults)
+- [`queryClient.getQueryCache`](#queryclientgetquerycache)
+- [`queryClient.getMutationCache`](#queryclientgetmutationcache)
+- [`queryClient.clear`](#queryclientclear)
+- [`queryClient.resumePausedMutations`](#queryclientresumepausedmutations)
 
 **Options**
 
@@ -122,7 +122,6 @@ try {
 **Options**
 
 The options for `fetchInfiniteQuery` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery).
-
 
 **Returns**
 

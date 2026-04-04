@@ -228,10 +228,12 @@ import {
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.query({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  }).catch(noop)
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return {
     props: {
@@ -310,10 +312,12 @@ import {
 export async function loader() {
   const queryClient = new QueryClient()
 
-  await queryClient.query({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  }).catch(noop)
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return json({ dehydratedState: dehydrate(queryClient) })
 }

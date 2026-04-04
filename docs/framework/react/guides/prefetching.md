@@ -21,11 +21,13 @@ One specific use of prefetching is to avoid Request Waterfalls, for an in-depth 
 ```tsx
 const prefetchTodos = () => {
   // The results of this query will be cached like a normal query
-  void queryClient.query({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-  // Swallow errors here, because usually they will fetch again in `useQuery`
-  }).catch(noop)
+  void queryClient
+    .query({
+      queryKey: ['todos'],
+      queryFn: fetchTodos,
+      // Swallow errors here, because usually they will fetch again in `useQuery`
+    })
+    .catch(noop)
 }
 ```
 
@@ -217,10 +219,12 @@ const queryClient = useQueryClient()
 const { data: articleData, isPending } = useQuery({
   queryKey: ['article', id],
   queryFn: (...args) => {
-    void queryClient.query({
-      queryKey: ['article-comments', id],
-      queryFn: getArticleCommentsById,
-    }).catch(noop)
+    void queryClient
+      .query({
+        queryKey: ['article-comments', id],
+        queryFn: getArticleCommentsById,
+      })
+      .catch(noop)
 
     return getArticleById(...args)
   },
@@ -233,10 +237,12 @@ Prefetching in an effect also works, but note that if you are using `useSuspense
 const queryClient = useQueryClient()
 
 useEffect(() => {
-  void queryClient.query({
-    queryKey: ['article-comments', id],
-    queryFn: getArticleCommentsById,
-  }).catch(noop)
+  void queryClient
+    .query({
+      queryKey: ['article-comments', id],
+      queryFn: getArticleCommentsById,
+    })
+    .catch(noop)
 }, [queryClient, id])
 ```
 

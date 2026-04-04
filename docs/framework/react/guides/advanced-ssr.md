@@ -116,10 +116,12 @@ import {
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.query({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  }).catch(noop)
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return {
     props: {
@@ -172,10 +174,12 @@ import Posts from './posts'
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  await queryClient.query({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  }).catch(noop)
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return (
     // Neat! Serialization is now as easy as passing props.
@@ -237,10 +241,12 @@ import CommentsServerComponent from './comments-server'
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  await queryClient.query({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  }).catch(noop)
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -261,10 +267,12 @@ import Comments from './comments'
 export default async function CommentsServerComponent() {
   const queryClient = new QueryClient()
 
-  await queryClient.query({
-    queryKey: ['posts-comments'],
-    queryFn: getComments,
-  }).catch(noop)
+  await queryClient
+    .query({
+      queryKey: ['posts-comments'],
+      queryFn: getComments,
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -437,10 +445,12 @@ export default function PostsPage() {
   const queryClient = getQueryClient()
 
   // look ma, no await
-  void queryClient.query({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  }).catch(noop)
+  void queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -504,10 +514,12 @@ export default function PostsPage() {
   const queryClient = getQueryClient()
 
   // look ma, no await
-  void queryClient.query({
-    queryKey: ['posts'],
-    queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
-  }).catch(noop)
+  void queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

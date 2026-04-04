@@ -72,7 +72,9 @@ queryClient.prefetchQuery(key, fn, options) // [!code --]
 queryClient.query({ queryKey: key, queryFn: fn, ...options }).catch(noop) // [!code ++]
 
 queryClient.prefetchInfiniteQuery(key, fn, options) // [!code --]
-queryClient.infiniteQuery({ queryKey: key, queryFn: fn, ...options }).catch(noop) // [!code ++]
+queryClient
+  .infiniteQuery({ queryKey: key, queryFn: fn, ...options })
+  .catch(noop) // [!code ++]
 
 queryClient.ensureQueryData(key, options) // [!code --]
 queryClient.query({ queryKey: key, ...options, staleTime: 'static' }) // [!code ++]
