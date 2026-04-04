@@ -86,17 +86,17 @@ function Comments(props) {
 [//]: # 'ExampleParentComponent'
 [//]: # 'Suspense'
 
-Another way is to prefetch inside of the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.prefetchQuery`:
+Another way is to prefetch inside of the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.query`:
 
 ```tsx
 const queryClient = useQueryClient()
 const articleQuery = useQuery(() => ({
   queryKey: ['article', id],
   queryFn: (...args) => {
-    queryClient.prefetchQuery({
+    void queryClient.query({
       queryKey: ['article-comments', id],
       queryFn: getArticleCommentsById,
-    })
+    }).catch(noop)
 
     return getArticleById(...args)
   },
@@ -111,10 +111,10 @@ import { createEffect } from 'solid-js'
 const queryClient = useQueryClient()
 
 createEffect(() => {
-  queryClient.prefetchQuery({
+  void queryClient.query({
     queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
-  })
+  }).catch(noop)
 })
 ```
 
@@ -185,10 +185,10 @@ function Feed() {
 
       for (const feedItem of feed) {
         if (feedItem.type === 'GRAPH') {
-          queryClient.prefetchQuery({
+          void queryClient.query({
             queryKey: ['graph', feedItem.id],
             queryFn: getGraphDataById,
-          })
+          }).catch(noop)
         }
       }
 
@@ -234,10 +234,10 @@ const articleRoute = new Route({
     routeContext: { articleQueryOptions, commentsQueryOptions },
   }) => {
     // Fetch comments asap, but don't block
-    queryClient.prefetchQuery(commentsQueryOptions)
+    void queryClient.query(commentsQueryOptions).catch(noop)
 
     // Don't render the route at all until article has been fetched
-    await queryClient.prefetchQuery(articleQueryOptions)
+    await queryClient.query(articleQueryOptions).catch(noop)
   },
   component: ({ useRouteContext }) => {
     const { articleQueryOptions, commentsQueryOptions } = useRouteContext()

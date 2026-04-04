@@ -174,7 +174,7 @@ computed(() => {
 
 ## Typing Query Options
 
-If you inline query options into `injectQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `injectQuery` and e.g. `prefetchQuery` or manage them in a service. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
+If you inline query options into `injectQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `injectQuery` and imperative calls like `queryClient.query`, or manage them in a service. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
 
 ```ts
 @Injectable({
@@ -215,10 +215,12 @@ export class Component {
   postQuery = injectQuery(this.optionsSignal)
 
   someMethod() {
-    this.queryClient.prefetchQuery(this.queries.post(23))
+    this.queryClient.query(this.queries.post(23)).catch(noop)
   }
 }
 ```
+
+Because `queryClient.query` preserves `select` and `enabled`, the extracted options behave the same way in both places. The legacy `fetchQuery` and `prefetchQuery` APIs still accept those options at the type level, but they ignore `select` and `enabled` at runtime.
 
 Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:
 
