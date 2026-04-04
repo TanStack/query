@@ -140,6 +140,9 @@ export class QueryClient {
       .data
   }
 
+  /**
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -394,6 +397,9 @@ export class QueryClient {
     return queryData as unknown as TData
   }
 
+  /**
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -425,6 +431,9 @@ export class QueryClient {
       : Promise.resolve(query.state.data as TData)
   }
 
+  /**
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -464,6 +473,9 @@ export class QueryClient {
     return this.query(options as any)
   }
 
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -488,6 +500,9 @@ export class QueryClient {
     return this.fetchQuery(options as any)
   }
 
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -506,6 +521,9 @@ export class QueryClient {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
+  /**
+   * @deprecated Use queryClient.infiniteQuery({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureInfiniteQueryData<
     TQueryFnData,
     TError = DefaultError,

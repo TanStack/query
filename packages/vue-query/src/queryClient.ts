@@ -68,6 +68,9 @@ export class QueryClient extends QC {
     return super.getQueryData(cloneDeepUnref(queryKey))
   }
 
+  /**
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -76,6 +79,9 @@ export class QueryClient extends QC {
   >(
     options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData>
+  /**
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -377,6 +383,9 @@ export class QueryClient extends QC {
     return super.infiniteQuery(cloneDeepUnref(options))
   }
 
+  /**
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -392,6 +401,9 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<TData>
+  /**
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -417,6 +429,9 @@ export class QueryClient extends QC {
     return super.fetchQuery(cloneDeepUnref(options))
   }
 
+  /**
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -425,6 +440,9 @@ export class QueryClient extends QC {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void>
+  /**
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -448,6 +466,9 @@ export class QueryClient extends QC {
     return super.prefetchQuery(cloneDeepUnref(options))
   }
 
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -463,6 +484,9 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>>
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -500,6 +524,9 @@ export class QueryClient extends QC {
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
+  /**
+   * @deprecated use void queryClient.infiniteQuery(options)instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -515,6 +542,9 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<void>
+  /**
+   * @deprecated use void queryClient.infiniteQuery(options)instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
