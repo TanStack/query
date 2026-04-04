@@ -35,9 +35,7 @@ export type UseMutationOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 > =
-  | MaybeRefDeep<
-      VueMutationOptions<TData, TError, TVariables, TOnMutateResult>
-    >
+  | MaybeRefDeep<VueMutationOptions<TData, TError, TVariables, TOnMutateResult>>
   | (() => MaybeRefDeep<
       VueMutationOptions<TData, TError, TVariables, TOnMutateResult>
     >)
