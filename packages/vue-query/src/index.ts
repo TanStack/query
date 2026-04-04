@@ -12,6 +12,7 @@ export type {
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
 export { MutationCache } from './mutationCache'
+export { mutationOptions } from './mutationOptions'
 export { useQuery } from './useQuery'
 export { useQueries } from './useQueries'
 export { useInfiniteQuery } from './useInfiniteQuery'
@@ -32,6 +33,7 @@ export type {
   UseInfiniteQueryReturnType,
 } from './useInfiniteQuery'
 export type { UseMutationOptions, UseMutationReturnType } from './useMutation'
+export type { VueMutationOptions } from './types'
 export type { UseQueriesOptions, UseQueriesResults } from './useQueries'
 export type { MutationFilters, MutationStateOptions } from './useMutationState'
 export type { QueryFilters } from './useIsFetching'
