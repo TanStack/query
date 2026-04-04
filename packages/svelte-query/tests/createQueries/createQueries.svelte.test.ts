@@ -4,7 +4,7 @@ import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import IsRestoringExample from './IsRestoringExample.svelte'
 
-describe('createQueries (isRestoring)', () => {
+describe('createQueries', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
