@@ -13,7 +13,13 @@ import {
   skipToken,
 } from '..'
 import { mockOnlineManagerIsOnline } from './utils'
-import type { QueryCache, QueryFunction, QueryObserverOptions } from '..'
+import type {
+  InfiniteData,
+  Query,
+  QueryCache,
+  QueryFunction,
+  QueryObserverOptions,
+} from '..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -1476,6 +1482,162 @@ describe('queryClient', () => {
         pages: ['page-1'],
         pageParams: [0],
       })
+    })
+
+    test('should throw when skipToken is provided and no cached data exists', async () => {
+      const key = queryKey()
+      const select = vi.fn(
+        (data: { pages: Array<string> }) => data.pages.length,
+      )
+
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: key,
+          queryFn: skipToken,
+          initialPageParam: 0,
+          select,
+        }),
+      ).rejects.toThrowError()
+
+      expect(select).not.toHaveBeenCalled()
+    })
+
+    test('should throw when enabled resolves true and skipToken are provided with no cached data', async () => {
+      await expect(
+        queryClient.infiniteQuery({
+          queryKey: queryKey(),
+          queryFn: skipToken,
+          initialPageParam: 0,
+          enabled: true,
+        }),
+      ).rejects.toThrowError()
+    })
+
+    test('should return cached data when enabled resolves false and skipToken are provided', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, {
+        pages: [{ value: 'cached-page' }],
+        pageParams: [0],
+      })
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn: skipToken,
+        initialPageParam: 0,
+        enabled: () => false,
+        select: (data: { pages: Array<{ value: string }> }) =>
+          data.pages[0]?.value.length,
+      })
+
+      expect(result).toBe('cached-page'.length)
+    })
+
+    test('should fetch when enabled callback returns true and cache is stale', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, {
+        pages: ['old-page'],
+        pageParams: [0],
+      })
+
+      await vi.advanceTimersByTimeAsync(1)
+
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve(`new-page-${String(pageParam)}`),
+      )
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+        enabled: () => true,
+        staleTime: 0,
+      })
+
+      expect(result).toEqual({
+        pages: ['new-page-0'],
+        pageParams: [0],
+      })
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    test('should evaluate staleTime callback and refetch when it returns stale', async () => {
+      const key = queryKey()
+
+      queryClient.setQueryData(key, {
+        pages: [{ value: 'old-page', staleTime: 0 }],
+        pageParams: [0],
+      })
+
+      await vi.advanceTimersByTimeAsync(1)
+
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve({
+          value: `new-page-${String(pageParam)}`,
+          staleTime: 0,
+        }),
+      )
+      const staleTimeSpy = vi.fn()
+      const staleTime = (
+        query: Query<
+          { value: string; staleTime: number },
+          Error,
+          InfiniteData<{ value: string; staleTime: number }, number>
+        >,
+      ) => {
+        staleTimeSpy()
+        return query.state.data?.pages[0]?.staleTime ?? 0
+      }
+
+      const result = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+        staleTime,
+      })
+
+      expect(result).toEqual({
+        pages: [{ value: 'new-page-0', staleTime: 0 }],
+        pageParams: [0],
+      })
+      expect(staleTimeSpy).toHaveBeenCalled()
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+
+    test('should read from cache with static staleTime even if invalidated', async () => {
+      const key = queryKey()
+
+      const queryFn = vi.fn(({ pageParam }: { pageParam: number }) =>
+        Promise.resolve({ value: `fetched-${String(pageParam)}` }),
+      )
+      const first = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+        staleTime: 'static',
+      })
+
+      expect(first).toEqual({
+        pages: [{ value: 'fetched-0' }],
+        pageParams: [0],
+      })
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      await queryClient.invalidateQueries({
+        queryKey: key,
+        refetchType: 'none',
+      })
+
+      const second = await queryClient.infiniteQuery({
+        queryKey: key,
+        queryFn,
+        initialPageParam: 0,
+        staleTime: 'static',
+      })
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(second).toBe(first)
     })
 
     test('should apply select to infinite query data', async () => {
