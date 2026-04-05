@@ -19,9 +19,9 @@ One specific use of prefetching is to avoid Request Waterfalls, for an in-depth 
 ## Using `query` to prefetch
 
 > [!NOTE]
-> These tips replace the use of the now deprecated `prefetchQuery` and `ensureQueryData` methods. If you used an earlier version of this guide, note that those methods will be removed in the next major version of Tanstack Query
+> These tips replace the use of the now deprecated `prefetchQuery` and `ensureQueryData` methods. If you used an earlier version of this guide, note that those methods will be removed in the next major version of TanStack Query
 
-Pretching a query uses the `query` method. This method by default will
+Prefetching a query uses the `query` method. This method by default will
 
 - Run the query function
 - Cache the result
@@ -391,7 +391,7 @@ For now, let's focus on the client side case and look at an example of how you c
 
 When integrating at the router level, you can choose to either _block_ rendering of that route until all data is present, or you can start a prefetch but not await the result. That way, you can start rendering the route as soon as possible. You can also mix these two approaches and await some critical data, but start rendering before all the secondary data has finished loading. In this example, we'll configure an `/article` route to not render until the article data has finished loading, as well as start prefetching comments as soon as possible, but not block rendering the route if comments haven't finished loading yet.
 
-Note that many route loaders like Tanstack Router use error boundarys to trigger error fallbacks. Whereas up to now we have been using `.catch(noop)` to ignore errors for data that will be retried by `useQuery`, for critical data that the route will not work without, you should `await` the promise without `noop` and handle the error in a `try` block or the router's error handling (such as Tanstack Router's `errorComponent`).
+Note that many route loaders use error boundarys to trigger error fallbacks. Whereas up to now we have been using `.catch(noop)` to ignore errors for data that will be retried by `useQuery`, for critical data that the route will not work without, you should `await` the promise without `noop` and handle the error in a `try` block or the router's error handling (such as TanStack Router's `errorComponent`).
 
 ```tsx
 const queryClient = new QueryClient()
@@ -420,7 +420,7 @@ const articleRoute = new Route({
     // As this is critical data we want the error component to trigger
     // as soon as possible if something goes wrong
     await queryClient.query({
-      ...articleQueryOptions
+      ...articleQueryOptions,
       // If we have the article loaded already, we don't want to block on
       // an extra prefetch; fallback on the default useQuery behavior to
       // keep the data fresh
