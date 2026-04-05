@@ -9,14 +9,9 @@ import {
   vi,
 } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
-import {
-  QueryClient,
-  createQuery,
-  keepPreviousData,
-} from '../src/index.js'
+import { QueryClient, createQuery, keepPreviousData } from '../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from './utils.svelte.js'
-import type { CreateQueryResult ,
-  QueryCache} from '../src/index.js'
+import type { CreateQueryResult, QueryCache } from '../src/index.js'
 
 describe('createQuery', () => {
   let queryClient: QueryClient
