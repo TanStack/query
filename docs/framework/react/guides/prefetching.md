@@ -33,7 +33,7 @@ For prefetching you often want to modify these defaults:
 - Out of the box, `query` uses the default `staleTime` configured for the `queryClient` to determine whether existing data in the cache is fresh or needs to be fetched again
 - You can also pass a specific `staleTime` like this: `query({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })`
   - This `staleTime` is only used for that query fetch, you still need to set it for any `useQuery` call as well
-  - If want to always return data if it's available in the cache regardless of the default `staleTime`, you can pass `"static"` in for `staleTime`.
+  - If you want to always return data if it's available in the cache regardless of the default `staleTime`, you can pass `"static"` in for `staleTime`.
   - Tip: If you are prefetching on the server, set a default `staleTime` higher than `0` for that `queryClient` to avoid having to pass in a specific `staleTime` to each prefetch call
 - If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `gcTime`
 - If your prefetch is for non-critical data, you can discard the promise with `void` and use `.catch(noop)` to swallow errors. The query will usually try to fetch again in a `useQuery`, which is a nice graceful fallback.
@@ -238,7 +238,7 @@ function Article({ id }) {
 }
 ```
 
-Another way is to prefetch inside of the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.query`:
+Another way is to prefetch inside the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.query`:
 
 ```tsx
 const queryClient = useQueryClient()
