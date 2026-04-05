@@ -1,5 +1,6 @@
 ---
 '@tanstack/query-core': minor
+'@tanstack/solid-query': minor
 '@tanstack/vue-query': minor
 ---
 
