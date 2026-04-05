@@ -218,6 +218,8 @@ For now, let's focus on the client side case and look at an example of how you c
 
 When integrating at the router level, you can choose to either _block_ rendering of that route until all data is present, or you can start a prefetch but not await the result. That way, you can start rendering the route as soon as possible. You can also mix these two approaches and await some critical data, but start rendering before all the secondary data has finished loading. In this example, we'll configure an `/article` route to not render until the article data has finished loading, as well as start prefetching comments as soon as possible, but not block rendering the route if comments haven't finished loading yet.
 
+Note that many route loaders use error boundaries to trigger error fallbacks. Whereas up to now we have been using `.catch(noop)` to ignore errors for data that will be retried by `useQuery`, for critical data that the route will not work without, you should `await` the promise without `noop` and handle the error in a `try` block or the router's error handling (such as TanStack Router's `errorComponent`).
+
 ```tsx
 const queryClient = new QueryClient()
 const routerContext = new RouterContext()
@@ -238,11 +240,19 @@ const articleRoute = new Route({
     context: { queryClient },
     routeContext: { articleQueryOptions, commentsQueryOptions },
   }) => {
-    // Fetch comments asap, but don't block
+    // Fetch comments asap, but don't block or throw errors
     void queryClient.query(commentsQueryOptions).catch(noop)
 
     // Don't render the route at all until article has been fetched
-    await queryClient.query(articleQueryOptions).catch(noop)
+    // As this is critical data we want the error component to trigger
+    // as soon as possible if something goes wrong
+    await queryClient.query({
+      ...articleQueryOptions,
+      // If we have the article loaded already, we don't want to block on
+      // an extra prefetch; fallback on the default useQuery behavior to
+      // keep the data fresh
+      staleTime: 'static'
+    })
   },
   component: ({ useRouteContext }) => {
     const { articleQueryOptions, commentsQueryOptions } = useRouteContext()
@@ -256,6 +266,7 @@ const articleRoute = new Route({
   errorComponent: () => 'Oh crap!',
 })
 ```
+
 
 Integration with other routers is also possible.
 
