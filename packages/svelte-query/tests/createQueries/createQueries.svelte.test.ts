@@ -969,4 +969,50 @@ describe('createQueries', () => {
 
     vi.useRealTimers()
   })
+
+  it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
+    vi.useFakeTimers()
+
+    const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
+    const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
+
+    const rendered = render(IsRestoringExample, {
+      props: { queryFn1, queryFn2 },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('status1')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('status2')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus1')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('fetchStatus2')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data1')).toHaveTextContent('undefined')
+    expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+
+    vi.useRealTimers()
+  })
 })
