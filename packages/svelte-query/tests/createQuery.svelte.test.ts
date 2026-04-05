@@ -1331,7 +1331,7 @@ describe('createQuery', () => {
           states2.push({ ...secondQuery })
         })
 
-        await vi.advanceTimersByTimeAsync(100)
+        await vi.advanceTimersByTimeAsync(11)
         expect(firstQuery).toMatchObject({ data: 'two', isStale: true })
         expect(secondQuery).toMatchObject({ data: 'two', isStale: true })
 
