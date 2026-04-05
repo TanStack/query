@@ -14,8 +14,6 @@ queryOptions({
 
 You can generally pass everything to `queryOptions` that you can also pass to [`useQuery`](./useQuery.md). These options can be shared across hooks and imperative APIs such as `queryClient.query`.
 
-Options like `select` and `enabled` keep working when you pass the result to `queryClient.query`, because `query()` honors the same imperative query semantics. Legacy methods like `fetchQuery` and `prefetchQuery` ignore `select` and `enabled`, even though TypeScript still accepts those excess properties.
-
 - `queryKey: QueryKey`
   - **Required**
   - The query key to generate options for.
