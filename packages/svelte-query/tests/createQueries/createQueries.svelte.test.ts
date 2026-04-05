@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  it,
+  vi,
+} from 'vitest'
 import { render } from '@testing-library/svelte'
 import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQueries } from '../../src/index.js'
