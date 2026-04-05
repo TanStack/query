@@ -517,9 +517,7 @@ Note that the infinite list must be bi-directional, which requires both `getNext
 
 ### Infinite Queries can prefetch multiple pages
 
-Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option.
-
-If you are updating older v5 examples, prefer `queryClient.infiniteQuery(...)` here instead of `queryClient.prefetchInfiniteQuery(...)`. Like the other legacy imperative methods, `prefetchInfiniteQuery` is deprecated as of `INSERT_FUTURE_V5_MINOR`. Read the [prefetching guide](./prefetching.md) for the current pattern.
+Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](./prefetching.md) for more information.
 
 ### New `combine` option for `useQueries`
 

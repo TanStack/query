@@ -9,9 +9,7 @@ usePrefetchQuery(options)
 
 **Options**
 
-You can pass everything to `usePrefetchQuery` that you can pass to [`queryClient.prefetchQuery`](../../../reference/QueryClient.md#queryclientprefetchquery). Remember that some of them are required as below:
-
-For general imperative fetching outside render, prefer [`queryClient.query`](../../../reference/QueryClient.md#queryclientquery). This hook specifically mirrors the legacy prefetch behavior during render.
+You can pass everything to `usePrefetchQuery` that you can pass to [`queryClient.query`](../../../reference/QueryClient.md#queryclientprefetchquery). Remember that some of them are required as below:
 
 - `queryKey: QueryKey`
   - **Required**
