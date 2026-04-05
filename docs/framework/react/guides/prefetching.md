@@ -58,7 +58,7 @@ const prefetchTodos = () => {
 
 [//]: # 'ExamplePrefetchQuery'
 
-Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option, in which case you also have to provide a `getNextPageParam` function:
+Infinite Queries can be prefetched like regular Queries. By default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option, in which case you also have to provide a `getNextPageParam` function:
 
 [//]: # 'ExamplePrefetchInfiniteQuery'
 
@@ -257,7 +257,7 @@ const { data: articleData, isPending } = useQuery({
 })
 ```
 
-Prefetching in an effect also works, but note that if you are using `useSuspenseQuery` in the same component, this effect wont run until _after_ the query finishes which might not be what you want.
+Prefetching in an effect also works, but note that if you are using `useSuspenseQuery` in the same component, this effect won't run until _after_ the query finishes which might not be what you want.
 
 ```tsx
 const queryClient = useQueryClient()
@@ -291,7 +291,7 @@ Sometimes we want to prefetch conditionally, based on the result of another fetc
 
 ```tsx
 // This lazy loads the GraphFeedItem component, meaning
-// it wont start loading until something renders it
+// it won't start loading until something renders it
 const GraphFeedItem = React.lazy(() => import('./GraphFeedItem'))
 
 function Feed() {
@@ -391,7 +391,7 @@ For now, let's focus on the client side case and look at an example of how you c
 
 When integrating at the router level, you can choose to either _block_ rendering of that route until all data is present, or you can start a prefetch but not await the result. That way, you can start rendering the route as soon as possible. You can also mix these two approaches and await some critical data, but start rendering before all the secondary data has finished loading. In this example, we'll configure an `/article` route to not render until the article data has finished loading, as well as start prefetching comments as soon as possible, but not block rendering the route if comments haven't finished loading yet.
 
-Note that many route loaders use error boundarys to trigger error fallbacks. Whereas up to now we have been using `.catch(noop)` to ignore errors for data that will be retried by `useQuery`, for critical data that the route will not work without, you should `await` the promise without `noop` and handle the error in a `try` block or the router's error handling (such as TanStack Router's `errorComponent`).
+Note that many route loaders use error boundaries to trigger error fallbacks. Whereas up to now we have been using `.catch(noop)` to ignore errors for data that will be retried by `useQuery`, for critical data that the route will not work without, you should `await` the promise without `noop` and handle the error in a `try` block or the router's error handling (such as TanStack Router's `errorComponent`).
 
 ```tsx
 const queryClient = new QueryClient()
