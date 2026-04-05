@@ -1068,6 +1068,14 @@
               "to": "framework/vue/reference/infiniteQueryOptions"
             },
             {
+              "label": "usePrefetchQuery",
+              "to": "framework/vue/reference/usePrefetchQuery"
+            },
+            {
+              "label": "usePrefetchInfiniteQuery",
+              "to": "framework/vue/reference/usePrefetchInfiniteQuery"
+            },
+            {
               "label": "hydration",
               "to": "framework/vue/reference/hydration"
             }
@@ -1305,10 +1313,6 @@
         {
           "label": "Mutation Property Order",
           "to": "eslint/mutation-property-order"
-        },
-        {
-          "label": "Prefer Query Options",
-          "to": "eslint/prefer-query-options"
         }
       ]
     },
