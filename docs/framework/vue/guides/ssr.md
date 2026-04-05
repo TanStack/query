@@ -180,30 +180,31 @@ Sync VueQuery client state with [vite-ssr](https://github.com/frandiox/vite-ssr)
 // main.js (entry point)
 import App from './App.vue'
 import viteSSR from 'vite-ssr/vue'
-import { QueryClient, VueQueryPlugin, hydrate, dehydrate } from '@tanstack/vue-query'
+import {
+  QueryClient,
+  VueQueryPlugin,
+  hydrate,
+  dehydrate,
+} from '@tanstack/vue-query'
 
-export default viteSSR(
-  App,
-  { routes: [] },
-  ({ app, initialState }) => {
-    // -- This is Vite SSR main hook, which is called once per request
+export default viteSSR(App, { routes: [] }, ({ app, initialState }) => {
+  // -- This is Vite SSR main hook, which is called once per request
 
-    // Create a fresh VueQuery client
-    const queryClient = new QueryClient()
+  // Create a fresh VueQuery client
+  const queryClient = new QueryClient()
 
-    // Sync initialState with the client state
-    if (import.meta.env.SSR) {
-      // Indicate how to access and serialize VueQuery state during SSR
-      initialState.vueQueryState = { toJSON: () => dehydrate(queryClient) }
-    } else {
-      // Reuse the existing state in the browser
-      hydrate(queryClient, initialState.vueQueryState)
-    }
+  // Sync initialState with the client state
+  if (import.meta.env.SSR) {
+    // Indicate how to access and serialize VueQuery state during SSR
+    initialState.vueQueryState = { toJSON: () => dehydrate(queryClient) }
+  } else {
+    // Reuse the existing state in the browser
+    hydrate(queryClient, initialState.vueQueryState)
+  }
 
-    // Mount and provide the client to the app components
-    app.use(VueQueryPlugin, { queryClient })
-  },
-)
+  // Mount and provide the client to the app components
+  app.use(VueQueryPlugin, { queryClient })
+})
 ```
 
 Then, call VueQuery from any component using Vue's `onServerPrefetch`:
