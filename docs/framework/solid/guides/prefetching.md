@@ -267,7 +267,6 @@ const articleRoute = new Route({
 })
 ```
 
-
 Integration with other routers is also possible.
 
 [//]: # 'Router'
