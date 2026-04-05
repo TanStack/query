@@ -170,7 +170,7 @@ export default defineComponent({
 </script>
 ```
 
-As demonstrated, it's fine to prefetch some queries and let others fetch on the client. This means you can control what content server renders or not by adding or removing `queryClient.prefetchQuery` or `suspense` for a specific query.
+As demonstrated, it's fine to prefetch some queries and let others fetch on the client. This means you can control what content server renders or not by adding or removing `queryClient.query` or `suspense` for a specific query.
 
 ## Using Vite SSR
 

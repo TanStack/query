@@ -3,17 +3,19 @@ id: prefetching
 title: Prefetching
 ---
 
-If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed. If this is the case, use `queryClient.query` or `queryClient.infiniteQuery` to warm the cache ahead of time. Vue's `QueryClient` wrapper supports these methods directly and unwraps refs in the options before forwarding them to the core client.
+If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed. If this is the case, use `queryClient.query` or `queryClient.infiniteQuery` to warm the cache ahead of time:
 
 [//]: # 'ExamplePrefetching'
 
 ```tsx
-const prefetchTodos = () => {
+import { noop } from "@tanstack/vue-query"
+
+const prefetchTodos = async () => {
   // The results of this query will be cached like a normal query
-  void queryClient.query({
+  await queryClient.query({
     queryKey: ['todos'],
     queryFn: fetchTodos,
-  })
+  }).catch(noop)
 }
 ```
 
@@ -32,15 +34,17 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 [//]: # 'ExampleInfiniteQuery'
 
 ```tsx
+import { noop } from "@tanstack/vue-query"
+
 const prefetchProjects = () => {
   // The results of this query will be cached like a normal query
-  void queryClient.infiniteQuery({
+  await queryClient.infiniteQuery({
     queryKey: ['projects'],
     queryFn: fetchProjects,
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
     pages: 3, // prefetch the first 3 pages
-  })
+  }).catch(noop)
 }
 ```
 
