@@ -1,16 +1,31 @@
 import { flushSync } from 'svelte'
-import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  it,
+  vi,
+} from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQuery, keepPreviousData } from '../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from './utils.svelte.js'
 import type { CreateQueryResult } from '../src/index.js'
 
 describe('createQuery', () => {
-  const queryClient = new QueryClient()
-  const queryCache = queryClient.getQueryCache()
+  let queryClient: QueryClient
+  let queryCache: ReturnType<QueryClient['getQueryCache']>
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryClient = new QueryClient()
+    queryCache = queryClient.getQueryCache()
+  })
 
   afterEach(() => {
     queryClient.clear()
+    vi.useRealTimers()
   })
 
   it(
@@ -68,36 +83,35 @@ describe('createQuery', () => {
         promise: expect.any(Promise),
       })
       resolve('resolved')
-      await vi.waitFor(() =>
-        expect(query).toEqual({
-          data: 'resolved',
-          dataUpdatedAt: expect.any(Number),
-          error: null,
-          errorUpdatedAt: 0,
-          failureCount: 0,
-          failureReason: null,
-          errorUpdateCount: 0,
-          isEnabled: true,
-          isError: false,
-          isFetched: true,
-          isFetchedAfterMount: true,
-          isFetching: false,
-          isPaused: false,
-          isPending: false,
-          isInitialLoading: false,
-          isLoading: false,
-          isLoadingError: false,
-          isPlaceholderData: false,
-          isRefetchError: false,
-          isRefetching: false,
-          isStale: true,
-          isSuccess: true,
-          refetch: expect.any(Function),
-          status: 'success',
-          fetchStatus: 'idle',
-          promise: expect.any(Promise),
-        }),
-      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query).toEqual({
+        data: 'resolved',
+        dataUpdatedAt: expect.any(Number),
+        error: null,
+        errorUpdatedAt: 0,
+        failureCount: 0,
+        failureReason: null,
+        errorUpdateCount: 0,
+        isEnabled: true,
+        isError: false,
+        isFetched: true,
+        isFetchedAfterMount: true,
+        isFetching: false,
+        isPaused: false,
+        isPending: false,
+        isInitialLoading: false,
+        isLoading: false,
+        isLoadingError: false,
+        isPlaceholderData: false,
+        isRefetchError: false,
+        isRefetching: false,
+        isStale: true,
+        isSuccess: true,
+        refetch: expect.any(Function),
+        status: 'success',
+        fetchStatus: 'idle',
+        promise: expect.any(Promise),
+      })
 
       expect(promise1).toBe(query.promise)
     }),
@@ -123,7 +137,9 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => expect(query.isError).toBe(true))
+      await vi.advanceTimersByTimeAsync(1)
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.isError).toBe(true)
 
       expect(states[0]).toEqual({
         data: undefined,
@@ -241,14 +257,13 @@ describe('createQuery', () => {
         }),
       )
       resolve('resolved')
-      await vi.waitFor(() =>
-        expect(query).toEqual(
-          expect.objectContaining({
-            data: 'resolved',
-            isFetched: true,
-            isFetchedAfterMount: true,
-          }),
-        ),
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query).toEqual(
+        expect.objectContaining({
+          data: 'resolved',
+          isFetched: true,
+          isFetchedAfterMount: true,
+        }),
       )
     })()
   })
@@ -366,9 +381,8 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => {
-        expect(query.data).toBe('data')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('data')
 
       expect(states.length).toBe(2)
       expect(states[0]).toMatchObject({ data: undefined })
@@ -400,7 +414,8 @@ describe('createQuery', () => {
       })
 
       resolve('resolved: 1')
-      await vi.waitFor(() => expect(query.data).toBe('resolved: 1'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('resolved: 1')
 
       expect(query).toMatchObject({
         isPending: false,
@@ -430,7 +445,8 @@ describe('createQuery', () => {
       })
 
       resolve('resolved: 2')
-      await vi.waitFor(() => expect(query.data).toBe('resolved: 2'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('resolved: 2')
 
       expect(query).toMatchObject({
         data: 'resolved: 2',
@@ -461,9 +477,8 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => {
-        expect(query.data).toBe('data')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('data')
     })()
 
     // Simulate rerender by removing the query and mounting again
@@ -484,12 +499,11 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => {
-        expect(query.data).toBe('data')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('data')
 
       // Give it time to catch any accidental infinite updates
-      await new Promise((r) => setTimeout(r, 100))
+      await vi.advanceTimersByTimeAsync(100)
     })()
 
     expect(states.length).toBe(4)
@@ -534,9 +548,8 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => {
-        expect(query.data).toBe('test')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('test')
 
       expect(states.length).toBe(2)
       expect(states[0]).toMatchObject({ data: undefined })
@@ -565,9 +578,8 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => {
-        expect(query.data).toBe('prefetched')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('prefetched')
 
       expect(states.length).toBe(1)
       expect(states[0]).toMatchObject({ data: 'prefetched' })
@@ -593,9 +605,8 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => {
-        expect(query.data).toBe('test')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('test')
 
       expect(states.length).toBe(2)
       expect(states[0]).toMatchObject({ data: undefined })
@@ -625,9 +636,8 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => {
-        expect(query.status).toBe('error')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.status).toBe('error')
 
       expect(states.length).toBe(2)
       expect(states[0]).toMatchObject({ status: 'pending', data: undefined })
@@ -654,12 +664,14 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => expect(query.data).toBe(1))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(1)
 
       queryClient.removeQueries({ queryKey: key })
-      await query.refetch()
+      query.refetch()
 
-      await vi.waitFor(() => expect(query.data).toBe(2))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(2)
 
       expect(states.length).toBe(4)
       expect(states[0]).toMatchObject({
@@ -696,9 +708,11 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => expect(query.data).toBe(''))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('')
       search = 'phone'
-      await vi.waitFor(() => expect(query.data).toBe('phone'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('phone')
 
       expect(states.length).toBe(4)
       expect(states[0]).toMatchObject({
@@ -743,15 +757,13 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => {
-        expect(query.data).toBe(1)
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(1)
 
       queryClient.removeQueries({ queryKey: key })
-      await query.refetch()
-      await vi.waitFor(() => {
-        expect(query.data).toBe(2)
-      })
+      query.refetch()
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(2)
 
       expect(states.length).toBe(4)
       // Initial
@@ -799,9 +811,11 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => expect(query.data?.[1]?.done).toBe(false))
-      await query.refetch()
-      await vi.waitFor(() => expect(query.data?.[1]?.done).toBe(true))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data?.[1]?.done).toBe(false)
+      query.refetch()
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data?.[1]?.done).toBe(true)
 
       expect(states.length).toBe(4)
 
@@ -838,9 +852,11 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      await vi.waitFor(() => expect(query.data).toBe('set'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('set')
       queryClient.refetchQueries({ queryKey: key })
-      await vi.waitFor(() => expect(query.data).toBe('fetched'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('fetched')
     }),
   )
 
@@ -859,33 +875,22 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      await vi.waitFor(() =>
-        expect(query).toEqual(
-          expect.objectContaining({
-            data: 1,
-            isStale: false,
-            isFetching: false,
-          }),
-        ),
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query).toEqual(
+        expect.objectContaining({
+          data: 1,
+          isStale: false,
+          isFetching: false,
+        }),
       )
       queryClient.invalidateQueries({ queryKey: key })
-      await vi.waitFor(() =>
-        expect(query).toEqual(
-          expect.objectContaining({
-            data: 1,
-            isStale: true,
-            isFetching: true,
-          }),
-        ),
-      )
-      await vi.waitFor(() =>
-        expect(query).toEqual(
-          expect.objectContaining({
-            data: 2,
-            isStale: false,
-            isFetching: false,
-          }),
-        ),
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query).toEqual(
+        expect.objectContaining({
+          data: 2,
+          isStale: false,
+          isFetching: false,
+        }),
       )
     }),
   )
@@ -910,7 +915,7 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await sleep(50)
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(states.length).toBe(1)
       expect(states[0]).toMatchObject({
@@ -945,7 +950,7 @@ describe('createQuery', () => {
       queryClient.invalidateQueries({ queryKey: key })
 
       // Wait long enough for the invalidation and potential refetch
-      await sleep(100)
+      await vi.advanceTimersByTimeAsync(100)
 
       expect(states.length).toBe(1)
       expect(states[0]).toMatchObject({
@@ -977,9 +982,11 @@ describe('createQuery', () => {
         states.push({ ...query })
       })
 
-      await vi.waitFor(() => expect(query.data).toBe(0))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(0)
       count = 1
-      await vi.waitFor(() => expect(states.length).toBe(3))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(states.length).toBe(3)
 
       // Fetch query
       expect(states[0]).toMatchObject({
@@ -1021,13 +1028,15 @@ describe('createQuery', () => {
       })
 
       // Wait for the initial fetch to complete
-      await vi.waitFor(() => expect(query.data).toBe(0))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(0)
 
       // Update count to trigger a new fetch
       count = 1
 
       // Wait for all state updates to complete
-      await vi.waitFor(() => expect(states.length).toBe(4))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(states.length).toBe(4)
 
       // Initial
       expect(states[0]).toMatchObject({
@@ -1082,16 +1091,18 @@ describe('createQuery', () => {
       })
 
       // Wait for the initial fetch to complete
-      await vi.waitFor(() => expect(query.data).toBe(0))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(0)
 
       // Update count to trigger a new fetch
       count = 1
 
       // Wait for the new fetch to complete
-      await vi.waitFor(() => expect(query.data).toBe(1))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(1)
 
       // Wait for all state updates to complete
-      await vi.waitFor(() => expect(states.length).toBe(4))
+      expect(states.length).toBe(4)
 
       // Initial
       expect(states[0]).toMatchObject({
@@ -1154,9 +1165,10 @@ describe('createQuery', () => {
       flushSync()
       flushSync(() => (count = 11))
       flushSync(() => (count = 12))
-      await query.refetch()
+      query.refetch()
       // Wait for all operations to complete
-      await vi.waitFor(() => expect(query.data).toBe(12))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(12)
 
       // Disabled query
       expect(states[0]).toMatchObject({
@@ -1229,13 +1241,15 @@ describe('createQuery', () => {
       resolve(1)
 
       // Wait for the first query to complete
-      await vi.waitFor(() => expect(firstQuery.data).toBe(1))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(firstQuery.data).toBe(1)
 
       // Refetch the first query
-      await firstQuery.refetch()
+      firstQuery.refetch()
 
       // Wait for all state updates to complete
-      await vi.waitFor(() => expect(states.length).toBe(4))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(states.length).toBe(4)
 
       expect(states[0]).toMatchObject({
         data: undefined,
@@ -1287,9 +1301,8 @@ describe('createQuery', () => {
         },
       })
 
-      await vi.waitFor(() =>
-        expect(queryClient.getQueryState(key)?.data).toBe('prefetch'),
-      )
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
 
       await withEffectRoot(async () => {
         const firstQuery = createQuery<string>(
@@ -1318,10 +1331,9 @@ describe('createQuery', () => {
           states2.push({ ...secondQuery })
         })
 
-        await vi.waitFor(() => {
-          expect(firstQuery).toMatchObject({ data: 'two', isStale: true })
-          expect(secondQuery).toMatchObject({ data: 'two', isStale: true })
-        })
+        await vi.advanceTimersByTimeAsync(100)
+        expect(firstQuery).toMatchObject({ data: 'two', isStale: true })
+        expect(secondQuery).toMatchObject({ data: 'two', isStale: true })
 
         expect(states1).toMatchObject([
           // First render
@@ -1387,7 +1399,7 @@ describe('createQuery', () => {
       })
 
       // Wait for the query to become stale
-      await sleep(100)
+      await vi.advanceTimersByTimeAsync(51)
 
       expect(states.length).toBe(3)
       expect(states[0]).toMatchObject({ isStale: true })
@@ -1423,9 +1435,8 @@ describe('createQuery', () => {
         query.refetch()
       }, 10)
 
-      await vi.waitFor(() => {
-        expect(states.length).toBe(2)
-      })
+      await vi.advanceTimersByTimeAsync(10)
+      expect(states.length).toBe(2)
 
       expect(states[0]).toMatchObject({
         data: undefined,
@@ -1464,7 +1475,8 @@ describe('createQuery', () => {
         resolve('test')
       }, 10)
 
-      await vi.waitFor(() => expect(query.data).toBe('test'))
+      await vi.advanceTimersByTimeAsync(10)
+      expect(query.data).toBe('test')
 
       // Refetch after data is available
       setTimeout(() => {
@@ -1474,7 +1486,7 @@ describe('createQuery', () => {
       }, 20)
 
       // Wait for refetch to complete
-      await sleep(30)
+      await vi.advanceTimersByTimeAsync(20)
 
       expect(states.length).toBe(2)
       expect(states[0]).toBe(undefined)
@@ -1508,7 +1520,8 @@ describe('createQuery', () => {
         renderCount++
       })
 
-      await vi.waitFor(() => expect(query.data).toBe('test'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('test')
 
       expect(renderCount).toBe(2)
       expect(states.length).toBe(2)
@@ -1581,10 +1594,9 @@ describe('createQuery', () => {
       expect(query1.fetchStatus).toBe('idle')
 
       // Wait for second query to complete
-      await vi.waitFor(() => {
-        expect(query2.status).toBe('success')
-        expect(query2.fetchStatus).toBe('idle')
-      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query2.status).toBe('success')
+      expect(query2.fetchStatus).toBe('idle')
 
       // Verify the state transitions for the second query
       expect(states2[0]?.status).toBe('pending')
@@ -1625,13 +1637,13 @@ describe('createQuery', () => {
       )
 
       // Wait a bit to ensure the query has time to settle
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       // Simulate window focus
       window.dispatchEvent(new Event('visibilitychange'))
 
       // Wait a bit more to ensure no refetch happens
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       // The query function should not have been called
       expect(queryFn).not.toHaveBeenCalled()
@@ -1663,13 +1675,14 @@ describe('createQuery', () => {
       })
 
       // Wait for the initial fetch to complete
-      await vi.waitFor(() => expect(query.data).toBe(0))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(0)
 
       // Simulate window focus
       window.dispatchEvent(new Event('visibilitychange'))
 
       // Wait a bit to ensure no refetch happens
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       // Should only have 2 states: initial and after fetch
       expect(states.length).toBe(2)
@@ -1703,13 +1716,14 @@ describe('createQuery', () => {
       })
 
       // Wait for the initial fetch to complete
-      await vi.waitFor(() => expect(query.data).toBe(0))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(0)
 
       // Simulate window focus
       window.dispatchEvent(new Event('visibilitychange'))
 
       // Wait a bit to ensure no refetch happens
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       // Should only have 2 states: initial and after fetch
       expect(states.length).toBe(2)
@@ -1743,13 +1757,14 @@ describe('createQuery', () => {
       })
 
       // Wait for the initial fetch to complete
-      await vi.waitFor(() => expect(query.data).toBe(0))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe(0)
 
       // Simulate window focus
       window.dispatchEvent(new Event('visibilitychange'))
 
       // Wait a bit to ensure no refetch happens
-      await sleep(10)
+      await vi.advanceTimersByTimeAsync(10)
 
       // Should only have 2 states: initial and after fetch
       expect(states.length).toBe(2)
@@ -1787,7 +1802,8 @@ describe('createQuery', () => {
       })
 
       // Wait for the refetch to complete
-      await vi.waitFor(() => expect(query.data).toBe('data'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('data')
 
       // Should have 2 states: initial (with prefetched data) and after refetch
       expect(states.length).toBe(2)
@@ -1830,7 +1846,8 @@ describe('createQuery', () => {
       })
 
       // Wait for the refetch to complete
-      await vi.waitFor(() => expect(query.data).toBe('data'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.data).toBe('data')
 
       // Should have 2 states: initial (with prefetched data) and after refetch
       expect(states.length).toBe(2)
@@ -1864,7 +1881,8 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      await vi.waitFor(() => expect(query.status).toBe('error'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.status).toBe('error')
       expect(query.error?.message).toBe('Error test')
 
       consoleMock.mockRestore()
@@ -1886,18 +1904,19 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      await vi.waitFor(() => expect(query.status).toBe('error'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(query.status).toBe('error')
       expect(query.error?.message).toBe('Local Error')
     }),
   )
 
   it(
     'should support changing provided query client',
-    withEffectRoot(async () => {
+    withEffectRoot(() => {
       const queryClient1 = new QueryClient()
       const queryClient2 = new QueryClient()
 
-      let queryClient = $state(queryClient1)
+      let currentClient = $state(queryClient1)
 
       const key = ['test']
 
@@ -1906,12 +1925,12 @@ describe('createQuery', () => {
           queryKey: key,
           queryFn: () => Promise.resolve('prefetched'),
         }),
-        () => queryClient,
+        () => currentClient,
       )
 
       expect(queryClient1.getQueryCache().find({ queryKey: key })).toBeDefined()
 
-      queryClient = queryClient2
+      currentClient = queryClient2
       flushSync()
 
       expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
