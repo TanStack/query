@@ -87,7 +87,6 @@ describe('infiniteQueryOptions', () => {
 
     const { data } = useSuspenseInfiniteQuery(options)
 
-    // known issue: type of pageParams is unknown when returned from useInfiniteQuery
     expectTypeOf(data).toEqualTypeOf<Array<string>>()
   })
   it('should work when passed to infiniteQuery', async () => {
