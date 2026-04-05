@@ -371,7 +371,7 @@ export class QueryClient {
     const query = this.#queryCache.build(this, defaultedOptions)
     const isEnabled = resolveEnabled(defaultedOptions.enabled, query) !== false
 
-    if (!isEnabled && query.state.data == null) {
+    if (!isEnabled && query.state.data === undefined) {
       return Promise.reject(
         new Error(
           `Query is disabled and no cached data is available for key: '${defaultedOptions.queryHash}'`,
