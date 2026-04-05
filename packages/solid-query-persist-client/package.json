@@ -74,7 +74,7 @@
     "@tanstack/solid-query": "workspace:*",
     "babel-preset-solid": "2.0.0-beta.4",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "2.0.0-beta.4",
+    "solid-js": "2.0.0-beta.5",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "3.0.0-next.2"
   },

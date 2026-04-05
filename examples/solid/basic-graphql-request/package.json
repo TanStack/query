@@ -13,7 +13,7 @@
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
     "@solidjs/web": "2.0.0-beta.4",
-    "solid-js": "2.0.0-beta.4"
+    "solid-js": "2.0.0-beta.5"
   },
   "devDependencies": {
     "typescript": "5.8.3",
