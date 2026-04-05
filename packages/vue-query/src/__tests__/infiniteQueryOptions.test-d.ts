@@ -1,7 +1,8 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { QueryClient, dataTagSymbol } from '@tanstack/query-core'
+import { dataTagSymbol } from '@tanstack/query-core'
 import { reactive } from 'vue-demi'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import { QueryClient } from '../queryClient'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
