@@ -515,6 +515,7 @@ export interface QueryExecuteOptions<
   staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
 }
 
+/** @deprecated */
 export interface FetchQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -533,6 +534,7 @@ export interface FetchQueryOptions<
   staleTime?: StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey>
 }
 
+/** @deprecated */
 export interface EnsureQueryDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -549,6 +551,7 @@ export interface EnsureQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
+/** @deprecated */
 export type EnsureInfiniteQueryDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -592,6 +595,7 @@ export type InfiniteQueryExecuteOptions<
   InitialPageParam<TPageParam> &
   InfiniteQueryPages<TQueryFnData, TPageParam>
 
+/** @deprecated */
 export type FetchInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
