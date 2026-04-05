@@ -215,12 +215,10 @@ export class Component {
   postQuery = injectQuery(this.optionsSignal)
 
   someMethod() {
-    this.queryClient.query(this.queries.post(23)).catch(noop)
+    void this.queryClient.query(this.queries.post(23)).catch(noop)
   }
 }
 ```
-
-Because `queryClient.query` preserves `select` and `enabled`, the extracted options behave the same way in both places. The legacy `fetchQuery` and `prefetchQuery` APIs still accept those options at the type level, but they ignore `select` and `enabled` at runtime.
 
 Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:
 

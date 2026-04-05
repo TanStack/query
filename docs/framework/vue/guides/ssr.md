@@ -140,7 +140,7 @@ export default defineComponent({
       (ssrContext != null && ssrContext.VueQuery) || useQueryClient()
 
     // This will be prefetched and sent from the server
-    const { data, refetch, suspsense } = useQuery(
+    const { data, refetch, suspense } = useQuery(
       {
         queryKey: ['todos'],
         queryFn: getTodos,
