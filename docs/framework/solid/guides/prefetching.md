@@ -86,7 +86,7 @@ function Comments(props) {
 [//]: # 'ExampleParentComponent'
 [//]: # 'Suspense'
 
-Another way is to prefetch inside of the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.query`:
+Another way is to prefetch inside the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.query`:
 
 ```tsx
 const queryClient = useQueryClient()
