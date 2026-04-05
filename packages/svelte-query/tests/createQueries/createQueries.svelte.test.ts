@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
 import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQueries } from '../../src/index.js'
@@ -14,9 +14,15 @@ import type {
 } from '../../src/index.js'
 
 describe('createQueries', () => {
-  const queryClient = new QueryClient()
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryClient = new QueryClient()
+  })
 
   afterEach(() => {
+    vi.useRealTimers()
     queryClient.clear()
   })
 
@@ -50,11 +56,12 @@ describe('createQueries', () => {
       })
 
       resolve1(1)
-
-      await vi.waitFor(() => expect(result[0].data).toBe(1))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(result[0].data).toBe(1)
 
       resolve2(2)
-      await vi.waitFor(() => expect(result[1].data).toBe(2))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(result[1].data).toBe(2)
 
       expect(results.length).toBe(3)
       expect(results[0]).toMatchObject([
@@ -755,7 +762,8 @@ describe('createQueries', () => {
         results.push([result[0]])
       })
 
-      await vi.waitFor(() => expect(result[0].data).toBe(1))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(result[0].data).toBe(1)
 
       expect(results.length).toBe(2)
       expect(results[0]).toMatchObject([{ data: undefined }])
@@ -764,7 +772,8 @@ describe('createQueries', () => {
       // Trigger refetch
       result[0].refetch()
 
-      await vi.waitFor(() => expect(result[0].data).toBe(2))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(result[0].data).toBe(2)
 
       // Only one render for data update, no render for isFetching transition
       expect(results.length).toBe(3)
@@ -815,13 +824,13 @@ describe('createQueries', () => {
 
       // Resolve the first query
       resolve1('first result')
-      await vi.waitFor(() => expect(queries.res).toBe('first result'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queries.res).toBe('first result')
 
       // Resolve the second query
       resolve2('second result')
-      await vi.waitFor(() =>
-        expect(queries.res).toBe('first result,second result'),
-      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queries.res).toBe('first result,second result')
 
       expect(queries).toEqual({
         combined: true,
@@ -878,17 +887,17 @@ describe('createQueries', () => {
       })
 
       // Initially both queries are loading
-      await vi.waitFor(() =>
-        expect(results[0]).toStrictEqual({
-          combined: true,
-          refetch: expect.any(Function),
-          res: '',
-        }),
-      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(results[0]).toStrictEqual({
+        combined: true,
+        refetch: expect.any(Function),
+        res: '',
+      })
 
       // Resolve the first query
       resolve1('first result ' + count)
-      await vi.waitFor(() => expect(queries.res).toBe('first result 0'))
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queries.res).toBe('first result 0')
 
       expect(results[1]).toStrictEqual({
         combined: true,
@@ -898,9 +907,8 @@ describe('createQueries', () => {
 
       // Resolve the second query
       resolve2('second result ' + count)
-      await vi.waitFor(() =>
-        expect(queries.res).toBe('first result 0,second result 0'),
-      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queries.res).toBe('first result 0,second result 0')
 
       expect(results[2]).toStrictEqual({
         combined: true,
@@ -916,9 +924,8 @@ describe('createQueries', () => {
       resolve3('first result ' + count)
       resolve4('second result ' + count)
 
-      await vi.waitFor(() =>
-        expect(queries.res).toBe('first result 1,second result 1'),
-      )
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queries.res).toBe('first result 1,second result 1')
 
       const length = results.length
       expect(results.at(-1)).toStrictEqual({
@@ -936,8 +943,6 @@ describe('createQueries', () => {
   )
 
   it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    vi.useFakeTimers()
-
     const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
     const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
 
@@ -966,13 +971,9 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
-    vi.useRealTimers()
   })
 
   it('should not fetch queries with different durations for the duration of the restoring period when isRestoring is true', async () => {
-    vi.useFakeTimers()
-
     const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
     const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
 
@@ -1012,7 +1013,5 @@ describe('createQueries', () => {
     expect(rendered.getByTestId('data2')).toHaveTextContent('undefined')
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
-
-    vi.useRealTimers()
   })
 })
