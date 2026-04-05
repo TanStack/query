@@ -68,12 +68,8 @@ describe('createQueries', () => {
       () => queryClient,
     )
 
-    expectTypeOf(result1[0]).toEqualTypeOf<
-      CreateQueryResult<number, unknown>
-    >()
-    expectTypeOf(result1[1]).toEqualTypeOf<
-      CreateQueryResult<string, unknown>
-    >()
+    expectTypeOf(result1[0]).toEqualTypeOf<CreateQueryResult<number, unknown>>()
+    expectTypeOf(result1[1]).toEqualTypeOf<CreateQueryResult<string, unknown>>()
     expectTypeOf(result1[2]).toEqualTypeOf<
       CreateQueryResult<Array<string>, boolean>
     >()
@@ -109,12 +105,8 @@ describe('createQueries', () => {
       () => queryClient,
     )
 
-    expectTypeOf(result2[0]).toEqualTypeOf<
-      CreateQueryResult<string, unknown>
-    >()
-    expectTypeOf(result2[1]).toEqualTypeOf<
-      CreateQueryResult<number, unknown>
-    >()
+    expectTypeOf(result2[0]).toEqualTypeOf<CreateQueryResult<string, unknown>>()
+    expectTypeOf(result2[1]).toEqualTypeOf<CreateQueryResult<number, unknown>>()
     expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
     expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
 
@@ -195,12 +187,8 @@ describe('createQueries', () => {
       () => queryClient,
     )
 
-    expectTypeOf(result1[0]).toEqualTypeOf<
-      CreateQueryResult<number, unknown>
-    >()
-    expectTypeOf(result1[1]).toEqualTypeOf<
-      CreateQueryResult<string, unknown>
-    >()
+    expectTypeOf(result1[0]).toEqualTypeOf<CreateQueryResult<number, unknown>>()
+    expectTypeOf(result1[1]).toEqualTypeOf<CreateQueryResult<string, unknown>>()
     expectTypeOf(result1[2]).toEqualTypeOf<
       CreateQueryResult<Array<string>, boolean>
     >()
@@ -239,12 +227,8 @@ describe('createQueries', () => {
       () => queryClient,
     )
 
-    expectTypeOf(result2[0]).toEqualTypeOf<
-      CreateQueryResult<string, unknown>
-    >()
-    expectTypeOf(result2[1]).toEqualTypeOf<
-      CreateQueryResult<number, unknown>
-    >()
+    expectTypeOf(result2[0]).toEqualTypeOf<CreateQueryResult<string, unknown>>()
+    expectTypeOf(result2[1]).toEqualTypeOf<CreateQueryResult<number, unknown>>()
     expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
     expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
 
@@ -273,12 +257,8 @@ describe('createQueries', () => {
       () => queryClient,
     )
 
-    expectTypeOf(result3[0]).toEqualTypeOf<
-      CreateQueryResult<string, unknown>
-    >()
-    expectTypeOf(result3[1]).toEqualTypeOf<
-      CreateQueryResult<number, unknown>
-    >()
+    expectTypeOf(result3[0]).toEqualTypeOf<CreateQueryResult<string, unknown>>()
+    expectTypeOf(result3[1]).toEqualTypeOf<CreateQueryResult<number, unknown>>()
     expectTypeOf(result3[0].data).toEqualTypeOf<string | undefined>()
     expectTypeOf(result3[1].data).toEqualTypeOf<number | undefined>()
 
