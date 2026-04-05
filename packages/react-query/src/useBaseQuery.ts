@@ -96,75 +96,28 @@ export function useBaseQuery<
       ),
   )
 
-  // note: this must be called before useSyncExternalStore
+  observer.setOptions(defaultedOptions, { isNewCacheEntry })
+
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  const shouldSubscribe = !isRestoring && options.subscribed !== false
-  React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) => {
-        const unsubscribe = shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop
-
-        // Update result to make sure we did not miss any query updates
-        // between creating the observer and subscribing to it.
-        observer.updateResult()
-
-        return unsubscribe
-      },
-      [observer, shouldSubscribe],
-    ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
-  )
+  React.useEffect(() => {
+    errorResetBoundary.clearReset()
+  }, [errorResetBoundary])
 
   React.useEffect(() => {
-    observer.setOptions(defaultedOptions)
-  }, [defaultedOptions, observer])
+    observer.subscribe(notifyManager.batchCalls(() => {}))
+  }, [observer])
 
-  // Handle suspense
-  if (shouldSuspend(defaultedOptions, result)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+  if (shouldSuspend(defaultedOptions, result, isRestoring)) {
+    return fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
-
-  // Handle error boundary
-  if (
-    getHasError({
-      result,
-      errorResetBoundary,
-      throwOnError: defaultedOptions.throwOnError,
-      query,
-      suspense: defaultedOptions.suspense,
-    })
-  ) {
-    throw result.error
-  }
-
-  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(
-    defaultedOptions,
-    result,
-  )
 
   if (
-    defaultedOptions.experimental_prefetchInRender &&
-    !environmentManager.isServer() &&
-    willFetch(result, isRestoring)
+    willFetch(result, isRestoring) &&
+    defaultedOptions._optimisticResults !== 'optimistic'
   ) {
-    const promise = isNewCacheEntry
-      ? // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
-        fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
-      : // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-        query?.promise
-
-    promise?.catch(noop).finally(() => {
-      // `.updateResult()` will trigger `.#currentThenable` to finalize
-      observer.updateResult()
-    })
+    observer.fetchOptimistic(defaultedOptions)
   }
 
-  // Handle result property usage tracking
-  return !defaultedOptions.notifyOnChangeProps
-    ? observer.trackResult(result)
-    : result
+  return result
 }

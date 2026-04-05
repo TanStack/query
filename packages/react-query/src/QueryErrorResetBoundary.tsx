@@ -3,26 +3,26 @@ import * as React from 'react'
 
 // CONTEXT
 export type QueryErrorResetFunction = () => void
-export type QueryErrorIsResetFunction = () => boolean
+export type QueryErrorGetResetIdFunction = () => number
 export type QueryErrorClearResetFunction = () => void
 
 export interface QueryErrorResetBoundaryValue {
   clearReset: QueryErrorClearResetFunction
-  isReset: QueryErrorIsResetFunction
+  getResetId: QueryErrorGetResetIdFunction
   reset: QueryErrorResetFunction
 }
 
 function createValue(): QueryErrorResetBoundaryValue {
-  let isReset = false
+  const resetIdRef = { current: 0 }
   return {
     clearReset: () => {
-      isReset = false
+      resetIdRef.current = 0
     },
     reset: () => {
-      isReset = true
+      resetIdRef.current += 1
     },
-    isReset: () => {
-      return isReset
+    getResetId: () => {
+      return resetIdRef.current
     },
   }
 }
