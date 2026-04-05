@@ -18,6 +18,7 @@ import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { Portal } from 'solid-js/web'
 import { tokens } from './theme'
+import { formatDateTime } from './locale'
 import {
   convertRemToPixels,
   displayValue,
@@ -778,7 +779,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
                 item.options.mutationKey
                   ? JSON.stringify(item.options.mutationKey) + ' - '
                   : ''
-              }${new Date(item.state.submittedAt).toLocaleString()}`
+              }${formatDateTime(item.state.submittedAt)}`
               return rankItem(value, props.localStore.mutationFilter || '')
                 .passed
             })
@@ -1580,9 +1581,9 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
             styles().selectedQueryRow,
           'tsqd-query-row',
         )}
-        aria-label={`Mutation submitted at ${new Date(
+        aria-label={`Mutation submitted at ${formatDateTime(
           props.mutation.state.submittedAt,
-        ).toLocaleString()}`}
+        )}`}
       >
         <div
           class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
@@ -1604,7 +1605,7 @@ const MutationRow: Component<{ mutation: Mutation }> = (props) => {
           <Show when={props.mutation.options.mutationKey}>
             {JSON.stringify(props.mutation.options.mutationKey)} -{' '}
           </Show>
-          {new Date(props.mutation.state.submittedAt).toLocaleString()}
+          {formatDateTime(props.mutation.state.submittedAt)}
         </code>
       </button>
     </Show>
