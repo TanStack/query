@@ -14,12 +14,12 @@
     "@tanstack/solid-query-persist-client": "^6.0.0-alpha.2",
     "msw": "^2.6.6",
     "@solidjs/web": "2.0.0-beta.4",
-    "solid-js": "2.0.0-beta.4"
+    "solid-js": "2.0.0-beta.5"
   },
   "devDependencies": {
     "typescript": "5.8.3",
     "vite": "^6.4.1",
-    "vite-plugin-solid": "3.0.0-next.2"
+    "vite-plugin-solid": "3.0.0-next.4"
   },
   "msw": {
     "workerDirectory": [

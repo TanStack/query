@@ -15,7 +15,7 @@
     "@tanstack/solid-query": "^6.0.0-alpha.2",
     "@tanstack/solid-query-devtools": "^6.0.0-alpha.2",
     "@solidjs/web": "2.0.0-beta.4",
-    "solid-js": "2.0.0-beta.4",
+    "solid-js": "2.0.0-beta.5",
     "vinxi": "^0.5.3"
   },
   "engines": {

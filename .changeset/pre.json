@@ -1,6 +1,6 @@
 {
   "mode": "pre",
-  "tag": "alpha",
+  "tag": "beta",
   "initialVersions": {
     "@tanstack/angular-query-experimental": "5.90.28",
     "@tanstack/angular-query-persist-client": "5.62.32",
