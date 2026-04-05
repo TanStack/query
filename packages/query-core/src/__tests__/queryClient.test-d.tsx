@@ -171,26 +171,51 @@ describe('fetchInfiniteQuery', () => {
   })
 
   it('should not allow passing getNextPageParam without pages', () => {
-    assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
-      {
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve('string'),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-      },
-    ])
+    void new QueryClient().fetchInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+    })
   })
 
   it('should not allow passing pages without getNextPageParam', () => {
-    assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
-      // @ts-expect-error Property 'getNextPageParam' is missing
-      {
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve('string'),
-        initialPageParam: 1,
-        pages: 5,
-      },
-    ])
+    // @ts-expect-error Property 'getNextPageParam' is missing
+    void new QueryClient().fetchInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      initialPageParam: 1,
+      pages: 5,
+    })
+  })
+
+  it('should allow manual mode without page param getters', () => {
+    void new QueryClient().fetchInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      mode: 'manual',
+      initialPageParam: 1,
+    })
+  })
+
+  it('should not allow manual mode with page param getters or pages', () => {
+    // @ts-expect-error getNextPageParam is not allowed in manual mode
+    void new QueryClient().fetchInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      mode: 'manual',
+      initialPageParam: 1,
+      getNextPageParam: () => 1,
+    })
+
+    // @ts-expect-error pages are not allowed in manual mode
+    void new QueryClient().fetchInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve('string'),
+      mode: 'manual',
+      initialPageParam: 1,
+      pages: 2,
+    })
   })
 })
 

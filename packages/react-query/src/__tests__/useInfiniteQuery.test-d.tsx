@@ -34,6 +34,7 @@ describe('pageParam', () => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
       initialPageParam: 1,
+      mode: 'manual',
     })
   })
 
@@ -45,7 +46,26 @@ describe('pageParam', () => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()
       },
       initialPageParam: 1,
+      mode: 'manual',
     })
+  })
+
+  it('should require pageParam on manual fetch methods', () => {
+    const infiniteQuery = useInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: ({ pageParam }) => {
+        expectTypeOf(pageParam).toEqualTypeOf<number>()
+        return pageParam * 5
+      },
+      initialPageParam: 1,
+      mode: 'manual',
+    })
+
+    infiniteQuery.fetchNextPage({ pageParam: 2 })
+    infiniteQuery.fetchPreviousPage({ pageParam: 0 })
+
+    // @ts-expect-error pageParam is required in manual mode
+    infiniteQuery.fetchNextPage()
   })
 })
 describe('select', () => {
@@ -115,6 +135,27 @@ describe('getNextPageParam / getPreviousPageParam', () => {
     expectTypeOf(infiniteQuery.data).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
     >()
+  })
+
+  it('should infer async object page types for getNextPageParam', () => {
+    useInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: async ({ pageParam = 0 }) => {
+        return {
+          nextCursor: pageParam + 1,
+          data: `page-${pageParam}`,
+        }
+      },
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        expectTypeOf(lastPage).toEqualTypeOf<{
+          nextCursor: number
+          data: string
+        }>()
+        return lastPage.nextCursor
+      },
+      retry: false,
+    })
   })
 })
 

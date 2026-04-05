@@ -7,7 +7,8 @@ import type {
 import type {
   DefaultError,
   InfiniteData,
-  InfiniteQueryObserverOptions,
+  InfiniteQueryMode,
+  InfiniteQueryObserverOptionsBase,
   InfiniteQueryObserverResult,
   QueryKey,
   QueryObserver,
@@ -30,40 +31,49 @@ export type UseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = MaybeRef<
   {
-    [Property in keyof InfiniteQueryObserverOptions<
+    [Property in keyof InfiniteQueryObserverOptionsBase<
       TQueryFnData,
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      TMode
     >]: Property extends 'enabled'
       ? MaybeRefOrGetter<
-          InfiniteQueryObserverOptions<
+          InfiniteQueryObserverOptionsBase<
             TQueryFnData,
             TError,
             TData,
             DeepUnwrapRef<TQueryKey>,
-            TPageParam
+            TPageParam,
+            TMode
           >[Property]
         >
       : MaybeRefDeep<
-          InfiniteQueryObserverOptions<
+          InfiniteQueryObserverOptionsBase<
             TQueryFnData,
             TError,
             TData,
             DeepUnwrapRef<TQueryKey>,
-            TPageParam
+            TPageParam,
+            TMode
           >[Property]
         >
   } & ShallowOption
 >
 
-export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
+export type UseInfiniteQueryReturnType<
   TData,
   TError,
-  InfiniteQueryObserverResult<TData, TError>
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = UseBaseQueryReturnType<
+  TData,
+  TError,
+  InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>
 >
 
 export function useInfiniteQuery<
@@ -79,11 +89,31 @@ export function useInfiniteQuery<
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      undefined
     >
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryReturnType<TData, TError>
+): UseInfiniteQueryReturnType<TData, TError, TPageParam, undefined>
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: MaybeRefOrGetter<
+    DefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      InfiniteQueryMode
+    >
+  >,
+  queryClient?: QueryClient,
+): UseInfiniteQueryReturnType<TData, TError, TPageParam, InfiniteQueryMode>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -98,11 +128,31 @@ export function useInfiniteQuery<
       TError,
       TData,
       TQueryKey,
-      TPageParam
+      TPageParam,
+      undefined
     >
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryReturnType<TData, TError>
+): UseInfiniteQueryReturnType<TData, TError, TPageParam, undefined>
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: MaybeRefOrGetter<
+    UndefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam,
+      InfiniteQueryMode
+    >
+  >,
+  queryClient?: QueryClient,
+): UseInfiniteQueryReturnType<TData, TError, TPageParam, InfiniteQueryMode>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -117,10 +167,7 @@ export function useInfiniteQuery<
   queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError>
 
-export function useInfiniteQuery(
-  options: MaybeRefOrGetter<UseInfiniteQueryOptions>,
-  queryClient?: QueryClient,
-) {
+export function useInfiniteQuery(options: any, queryClient?: QueryClient): any {
   return useBaseQuery(
     InfiniteQueryObserver as typeof QueryObserver,
     options,

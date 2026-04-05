@@ -4,6 +4,8 @@ import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
+  DistributiveOmit,
+  InfiniteQueryMode,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -72,22 +74,40 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   >
 }
 
-export interface CreateInfiniteQueryOptions<
+export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyof<
+  TMode extends InfiniteQueryMode | undefined = InfiniteQueryMode | undefined,
+> = CreateInfiniteQueryOptionsBase<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+  TMode
+>
+
+export type CreateInfiniteQueryOptionsBase<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
+> = DistributiveOmit<
   InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    TMode
   >,
   'suspense'
-> {}
+>
 
 export type CreateBaseQueryResult<
   TData = unknown,
@@ -111,15 +131,21 @@ export type DefinedCreateQueryResult<
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
 > = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+  MapToSignals<InfiniteQueryObserverResult<TData, TError, TPageParam, TMode>>
 
 export type DefinedCreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
+  TPageParam = unknown,
+  TMode extends InfiniteQueryMode | undefined = undefined,
   TDefinedInfiniteQueryObserver = DefinedInfiniteQueryObserverResult<
     TData,
-    TError
+    TError,
+    TPageParam,
+    TMode
   >,
 > = MapToSignals<TDefinedInfiniteQueryObserver>
 

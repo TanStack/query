@@ -61,4 +61,10 @@ export default [
     },
     settings: { vitest: { typecheck: true } },
   },
+  {
+    files: ['**/*.test-d.ts', '**/*.test-d.tsx'],
+    rules: {
+      'vitest/expect-expect': 'off',
+    },
+  },
 ]

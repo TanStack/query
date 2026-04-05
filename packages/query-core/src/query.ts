@@ -90,7 +90,7 @@ export interface QueryBehavior<
 export type FetchDirection = 'forward' | 'backward'
 
 export interface FetchMeta {
-  fetchMore?: { direction: FetchDirection }
+  fetchMore?: { direction: FetchDirection; pageParam?: unknown }
 }
 
 export interface FetchOptions<TData = unknown> {

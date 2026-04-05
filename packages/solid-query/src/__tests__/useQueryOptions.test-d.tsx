@@ -72,4 +72,24 @@ describe('infiniteQueryOptions', () => {
       }>
     >()
   })
+
+  it('should preserve manual fetch method types', () => {
+    const options = infiniteQueryOptions({
+      queryKey: ['key'],
+      queryFn: ({ pageParam }) => {
+        expectTypeOf(pageParam).toEqualTypeOf<number>()
+        return pageParam * 5
+      },
+      initialPageParam: 1,
+      mode: 'manual',
+    })
+
+    const query = useInfiniteQuery(() => options)
+
+    query.fetchNextPage({ pageParam: 2 })
+    query.fetchPreviousPage({ pageParam: 0 })
+
+    // @ts-expect-error pageParam is required in manual mode
+    query.fetchNextPage()
+  })
 })

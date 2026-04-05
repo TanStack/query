@@ -72,4 +72,90 @@ describe('InfiniteQueryObserver', () => {
       expectTypeOf(result.status).toEqualTypeOf<'success'>()
     }
   })
+
+  it('should not allow pageParam on fetchNextPage / fetchPreviousPage if getNextPageParam is defined', async () => {
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      initialPageParam: 1,
+      getNextPageParam: (page) => Number(page) + 1,
+    })
+
+    observer.fetchNextPage()
+    observer.fetchPreviousPage({ cancelRefetch: false })
+
+    // @ts-expect-error pageParam is not allowed in declarative mode
+    observer.fetchNextPage({ pageParam: 2 })
+
+    // @ts-expect-error pageParam is not allowed in declarative mode
+    observer.fetchPreviousPage({ pageParam: 0 })
+  })
+
+  it('should require pageParam on fetchNextPage / fetchPreviousPage if getNextPageParam is missing', async () => {
+    const observer = new InfiniteQueryObserver<
+      string,
+      Error,
+      InfiniteData<string>,
+      ReturnType<typeof queryKey>,
+      number,
+      'manual'
+    >(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      mode: 'manual',
+      initialPageParam: 1,
+    })
+
+    observer.fetchNextPage({ pageParam: 2 })
+    observer.fetchPreviousPage({ pageParam: 0, cancelRefetch: false })
+
+    // @ts-expect-error pageParam is required in manual mode
+    observer.fetchNextPage()
+
+    // @ts-expect-error pageParam is required in manual mode
+    observer.fetchPreviousPage()
+  })
+
+  it('should reject missing mode / getNextPageParam', () => {
+    // @ts-expect-error getNextPageParam is required unless mode is manual
+    new InfiniteQueryObserver(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      initialPageParam: 1,
+    })
+  })
+
+  it('should reject page param getters in manual mode', () => {
+    // @ts-expect-error getNextPageParam is not allowed in manual mode
+    new InfiniteQueryObserver<
+      string,
+      Error,
+      InfiniteData<string>,
+      ReturnType<typeof queryKey>,
+      number,
+      'manual'
+    >(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      mode: 'manual',
+      initialPageParam: 1,
+      getNextPageParam: () => 2,
+    })
+
+    // @ts-expect-error getPreviousPageParam is not allowed in manual mode
+    new InfiniteQueryObserver<
+      string,
+      Error,
+      InfiniteData<string>,
+      ReturnType<typeof queryKey>,
+      number,
+      'manual'
+    >(queryClient, {
+      queryKey: queryKey(),
+      queryFn: ({ pageParam }) => String(pageParam),
+      mode: 'manual',
+      initialPageParam: 1,
+      getPreviousPageParam: () => 0,
+    })
+  })
 })

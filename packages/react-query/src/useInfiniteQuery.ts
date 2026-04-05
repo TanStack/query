@@ -4,6 +4,7 @@ import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
+  InfiniteQueryMode,
   QueryClient,
   QueryKey,
   QueryObserver,
@@ -15,6 +16,8 @@ import type {
 } from './types'
 import type {
   DefinedInitialDataInfiniteOptions,
+  ManualDefinedInitialDataInfiniteOptions,
+  ManualUndefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
 
@@ -30,10 +33,28 @@ export function useInfiniteQuery<
     TError,
     TData,
     TQueryKey,
+    TPageParam,
+    undefined
+  >,
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError, TPageParam, undefined>
+
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: ManualDefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
     TPageParam
   >,
   queryClient?: QueryClient,
-): DefinedUseInfiniteQueryResult<TData, TError>
+): DefinedUseInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -47,10 +68,11 @@ export function useInfiniteQuery<
     TError,
     TData,
     TQueryKey,
-    TPageParam
+    TPageParam,
+    undefined
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<TData, TError, TPageParam, undefined>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -59,7 +81,7 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UseInfiniteQueryOptions<
+  options: ManualUndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
@@ -67,7 +89,7 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<TData, TError, TPageParam, InfiniteQueryMode>
 
 export function useInfiniteQuery(
   options: UseInfiniteQueryOptions,

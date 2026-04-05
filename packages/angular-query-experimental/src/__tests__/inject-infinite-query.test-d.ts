@@ -39,4 +39,21 @@ describe('injectInfiniteQuery', () => {
       expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
   })
+
+  test('should require pageParam on manual fetch methods', () => {
+    const query = TestBed.runInInjectionContext(() => {
+      return injectInfiniteQuery(() => ({
+        queryKey: ['infiniteQuery'],
+        queryFn: ({ pageParam }) => 'data on page ' + pageParam,
+        initialPageParam: 0,
+        mode: 'manual',
+      }))
+    })
+
+    query.fetchNextPage({ pageParam: 1 })
+    query.fetchPreviousPage({ pageParam: 0 })
+
+    // @ts-expect-error pageParam is required in manual mode
+    query.fetchNextPage()
+  })
 })

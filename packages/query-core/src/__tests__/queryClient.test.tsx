@@ -810,7 +810,12 @@ describe('queryClient', () => {
           StrictData,
           StrictQueryKey,
           number
-        >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
+        >({
+          queryKey: key,
+          queryFn: fetchFn,
+          initialPageParam: 0,
+          mode: 'manual',
+        }),
       ).resolves.toEqual(data)
     })
 
@@ -819,6 +824,7 @@ describe('queryClient', () => {
       const result = await queryClient.fetchInfiniteQuery({
         queryKey: key,
         initialPageParam: 10,
+        mode: 'manual',
         queryFn: ({ pageParam }) => Number(pageParam),
       })
       const result2 = queryClient.getQueryData(key)
@@ -848,7 +854,12 @@ describe('queryClient', () => {
         StrictData,
         StrictQueryKey,
         number
-      >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 })
+      >({
+        queryKey: key,
+        queryFn: fetchFn,
+        initialPageParam: 0,
+        mode: 'manual',
+      })
 
       const result = queryClient.getQueryData(key)
 
@@ -865,6 +876,7 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
         initialPageParam: 10,
+        mode: 'manual',
       })
 
       const result = queryClient.getQueryData(key)
@@ -1005,7 +1017,7 @@ describe('queryClient', () => {
 
       await queryClient.cancelQueries()
 
-      // with previous data present, imperative fetch should resolve to that data after cancel
+      // with previous data present, manual fetch should resolve to that data after cancel
       await expect(pending).resolves.toBe('data')
 
       const state1 = queryClient.getQueryState(key1)
@@ -1033,7 +1045,7 @@ describe('queryClient', () => {
       })
     })
 
-    test('should throw CancelledError for imperative methods when initial fetch is cancelled', async () => {
+    test('should throw CancelledError for manual methods when initial fetch is cancelled', async () => {
       const key = queryKey()
 
       const promise = queryClient.fetchQuery({
