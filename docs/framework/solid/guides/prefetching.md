@@ -2,6 +2,7 @@
 id: prefetching
 title: Prefetching & Router Integration
 ref: docs/framework/react/guides/prefetching.md
+replace: { 'react-query': 'solid-query', 'React': 'Solid' }
 ---
 
 [//]: # 'ExampleComponent'
