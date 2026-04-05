@@ -43,7 +43,7 @@ This is how you use `query` to prefetch:
 [//]: # 'ExamplePrefetchQuery'
 
 ```tsx
-import { noop } from "@tanstack/react-query"
+import { noop } from '@tanstack/react-query'
 
 const prefetchTodos = () => {
   void queryClient
@@ -63,16 +63,18 @@ Infinite Queries can be prefetched like regular Queries. By default, only the fi
 [//]: # 'ExamplePrefetchInfiniteQuery'
 
 ```tsx
-import { noop } from "@tanstack/react-query"
+import { noop } from '@tanstack/react-query'
 
 const prefetchProjects = () => {
-  void queryClient.infiniteQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-    pages: 3, // prefetch the first 3 pages
-  }).catch(noop)
+  void queryClient
+    .infiniteQuery({
+      queryKey: ['projects'],
+      queryFn: fetchProjects,
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+      pages: 3, // prefetch the first 3 pages
+    })
+    .catch(noop)
 }
 ```
 
