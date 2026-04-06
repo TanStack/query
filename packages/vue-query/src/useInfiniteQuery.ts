@@ -9,8 +9,10 @@ import type {
   InfiniteData,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
+  QueryFunction,
   QueryKey,
   QueryObserver,
+  SkipToken,
 } from '@tanstack/query-core'
 
 import type { UseBaseQueryReturnType } from './useBaseQuery'
@@ -23,6 +25,9 @@ import type {
   ShallowOption,
 } from './types'
 import type { QueryClient } from './queryClient'
+
+// Widen the type of the symbol to preserve contextual typing for
+// `computed(() => condition ? queryFn : skipToken)`.
 
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -48,15 +53,20 @@ export type UseInfiniteQueryOptions<
             TPageParam
           >[Property]
         >
-      : MaybeRefDeep<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            DeepUnwrapRef<TQueryKey>,
-            TPageParam
-          >[Property]
-        >
+      : Property extends 'queryFn'
+        ? MaybeRefOrGetter<
+            | QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>, TPageParam>
+            | SkipToken
+          >
+        : MaybeRefDeep<
+            InfiniteQueryObserverOptions<
+              TQueryFnData,
+              TError,
+              TData,
+              DeepUnwrapRef<TQueryKey>,
+              TPageParam
+            >[Property]
+          >
   } & ShallowOption
 >
 
