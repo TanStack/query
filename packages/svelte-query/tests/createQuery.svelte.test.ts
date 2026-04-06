@@ -1275,10 +1275,7 @@ describe('createQuery', () => {
     // Prefetch the query
     const prefetchPromise = queryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return 'prefetch'
-      },
+      queryFn: () => sleep(10).then(() => 'prefetch'),
     })
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
@@ -1518,10 +1515,7 @@ describe('createQuery', () => {
     withEffectRoot(() => {
       const key = ['test-key']
 
-      const queryFn = async () => {
-        await sleep(10)
-        return 'data1'
-      }
+      const queryFn = () => sleep(10).then(() => 'data1')
 
       // Create two queries with the same key but different options
       createQuery(
