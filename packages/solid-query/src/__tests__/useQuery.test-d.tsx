@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { queryOptions, useQuery } from '../index'
 
-describe('initialData', () => {
+describe('useQuery', () => {
   describe('Config object overload', () => {
     it('TData should always be defined when initialData is provided as an object', () => {
       const { data } = useQuery(() => ({
