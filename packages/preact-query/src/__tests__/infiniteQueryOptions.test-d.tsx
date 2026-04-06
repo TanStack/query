@@ -191,7 +191,7 @@ describe('infiniteQueryOptions', () => {
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
-    expectTypeOf(queryOptions.initialData).toMatchTypeOf<
+    expectTypeOf(queryOptions.initialData).toExtend<
       | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
       | InfiniteData<{ example: boolean }, number>
       | undefined
@@ -209,7 +209,7 @@ describe('infiniteQueryOptions', () => {
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
-    expectTypeOf(queryOptions.initialData).toMatchTypeOf<
+    expectTypeOf(queryOptions.initialData).toExtend<
       | InitialDataFunction<InfiniteData<{ example: boolean }, number>>
       | InfiniteData<{ example: boolean }, number>
       | undefined

@@ -231,7 +231,7 @@ describe('queryOptions', () => {
         queryFn: () => Promise.resolve('something string'),
         initialData: id ? 'initial string' : undefined,
       })
-      expectTypeOf(options.initialData).toMatchTypeOf<
+      expectTypeOf(options.initialData).toExtend<
         InitialDataFunction<string> | string | undefined
       >()
     }
