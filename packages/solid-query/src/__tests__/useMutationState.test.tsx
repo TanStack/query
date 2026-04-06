@@ -87,10 +87,7 @@ describe('useMutationState', () => {
     function Mutate() {
       const mutation = useMutation(() => ({
         mutationKey,
-        mutationFn: async (input: number) => {
-          await sleep(150)
-          return 'data' + input
-        },
+        mutationFn: (input: number) => sleep(150).then(() => 'data' + input),
       }))
 
       return (
