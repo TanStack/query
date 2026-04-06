@@ -174,7 +174,7 @@ computed(() => {
 
 ## Typing Query Options
 
-If you inline query options into `injectQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `injectQuery` and e.g. `prefetchQuery` or manage them in a service. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
+If you inline query options into `injectQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `injectQuery` and imperative calls like `queryClient.query`, or manage them in a service. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
 
 ```ts
 @Injectable({
@@ -215,7 +215,7 @@ export class Component {
   postQuery = injectQuery(this.optionsSignal)
 
   someMethod() {
-    this.queryClient.prefetchQuery(this.queries.post(23))
+    void this.queryClient.query(this.queries.post(23)).catch(noop)
   }
 }
 ```

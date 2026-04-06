@@ -11,6 +11,8 @@ usePrefetchInfiniteQuery(options)
 
 You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.prefetchInfiniteQuery`](../../../reference/QueryClient.md#queryclientprefetchinfinitequery). Remember that some of them are required as below:
 
+For general imperative fetching outside render, prefer [`queryClient.infiniteQuery`](../../../reference/QueryClient.md#queryclientinfinitequery). This hook specifically mirrors the legacy prefetch behavior during render.
+
 - `queryKey: QueryKey`
   - **Required**
   - The query key to prefetch during render

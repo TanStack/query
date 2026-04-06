@@ -12,7 +12,9 @@ infiniteQueryOptions({
 
 **Options**
 
-You can generally pass everything to `infiniteQueryOptions` that you can also pass to [`useInfiniteQuery`](./useInfiniteQuery.md). Some options will have no effect when then forwarded to a function like `queryClient.prefetchInfiniteQuery`, but TypeScript will still be fine with those excess properties.
+You can generally pass everything to `infiniteQueryOptions` that you can also pass to [`useInfiniteQuery`](./useInfiniteQuery.md). These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
+
+Options like `select` and `enabled` keep working when you pass the result to `queryClient.infiniteQuery`, because `infiniteQuery()` honors the same imperative query semantics. Legacy methods like `fetchInfiniteQuery` and `prefetchInfiniteQuery` ignore `select` and `enabled`, even though TypeScript still accepts those excess properties.
 
 - `queryKey: QueryKey`
   - **Required**
