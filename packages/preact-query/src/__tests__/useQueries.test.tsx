@@ -1128,16 +1128,12 @@ describe('useQueries', () => {
             {
               queryKey: key1,
               queryFn: () =>
-                sleep(5).then(() =>
-                  Promise.resolve(`first result ${count}`),
-                ),
+                sleep(5).then(() => Promise.resolve(`first result ${count}`)),
             },
             {
               queryKey: key2,
               queryFn: () =>
-                sleep(50).then(() =>
-                  Promise.resolve(`second result ${count}`),
-                ),
+                sleep(50).then(() => Promise.resolve(`second result ${count}`)),
             },
           ],
           combine: (queryResults) => {
@@ -1319,13 +1315,11 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: key1,
-              queryFn: () =>
-                sleep(10).then(() => `first result:${value}`),
+              queryFn: () => sleep(10).then(() => `first result:${value}`),
             },
             {
               queryKey: key2,
-              queryFn: () =>
-                sleep(20).then(() => `second result:${value}`),
+              queryFn: () => sleep(20).then(() => `second result:${value}`),
             },
           ],
           combine: useCallback((results: Array<QueryObserverResult>) => {
