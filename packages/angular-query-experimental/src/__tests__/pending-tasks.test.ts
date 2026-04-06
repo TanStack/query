@@ -287,7 +287,8 @@ describe('PendingTasks Integration', () => {
       }))
 
       mutation = injectMutation(() => ({
-        mutationFn: (data: string) => sleep(100).then(() => `processed: ${data}`),
+        mutationFn: (data: string) =>
+          sleep(100).then(() => `processed: ${data}`),
       }))
     }
 
@@ -373,13 +374,15 @@ describe('PendingTasks Integration', () => {
 
       const mutation1 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: (data: string) => sleep(30).then(() => `processed-1: ${data}`),
+          mutationFn: (data: string) =>
+            sleep(30).then(() => `processed-1: ${data}`),
         })),
       )
 
       const mutation2 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: (data: string) => sleep(50).then(() => `processed-2: ${data}`),
+          mutationFn: (data: string) =>
+            sleep(50).then(() => `processed-2: ${data}`),
         })),
       )
 
@@ -424,7 +427,8 @@ describe('PendingTasks Integration', () => {
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: (data: string) => sleep(60).then(() => `mutation: ${data}`),
+          mutationFn: (data: string) =>
+            sleep(60).then(() => `mutation: ${data}`),
         })),
       )
 
