@@ -1267,117 +1267,97 @@ describe('createQuery', () => {
     }),
   )
 
-  it.todo(
-    'should be able to set different stale times for a query',
-    async () => {
-      /**
-       * TODO: There's a super weird bug with this test, and I think it's caused by a race condition in query-core.
-       *
-       * If you add this to the top `updateResult` in `packages/query-core/src/queryObserver.ts:647`:
-       * ```
-       * for (let i = 0; i < 10_000_000; i++) {
-       *   continue
-       * }
-       * ```
-       *
-       * This test will miraculously start to pass. I'm suspicious that there's some race condition between props
-       * being tracked and `updateResult` being called, but that _should_ be fixed by `notifyOnChangeProps: 'all'`,
-       * and that's not doing anything.
-       *
-       * This test will also start to magically pass if you put `$inspect(firstQuery)` before `vi.waitFor` near
-       * the end of the test.
-       */
+  it('should be able to set different stale times for a query', async () => {
+    const key = ['test-key']
+    const states1: Array<CreateQueryResult<string>> = []
+    const states2: Array<CreateQueryResult<string>> = []
 
-      const key = ['test-key']
-      const states1: Array<CreateQueryResult<string>> = []
-      const states2: Array<CreateQueryResult<string>> = []
+    // Prefetch the query
+    const prefetchPromise = queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'prefetch'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    await prefetchPromise
 
-      // Prefetch the query
-      await queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'prefetch'
-        },
+    expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
+    // Advance time so secondQuery (staleTime: 10) sees prefetched data as stale
+    await vi.advanceTimersByTimeAsync(10)
+
+    await withEffectRoot(async () => {
+      const firstQuery = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve('one'),
+          staleTime: 100,
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        states1.push({ ...firstQuery })
       })
 
-      await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
+      const secondQuery = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve('two'),
+          staleTime: 10,
+        }),
+        () => queryClient,
+      )
 
-      await withEffectRoot(async () => {
-        const firstQuery = createQuery<string>(
-          () => ({
-            queryKey: key,
-            queryFn: () => Promise.resolve('one'),
-            staleTime: 100,
-          }),
-          () => queryClient,
-        )
+      $effect(() => {
+        states2.push({ ...secondQuery })
+      })
 
-        $effect(() => {
-          states1.push({ ...firstQuery })
-        })
+      // Wait for both staleTime to expire (100ms for firstQuery)
+      await vi.advanceTimersByTimeAsync(101)
+      expect(firstQuery).toMatchObject({ data: 'two', isStale: true })
+      expect(secondQuery).toMatchObject({ data: 'two', isStale: true })
 
-        const secondQuery = createQuery<string>(
-          () => ({
-            queryKey: key,
-            queryFn: () => Promise.resolve('two'),
-            staleTime: 10,
-          }),
-          () => queryClient,
-        )
+      expect(states1).toMatchObject([
+        // First render
+        {
+          data: 'prefetch',
+          isStale: false,
+        },
+        // Second createQuery started fetching
+        {
+          data: 'prefetch',
+          isStale: false,
+        },
+        // Second createQuery data came in
+        {
+          data: 'two',
+          isStale: false,
+        },
+        // Data became stale after 100ms
+        {
+          data: 'two',
+          isStale: true,
+        },
+      ])
 
-        $effect(() => {
-          states2.push({ ...secondQuery })
-        })
-
-        await vi.advanceTimersByTimeAsync(101)
-        expect(firstQuery).toMatchObject({ data: 'two', isStale: true })
-        expect(secondQuery).toMatchObject({ data: 'two', isStale: true })
-
-        expect(states1).toMatchObject([
-          // First render
-          {
-            data: 'prefetch',
-            isStale: false,
-          },
-          // Second createQuery started fetching
-          {
-            data: 'prefetch',
-            isStale: false,
-          },
-          // Second createQuery data came in
-          {
-            data: 'two',
-            isStale: false,
-          },
-          // Data became stale after 100ms
-          {
-            data: 'two',
-            isStale: true,
-          },
-        ])
-
-        expect(states2).toMatchObject([
-          // First render, data is stale and starts fetching
-          {
-            data: 'prefetch',
-            isStale: true,
-          },
-          // Second createQuery data came in
-          {
-            data: 'two',
-            isStale: false,
-          },
-          // Data became stale after 10ms
-          {
-            data: 'two',
-            isStale: true,
-          },
-        ])
-      })()
-    },
-  )
+      expect(states2).toMatchObject([
+        // First render, data is stale and starts fetching
+        {
+          data: 'prefetch',
+          isStale: true,
+        },
+        // Second createQuery data came in
+        {
+          data: 'two',
+          isStale: false,
+        },
+        // Data became stale after 10ms
+        {
+          data: 'two',
+          isStale: true,
+        },
+      ])
+    })()
+  })
 
   it(
     'should re-render when a query becomes stale',
@@ -1535,10 +1515,7 @@ describe('createQuery', () => {
     withEffectRoot(() => {
       const key = ['test-key']
 
-      const queryFn = async () => {
-        await sleep(10)
-        return 'data1'
-      }
+      const queryFn = () => sleep(10).then(() => 'data1')
 
       // Create two queries with the same key but different options
       createQuery(
