@@ -67,6 +67,6 @@ describe('injectIsRestoring', () => {
   test('throws NG0203 with descriptive error outside injection context', () => {
     expect(() => {
       injectIsRestoring()
-    }).toThrowError(/NG0203(.*?)injectIsRestoring/)
+    }).toThrow(/NG0203(.*?)injectIsRestoring/)
   })
 })

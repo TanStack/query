@@ -589,7 +589,7 @@ describe('injectQuery', () => {
           queryKey: ['injectionContextError'],
           queryFn: () => sleep(0).then(() => 'Some data'),
         }))
-      }).toThrowError(/NG0203(.*?)injectQuery/)
+      }).toThrow(/NG0203(.*?)injectQuery/)
     })
 
     test('can be used outside injection context when passing an injector', () => {
