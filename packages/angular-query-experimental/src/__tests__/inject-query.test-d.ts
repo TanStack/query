@@ -3,8 +3,9 @@ import { sleep } from '@tanstack/query-test-utils'
 import { injectQuery, queryOptions } from '..'
 import type { Signal } from '@angular/core'
 
-describe('initialData', () => {
-  describe('Config object overload', () => {
+describe('injectQuery', () => {
+  describe('initialData', () => {
+    describe('Config object overload', () => {
     it('TData should always be defined when initialData is provided as an object', () => {
       const { data } = injectQuery(() => ({
         queryKey: ['key'],
@@ -107,73 +108,74 @@ describe('initialData', () => {
     })
   })
 
-  describe('structuralSharing', () => {
-    it('should be able to use structuralSharing with unknown types', () => {
-      // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
-      injectQuery(() => ({
-        queryKey: ['key'],
-        queryFn: () => 5,
-        structuralSharing: (oldData, newData) => {
-          expectTypeOf(oldData).toBeUnknown()
-          expectTypeOf(newData).toBeUnknown()
-          return newData
-        },
-      }))
+    describe('structuralSharing', () => {
+      it('should be able to use structuralSharing with unknown types', () => {
+        // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
+        injectQuery(() => ({
+          queryKey: ['key'],
+          queryFn: () => 5,
+          structuralSharing: (oldData, newData) => {
+            expectTypeOf(oldData).toBeUnknown()
+            expectTypeOf(newData).toBeUnknown()
+            return newData
+          },
+        }))
+      })
     })
   })
-})
 
-describe('Discriminated union return type', () => {
-  test('data should be possibly undefined by default', () => {
-    const query = injectQuery(() => ({
-      queryKey: ['key'],
-      queryFn: () => sleep(0).then(() => 'Some data'),
-    }))
+  describe('Discriminated union return type', () => {
+    test('data should be possibly undefined by default', () => {
+      const query = injectQuery(() => ({
+        queryKey: ['key'],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      }))
 
-    expectTypeOf(query.data).toEqualTypeOf<Signal<string | undefined>>()
-  })
+      expectTypeOf(query.data).toEqualTypeOf<Signal<string | undefined>>()
+    })
 
-  test('data should be defined when query is success', () => {
-    const query = injectQuery(() => ({
-      queryKey: ['key'],
-      queryFn: () => sleep(0).then(() => 'Some data'),
-    }))
+    test('data should be defined when query is success', () => {
+      const query = injectQuery(() => ({
+        queryKey: ['key'],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      }))
 
-    if (query.isSuccess()) {
-      expectTypeOf(query.data).toEqualTypeOf<Signal<string>>()
-    }
-  })
+      if (query.isSuccess()) {
+        expectTypeOf(query.data).toEqualTypeOf<Signal<string>>()
+      }
+    })
 
-  test('error should be null when query is success', () => {
-    const query = injectQuery(() => ({
-      queryKey: ['key'],
-      queryFn: () => sleep(0).then(() => 'Some data'),
-    }))
+    test('error should be null when query is success', () => {
+      const query = injectQuery(() => ({
+        queryKey: ['key'],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      }))
 
-    if (query.isSuccess()) {
-      expectTypeOf(query.error).toEqualTypeOf<Signal<null>>()
-    }
-  })
+      if (query.isSuccess()) {
+        expectTypeOf(query.error).toEqualTypeOf<Signal<null>>()
+      }
+    })
 
-  test('data should be undefined when query is pending', () => {
-    const query = injectQuery(() => ({
-      queryKey: ['key'],
-      queryFn: () => sleep(0).then(() => 'Some data'),
-    }))
+    test('data should be undefined when query is pending', () => {
+      const query = injectQuery(() => ({
+        queryKey: ['key'],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      }))
 
-    if (query.isPending()) {
-      expectTypeOf(query.data).toEqualTypeOf<Signal<undefined>>()
-    }
-  })
+      if (query.isPending()) {
+        expectTypeOf(query.data).toEqualTypeOf<Signal<undefined>>()
+      }
+    })
 
-  test('error should be defined when query is error', () => {
-    const query = injectQuery(() => ({
-      queryKey: ['key'],
-      queryFn: () => sleep(0).then(() => 'Some data'),
-    }))
+    test('error should be defined when query is error', () => {
+      const query = injectQuery(() => ({
+        queryKey: ['key'],
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      }))
 
-    if (query.isError()) {
-      expectTypeOf(query.error).toEqualTypeOf<Signal<Error>>()
-    }
+      if (query.isError()) {
+        expectTypeOf(query.error).toEqualTypeOf<Signal<Error>>()
+      }
+    })
   })
 })
