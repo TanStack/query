@@ -25,12 +25,10 @@ function isQueryHookCallExpression(node: TSESTree.CallExpression) {
   return true
 }
 
-/** @returns true if it's a call to `queryClient.invalidateQueries` */
+/** @returns true if it's a call to `*.invalidateQueries` */
 function isInvalidateQueriesCallExpression(node: TSESTree.CallExpression) {
   return (
     node.callee.type === AST_NODE_TYPES.MemberExpression &&
-    node.callee.object.type === AST_NODE_TYPES.Identifier &&
-    node.callee.object.name === 'queryClient' &&
     node.callee.property.type === AST_NODE_TYPES.Identifier &&
     node.callee.property.name === 'invalidateQueries'
   )
