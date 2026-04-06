@@ -291,10 +291,8 @@ describe('useSuspenseQueries', () => {
     function getUserData() {
       return {
         queryKey: key,
-        queryFn: async () => {
-          await sleep(localDuration)
-          return { name: 'John Doe', age: 50 }
-        },
+        queryFn: () =>
+          sleep(localDuration).then(() => ({ name: 'John Doe', age: 50 })),
       }
     }
 
