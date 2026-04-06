@@ -1285,7 +1285,7 @@ describe('createQuery', () => {
 
     expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
     // Advance time so secondQuery (staleTime: 10) sees prefetched data as stale
-    await vi.advanceTimersByTimeAsync(11)
+    await vi.advanceTimersByTimeAsync(10)
 
     await withEffectRoot(async () => {
       const firstQuery = createQuery<string>(
