@@ -1267,103 +1267,100 @@ describe('createQuery', () => {
     }),
   )
 
-  it(
-    'should be able to set different stale times for a query',
-    async () => {
-      const key = ['test-key']
-      const states1: Array<CreateQueryResult<string>> = []
-      const states2: Array<CreateQueryResult<string>> = []
+  it('should be able to set different stale times for a query', async () => {
+    const key = ['test-key']
+    const states1: Array<CreateQueryResult<string>> = []
+    const states2: Array<CreateQueryResult<string>> = []
 
-      // Prefetch the query
-      const prefetchPromise = queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'prefetch'
-        },
+    // Prefetch the query
+    const prefetchPromise = queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(10)
+        return 'prefetch'
+      },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    await prefetchPromise
+
+    expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
+    // Advance time so secondQuery (staleTime: 10) sees prefetched data as stale
+    await vi.advanceTimersByTimeAsync(11)
+
+    await withEffectRoot(async () => {
+      const firstQuery = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve('one'),
+          staleTime: 100,
+        }),
+        () => queryClient,
+      )
+
+      $effect(() => {
+        states1.push({ ...firstQuery })
       })
-      await vi.advanceTimersByTimeAsync(10)
-      await prefetchPromise
 
-      expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
-      // Advance time so secondQuery (staleTime: 10) sees prefetched data as stale
-      await vi.advanceTimersByTimeAsync(11)
+      const secondQuery = createQuery<string>(
+        () => ({
+          queryKey: key,
+          queryFn: () => Promise.resolve('two'),
+          staleTime: 10,
+        }),
+        () => queryClient,
+      )
 
-      await withEffectRoot(async () => {
-        const firstQuery = createQuery<string>(
-          () => ({
-            queryKey: key,
-            queryFn: () => Promise.resolve('one'),
-            staleTime: 100,
-          }),
-          () => queryClient,
-        )
+      $effect(() => {
+        states2.push({ ...secondQuery })
+      })
 
-        $effect(() => {
-          states1.push({ ...firstQuery })
-        })
+      // Wait for both staleTime to expire (100ms for firstQuery)
+      await vi.advanceTimersByTimeAsync(101)
+      expect(firstQuery).toMatchObject({ data: 'two', isStale: true })
+      expect(secondQuery).toMatchObject({ data: 'two', isStale: true })
 
-        const secondQuery = createQuery<string>(
-          () => ({
-            queryKey: key,
-            queryFn: () => Promise.resolve('two'),
-            staleTime: 10,
-          }),
-          () => queryClient,
-        )
+      expect(states1).toMatchObject([
+        // First render
+        {
+          data: 'prefetch',
+          isStale: false,
+        },
+        // Second createQuery started fetching
+        {
+          data: 'prefetch',
+          isStale: false,
+        },
+        // Second createQuery data came in
+        {
+          data: 'two',
+          isStale: false,
+        },
+        // Data became stale after 100ms
+        {
+          data: 'two',
+          isStale: true,
+        },
+      ])
 
-        $effect(() => {
-          states2.push({ ...secondQuery })
-        })
-
-        // Wait for both staleTime to expire (100ms for firstQuery)
-        await vi.advanceTimersByTimeAsync(101)
-        expect(firstQuery).toMatchObject({ data: 'two', isStale: true })
-        expect(secondQuery).toMatchObject({ data: 'two', isStale: true })
-
-        expect(states1).toMatchObject([
-          // First render
-          {
-            data: 'prefetch',
-            isStale: false,
-          },
-          // Second createQuery started fetching
-          {
-            data: 'prefetch',
-            isStale: false,
-          },
-          // Second createQuery data came in
-          {
-            data: 'two',
-            isStale: false,
-          },
-          // Data became stale after 100ms
-          {
-            data: 'two',
-            isStale: true,
-          },
-        ])
-
-        expect(states2).toMatchObject([
-          // First render, data is stale and starts fetching
-          {
-            data: 'prefetch',
-            isStale: true,
-          },
-          // Second createQuery data came in
-          {
-            data: 'two',
-            isStale: false,
-          },
-          // Data became stale after 10ms
-          {
-            data: 'two',
-            isStale: true,
-          },
-        ])
-      })()
-    },
-  )
+      expect(states2).toMatchObject([
+        // First render, data is stale and starts fetching
+        {
+          data: 'prefetch',
+          isStale: true,
+        },
+        // Second createQuery data came in
+        {
+          data: 'two',
+          isStale: false,
+        },
+        // Data became stale after 10ms
+        {
+          data: 'two',
+          isStale: true,
+        },
+      ])
+    })()
+  })
 
   it(
     'should re-render when a query becomes stale',
