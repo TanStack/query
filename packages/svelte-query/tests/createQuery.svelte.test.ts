@@ -1267,42 +1267,27 @@ describe('createQuery', () => {
     }),
   )
 
-  it.todo(
+  it(
     'should be able to set different stale times for a query',
     async () => {
-      /**
-       * TODO: There's a super weird bug with this test, and I think it's caused by a race condition in query-core.
-       *
-       * If you add this to the top `updateResult` in `packages/query-core/src/queryObserver.ts:647`:
-       * ```
-       * for (let i = 0; i < 10_000_000; i++) {
-       *   continue
-       * }
-       * ```
-       *
-       * This test will miraculously start to pass. I'm suspicious that there's some race condition between props
-       * being tracked and `updateResult` being called, but that _should_ be fixed by `notifyOnChangeProps: 'all'`,
-       * and that's not doing anything.
-       *
-       * This test will also start to magically pass if you put `$inspect(firstQuery)` before `vi.waitFor` near
-       * the end of the test.
-       */
-
       const key = ['test-key']
       const states1: Array<CreateQueryResult<string>> = []
       const states2: Array<CreateQueryResult<string>> = []
 
       // Prefetch the query
-      await queryClient.prefetchQuery({
+      const prefetchPromise = queryClient.prefetchQuery({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
           return 'prefetch'
         },
       })
-
       await vi.advanceTimersByTimeAsync(10)
+      await prefetchPromise
+
       expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
+      // Advance time so secondQuery (staleTime: 10) sees prefetched data as stale
+      await vi.advanceTimersByTimeAsync(11)
 
       await withEffectRoot(async () => {
         const firstQuery = createQuery<string>(
@@ -1331,6 +1316,7 @@ describe('createQuery', () => {
           states2.push({ ...secondQuery })
         })
 
+        // Wait for both staleTime to expire (100ms for firstQuery)
         await vi.advanceTimersByTimeAsync(101)
         expect(firstQuery).toMatchObject({ data: 'two', isStale: true })
         expect(secondQuery).toMatchObject({ data: 'two', isStale: true })
