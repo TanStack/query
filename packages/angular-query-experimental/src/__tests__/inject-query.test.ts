@@ -612,10 +612,7 @@ describe('injectQuery', () => {
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: ['pendingTasksTest'],
-          queryFn: async () => {
-            await sleep(50)
-            return 'test data'
-          },
+          queryFn: () => sleep(50).then(() => 'test data'),
         })),
       )
 
