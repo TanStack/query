@@ -3,7 +3,7 @@ import { QueryClient } from '@tanstack/query-core'
 import { createInfiniteQuery, infiniteQueryOptions } from '../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
-describe('queryOptions', () => {
+describe('infiniteQueryOptions', () => {
   test('Should not allow excess properties', () => {
     infiniteQueryOptions({
       queryKey: ['key'],
