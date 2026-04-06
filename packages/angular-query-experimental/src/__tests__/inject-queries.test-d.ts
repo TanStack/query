@@ -5,8 +5,9 @@ import { queryOptions } from '../query-options'
 import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
 import type { Signal } from '@angular/core'
 
-describe('InjectQueries config object overload', () => {
-  it('TData should always be defined when initialData is provided as an object', () => {
+describe('injectQueries', () => {
+  describe('config object overload', () => {
+    it('TData should always be defined when initialData is provided as an object', () => {
     const query1 = {
       queryKey: ['key1'],
       queryFn: () => {
@@ -173,5 +174,6 @@ describe('InjectQueries config object overload', () => {
         ]
       >
     >()
+  })
   })
 })

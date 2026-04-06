@@ -3,7 +3,8 @@ import { sleep } from '@tanstack/query-test-utils'
 import { injectMutation } from '..'
 import type { Signal } from '@angular/core'
 
-describe('Discriminated union return type', () => {
+describe('injectMutation', () => {
+  describe('Discriminated union return type', () => {
   test('data should be possibly undefined by default', () => {
     const mutation = injectMutation(() => ({
       mutationFn: () => sleep(0).then(() => 'string'),
@@ -67,5 +68,6 @@ describe('Discriminated union return type', () => {
       expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string>>()
     }
     expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string | undefined>>()
+  })
   })
 })
