@@ -3559,9 +3559,7 @@ describe('useQuery', () => {
 
     const prefetchQueryFn =
       vi.fn<(...args: Array<unknown>) => Promise<string>>()
-    prefetchQueryFn.mockImplementation(() =>
-      sleep(10).then(() => 'not yet...'),
-    )
+    prefetchQueryFn.mockImplementation(() => sleep(10).then(() => 'not yet...'))
 
     queryClient.prefetchQuery({
       queryKey: key,

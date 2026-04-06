@@ -1132,9 +1132,7 @@ describe('useQueries', () => {
             {
               queryKey: key2,
               queryFn: () =>
-                sleep(50).then(() =>
-                  Promise.resolve('second result ' + count),
-                ),
+                sleep(50).then(() => Promise.resolve('second result ' + count)),
             },
           ],
           combine: (queryResults) => {
