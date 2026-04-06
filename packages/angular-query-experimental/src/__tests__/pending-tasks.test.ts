@@ -283,17 +283,11 @@ describe('PendingTasks Integration', () => {
     class TestComponent {
       query = injectQuery(() => ({
         queryKey: ['component-query'],
-        queryFn: async () => {
-          await sleep(100)
-          return 'component-data'
-        },
+        queryFn: () => sleep(100).then(() => 'component-data'),
       }))
 
       mutation = injectMutation(() => ({
-        mutationFn: async (data: string) => {
-          await sleep(100)
-          return `processed: ${data}`
-        },
+        mutationFn: (data: string) => sleep(100).then(() => `processed: ${data}`),
       }))
     }
 
@@ -338,20 +332,14 @@ describe('PendingTasks Integration', () => {
       const query1 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: ['concurrent-1'],
-          queryFn: async () => {
-            await sleep(30)
-            return 'data-1'
-          },
+          queryFn: () => sleep(30).then(() => 'data-1'),
         })),
       )
 
       const query2 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: ['concurrent-2'],
-          queryFn: async () => {
-            await sleep(50)
-            return 'data-2'
-          },
+          queryFn: () => sleep(50).then(() => 'data-2'),
         })),
       )
 
@@ -385,19 +373,13 @@ describe('PendingTasks Integration', () => {
 
       const mutation1 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (data: string) => {
-            await sleep(30)
-            return `processed-1: ${data}`
-          },
+          mutationFn: (data: string) => sleep(30).then(() => `processed-1: ${data}`),
         })),
       )
 
       const mutation2 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (data: string) => {
-            await sleep(50)
-            return `processed-2: ${data}`
-          },
+          mutationFn: (data: string) => sleep(50).then(() => `processed-2: ${data}`),
         })),
       )
 
@@ -436,19 +418,13 @@ describe('PendingTasks Integration', () => {
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: ['mixed-query'],
-          queryFn: async () => {
-            await sleep(40)
-            return 'query-data'
-          },
+          queryFn: () => sleep(40).then(() => 'query-data'),
         })),
       )
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (data: string) => {
-            await sleep(60)
-            return `mutation: ${data}`
-          },
+          mutationFn: (data: string) => sleep(60).then(() => `mutation: ${data}`),
         })),
       )
 
@@ -561,10 +537,7 @@ describe('PendingTasks Integration', () => {
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
           queryKey: ['cancel-test'],
-          queryFn: async () => {
-            await sleep(100)
-            return 'data'
-          },
+          queryFn: () => sleep(100).then(() => 'data'),
         })),
       )
 
@@ -623,10 +596,7 @@ describe('PendingTasks Integration', () => {
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (newData: string) => {
-            await sleep(50)
-            return newData
-          },
+          mutationFn: (newData: string) => sleep(50).then(() => newData),
           onMutate: async (newData) => {
             // Optimistic update
             const previousData = queryClient.getQueryData(testQueryKey)
