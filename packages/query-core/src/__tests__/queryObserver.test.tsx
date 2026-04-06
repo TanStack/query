@@ -10,6 +10,7 @@ import {
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, QueryObserver, focusManager } from '..'
+import { defaultTimeoutProvider, timeoutManager } from '../timeoutManager'
 import type { QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
@@ -1624,6 +1625,62 @@ describe('queryObserver', () => {
       expect(queryFn).toHaveBeenCalledTimes(2)
 
       unsubscribe2()
+    })
+  })
+
+  describe('falsy timer ID (0) handling', () => {
+    test('should call clearTimeout when stale timer ID is 0', async () => {
+      const provider = {
+        setTimeout: vi.fn(() => 0),
+        clearTimeout: vi.fn(),
+        setInterval: vi.fn(() => 0),
+        clearInterval: vi.fn(),
+      }
+      timeoutManager.setTimeoutProvider(provider)
+
+      const key = queryKey()
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: () => 'data',
+        staleTime: 100,
+      })
+
+      const unsubscribe = observer.subscribe(() => undefined)
+      await vi.advanceTimersByTimeAsync(0)
+
+      // setOptions triggers #clearStaleTimeout → must call clearTimeout(0)
+      observer.setOptions({ queryKey: key, queryFn: () => 'data', staleTime: 200 })
+
+      expect(provider.clearTimeout).toHaveBeenCalledWith(0)
+
+      unsubscribe()
+      timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
+    })
+
+    test('should call clearInterval when refetch interval timer ID is 0', async () => {
+      const provider = {
+        setTimeout: vi.fn(() => 0),
+        clearTimeout: vi.fn(),
+        setInterval: vi.fn(() => 0),
+        clearInterval: vi.fn(),
+      }
+      timeoutManager.setTimeoutProvider(provider)
+
+      const key = queryKey()
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: () => 'data',
+        refetchInterval: 100,
+      })
+
+      const unsubscribe = observer.subscribe(() => undefined)
+      await vi.advanceTimersByTimeAsync(0)
+
+      unsubscribe() // destroy → #clearRefetchInterval → must call clearInterval(0)
+
+      expect(provider.clearInterval).toHaveBeenCalledWith(0)
+
+      timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
     })
   })
 })
