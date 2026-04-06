@@ -182,7 +182,7 @@ describe('injectMutationState', () => {
       test('throws NG0203 with descriptive error outside injection context', () => {
         expect(() => {
           injectMutationState()
-        }).toThrowError(/NG0203(.*?)injectMutationState/)
+        }).toThrow(/NG0203(.*?)injectMutationState/)
       })
 
       test('can be used outside injection context when passing an injector', () => {

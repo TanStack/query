@@ -372,7 +372,7 @@ describe('useMutation', () => {
       })
 
       await vi.waitFor(() =>
-        expect(mutation.mutateAsync()).rejects.toThrowError('Some error'),
+        expect(mutation.mutateAsync()).rejects.toThrow('Some error'),
       )
 
       expect(mutation).toMatchObject({

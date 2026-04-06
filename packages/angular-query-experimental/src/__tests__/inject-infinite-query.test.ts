@@ -72,7 +72,7 @@ describe('injectInfiniteQuery', () => {
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }))
-      }).toThrowError(/NG0203(.*?)injectInfiniteQuery/)
+      }).toThrow(/NG0203(.*?)injectInfiniteQuery/)
     })
 
     test('can be used outside injection context when passing an injector', () => {

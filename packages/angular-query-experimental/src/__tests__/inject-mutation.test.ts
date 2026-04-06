@@ -448,7 +448,7 @@ describe('injectMutation', () => {
       }))
     })
 
-    await expect(() => mutateAsync()).rejects.toThrowError(err)
+    await expect(() => mutateAsync()).rejects.toThrow(err)
   })
 
   test('should throw when throwOnError function returns true', async () => {
@@ -463,7 +463,7 @@ describe('injectMutation', () => {
       }))
     })
 
-    await expect(() => mutateAsync()).rejects.toThrowError(err)
+    await expect(() => mutateAsync()).rejects.toThrow(err)
   })
 
   describe('injection context', () => {
@@ -473,7 +473,7 @@ describe('injectMutation', () => {
           mutationKey: ['injectionContextError'],
           mutationFn: () => Promise.resolve(),
         }))
-      }).toThrowError(/NG0203(.*?)injectMutation/)
+      }).toThrow(/NG0203(.*?)injectMutation/)
     })
 
     test('can be used outside injection context when passing an injector', () => {

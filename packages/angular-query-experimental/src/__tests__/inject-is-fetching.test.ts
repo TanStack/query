@@ -48,7 +48,7 @@ describe('injectIsFetching', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
       expect(() => {
         injectIsFetching()
-      }).toThrowError(/NG0203(.*?)injectIsFetching/)
+      }).toThrow(/NG0203(.*?)injectIsFetching/)
     })
 
     test('can be used outside injection context when passing an injector', () => {

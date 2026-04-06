@@ -810,7 +810,7 @@ describe('queryObserver', () => {
           // @ts-expect-error
           enabled: null,
         }),
-    ).toThrowError('Expected enabled to be a boolean')
+    ).toThrow('Expected enabled to be a boolean')
   })
 
   test('getCurrentQuery should return the current query', () => {
