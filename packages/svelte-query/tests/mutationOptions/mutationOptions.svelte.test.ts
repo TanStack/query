@@ -20,7 +20,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the object received as a parameter without any modification (without mutationKey in mutationOptions)', () => {
@@ -28,7 +28,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
