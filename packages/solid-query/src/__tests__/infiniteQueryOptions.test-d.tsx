@@ -25,7 +25,7 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<{ wow: boolean }, unknown>
     >()
 
-    expectTypeOf(options).toMatchTypeOf<
+    expectTypeOf(options).toExtend<
       ReturnType<
         DefinedInitialDataInfiniteOptions<
           { wow: boolean },
@@ -54,7 +54,7 @@ describe('infiniteQueryOptions', () => {
       () => InfiniteData<{ wow: boolean }, unknown> | undefined
     >()
 
-    expectTypeOf(options).toMatchTypeOf<
+    expectTypeOf(options).toExtend<
       ReturnType<
         UndefinedInitialDataInfiniteOptions<
           { wow: boolean },
