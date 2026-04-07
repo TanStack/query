@@ -509,6 +509,5 @@ describe('mutationCache', () => {
 
       unsubscribe()
     })
-
   })
 })
