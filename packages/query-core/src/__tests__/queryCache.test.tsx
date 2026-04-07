@@ -125,18 +125,21 @@ describe('queryCache', () => {
 
       const testClient = new QueryClient({ queryCache: testCache })
 
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const key3 = queryKey()
       testClient.prefetchQuery({
-        queryKey: ['key1'],
+        queryKey: key1,
         queryFn: () => sleep(100).then(() => 'data1'),
       })
       expect(testCache.findAll().length).toBe(1)
       testClient.prefetchQuery({
-        queryKey: ['key2'],
+        queryKey: key2,
         queryFn: () => sleep(100).then(() => 'data2'),
       })
       expect(testCache.findAll().length).toBe(2)
       testClient.prefetchQuery({
-        queryKey: ['key3'],
+        queryKey: key3,
         queryFn: () => sleep(100).then(() => 'data3'),
       })
       await vi.advanceTimersByTimeAsync(100)

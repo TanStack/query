@@ -482,9 +482,10 @@ describe('query', () => {
   })
 
   test('should reset to default state when created from hydration', async () => {
+    const key = queryKey()
     const client = new QueryClient()
     await client.prefetchQuery({
-      queryKey: ['string'],
+      queryKey: key,
       queryFn: () => Promise.resolve('string'),
     })
 
@@ -493,12 +494,12 @@ describe('query', () => {
     const hydrationClient = new QueryClient()
     hydrate(hydrationClient, dehydrated)
 
-    expect(hydrationClient.getQueryData(['string'])).toBe('string')
+    expect(hydrationClient.getQueryData(key)).toBe('string')
 
-    const query = hydrationClient.getQueryCache().find({ queryKey: ['string'] })
+    const query = hydrationClient.getQueryCache().find({ queryKey: key })
     query?.reset()
 
-    expect(hydrationClient.getQueryData(['string'])).toBe(undefined)
+    expect(hydrationClient.getQueryData(key)).toBe(undefined)
   })
 
   test('should be able to refetch a cancelled query', async () => {
