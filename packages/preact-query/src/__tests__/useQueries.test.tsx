@@ -389,7 +389,7 @@ describe('useQueries', () => {
       const result4 = useQueries({
         queries: [
           queryOptions({
-            queryKey: ['key1'],
+            queryKey: queryKey(),
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
@@ -397,7 +397,7 @@ describe('useQueries', () => {
             },
           }),
           queryOptions({
-            queryKey: ['key2'],
+            queryKey: queryKey(),
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
@@ -1697,15 +1697,17 @@ describe('useQueries', () => {
 
   it('should not cause infinite re-renders when removing last query', async () => {
     let renderCount = 0
+    const key1 = queryKey()
+    const key2 = queryKey()
 
     function Page() {
       const [queries, setQueries] = useState([
         {
-          queryKey: ['query1'],
+          queryKey: key1,
           queryFn: () => 'data1',
         },
         {
-          queryKey: ['query2'],
+          queryKey: key2,
           queryFn: () => 'data2',
         },
       ])
@@ -1721,7 +1723,7 @@ describe('useQueries', () => {
             onClick={() => {
               setQueries([
                 {
-                  queryKey: ['query1'],
+                  queryKey: key1,
                   queryFn: () => 'data1',
                 },
               ])
@@ -1733,7 +1735,7 @@ describe('useQueries', () => {
             onClick={() => {
               setQueries([
                 {
-                  queryKey: ['query2'],
+                  queryKey: key2,
                   queryFn: () => 'data2',
                 },
               ])
