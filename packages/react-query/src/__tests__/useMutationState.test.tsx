@@ -121,8 +121,7 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating({
-        predicate: (mutation) =>
-          mutation.options.mutationKey?.[0] === key1[0],
+        predicate: (mutation) => mutation.options.mutationKey?.[0] === key1[0],
       })
       isMutatingArray.push(isMutating)
       return null
