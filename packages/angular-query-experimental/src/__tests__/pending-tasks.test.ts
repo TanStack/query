@@ -10,7 +10,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
 import {
   QueryClient,
@@ -55,9 +55,10 @@ describe('PendingTasks Integration', () => {
     test('should handle synchronous queryFn with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['sync'],
+          queryKey: key,
           queryFn: () => 'instant-data', // Resolves synchronously
         })),
       )
@@ -80,9 +81,10 @@ describe('PendingTasks Integration', () => {
     test('should handle synchronous error with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['sync-error'],
+          queryKey: key,
           queryFn: () => {
             throw new Error('instant-error')
           }, // Throws synchronously
@@ -155,6 +157,7 @@ describe('PendingTasks Integration', () => {
 
   describe('Race Conditions', () => {
     test('should handle query that completes during initial subscription', async () => {
+      const key = queryKey()
       const app = TestBed.inject(ApplicationRef)
       let resolveQuery: (value: string) => void
 
@@ -164,7 +167,7 @@ describe('PendingTasks Integration', () => {
 
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['race-condition'],
+          queryKey: key,
           queryFn: () => queryPromise,
         })),
       )
@@ -185,9 +188,10 @@ describe('PendingTasks Integration', () => {
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['rapid-refetch'],
+          queryKey: key,
           queryFn: async () => {
             callCount++
             await sleep(10)
@@ -213,9 +217,10 @@ describe('PendingTasks Integration', () => {
       const app = TestBed.inject(ApplicationRef)
       let attempt = 0
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['paused-offline'],
+          queryKey: key,
           retry: 1,
           retryDelay: 50, // Longer delay to ensure we can go offline before retry
           queryFn: async () => {
@@ -328,25 +333,28 @@ describe('PendingTasks Integration', () => {
 
   describe('Concurrent Operations', () => {
     test('should handle multiple queries running simultaneously', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const key3 = queryKey()
       const app = TestBed.inject(ApplicationRef)
 
       const query1 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['concurrent-1'],
+          queryKey: key1,
           queryFn: () => sleep(30).then(() => 'data-1'),
         })),
       )
 
       const query2 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['concurrent-2'],
+          queryKey: key2,
           queryFn: () => sleep(50).then(() => 'data-2'),
         })),
       )
 
       const query3 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['concurrent-3'],
+          queryKey: key3,
           queryFn: () => 'instant-data', // Synchronous
         })),
       )
@@ -418,9 +426,10 @@ describe('PendingTasks Integration', () => {
     test('should handle mixed queries and mutations', async () => {
       const app = TestBed.inject(ApplicationRef)
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['mixed-query'],
+          queryKey: key,
           queryFn: () => sleep(40).then(() => 'query-data'),
         })),
       )
@@ -465,9 +474,12 @@ describe('PendingTasks Integration', () => {
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
 
+      const key1 = queryKey()
+      const key2 = queryKey()
+
       const query1 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['http-1'],
+          queryKey: key1,
           queryFn: () =>
             lastValueFrom(httpClient.get<{ id: number }>('/api/1')),
         })),
@@ -475,7 +487,7 @@ describe('PendingTasks Integration', () => {
 
       const query2 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['http-2'],
+          queryKey: key2,
           queryFn: () =>
             lastValueFrom(httpClient.get<{ id: number }>('/api/2')),
         })),
@@ -507,9 +519,10 @@ describe('PendingTasks Integration', () => {
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['http-cancel'],
+          queryKey: key,
           queryFn: () =>
             lastValueFrom(httpClient.get<{ data: string }>('/api/cancel')),
         })),
@@ -536,18 +549,19 @@ describe('PendingTasks Integration', () => {
 
   describe('Edge Cases', () => {
     test('should handle query cancellation mid-flight', async () => {
+      const key = queryKey()
       const app = TestBed.inject(ApplicationRef)
 
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['cancel-test'],
+          queryKey: key,
           queryFn: () => sleep(100).then(() => 'data'),
         })),
       )
 
       // Cancel the query after a short delay
       setTimeout(() => {
-        queryClient.cancelQueries({ queryKey: ['cancel-test'] })
+        queryClient.cancelQueries({ queryKey: key })
       }, 20)
 
       // Advance to the cancellation point
@@ -568,9 +582,10 @@ describe('PendingTasks Integration', () => {
       const app = TestBed.inject(ApplicationRef)
       let attemptCount = 0
 
+      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: ['retry-test'],
+          queryKey: key,
           retry: 2,
           retryDelay: 10,
           queryFn: async () => {
@@ -594,7 +609,7 @@ describe('PendingTasks Integration', () => {
 
     test('should handle mutation with optimistic updates', async () => {
       const app = TestBed.inject(ApplicationRef)
-      const testQueryKey = ['optimistic-test']
+      const testQueryKey = queryKey()
 
       queryClient.setQueryData(testQueryKey, 'initial-data')
 
