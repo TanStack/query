@@ -176,6 +176,7 @@ export type PlaceholderDataFunction<
 > = (
   previousData: TQueryData | undefined,
   previousQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
+  currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
 ) => TQueryData | undefined
 
 export type QueriesPlaceholderDataFunction<TQueryData> = (

@@ -155,7 +155,7 @@ const {
 - `initialDataUpdatedAt: number | (() => number | undefined)`
   - Optional
   - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
-- `placeholderData: TData | (previousValue: TData | undefined, previousQuery: Query | undefined) => TData`
+- `placeholderData: TData | (previousValue: TData | undefined, previousQuery: Query | undefined, currentQuery: Query) => TData`
   - Optional
   - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` state.
   - `placeholderData` is **not persisted** to the cache
