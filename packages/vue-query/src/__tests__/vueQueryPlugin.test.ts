@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { isVue2, isVue3, ref } from 'vue-demi'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'
@@ -284,6 +285,7 @@ describe('VueQueryPlugin', () => {
     })
 
     test('should delay useQuery subscription and not call fetcher if data is not stale', async () => {
+      const key = queryKey()
       const appMock = getAppMock()
       const customClient = new QueryClient({
         defaultOptions: {
@@ -299,7 +301,7 @@ describe('VueQueryPlugin', () => {
           vi.fn(),
           new Promise((resolve) => {
             setTimeout(() => {
-              client.setQueryData(['persist'], () => ({
+              client.setQueryData(key, () => ({
                 foo: 'bar',
               }))
               resolve()
@@ -312,7 +314,7 @@ describe('VueQueryPlugin', () => {
 
       const query = useQuery(
         {
-          queryKey: ['persist'],
+          queryKey: key,
           queryFn: fnSpy,
         },
         customClient,
@@ -331,6 +333,8 @@ describe('VueQueryPlugin', () => {
     })
 
     test('should delay useQueries subscription and not call fetcher if data is not stale', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
       const appMock = getAppMock()
       const customClient = new QueryClient({
         defaultOptions: {
@@ -346,10 +350,10 @@ describe('VueQueryPlugin', () => {
           vi.fn(),
           new Promise((resolve) => {
             setTimeout(() => {
-              client.setQueryData(['persist1'], () => ({
+              client.setQueryData(key1, () => ({
                 foo1: 'bar1',
               }))
-              client.setQueryData(['persist2'], () => ({
+              client.setQueryData(key2, () => ({
                 foo2: 'bar2',
               }))
               resolve()
@@ -362,7 +366,7 @@ describe('VueQueryPlugin', () => {
 
       const query = useQuery(
         {
-          queryKey: ['persist1'],
+          queryKey: key1,
           queryFn: fnSpy,
         },
         customClient,
@@ -372,7 +376,7 @@ describe('VueQueryPlugin', () => {
         {
           queries: [
             {
-              queryKey: ['persist2'],
+              queryKey: key2,
               queryFn: fnSpy,
             },
           ],
