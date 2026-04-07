@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { Injector, provideZonelessChangeDetection } from '@angular/core'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectIsFetching,
@@ -29,9 +29,10 @@ describe('injectIsFetching', () => {
   })
 
   test('Returns number of fetching queries', async () => {
+    const key = queryKey()
     const isFetching = TestBed.runInInjectionContext(() => {
       injectQuery(() => ({
-        queryKey: ['isFetching1'],
+        queryKey: key,
         queryFn: () => sleep(100).then(() => 'Some data'),
       }))
       return injectIsFetching()
