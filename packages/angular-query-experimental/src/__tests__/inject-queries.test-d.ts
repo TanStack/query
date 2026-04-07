@@ -1,4 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { skipToken } from '..'
 import { injectQueries } from '../inject-queries'
 import { queryOptions } from '../query-options'
@@ -8,8 +9,12 @@ import type { Signal } from '@angular/core'
 describe('injectQueries', () => {
   describe('config object overload', () => {
     it('TData should always be defined when initialData is provided as an object', () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const key3 = queryKey()
+
       const query1 = {
-        queryKey: ['key1'],
+        queryKey: key1,
         queryFn: () => {
           return {
             wow: true,
@@ -21,13 +26,13 @@ describe('injectQueries', () => {
       }
 
       const query2 = {
-        queryKey: ['key2'],
+        queryKey: key2,
         queryFn: () => 'Query Data',
         initialData: 'initial data',
       }
 
       const query3 = {
-        queryKey: ['key2'],
+        queryKey: key3,
         queryFn: () => 'Query Data',
       }
 
@@ -45,8 +50,9 @@ describe('injectQueries', () => {
     })
 
     it('TData should be defined when passed through queryOptions', () => {
+      const key = queryKey()
       const options = queryOptions({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn: () => {
           return {
             wow: true,
@@ -64,14 +70,17 @@ describe('injectQueries', () => {
     })
 
     it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into injectQuery', () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
       const query1 = queryOptions({
-        queryKey: ['key'],
+        queryKey: key1,
         queryFn: () => Promise.resolve(1),
         select: (data) => data > 1,
       })
 
       const query2 = {
-        queryKey: ['key'],
+        queryKey: key2,
         queryFn: () => Promise.resolve(1),
         select: (data: number) => data > 1,
       }
@@ -85,10 +94,11 @@ describe('injectQueries', () => {
     })
 
     it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+      const key = queryKey()
       const queryResults = injectQueries(() => ({
         queries: [
           {
-            queryKey: ['key'],
+            queryKey: key,
             queryFn: () => {
               return {
                 wow: true,
@@ -107,6 +117,7 @@ describe('injectQueries', () => {
     describe('custom injectable', () => {
       it('should allow custom hooks using UseQueryOptions', () => {
         type Data = string
+        const key = queryKey()
 
         const injectCustomQueries = (
           options?: OmitKeyof<CreateQueryOptions<Data>, 'queryKey' | 'queryFn'>,
@@ -115,7 +126,7 @@ describe('injectQueries', () => {
             queries: [
               {
                 ...options,
-                queryKey: ['todos-key'],
+                queryKey: key,
                 queryFn: () => Promise.resolve('data'),
               },
             ],
@@ -130,10 +141,11 @@ describe('injectQueries', () => {
     })
 
     it('TData should have correct type when conditional skipToken is passed', () => {
+      const key = queryKey()
       const queryResults = injectQueries(() => ({
         queries: [
           {
-            queryKey: ['withSkipToken'],
+            queryKey: key,
             queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
           },
         ],
@@ -148,17 +160,20 @@ describe('injectQueries', () => {
     })
 
     it('should return correct data for dynamic queries with mixed result types', () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
       const Queries1 = {
         get: () =>
           queryOptions({
-            queryKey: ['key1'],
+            queryKey: key1,
             queryFn: () => Promise.resolve(1),
           }),
       }
       const Queries2 = {
         get: () =>
           queryOptions({
-            queryKey: ['key2'],
+            queryKey: key2,
             queryFn: () => Promise.resolve(true),
           }),
       }

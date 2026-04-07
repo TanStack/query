@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it, test } from 'vitest'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { injectQuery, queryOptions } from '..'
 import type { Signal } from '@angular/core'
 
@@ -7,8 +7,9 @@ describe('injectQuery', () => {
   describe('initialData', () => {
     describe('Config object overload', () => {
       it('TData should always be defined when initialData is provided as an object', () => {
+        const key = queryKey()
         const { data } = injectQuery(() => ({
-          queryKey: ['key'],
+          queryKey: key,
           queryFn: () => ({ wow: true }),
           initialData: { wow: true },
         }))
@@ -17,9 +18,10 @@ describe('injectQuery', () => {
       })
 
       it('TData should be defined when passed through queryOptions', () => {
+        const key = queryKey()
         const options = () =>
           queryOptions({
-            queryKey: ['key'],
+            queryKey: key,
             queryFn: () => {
               return {
                 wow: true,
@@ -35,8 +37,9 @@ describe('injectQuery', () => {
       })
 
       it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
+        const key = queryKey()
         const options = queryOptions({
-          queryKey: ['key'],
+          queryKey: key,
           queryFn: () => Promise.resolve(1),
         })
 
@@ -49,8 +52,9 @@ describe('injectQuery', () => {
       })
 
       it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
+        const key = queryKey()
         const { data } = injectQuery(() => ({
-          queryKey: ['key'],
+          queryKey: key,
           queryFn: () => {
             return {
               wow: true,
@@ -65,8 +69,9 @@ describe('injectQuery', () => {
       })
 
       it('TData should have undefined in the union when initialData is NOT provided', () => {
+        const key = queryKey()
         const { data } = injectQuery(() => ({
-          queryKey: ['key'],
+          queryKey: key,
           queryFn: () => {
             return {
               wow: true,
@@ -78,8 +83,9 @@ describe('injectQuery', () => {
       })
 
       it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+        const key = queryKey()
         const { data } = injectQuery(() => ({
-          queryKey: ['key'],
+          queryKey: key,
           queryFn: () => {
             return {
               wow: true,
@@ -92,8 +98,9 @@ describe('injectQuery', () => {
       })
 
       it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+        const key = queryKey()
         const query = injectQuery(() => ({
-          queryKey: ['key'],
+          queryKey: key,
           queryFn: () => {
             return {
               wow: true,
@@ -110,9 +117,10 @@ describe('injectQuery', () => {
 
     describe('structuralSharing', () => {
       it('should be able to use structuralSharing with unknown types', () => {
+        const key = queryKey()
         // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
         injectQuery(() => ({
-          queryKey: ['key'],
+          queryKey: key,
           queryFn: () => 5,
           structuralSharing: (oldData, newData) => {
             expectTypeOf(oldData).toBeUnknown()
@@ -126,8 +134,9 @@ describe('injectQuery', () => {
 
   describe('Discriminated union return type', () => {
     test('data should be possibly undefined by default', () => {
+      const key = queryKey()
       const query = injectQuery(() => ({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
       }))
 
@@ -135,8 +144,9 @@ describe('injectQuery', () => {
     })
 
     test('data should be defined when query is success', () => {
+      const key = queryKey()
       const query = injectQuery(() => ({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
       }))
 
@@ -146,8 +156,9 @@ describe('injectQuery', () => {
     })
 
     test('error should be null when query is success', () => {
+      const key = queryKey()
       const query = injectQuery(() => ({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
       }))
 
@@ -157,8 +168,9 @@ describe('injectQuery', () => {
     })
 
     test('data should be undefined when query is pending', () => {
+      const key = queryKey()
       const query = injectQuery(() => ({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
       }))
 
@@ -168,8 +180,9 @@ describe('injectQuery', () => {
     })
 
     test('error should be defined when query is error', () => {
+      const key = queryKey()
       const query = injectQuery(() => ({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn: () => sleep(0).then(() => 'Some data'),
       }))
 
