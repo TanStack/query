@@ -1,5 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { createQueries, queryOptions } from '../../src/index.js'
 import type {
   CreateQueryOptions,
@@ -12,17 +13,19 @@ import type {
 
 describe('createQueries', () => {
   it('should return correct data for dynamic queries with mixed result types', () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const Queries1 = {
       get: () =>
         queryOptions({
-          queryKey: ['key1'],
+          queryKey: key1,
           queryFn: () => Promise.resolve(1),
         }),
     }
     const Queries2 = {
       get: () =>
         queryOptions({
-          queryKey: ['key2'],
+          queryKey: key2,
           queryFn: () => Promise.resolve(true),
         }),
     }
@@ -42,9 +45,9 @@ describe('createQueries', () => {
 
   it('handles type parameter - tuple of tuples', () => {
     const queryClient = new QueryClient()
-    const key1 = ['test-key-1']
-    const key2 = ['test-key-2']
-    const key3 = ['test-key-3']
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
 
     const result1 = createQueries<
       [[number], [string], [Array<string>, boolean]]
@@ -157,9 +160,9 @@ describe('createQueries', () => {
 
   it('handles type parameter - tuple of objects', () => {
     const queryClient = new QueryClient()
-    const key1 = ['test-key-1']
-    const key2 = ['test-key-2']
-    const key3 = ['test-key-3']
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
 
     const result1 = createQueries<
       [
@@ -314,10 +317,10 @@ describe('createQueries', () => {
 
   it('handles array literal without type parameter to infer result type', () => {
     const queryClient = new QueryClient()
-    const key1 = ['test-key-1']
-    const key2 = ['test-key-2']
-    const key3 = ['test-key-3']
-    const key4 = ['test-key-4']
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+    const key4 = queryKey()
 
     // Array.map preserves TQueryFnData
     const result1 = createQueries(
