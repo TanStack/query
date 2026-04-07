@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { mutationOptions } from '../../src/index.js'
 import BaseExample from './BaseExample.svelte'
 import MultiExample from './MultiExample.svelte'
@@ -32,8 +32,9 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
+    const key = queryKey()
     const mutationOpts = mutationOptions({
-      mutationKey: ['key'],
+      mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data'),
     })
 
@@ -69,8 +70,9 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with useIsMutating', async () => {
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['key'],
+      mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -95,8 +97,9 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (filter mutationOpts1.mutationKey)', async () => {
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['key'],
+      mutationKey: key,
       mutationFn: () => sleep(50).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -122,8 +125,9 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (with mutationKey in mutationOptions)', async () => {
+    const key = queryKey()
     const mutationOpts = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data'),
     })
 
@@ -162,8 +166,9 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating', async () => {
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -188,8 +193,9 @@ describe('mutationOptions', () => {
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (filter mutationOpts1.mutationKey)', async () => {
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(500).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -215,8 +221,9 @@ describe('mutationOptions', () => {
   })
 
   it('should return mutation states when used with useMutationState (with mutationKey in mutationOptions)', async () => {
+    const key = queryKey()
     const mutationOpts = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
@@ -261,8 +268,9 @@ describe('mutationOptions', () => {
   })
 
   it('should return mutation states when used with useMutationState', async () => {
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -290,8 +298,9 @@ describe('mutationOptions', () => {
   })
 
   it('should return mutation states when used with useMutationState (filter mutationOpts1.mutationKey)', async () => {
+    const key = queryKey()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: key,
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
