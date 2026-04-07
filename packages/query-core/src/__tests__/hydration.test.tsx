@@ -77,9 +77,7 @@ describe('dehydration and rehydration', () => {
       'string',
     )
     expect(hydrationCache.find({ queryKey: numberKey })?.state.data).toBe(1)
-    expect(hydrationCache.find({ queryKey: booleanKey })?.state.data).toBe(
-      true,
-    )
+    expect(hydrationCache.find({ queryKey: booleanKey })?.state.data).toBe(true)
     expect(hydrationCache.find({ queryKey: nullKey })?.state.data).toBe(null)
     expect(hydrationCache.find({ queryKey: arrayKey })?.state.data).toEqual([
       'string',
@@ -169,9 +167,7 @@ describe('dehydration and rehydration', () => {
     const hydrationCache = new QueryCache()
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
-    expect(hydrationCache.find({ queryKey: key })?.state.data).toBe(
-      'string',
-    )
+    expect(hydrationCache.find({ queryKey: key })?.state.data).toBe('string')
     await vi.advanceTimersByTimeAsync(100)
     expect(hydrationCache.find({ queryKey: key })).toBeTruthy()
 
@@ -197,9 +193,7 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, parsed, {
       defaultOptions: { queries: { retry: 10 } },
     })
-    expect(hydrationCache.find({ queryKey: key })?.options.retry).toBe(
-      10,
-    )
+    expect(hydrationCache.find({ queryKey: key })?.options.retry).toBe(10)
     queryClient.clear()
     hydrationClient.clear()
   })
@@ -233,12 +227,8 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, parsed, {
       defaultOptions: { queries: { gcTime: 10 } },
     })
-    expect(hydrationCache.find({ queryKey: key })?.options.retry).toBe(
-      10,
-    )
-    expect(hydrationCache.find({ queryKey: key })?.options.gcTime).toBe(
-      10,
-    )
+    expect(hydrationCache.find({ queryKey: key })?.options.retry).toBe(10)
+    expect(hydrationCache.find({ queryKey: key })?.options.gcTime).toBe(10)
     queryClient.clear()
     hydrationClient.clear()
   })
@@ -276,12 +266,8 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, parsed, {
       defaultOptions: { mutations: { gcTime: 10 } },
     })
-    expect(
-      hydrationCache.find({ mutationKey: key })?.options.retry,
-    ).toBe(10)
-    expect(
-      hydrationCache.find({ mutationKey: key })?.options.gcTime,
-    ).toBe(10)
+    expect(hydrationCache.find({ mutationKey: key })?.options.retry).toBe(10)
+    expect(hydrationCache.find({ mutationKey: key })?.options.gcTime).toBe(10)
     queryClient.clear()
     hydrationClient.clear()
   })
@@ -698,9 +684,8 @@ describe('dehydration and rehydration', () => {
     const dehydrated = dehydrate(queryClient)
     resolvePromise('string')
     expect(
-      dehydrated.queries.find(
-        (q) => q.queryHash === JSON.stringify(key),
-      )?.state.fetchStatus,
+      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(key))?.state
+        .fetchStatus,
     ).toBe('fetching')
     const stringified = JSON.stringify(dehydrated)
 
@@ -709,9 +694,9 @@ describe('dehydration and rehydration', () => {
     const hydrationCache = new QueryCache()
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
-    expect(
-      hydrationCache.find({ queryKey: key })?.state.fetchStatus,
-    ).toBe('idle')
+    expect(hydrationCache.find({ queryKey: key })?.state.fetchStatus).toBe(
+      'idle',
+    )
   })
 
   test('should dehydrate and hydrate meta for queries', async () => {
@@ -738,17 +723,15 @@ describe('dehydration and rehydration', () => {
     const dehydrated = dehydrate(queryClient)
 
     expect(
-      dehydrated.queries.find(
-        (q) => q.queryHash === JSON.stringify(metaKey),
-      )?.meta,
+      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(metaKey))
+        ?.meta,
     ).toEqual({
       some: 'meta',
     })
 
     expect(
-      dehydrated.queries.find(
-        (q) => q.queryHash === JSON.stringify(noMetaKey),
-      )?.meta,
+      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(noMetaKey))
+        ?.meta,
     ).toEqual(undefined)
 
     expect(
@@ -854,9 +837,8 @@ describe('dehydration and rehydration', () => {
 
     const dehydrated = dehydrate(queryClient)
     expect(
-      dehydrated.queries.find(
-        (q) => q.queryHash === JSON.stringify(key),
-      )?.state.fetchStatus,
+      dehydrated.queries.find((q) => q.queryHash === JSON.stringify(key))?.state
+        .fetchStatus,
     ).toBe('idle')
     const stringified = JSON.stringify(dehydrated)
 
@@ -867,13 +849,13 @@ describe('dehydration and rehydration', () => {
 
     const promise = hydrationClient.prefetchQuery(options)
     hydrate(hydrationClient, parsed)
-    expect(
-      hydrationCache.find({ queryKey: key })?.state.fetchStatus,
-    ).toBe('fetching')
+    expect(hydrationCache.find({ queryKey: key })?.state.fetchStatus).toBe(
+      'fetching',
+    )
     await vi.waitFor(() => promise)
-    expect(
-      hydrationCache.find({ queryKey: key })?.state.fetchStatus,
-    ).toBe('idle')
+    expect(hydrationCache.find({ queryKey: key })?.state.fetchStatus).toBe(
+      'idle',
+    )
   })
 
   test('should dehydrate and hydrate mutation scopes', () => {
@@ -973,22 +955,20 @@ describe('dehydration and rehydration', () => {
       'success',
     )
 
-    expect(hydrationCache.find({ queryKey: pendingKey })?.state).toMatchObject(
-      {
-        data: undefined,
-        dataUpdateCount: 0,
-        dataUpdatedAt: 0,
-        error: null,
-        errorUpdateCount: 0,
-        errorUpdatedAt: 0,
-        fetchFailureCount: 0,
-        fetchFailureReason: null,
-        fetchMeta: null,
-        fetchStatus: 'fetching',
-        isInvalidated: false,
-        status: 'pending',
-      },
-    )
+    expect(hydrationCache.find({ queryKey: pendingKey })?.state).toMatchObject({
+      data: undefined,
+      dataUpdateCount: 0,
+      dataUpdatedAt: 0,
+      error: null,
+      errorUpdateCount: 0,
+      errorUpdatedAt: 0,
+      fetchFailureCount: 0,
+      fetchFailureReason: null,
+      fetchMeta: null,
+      fetchStatus: 'fetching',
+      isInvalidated: false,
+      status: 'pending',
+    })
 
     await vi.waitFor(() =>
       expect(
@@ -1039,9 +1019,7 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, dehydrated)
     await vi.waitFor(() => promise)
     await vi.waitFor(() =>
-      expect(
-        hydrationClient.getQueryData(key),
-      ).toBeInstanceOf(Date),
+      expect(hydrationClient.getQueryData(key)).toBeInstanceOf(Date),
     )
 
     queryClient.clear()
@@ -1076,9 +1054,7 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, dehydrated)
     await vi.waitFor(() => promise)
     await vi.waitFor(() =>
-      expect(
-        hydrationClient.getQueryData(key),
-      ).toBeInstanceOf(Date),
+      expect(hydrationClient.getQueryData(key)).toBeInstanceOf(Date),
     )
 
     queryClient.clear()
@@ -1214,9 +1190,7 @@ describe('dehydration and rehydration', () => {
     // to end up in the cache, so for the test to fail properly on regressions,
     // wait for the fetchStatus to be idle
     await vi.waitFor(() =>
-      expect(clientQueryClient.getQueryState(key)?.fetchStatus).toBe(
-        'idle',
-      ),
+      expect(clientQueryClient.getQueryState(key)?.fetchStatus).toBe('idle'),
     )
     await vi.waitFor(() =>
       expect(clientQueryClient.getQueryData(key)).toBe('newer data'),
