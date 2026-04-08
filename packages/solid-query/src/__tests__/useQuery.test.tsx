@@ -44,15 +44,18 @@ import type { Mock } from 'vitest'
 import type { JSX } from 'solid-js'
 
 describe('useQuery', () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
 
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
 
   it('should return the correct types', () => {
@@ -5044,6 +5047,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
+    const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(() =>
       sleep(10).then(() => Promise.reject(new Error('Suspense Error Bingo'))),
@@ -5051,7 +5055,7 @@ describe('useQuery', () => {
 
     function Page(props: { enabled: boolean }) {
       const state = useQuery(() => ({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn,
         enabled: props.enabled,
         retry: false,

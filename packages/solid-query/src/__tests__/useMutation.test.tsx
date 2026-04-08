@@ -18,17 +18,21 @@ import { mockOnlineManagerIsOnline, setActTimeout } from './utils'
 import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
+  let queryCache: QueryCache
+  let mutationCache: MutationCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    mutationCache = new MutationCache()
+    queryClient = new QueryClient({ queryCache, mutationCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
-
-  const queryCache = new QueryCache()
-  const mutationCache = new MutationCache()
-  const queryClient = new QueryClient({ queryCache, mutationCache })
 
   it('should be able to reset `data`', async () => {
     function Page() {
@@ -1082,10 +1086,7 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation(() => ({
-        mutationFn: async (_text: string) => {
-          await sleep(10)
-          return 'result'
-        },
+        mutationFn: (_text: string) => sleep(10).then(() => 'result'),
         onSuccess: () => Promise.reject(error),
         onError,
       }))

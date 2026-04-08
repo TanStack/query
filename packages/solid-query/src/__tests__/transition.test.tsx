@@ -5,16 +5,19 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryCache, QueryClient, QueryClientProvider, useQuery } from '..'
 
 describe("useQuery's in Suspense mode with transitions", () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   it('should render the content when the transition is done', async () => {
     const key = queryKey()
@@ -22,10 +25,7 @@ describe("useQuery's in Suspense mode with transitions", () => {
     function Suspended() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return true
-        },
+        queryFn: () => sleep(10).then(() => true),
       }))
       return <Show when={state.data}>Message</Show>
     }

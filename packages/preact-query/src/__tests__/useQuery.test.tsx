@@ -48,6 +48,7 @@ describe('useQuery', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -82,10 +83,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery<string, Error>({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
       })
 
       states.push(state)
@@ -471,10 +469,7 @@ describe('useQuery', () => {
     function Component({ value }: { value: string }) {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'data: ' + value
-        },
+        queryFn: () => sleep(10).then(() => `data: ${value}`),
 
         gcTime: 0,
         notifyOnChangeProps: 'all',
@@ -533,10 +528,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(5)
-          return 'data'
-        },
+        queryFn: () => sleep(5).then(() => 'data'),
 
         gcTime: 0,
         notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
@@ -769,7 +761,7 @@ describe('useQuery', () => {
         queryFn: async () => {
           await sleep(10)
           count++
-          return 'test' + count
+          return `test${count}`
         },
       })
 
@@ -1002,10 +994,7 @@ describe('useQuery', () => {
     function Page() {
       const result = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'fetched'
-        },
+        queryFn: () => sleep(10).then(() => 'fetched'),
 
         initialData: 'initial',
         staleTime: Infinity,
@@ -1163,10 +1152,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(5)
-          return count
-        },
+        queryFn: () => sleep(5).then(() => count),
         enabled: count === 0,
       })
 
@@ -1223,10 +1209,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return count
-        },
+        queryFn: () => sleep(10).then(() => count),
         placeholderData: keepPreviousData,
       })
 
@@ -1593,10 +1576,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return count
-        },
+        queryFn: () => sleep(10).then(() => count),
         initialData: 99,
         placeholderData: keepPreviousData,
       })
@@ -1665,10 +1645,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return count
-        },
+        queryFn: () => sleep(10).then(() => count),
         enabled: false,
         placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
@@ -1763,10 +1740,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: [key, count],
-        queryFn: async () => {
-          await sleep(10)
-          return count
-        },
+        queryFn: () => sleep(10).then(() => count),
         enabled: false,
         placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
@@ -1841,10 +1815,7 @@ describe('useQuery', () => {
     function FirstComponent() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 1
-        },
+        queryFn: () => sleep(10).then(() => 1),
         notifyOnChangeProps: 'all',
       })
       const refetch = state.refetch
@@ -1904,10 +1875,7 @@ describe('useQuery', () => {
 
     queryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return 'prefetch'
-      },
+      queryFn: () => sleep(10).then(() => 'prefetch'),
     })
 
     await vi.advanceTimersByTimeAsync(20)
@@ -1915,10 +1883,7 @@ describe('useQuery', () => {
     function FirstComponent() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'one'
-        },
+        queryFn: () => sleep(10).then(() => 'one'),
 
         staleTime: 100,
       })
@@ -1929,10 +1894,7 @@ describe('useQuery', () => {
     function SecondComponent() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'two'
-        },
+        queryFn: () => sleep(10).then(() => 'two'),
 
         staleTime: 10,
       })
@@ -2034,10 +1996,7 @@ describe('useQuery', () => {
     }) => {
       return useQuery({
         queryKey: [key, id],
-        queryFn: async () => {
-          await sleep(10)
-          return { id, name: 'John' }
-        },
+        queryFn: () => sleep(10).then(() => ({ id, name: 'John' })),
         enabled: !!id && enabled,
       })
     }
@@ -2131,10 +2090,7 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(5)
-            return 'test'
-          },
+          queryFn: () => sleep(5).then(() => 'test'),
 
           notifyOnChangeProps: ['data'],
         })
@@ -2188,10 +2144,7 @@ describe('useQuery', () => {
         function Page() {
           const state = useQuery({
             queryKey: key,
-            queryFn: async () => {
-              await sleep(5)
-              return 'test'
-            },
+            queryFn: () => sleep(5).then(() => 'test'),
             notifyOnChangeProps: () => ['data'],
           })
 
@@ -2379,10 +2332,7 @@ describe('useQuery', () => {
   it('should update query options', () => {
     const key = queryKey()
 
-    const queryFn = async () => {
-      await sleep(10)
-      return 'data1'
-    }
+    const queryFn = () => sleep(10).then(() => 'data1')
 
     function Page() {
       useQuery({ queryKey: key, queryFn, retryDelay: 10 })
@@ -2400,10 +2350,7 @@ describe('useQuery', () => {
 
     let renders = 0
 
-    const queryFn = async () => {
-      await sleep(15)
-      return 'data'
-    }
+    const queryFn = () => sleep(15).then(() => 'data')
 
     function Page() {
       const query1 = useQuery({ queryKey: key, queryFn })
@@ -2456,18 +2403,12 @@ describe('useQuery', () => {
     function Page() {
       const first = useQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return 'data'
-        },
+        queryFn: () => sleep(10).then(() => 'data'),
         enabled: false,
       })
       const second = useQuery({
         queryKey: key2,
-        queryFn: async () => {
-          await sleep(10)
-          return 'data'
-        },
+        queryFn: () => sleep(10).then(() => 'data'),
       })
 
       return (
@@ -2506,10 +2447,7 @@ describe('useQuery', () => {
     function Page() {
       const { status } = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test'
-        },
+        queryFn: () => sleep(10).then(() => 'test'),
       })
 
       return <div>status: {status}</div>
@@ -3554,10 +3492,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'data'
-        },
+        queryFn: () => sleep(10).then(() => 'data'),
       })
       states.push(state)
       return (
@@ -3647,10 +3582,7 @@ describe('useQuery', () => {
 
     const prefetchQueryFn =
       vi.fn<(...args: Array<unknown>) => Promise<string>>()
-    prefetchQueryFn.mockImplementation(async () => {
-      await sleep(10)
-      return 'not yet...'
-    })
+    prefetchQueryFn.mockImplementation(() => sleep(10).then(() => 'not yet...'))
 
     queryClient.prefetchQuery({
       queryKey: key,
@@ -3686,9 +3618,8 @@ describe('useQuery', () => {
           if (counter < 2) {
             counter++
             return Promise.reject(new Error('error'))
-          } else {
-            return Promise.resolve('data')
           }
+          return Promise.resolve('data')
         },
         retryDelay: 10,
       })
@@ -3771,10 +3702,7 @@ describe('useQuery', () => {
 
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'data'
-        },
+        queryFn: () => sleep(10).then(() => 'data'),
         enabled: shouldFetch,
       })
 
@@ -3810,10 +3738,7 @@ describe('useQuery', () => {
     function Page() {
       const result = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'serverData'
-        },
+        queryFn: () => sleep(10).then(() => 'serverData'),
         initialData: 'initialData',
       })
       results.push(result)
@@ -4504,10 +4429,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return 0
-        },
+        queryFn: () => sleep(10).then(() => 0),
         select: useCallback(
           (data: number) => {
             selectRun++
@@ -4550,10 +4472,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return 0
-        },
+        queryFn: () => sleep(10).then(() => 0),
 
         select: useCallback(
           (data: number) => {
@@ -4603,10 +4522,7 @@ describe('useQuery', () => {
 
       const state = useQuery({
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(10)
-          return [1, 2]
-        },
+        queryFn: () => sleep(10).then(() => [1, 2]),
 
         select: (res) => res.map((x) => x + 1),
       })
@@ -4747,10 +4663,7 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    const queryFn = async () => {
-      await sleep(50)
-      return 'OK'
-    }
+    const queryFn = () => sleep(50).then(() => 'OK')
 
     function Page() {
       const [id, setId] = useState(1)
@@ -4994,15 +4907,15 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
+    const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
-    queryFn.mockImplementation(async () => {
-      await sleep(10)
-      return Promise.reject(new Error('Suspense Error Bingo'))
-    })
+    queryFn.mockImplementation(() =>
+      sleep(10).then(() => Promise.reject(new Error('Suspense Error Bingo'))),
+    )
 
     function Page({ enabled }: { enabled: boolean }) {
       const { error, isPending } = useQuery({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn,
         enabled,
         retry: false,
@@ -5062,9 +4975,8 @@ describe('useQuery', () => {
           await sleep(10)
           if (id % 2 === 1) {
             return Promise.reject(new Error('Error'))
-          } else {
-            return 'data'
           }
+          return 'data'
         },
         retry: false,
         retryOnMount: false,
@@ -5118,10 +5030,8 @@ describe('useQuery', () => {
     function Page({ id }: { id: boolean }) {
       const { error, isFetching } = useQuery({
         queryKey: [id],
-        queryFn: async () => {
-          await sleep(10)
-          return Promise.reject<unknown>(new Error('Error'))
-        },
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject<unknown>(new Error('Error'))),
         retry: false,
         retryOnMount: false,
         refetchOnMount: false,
@@ -5255,10 +5165,7 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
-            return 'data'
-          },
+          queryFn: () => sleep(10).then(() => 'data'),
         })
 
         useEffect(() => {
@@ -5300,7 +5207,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
         })
 
@@ -5363,7 +5270,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
         })
 
@@ -5411,7 +5318,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
         })
 
@@ -5457,7 +5364,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
           initialData: 'initial',
         })
@@ -5505,7 +5412,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
           initialData: 'initial',
         })
@@ -5565,7 +5472,7 @@ describe('useQuery', () => {
           queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
-            throw new Error('failed' + count)
+            throw new Error(`failed${count}`)
           },
           retry: 2,
           retryDelay: 10,
@@ -5678,7 +5585,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
         })
 
@@ -5735,7 +5642,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data' + count
+            return `data${count}`
           },
           refetchOnReconnect: false,
         })
@@ -5787,7 +5694,7 @@ describe('useQuery', () => {
       function Component() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: () => {
             count++
             return `data${count}`
           },
@@ -5862,7 +5769,7 @@ describe('useQuery', () => {
           queryFn: async () => {
             count++
             await sleep(10)
-            return 'data ' + count
+            return `data ${count}`
           },
           networkMode: 'always',
         })
@@ -5898,7 +5805,7 @@ describe('useQuery', () => {
           queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
-            throw new Error('error ' + count)
+            throw new Error(`error ${count}`)
           },
           networkMode: 'always',
           retry: 1,
@@ -5942,7 +5849,7 @@ describe('useQuery', () => {
           queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
-            throw new Error('failed' + count)
+            throw new Error(`failed${count}`)
           },
           retry: 2,
           retryDelay: 1,
@@ -6067,7 +5974,7 @@ describe('useQuery', () => {
         renders++
         return (
           <div>
-            <span>{data ? 'has data' + data : 'no data'}</span>
+            <span>{data ? `has data${data}` : 'no data'}</span>
             <button
               onClick={() => queryClient.setQueryData<string>(key, 'new data')}
             >
@@ -6221,10 +6128,7 @@ describe('useQuery', () => {
       const { data, status } = useQuery({
         enabled: false,
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 5
-        },
+        queryFn: () => sleep(10).then(() => 5),
       })
 
       const mounted = useRef<boolean>(null)
@@ -6390,10 +6294,7 @@ describe('useQuery', () => {
 
       const { data } = useQuery({
         queryKey: [key],
-        queryFn: async () => {
-          await sleep(5)
-          return 'Works'
-        },
+        queryFn: () => sleep(5).then(() => 'Works'),
       })
 
       return <div ref={(value) => setRef(value)}>{data}</div>
@@ -6416,10 +6317,7 @@ describe('useQuery', () => {
       const state = useQuery({
         staleTime: Infinity,
         queryKey: [key, steps[count]],
-        queryFn: async () => {
-          await sleep(10)
-          return steps[count]
-        },
+        queryFn: () => sleep(10).then(() => steps[count]),
         placeholderData: keepPreviousData,
       })
 
@@ -6532,11 +6430,7 @@ describe('useQuery', () => {
       const { data, status } = useQuery({
         queryKey: [key],
         queryFn: enabled
-          ? async () => {
-              await sleep(10)
-
-              return Promise.resolve('data')
-            }
+          ? () => sleep(10).then(() => Promise.resolve('data'))
           : skipToken,
         retry: false,
         retryOnMount: false,
@@ -6613,10 +6507,7 @@ describe('useQuery', () => {
     function Page() {
       const query = useQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return Promise.reject(error)
-        },
+        queryFn: () => sleep(10).then(() => Promise.reject(error)),
         retry: false,
         notifyOnChangeProps: 'all',
       })
@@ -6697,7 +6588,7 @@ describe('useQuery', () => {
     expect(results[3]).toMatchObject({
       status: 'error',
       fetchStatus: 'idle',
-      error: error,
+      error,
       errorUpdateCount: 2,
       isLoading: false,
       failureCount: 1,
@@ -6715,10 +6606,7 @@ describe('useQuery', () => {
 
     void serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return Promise.resolve('server')
-      },
+      queryFn: () => sleep(10).then(() => Promise.resolve('server')),
     })
 
     const dehydrated = dehydrate(serverQueryClient)
@@ -6773,10 +6661,8 @@ describe('useQuery', () => {
 
     void serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return Promise.reject(new Error('server error'))
-      },
+      queryFn: () =>
+        sleep(10).then(() => Promise.reject(new Error('server error'))),
     })
 
     const dehydrated = dehydrate(serverQueryClient)

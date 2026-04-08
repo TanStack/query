@@ -1,5 +1,45 @@
 # @tanstack/angular-query-persist-client
 
+## 5.96.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.96.2
+  - @tanstack/query-persist-client-core@5.96.2
+
+## 5.96.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.96.1
+  - @tanstack/query-persist-client-core@5.96.1
+
+## 5.96.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.96.0
+  - @tanstack/query-persist-client-core@5.96.0
+
+## 5.95.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.95.2
+  - @tanstack/query-persist-client-core@5.95.2
+
+## 5.95.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.95.1
+  - @tanstack/query-persist-client-core@5.95.1
+
 ## 5.95.0
 
 ### Patch Changes
