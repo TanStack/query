@@ -46,7 +46,7 @@ This is how you use `query` to prefetch:
 import { noop } from '@tanstack/react-query'
 
 const prefetchTodos = () => {
-  void queryClient
+  await queryClient
     .query({
       queryKey: ['todos'],
       queryFn: fetchTodos,
@@ -66,7 +66,7 @@ Infinite Queries can be prefetched like regular Queries. By default, only the fi
 import { noop } from '@tanstack/react-query'
 
 const prefetchProjects = () => {
-  void queryClient
+  await queryClient
     .infiniteQuery({
       queryKey: ['projects'],
       queryFn: fetchProjects,
