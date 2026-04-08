@@ -1062,7 +1062,7 @@ describe('queryClient', () => {
       expect(result).toBe('CACHED-DATA')
     })
 
-    test('should throw when enabled resolves true and skipToken are provided with no cached data', async () => {
+    test('should throw when enabled is true and skipToken are provided with no cached data', async () => {
       await expect(
         queryClient.query({
           queryKey: queryKey(),
@@ -1072,7 +1072,7 @@ describe('queryClient', () => {
       ).rejects.toThrowError()
     })
 
-    test('should return cached data when enabled resolves false and skipToken are provided', async () => {
+    test('should return cached data when enabled is false and skipToken are provided', async () => {
       const key1 = queryKey()
       queryClient.setQueryData(key1, { value: 'cached-data' })
 
@@ -1502,7 +1502,7 @@ describe('queryClient', () => {
       expect(select).not.toHaveBeenCalled()
     })
 
-    test('should throw when enabled resolves true and skipToken are provided with no cached data', async () => {
+    test('should throw when enabled is true and skipToken are provided with no cached data', async () => {
       await expect(
         queryClient.infiniteQuery({
           queryKey: queryKey(),
