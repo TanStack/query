@@ -9,7 +9,7 @@ usePrefetchQuery(options)
 
 **Options**
 
-You can pass everything to `usePrefetchQuery` that you can pass to [`queryClient.query`](../../../reference/QueryClient.md#queryclientprefetchquery). Remember that some of them are required as below:
+You can pass everything to `usePrefetchQuery` that you can pass to [`queryClient.query`](../../../reference/QueryClient.md#queryclientquery). Remember that some of them are required as below:
 
 - `queryKey: QueryKey`
   - **Required**

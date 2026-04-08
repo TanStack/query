@@ -36,7 +36,7 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 ```tsx
 import { noop } from "@tanstack/vue-query"
 
-const prefetchProjects = () => {
+const prefetchProjects = async () => {
   // The results of this query will be cached like a normal query
   await queryClient.infiniteQuery({
     queryKey: ['projects'],
