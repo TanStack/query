@@ -219,10 +219,8 @@ Then, call VueQuery from any component using Vue's `onServerPrefetch`:
 </template>
 
 <script setup>
-  import { useQuery, useQueryClient } from '@tanstack/vue-query'
+  import { useQuery } from '@tanstack/vue-query'
   import { onServerPrefetch } from 'vue'
-
-  const queryClient = useQueryClient()
 
   // This will be prefetched and sent from the server
   const { refetch, data, suspense } = useQuery({
