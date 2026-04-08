@@ -1,5 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, dataTagSymbol } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type { InfiniteData } from '@tanstack/query-core'
@@ -39,7 +40,7 @@ describe('infiniteQueryOptions', () => {
   it('should infer defined types', () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => 10,
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => ({ wow: true }),
       initialData: {
         pageParams: [undefined],
@@ -52,7 +53,7 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<{ wow: boolean }, unknown>
     >()
 
-    expectTypeOf(options).toMatchTypeOf<
+    expectTypeOf(options).toExtend<
       ReturnType<
         DefinedInitialDataInfiniteOptions<
           { wow: boolean },
@@ -72,7 +73,7 @@ describe('infiniteQueryOptions', () => {
   it('should work without defined types', () => {
     const options = infiniteQueryOptions({
       getNextPageParam: () => undefined,
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => ({ wow: true }),
       initialPageParam: 0,
     })
@@ -81,7 +82,7 @@ describe('infiniteQueryOptions', () => {
       () => InfiniteData<{ wow: boolean }, unknown> | undefined
     >()
 
-    expectTypeOf(options).toMatchTypeOf<
+    expectTypeOf(options).toExtend<
       ReturnType<
         UndefinedInitialDataInfiniteOptions<
           { wow: boolean },

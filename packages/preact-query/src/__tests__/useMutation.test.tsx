@@ -158,10 +158,9 @@ describe('useMutation', () => {
       return Promise.reject(new Error('Error test Jonas'))
     })
 
-    mutateFn.mockImplementation(async (value) => {
-      await sleep(10)
-      return Promise.resolve(value)
-    })
+    mutateFn.mockImplementation((value) =>
+      sleep(10).then(() => Promise.resolve(value)),
+    )
 
     function Page() {
       const { mutate, failureCount, failureReason, data, status } = useMutation(
@@ -370,10 +369,7 @@ describe('useMutation', () => {
     const key = queryKey()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: async (text: string) => {
-        await sleep(10)
-        return text
-      },
+      mutationFn: (text: string) => sleep(10).then(() => text),
     })
 
     const states: Array<UseMutationResult<any, any, any, any>> = []
@@ -1034,10 +1030,7 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation({
-        mutationFn: async (_text: string) => {
-          await sleep(10)
-          return 'result'
-        },
+        mutationFn: (_text: string) => sleep(10).then(() => 'result'),
         onSuccess: () => Promise.reject(error),
         onError,
       })

@@ -5047,6 +5047,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
+    const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(() =>
       sleep(10).then(() => Promise.reject(new Error('Suspense Error Bingo'))),
@@ -5054,7 +5055,7 @@ describe('useQuery', () => {
 
     function Page(props: { enabled: boolean }) {
       const state = useQuery(() => ({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn,
         enabled: props.enabled,
         retry: false,

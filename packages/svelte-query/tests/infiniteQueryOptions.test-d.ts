@@ -1,12 +1,14 @@
 import { describe, expectTypeOf, test } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { createInfiniteQuery, infiniteQueryOptions } from '../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
-describe('queryOptions', () => {
+describe('infiniteQueryOptions', () => {
   test('Should not allow excess properties', () => {
+    const key = queryKey()
     infiniteQueryOptions({
-      queryKey: ['key'],
+      queryKey: key,
       queryFn: () => Promise.resolve('data'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -16,8 +18,9 @@ describe('queryOptions', () => {
   })
 
   test('Should infer types for callbacks', () => {
+    const key = queryKey()
     infiniteQueryOptions({
-      queryKey: ['key'],
+      queryKey: key,
       queryFn: () => Promise.resolve('data'),
       staleTime: 1000,
       getNextPageParam: () => 1,
@@ -29,8 +32,9 @@ describe('queryOptions', () => {
   })
 
   test('Should work when passed to createInfiniteQuery', () => {
+    const key = queryKey()
     const options = infiniteQueryOptions({
-      queryKey: ['key'],
+      queryKey: key,
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -72,8 +76,9 @@ describe('queryOptions', () => {
   })
 
   test('Should work when passed to fetchInfiniteQuery', async () => {
+    const key = queryKey()
     const options = infiniteQueryOptions({
-      queryKey: ['key'],
+      queryKey: key,
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,

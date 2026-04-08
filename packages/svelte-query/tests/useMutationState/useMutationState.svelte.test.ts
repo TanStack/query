@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import BaseExample from './BaseExample.svelte'
 import SelectExample from './SelectExample.svelte'
 import type { Mutation } from '@tanstack/query-core'
@@ -15,6 +15,8 @@ describe('useMutationState', () => {
   })
 
   test('Run few mutation functions and check from useMutationState', async () => {
+    const successKey = queryKey()
+    const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
     const errorMutationFn = vi
       .fn()
@@ -25,11 +27,11 @@ describe('useMutationState', () => {
     const rendered = render(BaseExample, {
       props: {
         successMutationOpts: () => ({
-          mutationKey: ['success'],
+          mutationKey: successKey,
           mutationFn: successMutationFn,
         }),
         errorMutationOpts: () => ({
-          mutationKey: ['error'],
+          mutationKey: errorKey,
           mutationFn: errorMutationFn,
         }),
       },
@@ -47,6 +49,8 @@ describe('useMutationState', () => {
   })
 
   test('Can select specific type of mutation ( i.e: error only )', async () => {
+    const successKey = queryKey()
+    const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
     const errorMutationFn = vi
       .fn()
@@ -57,11 +61,11 @@ describe('useMutationState', () => {
     const rendered = render(BaseExample, {
       props: {
         successMutationOpts: () => ({
-          mutationKey: ['success'],
+          mutationKey: successKey,
           mutationFn: successMutationFn,
         }),
         errorMutationOpts: () => ({
-          mutationKey: ['error'],
+          mutationKey: errorKey,
           mutationFn: errorMutationFn,
         }),
         mutationStateOpts: {
@@ -82,7 +86,7 @@ describe('useMutationState', () => {
   })
 
   test('should return selected value when using select option', async () => {
-    const mutationKey = ['select']
+    const mutationKey = queryKey()
 
     const rendered = render(SelectExample, {
       props: {
@@ -108,6 +112,8 @@ describe('useMutationState', () => {
   })
 
   test('Can select specific mutation using mutation key', async () => {
+    const successKey = queryKey()
+    const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
     const errorMutationFn = vi
       .fn()
@@ -118,15 +124,15 @@ describe('useMutationState', () => {
     const rendered = render(BaseExample, {
       props: {
         successMutationOpts: () => ({
-          mutationKey: ['success'],
+          mutationKey: successKey,
           mutationFn: successMutationFn,
         }),
         errorMutationOpts: () => ({
-          mutationKey: ['error'],
+          mutationKey: errorKey,
           mutationFn: errorMutationFn,
         }),
         mutationStateOpts: {
-          filters: { mutationKey: ['success'] },
+          filters: { mutationKey: successKey },
         },
       },
     })

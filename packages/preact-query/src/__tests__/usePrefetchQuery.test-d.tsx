@@ -1,3 +1,4 @@
+import { queryKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
 import { usePrefetchQuery } from '..'
@@ -5,7 +6,7 @@ import { usePrefetchQuery } from '..'
 describe('usePrefetchQuery', () => {
   it('should return nothing', () => {
     const result = usePrefetchQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -15,7 +16,7 @@ describe('usePrefetchQuery', () => {
   it('should not allow refetchInterval or throwOnError options', () => {
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
         refetchInterval: 1000,
@@ -24,7 +25,7 @@ describe('usePrefetchQuery', () => {
 
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
         throwOnError: true,

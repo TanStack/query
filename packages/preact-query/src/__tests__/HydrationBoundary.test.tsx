@@ -1,6 +1,6 @@
 import * as coreModule from '@tanstack/query-core'
 import type { hydrate } from '@tanstack/query-core'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
 import { Suspense, startTransition } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
@@ -14,13 +14,16 @@ import {
 } from '..'
 
 describe('Preact hydration', () => {
+  const stringKey = queryKey()
+  const addedKey = queryKey()
+  const promiseKey = queryKey()
   let stringifiedState: string
 
   beforeEach(async () => {
     vi.useFakeTimers()
     const queryClient = new QueryClient()
     queryClient.prefetchQuery({
-      queryKey: ['string'],
+      queryKey: stringKey,
       queryFn: () => sleep(10).then(() => ['stringCached']),
     })
     await vi.advanceTimersByTimeAsync(10)
@@ -38,7 +41,7 @@ describe('Preact hydration', () => {
 
     function Page() {
       const { data } = useQuery({
-        queryKey: ['string'],
+        queryKey: stringKey,
         queryFn: () => sleep(20).then(() => ['string']),
       })
       return (
@@ -70,7 +73,7 @@ describe('Preact hydration', () => {
 
     function Page() {
       const { data } = useQuery({
-        queryKey: ['string'],
+        queryKey: stringKey,
         queryFn: () => sleep(20).then(() => ['string']),
       })
       return (
@@ -103,10 +106,10 @@ describe('Preact hydration', () => {
       const dehydratedState = JSON.parse(stringifiedState)
       const queryClient = new QueryClient()
 
-      function Page({ queryKey }: { queryKey: [string] }) {
+      function Page({ queryKey: pageKey }: { queryKey: Array<string> }) {
         const { data } = useQuery({
-          queryKey,
-          queryFn: () => sleep(20).then(() => queryKey),
+          queryKey: pageKey,
+          queryFn: () => sleep(20).then(() => pageKey),
         })
         return (
           <div>
@@ -118,24 +121,24 @@ describe('Preact hydration', () => {
       const rendered = render(
         <QueryClientProvider client={queryClient}>
           <HydrationBoundary state={dehydratedState}>
-            <Page queryKey={['string']} />
+            <Page queryKey={stringKey} />
           </HydrationBoundary>
         </QueryClientProvider>,
       )
 
       expect(rendered.getByText('stringCached')).toBeInTheDocument()
       await vi.advanceTimersByTimeAsync(21)
-      expect(rendered.getByText('string')).toBeInTheDocument()
+      expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
 
       const intermediateClient = new QueryClient()
 
       intermediateClient.prefetchQuery({
-        queryKey: ['string'],
+        queryKey: stringKey,
         queryFn: () => sleep(20).then(() => ['should change']),
       })
       intermediateClient.prefetchQuery({
-        queryKey: ['added'],
-        queryFn: () => sleep(20).then(() => ['added']),
+        queryKey: addedKey,
+        queryFn: () => sleep(20).then(() => [addedKey[0]]),
       })
       await vi.advanceTimersByTimeAsync(20)
       const dehydrated = dehydrate(intermediateClient)
@@ -144,21 +147,21 @@ describe('Preact hydration', () => {
       rendered.rerender(
         <QueryClientProvider client={queryClient}>
           <HydrationBoundary state={dehydrated}>
-            <Page queryKey={['string']} />
-            <Page queryKey={['added']} />
+            <Page queryKey={stringKey} />
+            <Page queryKey={addedKey} />
           </HydrationBoundary>
         </QueryClientProvider>,
       )
 
       // Existing observer should not have updated at this point,
       // as that would indicate a side effect in the render phase
-      expect(rendered.getByText('string')).toBeInTheDocument()
+      expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
       // New query data should be available immediately
-      expect(rendered.getByText('added')).toBeInTheDocument()
+      expect(rendered.getByText(addedKey[0]!)).toBeInTheDocument()
 
       await vi.advanceTimersByTimeAsync(0)
       // After effects phase has had time to run, the observer should have updated
-      expect(rendered.queryByText('string')).not.toBeInTheDocument()
+      expect(rendered.queryByText(stringKey[0]!)).not.toBeInTheDocument()
       expect(rendered.getByText('should change')).toBeInTheDocument()
 
       queryClient.clear()
@@ -174,10 +177,10 @@ describe('Preact hydration', () => {
       const initialDehydratedState = JSON.parse(stringifiedState)
       const queryClient = new QueryClient()
 
-      function Page({ queryKey }: { queryKey: [string] }) {
+      function Page({ queryKey: pageKey }: { queryKey: Array<string> }) {
         const { data } = useQuery({
-          queryKey,
-          queryFn: () => sleep(20).then(() => queryKey),
+          queryKey: pageKey,
+          queryFn: () => sleep(20).then(() => pageKey),
         })
         return (
           <div>
@@ -189,23 +192,23 @@ describe('Preact hydration', () => {
       const rendered = render(
         <QueryClientProvider client={queryClient}>
           <HydrationBoundary state={initialDehydratedState}>
-            <Page queryKey={['string']} />
+            <Page queryKey={stringKey} />
           </HydrationBoundary>
         </QueryClientProvider>,
       )
 
       expect(rendered.getByText('stringCached')).toBeInTheDocument()
       await vi.advanceTimersByTimeAsync(21)
-      expect(rendered.getByText('string')).toBeInTheDocument()
+      expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
 
       const intermediateClient = new QueryClient()
       intermediateClient.prefetchQuery({
-        queryKey: ['string'],
+        queryKey: stringKey,
         queryFn: () => sleep(20).then(() => ['should not change']),
       })
       intermediateClient.prefetchQuery({
-        queryKey: ['added'],
-        queryFn: () => sleep(20).then(() => ['added']),
+        queryKey: addedKey,
+        queryFn: () => sleep(20).then(() => [addedKey[0]]),
       })
       await vi.advanceTimersByTimeAsync(20)
 
@@ -223,8 +226,8 @@ describe('Preact hydration', () => {
           <Suspense fallback="loading">
             <QueryClientProvider client={queryClient}>
               <HydrationBoundary state={newDehydratedState}>
-                <Page queryKey={['string']} />
-                <Page queryKey={['added']} />
+                <Page queryKey={stringKey} />
+                <Page queryKey={addedKey} />
                 <Thrower />
               </HydrationBoundary>
             </QueryClientProvider>
@@ -238,26 +241,26 @@ describe('Preact hydration', () => {
         rendered.rerender(
           <QueryClientProvider client={queryClient}>
             <HydrationBoundary state={initialDehydratedState}>
-              <Page queryKey={['string']} />
-              <Page queryKey={['added']} />
+              <Page queryKey={stringKey} />
+              <Page queryKey={addedKey} />
             </HydrationBoundary>
           </QueryClientProvider>,
         )
 
         // This query existed before the transition so it should stay the same
-        expect(rendered.getByText('string')).toBeInTheDocument()
+        expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
         expect(
           rendered.queryByText('should not change'),
         ).not.toBeInTheDocument()
         // New query data should be available immediately because it was
         // hydrated in the previous transition, even though the new dehydrated
         // state did not contain it
-        expect(rendered.getByText('added')).toBeInTheDocument()
+        expect(rendered.getByText(addedKey[0]!)).toBeInTheDocument()
       })
 
       await vi.advanceTimersByTimeAsync(20)
       // It should stay the same even after effects have had a chance to run
-      expect(rendered.getByText('string')).toBeInTheDocument()
+      expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
       expect(rendered.queryByText('should not change')).not.toBeInTheDocument()
 
       queryClient.clear()
@@ -269,7 +272,7 @@ describe('Preact hydration', () => {
 
       function Page() {
         const { data } = useQuery({
-          queryKey: ['string'],
+          queryKey: stringKey,
           queryFn: () => sleep(20).then(() => ['string']),
         })
         return (
@@ -429,7 +432,7 @@ describe('Preact hydration', () => {
     // with a dataUpdatedAt earlier than the dehydratedAt of the next query
     const clientQueryClient = new QueryClient()
     clientQueryClient.prefetchQuery({
-      queryKey: ['promise'],
+      queryKey: promiseKey,
       queryFn: () => sleep(20).then(() => 'existing'),
     })
     await vi.advanceTimersByTimeAsync(20)
@@ -442,7 +445,7 @@ describe('Preact hydration', () => {
       },
     })
     prefetchQueryClient.prefetchQuery({
-      queryKey: ['promise'],
+      queryKey: promiseKey,
       queryFn: () =>
         sleep(10).then(() => Promise.reject(new Error('Query failed'))),
     })
@@ -455,7 +458,7 @@ describe('Preact hydration', () => {
 
     function Page() {
       const { data } = useQuery({
-        queryKey: ['promise'],
+        queryKey: promiseKey,
         queryFn: () => sleep(20).then(() => ['new']),
       })
       return (
