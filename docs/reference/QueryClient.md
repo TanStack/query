@@ -90,17 +90,9 @@ try {
 }
 ```
 
-**Behavior**
-
-- Respects `staleTime`. If cached data is still fresh, it resolves from the cache instead of fetching.
-- Respects `enabled`. If `enabled` is `false` and cached data exists, the cached data is returned. If `enabled` is `false` and no cached data exists, the promise rejects.
-- Respects `queryFn: skipToken`. If cached data exists, it is returned. If no cached data exists, the promise rejects.
-- Respects `select`. The promise resolves with the selected value, while the cache keeps the original query data.
-- If you are migrating from [`queryClient.ensureQueryData`](#queryclientensurequerydata), use `staleTime: 'static'` to return cached data when it exists, even after invalidation.
-
 **Options**
 
-The options for `query` are exactly the same as those of [`useQuery`](../framework/react/reference/useQuery.md)
+The options for `query` are exactly the same as those of [`useQuery`](../framework/react/reference/useQuery.md), except the following: `refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, refetchOnMount, notifyOnChangeProps, throwOnError, suspense, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/TanStack/query/blob/7cd2d192e6da3df0b08e334ea1cf04cd70478827/packages/query-core/src/types.ts#L119) for more clarity.
 
 **Returns**
 
@@ -108,7 +100,7 @@ The options for `query` are exactly the same as those of [`useQuery`](../framewo
 
 ## `queryClient.infiniteQuery`
 
-`fetchInfiniteQuery` is similar to `fetchQuery` but can be used to fetch and cache an infinite query.
+`fetchInfiniteQuery` is similar to `query` but can be used to fetch and cache an infinite query.
 
 ```tsx
 try {
@@ -121,7 +113,7 @@ try {
 
 **Options**
 
-The options for `fetchInfiniteQuery` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery).
+The options for `fetchInfiniteQuery` are exactly the same as those of [`query`](#query).
 
 **Returns**
 
