@@ -113,7 +113,7 @@ try {
 
 **Options**
 
-The options for `fetchInfiniteQuery` are exactly the same as those of [`query`](#query).
+The options for `fetchInfiniteQuery` are exactly the same as those of [`query`](#queryclientquery), with the addition of `initialPageParam`, `pages` and `getNextPageParam` options from [`useInfiniteQuery`](../framework/react/reference/useInfiniteQuery.md),.
 
 **Returns**
 
