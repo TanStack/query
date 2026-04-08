@@ -8,14 +8,16 @@ If you're lucky enough, you may know enough about what your users will do to be 
 [//]: # 'ExamplePrefetching'
 
 ```tsx
-import { noop } from "@tanstack/vue-query"
+import { noop } from '@tanstack/vue-query'
 
 const prefetchTodos = async () => {
   // The results of this query will be cached like a normal query
-  await queryClient.query({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-  }).catch(noop)
+  await queryClient
+    .query({
+      queryKey: ['todos'],
+      queryFn: fetchTodos,
+    })
+    .catch(noop)
 }
 ```
 
@@ -34,17 +36,19 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 [//]: # 'ExampleInfiniteQuery'
 
 ```tsx
-import { noop } from "@tanstack/vue-query"
+import { noop } from '@tanstack/vue-query'
 
 const prefetchProjects = async () => {
   // The results of this query will be cached like a normal query
-  await queryClient.infiniteQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-    pages: 3, // prefetch the first 3 pages
-  }).catch(noop)
+  await queryClient
+    .infiniteQuery({
+      queryKey: ['projects'],
+      queryFn: fetchProjects,
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+      pages: 3, // prefetch the first 3 pages
+    })
+    .catch(noop)
 }
 ```
 
