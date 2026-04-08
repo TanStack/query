@@ -5,7 +5,6 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
-  FetchQueryOptions,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
