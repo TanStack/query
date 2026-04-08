@@ -63,7 +63,7 @@ Its available methods are:
 
 ## `queryClient.query`
 
-`query` is an asynchronous method that can be used to fetch and cache a query. It will either resolves with the data or throw with an error.
+`query` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with an error.
 
 If the query exists and the data is not invalidated or older than the given `staleTime`, then the data from the cache will be returned. Otherwise it will try to fetch the latest data.
 
