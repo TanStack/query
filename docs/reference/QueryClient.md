@@ -100,7 +100,7 @@ The options for `query` are exactly the same as those of [`useQuery`](../framewo
 
 ## `queryClient.infiniteQuery`
 
-`fetchInfiniteQuery` is similar to `query` but can be used to fetch and cache an infinite query.
+`infiniteQuery` is similar to `query` but can be used to fetch and cache an infinite query.
 
 ```tsx
 try {
@@ -113,7 +113,7 @@ try {
 
 **Options**
 
-The options for `fetchInfiniteQuery` are exactly the same as those of [`query`](#queryclientquery), with the addition of `initialPageParam`, `pages` and `getNextPageParam` options from [`useInfiniteQuery`](../framework/react/reference/useInfiniteQuery.md),.
+The options for `infiniteQuery` are exactly the same as those of [`query`](#queryclientquery), with the addition of `initialPageParam`, `pages` and `getNextPageParam` options from [`useInfiniteQuery`](../framework/react/reference/useInfiniteQuery.md),.
 
 **Returns**
 
