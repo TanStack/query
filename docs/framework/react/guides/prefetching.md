@@ -45,7 +45,7 @@ This is how you use `query` to prefetch:
 ```tsx
 import { noop } from '@tanstack/react-query'
 
-const prefetchTodos = () => {
+const prefetchTodos = async () => {
   await queryClient
     .query({
       queryKey: ['todos'],
