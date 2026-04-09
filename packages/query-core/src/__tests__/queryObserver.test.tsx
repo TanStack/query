@@ -490,10 +490,7 @@ describe('queryObserver', () => {
   test('should always run the selector again if selector throws an error and selector is not referentially stable', async () => {
     const key = queryKey()
     const results: Array<QueryObserverResult> = []
-    const queryFn = async () => {
-      await sleep(10)
-      return { count: 1 }
-    }
+    const queryFn = () => sleep(10).then(() => ({ count: 1 }))
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -538,10 +535,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       retry: 0,
-      queryFn: async () => {
-        await sleep(10)
-        return shouldError ? 2 : 1
-      },
+      queryFn: () => sleep(10).then(() => (shouldError ? 2 : 1)),
       select: (num) => {
         if (shouldError) {
           throw error
@@ -811,7 +805,7 @@ describe('queryObserver', () => {
           // @ts-expect-error
           enabled: null,
         }),
-    ).toThrowError('Expected enabled to be a boolean')
+    ).toThrow('Expected enabled to be a boolean')
   })
 
   test('getCurrentQuery should return the current query', () => {
@@ -1164,13 +1158,11 @@ describe('queryObserver', () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: async () => {
-        await sleep(5)
-        return {
+      queryFn: () =>
+        sleep(5).then(() => ({
           data: 'data',
           staleTime: 20,
-        }
-      },
+        })),
       staleTime: (query) => query.state.data?.staleTime ?? 0,
     })
     const results: Array<QueryObserverResult<unknown>> = []
@@ -1192,12 +1184,10 @@ describe('queryObserver', () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: async () => {
-        await sleep(5)
-        return {
+      queryFn: () =>
+        sleep(5).then(() => ({
           data: 'data',
-        }
-      },
+        })),
       staleTime: 'static',
     })
     const result = observer.getCurrentResult()
@@ -1565,10 +1555,7 @@ describe('queryObserver', () => {
   describe('StrictMode behavior', () => {
     it('should deduplicate calls to queryFn', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(async () => {
-        await sleep(50)
-        return 'data'
-      })
+      const queryFn = vi.fn(() => sleep(50).then(() => 'data'))
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn,
@@ -1597,10 +1584,9 @@ describe('queryObserver', () => {
 
     it('should resolve with data when signal was consumed', async () => {
       const key = queryKey()
-      const queryFn = vi.fn(async ({ signal }) => {
-        await sleep(50)
-        return 'data' + String(signal)
-      })
+      const queryFn = vi.fn(({ signal }) =>
+        sleep(50).then(() => 'data' + String(signal)),
+      )
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn,
