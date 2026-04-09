@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, useIsMutating, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
 
@@ -17,6 +17,8 @@ describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -28,11 +30,11 @@ describe('useIsMutating', () => {
 
     function Mutations() {
       const { mutate: mutate1 } = useMutation({
-        mutationKey: ['mutation1'],
+        mutationKey: key1,
         mutationFn: () => sleep(50).then(() => 'data'),
       })
       const { mutate: mutate2 } = useMutation({
-        mutationKey: ['mutation2'],
+        mutationKey: key2,
         mutationFn: () => sleep(10).then(() => 'data'),
       })
 
@@ -78,20 +80,22 @@ describe('useIsMutating', () => {
   it('should filter correctly by mutationKey', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
 
     function IsMutating() {
-      const isMutating = useIsMutating({ mutationKey: ['mutation1'] })
+      const isMutating = useIsMutating({ mutationKey: key1 })
       isMutatingArray.push(isMutating)
       return null
     }
 
     function Page() {
       const { mutate: mutate1 } = useMutation({
-        mutationKey: ['mutation1'],
+        mutationKey: key1,
         mutationFn: () => sleep(100).then(() => 'data'),
       })
       const { mutate: mutate2 } = useMutation({
-        mutationKey: ['mutation2'],
+        mutationKey: key2,
         mutationFn: () => sleep(100).then(() => 'data'),
       })
 
@@ -112,11 +116,12 @@ describe('useIsMutating', () => {
   it('should filter correctly by predicate', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
 
     function IsMutating() {
       const isMutating = useIsMutating({
-        predicate: (mutation) =>
-          mutation.options.mutationKey?.[0] === 'mutation1',
+        predicate: (mutation) => mutation.options.mutationKey?.[0] === key1[0],
       })
       isMutatingArray.push(isMutating)
       return null
@@ -124,11 +129,11 @@ describe('useIsMutating', () => {
 
     function Page() {
       const { mutate: mutate1 } = useMutation({
-        mutationKey: ['mutation1'],
+        mutationKey: key1,
         mutationFn: () => sleep(100).then(() => 'data'),
       })
       const { mutate: mutate2 } = useMutation({
-        mutationKey: ['mutation2'],
+        mutationKey: key2,
         mutationFn: () => sleep(100).then(() => 'data'),
       })
 
@@ -148,12 +153,13 @@ describe('useIsMutating', () => {
 
   it('should use provided custom queryClient', async () => {
     const queryClient = new QueryClient()
+    const key = queryKey()
 
     function Page() {
       const isMutating = useIsMutating({}, queryClient)
       const { mutate } = useMutation(
         {
-          mutationKey: ['mutation1'],
+          mutationKey: key,
           mutationFn: () => sleep(10).then(() => 'data'),
         },
         queryClient,

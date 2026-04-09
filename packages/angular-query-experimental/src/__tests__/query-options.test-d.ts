@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, test } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient, dataTagSymbol, injectQuery, queryOptions } from '..'
 import type { Signal } from '@angular/core'
 
@@ -8,8 +9,9 @@ describe('queryOptions', () => {
   })
 
   test('should infer types for callbacks', () => {
+    const key = queryKey()
     queryOptions({
-      queryKey: ['key'],
+      queryKey: key,
       queryFn: () => Promise.resolve(5),
       staleTime: 1000,
       select: (data) => {
@@ -19,9 +21,10 @@ describe('queryOptions', () => {
   })
 
   test('should allow undefined response in initialData', () => {
+    const key = queryKey()
     const options = (id: string | null) =>
       queryOptions({
-        queryKey: ['todo', id],
+        queryKey: [...key, id],
         queryFn: () =>
           Promise.resolve({
             id: '1',
@@ -43,8 +46,9 @@ describe('queryOptions', () => {
 })
 
 test('should work when passed to injectQuery', () => {
+  const key = queryKey()
   const options = queryOptions({
-    queryKey: ['key'],
+    queryKey: key,
     queryFn: () => Promise.resolve(5),
   })
 
@@ -53,8 +57,9 @@ test('should work when passed to injectQuery', () => {
 })
 
 test('should work when passed to fetchQuery', () => {
+  const key = queryKey()
   const options = queryOptions({
-    queryKey: ['key'],
+    queryKey: key,
     queryFn: () => Promise.resolve(5),
   })
 
@@ -63,59 +68,65 @@ test('should work when passed to fetchQuery', () => {
 })
 
 test('should tag the queryKey with the result type of the QueryFn', () => {
-  const { queryKey } = queryOptions({
-    queryKey: ['key'],
+  const key = queryKey()
+  const { queryKey: tagged } = queryOptions({
+    queryKey: key,
     queryFn: () => Promise.resolve(5),
   })
-  assertType<number>(queryKey[dataTagSymbol])
+  assertType<number>(tagged[dataTagSymbol])
 })
 
 test('should tag the queryKey even if no promise is returned', () => {
-  const { queryKey } = queryOptions({
-    queryKey: ['key'],
+  const key = queryKey()
+  const { queryKey: tagged } = queryOptions({
+    queryKey: key,
     queryFn: () => 5,
   })
-  assertType<number>(queryKey[dataTagSymbol])
+  assertType<number>(tagged[dataTagSymbol])
 })
 
 test('should tag the queryKey with unknown if there is no queryFn', () => {
-  const { queryKey } = queryOptions({
-    queryKey: ['key'],
+  const key = queryKey()
+  const { queryKey: tagged } = queryOptions({
+    queryKey: key,
   })
 
-  assertType<unknown>(queryKey[dataTagSymbol])
+  assertType<unknown>(tagged[dataTagSymbol])
 })
 
 test('should tag the queryKey with the result type of the QueryFn if select is used', () => {
-  const { queryKey } = queryOptions({
-    queryKey: ['key'],
+  const key = queryKey()
+  const { queryKey: tagged } = queryOptions({
+    queryKey: key,
     queryFn: () => Promise.resolve(5),
     select: (data) => data.toString(),
   })
 
-  assertType<number>(queryKey[dataTagSymbol])
+  assertType<number>(tagged[dataTagSymbol])
 })
 
 test('should return the proper type when passed to getQueryData', () => {
-  const { queryKey } = queryOptions({
-    queryKey: ['key'],
+  const key = queryKey()
+  const { queryKey: tagged } = queryOptions({
+    queryKey: key,
     queryFn: () => Promise.resolve(5),
   })
 
   const queryClient = new QueryClient()
-  const data = queryClient.getQueryData(queryKey)
+  const data = queryClient.getQueryData(tagged)
 
   expectTypeOf(data).toEqualTypeOf<number | undefined>()
 })
 
 test('should properly type updaterFn when passed to setQueryData', () => {
-  const { queryKey } = queryOptions({
-    queryKey: ['key'],
+  const key = queryKey()
+  const { queryKey: tagged } = queryOptions({
+    queryKey: key,
     queryFn: () => Promise.resolve(5),
   })
 
   const queryClient = new QueryClient()
-  const data = queryClient.setQueryData(queryKey, (prev) => {
+  const data = queryClient.setQueryData(tagged, (prev) => {
     expectTypeOf(prev).toEqualTypeOf<number | undefined>()
     return prev
   })
@@ -124,19 +135,20 @@ test('should properly type updaterFn when passed to setQueryData', () => {
 })
 
 test('should properly type value when passed to setQueryData', () => {
-  const { queryKey } = queryOptions({
-    queryKey: ['key'],
+  const key = queryKey()
+  const { queryKey: tagged } = queryOptions({
+    queryKey: key,
     queryFn: () => Promise.resolve(5),
   })
 
   const queryClient = new QueryClient()
 
   // @ts-expect-error value should be a number
-  queryClient.setQueryData(queryKey, '5')
+  queryClient.setQueryData(tagged, '5')
   // @ts-expect-error value should be a number
-  queryClient.setQueryData(queryKey, () => '5')
+  queryClient.setQueryData(tagged, () => '5')
 
-  const data = queryClient.setQueryData(queryKey, 5)
+  const data = queryClient.setQueryData(tagged, 5)
 
   expectTypeOf(data).toEqualTypeOf<number | undefined>()
 })

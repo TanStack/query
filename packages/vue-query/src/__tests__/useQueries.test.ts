@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, ref } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
@@ -19,13 +19,15 @@ describe('useQueries', () => {
   })
 
   test('should return result for each query', () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const queries = [
       {
-        queryKey: ['key1'],
+        queryKey: key1,
         queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
-        queryKey: ['key2'],
+        queryKey: key2,
         queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
@@ -48,13 +50,15 @@ describe('useQueries', () => {
   })
 
   test('should resolve to success and update reactive state', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const queries = [
       {
-        queryKey: ['key11'],
+        queryKey: key1,
         queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
-        queryKey: ['key12'],
+        queryKey: key2,
         queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
@@ -79,14 +83,16 @@ describe('useQueries', () => {
   })
 
   test('should reject one of the queries and update reactive state', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const queries = [
       {
-        queryKey: ['key21'],
+        queryKey: key1,
         queryFn: () =>
           sleep(0).then(() => Promise.reject(new Error('Some error'))),
       },
       {
-        queryKey: ['key22'],
+        queryKey: key2,
         queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
@@ -111,17 +117,21 @@ describe('useQueries', () => {
   })
 
   test('should return state for new queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+    const key4 = queryKey()
     const queries = ref([
       {
-        queryKey: ['key31'],
+        queryKey: key1,
         queryFn: () => sleep(0).then(() => 'value31'),
       },
       {
-        queryKey: ['key32'],
+        queryKey: key2,
         queryFn: () => sleep(0).then(() => 'value32'),
       },
       {
-        queryKey: ['key33'],
+        queryKey: key3,
         queryFn: () => sleep(0).then(() => 'value33'),
       },
     ])
@@ -133,11 +143,11 @@ describe('useQueries', () => {
       0,
       queries.value.length,
       {
-        queryKey: ['key31'],
+        queryKey: key1,
         queryFn: () => sleep(0).then(() => 'value31'),
       },
       {
-        queryKey: ['key34'],
+        queryKey: key4,
         queryFn: () => sleep(0).then(() => 'value34'),
       },
     )
@@ -165,6 +175,8 @@ describe('useQueries', () => {
   })
 
   test('should stop listening to changes on onScopeDispose', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
     >
@@ -172,11 +184,11 @@ describe('useQueries', () => {
 
     const queries = [
       {
-        queryKey: ['key41'],
+        queryKey: key1,
         queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
-        queryKey: ['key42'],
+        queryKey: key2,
         queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
@@ -200,14 +212,16 @@ describe('useQueries', () => {
   })
 
   test('should use queryClient provided via options', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const queryClient = new QueryClient()
     const queries = [
       {
-        queryKey: ['key41'],
+        queryKey: key1,
         queryFn: () => sleep(0).then(() => 'Some data'),
       },
       {
-        queryKey: ['key42'],
+        queryKey: key2,
         queryFn: () => sleep(0).then(() => 'Some data'),
       },
     ]
@@ -219,17 +233,19 @@ describe('useQueries', () => {
   })
 
   test('should combine queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const firstResult = 'first result'
     const secondResult = 'second result'
 
     const queryClient = new QueryClient()
     const queries = [
       {
-        queryKey: ['key41'],
+        queryKey: key1,
         queryFn: () => sleep(0).then(() => firstResult),
       },
       {
-        queryKey: ['key42'],
+        queryKey: key2,
         queryFn: () => sleep(0).then(() => secondResult),
       },
     ]
@@ -255,13 +271,14 @@ describe('useQueries', () => {
   })
 
   test('should be `enabled` to accept getter function', async () => {
+    const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const checked = ref(false)
 
     useQueries({
       queries: [
         {
-          queryKey: ['enabled'],
+          queryKey: key,
           queryFn: fetchFn,
           enabled: () => checked.value,
         },
@@ -278,6 +295,7 @@ describe('useQueries', () => {
   })
 
   test('should allow getters for query keys', async () => {
+    const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
@@ -285,7 +303,7 @@ describe('useQueries', () => {
     useQueries({
       queries: [
         {
-          queryKey: ['key', () => key1.value, () => key2.value],
+          queryKey: [...key, () => key1.value, () => key2.value],
           queryFn: fetchFn,
         },
       ],
@@ -307,6 +325,7 @@ describe('useQueries', () => {
   })
 
   test('should allow arbitrarily nested getters for query keys', async () => {
+    const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
@@ -318,7 +337,7 @@ describe('useQueries', () => {
       queries: [
         {
           queryKey: [
-            'key',
+            ...key,
             key1,
             () => key2.value,
             { key: () => key3.value },
@@ -370,17 +389,19 @@ describe('useQueries', () => {
   })
 
   test('should refetch only the specific query without affecting others', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     let userCount = 0
     let postCount = 0
 
     const queriesState = useQueries({
       queries: [
         {
-          queryKey: ['users'],
+          queryKey: key1,
           queryFn: () => sleep(10).then(() => `users-${++userCount}`),
         },
         {
-          queryKey: ['posts'],
+          queryKey: key2,
           queryFn: () => sleep(20).then(() => `posts-${++postCount}`),
         },
       ],
@@ -406,7 +427,7 @@ describe('useQueries', () => {
       useQueries({
         queries: [
           {
-            queryKey: ['outsideScope'],
+            queryKey: queryKey(),
             queryFn: () => sleep(0).then(() => 'data'),
           },
         ],
@@ -422,6 +443,7 @@ describe('useQueries', () => {
   })
 
   test('should work with options getter and be reactive', async () => {
+    const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
     const key2 = ref('key2')
@@ -433,7 +455,7 @@ describe('useQueries', () => {
       queries: () => [
         {
           queryKey: [
-            'key',
+            ...key,
             key1,
             key2.value,
             { key: key3.value },

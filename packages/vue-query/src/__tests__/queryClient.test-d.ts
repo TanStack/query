@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData } from '@tanstack/query-core'
 
@@ -113,8 +114,9 @@ describe('setQueryData', () => {
 
 describe('fetchInfiniteQuery', () => {
   it('should allow passing pages', async () => {
+    const key = queryKey()
     const data = await new QueryClient().fetchInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: key,
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
@@ -125,9 +127,10 @@ describe('fetchInfiniteQuery', () => {
   })
 
   it('should not allow passing getNextPageParam without pages', () => {
+    const key = queryKey()
     assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
       {
-        queryKey: ['key'],
+        queryKey: key,
         queryFn: () => Promise.resolve('string'),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -136,10 +139,11 @@ describe('fetchInfiniteQuery', () => {
   })
 
   it('should not allow passing pages without getNextPageParam', () => {
+    const key = queryKey()
     assertType<Parameters<QueryClient['fetchInfiniteQuery']>>([
       // @ts-expect-error Property 'getNextPageParam' is missing
       {
-        queryKey: ['key'],
+        queryKey: key,
         queryFn: () => Promise.resolve('string'),
         initialPageParam: 1,
         pages: 5,

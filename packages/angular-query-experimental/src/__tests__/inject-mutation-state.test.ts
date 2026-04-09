@@ -8,7 +8,7 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectMutation,
@@ -37,7 +37,7 @@ describe('injectMutationState', () => {
 
   describe('injectMutationState', () => {
     test('should return variables after calling mutate 1', () => {
-      const mutationKey = ['mutation']
+      const mutationKey = queryKey()
       const variables = 'foo123'
 
       const mutation = TestBed.runInInjectionContext(() => {
@@ -60,8 +60,8 @@ describe('injectMutationState', () => {
     })
 
     test('reactive options should update injectMutationState', () => {
-      const mutationKey1 = ['mutation1']
-      const mutationKey2 = ['mutation2']
+      const mutationKey1 = queryKey()
+      const mutationKey2 = queryKey()
       const variables1 = 'foo123'
       const variables2 = 'bar234'
 
@@ -98,7 +98,7 @@ describe('injectMutationState', () => {
 
     test('should return variables after calling mutate 2', () => {
       queryClient.clear()
-      const mutationKey = ['mutation']
+      const mutationKey = queryKey()
       const variables = 'bar234'
 
       const mutation = TestBed.runInInjectionContext(() => {
@@ -182,7 +182,7 @@ describe('injectMutationState', () => {
       test('throws NG0203 with descriptive error outside injection context', () => {
         expect(() => {
           injectMutationState()
-        }).toThrowError(/NG0203(.*?)injectMutationState/)
+        }).toThrow(/NG0203(.*?)injectMutationState/)
       })
 
       test('can be used outside injection context when passing an injector', () => {
