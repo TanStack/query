@@ -1,5 +1,55 @@
 # @tanstack/query-core
 
+## 5.96.2
+
+## 5.96.1
+
+## 5.96.0
+
+## 5.95.2
+
+### Patch Changes
+
+- fix(timeoutManager): make sure NodeJs.Timout doesn't leak ([#10325](https://github.com/TanStack/query/pull/10325))
+
+## 5.95.1
+
+### Patch Changes
+
+- fix(timeoutManager): make sure NodeJs.Timout doesn't leak ([#10323](https://github.com/TanStack/query/pull/10323))
+
+## 5.95.0
+
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
+## 5.91.2
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
+## 5.91.1
+
+### Patch Changes
+
+- fix(core): cancel paused initial fetch when last observer unsubscribes ([#10291](https://github.com/TanStack/query/pull/10291))
+
+## 5.91.0
+
+### Minor Changes
+
+- feat: environmentManager ([#10199](https://github.com/TanStack/query/pull/10199))
+
 ## 5.90.20
 
 ### Patch Changes

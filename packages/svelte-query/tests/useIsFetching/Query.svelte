@@ -6,10 +6,7 @@
 
   const query = createQuery(() => ({
     queryKey: ['test'],
-    queryFn: async () => {
-      await sleep(10)
-      return 'test'
-    },
+    queryFn: () => sleep(10).then(() => 'test'),
     enabled: ready,
   }))
 </script>

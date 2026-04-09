@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryCache, QueryClient, QueryObserver } from '..'
+import { QueryCache, QueryClient, QueryObserver, hashKey } from '..'
 
 describe('queryCache', () => {
   let queryClient: QueryClient
@@ -125,18 +125,21 @@ describe('queryCache', () => {
 
       const testClient = new QueryClient({ queryCache: testCache })
 
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const key3 = queryKey()
       testClient.prefetchQuery({
-        queryKey: ['key1'],
+        queryKey: key1,
         queryFn: () => sleep(100).then(() => 'data1'),
       })
       expect(testCache.findAll().length).toBe(1)
       testClient.prefetchQuery({
-        queryKey: ['key2'],
+        queryKey: key2,
         queryFn: () => sleep(100).then(() => 'data2'),
       })
       expect(testCache.findAll().length).toBe(2)
       testClient.prefetchQuery({
-        queryKey: ['key3'],
+        queryKey: key3,
         queryFn: () => sleep(100).then(() => 'data3'),
       })
       await vi.advanceTimersByTimeAsync(100)
@@ -349,6 +352,31 @@ describe('queryCache', () => {
       expect(onError).not.toHaveBeenCalled()
       expect(onSettled).toHaveBeenCalledTimes(1)
       expect(onSettled).toHaveBeenCalledWith({ data: 5 }, null, query)
+    })
+  })
+
+  describe('build', () => {
+    test('should compute queryHash from queryKey when queryHash is not provided', () => {
+      const key = queryKey()
+
+      const query = queryCache.build(queryClient, {
+        queryKey: key,
+      })
+
+      expect(query.queryHash).toBe(hashKey(key))
+    })
+
+    test('should use provided queryHash instead of computing it', () => {
+      const key = queryKey()
+      const customHash = 'custom-hash'
+
+      const query = queryCache.build(queryClient, {
+        queryKey: key,
+        queryHash: customHash,
+      })
+
+      expect(query.queryHash).toBe(customHash)
+      expect(query.queryHash).not.toBe(hashKey(key))
     })
   })
 

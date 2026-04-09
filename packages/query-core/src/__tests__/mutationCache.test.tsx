@@ -467,5 +467,47 @@ describe('mutationCache', () => {
       expect(testCache.getAll()).toHaveLength(1)
       expect(testCache.getAll()).toEqual([mutation2])
     })
+
+    test('should delete scope when removing the only mutation in that scope', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      const mutation = testCache.build(testClient, {
+        scope: { id: 'scope1' },
+        mutationFn: () => Promise.resolve('data'),
+      })
+
+      expect(testCache.getAll()).toHaveLength(1)
+
+      testCache.remove(mutation)
+
+      expect(testCache.getAll()).toHaveLength(0)
+    })
+
+    test('should still notify removal when removing a mutation that does not exist in the cache', () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      const mutation = testCache.build(testClient, {
+        mutationFn: () => Promise.resolve('data'),
+      })
+
+      expect(testCache.getAll()).toHaveLength(1)
+      testCache.remove(mutation)
+      expect(testCache.getAll()).toHaveLength(0)
+
+      // Remove again — mutation is already gone from the cache
+      const callback = vi.fn()
+      const unsubscribe = testCache.subscribe(callback)
+      testCache.remove(mutation)
+
+      expect(testCache.getAll()).toHaveLength(0)
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(callback).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'removed', mutation }),
+      )
+
+      unsubscribe()
+    })
   })
 })

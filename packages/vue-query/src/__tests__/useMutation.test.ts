@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { reactive, ref } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 
@@ -83,11 +83,12 @@ describe('useMutation', () => {
   })
 
   test('should work with options getter and be reactive', async () => {
+    const key = queryKey()
     const result = 'Mock data'
     const keyRef = ref('key01')
     const fnMock = vi.fn((params: string) => sleep(10).then(() => params))
     const mutation = useMutation(() => ({
-      mutationKey: [keyRef.value],
+      mutationKey: [...key, keyRef.value],
       mutationFn: fnMock,
     }))
 
@@ -99,7 +100,7 @@ describe('useMutation', () => {
     expect(fnMock).toHaveBeenNthCalledWith(
       1,
       result,
-      expect.objectContaining({ mutationKey: ['key01'] }),
+      expect.objectContaining({ mutationKey: [...key, 'key01'] }),
     )
 
     keyRef.value = 'key02'
@@ -111,28 +112,30 @@ describe('useMutation', () => {
     expect(fnMock).toHaveBeenNthCalledWith(
       2,
       result,
-      expect.objectContaining({ mutationKey: ['key02'] }),
+      expect.objectContaining({ mutationKey: [...key, 'key02'] }),
     )
   })
 
   test('should update reactive options', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
     const options = reactive({
-      mutationKey: ['foo'],
+      mutationKey: key1,
       mutationFn: (params: string) => sleep(10).then(() => params),
     })
     const mutation = useMutation(options)
 
-    options.mutationKey = ['bar']
+    options.mutationKey = key2
     await vi.advanceTimersByTimeAsync(10)
     mutation.mutate('xyz')
 
     await vi.advanceTimersByTimeAsync(10)
 
-    const mutations = mutationCache.find({ mutationKey: ['bar'] })
+    const mutations = mutationCache.find({ mutationKey: key2 })
 
-    expect(mutations?.options.mutationKey).toEqual(['bar'])
+    expect(mutations?.options.mutationKey).toEqual(key2)
   })
 
   test('should update reactive options deeply', async () => {
@@ -177,13 +180,15 @@ describe('useMutation', () => {
   })
 
   test('should allow for non-options object (mutationFn or mutationKey) passed as arg1 & arg2 to trigger reactive updates', async () => {
-    const mutationKey = ref<Array<string>>(['foo2'])
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const mutationKeyRef = ref<Array<string>>(key1)
     const mutationFn = ref((params: string) => sleep(0).then(() => params))
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
-    const mutation = useMutation({ mutationKey, mutationFn })
+    const mutation = useMutation({ mutationKey: mutationKeyRef, mutationFn })
 
-    mutationKey.value = ['bar2']
+    mutationKeyRef.value = key2
     let proof = false
     mutationFn.value = (params: string) => {
       proof = true
@@ -194,8 +199,8 @@ describe('useMutation', () => {
     mutation.mutate('xyz')
     await vi.advanceTimersByTimeAsync(10)
 
-    const mutations = mutationCache.find({ mutationKey: ['bar2'] })
-    expect(mutations?.options.mutationKey).toEqual(['bar2'])
+    const mutations = mutationCache.find({ mutationKey: key2 })
+    expect(mutations?.options.mutationKey).toEqual(key2)
     expect(proof).toEqual(true)
   })
 
@@ -372,7 +377,7 @@ describe('useMutation', () => {
       })
 
       await vi.waitFor(() =>
-        expect(mutation.mutateAsync()).rejects.toThrowError('Some error'),
+        expect(mutation.mutateAsync()).rejects.toThrow('Some error'),
       )
 
       expect(mutation).toMatchObject({
@@ -384,6 +389,24 @@ describe('useMutation', () => {
         error: { value: Error('Some error') },
       })
     })
+  })
+
+  test('should warn when used outside of setup function in development mode', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    try {
+      useMutation({
+        mutationFn: (params: string) => sleep(0).then(() => params),
+      })
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    } finally {
+      warnSpy.mockRestore()
+      vi.unstubAllEnvs()
+    }
   })
 
   describe('throwOnError', () => {
@@ -401,6 +424,28 @@ describe('useMutation', () => {
 
       expect(boundaryFn).toHaveBeenCalledTimes(1)
       expect(boundaryFn).toHaveBeenCalledWith(err)
+    })
+
+    test('should throw from error watcher when throwOnError returns true', async () => {
+      const throwOnErrorFn = vi.fn().mockReturnValue(true)
+      const { mutate } = useMutation({
+        mutationFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        throwOnError: throwOnErrorFn,
+      })
+
+      mutate()
+
+      // Suppress the Unhandled Rejection caused by watcher throw in Vue 3
+      const rejectionHandler = () => {}
+      process.on('unhandledRejection', rejectionHandler)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      process.off('unhandledRejection', rejectionHandler)
+
+      expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
+      expect(throwOnErrorFn).toHaveBeenCalledWith(Error('Some error'))
     })
   })
 })
