@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQueries } from '../../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
 import IsRestoringExample from './IsRestoringExample.svelte'
@@ -22,8 +22,8 @@ describe('createQueries', () => {
   it(
     'should return the correct states',
     withEffectRoot(async () => {
-      const key1 = ['test-1']
-      const key2 = ['test-2']
+      const key1 = queryKey()
+      const key2 = queryKey()
       const results: Array<Array<CreateQueryResult>> = []
       const { promise: promise1, resolve: resolve1 } = promiseWithResolvers()
       const { promise: promise2, resolve: resolve2 } = promiseWithResolvers()
@@ -69,7 +69,7 @@ describe('createQueries', () => {
   it(
     'should track results',
     withEffectRoot(async () => {
-      const key1 = ['test-track-results']
+      const key1 = queryKey()
       const results: Array<Array<CreateQueryResult>> = []
       let count = 0
 
@@ -111,8 +111,8 @@ describe('createQueries', () => {
   it(
     'should combine queries',
     withEffectRoot(async () => {
-      const key1 = ['test-combine-1']
-      const key2 = ['test-combine-2']
+      const key1 = queryKey()
+      const key2 = queryKey()
 
       const { promise: promise1, resolve: resolve1 } =
         promiseWithResolvers<string>()
@@ -169,8 +169,8 @@ describe('createQueries', () => {
   it(
     'should track property access through combine function',
     withEffectRoot(async () => {
-      const key1 = ['test-track-combine-1']
-      const key2 = ['test-track-combine-2']
+      const key1 = queryKey()
+      const key2 = queryKey()
       let count = 0
       const results: Array<unknown> = []
 

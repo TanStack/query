@@ -34,7 +34,7 @@ describe('useQueryClient', () => {
   test('should throw an error when queryClient does not exist in the context', () => {
     injectSpy.mockReturnValueOnce(undefined)
 
-    expect(useQueryClient).toThrowError()
+    expect(useQueryClient).toThrow()
     expect(injectSpy).toHaveBeenCalledTimes(1)
     expect(injectSpy).toHaveBeenCalledWith(VUE_QUERY_CLIENT)
   })
@@ -42,7 +42,7 @@ describe('useQueryClient', () => {
   test('should throw an error when used outside of setup function', () => {
     hasInjectionContextSpy.mockReturnValueOnce(false)
 
-    expect(useQueryClient).toThrowError()
+    expect(useQueryClient).toThrow()
     expect(hasInjectionContextSpy).toHaveBeenCalledTimes(1)
   })
 

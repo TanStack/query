@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '..'
 import {
   addToEnd,
@@ -19,21 +20,21 @@ import { Mutation } from '../mutation'
 describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
     it('should use custom hash function when provided in options', () => {
-      const queryKey = ['test', { a: 1, b: 2 }]
+      const key = ['test', { a: 1, b: 2 }]
       const customHashFn = vi.fn(() => 'custom-hash')
 
-      const result = hashQueryKeyByOptions(queryKey, {
+      const result = hashQueryKeyByOptions(key, {
         queryKeyHashFn: customHashFn,
       })
 
-      expect(customHashFn).toHaveBeenCalledWith(queryKey)
+      expect(customHashFn).toHaveBeenCalledWith(key)
       expect(result).toEqual('custom-hash')
     })
 
     it('should use default hash function when no options provided', () => {
-      const queryKey = ['test', { a: 1, b: 2 }]
-      const defaultResult = hashKey(queryKey)
-      const result = hashQueryKeyByOptions(queryKey)
+      const key = ['test', { a: 1, b: 2 }]
+      const defaultResult = hashKey(key)
+      const result = hashQueryKeyByOptions(key)
 
       expect(result).toEqual(defaultResult)
     })
@@ -420,7 +421,7 @@ describe('core/utils', () => {
 
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
-      const filters = { mutationKey: ['key1'] }
+      const filters = { mutationKey: queryKey() }
       const queryClient = new QueryClient()
       const mutation = new Mutation({
         client: queryClient,

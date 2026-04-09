@@ -1,4 +1,5 @@
 import { skipToken } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 
 import { useSuspenseQuery } from '../useSuspenseQuery'
@@ -6,7 +7,7 @@ import { useSuspenseQuery } from '../useSuspenseQuery'
 describe('useSuspenseQuery', () => {
   it('should always have data defined', () => {
     const { data } = useSuspenseQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -15,7 +16,7 @@ describe('useSuspenseQuery', () => {
 
   it('should not have pending status', () => {
     const { status } = useSuspenseQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -25,14 +26,14 @@ describe('useSuspenseQuery', () => {
   it('should not allow skipToken in queryFn', () => {
     assertType(
       useSuspenseQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         // @ts-expect-error
         queryFn: skipToken,
       }),
     )
     assertType(
       useSuspenseQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         // @ts-expect-error
         queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
       }),
@@ -42,7 +43,7 @@ describe('useSuspenseQuery', () => {
   it('should not allow placeholderData, enabled or throwOnError props', () => {
     assertType(
       useSuspenseQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
         placeholderData: 5,
@@ -51,7 +52,7 @@ describe('useSuspenseQuery', () => {
     )
     assertType(
       useSuspenseQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
         enabled: true,
@@ -59,7 +60,7 @@ describe('useSuspenseQuery', () => {
     )
     assertType(
       useSuspenseQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
         throwOnError: true,
@@ -70,7 +71,7 @@ describe('useSuspenseQuery', () => {
   it('should not return isPlaceholderData', () => {
     expectTypeOf(
       useSuspenseQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
       }),
     ).not.toHaveProperty('isPlaceholderData')
@@ -78,7 +79,7 @@ describe('useSuspenseQuery', () => {
 
   it('should type-narrow the error field', () => {
     const query = useSuspenseQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
     })
 

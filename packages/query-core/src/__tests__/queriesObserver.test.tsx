@@ -296,10 +296,7 @@ describe('queriesObserver', () => {
     const observer = new QueriesObserver(queryClient, [
       {
         queryKey: key1,
-        queryFn: async () => {
-          await sleep(20)
-          return 1
-        },
+        queryFn: () => sleep(20).then(() => 1),
       },
     ])
 
