@@ -236,10 +236,7 @@ describe('query', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: async () => {
-        await sleep(100)
-        return 'data'
-      },
+      queryFn: () => sleep(100).then(() => 'data'),
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -249,10 +246,7 @@ describe('query', () => {
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
-      queryFn: async ({ signal }) => {
-        await sleep(100)
-        return 'data2' + String(signal)
-      },
+      queryFn: ({ signal }) => sleep(100).then(() => 'data2' + String(signal)),
     })
 
     // Ensure the fetch is in progress
@@ -326,10 +320,8 @@ describe('query', () => {
 
     queryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async ({ signal }) => {
-        await sleep(100)
-        return signal.aborted ? 'aborted' : 'data'
-      },
+      queryFn: ({ signal }) =>
+        sleep(100).then(() => (signal.aborted ? 'aborted' : 'data')),
     })
 
     await vi.advanceTimersByTimeAsync(10)
@@ -1057,10 +1049,9 @@ describe('query', () => {
     let x = 0
 
     queryClient.setQueryData(key, 'initial')
-    const queryFn = vi.fn().mockImplementation(async () => {
-      await sleep(100)
-      return 'data' + x
-    })
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(100).then(() => 'data' + x))
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
@@ -1221,10 +1212,7 @@ describe('query', () => {
 
   test('should update initialData when Query exists without data', async () => {
     const key = queryKey()
-    const queryFn = vi.fn(async () => {
-      await sleep(100)
-      return 'data'
-    })
+    const queryFn = vi.fn(() => sleep(100).then(() => 'data'))
 
     const promise = queryClient.prefetchQuery({
       queryKey: key,
