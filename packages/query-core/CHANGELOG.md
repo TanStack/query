@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.97.0
+
+### Patch Changes
+
+- fix(query-core): use explicit `undefined` check for timer IDs so that custom `TimeoutProvider`s returning `0` as a valid timer ID are properly cleared ([#10401](https://github.com/TanStack/query/pull/10401))
+
 ## 5.96.2
 
 ## 5.96.1
