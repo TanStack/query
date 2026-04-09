@@ -1,5 +1,5 @@
 ---
-"@tanstack/eslint-plugin-query": patch
+"@tanstack/eslint-plugin-query": minor
 ---
 
-Add ESLint v10 to peer dependencies
+feat(eslint): support eslint v10 and typescript v6
