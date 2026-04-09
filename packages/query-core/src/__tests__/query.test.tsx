@@ -1067,8 +1067,7 @@ describe('query', () => {
       queryFn,
     })
 
-    await vi.advanceTimersByTimeAsync(10)
-
+    await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     x = 1
@@ -1076,10 +1075,9 @@ describe('query', () => {
     // cancel ongoing re-fetches
     void queryClient.refetchQueries({ queryKey: key }, { cancelRefetch: true })
 
-    await vi.advanceTimersByTimeAsync(10)
-
     // The promise should not reject
-    await vi.waitFor(() => expect(promise).resolves.toBe('data1'))
+    await vi.advanceTimersByTimeAsync(100)
+    await expect(promise).resolves.toBe('data1')
 
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
@@ -1322,7 +1320,8 @@ describe('query', () => {
     query.fetch()
 
     await expect(promise1).rejects.toBeInstanceOf(CancelledError)
-    await vi.waitFor(() => expect(query.state.fetchStatus).toBe('idle'))
+    await vi.advanceTimersByTimeAsync(50)
+    expect(query.state.fetchStatus).toBe('idle')
 
     expect(queryFn).toHaveBeenCalledTimes(2)
 
