@@ -63,7 +63,7 @@ export const noRestDestructuring = createRule<[], 'noRestDestructuring'>({
         if (node.id.type !== 'ObjectPattern') return
 
         const hasRest = node.id.properties.some(
-          (prop) => prop.type === 'RestElement'
+          (prop) => prop.type === 'RestElement',
         )
 
         if (!hasRest) return
