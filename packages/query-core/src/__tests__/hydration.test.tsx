@@ -25,43 +25,31 @@ describe('dehydration and rehydration', () => {
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: stringKey,
-        queryFn: () => sleep(0).then(() => 'string'),
-      }),
-    )
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: numberKey,
-        queryFn: () => sleep(0).then(() => 1),
-      }),
-    )
-
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: booleanKey,
-        queryFn: () => sleep(0).then(() => true),
-      }),
-    )
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: nullKey,
-        queryFn: () => sleep(0).then(() => null),
-      }),
-    )
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: arrayKey,
-        queryFn: () => sleep(0).then(() => ['string', 0]),
-      }),
-    )
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: nestedKey,
-        queryFn: () => sleep(0).then(() => ({ key: [{ nestedKey: 1 }] })),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: stringKey,
+      queryFn: () => sleep(0).then(() => 'string'),
+    })
+    queryClient.prefetchQuery({
+      queryKey: numberKey,
+      queryFn: () => sleep(0).then(() => 1),
+    })
+    queryClient.prefetchQuery({
+      queryKey: booleanKey,
+      queryFn: () => sleep(0).then(() => true),
+    })
+    queryClient.prefetchQuery({
+      queryKey: nullKey,
+      queryFn: () => sleep(0).then(() => null),
+    })
+    queryClient.prefetchQuery({
+      queryKey: arrayKey,
+      queryFn: () => sleep(0).then(() => ['string', 0]),
+    })
+    queryClient.prefetchQuery({
+      queryKey: nestedKey,
+      queryFn: () => sleep(0).then(() => ({ key: [{ nestedKey: 1 }] })),
+    })
+    await vi.advanceTimersByTimeAsync(0)
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
 
@@ -125,16 +113,15 @@ describe('dehydration and rehydration', () => {
     hydrationClient.clear()
   })
 
-  test('should not dehydrate queries if dehydrateQueries is set to false', () => {
+  test('should not dehydrate queries if dehydrateQueries is set to false', async () => {
     const key = queryKey()
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => sleep(0).then(() => 'string'),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(0).then(() => 'string'),
+    })
+    await vi.advanceTimersByTimeAsync(0)
 
     const dehydrated = dehydrate(queryClient, {
       shouldDehydrateQuery: () => false,
@@ -149,13 +136,12 @@ describe('dehydration and rehydration', () => {
     const key = queryKey()
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => sleep(0).then(() => 'string'),
-        gcTime: 50,
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(0).then(() => 'string'),
+      gcTime: 50,
+    })
+    await vi.advanceTimersByTimeAsync(0)
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
 
@@ -179,12 +165,11 @@ describe('dehydration and rehydration', () => {
     const key = queryKey()
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => sleep(0).then(() => 'string'),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(0).then(() => 'string'),
+    })
+    await vi.advanceTimersByTimeAsync(0)
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
     const parsed = JSON.parse(stringified)
@@ -207,13 +192,12 @@ describe('dehydration and rehydration', () => {
         dehydrate: { shouldDehydrateQuery: () => true },
       },
     })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: key,
-        retry: 0,
-        queryFn: () => Promise.reject(new Error('error')),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: key,
+      retry: 0,
+      queryFn: () => Promise.reject(new Error('error')),
+    })
+    await vi.advanceTimersByTimeAsync(0)
     const dehydrated = dehydrate(queryClient)
     expect(dehydrated.queries.length).toBe(1)
     expect(dehydrated.queries[0]?.state.error).toStrictEqual(new Error('error'))
@@ -277,12 +261,11 @@ describe('dehydration and rehydration', () => {
     const complexKey = [...key, { key: ['string'], key2: 0 }]
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: complexKey,
-        queryFn: () => sleep(0).then(() => 'string'),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: complexKey,
+      queryFn: () => sleep(0).then(() => 'string'),
+    })
+    await vi.advanceTimersByTimeAsync(0)
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
 
@@ -300,13 +283,11 @@ describe('dehydration and rehydration', () => {
 
     const fetchDataAfterHydration =
       vi.fn<(...args: Array<unknown>) => unknown>()
-    await vi.waitFor(() =>
-      hydrationClient.prefetchQuery({
-        queryKey: complexKey,
-        queryFn: fetchDataAfterHydration,
-        staleTime: 100,
-      }),
-    )
+    await hydrationClient.prefetchQuery({
+      queryKey: complexKey,
+      queryFn: fetchDataAfterHydration,
+      staleTime: 100,
+    })
     expect(fetchDataAfterHydration).toHaveBeenCalledTimes(0)
 
     queryClient.clear()
@@ -323,24 +304,22 @@ describe('dehydration and rehydration', () => {
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: successKey,
-        queryFn: () => sleep(0).then(() => 'success'),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: successKey,
+      queryFn: () => sleep(0).then(() => 'success'),
+    })
+    await vi.advanceTimersByTimeAsync(0)
     queryClient.prefetchQuery({
       queryKey: loadingKey,
       queryFn: () => sleep(10000).then(() => 'loading'),
     })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: errorKey,
-        queryFn: () => {
-          throw new Error()
-        },
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: errorKey,
+      queryFn: () => {
+        throw new Error()
+      },
+    })
+    await vi.advanceTimersByTimeAsync(0)
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
 
@@ -365,18 +344,15 @@ describe('dehydration and rehydration', () => {
     const numberKey = queryKey()
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: stringKey,
-        queryFn: () => sleep(0).then(() => 'string'),
-      }),
-    )
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: numberKey,
-        queryFn: () => sleep(0).then(() => 1),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: stringKey,
+      queryFn: () => sleep(0).then(() => 'string'),
+    })
+    queryClient.prefetchQuery({
+      queryKey: numberKey,
+      queryFn: () => sleep(0).then(() => 1),
+    })
+    await vi.advanceTimersByTimeAsync(0)
     const dehydrated = dehydrate(queryClient, {
       shouldDehydrateQuery: (query) => query.queryKey !== stringKey,
     })
@@ -407,12 +383,12 @@ describe('dehydration and rehydration', () => {
     const key = queryKey()
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => sleep(5).then(() => 'string-older'),
-      }),
-    )
+    const promise1 = queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(5).then(() => 'string-older'),
+    })
+    await vi.advanceTimersByTimeAsync(5)
+    await promise1
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
 
@@ -421,12 +397,12 @@ describe('dehydration and rehydration', () => {
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
-    await vi.waitFor(() =>
-      hydrationClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => sleep(5).then(() => 'string-newer'),
-      }),
-    )
+    const promise2 = hydrationClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(5).then(() => 'string-newer'),
+    })
+    await vi.advanceTimersByTimeAsync(5)
+    await promise2
 
     hydrate(hydrationClient, parsed)
     expect(hydrationCache.find({ queryKey: key })?.state.data).toBe(
@@ -441,23 +417,23 @@ describe('dehydration and rehydration', () => {
     const key = queryKey()
     const hydrationCache = new QueryCache()
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
-    await vi.waitFor(() =>
-      hydrationClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => sleep(5).then(() => 'string-older'),
-      }),
-    )
+    const promise1 = hydrationClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(5).then(() => 'string-older'),
+    })
+    await vi.advanceTimersByTimeAsync(5)
+    await promise1
 
     // ---
 
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () => sleep(5).then(() => 'string-newer'),
-      }),
-    )
+    const promise2 = queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(5).then(() => 'string-newer'),
+    })
+    await vi.advanceTimersByTimeAsync(5)
+    await promise2
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
 
@@ -704,21 +680,18 @@ describe('dehydration and rehydration', () => {
     const noMetaKey = queryKey()
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: metaKey,
-        queryFn: () => Promise.resolve('meta'),
-        meta: {
-          some: 'meta',
-        },
-      }),
-    )
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: noMetaKey,
-        queryFn: () => Promise.resolve('no-meta'),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: metaKey,
+      queryFn: () => Promise.resolve('meta'),
+      meta: {
+        some: 'meta',
+      },
+    })
+    queryClient.prefetchQuery({
+      queryKey: noMetaKey,
+      queryFn: () => Promise.resolve('no-meta'),
+    })
+    await vi.advanceTimersByTimeAsync(0)
 
     const dehydrated = dehydrate(queryClient)
 
@@ -827,13 +800,12 @@ describe('dehydration and rehydration', () => {
 
     const options = {
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return 'string'
-      },
+      queryFn: () => sleep(10).then(() => 'string'),
     } as const
 
-    await vi.waitFor(() => queryClient.prefetchQuery(options))
+    const prefetchPromise = queryClient.prefetchQuery(options)
+    await vi.advanceTimersByTimeAsync(10)
+    await prefetchPromise
 
     const dehydrated = dehydrate(queryClient)
     expect(
@@ -852,7 +824,8 @@ describe('dehydration and rehydration', () => {
     expect(hydrationCache.find({ queryKey: key })?.state.fetchStatus).toBe(
       'fetching',
     )
-    await vi.waitFor(() => promise)
+    await vi.advanceTimersByTimeAsync(10)
+    await promise
     expect(hydrationCache.find({ queryKey: key })?.state.fetchStatus).toBe(
       'idle',
     )
@@ -901,12 +874,11 @@ describe('dehydration and rehydration', () => {
       queryCache,
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
     })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: successKey,
-        queryFn: () => sleep(0).then(() => 'success'),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: successKey,
+      queryFn: () => sleep(0).then(() => 'success'),
+    })
+    await vi.advanceTimersByTimeAsync(0)
 
     const promise = queryClient.prefetchQuery({
       queryKey: pendingKey,
@@ -917,7 +889,8 @@ describe('dehydration and rehydration', () => {
     expect(dehydrated.queries[0]?.promise).toBeUndefined()
     expect(dehydrated.queries[1]?.promise).toBeInstanceOf(Promise)
 
-    await vi.waitFor(() => promise)
+    await vi.advanceTimersByTimeAsync(10)
+    await promise
     queryClient.clear()
   })
 
@@ -929,12 +902,11 @@ describe('dehydration and rehydration', () => {
       queryCache,
       defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
     })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: successKey,
-        queryFn: () => sleep(0).then(() => 'success'),
-      }),
-    )
+    queryClient.prefetchQuery({
+      queryKey: successKey,
+      queryFn: () => sleep(0).then(() => 'success'),
+    })
+    await vi.advanceTimersByTimeAsync(0)
 
     void queryClient.prefetchQuery({
       queryKey: pendingKey,
@@ -970,24 +942,22 @@ describe('dehydration and rehydration', () => {
       status: 'pending',
     })
 
-    await vi.waitFor(() =>
-      expect(
-        hydrationCache.find({ queryKey: pendingKey })?.state,
-      ).toMatchObject({
-        data: 'pending',
-        dataUpdateCount: 1,
-        dataUpdatedAt: expect.any(Number),
-        error: null,
-        errorUpdateCount: 0,
-        errorUpdatedAt: 0,
-        fetchFailureCount: 0,
-        fetchFailureReason: null,
-        fetchMeta: null,
-        fetchStatus: 'idle',
-        isInvalidated: false,
-        status: 'success',
-      }),
-    )
+    await vi.advanceTimersByTimeAsync(20)
+
+    expect(hydrationCache.find({ queryKey: pendingKey })?.state).toMatchObject({
+      data: 'pending',
+      dataUpdateCount: 1,
+      dataUpdatedAt: expect.any(Number),
+      error: null,
+      errorUpdateCount: 0,
+      errorUpdatedAt: 0,
+      fetchFailureCount: 0,
+      fetchFailureReason: null,
+      fetchMeta: null,
+      fetchStatus: 'idle',
+      isInvalidated: false,
+      status: 'success',
+    })
   })
 
   test('should transform promise result', async () => {
@@ -1017,10 +987,10 @@ describe('dehydration and rehydration', () => {
     })
 
     hydrate(hydrationClient, dehydrated)
-    await vi.waitFor(() => promise)
-    await vi.waitFor(() =>
-      expect(hydrationClient.getQueryData(key)).toBeInstanceOf(Date),
-    )
+    await vi.advanceTimersByTimeAsync(20)
+    await promise
+
+    expect(hydrationClient.getQueryData(key)).toBeInstanceOf(Date)
 
     queryClient.clear()
   })
@@ -1052,10 +1022,9 @@ describe('dehydration and rehydration', () => {
     })
 
     hydrate(hydrationClient, dehydrated)
-    await vi.waitFor(() => promise)
-    await vi.waitFor(() =>
-      expect(hydrationClient.getQueryData(key)).toBeInstanceOf(Date),
-    )
+    await promise
+
+    expect(hydrationClient.getQueryData(key)).toBeInstanceOf(Date)
 
     queryClient.clear()
   })
@@ -1069,13 +1038,12 @@ describe('dehydration and rehydration', () => {
         },
       },
     })
-    await vi.waitFor(() =>
-      hydrationClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () =>
-          sleep(5).then(() => new Date('2024-01-01T00:00:00.000Z')),
-      }),
-    )
+    const hydrationPromise = hydrationClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(5).then(() => new Date('2024-01-01T00:00:00.000Z')),
+    })
+    await vi.advanceTimersByTimeAsync(5)
+    await hydrationPromise
 
     // ---
 
@@ -1087,13 +1055,12 @@ describe('dehydration and rehydration', () => {
         },
       },
     })
-    await vi.waitFor(() =>
-      queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => new Date('2024-01-02T00:00:00.000Z')),
-      }),
-    )
+    const queryPromise = queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => new Date('2024-01-02T00:00:00.000Z')),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    await queryPromise
     const dehydrated = dehydrate(queryClient)
 
     // ---
@@ -1122,10 +1089,7 @@ describe('dehydration and rehydration', () => {
 
     const promise = serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return 'server data'
-      },
+      queryFn: () => sleep(10).then(() => 'server data'),
     })
 
     const dehydrated = dehydrate(serverQueryClient)
@@ -1138,10 +1102,10 @@ describe('dehydration and rehydration', () => {
 
     hydrate(clientQueryClient, dehydrated)
 
-    await vi.waitFor(() => promise)
-    await vi.waitFor(() =>
-      expect(clientQueryClient.getQueryData(key)).toBe('server data'),
-    )
+    await vi.advanceTimersByTimeAsync(10)
+    await promise
+
+    expect(clientQueryClient.getQueryData(key)).toBe('server data')
 
     clientQueryClient.clear()
     serverQueryClient.clear()
@@ -1161,10 +1125,7 @@ describe('dehydration and rehydration', () => {
 
     const promise = serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return 'server data'
-      },
+      queryFn: () => sleep(10).then(() => 'server data'),
     })
 
     const dehydrated = dehydrate(serverQueryClient)
@@ -1189,12 +1150,10 @@ describe('dehydration and rehydration', () => {
     // If the query was hydrated in error, it would still take some time for it
     // to end up in the cache, so for the test to fail properly on regressions,
     // wait for the fetchStatus to be idle
-    await vi.waitFor(() =>
-      expect(clientQueryClient.getQueryState(key)?.fetchStatus).toBe('idle'),
-    )
-    await vi.waitFor(() =>
-      expect(clientQueryClient.getQueryData(key)).toBe('newer data'),
-    )
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(clientQueryClient.getQueryState(key)?.fetchStatus).toBe('idle')
+    expect(clientQueryClient.getQueryData(key)).toBe('newer data')
 
     clientQueryClient.clear()
     serverQueryClient.clear()
@@ -1218,10 +1177,7 @@ describe('dehydration and rehydration', () => {
 
     const query = {
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return countRef.current
-      },
+      queryFn: () => sleep(10).then(() => countRef.current),
     }
 
     const promise = serverQueryClient.prefetchQuery(query)
@@ -1240,10 +1196,10 @@ describe('dehydration and rehydration', () => {
 
     hydrate(clientQueryClient, dehydrated)
 
-    await vi.waitFor(() => promise)
-    await vi.waitFor(() =>
-      expect(clientQueryClient.getQueryData(query.queryKey)).toBe(0),
-    )
+    await vi.advanceTimersByTimeAsync(10)
+    await promise
+
+    expect(clientQueryClient.getQueryData(query.queryKey)).toBe(0)
 
     expect(serializeDataMock).toHaveBeenCalledTimes(1)
     expect(serializeDataMock).toHaveBeenCalledWith(0)
@@ -1253,6 +1209,7 @@ describe('dehydration and rehydration', () => {
 
     // --- server ---
     countRef.current++
+    await vi.advanceTimersByTimeAsync(1)
     serverQueryClient.clear()
     const promise2 = serverQueryClient.prefetchQuery(query)
 
@@ -1262,10 +1219,10 @@ describe('dehydration and rehydration', () => {
 
     hydrate(clientQueryClient, dehydrated)
 
-    await vi.waitFor(() => promise2)
-    await vi.waitFor(() =>
-      expect(clientQueryClient.getQueryData(query.queryKey)).toBe(1),
-    )
+    await vi.advanceTimersByTimeAsync(10)
+    await promise2
+
+    expect(clientQueryClient.getQueryData(query.queryKey)).toBe(1)
 
     expect(serializeDataMock).toHaveBeenCalledTimes(2)
     expect(serializeDataMock).toHaveBeenCalledWith(1)
