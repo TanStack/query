@@ -1,9 +1,9 @@
 <script lang="ts">
   import { createMutation } from '../../src/index.js'
-  import { sleep } from '@tanstack/query-test-utils'
+  import { queryKey, sleep } from '@tanstack/query-test-utils'
 
   const mutation = createMutation(() => ({
-    mutationKey: ['mutation-1'],
+    mutationKey: queryKey(),
     mutationFn: () => sleep(10).then(() => 'data'),
   }))
 </script>
