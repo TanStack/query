@@ -1,11 +1,11 @@
 <script lang="ts">
   import { createQuery } from '../../src/index.js'
-  import { sleep } from '@tanstack/query-test-utils'
+  import { queryKey, sleep } from '@tanstack/query-test-utils'
 
   let ready = $state(false)
 
   const query = createQuery(() => ({
-    queryKey: ['test'],
+    queryKey: queryKey(),
     queryFn: () => sleep(10).then(() => 'test'),
     enabled: ready,
   }))
