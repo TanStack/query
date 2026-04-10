@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
-import { createQuery, queryOptions } from '../src/index.js'
+import { createQuery, queryOptions } from '../../src/index.js'
 
 describe('createQuery', () => {
   describe('initialData', () => {
