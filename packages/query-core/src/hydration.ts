@@ -236,6 +236,15 @@ export function hydrate(
           query.setState({
             ...serializedState,
             data,
+            // if data was resolved synchronously, transition to success
+            // (mirrors the new-query branch below), but preserve fetchStatus
+            // if the query is already actively fetching
+            ...(data !== undefined && {
+              status: 'success' as const,
+              ...(!existingQueryIsFetching && {
+                fetchStatus: 'idle' as const,
+              }),
+            }),
           })
         }
       } else {
@@ -262,6 +271,9 @@ export function hydrate(
 
       if (
         promise &&
+        // If the data was synchronously available, there is no need to set up
+        // a retryer and thus no reason to call fetch
+        !syncData &&
         !existingQueryIsPending &&
         !existingQueryIsFetching &&
         // Only hydrate if dehydration is newer than any existing data,
@@ -270,8 +282,6 @@ export function hydrate(
       ) {
         // This doesn't actually fetch - it just creates a retryer
         // which will re-use the passed `initialPromise`
-        // Note that we need to call these even when data was synchronously
-        // available, as we still need to set up the retryer
         query
           .fetch(undefined, {
             // RSC transformed promises are not thenable
