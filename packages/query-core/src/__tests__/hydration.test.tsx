@@ -1401,9 +1401,9 @@ describe('dehydration and rehydration', () => {
       },
     })
 
-    let resolvePrefetch: undefined | ((value?: unknown) => void);
+    let resolvePrefetch: undefined | ((value?: unknown) => void)
     const prefetchPromise = new Promise((res) => {
-      resolvePrefetch = res;
+      resolvePrefetch = res
     })
     // Keep the query pending so it dehydrates with status: 'pending' and a promise
     void serverQueryClient.prefetchQuery({
@@ -1416,7 +1416,7 @@ describe('dehydration and rehydration', () => {
 
     // Simulate a synchronous thenable – models a React streaming promise that
     // resolved before the second hydrate() call.
-    resolvePrefetch?.('server data');
+    resolvePrefetch?.('server data')
     // @ts-expect-error
     dehydrated.queries[0].promise.then = (cb) => {
       cb?.('server data')
@@ -1430,7 +1430,9 @@ describe('dehydration and rehydration', () => {
     const clientQueryClient = new QueryClient()
     void clientQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: () => { throw new Error('QueryFn on client should not be called') },
+      queryFn: () => {
+        throw new Error('QueryFn on client should not be called')
+      },
     })
 
     const query = clientQueryClient.getQueryCache().find({ queryKey: key })!
@@ -1460,13 +1462,13 @@ describe('dehydration and rehydration', () => {
     })
     void serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: () => prefetchPromise
+      queryFn: () => prefetchPromise,
     })
     const dehydrated = dehydrate(serverQueryClient)
 
     // Simulate a synchronous thenable – the promise was already resolved
     // before we hydrate on the client
-    resolvePrefetch?.('server data');
+    resolvePrefetch?.('server data')
     // @ts-expect-error
     dehydrated.queries[0].promise.then = (cb) => {
       cb?.('server data')
@@ -1515,13 +1517,13 @@ describe('dehydration and rehydration', () => {
     })
     void serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: () => prefetchPromise
+      queryFn: () => prefetchPromise,
     })
     const dehydrated = dehydrate(serverQueryClient)
 
     // Simulate a synchronous thenable – the promise was already resolved
     // before we hydrate on the client
-    resolvePrefetch?.('server data');
+    resolvePrefetch?.('server data')
     // @ts-expect-error
     dehydrated.queries[0].promise.then = (cb) => {
       cb?.('server data')
