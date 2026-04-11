@@ -3,7 +3,11 @@
   import { createMutation, setQueryClientContext } from '../../src/index.js'
   import { sleep } from '@tanstack/query-test-utils'
 
-  let { queryClient }: { queryClient: QueryClient } = $props()
+  type Props = {
+    queryClient: QueryClient
+  }
+
+  let { queryClient }: Props = $props()
 
   setQueryClientContext(queryClient)
 

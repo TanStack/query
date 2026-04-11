@@ -5,13 +5,12 @@
   import { setQueryClientContext } from '../../src/context.js'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
 
-  let {
-    queryClient,
-    states,
-  }: {
+  type Props = {
     queryClient: QueryClient
     states: { value: Array<QueryObserverResult> }
-  } = $props()
+  }
+
+  let { queryClient, states }: Props = $props()
 
   setQueryClientContext(queryClient)
 

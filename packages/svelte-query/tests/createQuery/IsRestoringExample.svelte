@@ -7,13 +7,12 @@
   } from '../../src/context.js'
   import { createQuery } from '../../src/index.js'
 
-  let {
-    queryClient,
-    queryFn,
-  }: {
+  type Props = {
     queryClient: QueryClient
     queryFn: () => Promise<string>
-  } = $props()
+  }
+
+  let { queryClient, queryFn }: Props = $props()
 
   setQueryClientContext(queryClient)
   setIsRestoringContext({ current: true })

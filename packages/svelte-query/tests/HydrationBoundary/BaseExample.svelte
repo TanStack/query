@@ -7,15 +7,13 @@
   } from '../../src/index.js'
   import type { DehydratedState } from '@tanstack/query-core'
 
-  let {
-    queryClient,
-    dehydratedState,
-    queryFn,
-  }: {
+  type Props = {
     queryClient: QueryClient
     dehydratedState: DehydratedState
     queryFn: () => Promise<string>
-  } = $props()
+  }
+
+  let { queryClient, dehydratedState, queryFn }: Props = $props()
 
   setQueryClientContext(queryClient)
 

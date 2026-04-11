@@ -4,7 +4,11 @@
   import { setQueryClientContext } from '../../src/context.js'
   import { sleep } from '@tanstack/query-test-utils'
 
-  let { queryClient }: { queryClient: QueryClient } = $props()
+  type Props = {
+    queryClient: QueryClient
+  }
+
+  let { queryClient }: Props = $props()
 
   const queryKey = ['test']
 

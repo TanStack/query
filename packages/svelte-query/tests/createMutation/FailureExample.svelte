@@ -2,13 +2,12 @@
   import type { QueryClient } from '@tanstack/query-core'
   import { createMutation, setQueryClientContext } from '../../src/index.js'
 
-  let {
-    queryClient,
-    mutationFn,
-  }: {
+  type Props = {
     queryClient: QueryClient
     mutationFn: (value: { count: number }) => Promise<{ count: number }>
-  } = $props()
+  }
+
+  let { queryClient, mutationFn }: Props = $props()
 
   let count = $state(0)
 
