@@ -8,7 +8,10 @@
   let {
     queryClient,
     states,
-  }: { queryClient: QueryClient; states: { value: Array<QueryObserverResult> } } = $props()
+  }: {
+    queryClient: QueryClient
+    states: { value: Array<QueryObserverResult> }
+  } = $props()
 
   setQueryClientContext(queryClient)
 
