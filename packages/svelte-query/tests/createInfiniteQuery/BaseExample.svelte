@@ -23,7 +23,6 @@
 
   $effect(() => {
     // @ts-expect-error
-    // svelte-ignore state_snapshot_uncloneable
     states.value = [...untrack(() => states.value), $state.snapshot(query)]
   })
 </script>
