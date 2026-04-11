@@ -111,10 +111,10 @@ describe('createMutation', () => {
   test(
     'should recreate observer when queryClient changes',
     withEffectRoot(async () => {
-      const client1 = new QueryClient()
-      const client2 = new QueryClient()
+      const queryClient1 = new QueryClient()
+      const queryClient2 = new QueryClient()
 
-      let activeClient = $state(client1)
+      let activeClient = $state(queryClient1)
 
       const mutation = createMutation(
         () => ({
@@ -129,7 +129,7 @@ describe('createMutation', () => {
       expect(mutation.status).toBe('success')
       expect(mutation.data).toBe('first')
 
-      activeClient = client2
+      activeClient = queryClient2
       flushSync()
 
       expect(mutation.status).toBe('idle')
