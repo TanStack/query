@@ -51,17 +51,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              return 1
-            },
+            queryFn: () => sleep(10).then(() => 1),
           },
           {
             queryKey: key2,
-            queryFn: async () => {
-              await sleep(100)
-              return 2
-            },
+            queryFn: () => sleep(100).then(() => 2),
           },
         ],
       }))
@@ -701,10 +695,7 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              return 1
-            },
+            queryFn: () => sleep(10).then(() => 1),
           },
         ],
       }))

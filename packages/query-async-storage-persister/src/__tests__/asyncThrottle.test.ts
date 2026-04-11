@@ -146,6 +146,6 @@ describe('asyncThrottle', () => {
   })
 
   test('should throw error when "func" is not a function', () => {
-    expect(() => asyncThrottle(1 as any)).toThrowError()
+    expect(() => asyncThrottle(1 as any)).toThrow()
   })
 })

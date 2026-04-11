@@ -1,5 +1,17 @@
 # @tanstack/eslint-plugin-query
 
+## 5.97.0
+
+### Minor Changes
+
+- feat(eslint): support eslint v10 and typescript v6 ([#10182](https://github.com/TanStack/query/pull/10182))
+
+## 5.96.2
+
+### Patch Changes
+
+- fix(eslint-plugin): normalize whitespace in allowList variable matching for multiline expressions ([#10337](https://github.com/TanStack/query/pull/10337))
+
 ## 5.96.1
 
 ## 5.96.0
