@@ -195,9 +195,10 @@ describe('queryOptions', () => {
   })
 
   test('Should allow undefined response in initialData', () => {
-    assertType((id: string | null) =>
+    const key = queryKey()
+    const options = (id: string | null) =>
       queryOptions({
-        queryKey: ['todo', id],
+        queryKey: [...key, id],
         queryFn: () =>
           Promise.resolve({
             id: '1',
@@ -210,7 +211,10 @@ describe('queryOptions', () => {
                 id,
                 title: 'Initial Data',
               },
-      }),
-    )
+      })
+
+    expectTypeOf(options(null).initialData).returns.toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
   })
 })
