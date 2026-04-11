@@ -16,7 +16,7 @@ describe('QueryClientProvider', () => {
     vi.useRealTimers()
   })
 
-  test('Sets a specific cache for all queries to use', async () => {
+  test('should set a specific cache for all queries to use', async () => {
     const queryCache = queryClient.getQueryCache()
 
     const rendered = render(BaseExample, {
