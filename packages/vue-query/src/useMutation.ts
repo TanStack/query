@@ -20,7 +20,7 @@ import type {
   MutateOptions,
   MutationObserverResult,
 } from '@tanstack/query-core'
-import type { MaybeRefDeep, VueMutationOptions } from './types'
+import type { MaybeRefDeep, MutationOptions } from './types'
 import type { QueryClient } from './queryClient'
 
 type MutationResult<TData, TError, TVariables, TOnMutateResult> =
@@ -35,9 +35,9 @@ export type UseMutationOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 > =
-  | MaybeRefDeep<VueMutationOptions<TData, TError, TVariables, TOnMutateResult>>
+  | MaybeRefDeep<MutationOptions<TData, TError, TVariables, TOnMutateResult>>
   | (() => MaybeRefDeep<
-      VueMutationOptions<TData, TError, TVariables, TOnMutateResult>
+      MutationOptions<TData, TError, TVariables, TOnMutateResult>
     >)
 
 type MutateSyncFunction<

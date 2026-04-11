@@ -1,5 +1,5 @@
 import type { DefaultError, WithRequired } from '@tanstack/query-core'
-import type { VueMutationOptions } from './types'
+import type { MutationOptions } from './types'
 
 export function mutationOptions<
   TData = unknown,
@@ -8,11 +8,11 @@ export function mutationOptions<
   TOnMutateResult = unknown,
 >(
   options: WithRequired<
-    VueMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    MutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): WithRequired<
-  VueMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 export function mutationOptions<
@@ -22,11 +22,11 @@ export function mutationOptions<
   TOnMutateResult = unknown,
 >(
   options: () => WithRequired<
-    VueMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    MutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): () => WithRequired<
-  VueMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 export function mutationOptions<
@@ -36,11 +36,11 @@ export function mutationOptions<
   TOnMutateResult = unknown,
 >(
   options: Omit<
-    VueMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    MutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): Omit<
-  VueMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 export function mutationOptions<
@@ -50,11 +50,11 @@ export function mutationOptions<
   TOnMutateResult = unknown,
 >(
   options: () => Omit<
-    VueMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    MutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): () => Omit<
-  VueMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 export function mutationOptions(options: unknown) {

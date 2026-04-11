@@ -64,7 +64,7 @@ export type ShallowOption = {
   shallow?: boolean
 }
 
-export type VueMutationOptions<
+export type MutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,

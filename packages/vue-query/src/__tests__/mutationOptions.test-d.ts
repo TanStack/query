@@ -10,7 +10,7 @@ import type {
   WithRequired,
 } from '@tanstack/query-core'
 import type { Ref } from 'vue-demi'
-import type { VueMutationOptions } from '../types'
+import type { MutationOptions } from '../types'
 
 describe('mutationOptions', () => {
   it('should not allow excess properties', () => {
@@ -121,7 +121,7 @@ describe('mutationOptions', () => {
       }),
     ).toEqualTypeOf<
       WithRequired<
-        VueMutationOptions<number, DefaultError, string, unknown>,
+        MutationOptions<number, DefaultError, string, unknown>,
         'mutationKey'
       >
     >()
@@ -134,7 +134,7 @@ describe('mutationOptions', () => {
       }),
     ).toEqualTypeOf<
       Omit<
-        VueMutationOptions<number, DefaultError, string, unknown>,
+        MutationOptions<number, DefaultError, string, unknown>,
         'mutationKey'
       >
     >()

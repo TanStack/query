@@ -38,7 +38,7 @@ export type {
   UseInfiniteQueryReturnType,
 } from './useInfiniteQuery'
 export type { UseMutationOptions, UseMutationReturnType } from './useMutation'
-export type { VueMutationOptions } from './types'
+export type { MutationOptions } from './types'
 export type { UseQueriesOptions, UseQueriesResults } from './useQueries'
 export type { MutationFilters, MutationStateOptions } from './useMutationState'
 export type { QueryFilters } from './useIsFetching'
