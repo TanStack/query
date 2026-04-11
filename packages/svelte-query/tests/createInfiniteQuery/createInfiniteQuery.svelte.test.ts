@@ -4,7 +4,7 @@ import { QueryClient } from '@tanstack/query-core'
 import { ref } from '../utils.svelte.js'
 import BaseExample from './BaseExample.svelte'
 import SelectExample from './SelectExample.svelte'
-import ChangeClient from './ChangeClient.svelte'
+import ChangeClientExample from './ChangeClientExample.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
@@ -133,7 +133,7 @@ describe('createInfiniteQuery', () => {
   it('should be able to set new pages with the query client', async () => {
     const queryClient = new QueryClient()
 
-    const rendered = render(ChangeClient, {
+    const rendered = render(ChangeClientExample, {
       props: {
         queryClient,
       },
