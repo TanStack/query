@@ -1,7 +1,7 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { queryKey } from '@tanstack/query-test-utils'
-  import { setIsRestoringContext } from '../../src/context.js'
+  import { setIsRestoringContext, setQueryClientContext } from '../../src/context.js'
   import { createQueries } from '../../src/index.js'
 
   let {
@@ -13,18 +13,15 @@
   } = $props()
 
   const queryClient = new QueryClient()
-
+  setQueryClientContext(queryClient)
   setIsRestoringContext({ current: true })
 
-  const result = createQueries(
-    () => ({
-      queries: [
-        { queryKey: queryKey(), queryFn: queryFn1 },
-        { queryKey: queryKey(), queryFn: queryFn2 },
-      ],
-    }),
-    () => queryClient,
-  )
+  const result = createQueries(() => ({
+    queries: [
+      { queryKey: queryKey(), queryFn: queryFn1 },
+      { queryKey: queryKey(), queryFn: queryFn2 },
+    ],
+  }))
 </script>
 
 <div>

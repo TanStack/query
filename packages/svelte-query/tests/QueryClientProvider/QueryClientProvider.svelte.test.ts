@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import ParentComponent from './ParentComponent.svelte'
+import BaseExample from './BaseExample.svelte'
 
 describe('QueryClientProvider', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('QueryClientProvider', () => {
     const queryClient = new QueryClient()
     const queryCache = queryClient.getQueryCache()
 
-    const rendered = render(ParentComponent, {
+    const rendered = render(BaseExample, {
       props: {
         queryClient: queryClient,
       },
