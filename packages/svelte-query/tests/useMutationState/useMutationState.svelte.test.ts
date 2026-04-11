@@ -19,7 +19,7 @@ describe('useMutationState', () => {
     vi.useRealTimers()
   })
 
-  test('Run few mutation functions and check from useMutationState', async () => {
+  test('should run few mutation functions and check from useMutationState', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
@@ -54,7 +54,7 @@ describe('useMutationState', () => {
     expect(rendered.getByText('Data: ["success","error"]')).toBeInTheDocument()
   })
 
-  test('Can select specific type of mutation ( i.e: error only )', async () => {
+  test('should select specific type of mutation ( i.e: error only )', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
@@ -119,7 +119,7 @@ describe('useMutationState', () => {
     expect(rendered.getByText('Variables: ["success"]')).toBeInTheDocument()
   })
 
-  test('Can select specific mutation using mutation key', async () => {
+  test('should select specific mutation using mutation key', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))

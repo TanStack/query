@@ -22,7 +22,7 @@ describe('createMutation', () => {
     vi.useRealTimers()
   })
 
-  test('Able to reset `error`', async () => {
+  test('should be able to reset `error`', async () => {
     const rendered = render(ResetExample, {
       props: { queryClient },
     })
@@ -38,7 +38,7 @@ describe('createMutation', () => {
     expect(rendered.getByText('Error: undefined')).toBeInTheDocument()
   })
 
-  test('Able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
+  test('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     const onSuccessMock = vi.fn()
     const onSettledMock = vi.fn()
 
@@ -69,7 +69,7 @@ describe('createMutation', () => {
     expect(onSettledMock).toHaveBeenNthCalledWith(3, 3)
   })
 
-  test('Set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
+  test('should set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
     type Value = { count: number }
 
     const mutationFn = vi.fn<(value: Value) => Promise<Value>>()
