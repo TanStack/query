@@ -1,16 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { mutationOptions } from '../../src/index.js'
 import BaseExample from './BaseExample.svelte'
 import MultiExample from './MultiExample.svelte'
 
 describe('mutationOptions', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
@@ -39,7 +44,7 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts: () => mutationOpts },
+      props: { queryClient, mutationOpts: () => mutationOpts },
     })
 
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
@@ -57,7 +62,7 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts: () => mutationOpts },
+      props: { queryClient, mutationOpts: () => mutationOpts },
     })
 
     expect(rendered.getByText('isMutating: 0')).toBeInTheDocument()
@@ -81,6 +86,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(MultiExample, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
       },
@@ -108,6 +114,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(MultiExample, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
         isMutatingFilters: { mutationKey: mutationOpts1.mutationKey },
@@ -133,6 +140,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
+        queryClient,
         mutationOpts: () => mutationOpts,
         isMutatingFilters: { mutationKey: mutationOpts.mutationKey },
       },
@@ -153,7 +161,7 @@ describe('mutationOptions', () => {
     })
 
     const rendered = render(BaseExample, {
-      props: { mutationOpts: () => mutationOpts },
+      props: { queryClient, mutationOpts: () => mutationOpts },
     })
 
     expect(rendered.getByText('clientIsMutating: 0')).toBeInTheDocument()
@@ -177,6 +185,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(MultiExample, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
       },
@@ -204,6 +213,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(MultiExample, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
         isMutatingFilters: { mutationKey: mutationOpts1.mutationKey },
@@ -229,6 +239,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
+        queryClient,
         mutationOpts: () => mutationOpts,
         mutationStateOpts: {
           filters: {
@@ -253,6 +264,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(BaseExample, {
       props: {
+        queryClient,
         mutationOpts: () => mutationOpts,
         mutationStateOpts: {
           filters: { status: 'success' },
@@ -279,6 +291,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(MultiExample, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
         mutationStateOpts: {
@@ -309,6 +322,7 @@ describe('mutationOptions', () => {
 
     const rendered = render(MultiExample, {
       props: {
+        queryClient,
         mutationOpts1: () => mutationOpts1,
         mutationOpts2: () => mutationOpts2,
         mutationStateOpts: {

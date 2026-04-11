@@ -1,14 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { queryOptions } from '../queryOptions'
-import type { UseQueryOptions } from '../useQuery'
+import type { QueryOptions } from '../queryOptions'
 
 describe('queryOptions', () => {
   it('should return the object received as a parameter without any modification.', () => {
-    const object: UseQueryOptions = {
+    const object: QueryOptions = {
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
     } as const
 
-    expect(queryOptions(object)).toBe(object)
+    const options = queryOptions(object)
+    expect(options).toBe(object)
   })
 })

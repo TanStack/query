@@ -38,10 +38,9 @@ watchEffect(() => {
 
 onMounted(() => {
   devtools.mount(div.value as HTMLElement)
-})
-
-onScopeDispose(() => {
-  devtools.unmount()
+  onScopeDispose(() => {
+    devtools.unmount()
+  })
 })
 </script>
 

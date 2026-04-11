@@ -1,16 +1,21 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import BaseExample from './BaseExample.svelte'
 import SelectExample from './SelectExample.svelte'
 import type { Mutation } from '@tanstack/query-core'
 
 describe('useMutationState', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
@@ -26,6 +31,7 @@ describe('useMutationState', () => {
 
     const rendered = render(BaseExample, {
       props: {
+        queryClient,
         successMutationOpts: () => ({
           mutationKey: successKey,
           mutationFn: successMutationFn,
@@ -60,6 +66,7 @@ describe('useMutationState', () => {
 
     const rendered = render(BaseExample, {
       props: {
+        queryClient,
         successMutationOpts: () => ({
           mutationKey: successKey,
           mutationFn: successMutationFn,
@@ -90,6 +97,7 @@ describe('useMutationState', () => {
 
     const rendered = render(SelectExample, {
       props: {
+        queryClient,
         mutationOpts: () => ({
           mutationKey,
           mutationFn: () => sleep(10).then(() => 'data'),
@@ -123,6 +131,7 @@ describe('useMutationState', () => {
 
     const rendered = render(BaseExample, {
       props: {
+        queryClient,
         successMutationOpts: () => ({
           mutationKey: successKey,
           mutationFn: successMutationFn,
