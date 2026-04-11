@@ -1,4 +1,4 @@
-import { describe, expectTypeOf, test } from 'vitest'
+import { assertType, describe, expectTypeOf, test } from 'vitest'
 import {
   QueriesObserver,
   QueryClient,
@@ -12,12 +12,14 @@ import type { QueryObserverResult } from '@tanstack/query-core'
 describe('queryOptions', () => {
   test('Should not allow excess properties', () => {
     const key = queryKey()
-    queryOptions({
-      queryKey: key,
-      queryFn: () => Promise.resolve(5),
-      // @ts-expect-error this is a good error, because stallTime does not exist!
-      stallTime: 1000,
-    })
+    assertType(
+      queryOptions({
+        queryKey: key,
+        queryFn: () => Promise.resolve(5),
+        // @ts-expect-error this is a good error, because stallTime does not exist!
+        stallTime: 1000,
+      }),
+    )
   })
 
   test('Should infer types for callbacks', () => {
@@ -193,7 +195,7 @@ describe('queryOptions', () => {
   })
 
   test('Should allow undefined response in initialData', () => {
-    return (id: string | null) =>
+    assertType((id: string | null) =>
       queryOptions({
         queryKey: ['todo', id],
         queryFn: () =>
@@ -208,6 +210,7 @@ describe('queryOptions', () => {
                 id,
                 title: 'Initial Data',
               },
-      })
+      }),
+    )
   })
 })
