@@ -1,5 +1,7 @@
 # @tanstack/query-core
 
+## 5.98.0
+
 ## 5.97.0
 
 ### Patch Changes
