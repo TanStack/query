@@ -1125,6 +1125,10 @@
               "to": "framework/solid/reference/infiniteQueryOptions"
             },
             {
+              "label": "mutationOptions",
+              "to": "framework/solid/reference/mutationOptions"
+            },
+            {
               "label": "hydration",
               "to": "framework/solid/reference/hydration"
             }
