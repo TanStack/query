@@ -19,7 +19,7 @@ import type {
 } from '../../src/types.js'
 
 describe('mutationOptions', () => {
-  test('Should not allow excess properties', () => {
+  test('should not allow excess properties', () => {
     const key = queryKey()
 
     // @ts-expect-error this is a good error, because onMutates does not exist!
@@ -33,7 +33,7 @@ describe('mutationOptions', () => {
     })
   })
 
-  test('Should infer types for callbacks', () => {
+  test('should infer types for callbacks', () => {
     const key = queryKey()
 
     mutationOptions({
@@ -45,7 +45,7 @@ describe('mutationOptions', () => {
     })
   })
 
-  test('Should infer types for onError callback', () => {
+  test('should infer types for onError callback', () => {
     const key = queryKey()
 
     mutationOptions({
@@ -59,7 +59,7 @@ describe('mutationOptions', () => {
     })
   })
 
-  test('Should infer types for variables', () => {
+  test('should infer types for variables', () => {
     const key = queryKey()
 
     mutationOptions<number, DefaultError, { id: string }>({
@@ -71,7 +71,7 @@ describe('mutationOptions', () => {
     })
   })
 
-  test('Should infer result type correctly', () => {
+  test('should infer result type correctly', () => {
     const key = queryKey()
 
     mutationOptions<number, DefaultError, void, { name: string }>({
@@ -86,7 +86,7 @@ describe('mutationOptions', () => {
     })
   })
 
-  test('Should infer context type correctly', () => {
+  test('should infer context type correctly', () => {
     const key = queryKey()
 
     mutationOptions<number>({
@@ -110,7 +110,7 @@ describe('mutationOptions', () => {
     })
   })
 
-  test('Should error if mutationFn return type mismatches TData', () => {
+  test('should error if mutationFn return type mismatches TData', () => {
     assertType(
       mutationOptions<number>({
         // @ts-expect-error this is a good error, because return type is string, not number
@@ -119,7 +119,7 @@ describe('mutationOptions', () => {
     )
   })
 
-  test('Should allow mutationKey to be omitted', () => {
+  test('should allow mutationKey to be omitted', () => {
     return mutationOptions({
       mutationFn: () => Promise.resolve(123),
       onSuccess: (data) => {
@@ -128,7 +128,7 @@ describe('mutationOptions', () => {
     })
   })
 
-  test('Should infer all types when not explicitly provided', () => {
+  test('should infer all types when not explicitly provided', () => {
     const key = queryKey()
 
     expectTypeOf(
@@ -157,7 +157,7 @@ describe('mutationOptions', () => {
     >()
   })
 
-  test('Should work when used with createMutation', () => {
+  test('should work when used with createMutation', () => {
     const key = queryKey()
 
     const mutation = createMutation(() =>
@@ -184,7 +184,7 @@ describe('mutationOptions', () => {
     )
   })
 
-  test('Should work when used with useIsMutating', () => {
+  test('should work when used with useIsMutating', () => {
     const key = queryKey()
 
     const isMutating = useIsMutating(
@@ -203,7 +203,7 @@ describe('mutationOptions', () => {
     )
   })
 
-  test('Should work when used with queryClient.isMutating', () => {
+  test('should work when used with queryClient.isMutating', () => {
     const key = queryKey()
     const queryClient = new QueryClient()
 
@@ -223,7 +223,7 @@ describe('mutationOptions', () => {
     )
   })
 
-  test('Should work when used with useMutationState', () => {
+  test('should work when used with useMutationState', () => {
     const key = queryKey()
 
     const mutationState = useMutationState({

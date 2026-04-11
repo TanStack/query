@@ -800,10 +800,7 @@ describe('dehydration and rehydration', () => {
 
     const options = {
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return 'string'
-      },
+      queryFn: () => sleep(10).then(() => 'string'),
     } as const
 
     const prefetchPromise = queryClient.prefetchQuery(options)
@@ -1092,10 +1089,7 @@ describe('dehydration and rehydration', () => {
 
     const promise = serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return 'server data'
-      },
+      queryFn: () => sleep(10).then(() => 'server data'),
     })
 
     const dehydrated = dehydrate(serverQueryClient)
@@ -1131,10 +1125,7 @@ describe('dehydration and rehydration', () => {
 
     const promise = serverQueryClient.prefetchQuery({
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return 'server data'
-      },
+      queryFn: () => sleep(10).then(() => 'server data'),
     })
 
     const dehydrated = dehydrate(serverQueryClient)
@@ -1186,10 +1177,7 @@ describe('dehydration and rehydration', () => {
 
     const query = {
       queryKey: key,
-      queryFn: async () => {
-        await sleep(10)
-        return countRef.current
-      },
+      queryFn: () => sleep(10).then(() => countRef.current),
     }
 
     const promise = serverQueryClient.prefetchQuery(query)

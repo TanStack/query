@@ -406,10 +406,7 @@ describe('mutations', () => {
     const onSuccess = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
-        await sleep(100)
-        return Promise.resolve('update')
-      },
+      mutationFn: () => sleep(100).then(() => Promise.resolve('update')),
       onSuccess: () => {
         onSuccess(1)
       },
@@ -418,10 +415,7 @@ describe('mutations', () => {
     void mutation.mutate()
 
     mutation.setOptions({
-      mutationFn: async () => {
-        await sleep(100)
-        return Promise.resolve('update')
-      },
+      mutationFn: () => sleep(100).then(() => Promise.resolve('update')),
       onSuccess: () => {
         onSuccess(2)
       },

@@ -2009,10 +2009,7 @@ describe('queryClient', () => {
 
       const promise = queryClient.fetchQuery({
         queryKey: key,
-        queryFn: async () => {
-          await sleep(50)
-          return 25
-        },
+        queryFn: () => sleep(50).then(() => 25),
       })
 
       await vi.advanceTimersByTimeAsync(10)

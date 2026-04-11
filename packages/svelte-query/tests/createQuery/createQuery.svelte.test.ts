@@ -1,3 +1,4 @@
+import { render } from '@testing-library/svelte'
 import { flushSync } from 'svelte'
 import {
   afterEach,
@@ -9,9 +10,10 @@ import {
   vi,
 } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, createQuery, keepPreviousData } from '../src/index.js'
-import { promiseWithResolvers, withEffectRoot } from './utils.svelte.js'
-import type { CreateQueryResult, QueryCache } from '../src/index.js'
+import { QueryClient, createQuery, keepPreviousData } from '../../src/index.js'
+import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
+import IsRestoringExample from './IsRestoringExample.svelte'
+import type { CreateQueryResult, QueryCache } from '../../src/index.js'
 
 describe('createQuery', () => {
   let queryClient: QueryClient
@@ -1917,4 +1919,26 @@ describe('createQuery', () => {
       expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
     }),
   )
+
+  it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
+    const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
+
+    const rendered = render(IsRestoringExample, {
+      props: { queryClient, queryFn },
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
+    expect(queryFn).toHaveBeenCalledTimes(0)
+  })
 })

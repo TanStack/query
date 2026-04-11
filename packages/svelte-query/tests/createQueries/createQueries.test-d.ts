@@ -43,7 +43,7 @@ describe('createQueries', () => {
     >()
   })
 
-  it('handles type parameter - tuple of tuples', () => {
+  it('should handle type parameter - tuple of tuples', () => {
     const queryClient = new QueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
@@ -158,7 +158,7 @@ describe('createQueries', () => {
     )
   })
 
-  it('handles type parameter - tuple of objects', () => {
+  it('should handle type parameter - tuple of objects', () => {
     const queryClient = new QueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
@@ -315,7 +315,7 @@ describe('createQueries', () => {
     )
   })
 
-  it('handles array literal without type parameter to infer result type', () => {
+  it('should handle array literal without type parameter to infer result type', () => {
     const queryClient = new QueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
@@ -562,7 +562,7 @@ describe('createQueries', () => {
     )
   })
 
-  it('handles strongly typed queryFn factories and createQueries wrappers', () => {
+  it('should handle strongly typed queryFn factories and createQueries wrappers', () => {
     const queryClient = new QueryClient()
 
     // QueryKey + queryFn factory

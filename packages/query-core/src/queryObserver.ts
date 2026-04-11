@@ -417,14 +417,14 @@ export class QueryObserver<
   }
 
   #clearStaleTimeout(): void {
-    if (this.#staleTimeoutId) {
+    if (this.#staleTimeoutId !== undefined) {
       timeoutManager.clearTimeout(this.#staleTimeoutId)
       this.#staleTimeoutId = undefined
     }
   }
 
   #clearRefetchInterval(): void {
-    if (this.#refetchIntervalId) {
+    if (this.#refetchIntervalId !== undefined) {
       timeoutManager.clearInterval(this.#refetchIntervalId)
       this.#refetchIntervalId = undefined
     }

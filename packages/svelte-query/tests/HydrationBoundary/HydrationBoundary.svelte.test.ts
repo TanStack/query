@@ -5,22 +5,25 @@ import { sleep } from '@tanstack/query-test-utils'
 import BaseExample from './BaseExample.svelte'
 
 describe('HydrationBoundary', () => {
+  let queryClient: QueryClient
   let stringifiedState: string
 
   beforeEach(async () => {
     vi.useFakeTimers()
-    const queryClient = new QueryClient()
-    queryClient.prefetchQuery({
+    queryClient = new QueryClient()
+    const dehydrateClient = new QueryClient()
+    dehydrateClient.prefetchQuery({
       queryKey: ['string'],
       queryFn: () => sleep(10).then(() => 'stringCached'),
     })
     await vi.advanceTimersByTimeAsync(10)
-    const dehydrated = dehydrate(queryClient)
+    const dehydrated = dehydrate(dehydrateClient)
     stringifiedState = JSON.stringify(dehydrated)
-    queryClient.clear()
+    dehydrateClient.clear()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
@@ -29,6 +32,7 @@ describe('HydrationBoundary', () => {
 
     const rendered = render(BaseExample, {
       props: {
+        queryClient,
         dehydratedState,
         queryFn: () => sleep(20).then(() => 'string'),
       },

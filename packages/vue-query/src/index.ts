@@ -6,6 +6,7 @@ export { VueQueryPlugin } from './vueQueryPlugin'
 export { QueryClient } from './queryClient'
 export { QueryCache } from './queryCache'
 export { queryOptions } from './queryOptions'
+export { type QueryOptions } from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export type {
   DefinedInitialDataInfiniteOptions,
@@ -15,11 +16,15 @@ export { MutationCache } from './mutationCache'
 export { useQuery } from './useQuery'
 export { useQueries } from './useQueries'
 export { useInfiniteQuery } from './useInfiniteQuery'
+export { usePrefetchQuery } from './usePrefetchQuery'
+export { usePrefetchInfiniteQuery } from './usePrefetchInfiniteQuery'
 export { useMutation } from './useMutation'
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating, useMutationState } from './useMutationState'
 export { VUE_QUERY_CLIENT } from './utils'
 
+export type { UsePrefetchQueryOptions } from './usePrefetchQuery'
+export type { UsePrefetchInfiniteQueryOptions } from './usePrefetchInfiniteQuery'
 export type {
   UseQueryOptions,
   UseQueryReturnType,
