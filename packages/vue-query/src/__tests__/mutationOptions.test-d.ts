@@ -14,8 +14,8 @@ import type { VueMutationOptions } from '../types'
 
 describe('mutationOptions', () => {
   it('should not allow excess properties', () => {
-    // @ts-expect-error this is a good error, because onMutates does not exist!
     mutationOptions({
+      // @ts-expect-error this is a good error, because onMutates does not exist!
       mutationFn: () => Promise.resolve(5),
       mutationKey: ['key'],
       onMutates: 1000,
@@ -216,5 +216,31 @@ describe('mutationOptions', () => {
         mutationFn: () => Promise.resolve(5),
       }),
     })
+  })
+
+  it('should allow getter and infer types correctly', () => {
+    const options = mutationOptions(() => ({
+      mutationKey: ['key'] as const,
+      mutationFn: () => Promise.resolve('data'),
+      onSuccess: (data) => {
+        expectTypeOf(data).toEqualTypeOf<string>()
+      },
+    }))
+
+    const resolved = options()
+    expectTypeOf(resolved.mutationFn).not.toBeUndefined()
+    expectTypeOf(resolved.mutationKey).not.toBeUndefined()
+  })
+
+  it('should allow getter without mutationKey', () => {
+    const options = mutationOptions(() => ({
+      mutationFn: () => Promise.resolve(5),
+      onSuccess: (data) => {
+        expectTypeOf(data).toEqualTypeOf<number>()
+      },
+    }))
+
+    const resolved = options()
+    expectTypeOf(resolved.mutationFn).not.toBeUndefined()
   })
 })

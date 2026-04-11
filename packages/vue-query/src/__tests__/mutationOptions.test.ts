@@ -340,50 +340,43 @@ describe('mutationOptions', () => {
     expect(states.value).toEqual(['data1'])
   })
 
-  it('should work with options getter and be reactive when used with useIsMutating', async () => {
-    const keyRef = ref('isMutatingGetter2')
-    const mutationOpts = mutationOptions({
-      mutationKey: ['isMutatingGetter'],
+  it('should work with getter passed to mutationOptions when used with useIsMutating', async () => {
+    const keyRef = ref('isMutatingGetter')
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: [keyRef.value],
       mutationFn: () => sleep(10).then(() => 'data'),
-    })
+    }))
 
     const { mutate } = useMutation(mutationOpts)
     mutate()
 
-    const isMutating = useIsMutating(() => ({
+    const isMutating = useIsMutating({
       mutationKey: [keyRef.value],
-    }))
-
-    expect(isMutating.value).toEqual(0)
-
-    keyRef.value = 'isMutatingGetter'
+    })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(isMutating.value).toEqual(1)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isMutating.value).toEqual(0)
   })
 
-  it('should work with options getter and be reactive when used with useMutationState', async () => {
-    const keyRef = ref('useMutationStateGetter2')
-    const mutationOpts = mutationOptions({
-      mutationKey: ['useMutationStateGetter'],
+  it('should work with getter passed to mutationOptions when used with useMutationState', async () => {
+    const keyRef = ref('useMutationStateGetter')
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: [keyRef.value],
       mutationFn: (params: string) => sleep(10).then(() => params),
-    })
+    }))
 
     const { mutate } = useMutation(mutationOpts)
     mutate('foo')
 
-    const states = useMutationState(() => ({
+    const states = useMutationState({
       filters: { mutationKey: [keyRef.value], status: 'pending' },
       select: (mutation) => mutation.state.variables,
-    }))
-
-    expect(states.value).toEqual([])
-
-    keyRef.value = 'useMutationStateGetter'
+    })
 
     await vi.advanceTimersByTimeAsync(0)
-
     expect(states.value).toEqual(['foo'])
   })
 
