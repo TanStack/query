@@ -10,16 +10,22 @@ import OnSuccessExample from './OnSuccessExample.svelte'
 import FailureExample from './FailureExample.svelte'
 
 describe('createMutation', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   test('Able to reset `error`', async () => {
-    const rendered = render(ResetExample)
+    const rendered = render(ResetExample, {
+      props: { queryClient },
+    })
 
     expect(rendered.queryByText('Error: undefined')).toBeInTheDocument()
 
@@ -38,6 +44,7 @@ describe('createMutation', () => {
 
     const rendered = render(OnSuccessExample, {
       props: {
+        queryClient,
         onSuccessMock,
         onSettledMock,
       },
@@ -75,6 +82,7 @@ describe('createMutation', () => {
 
     const rendered = render(FailureExample, {
       props: {
+        queryClient,
         mutationFn,
       },
     })
@@ -103,16 +111,16 @@ describe('createMutation', () => {
   test(
     'should recreate observer when queryClient changes',
     withEffectRoot(async () => {
-      const queryClient1 = new QueryClient()
-      const queryClient2 = new QueryClient()
+      const client1 = new QueryClient()
+      const client2 = new QueryClient()
 
-      let queryClient = $state(queryClient1)
+      let activeClient = $state(client1)
 
       const mutation = createMutation(
         () => ({
           mutationFn: (params: string) => sleep(10).then(() => params),
         }),
-        () => queryClient,
+        () => activeClient,
       )
 
       mutation.mutate('first')
@@ -121,7 +129,7 @@ describe('createMutation', () => {
       expect(mutation.status).toBe('success')
       expect(mutation.data).toBe('first')
 
-      queryClient = queryClient2
+      activeClient = client2
       flushSync()
 
       expect(mutation.status).toBe('idle')

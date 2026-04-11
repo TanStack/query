@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
+  import type { QueryClient } from '@tanstack/query-core'
   import {
     createMutation,
     setQueryClientContext,
@@ -12,16 +12,17 @@
   } from '../../src/index.js'
 
   let {
+    queryClient,
     successMutationOpts,
     errorMutationOpts,
     mutationStateOpts,
   }: {
+    queryClient: QueryClient
     successMutationOpts: Accessor<CreateMutationOptions>
     errorMutationOpts: Accessor<CreateMutationOptions>
     mutationStateOpts?: MutationStateOptions | undefined
   } = $props()
 
-  const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
   const successMutation = createMutation(successMutationOpts)

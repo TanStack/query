@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
+  import type { QueryClient } from '@tanstack/query-core'
   import { queryKey } from '@tanstack/query-test-utils'
   import {
     setIsRestoringContext,
@@ -8,14 +8,15 @@
   import { createQueries } from '../../src/index.js'
 
   let {
+    queryClient,
     queryFn1,
     queryFn2,
   }: {
+    queryClient: QueryClient
     queryFn1: () => Promise<string>
     queryFn2: () => Promise<string>
   } = $props()
 
-  const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
   setIsRestoringContext({ current: true })
 
