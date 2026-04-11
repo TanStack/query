@@ -1313,6 +1313,10 @@
         {
           "label": "Mutation Property Order",
           "to": "eslint/mutation-property-order"
+        },
+        {
+          "label": "Prefer Query Options",
+          "to": "eslint/prefer-query-options"
         }
       ]
     },
