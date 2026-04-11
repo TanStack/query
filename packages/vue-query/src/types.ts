@@ -22,6 +22,8 @@ type UnwrapLeaf =
   | Set<any>
   | WeakSet<any>
 
+export type MaybeGetter<T> = T | (() => T)
+
 export type MaybeRef<T> = Ref<T> | ComputedRef<T> | T
 
 export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
