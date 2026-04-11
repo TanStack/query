@@ -5,7 +5,7 @@ import { createInfiniteQuery, infiniteQueryOptions } from '../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('infiniteQueryOptions', () => {
-  test('Should not allow excess properties', () => {
+  test('should not allow excess properties', () => {
     const key = queryKey()
     assertType(
       infiniteQueryOptions({
@@ -19,7 +19,7 @@ describe('infiniteQueryOptions', () => {
     )
   })
 
-  test('Should infer types for callbacks', () => {
+  test('should infer types for callbacks', () => {
     const key = queryKey()
     infiniteQueryOptions({
       queryKey: key,
@@ -33,7 +33,7 @@ describe('infiniteQueryOptions', () => {
     })
   })
 
-  test('Should work when passed to createInfiniteQuery', () => {
+  test('should work when passed to createInfiniteQuery', () => {
     const key = queryKey()
     const options = infiniteQueryOptions({
       queryKey: key,
@@ -50,7 +50,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  test('Should work when passed to fetchInfiniteQuery', async () => {
+  test('should work when passed to fetchInfiniteQuery', async () => {
     const key = queryKey()
     const options = infiniteQueryOptions({
       queryKey: key,

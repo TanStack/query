@@ -4,7 +4,7 @@ import { getIsRestoringContext } from '../../src/index.js'
 import BaseExample from './BaseExample.svelte'
 
 describe('getQueryClientContext', () => {
-  test('Throw when called without a client in context', () => {
+  test('should throw when called without a client in context', () => {
     expect(() => render(BaseExample)).toThrow(
       'No QueryClient was found in Svelte context. Did you forget to wrap your component with QueryClientProvider?',
     )
@@ -12,7 +12,7 @@ describe('getQueryClientContext', () => {
 })
 
 describe('getIsRestoringContext', () => {
-  test('Do not throw when called outside of a component', () => {
+  test('should not throw when called outside of a component', () => {
     expect(() => getIsRestoringContext()).not.toThrow()
   })
 })
