@@ -1,5 +1,7 @@
 # @tanstack/eslint-plugin-query
 
+## 5.98.0
+
 ## 5.97.0
 
 ### Minor Changes
