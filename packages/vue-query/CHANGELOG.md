@@ -1,5 +1,16 @@
 # @tanstack/vue-query
 
+## 5.99.0
+
+### Minor Changes
+
+- feat(vue-query): add 'mutationOptions' ([#10381](https://github.com/TanStack/query/pull/10381))
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.99.0
+
 ## 5.98.0
 
 ### Minor Changes
