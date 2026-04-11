@@ -1,7 +1,10 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { queryKey } from '@tanstack/query-test-utils'
-  import { setIsRestoringContext, setQueryClientContext } from '../../src/context.js'
+  import {
+    setIsRestoringContext,
+    setQueryClientContext,
+  } from '../../src/context.js'
   import { createQueries } from '../../src/index.js'
 
   let {
