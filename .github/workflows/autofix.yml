@@ -3,7 +3,7 @@ name: autofix.ci # needed to securely identify the workflow
 on:
   pull_request:
   push:
-    branches: [main, alpha, beta, rc, v4]
+    branches: [main, 'v[0-9]', '*-pre', '*-maint']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -18,11 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v6.0.2
       - name: Setup Tools
-        uses: tanstack/config/.github/setup@main
+        uses: TanStack/config/.github/setup@main
       - name: Fix formatting
         run: pnpm run format
       - name: Apply fixes

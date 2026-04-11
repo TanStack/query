@@ -3,6 +3,9 @@
   "compilerOptions": {
     "incremental": false,
     "composite": false,
-    "rootDir": "../../"
-  }
+    "rootDir": "../../",
+    "customConditions": []
+  },
+  "include": ["src"],
+  "exclude": ["src/__tests__"]
 }

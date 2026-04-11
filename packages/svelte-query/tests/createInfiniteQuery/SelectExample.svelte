@@ -1,31 +1,32 @@
 <script lang="ts">
   import { untrack } from 'svelte'
-  import { QueryClient } from '@tanstack/query-core'
   import { createInfiniteQuery } from '../../src/index.js'
-  import type { QueryObserverResult } from '@tanstack/query-core'
-  import { sleep } from '@tanstack/query-test-utils'
+  import { setQueryClientContext } from '../../src/context.js'
+  import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
+  import { queryKey, sleep } from '@tanstack/query-test-utils'
 
-  let { states }: { states: { value: Array<QueryObserverResult> } } = $props()
+  type Props = {
+    queryClient: QueryClient
+    states: { value: Array<QueryObserverResult> }
+  }
 
-  const queryClient = new QueryClient()
+  let { queryClient, states }: Props = $props()
 
-  const query = createInfiniteQuery(
-    () => ({
-      queryKey: ['test'],
-      queryFn: () => sleep(10).then(() => ({ count: 1 })),
-      select: (data) => ({
-        pages: data.pages.map((x) => `count: ${x.count}`),
-        pageParams: data.pageParams,
-      }),
-      getNextPageParam: () => undefined,
-      initialPageParam: 0,
+  setQueryClientContext(queryClient)
+
+  const query = createInfiniteQuery(() => ({
+    queryKey: queryKey(),
+    queryFn: () => sleep(10).then(() => ({ count: 1 })),
+    select: (data) => ({
+      pages: data.pages.map((x) => `count: ${x.count}`),
+      pageParams: data.pageParams,
     }),
-    () => queryClient,
-  )
+    getNextPageParam: () => undefined,
+    initialPageParam: 0,
+  }))
 
   $effect(() => {
     // @ts-expect-error
-    // svelte-ignore state_snapshot_uncloneable
     states.value = [...untrack(() => states.value), $state.snapshot(query)]
   })
 </script>

@@ -1,4 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { queryOptions, useQueries } from '..'
 import type { UseQueryResult } from '..'
 
@@ -7,14 +8,14 @@ describe('useQueries', () => {
     const Queries1 = {
       get: () =>
         queryOptions({
-          queryKey: ['key1'],
+          queryKey: queryKey(),
           queryFn: () => Promise.resolve(1),
         }),
     }
     const Queries2 = {
       get: () =>
         queryOptions({
-          queryKey: ['key2'],
+          queryKey: queryKey(),
           queryFn: () => Promise.resolve(true),
         }),
     }

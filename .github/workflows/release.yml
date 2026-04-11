@@ -2,13 +2,11 @@ name: Release
 
 on:
   push:
-    branches: [main, alpha, beta, rc, v4]
-  repository_dispatch:
-    types: [release]
+    branches: [main, 'v[0-9]', '*-pre', '*-maint']
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -21,54 +19,43 @@ permissions:
 jobs:
   release:
     name: Release
-    if: github.repository_owner == 'TanStack'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
-      - name: Start Nx Agents
-        run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
       - name: Setup Tools
-        uses: tanstack/config/.github/setup@main
-      - name: Run Tests
-        run: pnpm run test:ci
-      - name: Stop Nx Agents
-        if: ${{ always() }}
-        run: npx nx-cloud stop-all-agents
-      # - name: Check for Changesets marked as major
-      #   id: major
-      #   run: |
-      #     echo "found=false" >> $GITHUB_OUTPUT
-      #     regex="(major)"
-      #     shopt -s nullglob
-      #     for file in .changeset/*.md; do
-      #       if [[ $(cat $file) =~ $regex ]]; then
-      #         echo "found=true" >> $GITHUB_OUTPUT
-      #       fi
-      #     done
-      - name: Run Changesets (version or publish)
+        uses: TanStack/config/.github/setup@main
+      - name: Run Build
+        run: pnpm run build:all
+      - name: Determine dist-tag
+        id: dist-tag
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+          if [[ "$BRANCH" == *-pre ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "tag=pre" >> "$GITHUB_OUTPUT"
+          elif [[ "$BRANCH" == *-maint ]]; then
+            echo "tag=maint" >> "$GITHUB_OUTPUT"
+          elif [[ "$BRANCH" =~ ^v[0-9]+$ ]]; then
+            echo "tag=$BRANCH" >> "$GITHUB_OUTPUT"
+          else
+            echo "latest=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@v1.5.3
+        uses: changesets/action@v1
         with:
           version: pnpm run changeset:version
-          publish: pnpm run changeset:publish
-          commit: 'ci: Version Packages'
+          publish: pnpm run changeset:publish ${{ steps.dist-tag.outputs.tag && format('--tag {0}', steps.dist-tag.outputs.tag) }}
           title: 'ci: Version Packages'
+          commit: 'ci: changeset release'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Auto-merge Changesets PR
-      #   if: steps.changesets.outputs.hasChangesets == 'true' && steps.major.outputs.found == 'false'
-      #   run: |
-      #     gh pr merge --squash "$PR_NUMBER"
-      #     gh api --method POST /repos/$REPO/dispatches -f 'event_type=release'
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     REPO: ${{ github.repository }}
-      #     PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
-      - name: Comment on PRs about release
+      - name: Create GitHub Release
         if: steps.changesets.outputs.published == 'true'
-        uses: tanstack/config/.github/comment-on-release@main
-        with:
-          published-packages: ${{ steps.changesets.outputs.publishedPackages }}
+        run: node scripts/create-github-release.mjs ${{ steps.dist-tag.outputs.prerelease == 'true' && '--prerelease' }} ${{ steps.dist-tag.outputs.latest == 'true' && '--latest' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

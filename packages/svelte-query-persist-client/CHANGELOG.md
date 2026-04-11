@@ -1,5 +1,123 @@
 # @tanstack/svelte-query-persist-client
 
+## 6.1.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.99.0
+  - @tanstack/svelte-query@6.1.16
+
+## 6.1.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.98.0
+  - @tanstack/svelte-query@6.1.15
+
+## 6.1.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.97.0
+  - @tanstack/svelte-query@6.1.14
+
+## 6.1.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.96.2
+  - @tanstack/svelte-query@6.1.13
+
+## 6.1.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.96.1
+  - @tanstack/svelte-query@6.1.12
+
+## 6.1.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.96.0
+  - @tanstack/svelte-query@6.1.11
+
+## 6.1.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.95.2
+  - @tanstack/svelte-query@6.1.10
+
+## 6.1.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.95.1
+  - @tanstack/svelte-query@6.1.9
+
+## 6.1.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.95.0
+  - @tanstack/svelte-query@6.1.8
+
+## 6.1.7
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+- Updated dependencies [[`4b6536d`](https://github.com/TanStack/query/commit/4b6536dfce99036f4e37f52943c6fed3ad0e0a18)]:
+  - @tanstack/query-persist-client-core@5.94.5
+  - @tanstack/svelte-query@6.1.7
+
+## 6.1.6
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
+- Updated dependencies [[`4c75210`](https://github.com/TanStack/query/commit/4c75210ce8235fe3d39b67e1029eff11278927cc)]:
+  - @tanstack/query-persist-client-core@5.94.4
+  - @tanstack/svelte-query@6.1.6
+
+## 6.0.25
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
+- Updated dependencies [[`248975e`](https://github.com/TanStack/query/commit/248975e896f585f6eaa505c796e73fcf7bfd1eec)]:
+  - @tanstack/query-persist-client-core@5.92.4
+  - @tanstack/svelte-query@6.1.3
+
+## 6.0.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.92.3
+  - @tanstack/svelte-query@6.1.2
+
+## 6.0.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-persist-client-core@5.92.2
+  - @tanstack/svelte-query@6.1.1
+
 ## 6.0.22
 
 ### Patch Changes

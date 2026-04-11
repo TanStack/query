@@ -30,16 +30,19 @@ import type {
 import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states', async () => {
     const key1 = queryKey()
@@ -51,17 +54,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              return 1
-            },
+            queryFn: () => sleep(10).then(() => 1),
           },
           {
             queryKey: key2,
-            queryFn: async () => {
-              await sleep(200)
-              return 2
-            },
+            queryFn: () => sleep(200).then(() => 2),
           },
         ],
       })
@@ -391,7 +388,7 @@ describe('useQueries', () => {
       const result4 = useQueries({
         queries: [
           queryOptions({
-            queryKey: ['key1'],
+            queryKey: queryKey(),
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
@@ -399,7 +396,7 @@ describe('useQueries', () => {
             },
           }),
           queryOptions({
-            queryKey: ['key2'],
+            queryKey: queryKey(),
             queryFn: () => 'string',
             select: (a) => {
               expectTypeOf(a).toEqualTypeOf<string>()
@@ -1090,17 +1087,11 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: key1,
-            queryFn: async () => {
-              await sleep(5)
-              return Promise.resolve('query1')
-            },
+            queryFn: () => sleep(5).then(() => Promise.resolve('query1')),
           },
           {
             queryKey: key2,
-            queryFn: async () => {
-              await sleep(20)
-              return Promise.resolve('query2')
-            },
+            queryFn: () => sleep(20).then(() => Promise.resolve('query2')),
           },
         ],
         combine: ([query1, query2]) => {
@@ -1135,17 +1126,13 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: key1,
-              queryFn: async () => {
-                await sleep(5)
-                return Promise.resolve('first result ' + count)
-              },
+              queryFn: () =>
+                sleep(5).then(() => Promise.resolve('first result ' + count)),
             },
             {
               queryKey: key2,
-              queryFn: async () => {
-                await sleep(50)
-                return Promise.resolve('second result ' + count)
-              },
+              queryFn: () =>
+                sleep(50).then(() => Promise.resolve('second result ' + count)),
             },
           ],
           combine: (queryResults) => {
@@ -1327,17 +1314,11 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: key1,
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result:' + value
-              },
+              queryFn: () => sleep(10).then(() => 'first result:' + value),
             },
             {
               queryKey: key2,
-              queryFn: async () => {
-                await sleep(20)
-                return 'second result:' + value
-              },
+              queryFn: () => sleep(20).then(() => 'second result:' + value),
             },
           ],
           combine: React.useCallback((results: Array<QueryObserverResult>) => {
@@ -1411,17 +1392,11 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(20)
-                return 'second result'
-              },
+              queryFn: () => sleep(20).then(() => 'second result'),
             },
           ],
           combine: React.useCallback(
@@ -1535,24 +1510,15 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(15)
-                return 'second result'
-              },
+              queryFn: () => sleep(15).then(() => 'second result'),
             },
             {
               queryKey: [key3],
-              queryFn: async () => {
-                await sleep(20)
-                return 'third result'
-              },
+              queryFn: () => sleep(20).then(() => 'third result'),
             },
           ],
           combine: (results) => {
@@ -1597,24 +1563,15 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: [key1],
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: [key2],
-              queryFn: async () => {
-                await sleep(15)
-                return 'second result'
-              },
+              queryFn: () => sleep(15).then(() => 'second result'),
             },
             {
               queryKey: [key3],
-              queryFn: async () => {
-                await sleep(20)
-                return 'third result'
-              },
+              queryFn: () => sleep(20).then(() => 'third result'),
             },
           ],
           combine: (results) => {
@@ -1676,17 +1633,11 @@ describe('useQueries', () => {
           queries: [
             {
               queryKey: key1,
-              queryFn: async () => {
-                await sleep(10)
-                return 'first result'
-              },
+              queryFn: () => sleep(10).then(() => 'first result'),
             },
             {
               queryKey: key2,
-              queryFn: async () => {
-                await sleep(20)
-                return 'second result'
-              },
+              queryFn: () => sleep(20).then(() => 'second result'),
             },
           ],
           combine: React.useCallback((results: Array<QueryObserverResult>) => {
@@ -1745,15 +1696,17 @@ describe('useQueries', () => {
 
   it('should not cause infinite re-renders when removing last query', async () => {
     let renderCount = 0
+    const key1 = queryKey()
+    const key2 = queryKey()
 
     function Page() {
       const [queries, setQueries] = React.useState([
         {
-          queryKey: ['query1'],
+          queryKey: key1,
           queryFn: () => 'data1',
         },
         {
-          queryKey: ['query2'],
+          queryKey: key2,
           queryFn: () => 'data2',
         },
       ])
@@ -1769,7 +1722,7 @@ describe('useQueries', () => {
             onClick={() => {
               setQueries([
                 {
-                  queryKey: ['query1'],
+                  queryKey: key1,
                   queryFn: () => 'data1',
                 },
               ])
@@ -1781,7 +1734,7 @@ describe('useQueries', () => {
             onClick={() => {
               setQueries([
                 {
-                  queryKey: ['query2'],
+                  queryKey: key2,
                   queryFn: () => 'data2',
                 },
               ])
@@ -1815,6 +1768,7 @@ describe('useQueries', () => {
 
   it('should return correct results when queries count changes with stable combine reference', async () => {
     const combine = (results: Array<QueryObserverResult>) => results
+    const key = queryKey()
 
     const results: Array<{ n: number; length: number }> = []
 
@@ -1824,7 +1778,7 @@ describe('useQueries', () => {
       const queries = useQueries(
         {
           queries: [...Array(n).keys()].map((i) => ({
-            queryKey: ['dynamic', i],
+            queryKey: [...key, i],
             queryFn: () => i,
           })),
           combine,

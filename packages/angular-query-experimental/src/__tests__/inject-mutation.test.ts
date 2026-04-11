@@ -9,7 +9,7 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import { expectSignals, setFixtureSignalInputs } from './test-utils'
 
@@ -118,7 +118,9 @@ describe('injectMutation', () => {
     const mutationCache = queryClient.getMutationCache()
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
-    const mutationKey = signal(['1'])
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const mutationKey = signal(key1)
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
         mutationKey: mutationKey(),
@@ -126,13 +128,13 @@ describe('injectMutation', () => {
       }))
     })
 
-    mutationKey.set(['2'])
+    mutationKey.set(key2)
 
     mutation.mutate('xyz')
 
-    const mutations = mutationCache.find({ mutationKey: ['2'] })
+    const mutations = mutationCache.find({ mutationKey: key2 })
 
-    expect(mutations?.options.mutationKey).toEqual(['2'])
+    expect(mutations?.options.mutationKey).toEqual(key2)
   })
 
   test('should reset state after invoking mutation.reset', async () => {
@@ -391,11 +393,12 @@ describe('injectMutation', () => {
 
   describe('throwOnError', () => {
     test('should evaluate throwOnError when mutation is expected to throw', async () => {
+      const key = queryKey()
       const err = new Error('Expected mock error. All is well!')
       const boundaryFn = vi.fn()
       const { mutate } = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationKey: ['fake'],
+          mutationKey: key,
           mutationFn: () => {
             return Promise.reject(err)
           },
@@ -412,13 +415,37 @@ describe('injectMutation', () => {
       expect(boundaryFn).toHaveBeenCalledTimes(1)
       expect(boundaryFn).toHaveBeenCalledWith(err)
     })
+
+    test('should throw when throwOnError is true and mutate is used', async () => {
+      const key = queryKey()
+      const { mutate } = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationKey: key,
+          mutationFn: () => {
+            return Promise.reject(
+              new Error('Expected mock error. All is well!'),
+            )
+          },
+          throwOnError: true,
+        }))
+      })
+
+      TestBed.tick()
+
+      mutate()
+
+      await expect(vi.advanceTimersByTimeAsync(0)).rejects.toThrow(
+        'Expected mock error. All is well!',
+      )
+    })
   })
 
   test('should throw when throwOnError is true', async () => {
+    const key = queryKey()
     const err = new Error('Expected mock error. All is well!')
     const { mutateAsync } = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationKey: ['fake'],
+        mutationKey: key,
         mutationFn: () => {
           return Promise.reject(err)
         },
@@ -426,14 +453,15 @@ describe('injectMutation', () => {
       }))
     })
 
-    await expect(() => mutateAsync()).rejects.toThrowError(err)
+    await expect(() => mutateAsync()).rejects.toThrow(err)
   })
 
   test('should throw when throwOnError function returns true', async () => {
+    const key = queryKey()
     const err = new Error('Expected mock error. All is well!')
     const { mutateAsync } = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationKey: ['fake'],
+        mutationKey: key,
         mutationFn: () => {
           return Promise.reject(err)
         },
@@ -441,24 +469,26 @@ describe('injectMutation', () => {
       }))
     })
 
-    await expect(() => mutateAsync()).rejects.toThrowError(err)
+    await expect(() => mutateAsync()).rejects.toThrow(err)
   })
 
   describe('injection context', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
+      const key = queryKey()
       expect(() => {
         injectMutation(() => ({
-          mutationKey: ['injectionContextError'],
+          mutationKey: key,
           mutationFn: () => Promise.resolve(),
         }))
-      }).toThrowError(/NG0203(.*?)injectMutation/)
+      }).toThrow(/NG0203(.*?)injectMutation/)
     })
 
     test('can be used outside injection context when passing an injector', () => {
+      const key = queryKey()
       expect(() => {
         injectMutation(
           () => ({
-            mutationKey: ['injectionContextError'],
+            mutationKey: key,
             mutationFn: () => Promise.resolve(),
           }),
           {
@@ -473,9 +503,10 @@ describe('injectMutation', () => {
       let mutationStarted = false
       let mutationCompleted = false
 
+      const key = queryKey()
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationKey: ['pendingTasksTest'],
+          mutationKey: key,
           mutationFn: async (data: string) => {
             mutationStarted = true
             await sleep(50)
@@ -566,9 +597,11 @@ describe('injectMutation', () => {
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
+      const key = queryKey()
+
       const mutation1 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationKey: ['sync-mutation-key'],
+          mutationKey: key,
           mutationFn: async (data: string) => {
             callCount++
             return `mutation1: ${data}`
@@ -578,7 +611,7 @@ describe('injectMutation', () => {
 
       const mutation2 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationKey: ['sync-mutation-key'],
+          mutationKey: key,
           mutationFn: async (data: string) => {
             callCount++
             return `mutation2: ${data}`
@@ -616,7 +649,7 @@ describe('injectMutation', () => {
       })
 
       const app = TestBed.inject(ApplicationRef)
-      const testQueryKey = ['sync-optimistic']
+      const testQueryKey = queryKey()
       let onMutateCalled = false
       let onSuccessCalled = false
 
@@ -669,9 +702,10 @@ describe('injectMutation', () => {
 
       const app = TestBed.inject(ApplicationRef)
 
+      const key = queryKey()
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationKey: ['cancel-sync'],
+          mutationKey: key,
           mutationFn: async (data: string) => `processed: ${data}`, // Synchronous resolution
         })),
       )

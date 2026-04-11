@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { getCurrentInstance } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type { Mock } from 'vitest'
@@ -18,8 +18,9 @@ describe('useInfiniteQuery', () => {
   })
 
   test('should properly execute infinite query', async () => {
+    const key = queryKey()
     const { data, fetchNextPage, status } = useInfiniteQuery({
-      queryKey: ['infiniteQuery'],
+      queryKey: key,
       queryFn: ({ pageParam }) =>
         sleep(0).then(() => 'data on page ' + pageParam),
       initialPageParam: 0,
@@ -48,8 +49,9 @@ describe('useInfiniteQuery', () => {
     expect(status.value).toStrictEqual('success')
   })
   test('should properly execute infinite query using infiniteQueryOptions', async () => {
+    const key = queryKey()
     const options = infiniteQueryOptions({
-      queryKey: ['infiniteQueryOptions'],
+      queryKey: key,
       queryFn: ({ pageParam }) =>
         sleep(0).then(() => 'data on page ' + pageParam),
       initialPageParam: 0,
