@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
+  import type { QueryClient } from '@tanstack/query-core'
   import { queryKey, sleep } from '@tanstack/query-test-utils'
   import { setQueryClientContext } from '../../src/context.js'
   import { createQuery, useIsFetching } from '../../src/index.js'
 
-  const queryClient = new QueryClient()
+  let { queryClient }: { queryClient: QueryClient } = $props()
+
   setQueryClientContext(queryClient)
 
   let ready = $state(false)

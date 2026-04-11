@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
+  import type { QueryClient } from '@tanstack/query-core'
   import { createMutation, setQueryClientContext } from '../../src/index.js'
   import { sleep } from '@tanstack/query-test-utils'
 
-  const queryClient = new QueryClient()
+  let { queryClient }: { queryClient: QueryClient } = $props()
+
   setQueryClientContext(queryClient)
 
   const mutation = createMutation(() => ({

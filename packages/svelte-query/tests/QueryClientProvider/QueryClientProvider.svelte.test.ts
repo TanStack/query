@@ -4,21 +4,24 @@ import { QueryClient } from '@tanstack/query-core'
 import BaseExample from './BaseExample.svelte'
 
 describe('QueryClientProvider', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
   test('Sets a specific cache for all queries to use', async () => {
-    const queryClient = new QueryClient()
     const queryCache = queryClient.getQueryCache()
 
     const rendered = render(BaseExample, {
       props: {
-        queryClient: queryClient,
+        queryClient,
       },
     })
 

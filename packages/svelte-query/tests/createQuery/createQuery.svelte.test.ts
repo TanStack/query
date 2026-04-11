@@ -1924,7 +1924,7 @@ describe('createQuery', () => {
     const queryFn = vi.fn(() => sleep(10).then(() => 'data'))
 
     const rendered = render(IsRestoringExample, {
-      props: { queryFn },
+      props: { queryClient, queryFn },
     })
 
     await vi.advanceTimersByTimeAsync(0)
