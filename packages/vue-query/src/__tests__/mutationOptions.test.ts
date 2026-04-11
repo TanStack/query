@@ -380,6 +380,19 @@ describe('mutationOptions', () => {
     expect(states.value).toEqual(['foo'])
   })
 
+  it('should work with getter passed to mutationOptions without mutationKey', async () => {
+    const mutationOpts = mutationOptions(() => ({
+      mutationFn: () => sleep(10).then(() => 'data'),
+    }))
+
+    const { mutate, data } = useMutation(mutationOpts)
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(data.value).toEqual('data')
+  })
+
   it('should return data in a shallow ref when shallow is true', async () => {
     const mutationOpts = mutationOptions({
       mutationKey: ['key'],
