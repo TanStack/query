@@ -5,13 +5,12 @@
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
   import { queryKey, sleep } from '@tanstack/query-test-utils'
 
-  let {
-    queryClient,
-    states,
-  }: {
+  type Props = {
     queryClient: QueryClient
     states: { value: Array<QueryObserverResult> }
-  } = $props()
+  }
+
+  let { queryClient, states }: Props = $props()
 
   setQueryClientContext(queryClient)
 

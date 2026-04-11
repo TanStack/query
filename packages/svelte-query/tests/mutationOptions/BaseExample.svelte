@@ -13,17 +13,19 @@
   } from '../../src/index.js'
   import type { MutationFilters } from '@tanstack/query-core'
 
+  type Props = {
+    queryClient: QueryClient
+    mutationOpts: Accessor<CreateMutationOptions<string>>
+    isMutatingFilters?: MutationFilters
+    mutationStateOpts?: MutationStateOptions
+  }
+
   let {
     queryClient,
     mutationOpts,
     isMutatingFilters,
     mutationStateOpts,
-  }: {
-    queryClient: QueryClient
-    mutationOpts: Accessor<CreateMutationOptions<string, Error, void, unknown>>
-    isMutatingFilters?: MutationFilters
-    mutationStateOpts?: MutationStateOptions
-  } = $props()
+  }: Props = $props()
 
   setQueryClientContext(queryClient)
 

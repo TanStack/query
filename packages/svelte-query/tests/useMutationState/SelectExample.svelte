@@ -11,15 +11,13 @@
     MutationStateOptions,
   } from '../../src/index.js'
 
-  let {
-    queryClient,
-    mutationOpts,
-    mutationStateOpts,
-  }: {
+  type Props = {
     queryClient: QueryClient
-    mutationOpts: Accessor<CreateMutationOptions>
-    mutationStateOpts: MutationStateOptions<any>
-  } = $props()
+    mutationOpts: Accessor<CreateMutationOptions<string>>
+    mutationStateOpts: MutationStateOptions<string>
+  }
+
+  let { queryClient, mutationOpts, mutationStateOpts }: Props = $props()
 
   setQueryClientContext(queryClient)
 

@@ -4,7 +4,11 @@
   import { setQueryClientContext } from '../../src/context.js'
   import { createQuery, useIsFetching } from '../../src/index.js'
 
-  let { queryClient }: { queryClient: QueryClient } = $props()
+  type Props = {
+    queryClient: QueryClient
+  }
+
+  let { queryClient }: Props = $props()
 
   setQueryClientContext(queryClient)
 

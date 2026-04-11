@@ -5,8 +5,8 @@
 
   type Props = {
     queryClient: QueryClient
-    onSuccessMock: any
-    onSettledMock: any
+    onSuccessMock: (data: number) => void
+    onSettledMock: (data: number | undefined) => void
   }
 
   const { queryClient, onSettledMock, onSuccessMock }: Props = $props()

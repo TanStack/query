@@ -7,15 +7,13 @@
   } from '../../src/context.js'
   import { createQueries } from '../../src/index.js'
 
-  let {
-    queryClient,
-    queryFn1,
-    queryFn2,
-  }: {
+  type Props = {
     queryClient: QueryClient
     queryFn1: () => Promise<string>
     queryFn2: () => Promise<string>
-  } = $props()
+  }
+
+  let { queryClient, queryFn1, queryFn2 }: Props = $props()
 
   setQueryClientContext(queryClient)
   setIsRestoringContext({ current: true })

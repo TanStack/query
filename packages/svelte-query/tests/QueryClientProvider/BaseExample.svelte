@@ -3,7 +3,11 @@
   import QueryChild from './QueryChild.svelte'
   import type { QueryClient } from '@tanstack/query-core'
 
-  let { queryClient }: { queryClient: QueryClient } = $props()
+  type Props = {
+    queryClient: QueryClient
+  }
+
+  let { queryClient }: Props = $props()
 </script>
 
 <QueryClientProvider client={queryClient}>
