@@ -26,7 +26,7 @@ describe('injectMutation', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
   })
@@ -564,7 +564,7 @@ describe('injectMutation', () => {
       TestBed.configureTestingModule({
         providers: [
           provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
+          ...provideTanStackQuery(queryClient),
         ],
       })
 
@@ -614,7 +614,7 @@ describe('injectMutation', () => {
       TestBed.configureTestingModule({
         providers: [
           provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
+          ...provideTanStackQuery(queryClient),
         ],
       })
 
@@ -666,7 +666,7 @@ describe('injectMutation', () => {
       TestBed.configureTestingModule({
         providers: [
           provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
+          ...provideTanStackQuery(queryClient),
         ],
       })
 
@@ -730,7 +730,7 @@ describe('injectMutation', () => {
       TestBed.configureTestingModule({
         providers: [
           provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
+          ...provideTanStackQuery(queryClient),
         ],
       })
 

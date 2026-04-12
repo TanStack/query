@@ -27,7 +27,7 @@ describe('injectMutationState', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
   })
@@ -164,7 +164,7 @@ describe('injectMutationState', () => {
       const rendered = await render(FakeComponent, {
         providers: [
           provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
+          ...provideTanStackQuery(queryClient),
         ],
         bindings: [inputBinding('name', name.asReadonly())],
         detectChangesOnRender: false,

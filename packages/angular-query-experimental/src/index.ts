@@ -62,4 +62,6 @@ export {
   provideQueryClient,
   provideTanStackQuery,
   queryFeature,
+  withHydrationKey,
+  withNoQueryHydration,
 } from './providers'
