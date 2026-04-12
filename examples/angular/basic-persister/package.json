@@ -13,6 +13,7 @@
     "@angular/compiler": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
+    "@tanstack/angular-query-devtools": "^5.99.0",
     "@tanstack/angular-query-experimental": "^5.99.0",
     "@tanstack/angular-query-persist-client": "^5.99.0",
     "@tanstack/query-async-storage-persister": "^5.99.0",
@@ -24,6 +25,6 @@
     "@angular/build": "^20.0.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
-    "typescript": "5.8.3"
+    "typescript": "5.9.3"
   }
 }

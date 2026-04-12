@@ -25,7 +25,7 @@ const queryClient = new QueryClient({
 })
 
 TestBed.configureTestingModule({
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [...provideTanStackQuery(queryClient)],
 })
 ```
 
@@ -85,7 +85,7 @@ Angular's `HttpClientTestingModule` plays nicely with PendingTasks. Register it 
 ```ts
 TestBed.configureTestingModule({
   imports: [HttpClientTestingModule],
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [...provideTanStackQuery(queryClient)],
 })
 
 const httpCtrl = TestBed.inject(HttpTestingController)
