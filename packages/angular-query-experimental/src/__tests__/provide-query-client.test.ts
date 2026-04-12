@@ -11,7 +11,7 @@ describe('provideQueryClient', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideQueryClient(queryClient),
+        ...provideQueryClient(queryClient),
       ],
     })
 
@@ -28,7 +28,7 @@ describe('provideQueryClient', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideQueryClient(CUSTOM_QUERY_CLIENT),
+        ...provideQueryClient(CUSTOM_QUERY_CLIENT),
       ],
     })
 

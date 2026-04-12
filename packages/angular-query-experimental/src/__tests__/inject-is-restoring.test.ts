@@ -17,7 +17,7 @@ describe('injectIsRestoring', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
 
@@ -35,7 +35,7 @@ describe('injectIsRestoring', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
         provideIsRestoring(restoringSignal.asReadonly()),
       ],
     })
@@ -53,7 +53,7 @@ describe('injectIsRestoring', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
 

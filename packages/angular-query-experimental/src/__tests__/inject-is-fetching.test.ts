@@ -19,7 +19,7 @@ describe('injectIsFetching', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
   })

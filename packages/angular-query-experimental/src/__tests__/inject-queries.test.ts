@@ -104,7 +104,7 @@ describe('injectQueries', () => {
     const rendered = await render(Page, {
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
 
