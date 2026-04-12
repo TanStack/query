@@ -15,13 +15,30 @@ import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,
 } from '@tanstack/query-persist-client-core'
-import type { PersistQueryClientOptions as PersistQueryClientOptionsCore } from '@tanstack/query-persist-client-core'
 import type { PersistQueryClientFeature } from '@tanstack/angular-query-experimental'
+import type {
+  PersistQueryClientUserOptions,
+  WithPersistQueryClientFn,
+  WithPersistQueryClientOptions,
+} from './with-persist-query-client.types'
 
-type PersistQueryClientOptions = {
-  persistOptions: Omit<PersistQueryClientOptionsCore, 'queryClient'>
-  onSuccess?: () => Promise<unknown> | unknown
-  onError?: () => Promise<unknown> | unknown
+export type {
+  PersistQueryClientUserOptions,
+  WithPersistQueryClientFn,
+  WithPersistQueryClientOptions,
+} from './with-persist-query-client.types'
+
+function resolvePersistOptions(
+  input: PersistQueryClientUserOptions | WithPersistQueryClientFn,
+  withOptions: WithPersistQueryClientOptions | undefined,
+  injectDep: <T>(token: any) => T,
+): PersistQueryClientUserOptions {
+  if (typeof input === 'function') {
+    const deps = withOptions?.deps ?? []
+    const depValues = deps.map((token) => injectDep(token))
+    return input(...depValues)
+  }
+  return input
 }
 
 /**
@@ -36,7 +53,7 @@ type PersistQueryClientOptions = {
  *
  * export const appConfig: ApplicationConfig = {
  *   providers: [
- *     provideTanStackQuery(
+ *     ...provideTanStackQuery(
  *       new QueryClient(),
  *       withPersistQueryClient({
  *         persistOptions: {
@@ -53,36 +70,52 @@ type PersistQueryClientOptions = {
  * @public
  */
 export function withPersistQueryClient(
-  persistQueryClientOptions: PersistQueryClientOptions,
+  factoryOrOptions: WithPersistQueryClientFn,
+  withOptions?: WithPersistQueryClientOptions,
+): PersistQueryClientFeature
+export function withPersistQueryClient(
+  options: PersistQueryClientUserOptions,
+): PersistQueryClientFeature
+export function withPersistQueryClient(
+  factoryOrOptions:
+    | PersistQueryClientUserOptions
+    | WithPersistQueryClientFn,
+  withOptions?: WithPersistQueryClientOptions,
 ): PersistQueryClientFeature {
   const isRestoring = signal(true)
-  const providers = [
+  return queryFeature('PersistQueryClient', [
     provideIsRestoring(isRestoring.asReadonly()),
     {
-      // Do not use provideEnvironmentInitializer while Angular < v19 is supported
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
       useValue: () => {
-        if (!isPlatformBrowser(inject(PLATFORM_ID))) return
+        if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+          isRestoring.set(false)
+          return
+        }
         const destroyRef = inject(DestroyRef)
         const queryClient = inject(QueryClient)
 
-        const { onSuccess, onError, persistOptions } = persistQueryClientOptions
+        const { onSuccess, onError, persistOptions } = resolvePersistOptions(
+          factoryOrOptions,
+          withOptions,
+          inject,
+        )
         const options = { queryClient, ...persistOptions }
-        persistQueryClientRestore(options)
+        void persistQueryClientRestore(options)
           .then(() => {
-            onSuccess?.()
+            return onSuccess?.()
           })
           .catch(() => {
-            onError?.()
+            return onError?.()
           })
           .finally(() => {
+            if (destroyRef.destroyed) return
             isRestoring.set(false)
             const cleanup = persistQueryClientSubscribe(options)
             destroyRef.onDestroy(cleanup)
           })
       },
     },
-  ]
-  return queryFeature('PersistQueryClient', providers)
+  ])
 }
