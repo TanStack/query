@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { Injector, provideZonelessChangeDetection } from '@angular/core'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
-import { expectSignals } from './test-utils'
+import { ChangeDetectionStrategy, Component, Injector } from '@angular/core'
+import { sleep } from '@tanstack/query-test-utils'
+import { QueryClient, injectInfiniteQuery } from '..'
+import { expectSignals, setupTanStackQueryTestBed } from './test-utils'
 
 describe('injectInfiniteQuery', () => {
   let queryClient: QueryClient
@@ -11,12 +11,7 @@ describe('injectInfiniteQuery', () => {
   beforeEach(() => {
     queryClient = new QueryClient()
     vi.useFakeTimers()
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
+    setupTanStackQueryTestBed(queryClient)
   })
 
   afterEach(() => {
@@ -24,16 +19,24 @@ describe('injectInfiniteQuery', () => {
   })
 
   test('should properly execute infinite query', async () => {
-    const key = queryKey()
-    const query = TestBed.runInInjectionContext(() => {
-      return injectInfiniteQuery(() => ({
-        queryKey: key,
+    @Component({
+      selector: 'app-test',
+      template: '',
+      changeDetection: ChangeDetectionStrategy.OnPush,
+    })
+    class TestComponent {
+      query = injectInfiniteQuery(() => ({
+        queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) =>
           sleep(10).then(() => 'data on page ' + pageParam),
         initialPageParam: 0,
         getNextPageParam: () => 12,
       }))
-    })
+    }
+
+    const fixture = TestBed.createComponent(TestComponent)
+    fixture.detectChanges()
+    const query = fixture.componentInstance.query
 
     expectSignals(query, {
       data: undefined,
@@ -65,32 +68,35 @@ describe('injectInfiniteQuery', () => {
 
   describe('injection context', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
-      const key = queryKey()
       expect(() => {
         injectInfiniteQuery(() => ({
-          queryKey: key,
+          queryKey: ['injectionContextError'],
           queryFn: ({ pageParam }) =>
             sleep(0).then(() => 'data on page ' + pageParam),
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }))
-      }).toThrow(/NG0203(.*?)injectInfiniteQuery/)
+      }).toThrowError(/NG0203(.*?)injectInfiniteQuery/)
     })
 
     test('can be used outside injection context when passing an injector', () => {
-      const key = queryKey()
+      const injector = TestBed.inject(Injector)
+
+      // Call injectInfiniteQuery directly outside any component
       const query = injectInfiniteQuery(
         () => ({
-          queryKey: key,
+          queryKey: ['manualInjector'],
           queryFn: ({ pageParam }) =>
             sleep(0).then(() => 'data on page ' + pageParam),
           initialPageParam: 0,
           getNextPageParam: () => 12,
         }),
         {
-          injector: TestBed.inject(Injector),
+          injector: injector,
         },
       )
+
+      TestBed.tick()
 
       expect(query.status()).toBe('pending')
     })
