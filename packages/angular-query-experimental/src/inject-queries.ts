@@ -7,24 +7,27 @@ import {
   DestroyRef,
   Injector,
   NgZone,
+  PendingTasks,
   assertInInjectionContext,
   computed,
   effect,
   inject,
+  linkedSignal,
   runInInjectionContext,
-  signal,
   untracked,
 } from '@angular/core'
 import { signalProxy } from './signal-proxy'
 import { injectIsRestoring } from './inject-is-restoring'
 import type {
   DefaultError,
+  DefinedQueryObserverResult,
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
+  QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
 import type {
@@ -33,6 +36,7 @@ import type {
   DefinedCreateQueryResult,
 } from './types'
 import type { Signal } from '@angular/core'
+import type { MethodKeys } from './signal-proxy'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function always gets undefined passed
@@ -90,39 +94,42 @@ type GetCreateQueryOptionsForCreateQueries<T> =
                 : // Fallback
                   QueryObserverOptionsForCreateQueries
 
-// A defined initialData setting should return a DefinedCreateQueryResult rather than CreateQueryResult
-type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
-  initialData?: infer TInitialData
-}
-  ? unknown extends TInitialData
-    ? CreateQueryResult<TData, TError>
-    : TInitialData extends TData
-      ? DefinedCreateQueryResult<TData, TError>
-      : TInitialData extends () => infer TInitialDataResult
-        ? unknown extends TInitialDataResult
-          ? CreateQueryResult<TData, TError>
-          : TInitialDataResult extends TData
-            ? DefinedCreateQueryResult<TData, TError>
-            : CreateQueryResult<TData, TError>
-        : CreateQueryResult<TData, TError>
-  : CreateQueryResult<TData, TError>
+// Generic wrapper that handles initialData logic for any result type pair
+type GenericGetDefinedOrUndefinedQueryResult<T, TData, TUndefined, TDefined> =
+  T extends {
+    initialData?: infer TInitialData
+  }
+    ? unknown extends TInitialData
+      ? TUndefined
+      : TInitialData extends TData
+        ? TDefined
+        : TInitialData extends () => infer TInitialDataResult
+          ? unknown extends TInitialDataResult
+            ? TUndefined
+            : TInitialDataResult extends TData
+              ? TDefined
+              : TUndefined
+          : TUndefined
+    : TUndefined
 
-type GetCreateQueryResult<T> =
-  // Part 1: responsible for mapping explicit type parameter to function result, if object
+// Infer TData and TError from query options
+// Shared type between the results with and without the combine function
+type InferDataAndError<T> =
+  // Part 1: explicit type parameter as object { queryFnData, error, data }
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
-    ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
+    ? { data: TData; error: TError }
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-      ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
+      ? { data: TQueryFnData; error: TError }
       : T extends { data: infer TData; error?: infer TError }
-        ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
-        : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
+        ? { data: TData; error: TError }
+        : // Part 2: explicit type parameter as tuple [TQueryFnData, TError, TData]
           T extends [any, infer TError, infer TData]
-          ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
+          ? { data: TData; error: TError }
           : T extends [infer TQueryFnData, infer TError]
-            ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
+            ? { data: TQueryFnData; error: TError }
             : T extends [infer TQueryFnData]
-              ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
-              : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
+              ? { data: TQueryFnData; error: unknown }
+              : // Part 3: infer from queryFn, select, throwOnError
                 T extends {
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
@@ -130,13 +137,40 @@ type GetCreateQueryResult<T> =
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? GetDefinedOrUndefinedQueryResult<
-                    T,
-                    unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
-                  >
+                ? {
+                    data: unknown extends TData ? TQueryFnData : TData
+                    error: unknown extends TError ? DefaultError : TError
+                  }
                 : // Fallback
-                  CreateQueryResult
+                  { data: unknown; error: DefaultError }
+
+// Maps query options to Angular's signal-wrapped CreateQueryResult
+type GetCreateQueryResult<T> = GenericGetDefinedOrUndefinedQueryResult<
+  T,
+  InferDataAndError<T>['data'],
+  CreateQueryResult<
+    InferDataAndError<T>['data'],
+    InferDataAndError<T>['error']
+  >,
+  DefinedCreateQueryResult<
+    InferDataAndError<T>['data'],
+    InferDataAndError<T>['error']
+  >
+>
+
+// Maps query options to plain QueryObserverResult for combine function
+type GetQueryObserverResult<T> = GenericGetDefinedOrUndefinedQueryResult<
+  T,
+  InferDataAndError<T>['data'],
+  QueryObserverResult<
+    InferDataAndError<T>['data'],
+    InferDataAndError<T>['error']
+  >,
+  DefinedQueryObserverResult<
+    InferDataAndError<T>['data'],
+    InferDataAndError<T>['error']
+  >
+>
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -201,6 +235,25 @@ export type QueriesResults<
           >
         : { [K in keyof T]: GetCreateQueryResult<T[K]> }
 
+// Maps query options array to plain QueryObserverResult types for combine function
+type RawQueriesResults<
+  T extends Array<any>,
+  TResults extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
+  ? Array<QueryObserverResult>
+  : T extends []
+    ? []
+    : T extends [infer Head]
+      ? [...TResults, GetQueryObserverResult<Head>]
+      : T extends [infer Head, ...infer Tails]
+        ? RawQueriesResults<
+            [...Tails],
+            [...TResults, GetQueryObserverResult<Head>],
+            [...TDepth, 1]
+          >
+        : { [K in keyof T]: GetQueryObserverResult<T[K]> }
+
 export interface InjectQueriesOptions<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
@@ -210,8 +263,13 @@ export interface InjectQueriesOptions<
     | readonly [
         ...{ [K in keyof T]: GetCreateQueryOptionsForCreateQueries<T[K]> },
       ]
-  combine?: (result: QueriesResults<T>) => TCombinedResult
+  combine?: (result: RawQueriesResults<T>) => TCombinedResult
 }
+
+const methodsToExclude: Array<MethodKeys<QueryObserverResult>> = ['refetch']
+
+const hasPendingQueriesState = (results: Array<QueryObserverResult>): boolean =>
+  results.some((result) => result.fetchStatus !== 'idle')
 
 /**
  * @param optionsFn - A function that returns queries' options.
@@ -228,8 +286,24 @@ export function injectQueries<
   return runInInjectionContext(injector ?? inject(Injector), () => {
     const destroyRef = inject(DestroyRef)
     const ngZone = inject(NgZone)
+    const pendingTasks = inject(PendingTasks)
     const queryClient = inject(QueryClient)
     const isRestoring = injectIsRestoring()
+    let destroyed = false
+    let taskCleanupRef: (() => void) | null = null
+
+    const startPendingTask = () => {
+      if (!taskCleanupRef && !destroyed) {
+        taskCleanupRef = pendingTasks.add()
+      }
+    }
+
+    const stopPendingTask = () => {
+      if (taskCleanupRef) {
+        taskCleanupRef()
+        taskCleanupRef = null
+      }
+    }
 
     /**
      * Signal that has the default options from query client applied
@@ -255,76 +329,125 @@ export function injectQueries<
       })
     })
 
-    const observerSignal = (() => {
-      let instance: QueriesObserver<TCombinedResult> | null = null
+    const observerOptionsSignal = computed(
+      () => optionsSignal() as QueriesObserverOptions<TCombinedResult>,
+    )
 
-      return computed(() => {
-        return (instance ||= new QueriesObserver<TCombinedResult>(
-          queryClient,
-          defaultedQueries(),
-          optionsSignal() as QueriesObserverOptions<TCombinedResult>,
-        ))
-      })
-    })()
+    // Computed without deps to lazy initialize the observer
+    const observerSignal = computed(() => {
+      return new QueriesObserver<TCombinedResult>(
+        queryClient,
+        untracked(defaultedQueries),
+        untracked(observerOptionsSignal),
+      )
+    })
 
     const optimisticResultSignal = computed(() =>
       observerSignal().getOptimisticResult(
         defaultedQueries(),
-        (optionsSignal() as QueriesObserverOptions<TCombinedResult>).combine,
+        observerOptionsSignal().combine,
       ),
     )
 
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     effect(() => {
-      observerSignal().setQueries(
-        defaultedQueries(),
-        optionsSignal() as QueriesObserverOptions<TCombinedResult>,
-      )
+      observerSignal().setQueries(defaultedQueries(), observerOptionsSignal())
     })
 
-    const optimisticCombinedResultSignal = computed(() => {
-      const [_optimisticResult, getCombinedResult, trackResult] =
-        optimisticResultSignal()
-      return getCombinedResult(trackResult())
+    const optimisticResultSourceSignal = computed(() => {
+      const options = observerOptionsSignal()
+      return { queries: defaultedQueries(), combine: options.combine }
     })
 
-    const resultFromSubscriberSignal = signal<TCombinedResult | null>(null)
+    const resultSignal = linkedSignal({
+      source: optimisticResultSourceSignal,
+      computation: () => {
+        const observer = untracked(observerSignal)
+        const [_optimisticResult, getCombinedResult, trackResult] =
+          observer.getOptimisticResult(
+            defaultedQueries(),
+            observerOptionsSignal().combine,
+          )
+        return getCombinedResult(trackResult())
+      },
+    })
 
-    effect(() => {
+    effect((onCleanup) => {
       const observer = observerSignal()
-      const [_optimisticResult, getCombinedResult] = optimisticResultSignal()
+      const [optimisticResult, getCombinedResult] = optimisticResultSignal()
 
-      untracked(() => {
-        const unsubscribe = isRestoring()
-          ? () => undefined
-          : ngZone.runOutsideAngular(() =>
-              observer.subscribe(
-                notifyManager.batchCalls((state) => {
-                  resultFromSubscriberSignal.set(getCombinedResult(state))
-                }),
-              ),
-            )
+      if (isRestoring()) {
+        stopPendingTask()
+        return
+      }
 
-        destroyRef.onDestroy(unsubscribe)
+      if (hasPendingQueriesState(optimisticResult)) {
+        startPendingTask()
+      } else {
+        stopPendingTask()
+      }
+
+      const unsubscribe = untracked(() =>
+        ngZone.runOutsideAngular(() =>
+          observer.subscribe((state) => {
+            if (hasPendingQueriesState(state)) {
+              startPendingTask()
+            } else {
+              stopPendingTask()
+            }
+
+            queueMicrotask(() => {
+              if (destroyed) return
+              notifyManager.batch(() => {
+                ngZone.run(() => {
+                  resultSignal.set(getCombinedResult(state))
+                })
+              })
+            })
+          }),
+        ),
+      )
+
+      onCleanup(() => {
+        unsubscribe()
+        stopPendingTask()
       })
     })
 
-    const resultSignal = computed(() => {
-      const subscriberResult = resultFromSubscriberSignal()
-      const optimisticResult = optimisticCombinedResultSignal()
-      return subscriberResult ?? optimisticResult
+    // Angular does not use reactive getters on plain objects, so we wrap each
+    // QueryObserverResult in a signal-backed proxy to keep field-level tracking
+    // (`result.data()`, `result.status()`, etc.).
+    // Solid uses a related proxy approach in useQueries, but there it proxies
+    // object fields for store/resource reactivity rather than callable signals.
+    const createResultProxy = (index: number) =>
+      signalProxy(
+        computed(() => (resultSignal() as Array<QueryObserverResult>)[index]!),
+        methodsToExclude,
+      )
+
+    // Keep this positional to match QueriesObserver semantics.
+    // Like Solid/Vue adapters, proxies are rebuilt from current observer output.
+    const proxiedResultsSignal = computed(() =>
+      (resultSignal() as Array<QueryObserverResult>).map((_, index) =>
+        createResultProxy(index),
+      ),
+    )
+
+    destroyRef.onDestroy(() => {
+      destroyed = true
+      stopPendingTask()
     })
 
     return computed(() => {
       const result = resultSignal()
       const { combine } = optionsSignal()
 
-      return combine
-        ? result
-        : (result as QueriesResults<T>).map((query) =>
-            signalProxy(signal(query)),
-          )
+      if (combine) {
+        return result
+      }
+
+      return proxiedResultsSignal() as unknown as TCombinedResult
     })
   }) as unknown as Signal<TCombinedResult>
 }
