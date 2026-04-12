@@ -44,11 +44,13 @@ function resolvePersistOptions(
 /**
  * Enables persistence.
  *
- * **Example**
+ * **Example (static options)** - avoid browser-only globals at module scope when the same config
+ * runs on the server; prefer the factory form below for `localStorage`.
  *
  * ```ts
- * const localStoragePersister = createAsyncStoragePersister({
- *  storage: window.localStorage,
+ * withPersistQueryClient({
+ *   persistOptions: { persister },
+ *   onSuccess: () => console.log('Restored.'),
  * })
  *
  * export const appConfig: ApplicationConfig = {
@@ -60,12 +62,33 @@ function resolvePersistOptions(
  *           persister: localStoragePersister,
  *         },
  *         onSuccess: () => console.log('Restoration completed successfully.'),
- *       })
+ *       }),
  *     ),
  *   ],
  * };
  * ```
- * @param persistQueryClientOptions - persistence options and optional onSuccess and onError callbacks which get called when the restoration process is complete.
+ *
+ * **Example (factory, browser only, optional deps)** - the callback only runs in the browser, so
+ * it can safely reference browser APIs such as `localStorage`.
+ *
+ * ```ts
+ * withPersistQueryClient(() => ({
+ *   persistOptions: {
+ *     persister: createAsyncStoragePersister({ storage: localStorage }),
+ *   },
+ * }))
+ * ```
+ *
+ * ```ts
+ * withPersistQueryClient(
+ *   (storage: StorageService) => ({
+ *     persistOptions: { persister: storage.createPersister() },
+ *   }),
+ *   { deps: [StorageService] },
+ * )
+ * ```
+ * @param factoryOrOptions - Either a callback (runs only in the browser) or a static options object.
+ * @param withOptions - When using a callback, optional `deps` passed as arguments (like `useFactory`).
  * @returns A set of providers for use with `provideTanStackQuery`.
  * @public
  */
@@ -77,9 +100,7 @@ export function withPersistQueryClient(
   options: PersistQueryClientUserOptions,
 ): PersistQueryClientFeature
 export function withPersistQueryClient(
-  factoryOrOptions:
-    | PersistQueryClientUserOptions
-    | WithPersistQueryClientFn,
+  factoryOrOptions: PersistQueryClientUserOptions | WithPersistQueryClientFn,
   withOptions?: WithPersistQueryClientOptions,
 ): PersistQueryClientFeature {
   const isRestoring = signal(true)

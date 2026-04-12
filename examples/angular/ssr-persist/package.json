@@ -1,0 +1,35 @@
+{
+  "name": "@tanstack/query-example-angular-ssr-persist",
+  "type": "module",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "serve:ssr": "node dist/ssr-persist/server/server.mjs"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-server": "^20.0.0",
+    "@angular/ssr": "^20.0.0",
+    "@tanstack/angular-query-devtools": "^5.99.0",
+    "@tanstack/angular-query-experimental": "^5.99.0",
+    "@tanstack/angular-query-persist-client": "^5.99.0",
+    "@tanstack/query-async-storage-persister": "^5.99.0",
+    "express": "^5.1.0",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.8.1",
+    "zone.js": "0.16.1"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.0.0",
+    "@angular/cli": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
+    "@types/express": "^5.0.1",
+    "typescript": "5.9.3"
+  }
+}
