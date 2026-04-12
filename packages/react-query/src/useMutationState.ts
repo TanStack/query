@@ -22,14 +22,34 @@ export function useIsMutating(
   ).length
 }
 
-type MutationStateOptions<TResult = MutationState> = {
+type MutationStateOptions<
+  TData = unknown,
+  TError = unknown,
+  TVariables = unknown,
+  TContext = unknown,
+  TResult = MutationState
+> = {
   filters?: MutationFilters
-  select?: (mutation: Mutation) => TResult
+  select?: (
+    mutation: Mutation<TData, TError, TVariables, TContext>
+  ) => TResult
 }
 
-function getResult<TResult = MutationState>(
+function getResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = unknown,
+  TContext = unknown,
+  TResult = MutationState
+>(
   mutationCache: MutationCache,
-  options: MutationStateOptions<TResult>,
+  options: MutationStateOptions<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    TResult
+  >,
 ): Array<TResult> {
   return mutationCache
     .findAll(options.filters)
@@ -39,13 +59,26 @@ function getResult<TResult = MutationState>(
     )
 }
 
-export function useMutationState<TResult = MutationState>(
-  options: MutationStateOptions<TResult> = {},
+export function useMutationState<
+  TData = unknown,
+  TError = unknown,
+  TVariables = unknown,
+  TContext = unknown,
+  TResult = MutationState
+>(
+  options: MutationStateOptions<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    TResult
+  > = {},
   queryClient?: QueryClient,
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
   const optionsRef = React.useRef(options)
   const result = React.useRef<Array<TResult>>(null)
+
   if (result.current === null) {
     result.current = getResult(mutationCache, options)
   }
