@@ -6,10 +6,10 @@ title: provideAngularQuery
 # ~~Function: provideAngularQuery()~~
 
 ```ts
-function provideAngularQuery(queryClient): Provider[];
+function provideAngularQuery(queryClient): EnvironmentProviders;
 ```
 
-Defined in: [providers.ts:124](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L124)
+Defined in: [providers.ts:176](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L176)
 
 Sets up providers necessary to enable TanStack Query functionality for Angular applications.
 
@@ -25,7 +25,7 @@ A `QueryClient` instance.
 
 ## Returns
 
-`Provider`[]
+`EnvironmentProviders`
 
 A set of providers to set up TanStack Query.
 

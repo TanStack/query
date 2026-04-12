@@ -52,10 +52,10 @@ function configureQueryClient() {
 function createQueryClientProviders(
   queryClient: QueryClient | InjectionToken<QueryClient>,
 ): Array<Provider> {
-    return [
-      queryClient instanceof InjectionToken
-        ? { provide: QueryClient, useExisting: queryClient }
-        : { provide: QueryClient, useValue: queryClient },
+  return [
+    queryClient instanceof InjectionToken
+      ? { provide: QueryClient, useExisting: queryClient }
+      : { provide: QueryClient, useValue: queryClient },
   ]
 }
 
@@ -65,8 +65,9 @@ function createQueryClientProviders(
  * for the entire application. Internally it calls `provideQueryClient`.
  * You can use `provideQueryClient` to provide a different `QueryClient` instance for a part
  * of the application or for unit testing purposes.
+ *
  * @param queryClient - A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
- * @returns a provider object that can be used to provide the `QueryClient` instance.
+ * @returns A single {@link EnvironmentProviders} value to add to environment `providers` (do not spread).
  */
 export function provideQueryClient(
   queryClient: QueryClient | InjectionToken<QueryClient>,
@@ -118,20 +119,14 @@ export function provideQueryClient(
  *
  * You can also enable optional developer tools by adding `withDevtools`. By
  * default the tools will then be loaded when your app is in development mode.
- * ```ts
- * import {
- *   provideTanStackQuery,
- *   withDevtools
- *   QueryClient,
- * } from '@tanstack/angular-query-experimental'
  *
- * bootstrapApplication(AppComponent,
- *   {
- *     providers: [
- *       provideTanStackQuery(new QueryClient(), withDevtools())
- *     ]
- *   }
- * )
+ * ```ts
+ * import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query-experimental'
+ * import { withDevtools } from '@tanstack/angular-query-devtools'
+ *
+ * bootstrapApplication(AppComponent, {
+ *   providers: [provideTanStackQuery(new QueryClient(), withDevtools())],
+ * })
  * ```
  *
  * **Example: using an InjectionToken**
@@ -150,9 +145,10 @@ export function provideQueryClient(
  * Note that this is a small optimization and for most applications it's preferable to provide the `QueryClient` in the main application config.
  * @param queryClient - A `QueryClient` instance, or an `InjectionToken` which provides a `QueryClient`.
  * @param features - Optional features to configure additional Query functionality.
- * @returns A set of providers to set up TanStack Query.
+ * @returns A single {@link EnvironmentProviders} value (do not spread into `providers`).
  * @see https://tanstack.com/query/v5/docs/framework/angular/quick-start
- * @see withDevtools
+ * @see https://tanstack.com/query/v5/docs/framework/angular/devtools
+ * @see https://tanstack.com/query/latest/docs/framework/angular/guides/ssr
  */
 export function provideTanStackQuery(
   queryClient: QueryClient | InjectionToken<QueryClient>,
@@ -223,7 +219,17 @@ export type DevtoolsFeature = QueryFeature<'Devtools'>
 export type PersistQueryClientFeature = QueryFeature<'PersistQueryClient'>
 
 /**
- * Sets a non-default serialization key for this injector's QueryClient cache.
+ * Sets a non-default serialization key for this injector's `QueryClient` cache (server dehydrate /
+ * browser hydrate via `TransferState`). Use this when you have multiple `QueryClient` instances
+ * so each has its own key. The default key applies when you do not add this feature.
+ *
+ * ```ts
+ * providers: [
+ *   provideTanStackQuery(secondaryClient, withHydrationKey('my-secondary-query-cache')),
+ * ]
+ * ```
+ *
+ * @param key - A unique string for this client's `TransferState` entry.
  */
 export function withHydrationKey(key: string): QueryFeature<'Hydration'> {
   return queryFeature(
@@ -238,7 +244,7 @@ export function withHydrationKey(key: string): QueryFeature<'Hydration'> {
 }
 
 /**
- * Disables TransferState hydration/dehydration for the current environment injector.
+ * Disables `TransferState` hydration and dehydration for the current environment injector.
  */
 export function withNoQueryHydration(): QueryFeature<'Hydration'> {
   return queryFeature(

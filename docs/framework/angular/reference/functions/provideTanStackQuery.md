@@ -6,10 +6,10 @@ title: provideTanStackQuery
 # Function: provideTanStackQuery()
 
 ```ts
-function provideTanStackQuery(queryClient, ...features): Provider[];
+function provideTanStackQuery(queryClient, ...features): EnvironmentProviders;
 ```
 
-Defined in: [providers.ts:105](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L105)
+Defined in: [providers.ts:156](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/providers.ts#L156)
 
 Sets up providers necessary to enable TanStack Query functionality for Angular applications.
 
@@ -47,20 +47,14 @@ export class AppModule {}
 
 You can also enable optional developer tools by adding `withDevtools`. By
 default the tools will then be loaded when your app is in development mode.
-```ts
-import {
-  provideTanStackQuery,
-  withDevtools
-  QueryClient,
-} from '@tanstack/angular-query-experimental'
 
-bootstrapApplication(AppComponent,
-  {
-    providers: [
-      provideTanStackQuery(new QueryClient(), withDevtools())
-    ]
-  }
-)
+```ts
+import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query-experimental'
+import { withDevtools } from '@tanstack/angular-query-devtools'
+
+bootstrapApplication(AppComponent, {
+  providers: [provideTanStackQuery(new QueryClient(), withDevtools())],
+})
 ```
 
 **Example: using an InjectionToken**
@@ -94,11 +88,12 @@ Optional features to configure additional Query functionality.
 
 ## Returns
 
-`Provider`[]
+`EnvironmentProviders`
 
-A set of providers to set up TanStack Query.
+A single EnvironmentProviders value (do not spread into `providers`).
 
 ## See
 
  - https://tanstack.com/query/v5/docs/framework/angular/quick-start
- - withDevtools
+ - https://tanstack.com/query/v5/docs/framework/angular/devtools
+ - https://tanstack.com/query/latest/docs/framework/angular/guides/ssr
