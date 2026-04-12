@@ -10,9 +10,10 @@ import {
   createSignal,
   on,
   onCleanup,
+  useContext,
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
-import { useQueryClient } from './QueryClientProvider'
+import { QueryClientContext } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { UseBaseQueryOptions } from './types'
 import type { Accessor, Signal } from 'solid-js'
@@ -115,7 +116,17 @@ export function useBaseQuery<
 ) {
   type ResourceData = QueryObserverResult<TData, TError>
 
-  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const queryClientFromContext = useContext(QueryClientContext)
+  const client = createMemo(() => {
+    const clientFromOptions = queryClient?.()
+    if (clientFromOptions) {
+      return clientFromOptions
+    }
+    if (!queryClientFromContext) {
+      throw new Error('No QueryClient set, use QueryClientProvider to set one')
+    }
+    return queryClientFromContext()
+  })
   const isRestoring = useIsRestoring()
   // There are times when we run a query on the server but the resource is never read
   // This could lead to times when the queryObserver is unsubscribed before the resource has loaded
