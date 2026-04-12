@@ -2343,6 +2343,68 @@ importers:
         specifier: ^2.2.8
         version: 2.2.12(typescript@5.8.3)
 
+  packages/angular-query-devtools:
+    dependencies:
+      '@tanstack/query-core':
+        specifier: workspace:*
+        version: link:../query-core
+      '@tanstack/query-devtools':
+        specifier: workspace:*
+        version: link:../query-devtools
+    devDependencies:
+      '@analogjs/vite-plugin-angular':
+        specifier: ^2.3.1
+        version: 2.4.5(@angular/build@20.3.22(e6ac13a7a065fd2084839531be11ab9f))
+      '@analogjs/vitest-angular':
+        specifier: ^2.3.1
+        version: 2.4.5(@analogjs/vite-plugin-angular@2.4.5(@angular/build@20.3.22(e6ac13a7a065fd2084839531be11ab9f)))(@angular-devkit/architect@0.2003.22(chokidar@4.0.3))(@angular-devkit/schematics@20.3.22(chokidar@4.0.3))(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@5.8.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(yaml@2.8.3)))(zone.js@0.16.1)
+      '@angular/build':
+        specifier: ^20.0.0
+        version: 20.3.22(e6ac13a7a065fd2084839531be11ab9f)
+      '@angular/common':
+        specifier: ^20.0.0
+        version: 20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2)
+      '@angular/compiler':
+        specifier: ^20.0.0
+        version: 20.3.18
+      '@angular/compiler-cli':
+        specifier: ^20.0.0
+        version: 20.3.18(@angular/compiler@20.3.18)
+      '@angular/core':
+        specifier: ^20.0.0
+        version: 20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.16.1)
+      '@angular/platform-browser':
+        specifier: ^20.0.0
+        version: 20.3.18(@angular/animations@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.16.1)))(@angular/common@20.3.18(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@20.3.18(@angular/compiler@20.3.18)(rxjs@7.8.2)(zone.js@0.16.1))
+      '@tanstack/angular-query-experimental':
+        specifier: workspace:*
+        version: link:../angular-query-experimental
+      '@testing-library/jest-dom':
+        specifier: ^6.8.0
+        version: 6.9.1
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vite-plugin-dts:
+        specifier: 4.2.3
+        version: 4.2.3(@types/node@22.19.15)(rollup@4.60.1)(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(yaml@2.8.3))
+      vite-plugin-externalize-deps:
+        specifier: ^0.9.0
+        version: 0.9.0(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(yaml@2.8.3))
+      vite-tsconfig-paths:
+        specifier: ^5.1.4
+        version: 5.1.4(typescript@5.8.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(yaml@2.8.3))
+      zone.js:
+        specifier: ^0.16.0
+        version: 0.16.1
+    publishDirectory: dist
+
   packages/angular-query-experimental:
     dependencies:
       '@tanstack/query-core':
