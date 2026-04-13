@@ -365,6 +365,97 @@ describe('useMutation', () => {
     ])
   })
 
+  it('should be able to override the error callbacks when using mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: async (_text: string) =>
+          sleep(10).then(() => Promise.reject(new Error('oops'))),
+        onError: () => {
+          callbacks.push('useMutation.onError')
+        },
+        onSettled: () => {
+          callbacks.push('useMutation.onSettled')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onError: () => {
+                callbacks.push('mutate.onError')
+              },
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual([
+      'useMutation.onError',
+      'useMutation.onSettled',
+      'mutate.onError',
+      'mutate.onSettled',
+    ])
+  })
+
+  it('should be able to override the settled callbacks when using mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+        onSuccess: () => {
+          callbacks.push('useMutation.onSuccess')
+        },
+        onSettled: () => {
+          callbacks.push('useMutation.onSettled')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSuccess: () => {
+                callbacks.push('mutate.onSuccess')
+              },
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual([
+      'useMutation.onSuccess',
+      'useMutation.onSettled',
+      'mutate.onSuccess',
+      'mutate.onSettled',
+    ])
+  })
+
   it('should be able to use mutation defaults', async () => {
     const key = queryKey()
 
