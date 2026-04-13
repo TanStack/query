@@ -273,10 +273,16 @@ export function hydrate(
         // Note that we need to call these even when data was synchronously
         // available, as we still need to set up the retryer
         query
-          .fetch(undefined, {
-            // RSC transformed promises are not thenable
-            initialPromise: Promise.resolve(promise).then(deserializeData),
-          })
+          .fetch(
+            // Preserve the query's behavior (e.g. infiniteQueryBehavior) so
+            // that when the streamed promise resolves, the data gets processed
+            // through the correct pipeline instead of being stored raw.
+            query.options.behavior ? { behavior: query.options.behavior } : undefined,
+            {
+              // RSC transformed promises are not thenable
+              initialPromise: Promise.resolve(promise).then(deserializeData),
+            },
+          )
           // Avoid unhandled promise rejections
           .catch(noop)
       }
