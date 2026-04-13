@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-  injectIsRestoring,
   QueryClient,
+  injectIsRestoring,
   injectQueries,
   injectQuery,
   provideTanStackQuery,
@@ -10,8 +10,8 @@ import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import {
   Component,
   EnvironmentInjector,
-  PLATFORM_ID,
   InjectionToken,
+  PLATFORM_ID,
   createEnvironmentInjector,
   effect,
   provideZonelessChangeDetection,
@@ -19,12 +19,12 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import * as persistClientCore from '@tanstack/query-persist-client-core'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
-import * as persistClientCore from '@tanstack/query-persist-client-core'
 
 beforeEach(() => {
   vi.useFakeTimers()

@@ -10,12 +10,13 @@ import {
   makeStateKey,
 } from '@angular/core'
 import {
+  
   QueryClient,
   dehydrate,
-  hydrate,
-  type DehydratedState,
+  hydrate
 } from '@tanstack/query-core'
 import { INTERNAL_TANSTACK_QUERY_HYDRATION_TRANSFER_KEY } from './hydration-state-key'
+import type {DehydratedState} from '@tanstack/query-core';
 import type { Provider } from '@angular/core'
 
 const INTERNAL_QUERY_CLIENT_SHOULD_HYDRATE = new InjectionToken<boolean>('', {

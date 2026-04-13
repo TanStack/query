@@ -1,13 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-  QueryClient,
-  dehydrate,
-  injectQuery,
-  provideTanStackQuery,
-  withHydrationKey,
-  withNoQueryHydration,
-} from '..'
-import {
   Component,
   EnvironmentInjector,
   PLATFORM_ID,
@@ -16,14 +8,22 @@ import {
   effect,
   inject,
   makeStateKey,
-  provideZonelessChangeDetection,
   provideEnvironmentInitializer,
+  provideZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import type { DehydratedState } from '@tanstack/query-core'
+import {
+  QueryClient,
+  dehydrate,
+  injectQuery,
+  provideTanStackQuery,
+  withHydrationKey,
+  withNoQueryHydration,
+} from '..'
 import { INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY } from '../hydration-state-key'
+import type { DehydratedState } from '@tanstack/query-core'
 
 beforeEach(() => {
   vi.useFakeTimers()
@@ -198,7 +198,7 @@ describe('TransferState dehydration (server)', () => {
   function createQueryInjector(
     queryClient: QueryClient,
     platformId: 'server' | 'browser',
-    ...features: Parameters<typeof provideTanStackQuery>[1][]
+    ...features: Array<Parameters<typeof provideTanStackQuery>[1]>
   ) {
     TestBed.configureTestingModule({
       providers: [

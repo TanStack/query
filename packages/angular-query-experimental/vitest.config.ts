@@ -28,6 +28,10 @@ export default defineConfig({
       exclude: ['src/__tests__/**'],
     },
     include: ['**/*.{test,spec}.{ts,mts,cts,tsx,js,mjs,cjs,jsx}'],
+    typecheck: {
+      enabled: true,
+      include: ['**/*.test-d.ts'],
+    },
     globals: true,
     restoreMocks: true,
   },
