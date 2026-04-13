@@ -350,6 +350,135 @@ describe('mutationOptions', () => {
     unsubscribe()
   })
 
+  it('should return the number of fetching mutations when used with queryClient.isMutating (getter with mutationKey in mutationOptions)', async () => {
+    const isMutatingArray: Array<number> = []
+    const queryClient = useQueryClient()
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: ['mutation'],
+      mutationFn: () => sleep(500).then(() => 'data'),
+    }))
+
+    const { mutate } = useMutation(mutationOpts)
+
+    const resolvedOpts = mutationOpts()
+
+    const mutationCache = queryClient.getMutationCache()
+    const unsubscribe = mutationCache.subscribe(() => {
+      isMutatingArray.push(queryClient.isMutating(resolvedOpts))
+    })
+
+    isMutatingArray.push(queryClient.isMutating(resolvedOpts))
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(0)
+    // Use Math.max because subscribe callback count is implementation-dependent
+    expect(Math.max(...isMutatingArray)).toEqual(1)
+    await vi.advanceTimersByTimeAsync(500)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+
+    unsubscribe()
+  })
+
+  it('should return the number of fetching mutations when used with queryClient.isMutating (getter without mutationKey in mutationOptions)', async () => {
+    const isMutatingArray: Array<number> = []
+    const queryClient = useQueryClient()
+    const mutationOpts = mutationOptions(() => ({
+      mutationFn: () => sleep(500).then(() => 'data'),
+    }))
+
+    const { mutate } = useMutation(mutationOpts)
+
+    const mutationCache = queryClient.getMutationCache()
+    const unsubscribe = mutationCache.subscribe(() => {
+      isMutatingArray.push(queryClient.isMutating())
+    })
+
+    isMutatingArray.push(queryClient.isMutating())
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(0)
+    // Use Math.max because subscribe callback count is implementation-dependent
+    expect(Math.max(...isMutatingArray)).toEqual(1)
+    await vi.advanceTimersByTimeAsync(500)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+
+    unsubscribe()
+  })
+
+  it('should return the number of fetching mutations when used with queryClient.isMutating (getter)', async () => {
+    const isMutatingArray: Array<number> = []
+    const queryClient = useQueryClient()
+    const mutationOpts1 = mutationOptions(() => ({
+      mutationKey: ['mutation'],
+      mutationFn: () => sleep(500).then(() => 'data1'),
+    }))
+    const mutationOpts2 = mutationOptions(() => ({
+      mutationFn: () => sleep(500).then(() => 'data2'),
+    }))
+
+    const { mutate: mutate1 } = useMutation(mutationOpts1)
+    const { mutate: mutate2 } = useMutation(mutationOpts2)
+
+    const mutationCache = queryClient.getMutationCache()
+    const unsubscribe = mutationCache.subscribe(() => {
+      isMutatingArray.push(queryClient.isMutating())
+    })
+
+    isMutatingArray.push(queryClient.isMutating())
+
+    mutate1()
+    mutate2()
+    await vi.advanceTimersByTimeAsync(0)
+    // Use Math.max because subscribe callback count is implementation-dependent
+    expect(Math.max(...isMutatingArray)).toEqual(2)
+    await vi.advanceTimersByTimeAsync(500)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+
+    unsubscribe()
+  })
+
+  it('should return the number of fetching mutations when used with queryClient.isMutating (getter, filter mutationOpts1.mutationKey)', async () => {
+    const isMutatingArray: Array<number> = []
+    const queryClient = useQueryClient()
+    const mutationOpts1 = mutationOptions(() => ({
+      mutationKey: ['mutation'],
+      mutationFn: () => sleep(500).then(() => 'data1'),
+    }))
+    const mutationOpts2 = mutationOptions(() => ({
+      mutationFn: () => sleep(500).then(() => 'data2'),
+    }))
+
+    const resolvedOpts1 = mutationOpts1()
+
+    const { mutate: mutate1 } = useMutation(mutationOpts1)
+    const { mutate: mutate2 } = useMutation(mutationOpts2)
+
+    const mutationCache = queryClient.getMutationCache()
+    const unsubscribe = mutationCache.subscribe(() => {
+      isMutatingArray.push(
+        queryClient.isMutating({
+          mutationKey: resolvedOpts1.mutationKey,
+        }),
+      )
+    })
+
+    isMutatingArray.push(
+      queryClient.isMutating({
+        mutationKey: resolvedOpts1.mutationKey,
+      }),
+    )
+
+    mutate1()
+    mutate2()
+    await vi.advanceTimersByTimeAsync(0)
+    // Use Math.max because subscribe callback count is implementation-dependent
+    expect(Math.max(...isMutatingArray)).toEqual(1)
+    await vi.advanceTimersByTimeAsync(500)
+    expect(isMutatingArray[isMutatingArray.length - 1]).toEqual(0)
+
+    unsubscribe()
+  })
+
   it('should return mutation states when used with useMutationState (with mutationKey in mutationOptions)', async () => {
     const mutationOpts = mutationOptions({
       mutationKey: ['mutation'],
