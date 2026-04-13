@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import BaseExample from './BaseExample.svelte'
-import SelectExample from './SelectExample.svelte'
+import Base from './Base.svelte'
+import Select from './Select.svelte'
 import type { Mutation } from '@tanstack/query-core'
 
 describe('useMutationState', () => {
@@ -29,7 +29,7 @@ describe('useMutationState', () => {
         sleep(20).then(() => Promise.reject(new Error('error'))),
       )
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
         queryClient,
         successMutationOpts: () => ({
@@ -64,7 +64,7 @@ describe('useMutationState', () => {
         sleep(20).then(() => Promise.reject(new Error('error'))),
       )
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
         queryClient,
         successMutationOpts: () => ({
@@ -95,7 +95,7 @@ describe('useMutationState', () => {
   test('should return selected value when using select option', async () => {
     const mutationKey = queryKey()
 
-    const rendered = render(SelectExample, {
+    const rendered = render(Select, {
       props: {
         queryClient,
         mutationOpts: () => ({
@@ -129,7 +129,7 @@ describe('useMutationState', () => {
         sleep(20).then(() => Promise.reject(new Error('error'))),
       )
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
         queryClient,
         successMutationOpts: () => ({

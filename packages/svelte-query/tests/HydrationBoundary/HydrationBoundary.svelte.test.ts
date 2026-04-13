@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
 import { QueryClient, dehydrate } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
-import BaseExample from './BaseExample.svelte'
+import Base from './Base.svelte'
 
 describe('HydrationBoundary', () => {
   let queryClient: QueryClient
@@ -30,7 +30,7 @@ describe('HydrationBoundary', () => {
   it('should hydrate queries to the cache on context', async () => {
     const dehydratedState = JSON.parse(stringifiedState)
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
         queryClient,
         dehydratedState,
