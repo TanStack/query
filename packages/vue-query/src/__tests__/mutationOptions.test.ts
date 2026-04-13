@@ -149,6 +149,82 @@ describe('mutationOptions', () => {
     expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
+  it('should return the number of fetching mutations when used with useIsMutating (getter without mutationKey in mutationOptions)', async () => {
+    const isMutatingArray: Array<number> = []
+    const mutationOpts = mutationOptions(() => ({
+      mutationFn: () => sleep(50).then(() => 'data'),
+    }))
+
+    const { mutate } = useMutation(mutationOpts)
+    const isMutating = useIsMutating()
+
+    isMutatingArray.push(isMutating.value)
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(0)
+    isMutatingArray.push(isMutating.value)
+    await vi.advanceTimersByTimeAsync(50)
+    isMutatingArray.push(isMutating.value)
+
+    expect(isMutatingArray).toEqual([0, 1, 0])
+  })
+
+  it('should return the number of fetching mutations when used with useIsMutating (getter)', async () => {
+    const isMutatingArray: Array<number> = []
+    const mutationOpts1 = mutationOptions(() => ({
+      mutationKey: ['key'],
+      mutationFn: () => sleep(50).then(() => 'data1'),
+    }))
+    const mutationOpts2 = mutationOptions(() => ({
+      mutationFn: () => sleep(50).then(() => 'data2'),
+    }))
+
+    const { mutate: mutate1 } = useMutation(mutationOpts1)
+    const { mutate: mutate2 } = useMutation(mutationOpts2)
+    const isMutating = useIsMutating()
+
+    isMutatingArray.push(isMutating.value)
+
+    mutate1()
+    mutate2()
+    await vi.advanceTimersByTimeAsync(0)
+    isMutatingArray.push(isMutating.value)
+    await vi.advanceTimersByTimeAsync(50)
+    isMutatingArray.push(isMutating.value)
+
+    expect(isMutatingArray).toEqual([0, 2, 0])
+  })
+
+  it('should return the number of fetching mutations when used with useIsMutating (getter, filter mutationOpts1.mutationKey)', async () => {
+    const isMutatingArray: Array<number> = []
+    const mutationOpts1 = mutationOptions(() => ({
+      mutationKey: ['key'],
+      mutationFn: () => sleep(50).then(() => 'data1'),
+    }))
+    const mutationOpts2 = mutationOptions(() => ({
+      mutationFn: () => sleep(50).then(() => 'data2'),
+    }))
+
+    const resolvedOpts1 = mutationOpts1()
+
+    const { mutate: mutate1 } = useMutation(mutationOpts1)
+    const { mutate: mutate2 } = useMutation(mutationOpts2)
+    const isMutating = useIsMutating({
+      mutationKey: resolvedOpts1.mutationKey,
+    })
+
+    isMutatingArray.push(isMutating.value)
+
+    mutate1()
+    mutate2()
+    await vi.advanceTimersByTimeAsync(0)
+    isMutatingArray.push(isMutating.value)
+    await vi.advanceTimersByTimeAsync(50)
+    isMutatingArray.push(isMutating.value)
+
+    expect(isMutatingArray).toEqual([0, 1, 0])
+  })
+
   it('should return the number of fetching mutations when used with queryClient.isMutating (with mutationKey in mutationOptions)', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = useQueryClient()
