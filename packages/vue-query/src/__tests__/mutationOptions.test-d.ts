@@ -295,5 +295,4 @@ describe('mutationOptions', () => {
     )
     expectTypeOf(mutation.data.value).toEqualTypeOf<string | undefined>()
   })
-
 })
