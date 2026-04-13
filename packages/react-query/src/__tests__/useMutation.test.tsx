@@ -99,6 +99,329 @@ describe('useMutation', () => {
     expect(queryByRole('heading')).toBeNull()
   })
 
+  it('should call mutate callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSuccess: () => {
+                callbacks.push('mutate.onSuccess')
+              },
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
+  })
+
+  it('should call mutateAsync callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSuccess: () => {
+              callbacks.push('mutateAsync.onSuccess')
+            },
+            onSettled: () => {
+              callbacks.push('mutateAsync.onSettled')
+            },
+          })
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onSuccess', 'mutateAsync.onSettled'])
+  })
+
+  it('should call mutate error callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onError: () => {
+                callbacks.push('mutate.onError')
+              },
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
+  })
+
+  it('should call mutateAsync error callbacks when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: async (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          try {
+            await mutateAsync('todo', {
+              onError: () => {
+                callbacks.push('mutateAsync.onError')
+              },
+              onSettled: () => {
+                callbacks.push('mutateAsync.onSettled')
+              },
+            })
+          } catch {}
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onError', 'mutateAsync.onSettled'])
+  })
+
+  it('should call only mutate onSuccess when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSuccess: () => {
+                callbacks.push('mutate.onSuccess')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onSuccess'])
+  })
+
+  it('should call only mutate onError when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onError: () => {
+                callbacks.push('mutate.onError')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onError'])
+  })
+
+  it('should call only mutate onSettled when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutate.onSettled'])
+  })
+
+  it('should call only mutateAsync onSuccess when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSuccess: () => {
+              callbacks.push('mutateAsync.onSuccess')
+            },
+          })
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onSuccess'])
+  })
+
+  it('should call only mutateAsync onError when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: async (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          try {
+            await mutateAsync('todo', {
+              onError: () => {
+                callbacks.push('mutateAsync.onError')
+              },
+            })
+          } catch {}
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onError'])
+  })
+
+  it('should call only mutateAsync onSettled when useMutation has no callbacks', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutateAsync } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          await mutateAsync('todo', {
+            onSettled: () => {
+              callbacks.push('mutateAsync.onSettled')
+            },
+          })
+        }, 0)
+      }, [mutateAsync])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['mutateAsync.onSettled'])
+  })
+
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     let count = 0
     const onSuccessMock = vi.fn()
