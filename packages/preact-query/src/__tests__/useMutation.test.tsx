@@ -1893,4 +1893,90 @@ describe('useMutation', () => {
       rendered.getByText('data: custom client, status: success'),
     ).toBeInTheDocument()
   })
+
+  it('should be able to chain mutateAsync calls sequentially', async () => {
+    function Page() {
+      const [result, setResult] = useState<string>('idle')
+
+      const createUserMutation = useMutation({
+        mutationFn: (name: string) => sleep(10).then(() => ({ id: '1', name })),
+      })
+
+      const updateProfileMutation = useMutation({
+        mutationFn: (userId: string) =>
+          sleep(10).then(() => `profile updated for ${userId}`),
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              const user = await createUserMutation.mutateAsync('John')
+              const profile = await updateProfileMutation.mutateAsync(user.id)
+              setResult(profile)
+            }}
+          >
+            chain
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /chain/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('result: profile updated for 1'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle error in chained mutateAsync calls', async () => {
+    function Page() {
+      const [result, setResult] = useState<string>('idle')
+
+      const createUserMutation = useMutation({
+        mutationFn: (_name: string) =>
+          sleep(10).then<{ id: string }>(() => {
+            throw new Error('create failed')
+          }),
+      })
+
+      const updateProfileMutation = useMutation({
+        mutationFn: (userId: string) =>
+          sleep(10).then(() => `profile updated for ${userId}`),
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              try {
+                const user = await createUserMutation.mutateAsync('John')
+                const profile = await updateProfileMutation.mutateAsync(user.id)
+                setResult(profile)
+              } catch (error) {
+                setResult(`error: ${(error as Error).message}`)
+              }
+            }}
+          >
+            chain
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /chain/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('result: error: create failed'),
+    ).toBeInTheDocument()
+  })
 })
