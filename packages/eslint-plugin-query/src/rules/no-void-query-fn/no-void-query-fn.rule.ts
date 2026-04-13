@@ -1,14 +1,10 @@
 import { ESLintUtils } from '@typescript-eslint/utils'
+import { TypeFlags } from 'typescript'
 import { ASTUtils } from '../../utils/ast-utils'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { getDocsUrl } from '../../utils/get-docs-url'
 import type { ParserServicesWithTypeInformation } from '@typescript-eslint/utils'
 import type { ExtraRuleDocs } from '../../types'
-
-const TypeFlags = {
-  Void: 16384,
-  Undefined: 32768,
-} as const
 
 export const name = 'no-void-query-fn'
 
