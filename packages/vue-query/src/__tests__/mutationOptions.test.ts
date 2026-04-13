@@ -35,6 +35,25 @@ describe('mutationOptions', () => {
     expect(mutationOptions(object)).toStrictEqual(object)
   })
 
+  it('should return the getter received as a parameter without any modification (with mutationKey in mutationOptions)', () => {
+    const getter = () =>
+      ({
+        mutationKey: ['key'],
+        mutationFn: () => sleep(10).then(() => 5),
+      }) as const
+
+    expect(mutationOptions(getter)).toBe(getter)
+  })
+
+  it('should return the getter received as a parameter without any modification (without mutationKey in mutationOptions)', () => {
+    const getter = () =>
+      ({
+        mutationFn: () => sleep(10).then(() => 5),
+      }) as const
+
+    expect(mutationOptions(getter)).toBe(getter)
+  })
+
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
     const isMutatingArray: Array<number> = []
     const mutationOpts = mutationOptions({
