@@ -1979,4 +1979,113 @@ describe('useMutation', () => {
       rendered.getByText('result: error: create failed'),
     ).toBeInTheDocument()
   })
+
+  it('should handle conditional logic based on mutate success or failure', async () => {
+    function Page() {
+      const [message, setMessage] = useState<string>('idle')
+
+      const submitMutation = useMutation({
+        mutationFn: async (shouldFail: boolean) => {
+          await sleep(10)
+          if (shouldFail) {
+            throw new Error('submission failed')
+          }
+          return 'submitted successfully'
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <button
+            onClick={() =>
+              submitMutation.mutate(false, {
+                onSuccess: (result) => setMessage(`success: ${result}`),
+                onError: (error) => setMessage(`error: ${error.message}`),
+              })
+            }
+          >
+            submit
+          </button>
+          <button
+            onClick={() =>
+              submitMutation.mutate(true, {
+                onSuccess: (result) => setMessage(`success: ${result}`),
+                onError: (error) => setMessage(`error: ${error.message}`),
+              })
+            }
+          >
+            submit fail
+          </button>
+          <div>message: {message}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('message: success: submitted successfully'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /submit fail/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('message: error: submission failed'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle conditional error with retry using mutate', async () => {
+    let attempt = 0
+
+    function Page() {
+      const [message, setMessage] = useState<string>('idle')
+
+      const submitMutation = useMutation({
+        mutationFn: async () => {
+          await sleep(10)
+          attempt++
+          if (attempt < 2) {
+            throw new Error('temporary failure')
+          }
+          return 'success'
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <button
+            onClick={() =>
+              submitMutation.mutate(undefined, {
+                onSuccess: (result) => setMessage(`result: ${result}`),
+                onError: () => setMessage('failed, retrying...'),
+              })
+            }
+          >
+            submit
+          </button>
+          <div>message: {message}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /submit/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('message: failed, retrying...'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /submit/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByText('message: result: success')).toBeInTheDocument()
+  })
 })
