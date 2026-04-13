@@ -54,6 +54,19 @@ describe('mutationOptions', () => {
     expect(mutationOptions(getter)).toBe(getter)
   })
 
+  it('should work when used with useMutation (getter without mutationKey in mutationOptions)', async () => {
+    const mutationOpts = mutationOptions(() => ({
+      mutationFn: () => sleep(10).then(() => 'data'),
+    }))
+
+    const { mutate, data } = useMutation(mutationOpts)
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(data.value).toEqual('data')
+  })
+
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
     const isMutatingArray: Array<number> = []
     const mutationOpts = mutationOptions({
@@ -147,6 +160,27 @@ describe('mutationOptions', () => {
     isMutatingArray.push(isMutating.value)
 
     expect(isMutatingArray).toEqual([0, 1, 0])
+  })
+
+  it('should return the number of fetching mutations when used with useIsMutating (getter with mutationKey in mutationOptions)', async () => {
+    const keyRef = ref('isMutatingGetter')
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: [keyRef.value],
+      mutationFn: () => sleep(10).then(() => 'data'),
+    }))
+
+    const { mutate } = useMutation(mutationOpts)
+    mutate()
+
+    const isMutating = useIsMutating({
+      mutationKey: [keyRef.value],
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isMutating.value).toEqual(1)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isMutating.value).toEqual(0)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter without mutationKey in mutationOptions)', async () => {
@@ -564,6 +598,25 @@ describe('mutationOptions', () => {
     expect(states.value).toEqual(['data1'])
   })
 
+  it('should return mutation states when used with useMutationState (getter with mutationKey in mutationOptions)', async () => {
+    const keyRef = ref('useMutationStateGetter')
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: [keyRef.value],
+      mutationFn: (params: string) => sleep(10).then(() => params),
+    }))
+
+    const { mutate } = useMutation(mutationOpts)
+    mutate('foo')
+
+    const states = useMutationState({
+      filters: { mutationKey: [keyRef.value], status: 'pending' },
+      select: (mutation) => mutation.state.variables,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(states.value).toEqual(['foo'])
+  })
+
   it('should return mutation states when used with useMutationState (getter without mutationKey in mutationOptions)', async () => {
     const mutationOpts = mutationOptions(() => ({
       mutationFn: () => sleep(10).then(() => 'data'),
@@ -630,59 +683,6 @@ describe('mutationOptions', () => {
     mutate2()
     await vi.advanceTimersByTimeAsync(10)
     expect(states.value).toEqual(['data1'])
-  })
-
-  it('should work with getter passed to mutationOptions when used with useIsMutating', async () => {
-    const keyRef = ref('isMutatingGetter')
-    const mutationOpts = mutationOptions(() => ({
-      mutationKey: [keyRef.value],
-      mutationFn: () => sleep(10).then(() => 'data'),
-    }))
-
-    const { mutate } = useMutation(mutationOpts)
-    mutate()
-
-    const isMutating = useIsMutating({
-      mutationKey: [keyRef.value],
-    })
-
-    await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating.value).toEqual(1)
-
-    await vi.advanceTimersByTimeAsync(10)
-    expect(isMutating.value).toEqual(0)
-  })
-
-  it('should work with getter passed to mutationOptions when used with useMutationState', async () => {
-    const keyRef = ref('useMutationStateGetter')
-    const mutationOpts = mutationOptions(() => ({
-      mutationKey: [keyRef.value],
-      mutationFn: (params: string) => sleep(10).then(() => params),
-    }))
-
-    const { mutate } = useMutation(mutationOpts)
-    mutate('foo')
-
-    const states = useMutationState({
-      filters: { mutationKey: [keyRef.value], status: 'pending' },
-      select: (mutation) => mutation.state.variables,
-    })
-
-    await vi.advanceTimersByTimeAsync(0)
-    expect(states.value).toEqual(['foo'])
-  })
-
-  it('should work with getter passed to mutationOptions without mutationKey', async () => {
-    const mutationOpts = mutationOptions(() => ({
-      mutationFn: () => sleep(10).then(() => 'data'),
-    }))
-
-    const { mutate, data } = useMutation(mutationOpts)
-
-    mutate()
-    await vi.advanceTimersByTimeAsync(10)
-
-    expect(data.value).toEqual('data')
   })
 
   it('should return data in a shallow ref when shallow is true', async () => {
