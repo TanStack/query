@@ -564,6 +564,74 @@ describe('mutationOptions', () => {
     expect(states.value).toEqual(['data1'])
   })
 
+  it('should return mutation states when used with useMutationState (getter without mutationKey in mutationOptions)', async () => {
+    const mutationOpts = mutationOptions(() => ({
+      mutationFn: () => sleep(10).then(() => 'data'),
+    }))
+
+    const { mutate } = useMutation(mutationOpts)
+    const states = useMutationState({
+      filters: { status: 'success' },
+      select: (mutation) => mutation.state.data,
+    })
+
+    expect(states.value).toEqual([])
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(states.value).toEqual(['data'])
+  })
+
+  it('should return mutation states when used with useMutationState (getter)', async () => {
+    const mutationOpts1 = mutationOptions(() => ({
+      mutationKey: ['mutation'],
+      mutationFn: () => sleep(10).then(() => 'data1'),
+    }))
+    const mutationOpts2 = mutationOptions(() => ({
+      mutationFn: () => sleep(10).then(() => 'data2'),
+    }))
+
+    const { mutate: mutate1 } = useMutation(mutationOpts1)
+    const { mutate: mutate2 } = useMutation(mutationOpts2)
+    const states = useMutationState({
+      filters: { status: 'success' },
+      select: (mutation) => mutation.state.data,
+    })
+
+    expect(states.value).toEqual([])
+
+    mutate1()
+    mutate2()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(states.value).toEqual(['data1', 'data2'])
+  })
+
+  it('should return mutation states when used with useMutationState (getter, filter mutationOpts1.mutationKey)', async () => {
+    const mutationOpts1 = mutationOptions(() => ({
+      mutationKey: ['mutation'],
+      mutationFn: () => sleep(10).then(() => 'data1'),
+    }))
+    const mutationOpts2 = mutationOptions(() => ({
+      mutationFn: () => sleep(10).then(() => 'data2'),
+    }))
+
+    const resolvedOpts1 = mutationOpts1()
+
+    const { mutate: mutate1 } = useMutation(mutationOpts1)
+    const { mutate: mutate2 } = useMutation(mutationOpts2)
+    const states = useMutationState({
+      filters: { mutationKey: resolvedOpts1.mutationKey, status: 'success' },
+      select: (mutation) => mutation.state.data,
+    })
+
+    expect(states.value).toEqual([])
+
+    mutate1()
+    mutate2()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(states.value).toEqual(['data1'])
+  })
+
   it('should work with getter passed to mutationOptions when used with useIsMutating', async () => {
     const keyRef = ref('isMutatingGetter')
     const mutationOpts = mutationOptions(() => ({
