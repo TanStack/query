@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isReactive, ref } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
@@ -715,5 +715,39 @@ describe('mutationOptions', () => {
 
     expect(data.value).toEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
+  })
+
+  it('should reactively update mutationKey when ref changes in getter', async () => {
+    const key = queryKey()
+    const keyRef = ref('key01')
+    const fnMock = vi.fn((params: string) => sleep(10).then(() => params))
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: [...key, keyRef.value],
+      mutationFn: fnMock,
+    }))
+
+    const mutation = useMutation(mutationOpts)
+
+    mutation.mutate('data')
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fnMock).toHaveBeenCalledTimes(1)
+    expect(fnMock).toHaveBeenNthCalledWith(
+      1,
+      'data',
+      expect.objectContaining({ mutationKey: [...key, 'key01'] }),
+    )
+
+    keyRef.value = 'key02'
+    await vi.advanceTimersByTimeAsync(0)
+    mutation.mutate('data')
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fnMock).toHaveBeenCalledTimes(2)
+    expect(fnMock).toHaveBeenNthCalledWith(
+      2,
+      'data',
+      expect.objectContaining({ mutationKey: [...key, 'key02'] }),
+    )
   })
 })
