@@ -700,4 +700,20 @@ describe('mutationOptions', () => {
     expect(data.value).toEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
   })
+
+  it('should return data in a shallow ref when shallow is true (getter)', async () => {
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: ['key'],
+      mutationFn: () => sleep(10).then(() => ({ nested: { count: 0 } })),
+      shallow: true,
+    }))
+
+    const { mutate, data } = useMutation(mutationOpts)
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(data.value).toEqual({ nested: { count: 0 } })
+    expect(isReactive(data.value?.nested)).toBe(false)
+  })
 })
