@@ -6,7 +6,7 @@ import { sleep } from '@tanstack/query-test-utils'
 import { createMutation } from '../../src/index.js'
 import { withEffectRoot } from '../utils.svelte.js'
 import ResetExample from './ResetExample.svelte'
-import OnSuccessExample from './OnSuccessExample.svelte'
+import SuccessExample from './SuccessExample.svelte'
 import FailureExample from './FailureExample.svelte'
 
 describe('createMutation', () => {
@@ -42,7 +42,7 @@ describe('createMutation', () => {
     const onSuccessMock = vi.fn()
     const onSettledMock = vi.fn()
 
-    const rendered = render(OnSuccessExample, {
+    const rendered = render(SuccessExample, {
       props: {
         queryClient,
         onSuccessMock,
