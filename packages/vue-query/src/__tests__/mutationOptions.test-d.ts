@@ -243,4 +243,56 @@ describe('mutationOptions', () => {
     const resolved = options()
     expectTypeOf(resolved.mutationFn).not.toBeUndefined()
   })
+
+  it('should error if mutationFn return type mismatches TData (getter)', () => {
+    assertType(
+      mutationOptions<number>(() => ({
+        // @ts-expect-error this is a good error, because return type is string, not number
+        mutationFn: async () => Promise.resolve('wrong return'),
+      })),
+    )
+  })
+
+  it('should infer all types when not explicitly provided (getter)', () => {
+    expectTypeOf(
+      mutationOptions(() => ({
+        mutationFn: (id: string) => Promise.resolve(id.length),
+        mutationKey: ['key'],
+        onSuccess: (data) => {
+          expectTypeOf(data).toEqualTypeOf<number>()
+        },
+      })),
+    ).toEqualTypeOf<
+      () => WithRequired<
+        MutationOptions<number, DefaultError, string, unknown>,
+        'mutationKey'
+      >
+    >()
+    expectTypeOf(
+      mutationOptions(() => ({
+        mutationFn: (id: string) => Promise.resolve(id.length),
+        onSuccess: (data) => {
+          expectTypeOf(data).toEqualTypeOf<number>()
+        },
+      })),
+    ).toEqualTypeOf<
+      () => Omit<
+        MutationOptions<number, DefaultError, string, unknown>,
+        'mutationKey'
+      >
+    >()
+  })
+
+  it('should work when used with useMutation (getter)', () => {
+    const mutation = useMutation(
+      mutationOptions(() => ({
+        mutationKey: ['key'],
+        mutationFn: () => Promise.resolve('data'),
+        onSuccess: (data) => {
+          expectTypeOf(data).toEqualTypeOf<string>()
+        },
+      })),
+    )
+    expectTypeOf(mutation.data.value).toEqualTypeOf<string | undefined>()
+  })
 })
