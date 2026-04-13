@@ -435,10 +435,7 @@ describe('useMutation', () => {
 
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(callbacks).toEqual([
-      'useMutation.onError',
-      'mutateAsync.onError',
-    ])
+    expect(callbacks).toEqual(['useMutation.onError', 'mutateAsync.onError'])
   })
 
   it('should be able to call `onSettled` callback after mutateAsync', async () => {
