@@ -1898,8 +1898,7 @@ describe('useMutation', () => {
       const [result, setResult] = React.useState<string>('idle')
 
       const createUserMutation = useMutation({
-        mutationFn: (name: string) =>
-          sleep(10).then(() => ({ id: '1', name })),
+        mutationFn: (name: string) => sleep(10).then(() => ({ id: '1', name })),
       })
 
       const updateProfileMutation = useMutation({
@@ -1975,6 +1974,8 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /chain/i }))
     await vi.advanceTimersByTimeAsync(11)
 
-    expect(rendered.getByText('result: error: create failed')).toBeInTheDocument()
+    expect(
+      rendered.getByText('result: error: create failed'),
+    ).toBeInTheDocument()
   })
 })
