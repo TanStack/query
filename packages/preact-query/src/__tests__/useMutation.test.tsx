@@ -131,10 +131,7 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(callbacks).toEqual([
-      'mutate.onSuccess',
-      'mutate.onSettled',
-    ])
+    expect(callbacks).toEqual(['mutate.onSuccess', 'mutate.onSettled'])
   })
 
   it('should call mutateAsync callbacks when useMutation has no callbacks', async () => {
@@ -205,10 +202,7 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(callbacks).toEqual([
-      'mutate.onError',
-      'mutate.onSettled',
-    ])
+    expect(callbacks).toEqual(['mutate.onError', 'mutate.onSettled'])
   })
 
   it('should call mutateAsync error callbacks when useMutation has no callbacks', async () => {
@@ -244,10 +238,7 @@ describe('useMutation', () => {
 
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(callbacks).toEqual([
-      'mutateAsync.onError',
-      'mutateAsync.onSettled',
-    ])
+    expect(callbacks).toEqual(['mutateAsync.onError', 'mutateAsync.onSettled'])
   })
 
   it('should call only mutate onSuccess when useMutation has no callbacks', async () => {

@@ -161,7 +161,10 @@ describe('useMutation', () => {
 
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(callbacks).toEqual(['mutateAsync.onSuccess', 'mutateAsync.onSettled'])
+    expect(callbacks).toEqual([
+      'mutateAsync.onSuccess',
+      'mutateAsync.onSettled',
+    ])
   })
 
   it('should call mutate error callbacks when useMutation has no callbacks', async () => {
