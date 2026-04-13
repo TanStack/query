@@ -2088,4 +2088,123 @@ describe('useMutation', () => {
 
     expect(rendered.getByText('message: result: success')).toBeInTheDocument()
   })
+
+  it('should support optimistic update on success', async () => {
+    function Page() {
+      const [items, setItems] = useState<Array<string>>([
+        'item1',
+        'item2',
+        'item3',
+      ])
+
+      const [successMessage, setSuccessMessage] = useState<string>('')
+
+      const deleteMutation = useMutation({
+        mutationFn: (item: string) => sleep(10).then(() => item),
+        onMutate: (item) => {
+          const previousItems = [...items]
+          setItems((prev) => prev.filter((i) => i !== item))
+          return { previousItems }
+        },
+        onSuccess: (deletedItem) => {
+          setSuccessMessage(`deleted: ${deletedItem}`)
+        },
+        onError: (_error, _item, context) => {
+          if (context?.previousItems) {
+            setItems(context.previousItems)
+          }
+        },
+      })
+
+      return (
+        <div>
+          {items.map((item) => (
+            <button key={item} onClick={() => deleteMutation.mutate(item)}>
+              delete {item}
+            </button>
+          ))}
+          <div>items: {items.join(', ')}</div>
+          <div>success: {successMessage || 'none'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('items: item1, item2, item3')).toBeInTheDocument()
+    expect(rendered.getByText('success: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /delete item2/i }))
+
+    // optimistic update: item2 removed immediately
+    expect(rendered.getByText('items: item1, item3')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    // success: item2 stays removed and onSuccess called
+    expect(rendered.getByText('items: item1, item3')).toBeInTheDocument()
+    expect(rendered.getByText('success: deleted: item2')).toBeInTheDocument()
+  })
+
+  it('should support optimistic update and rollback on error', async () => {
+    function Page() {
+      const [items, setItems] = useState<Array<string>>([
+        'item1',
+        'item2',
+        'item3',
+      ])
+
+      const [message, setMessage] = useState<string>('')
+
+      const deleteMutation = useMutation({
+        mutationFn: (item: string) =>
+          sleep(10).then(() => {
+            throw new Error(`Failed to delete ${item}`)
+          }),
+        onMutate: (item) => {
+          const previousItems = [...items]
+          setItems((prev) => prev.filter((i) => i !== item))
+          return { previousItems }
+        },
+        onSuccess: (deletedItem) => {
+          setMessage(`deleted: ${deletedItem}`)
+        },
+        onError: (_error, _item, context) => {
+          setMessage('rollback')
+          if (context?.previousItems) {
+            setItems(context.previousItems)
+          }
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          {items.map((item) => (
+            <button key={item} onClick={() => deleteMutation.mutate(item)}>
+              delete {item}
+            </button>
+          ))}
+          <div>items: {items.join(', ')}</div>
+          <div>message: {message || 'none'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    expect(rendered.getByText('items: item1, item2, item3')).toBeInTheDocument()
+    expect(rendered.getByText('message: none')).toBeInTheDocument()
+
+    fireEvent.click(rendered.getByRole('button', { name: /delete item2/i }))
+
+    // optimistic update: item2 removed immediately
+    expect(rendered.getByText('items: item1, item3')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+
+    // rollback: item2 restored after error, onSuccess not called
+    expect(rendered.getByText('items: item1, item2, item3')).toBeInTheDocument()
+    expect(rendered.getByText('message: rollback')).toBeInTheDocument()
+  })
 })
