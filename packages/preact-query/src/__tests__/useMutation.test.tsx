@@ -2027,12 +2027,16 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /^submit$/i }))
     await vi.advanceTimersByTimeAsync(11)
 
-    expect(rendered.getByText('message: success: submitted successfully')).toBeInTheDocument()
+    expect(
+      rendered.getByText('message: success: submitted successfully'),
+    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /submit fail/i }))
     await vi.advanceTimersByTimeAsync(11)
 
-    expect(rendered.getByText('message: error: submission failed')).toBeInTheDocument()
+    expect(
+      rendered.getByText('message: error: submission failed'),
+    ).toBeInTheDocument()
   })
 
   it('should handle conditional error with retry using mutate', async () => {
@@ -2075,7 +2079,9 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /submit/i }))
     await vi.advanceTimersByTimeAsync(11)
 
-    expect(rendered.getByText('message: failed, retrying...')).toBeInTheDocument()
+    expect(
+      rendered.getByText('message: failed, retrying...'),
+    ).toBeInTheDocument()
 
     fireEvent.click(rendered.getByRole('button', { name: /submit/i }))
     await vi.advanceTimersByTimeAsync(11)
