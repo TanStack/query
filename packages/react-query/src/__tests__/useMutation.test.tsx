@@ -263,6 +263,111 @@ describe('useMutation', () => {
     )
   })
 
+  it('should be able to call `onSuccess` callback after successful mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+        onSuccess: () => {
+          callbacks.push('useMutation.onSuccess')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSuccess: () => {
+                callbacks.push('mutate.onSuccess')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['useMutation.onSuccess', 'mutate.onSuccess'])
+  })
+
+  it('should be able to call `onError` callback after failed mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (_text: string) =>
+          sleep(10).then(() => {
+            throw new Error('oops')
+          }),
+        onError: () => {
+          callbacks.push('useMutation.onError')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onError: () => {
+                callbacks.push('mutate.onError')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['useMutation.onError', 'mutate.onError'])
+  })
+
+  it('should be able to call `onSettled` callback after mutate', async () => {
+    const callbacks: Array<string> = []
+
+    function Page() {
+      const { mutate } = useMutation({
+        mutationFn: (text: string) => sleep(10).then(() => text),
+        onSettled: () => {
+          callbacks.push('useMutation.onSettled')
+        },
+      })
+
+      return (
+        <button
+          onClick={() =>
+            mutate('todo', {
+              onSettled: () => {
+                callbacks.push('mutate.onSettled')
+              },
+            })
+          }
+        >
+          mutate
+        </button>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(callbacks).toEqual(['useMutation.onSettled', 'mutate.onSettled'])
+  })
+
   it('should be able to override the useMutation success callbacks', async () => {
     const callbacks: Array<string> = []
 
