@@ -294,10 +294,7 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(callbacks).toEqual([
-      'useMutation.onSuccess',
-      'mutate.onSuccess',
-    ])
+    expect(callbacks).toEqual(['useMutation.onSuccess', 'mutate.onSuccess'])
   })
 
   it('should be able to call `onError` callback after failed mutate', async () => {
@@ -334,10 +331,7 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(callbacks).toEqual([
-      'useMutation.onError',
-      'mutate.onError',
-    ])
+    expect(callbacks).toEqual(['useMutation.onError', 'mutate.onError'])
   })
 
   it('should be able to call `onSettled` callback after mutate', async () => {
@@ -371,10 +365,7 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(callbacks).toEqual([
-      'useMutation.onSettled',
-      'mutate.onSettled',
-    ])
+    expect(callbacks).toEqual(['useMutation.onSettled', 'mutate.onSettled'])
   })
 
   it('should be able to override the useMutation success callbacks', async () => {
