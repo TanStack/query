@@ -783,6 +783,83 @@ describe('useMutation', () => {
     consoleMock.mockRestore()
   })
 
+  it('should not throw an error when throwOnError is set to false', async () => {
+    function Page() {
+      const { mutate, error } = useMutation<string, Error>({
+        mutationFn: () =>
+          sleep(10).then(() => {
+            throw new Error('Expected mock error')
+          }),
+        throwOnError: false,
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+          <div>error: {error?.message ?? 'null'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
+  })
+
+  it('should not throw an error when throwOnError is a function that returns false', async () => {
+    function Page() {
+      const { mutate, error } = useMutation<string, Error>({
+        mutationFn: () =>
+          sleep(10).then(() => {
+            throw new Error('Expected mock error')
+          }),
+        throwOnError: () => false,
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+          <div>error: {error?.message ?? 'null'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
+  })
+
+  it('should not throw an error when throwOnError is not set', async () => {
+    function Page() {
+      const { mutate, error } = useMutation<string, Error>({
+        mutationFn: () =>
+          sleep(10).then(() => {
+            throw new Error('Expected mock error')
+          }),
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+          <div>error: {error?.message ?? 'null'}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(rendered.getByText('error: Expected mock error')).toBeInTheDocument()
+  })
+
   it('should pass meta to mutation', async () => {
     const errorMock = vi.fn()
     const successMock = vi.fn()
