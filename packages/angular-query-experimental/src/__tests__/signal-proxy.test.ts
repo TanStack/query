@@ -9,7 +9,7 @@ import {
   signal,
   untracked,
 } from '@angular/core'
-import { beforeEach, describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { TestBed } from '@angular/core/testing'
 import { signalProxy } from '../signal-proxy'
 
@@ -22,24 +22,24 @@ describe('signalProxy', () => {
   })
   const proxy = signalProxy(inputSignal, ['fn'])
 
-  test('should have computed fields', () => {
+  it('should have computed fields', () => {
     expect(proxy.baz()).toEqual('qux')
     expect(isSignal(proxy.baz)).toBe(true)
   })
 
-  test('should pass through functions as-is', () => {
+  it('should pass through functions as-is', () => {
     expect(proxy.fn()).toEqual('bar')
     expect(isSignal(proxy.fn)).toBe(false)
   })
 
-  test('supports "in" operator', () => {
+  it('supports "in" operator', () => {
     expect('baz' in proxy).toBe(true)
     expect('falsy' in proxy).toBe(true)
     expect('zero' in proxy).toBe(true)
     expect('foo' in proxy).toBe(false)
   })
 
-  test('supports "Object.keys"', () => {
+  it('supports "Object.keys"', () => {
     expect(Object.keys(proxy)).toEqual(['fn', 'baz', 'falsy', 'zero'])
   })
 
@@ -67,7 +67,7 @@ describe('signalProxy', () => {
       })
     })
 
-    test('should generate fixed fields after initial change detection run', async () => {
+    it('should generate fixed fields after initial change detection run', async () => {
       const number = signal(1)
       const fixture = TestBed.createComponent(TestComponent, {
         bindings: [inputBinding('number', number.asReadonly())],
@@ -84,7 +84,7 @@ describe('signalProxy', () => {
       expect(instance.shortFn).toBe(instance.proxy.fn)
     })
 
-    test('should reflect updates on the proxy', async () => {
+    it('should reflect updates on the proxy', async () => {
       const number = signal(0)
       const fixture = TestBed.createComponent(TestComponent, {
         bindings: [inputBinding('number', number.asReadonly())],

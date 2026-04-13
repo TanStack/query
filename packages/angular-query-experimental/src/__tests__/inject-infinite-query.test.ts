@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ChangeDetectionStrategy, Component, Injector } from '@angular/core'
 import { sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectInfiniteQuery } from '..'
@@ -18,7 +18,7 @@ describe('injectInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should properly execute infinite query', async () => {
+  it('should properly execute infinite query', async () => {
     @Component({
       selector: 'app-test',
       template: '',
@@ -67,7 +67,7 @@ describe('injectInfiniteQuery', () => {
   })
 
   describe('injection context', () => {
-    test('throws NG0203 with descriptive error outside injection context', () => {
+    it('throws NG0203 with descriptive error outside injection context', () => {
       expect(() => {
         injectInfiniteQuery(() => ({
           queryKey: ['injectionContextError'],
@@ -79,7 +79,7 @@ describe('injectInfiniteQuery', () => {
       }).toThrowError(/NG0203(.*?)injectInfiniteQuery/)
     })
 
-    test('can be used outside injection context when passing an injector', () => {
+    it('can be used outside injection context when passing an injector', () => {
       const injector = TestBed.inject(Injector)
 
       // Call injectInfiniteQuery directly outside any component

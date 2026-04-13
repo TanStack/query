@@ -18,13 +18,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing'
 import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  expectTypeOf,
-  test,
-  vi,
+  afterEach, beforeEach, describe, expect, expectTypeOf, it, vi,
 } from 'vitest'
 import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -57,7 +51,7 @@ describe('injectQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should return the correct types', () => {
+  it('should return the correct types', () => {
     const key = queryKey()
 
     @Component({
@@ -264,7 +258,7 @@ describe('injectQuery', () => {
     >()
   })
 
-  test('should return pending status initially', () => {
+  it('should return pending status initially', () => {
     @Component({
       selector: 'app-test',
       template: '',
@@ -288,7 +282,7 @@ describe('injectQuery', () => {
     expect(query.isFetched()).toBe(false)
   })
 
-  test('should resolve to success and update signal: injectQuery()', async () => {
+  it('should resolve to success and update signal: injectQuery()', async () => {
     @Component({
       selector: 'app-test',
       template: '',
@@ -314,7 +308,7 @@ describe('injectQuery', () => {
     expect(query.isSuccess()).toBe(true)
   })
 
-  test('should reject and update signal', async () => {
+  it('should reject and update signal', async () => {
     @Component({
       selector: 'app-test',
       template: '',
@@ -344,7 +338,7 @@ describe('injectQuery', () => {
     expect(query.failureReason()).toMatchObject({ message: 'Some error' })
   })
 
-  test('should update query on options contained signal change', async () => {
+  it('should update query on options contained signal change', async () => {
     const key = signal(['key6', 'key7'])
     const spy = vi.fn(() => sleep(10).then(() => 'Some data'))
 
@@ -385,7 +379,7 @@ describe('injectQuery', () => {
     })
   })
 
-  test('should only run query once enabled signal is set to true', async () => {
+  it('should only run query once enabled signal is set to true', async () => {
     const spy = vi.fn(() => sleep(10).then(() => 'Some data'))
     const enabled = signal(false)
 
@@ -418,7 +412,7 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('success')
   })
 
-  test('should properly execute dependant queries', async () => {
+  it('should properly execute dependant queries', async () => {
     const dependentQueryFn = vi
       .fn()
       .mockImplementation(() => sleep(1000).then(() => 'Some data'))
@@ -466,7 +460,7 @@ describe('injectQuery', () => {
     )
   })
 
-  test('should use the current value for the queryKey when refetch is called', async () => {
+  it('should use the current value for the queryKey when refetch is called', async () => {
     const fetchFn = vi.fn(() => sleep(10).then(() => 'Some data'))
     const keySignal = signal('key11')
 
@@ -517,7 +511,7 @@ describe('injectQuery', () => {
     await vi.advanceTimersByTimeAsync(11)
   })
 
-  test('should support selection function with select', async () => {
+  it('should support selection function with select', async () => {
     const app = TestBed.inject(ApplicationRef)
 
     @Component({
@@ -548,7 +542,7 @@ describe('injectQuery', () => {
   })
 
   describe('throwOnError', () => {
-    test('should evaluate throwOnError when query is expected to throw', async () => {
+    it('should evaluate throwOnError when query is expected to throw', async () => {
       const boundaryFn = vi.fn()
 
       @Component({
@@ -580,7 +574,7 @@ describe('injectQuery', () => {
       )
     })
 
-    test('should throw when throwOnError is true', async () => {
+    it('should throw when throwOnError is true', async () => {
       const zone = TestBed.inject(NgZone)
       const zoneErrorPromise = new Promise<Error>((resolve) => {
         const sub = zone.onError.subscribe((error) => {
@@ -624,7 +618,7 @@ describe('injectQuery', () => {
       }
     })
 
-    test('should throw when throwOnError function returns true', async () => {
+    it('should throw when throwOnError function returns true', async () => {
       const zone = TestBed.inject(NgZone)
       const zoneErrorPromise = new Promise<Error>((resolve) => {
         const sub = zone.onError.subscribe((error) => {
@@ -669,7 +663,7 @@ describe('injectQuery', () => {
     })
   })
 
-  test('should set state to error when queryFn returns reject promise', async () => {
+  it('should set state to error when queryFn returns reject promise', async () => {
     @Component({
       selector: 'app-test',
       template: '',
@@ -695,7 +689,7 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('error')
   })
 
-  test('should render with required signal inputs', async () => {
+  it('should render with required signal inputs', async () => {
     @Component({
       selector: 'app-fake',
       template: `{{ query.data() }}`,
@@ -722,7 +716,7 @@ describe('injectQuery', () => {
     expect(result).toEqual('signal-input-required-test')
   })
 
-  test('should support aliasing query.data on required signal inputs', async () => {
+  it('should support aliasing query.data on required signal inputs', async () => {
     @Component({
       selector: 'app-fake',
       template: `{{ data() }}`,
@@ -751,7 +745,7 @@ describe('injectQuery', () => {
     expect(result).toEqual('signal-input-alias-test')
   })
 
-  test('should allow reading the query data on effect registered before injection', () => {
+  it('should allow reading the query data on effect registered before injection', () => {
     const spy = vi.fn()
     @Component({
       selector: 'app-test',
@@ -774,7 +768,7 @@ describe('injectQuery', () => {
     expect(spy).toHaveBeenCalledWith(undefined)
   })
 
-  test('should render with an initial value for input signal if available before change detection', async () => {
+  it('should render with an initial value for input signal if available before change detection', async () => {
     const key1 = queryKey() as [string]
     const key2 = queryKey() as [string]
     queryClient.setQueryData(key1, 'value 1')
@@ -815,7 +809,7 @@ describe('injectQuery', () => {
     expect(query.data()).toEqual('value 2')
   })
 
-  test('should allow reading the query data on component ngOnInit with required signal input', async () => {
+  it('should allow reading the query data on component ngOnInit with required signal input', async () => {
     const spy = vi.fn()
     @Component({
       selector: 'app-test',
@@ -857,7 +851,7 @@ describe('injectQuery', () => {
     expect(instance.initialStatus).toEqual('pending')
   })
 
-  test('should update query data on the same macro task when query data changes', async () => {
+  it('should update query data on the same macro task when query data changes', async () => {
     const query = TestBed.runInInjectionContext(() =>
       injectQuery(() => ({
         queryKey: ['test'],
@@ -877,7 +871,7 @@ describe('injectQuery', () => {
     expect(query.data()).toBe('new data')
   })
 
-  test('should pause fetching while restoring and fetch once restoring is disabled', async () => {
+  it('should pause fetching while restoring and fetch once restoring is disabled', async () => {
     const isRestoring = signal(true)
     const fetchSpy = vi.fn(() => sleep(10).then(() => 'restored-data'))
 
@@ -925,7 +919,7 @@ describe('injectQuery', () => {
   })
 
   describe('injection context', () => {
-    test('throws NG0203 with descriptive error outside injection context', () => {
+    it('throws NG0203 with descriptive error outside injection context', () => {
       expect(() => {
         injectQuery(() => ({
           queryKey: ['injectionContextError'],
@@ -934,7 +928,7 @@ describe('injectQuery', () => {
       }).toThrowError(/NG0203(.*?)injectQuery/)
     })
 
-    test('can be used outside injection context when passing an injector', () => {
+    it('can be used outside injection context when passing an injector', () => {
       const injector = TestBed.inject(Injector)
 
       @Component({
@@ -961,7 +955,7 @@ describe('injectQuery', () => {
       expect(query.status()).toBe('pending')
     })
 
-    test('should complete queries before whenStable() resolves', async () => {
+    it('should complete queries before whenStable() resolves', async () => {
       const app = TestBed.inject(ApplicationRef)
 
       @Component({
@@ -993,7 +987,7 @@ describe('injectQuery', () => {
       expect(query.data()).toBe('test data')
     })
 
-    test('should complete HttpClient-based queries before whenStable() resolves', async () => {
+    it('should complete HttpClient-based queries before whenStable() resolves', async () => {
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
         providers: [
@@ -1048,7 +1042,7 @@ describe('injectQuery', () => {
       httpTestingController.verify()
     })
 
-    test('should handle synchronous queryFn with staleTime', async () => {
+    it('should handle synchronous queryFn with staleTime', async () => {
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
         providers: [
@@ -1099,7 +1093,7 @@ describe('injectQuery', () => {
       expect(component.callCount).toBe(2)
     })
 
-    test('should handle enabled/disabled transitions with synchronous queryFn', async () => {
+    it('should handle enabled/disabled transitions with synchronous queryFn', async () => {
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
         providers: [
@@ -1154,7 +1148,7 @@ describe('injectQuery', () => {
       expect(component.callCount).toBe(1)
     })
 
-    test('should handle query invalidation with synchronous data', async () => {
+    it('should handle query invalidation with synchronous data', async () => {
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
         providers: [

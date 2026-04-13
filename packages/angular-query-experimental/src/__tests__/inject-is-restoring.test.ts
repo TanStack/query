@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { Injector, provideZonelessChangeDetection, signal } from '@angular/core'
 import {
   QueryClient,
@@ -11,7 +11,7 @@ import {
 describe('injectIsRestoring', () => {
   let queryClient: QueryClient
 
-  test('returns false by default when provideIsRestoring is not used', () => {
+  it('returns false by default when provideIsRestoring is not used', () => {
     queryClient = new QueryClient()
 
     TestBed.configureTestingModule({
@@ -28,7 +28,7 @@ describe('injectIsRestoring', () => {
     expect(isRestoring()).toBe(false)
   })
 
-  test('returns provided signal value when provideIsRestoring is used', () => {
+  it('returns provided signal value when provideIsRestoring is used', () => {
     queryClient = new QueryClient()
     const restoringSignal = signal(true)
 
@@ -47,7 +47,7 @@ describe('injectIsRestoring', () => {
     expect(isRestoring()).toBe(true)
   })
 
-  test('can be used outside injection context when passing an injector', () => {
+  it('can be used outside injection context when passing an injector', () => {
     queryClient = new QueryClient()
 
     TestBed.configureTestingModule({
@@ -64,7 +64,7 @@ describe('injectIsRestoring', () => {
     expect(isRestoring()).toBe(false)
   })
 
-  test('throws NG0203 with descriptive error outside injection context', () => {
+  it('throws NG0203 with descriptive error outside injection context', () => {
     expect(() => {
       injectIsRestoring()
     }).toThrow(/NG0203(.*?)injectIsRestoring/)

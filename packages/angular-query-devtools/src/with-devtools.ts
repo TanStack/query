@@ -5,12 +5,12 @@ import {
   InjectionToken,
   Injector,
   PLATFORM_ID,
+  afterNextRender,
   computed,
   effect,
   inject,
   isDevMode,
   runInInjectionContext,
-  afterNextRender,
 } from '@angular/core'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { queryFeature } from '@tanstack/angular-query-experimental'

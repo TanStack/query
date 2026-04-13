@@ -13,7 +13,7 @@ import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
 import { sleep } from '@tanstack/query-test-utils'
 import { firstValueFrom } from 'rxjs'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import { expectSignals } from './test-utils'
 
@@ -35,7 +35,7 @@ describe('injectMutation', () => {
     vi.useRealTimers()
   })
 
-  test('should be in idle state initially', () => {
+  it('should be in idle state initially', () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
         mutationFn: (params) => sleep(0).then(() => params),
@@ -50,7 +50,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('should change state after invoking mutate', async () => {
+  it('should change state after invoking mutate', async () => {
     const result = 'Mock data'
 
     const mutation = TestBed.runInInjectionContext(() => {
@@ -74,7 +74,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('should return error when request fails', async () => {
+  it('should return error when request fails', async () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
         mutationFn: () =>
@@ -96,7 +96,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('should return data when request succeeds', async () => {
+  it('should return data when request succeeds', async () => {
     const result = 'Mock data'
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
@@ -118,7 +118,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('reactive options should update mutation', () => {
+  it('reactive options should update mutation', () => {
     const mutationCache = queryClient.getMutationCache()
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
@@ -139,7 +139,7 @@ describe('injectMutation', () => {
     expect(mutations?.options.mutationKey).toEqual(['2'])
   })
 
-  test('should reset state after invoking mutation.reset', async () => {
+  it('should reset state after invoking mutation.reset', async () => {
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
         mutationFn: () =>
@@ -172,7 +172,7 @@ describe('injectMutation', () => {
       vi.clearAllMocks()
     })
 
-    test('should call onMutate when passed as an option', async () => {
+    it('should call onMutate when passed as an option', async () => {
       const onMutate = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
@@ -188,7 +188,7 @@ describe('injectMutation', () => {
       expect(onMutate).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onError when passed as an option', async () => {
+    it('should call onError when passed as an option', async () => {
       const onError = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
@@ -205,7 +205,7 @@ describe('injectMutation', () => {
       expect(onError).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onSuccess when passed as an option', async () => {
+    it('should call onSuccess when passed as an option', async () => {
       const onSuccess = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
@@ -221,7 +221,7 @@ describe('injectMutation', () => {
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onSettled when passed as an option', async () => {
+    it('should call onSettled when passed as an option', async () => {
       const onSettled = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
@@ -237,7 +237,7 @@ describe('injectMutation', () => {
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onError when passed as an argument of mutate function', async () => {
+    it('should call onError when passed as an argument of mutate function', async () => {
       const onError = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
@@ -253,7 +253,7 @@ describe('injectMutation', () => {
       expect(onError).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onSuccess when passed as an argument of mutate function', async () => {
+    it('should call onSuccess when passed as an argument of mutate function', async () => {
       const onSuccess = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
@@ -268,7 +268,7 @@ describe('injectMutation', () => {
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onSettled when passed as an argument of mutate function', async () => {
+    it('should call onSettled when passed as an argument of mutate function', async () => {
       const onSettled = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
@@ -283,7 +283,7 @@ describe('injectMutation', () => {
       expect(onSettled).toHaveBeenCalledTimes(1)
     })
 
-    test('should fire both onSettled functions', async () => {
+    it('should fire both onSettled functions', async () => {
       const onSettled = vi.fn()
       const onSettledOnFunction = vi.fn()
       const mutation = TestBed.runInInjectionContext(() => {
@@ -302,7 +302,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('should support required signal inputs', async () => {
+  it('should support required signal inputs', async () => {
     const mutationCache = queryClient.getMutationCache()
 
     @Component({
@@ -352,7 +352,7 @@ describe('injectMutation', () => {
     expect(mutation!.options.mutationKey).toStrictEqual(['fake', 'value'])
   })
 
-  test('should update options on required signal input change', async () => {
+  it('should update options on required signal input change', async () => {
     const mutationCache = queryClient.getMutationCache()
 
     @Component({
@@ -415,7 +415,7 @@ describe('injectMutation', () => {
   })
 
   describe('throwOnError', () => {
-    test('should evaluate throwOnError when mutation is expected to throw', async () => {
+    it('should evaluate throwOnError when mutation is expected to throw', async () => {
       const err = new Error('Expected mock error. All is well!')
       const boundaryFn = vi.fn()
       const { mutate } = TestBed.runInInjectionContext(() => {
@@ -438,7 +438,7 @@ describe('injectMutation', () => {
       expect(boundaryFn).toHaveBeenCalledWith(err)
     })
 
-    test('should emit zone error when throwOnError is true and mutate is used', async () => {
+    it('should emit zone error when throwOnError is true and mutate is used', async () => {
       const err = new Error('Expected mock error. All is well!')
       const zone = TestBed.inject(NgZone)
       const zoneErrorEmitSpy = vi.spyOn(zone.onError, 'emit')
@@ -469,7 +469,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('should throw when throwOnError is true', async () => {
+  it('should throw when throwOnError is true', async () => {
     const err = new Error('Expected mock error. All is well!')
     const { mutateAsync } = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
@@ -484,7 +484,7 @@ describe('injectMutation', () => {
     await expect(() => mutateAsync()).rejects.toThrowError(err)
   })
 
-  test('should throw when throwOnError function returns true', async () => {
+  it('should throw when throwOnError function returns true', async () => {
     const err = new Error('Expected mock error. All is well!')
     const { mutateAsync } = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
@@ -500,7 +500,7 @@ describe('injectMutation', () => {
   })
 
   describe('injection context', () => {
-    test('throws NG0203 with descriptive error outside injection context', () => {
+    it('throws NG0203 with descriptive error outside injection context', () => {
       expect(() => {
         injectMutation(() => ({
           mutationKey: ['injectionContextError'],
@@ -509,7 +509,7 @@ describe('injectMutation', () => {
       }).toThrowError(/NG0203(.*?)injectMutation/)
     })
 
-    test('can be used outside injection context when passing an injector', () => {
+    it('can be used outside injection context when passing an injector', () => {
       expect(() => {
         injectMutation(
           () => ({
@@ -523,7 +523,7 @@ describe('injectMutation', () => {
       }).not.toThrow()
     })
 
-    test('should complete mutation before whenStable() resolves', async () => {
+    it('should complete mutation before whenStable() resolves', async () => {
       const app = TestBed.inject(ApplicationRef)
       let mutationStarted = false
       let mutationCompleted = false
@@ -559,7 +559,7 @@ describe('injectMutation', () => {
       expect(mutation.data()).toBe('processed: test')
     })
 
-    test('should handle synchronous mutation with retry', async () => {
+    it('should handle synchronous mutation with retry', async () => {
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
         providers: [
@@ -609,7 +609,7 @@ describe('injectMutation', () => {
       expect(attemptCount).toBe(3) // Initial + 2 retries
     })
 
-    test('should handle multiple synchronous mutations on same key', async () => {
+    it('should handle multiple synchronous mutations on same key', async () => {
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
         providers: [
@@ -661,7 +661,7 @@ describe('injectMutation', () => {
       expect(callCount).toBe(2)
     })
 
-    test('should handle synchronous mutation with optimistic updates', async () => {
+    it('should handle synchronous mutation with optimistic updates', async () => {
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
         providers: [
@@ -725,7 +725,7 @@ describe('injectMutation', () => {
       expect(queryClient.getQueryData(testQueryKey)).toBe('final: test')
     })
 
-    test('should handle synchronous mutation cancellation', async () => {
+    it('should handle synchronous mutation cancellation', async () => {
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
         providers: [

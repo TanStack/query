@@ -28,6 +28,13 @@ export type {
   WithPersistQueryClientOptions,
 } from './with-persist-query-client.types'
 
+/**
+ * Resolves factory vs static persistence configuration.
+ * @param input - Callback, static options object, or mixed union.
+ * @param withOptions - When `input` is a callback, optional `deps` for dependency injection.
+ * @param injectDep - `inject` function used to resolve `withOptions.deps` tokens.
+ * @returns Resolved persistence user options for the browser initializer.
+ */
 function resolvePersistOptions(
   input: PersistQueryClientUserOptions | WithPersistQueryClientFn,
   withOptions: WithPersistQueryClientOptions | undefined,
@@ -99,6 +106,12 @@ export function withPersistQueryClient(
 export function withPersistQueryClient(
   options: PersistQueryClientUserOptions,
 ): PersistQueryClientFeature
+/**
+ * @param factoryOrOptions - Either a callback (runs only in the browser) or a static options object.
+ * @param withOptions - When using a callback, optional `deps` passed as arguments (like `useFactory`).
+ * @returns A set of providers for use with `provideTanStackQuery`.
+ * @public
+ */
 export function withPersistQueryClient(
   factoryOrOptions: PersistQueryClientUserOptions | WithPersistQueryClientFn,
   withOptions?: WithPersistQueryClientOptions,

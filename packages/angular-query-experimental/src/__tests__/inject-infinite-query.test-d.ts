@@ -1,11 +1,11 @@
-import { describe, expectTypeOf, it, test } from 'vitest'
+import { describe, expectTypeOf, it } from 'vitest'
 import { injectInfiniteQuery } from '..'
 import type { Signal } from '@angular/core'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('injectInfiniteQuery', () => {
   describe('Discriminated union return type', () => {
-    test('data should be possibly undefined by default', () => {
+    it('data should be possibly undefined by default', () => {
       const query = injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) =>
@@ -19,7 +19,7 @@ describe('injectInfiniteQuery', () => {
       >()
     })
 
-    test('data should be defined when query is success', () => {
+    it('data should be defined when query is success', () => {
       const query = injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) =>
@@ -35,7 +35,7 @@ describe('injectInfiniteQuery', () => {
       }
     })
 
-    test('error should be null when query is success', () => {
+    it('error should be null when query is success', () => {
       const query = injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) =>
@@ -49,7 +49,7 @@ describe('injectInfiniteQuery', () => {
       }
     })
 
-    test('data should be undefined when query is pending', () => {
+    it('data should be undefined when query is pending', () => {
       const query = injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) =>
@@ -63,7 +63,7 @@ describe('injectInfiniteQuery', () => {
       }
     })
 
-    test('error should be defined when query is error', () => {
+    it('error should be defined when query is error', () => {
       const query = injectInfiniteQuery(() => ({
         queryKey: ['infiniteQuery'],
         queryFn: ({ pageParam }) =>

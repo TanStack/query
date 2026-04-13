@@ -1,12 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import {
-  QueryClient,
-  dehydrate,
-  injectQuery,
-  provideTanStackQuery,
-  withHydrationKey,
-  withNoQueryHydration,
-} from '..'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   Component,
   EnvironmentInjector,
@@ -16,14 +8,22 @@ import {
   effect,
   inject,
   makeStateKey,
-  provideZonelessChangeDetection,
   provideEnvironmentInitializer,
+  provideZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import type { DehydratedState } from '@tanstack/query-core'
+import {
+  QueryClient,
+  dehydrate,
+  injectQuery,
+  provideTanStackQuery,
+  withHydrationKey,
+  withNoQueryHydration,
+} from '..'
 import { INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY } from '../hydration-state-key'
+import type { DehydratedState } from '@tanstack/query-core'
 
 beforeEach(() => {
   vi.useFakeTimers()
@@ -35,7 +35,7 @@ afterEach(() => {
 })
 
 describe('TransferState hydration (client)', () => {
-  test('browser hydrates from default key', async () => {
+  it('browser hydrates from default key', async () => {
     const key = queryKey()
     const sourceClient = new QueryClient()
     sourceClient.setQueryData(key, 'from-server')
@@ -74,7 +74,7 @@ describe('TransferState hydration (client)', () => {
     ).toBeNull()
   })
 
-  test('browser hydrates from custom key', async () => {
+  it('browser hydrates from custom key', async () => {
     const customKeyName = 'tanstack-test-custom-hydration'
     const customKey = makeStateKey<DehydratedState>(customKeyName)
     const key = queryKey()
@@ -108,7 +108,7 @@ describe('TransferState hydration (client)', () => {
     expect(rendered.fixture.debugElement.injector.get(TransferState).get(customKey, null)).toBeNull()
   })
 
-  test('browser does not re-fetch when hydrated state is fresh', async () => {
+  it('browser does not re-fetch when hydrated state is fresh', async () => {
     const key = queryKey()
     const sourceClient = new QueryClient()
     sourceClient.setQueryData(key, 'cached')
@@ -151,7 +151,7 @@ describe('TransferState hydration (client)', () => {
     expect(queryFnCalls).toBe(0)
   })
 
-  test('withNoQueryHydration disables browser hydration', async () => {
+  it('withNoQueryHydration disables browser hydration', async () => {
     const key = queryKey()
     const sourceClient = new QueryClient()
     sourceClient.setQueryData(key, 'from-server')
@@ -198,7 +198,7 @@ describe('TransferState dehydration (server)', () => {
   function createQueryInjector(
     queryClient: QueryClient,
     platformId: 'server' | 'browser',
-    ...features: Parameters<typeof provideTanStackQuery>[1][]
+    ...features: Array<Parameters<typeof provideTanStackQuery>[1]>
   ) {
     TestBed.configureTestingModule({
       providers: [
@@ -213,7 +213,7 @@ describe('TransferState dehydration (server)', () => {
     )
   }
 
-  test('server serializes dehydrated queries on TransferState.toJson', async () => {
+  it('server serializes dehydrated queries on TransferState.toJson', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
     const injector = createQueryInjector(queryClient, 'server')
@@ -236,7 +236,7 @@ describe('TransferState dehydration (server)', () => {
     expect(stored.queries[0]?.queryKey).toEqual(key)
   })
 
-  test('browser platform does not write server dehydration state', async () => {
+  it('browser platform does not write server dehydration state', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
     const injector = createQueryInjector(queryClient, 'browser')
@@ -257,7 +257,7 @@ describe('TransferState dehydration (server)', () => {
     ).toBeNull()
   })
 
-  test('withNoQueryHydration disables server dehydration', async () => {
+  it('withNoQueryHydration disables server dehydration', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
     const injector = createQueryInjector(
@@ -282,7 +282,7 @@ describe('TransferState dehydration (server)', () => {
     ).toBeNull()
   })
 
-  test('multiple query clients can use distinct hydration keys', async () => {
+  it('multiple query clients can use distinct hydration keys', async () => {
     const keyA = queryKey()
     const keyB = queryKey()
     const clientA = new QueryClient()

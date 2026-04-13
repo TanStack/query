@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
-  injectIsRestoring,
   QueryClient,
+  injectIsRestoring,
   injectQueries,
   injectQuery,
   provideTanStackQuery,
@@ -10,8 +10,8 @@ import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import {
   Component,
   EnvironmentInjector,
-  PLATFORM_ID,
   InjectionToken,
+  PLATFORM_ID,
   createEnvironmentInjector,
   effect,
   provideZonelessChangeDetection,
@@ -19,12 +19,12 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import * as persistClientCore from '@tanstack/query-persist-client-core'
 import { withPersistQueryClient } from '../with-persist-query-client'
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
-import * as persistClientCore from '@tanstack/query-persist-client-core'
 
 beforeEach(() => {
   vi.useFakeTimers()
@@ -70,7 +70,7 @@ const createMockErrorPersister = (
 }
 
 describe('withPersistQueryClient', () => {
-  test('restores cache from persister', async () => {
+  it('restores cache from persister', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -154,7 +154,7 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test('restores cache for injectQueries and keeps it idle while restoring', async () => {
+  it('restores cache for injectQueries and keeps it idle while restoring', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const states: Array<
@@ -264,7 +264,7 @@ describe('withPersistQueryClient', () => {
     ])
   })
 
-  test('should show initialData while restoring', async () => {
+  it('should show initialData while restoring', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -352,7 +352,7 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test('should not refetch after restoring when data is fresh', async () => {
+  it('should not refetch after restoring when data is fresh', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -435,7 +435,7 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test('should call onSuccess after successful restoring', async () => {
+  it('should call onSuccess after successful restoring', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
     queryClient.prefetchQuery({
@@ -491,7 +491,7 @@ describe('withPersistQueryClient', () => {
     expect(rendered.getByText('fetched')).toBeInTheDocument()
   })
 
-  test('should await onSuccess before refetching or subscribing', async () => {
+  it('should await onSuccess before refetching or subscribing', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
     queryClient.prefetchQuery({
@@ -560,7 +560,7 @@ describe('withPersistQueryClient', () => {
     expect(rendered.getByText('fetched')).toBeInTheDocument()
   })
 
-  test('should remove cache after non-successful restoring', async () => {
+  it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
     const onErrorMock = vi
       .spyOn(console, 'error')
@@ -615,7 +615,7 @@ describe('withPersistQueryClient', () => {
     onErrorMock.mockRestore()
   })
 
-  test('should await onError before starting queries after restore failure', async () => {
+  it('should await onError before starting queries after restore failure', async () => {
     const key = queryKey()
     const onErrorMock = vi
       .spyOn(console, 'error')
@@ -678,7 +678,7 @@ describe('withPersistQueryClient', () => {
     onErrorMock.mockRestore()
   })
 
-  test('factory form with deps receives injected token and restores cache', async () => {
+  it('factory form with deps receives injected token and restores cache', async () => {
     const key = queryKey()
     const holder = { persister: createMockPersister() }
     const HOLDER = new InjectionToken<{ persister: Persister }>(
@@ -732,7 +732,7 @@ describe('withPersistQueryClient', () => {
     expect(rendered.getByText('hydrated')).toBeInTheDocument()
   })
 
-  test('factory callback runs only in browser mode', async () => {
+  it('factory callback runs only in browser mode', async () => {
     const factory = vi.fn(() => ({
       persistOptions: {
         persister: createMockPersister(),
@@ -760,7 +760,7 @@ describe('withPersistQueryClient', () => {
     expect(rendered.fixture.nativeElement.textContent.trim()).toBe('false')
   })
 
-  test('cleanup subscription runs on injector destroy', async () => {
+  it('cleanup subscription runs on injector destroy', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
     const persister = createMockPersister()

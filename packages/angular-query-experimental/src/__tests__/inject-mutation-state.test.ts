@@ -9,7 +9,7 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { render } from '@testing-library/angular'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
@@ -37,7 +37,7 @@ describe('injectMutationState', () => {
   })
 
   describe('injectMutationState', () => {
-    test('should return variables after calling mutate 1', () => {
+    it('should return variables after calling mutate 1', () => {
       const mutationKey = ['mutation']
       const variables = 'foo123'
 
@@ -60,7 +60,7 @@ describe('injectMutationState', () => {
       expect(mutationState()).toEqual([variables])
     })
 
-    test('reactive options should update injectMutationState', () => {
+    it('reactive options should update injectMutationState', () => {
       const mutationKey1 = ['mutation1']
       const mutationKey2 = ['mutation2']
       const variables1 = 'foo123'
@@ -97,7 +97,7 @@ describe('injectMutationState', () => {
       expect(mutationState()).toEqual([variables2])
     })
 
-    test('should return variables after calling mutate 2', () => {
+    it('should return variables after calling mutate 2', () => {
       queryClient.clear()
       const mutationKey = ['mutation']
       const variables = 'bar234'
@@ -118,7 +118,7 @@ describe('injectMutationState', () => {
       expect(mutationState()[0]?.variables).toEqual(variables)
     })
 
-    test('should support required signal inputs', async () => {
+    it('should support required signal inputs', async () => {
       queryClient.clear()
       const fakeName = 'name1'
       const mutationKey1 = ['fake', fakeName]
@@ -194,13 +194,13 @@ describe('injectMutationState', () => {
     })
 
     describe('injection context', () => {
-      test('throws NG0203 with descriptive error outside injection context', () => {
+      it('throws NG0203 with descriptive error outside injection context', () => {
         expect(() => {
           injectMutationState()
         }).toThrowError(/NG0203(.*?)injectMutationState/)
       })
 
-      test('can be used outside injection context when passing an injector', () => {
+      it('can be used outside injection context when passing an injector', () => {
         const injector = TestBed.inject(Injector)
         expect(
           injectMutationState(undefined, {

@@ -1,4 +1,5 @@
-import { InjectionToken, makeStateKey, type StateKey } from '@angular/core'
+import { InjectionToken,  makeStateKey } from '@angular/core'
+import type {StateKey} from '@angular/core';
 import type { DehydratedState } from '@tanstack/query-core'
 
 export const INTERNAL_TANSTACK_QUERY_HYDRATION_STATE_KEY =
