@@ -22,7 +22,7 @@ import type {
   QueryFunction,
   QueryFunctionContext,
   QueryKey,
-  SolidQueryOptions,
+  QueryOptions,
   UseQueryResult,
 } from '..'
 
@@ -586,7 +586,7 @@ describe('useQueries', () => {
       TData,
       TQueryKey extends QueryKey,
     >(
-      queries: Array<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
+      queries: Array<QueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
     ) {
       return useQueries(() => ({
         queries: queries.map(

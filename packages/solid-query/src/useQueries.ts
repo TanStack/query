@@ -13,7 +13,7 @@ import {
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
-import type { SolidQueryOptions, UseQueryResult } from './types'
+import type { QueryOptions, UseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -36,7 +36,7 @@ type UseQueryOptionsForUseQueries<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
-  SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData' | 'suspense'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>

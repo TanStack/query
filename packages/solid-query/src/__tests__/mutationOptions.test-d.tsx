@@ -9,7 +9,7 @@ import type {
   MutationState,
   WithRequired,
 } from '@tanstack/query-core'
-import type { SolidMutationOptions, UseMutationResult } from '../types'
+import type { MutationOptions, UseMutationResult } from '../types'
 
 describe('mutationOptions', () => {
   it('should not allow excess properties', () => {
@@ -120,7 +120,7 @@ describe('mutationOptions', () => {
       }),
     ).toEqualTypeOf<
       WithRequired<
-        SolidMutationOptions<number, DefaultError, string>,
+        MutationOptions<number, DefaultError, string>,
         'mutationKey'
       >
     >()
@@ -132,7 +132,7 @@ describe('mutationOptions', () => {
         },
       }),
     ).toEqualTypeOf<
-      Omit<SolidMutationOptions<number, DefaultError, string>, 'mutationKey'>
+      Omit<MutationOptions<number, DefaultError, string>, 'mutationKey'>
     >()
   })
 
