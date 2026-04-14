@@ -1897,11 +1897,11 @@ describe('useMutation', () => {
     function Page() {
       const [result, setResult] = React.useState<string>('idle')
 
-      const createUserMutation = useMutation({
+      const { mutateAsync: createUserAsync } = useMutation({
         mutationFn: (name: string) => sleep(10).then(() => ({ id: '1', name })),
       })
 
-      const updateProfileMutation = useMutation({
+      const { mutateAsync: updateProfileAsync } = useMutation({
         mutationFn: (userId: string) =>
           sleep(10).then(() => `profile updated for ${userId}`),
       })
@@ -1910,8 +1910,8 @@ describe('useMutation', () => {
         <div>
           <button
             onClick={async () => {
-              const user = await createUserMutation.mutateAsync('John')
-              const profile = await updateProfileMutation.mutateAsync(user.id)
+              const user = await createUserAsync('John')
+              const profile = await updateProfileAsync(user.id)
               setResult(profile)
             }}
           >
@@ -1937,14 +1937,14 @@ describe('useMutation', () => {
     function Page() {
       const [result, setResult] = React.useState<string>('idle')
 
-      const createUserMutation = useMutation({
+      const { mutateAsync: createUserAsync } = useMutation({
         mutationFn: (_name: string) =>
           sleep(10).then<{ id: string }>(() => {
             throw new Error('create failed')
           }),
       })
 
-      const updateProfileMutation = useMutation({
+      const { mutateAsync: updateProfileAsync } = useMutation({
         mutationFn: (userId: string) =>
           sleep(10).then(() => `profile updated for ${userId}`),
       })
@@ -1954,8 +1954,8 @@ describe('useMutation', () => {
           <button
             onClick={async () => {
               try {
-                const user = await createUserMutation.mutateAsync('John')
-                const profile = await updateProfileMutation.mutateAsync(user.id)
+                const user = await createUserAsync('John')
+                const profile = await updateProfileAsync(user.id)
                 setResult(profile)
               } catch (error) {
                 setResult(`error: ${(error as Error).message}`)
@@ -1983,7 +1983,7 @@ describe('useMutation', () => {
     function Page() {
       const [message, setMessage] = React.useState<string>('idle')
 
-      const submitMutation = useMutation({
+      const { mutate } = useMutation({
         mutationFn: async (shouldFail: boolean) => {
           await sleep(10)
           if (shouldFail) {
@@ -1998,7 +1998,7 @@ describe('useMutation', () => {
         <div>
           <button
             onClick={() =>
-              submitMutation.mutate(false, {
+              mutate(false, {
                 onSuccess: (result) => setMessage(`success: ${result}`),
                 onError: (error) => setMessage(`error: ${error.message}`),
               })
@@ -2008,7 +2008,7 @@ describe('useMutation', () => {
           </button>
           <button
             onClick={() =>
-              submitMutation.mutate(true, {
+              mutate(true, {
                 onSuccess: (result) => setMessage(`success: ${result}`),
                 onError: (error) => setMessage(`error: ${error.message}`),
               })
@@ -2044,7 +2044,7 @@ describe('useMutation', () => {
     function Page() {
       const [message, setMessage] = React.useState<string>('idle')
 
-      const submitMutation = useMutation({
+      const { mutate } = useMutation({
         mutationFn: async () => {
           await sleep(10)
           attempt++
@@ -2060,7 +2060,7 @@ describe('useMutation', () => {
         <div>
           <button
             onClick={() =>
-              submitMutation.mutate(undefined, {
+              mutate(undefined, {
                 onSuccess: (result) => setMessage(`result: ${result}`),
                 onError: () => setMessage('failed, retrying...'),
               })
@@ -2098,7 +2098,7 @@ describe('useMutation', () => {
 
       const [successMessage, setSuccessMessage] = React.useState<string>('')
 
-      const deleteMutation = useMutation({
+      const { mutate } = useMutation({
         mutationFn: (item: string) => sleep(10).then(() => item),
         onMutate: (item) => {
           const previousItems = [...items]
@@ -2118,7 +2118,7 @@ describe('useMutation', () => {
       return (
         <div>
           {items.map((item) => (
-            <button key={item} onClick={() => deleteMutation.mutate(item)}>
+            <button key={item} onClick={() => mutate(item)}>
               delete {item}
             </button>
           ))}
@@ -2155,7 +2155,7 @@ describe('useMutation', () => {
 
       const [message, setMessage] = React.useState<string>('')
 
-      const deleteMutation = useMutation({
+      const { mutate } = useMutation({
         mutationFn: (item: string) =>
           sleep(10).then(() => {
             throw new Error(`Failed to delete ${item}`)
@@ -2180,7 +2180,7 @@ describe('useMutation', () => {
       return (
         <div>
           {items.map((item) => (
-            <button key={item} onClick={() => deleteMutation.mutate(item)}>
+            <button key={item} onClick={() => mutate(item)}>
               delete {item}
             </button>
           ))}
