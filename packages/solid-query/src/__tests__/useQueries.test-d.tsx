@@ -142,7 +142,7 @@ describe('useQueries', () => {
     expectTypeOf(queryResults[2].data).toEqualTypeOf<string | undefined>()
   })
 
-  it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
+  it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQueries', () => {
     const query1 = queryOptions({
       queryKey: queryKey(),
       queryFn: () => Promise.resolve(1),
