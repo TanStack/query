@@ -1458,4 +1458,162 @@ describe('dehydration and rehydration', () => {
     expect(result.pages).toHaveLength(1)
     expect(result.pageParams).toHaveLength(1)
   })
+
+  test('should restore infinite query type through dehydrate and hydrate cycle', async () => {
+    const serverClient = new QueryClient({ queryCache: new QueryCache() })
+
+    await vi.waitFor(() =>
+      serverClient.prefetchInfiniteQuery({
+        queryKey: ['infinite-type-restore'],
+        queryFn: async ({ pageParam }) =>
+          sleep(0).then(() => ({ items: [`item-${pageParam}`], next: (pageParam as number) + 1 })),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
+          lastPage.next,
+      }),
+    )
+
+    const dehydrated = dehydrate(serverClient)
+
+    const dehydratedQuery = dehydrated.queries.find(
+      (q) => q.queryKey[0] === 'infinite-type-restore',
+    )
+    expect(dehydratedQuery?.queryType).toBe('infiniteQuery')
+
+    const clientCache = new QueryCache()
+    const clientClient = new QueryClient({ queryCache: clientCache })
+    hydrate(clientClient, dehydrated)
+
+    const hydratedQuery = clientCache.find({ queryKey: ['infinite-type-restore'] })
+    expect(hydratedQuery?.type).toBe('infiniteQuery')
+  })
+
+  test('should preserve pages structure when refetching infinite query after hydration', async () => {
+    const serverClient = new QueryClient({ queryCache: new QueryCache() })
+
+    await vi.waitFor(() =>
+      serverClient.prefetchInfiniteQuery({
+        queryKey: ['refetch'],
+        queryFn: async ({ pageParam }) =>
+          sleep(0).then(() => ({
+            items: [`page-${pageParam}`],
+            next: (pageParam as number) + 1,
+          })),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
+          lastPage.next,
+      }),
+    )
+
+    const dehydrated = dehydrate(serverClient)
+
+    const clientCache = new QueryCache()
+    const clientClient = new QueryClient({ queryCache: clientCache })
+    hydrate(clientClient, dehydrated)
+
+    const beforeRefetch = clientClient.getQueryData<{
+      pages: Array<{ items: Array<string>; next: number }>
+      pageParams: Array<unknown>
+    }>(['refetch'])
+    expect(beforeRefetch?.pages).toHaveLength(1)
+    expect(beforeRefetch?.pageParams).toHaveLength(1)
+
+    const result = await vi.waitFor(() =>
+      clientClient.fetchInfiniteQuery({
+        queryKey: ['refetch'],
+        queryFn: async ({ pageParam }) =>
+          sleep(0).then(() => ({
+            items: [`page-${pageParam}`],
+            next: (pageParam as number) + 1,
+          })),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
+          lastPage.next,
+      }),
+    )
+
+    expect(result).toHaveProperty('pages')
+    expect(result).toHaveProperty('pageParams')
+    expect(Array.isArray(result.pages)).toBe(true)
+    expect(result.pages).toHaveLength(1)
+    expect(result.pages[0]).toHaveProperty('items')
+  })
+
+  test('should retain infinite query type after subsequent setOptions calls', async () => {
+    const serverClient = new QueryClient({ queryCache: new QueryCache() })
+
+    await vi.waitFor(() =>
+      serverClient.prefetchInfiniteQuery({
+        queryKey: ['infinite-setoptions-guard'],
+        queryFn: async ({ pageParam }) =>
+          sleep(0).then(() => ({ data: `p${pageParam}`, next: (pageParam as number) + 1 })),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage: { data: string; next: number }) =>
+          lastPage.next,
+      }),
+    )
+
+    const dehydrated = dehydrate(serverClient)
+
+    const clientCache = new QueryCache()
+    const clientClient = new QueryClient({ queryCache: clientCache })
+    hydrate(clientClient, dehydrated)
+
+    const query = clientCache.find({ queryKey: ['infinite-setoptions-guard'] })!
+    expect(query.type).toBe('infiniteQuery')
+
+    query.setOptions({ queryKey: ['infinite-setoptions-guard'] })
+    expect(query.type).toBe('infiniteQuery')
+  })
+
+  test('should restore all pages when refetching multi-page infinite query after hydration', async () => {
+    const serverClient = new QueryClient({ queryCache: new QueryCache() })
+
+    await vi.waitFor(() =>
+      serverClient.prefetchInfiniteQuery({
+        queryKey: ['infinite-multipage-restore'],
+        queryFn: async ({ pageParam }) =>
+          sleep(0).then(() => ({
+            items: [`item-${pageParam}`],
+            next: (pageParam as number) + 1,
+          })),
+        initialPageParam: 0,
+        pages: 2,
+        getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
+          lastPage.next,
+      }),
+    )
+
+    const dehydrated = dehydrate(serverClient)
+
+    const clientCache = new QueryCache()
+    const clientClient = new QueryClient({ queryCache: clientCache })
+    hydrate(clientClient, dehydrated)
+
+    const beforeRefetch = clientClient.getQueryData<{
+      pages: Array<unknown>
+      pageParams: Array<unknown>
+    }>(['infinite-multipage-restore'])
+    expect(beforeRefetch?.pages).toHaveLength(2)
+
+    const result = await vi.waitFor(() =>
+      clientClient.fetchInfiniteQuery({
+        queryKey: ['infinite-multipage-restore'],
+        queryFn: async ({ pageParam }) =>
+          sleep(0).then(() => ({
+            items: [`item-${pageParam}`],
+            next: (pageParam as number) + 1,
+          })),
+        initialPageParam: 0,
+        pages: 2,
+        getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
+          lastPage.next,
+      }),
+    )
+
+    expect(result.pages).toHaveLength(2)
+    expect(result.pageParams).toHaveLength(2)
+    expect(result.pages[0]).toHaveProperty('items')
+    expect(result.pages[1]).toHaveProperty('items')
+  })
 })

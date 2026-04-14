@@ -1,9 +1,5 @@
 import { QueryObserver } from './queryObserver'
-import {
-  hasNextPage,
-  hasPreviousPage,
-  infiniteQueryBehavior,
-} from './infiniteQueryBehavior'
+import { hasNextPage, hasPreviousPage } from './infiniteQueryBehavior'
 import type { Subscribable } from './subscribable'
 import type {
   DefaultError,
@@ -95,7 +91,7 @@ export class InfiniteQueryObserver<
   ): void {
     super.setOptions({
       ...options,
-      behavior: infiniteQueryBehavior(),
+      _type: 'infiniteQuery',
     })
   }
 
@@ -108,7 +104,7 @@ export class InfiniteQueryObserver<
       TPageParam
     >,
   ): InfiniteQueryObserverResult<TData, TError> {
-    options.behavior = infiniteQueryBehavior()
+    options._type = 'infiniteQuery'
     return super.getOptimisticResult(options) as InfiniteQueryObserverResult<
       TData,
       TError

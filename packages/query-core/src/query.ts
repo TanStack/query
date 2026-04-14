@@ -10,6 +10,7 @@ import {
 import { notifyManager } from './notifyManager'
 import { CancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
+import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type {
@@ -166,6 +167,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
+  type: 'query' | 'infiniteQuery'
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -181,6 +183,7 @@ export class Query<
 
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
+    this.type = 'query'
     this.setOptions(config.options)
     this.observers = []
     this.#client = config.client
@@ -203,6 +206,10 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
+
+    if (options?._type) {
+      this.type = options._type
+    }
 
     this.updateGcTime(this.options.gcTime)
 
@@ -510,7 +517,13 @@ export class Query<
 
     const context = createFetchContext()
 
-    this.options.behavior?.onFetch(context, this as unknown as Query)
+    const behavior =
+      this.type === 'infiniteQuery'
+        ? (infiniteQueryBehavior(
+            (this.options as { pages?: number }).pages,
+          ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
+        : this.options.behavior
+    behavior?.onFetch(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state

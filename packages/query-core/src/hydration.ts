@@ -11,9 +11,8 @@ import type {
   QueryOptions,
 } from './types'
 import type { QueryClient } from './queryClient'
-import type { Query, QueryBehavior, QueryState } from './query'
+import type { Query, QueryState } from './query'
 import type { Mutation, MutationState } from './mutation'
-import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 
 // TYPES
 type TransformerFn = (data: any) => any
@@ -72,11 +71,6 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
   }
 }
 
-function isInfiniteQuery(query: Query): boolean {
-  const options = query.options
-  return 'initialPageParam' in options
-}
-
 // Most config is not dehydrated but instead meant to configure again when
 // consuming the de/rehydrated data, typically with useQuery on the client.
 // Sometimes it might make sense to prefetch data on the server and include
@@ -120,7 +114,7 @@ function dehydrateQuery(
     },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
-    queryType: isInfiniteQuery(query) ? 'infiniteQuery' : 'query',
+    queryType: query.type,
     ...(query.state.status === 'pending' && {
       promise: dehydratePromise(),
     }),
@@ -261,9 +255,7 @@ export function hydrate(
           queryKey,
           queryHash,
           meta,
-          behavior: queryType === 'infiniteQuery'
-          ? (infiniteQueryBehavior() as QueryBehavior<unknown, DefaultError, unknown>)
-          : undefined,
+          _type: queryType === 'infiniteQuery' ? ('infiniteQuery' as const) : undefined,
         }
 
         // Restore query
