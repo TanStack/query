@@ -1,0 +1,108 @@
+{
+  "name": "@tanstack/lit-query",
+  "version": "0.1.0",
+  "description": "Lit adapter for TanStack Query Core",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist-cjs/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "dist-cjs",
+    "src/**/*.ts",
+    "!src/tests/**/*"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist-cjs/index.d.cts",
+        "default": "./dist-cjs/index.js"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.build.json",
+    "build:cjs": "node -e \"require('node:fs').rmSync('dist-cjs', { recursive: true, force: true })\" && tsc -p tsconfig.build.cjs.json && node scripts/write-cjs-package.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "package:check": "node scripts/check-package.mjs",
+    "package:smoke:cjs-types": "node scripts/check-cjs-types-smoke.mjs",
+    "package:build": "npm run build && publint --strict && attw --pack && npm run package:smoke:cjs-types",
+    "measure:bundle": "npm run build && node scripts/measure-bundle.mjs",
+    "measure:bundle:raw": "node scripts/measure-bundle.mjs",
+    "perf:l3": "npm run build && node scripts/l3-stress.mjs",
+    "perf:l3:raw": "node scripts/l3-stress.mjs",
+    "example:install": "npm --prefix examples/lit-query-e2e-app install",
+    "example:dev": "npm --prefix examples/lit-query-e2e-app run dev",
+    "example:e2e": "npm run build && npm --prefix examples/lit-query-e2e-app run e2e",
+    "example:e2e:headed": "npm run build && npm --prefix examples/lit-query-e2e-app run e2e:headed",
+    "example:e2e:query-error": "npm run build && npm --prefix examples/lit-query-e2e-app run e2e:query-error",
+    "example:e2e:mutation-error": "npm run build && npm --prefix examples/lit-query-e2e-app run e2e:mutation-error",
+    "example:e2e:refetch-button": "npm run build && npm --prefix examples/lit-query-e2e-app run e2e:refetch-button",
+    "example:e2e:lifecycle-reconnect": "npm run build && npm --prefix examples/lit-query-e2e-app run e2e:lifecycle-reconnect",
+    "example:e2e:lifecycle-contract": "npm run build && npm --prefix examples/lit-query-e2e-app run e2e:lifecycle-contract",
+    "example:e2e:all": "npm run build && npm --prefix examples/lit-query-e2e-app run e2e:all",
+    "example:e2e:all:nobuild": "npm --prefix examples/lit-query-e2e-app run e2e:all",
+    "example:e2e:all:headed": "npm run build && npm --prefix examples/lit-query-e2e-app run e2e:all:headed",
+    "example:pagination:install": "npm --prefix examples/lit-query-pagination-app install",
+    "example:pagination:dev": "npm --prefix examples/lit-query-pagination-app run dev",
+    "example:pagination:e2e": "npm run build && npm --prefix examples/lit-query-pagination-app run e2e",
+    "example:pagination:e2e:prefetch": "npm run build && npm --prefix examples/lit-query-pagination-app run e2e:prefetch",
+    "example:pagination:e2e:error": "npm run build && npm --prefix examples/lit-query-pagination-app run e2e:error",
+    "example:pagination:e2e:mutations": "npm run build && npm --prefix examples/lit-query-pagination-app run e2e:mutations",
+    "example:pagination:e2e:boundary": "npm run build && npm --prefix examples/lit-query-pagination-app run e2e:boundary",
+    "example:pagination:e2e:all": "npm run build && npm --prefix examples/lit-query-pagination-app run e2e:all",
+    "example:pagination:e2e:all:headed": "npm run build && npm --prefix examples/lit-query-pagination-app run e2e:all:headed",
+    "example:ssr:install": "npm --prefix examples/lit-query-ssr-app install",
+    "example:ssr:dev": "npm run build && npm --prefix examples/lit-query-ssr-app run dev",
+    "example:ssr:dev:public-origin": "npm run build && npm --prefix examples/lit-query-ssr-app run dev:public-origin",
+    "example:ssr:e2e:default": "npm run build && npm --prefix examples/lit-query-ssr-app run e2e",
+    "example:ssr:e2e:error": "npm run build && npm --prefix examples/lit-query-ssr-app run e2e:error",
+    "example:ssr:e2e:refreshing": "npm run build && npm --prefix examples/lit-query-ssr-app run e2e:refreshing",
+    "example:ssr:e2e:public-origin": "npm run build && npm --prefix examples/lit-query-ssr-app run e2e:public-origin",
+    "example:ssr:e2e": "npm run example:ssr:e2e:default && npm run example:ssr:e2e:public-origin",
+    "example:ssr:e2e:all:default": "npm run build && npm --prefix examples/lit-query-ssr-app run e2e:all",
+    "example:ssr:e2e:all:nobuild": "npm --prefix examples/lit-query-ssr-app run e2e:all && npm --prefix examples/lit-query-ssr-app run e2e:public-origin",
+    "example:ssr:e2e:all": "npm run example:ssr:e2e:all:default && npm run example:ssr:e2e:public-origin",
+    "demo:setup": "npm run example:install && npm --prefix examples/lit-query-e2e-app exec playwright install chromium",
+    "demo:gate": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build && npm run package:check && npm run package:build && npm run example:e2e:all:nobuild && npm run example:ssr:e2e:all:nobuild && npm run measure:bundle:raw && npm run perf:l3:raw",
+    "demo:gate:headed": "npm run build && npm run example:e2e:all:headed"
+  },
+  "dependencies": {
+    "@lit/context": "^1.1.6",
+    "@tanstack/query-core": "^5.90.0",
+    "lit": "^3.3.1"
+  },
+  "peerDependencies": {
+    "lit": ">=2.8.0 <4",
+    "@tanstack/query-core": "^5.0.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.15.3",
+    "@eslint/js": "^9.36.0",
+    "@types/node": "^24.5.2",
+    "@vitest/eslint-plugin": "^1.4.0",
+    "eslint": "^9.36.0",
+    "globals": "^17.4.0",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.7.4",
+    "publint": "^0.3.13",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.56.1",
+    "vitest": "^3.2.4"
+  }
+}

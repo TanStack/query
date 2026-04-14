@@ -1,0 +1,30 @@
+{
+  "name": "lit-query-e2e-app",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "e2e": "node ./e2e/smoke.mjs",
+    "e2e:headed": "PW_HEADLESS=false node ./e2e/smoke.mjs",
+    "e2e:query-error": "node ./e2e/query-error.mjs",
+    "e2e:mutation-error": "node ./e2e/mutation-error.mjs",
+    "e2e:refetch-button": "node ./e2e/refetch-button.mjs",
+    "e2e:lifecycle-reconnect": "node ./e2e/lifecycle-reconnect.mjs",
+    "e2e:lifecycle-contract": "node ./e2e/lifecycle-contract.mjs",
+    "e2e:all": "npm run e2e && npm run e2e:query-error && npm run e2e:mutation-error && npm run e2e:refetch-button && npm run e2e:lifecycle-reconnect && npm run e2e:lifecycle-contract",
+    "e2e:all:headed": "PW_HEADLESS=false npm run e2e:all"
+  },
+  "dependencies": {
+    "@tanstack/lit-query": "file:../..",
+    "@tanstack/query-core": "^5.90.0",
+    "lit": "^3.3.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.53.1",
+    "typescript": "^5.9.2",
+    "vite": "^6.3.5"
+  }
+}

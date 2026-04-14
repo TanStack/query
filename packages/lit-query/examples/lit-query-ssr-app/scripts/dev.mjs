@@ -1,0 +1,44 @@
+import { spawn, spawnSync } from 'node:child_process'
+import { once } from 'node:events'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const cwd = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+
+function runBuild() {
+  const result = spawnSync(npmCommand, ['run', 'build'], {
+    cwd,
+    stdio: 'inherit',
+  })
+
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1)
+  }
+}
+
+async function run() {
+  runBuild()
+
+  const server = spawn(npmCommand, ['run', 'dev:server'], {
+    cwd,
+    stdio: 'inherit',
+  })
+
+  const stopServer = (signal) => {
+    if (server.exitCode === null) {
+      server.kill(signal)
+    }
+  }
+
+  process.on('SIGINT', () => stopServer('SIGINT'))
+  process.on('SIGTERM', () => stopServer('SIGTERM'))
+
+  const [code] = await once(server, 'exit')
+  process.exitCode = code ?? 0
+}
+
+run().catch((error) => {
+  console.error(error)
+  process.exitCode = 1
+})
