@@ -2207,4 +2207,144 @@ describe('useMutation', () => {
     expect(rendered.getByText('items: item1, item2, item3')).toBeInTheDocument()
     expect(rendered.getByText('message: rollback')).toBeInTheDocument()
   })
+
+  it('should be able to run multiple mutateAsync calls in parallel with Promise.all', async () => {
+    function Page() {
+      const [result, setResult] = useState<string>('idle')
+
+      const { mutateAsync } = useMutation({
+        mutationFn: (file: string) => sleep(10).then(() => `uploaded: ${file}`),
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              const results = await Promise.all([
+                mutateAsync('file1'),
+                mutateAsync('file2'),
+                mutateAsync('file3'),
+              ])
+              setResult(results.join(', '))
+            }}
+          >
+            upload all
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, uploaded: file2, uploaded: file3',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle Promise.all rejection when one parallel mutateAsync call fails', async () => {
+    function Page() {
+      const [result, setResult] = useState<string>('idle')
+
+      const { mutateAsync } = useMutation({
+        mutationFn: async (file: string) => {
+          await sleep(10)
+          if (file === 'file2') {
+            throw new Error('upload failed')
+          }
+          return `uploaded: ${file}`
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              try {
+                const results = await Promise.all([
+                  mutateAsync('file1'),
+                  mutateAsync('file2'),
+                  mutateAsync('file3'),
+                ])
+                setResult(results.join(', '))
+              } catch (error) {
+                setResult(`error: ${(error as Error).message}`)
+              }
+            }}
+          >
+            upload all
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText('result: error: upload failed'),
+    ).toBeInTheDocument()
+  })
+
+  it('should handle partial failure in parallel mutateAsync calls with Promise.allSettled', async () => {
+    function Page() {
+      const [result, setResult] = useState<string>('idle')
+
+      const { mutateAsync } = useMutation({
+        mutationFn: async (file: string) => {
+          await sleep(10)
+          if (file === 'file2') {
+            throw new Error('upload failed')
+          }
+          return `uploaded: ${file}`
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <button
+            onClick={async () => {
+              const results = await Promise.allSettled([
+                mutateAsync('file1'),
+                mutateAsync('file2'),
+                mutateAsync('file3'),
+              ])
+              const summary = results
+                .map((r) =>
+                  r.status === 'fulfilled'
+                    ? r.value
+                    : `error: ${r.reason.message}`,
+                )
+                .join(', ')
+              setResult(summary)
+            }}
+          >
+            upload all
+          </button>
+          <div>result: {result}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /upload all/i }))
+    await vi.advanceTimersByTimeAsync(11)
+
+    expect(
+      rendered.getByText(
+        'result: uploaded: file1, error: upload failed, uploaded: file3',
+      ),
+    ).toBeInTheDocument()
+  })
 })
