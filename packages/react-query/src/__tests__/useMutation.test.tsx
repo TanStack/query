@@ -2240,7 +2240,9 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(11)
 
     expect(
-      rendered.getByText('result: uploaded: file1, uploaded: file2, uploaded: file3'),
+      rendered.getByText(
+        'result: uploaded: file1, uploaded: file2, uploaded: file3',
+      ),
     ).toBeInTheDocument()
   })
 
@@ -2318,7 +2320,9 @@ describe('useMutation', () => {
               ])
               const summary = results
                 .map((r) =>
-                  r.status === 'fulfilled' ? r.value : `error: ${r.reason.message}`,
+                  r.status === 'fulfilled'
+                    ? r.value
+                    : `error: ${r.reason.message}`,
                 )
                 .join(', ')
               setResult(summary)
@@ -2337,7 +2341,9 @@ describe('useMutation', () => {
     await vi.advanceTimersByTimeAsync(11)
 
     expect(
-      rendered.getByText('result: uploaded: file1, error: upload failed, uploaded: file3'),
+      rendered.getByText(
+        'result: uploaded: file1, error: upload failed, uploaded: file3',
+      ),
     ).toBeInTheDocument()
   })
 })
