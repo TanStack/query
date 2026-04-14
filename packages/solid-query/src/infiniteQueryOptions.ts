@@ -15,13 +15,7 @@ export type UndefinedInitialDataInfiniteOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = Accessor<
-  InfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  > & {
+  InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
     initialData?: undefined
   }
 >
@@ -34,13 +28,7 @@ export type DefinedInitialDataInfiniteOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = Accessor<
-  InfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  > & {
+  InfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
     initialData:
       | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
       | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)

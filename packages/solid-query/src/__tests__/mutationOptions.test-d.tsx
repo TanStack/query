@@ -119,10 +119,7 @@ describe('mutationOptions', () => {
         },
       }),
     ).toEqualTypeOf<
-      WithRequired<
-        MutationOptions<number, DefaultError, string>,
-        'mutationKey'
-      >
+      WithRequired<MutationOptions<number, DefaultError, string>, 'mutationKey'>
     >()
     expectTypeOf(
       mutationOptions({
