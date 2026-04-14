@@ -1,5 +1,6 @@
 import { ContextProvider } from '@lit/context'
 import type { QueryClient } from '@tanstack/query-core'
+import type { TemplateResult } from 'lit'
 import { LitElement, html } from 'lit'
 import {
   createMissingQueryClientError,
@@ -66,7 +67,7 @@ export class QueryClientProvider extends LitElement {
     }
   }
 
-  render() {
+  render(): TemplateResult {
     return html`<slot></slot>`
   }
 

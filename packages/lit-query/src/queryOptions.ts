@@ -16,13 +16,7 @@ export type DefinedInitialDataOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
-  QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
-  >,
+  QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'queryFn'
 > & {
   initialData:
@@ -37,13 +31,7 @@ export type UnusedSkipTokenOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
-  QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
-  >,
+  QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'queryFn'
 > & {
   queryFn?: Exclude<

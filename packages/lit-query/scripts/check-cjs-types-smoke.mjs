@@ -7,6 +7,7 @@ import { promisify } from 'node:util'
 
 const execFile = promisify(execFileCallback)
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const pnpmCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
 const projectDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const typeRootsDir = resolve(projectDir, 'node_modules', '@types')
 const tscEntrypoint = resolve(
@@ -37,13 +38,21 @@ async function packProject(destination) {
   await mkdir(destination, { recursive: true })
 
   const { stdout } = await execFile(
-    npmCommand,
+    pnpmCommand,
     ['pack', '--json', '--pack-destination', destination],
     {
       cwd: projectDir,
     },
   )
-  const [{ filename }] = JSON.parse(stdout)
+  const packResult = JSON.parse(stdout)
+  const filename = Array.isArray(packResult)
+    ? packResult[0]?.filename
+    : packResult?.filename
+
+  if (typeof filename !== 'string') {
+    throw new Error(`Unexpected pack output: ${stdout}`)
+  }
+
   return resolve(destination, filename)
 }
 

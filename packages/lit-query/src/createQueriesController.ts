@@ -2,6 +2,7 @@ import {
   QueriesObserver,
   type DefaultError,
   type DefinedQueryObserverResult,
+  type OmitKeyof,
   type QueriesObserverOptions,
   type QueryFunction,
   type QueryKey,
@@ -27,7 +28,47 @@ export type CreateQueriesInput<
   TQueryKey extends QueryKey = QueryKey,
 > = QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
 
+type CreateQueriesInputForController<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = OmitKeyof<CreateQueriesInput<TQueryFnData, TError, TData, TQueryKey>, never>
+
+type MAXIMUM_DEPTH = 20
+
 type SkipTokenForCreateQueries = symbol
+
+type GetCreateQueriesInput<T> = T extends {
+  queryFnData: infer TQueryFnData
+  error?: infer TError
+  data: infer TData
+}
+  ? CreateQueriesInputForController<TQueryFnData, TError, TData>
+  : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
+    ? CreateQueriesInputForController<TQueryFnData, TError>
+    : T extends { data: infer TData; error?: infer TError }
+      ? CreateQueriesInputForController<unknown, TError, TData>
+      : T extends [infer TQueryFnData, infer TError, infer TData]
+        ? CreateQueriesInputForController<TQueryFnData, TError, TData>
+        : T extends [infer TQueryFnData, infer TError]
+          ? CreateQueriesInputForController<TQueryFnData, TError>
+          : T extends [infer TQueryFnData]
+            ? CreateQueriesInputForController<TQueryFnData>
+            : T extends {
+                  queryFn?:
+                    | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                    | SkipTokenForCreateQueries
+                  select?: (data: any) => infer TData
+                  throwOnError?: ThrowOnError<any, infer TError, any, any>
+                }
+              ? CreateQueriesInputForController<
+                  TQueryFnData,
+                  unknown extends TError ? DefaultError : TError,
+                  unknown extends TData ? TQueryFnData : TData,
+                  TQueryKey
+                >
+              : CreateQueriesInputForController
 
 type GetDefinedOrUndefinedCreateQueriesResult<
   T,
@@ -49,47 +90,102 @@ type GetDefinedOrUndefinedCreateQueriesResult<
         : QueryObserverResult<TData, TError>
   : QueryObserverResult<TData, TError>
 
-type GetCreateQueriesResult<T> =
-  T extends { queryFnData: any; error?: infer TError; data: infer TData }
-    ? GetDefinedOrUndefinedCreateQueriesResult<T, TData, TError>
-    : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-      ? GetDefinedOrUndefinedCreateQueriesResult<T, TQueryFnData, TError>
-      : T extends { data: infer TData; error?: infer TError }
-        ? GetDefinedOrUndefinedCreateQueriesResult<T, TData, TError>
-        : T extends [any, infer TError, infer TData]
-          ? GetDefinedOrUndefinedCreateQueriesResult<T, TData, TError>
-          : T extends [infer TQueryFnData, infer TError]
-            ? GetDefinedOrUndefinedCreateQueriesResult<
-                T,
-                TQueryFnData,
-                TError
-              >
-            : T extends [infer TQueryFnData]
-              ? GetDefinedOrUndefinedCreateQueriesResult<T, TQueryFnData>
-              : T extends {
-                    queryFn?:
-                      | QueryFunction<infer TQueryFnData, any>
-                      | SkipTokenForCreateQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
-                  }
-                ? GetDefinedOrUndefinedCreateQueriesResult<
-                    T,
-                    unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
-                  >
-                : QueryObserverResult
-
-export type CreateQueriesResults<TQueryOptions extends readonly unknown[]> = {
-  [Index in keyof TQueryOptions]: GetCreateQueriesResult<TQueryOptions[Index]>
+type GetCreateQueriesResult<T> = T extends {
+  queryFnData: any
+  error?: infer TError
+  data: infer TData
 }
+  ? GetDefinedOrUndefinedCreateQueriesResult<T, TData, TError>
+  : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
+    ? GetDefinedOrUndefinedCreateQueriesResult<T, TQueryFnData, TError>
+    : T extends { data: infer TData; error?: infer TError }
+      ? GetDefinedOrUndefinedCreateQueriesResult<T, TData, TError>
+      : T extends [any, infer TError, infer TData]
+        ? GetDefinedOrUndefinedCreateQueriesResult<T, TData, TError>
+        : T extends [infer TQueryFnData, infer TError]
+          ? GetDefinedOrUndefinedCreateQueriesResult<T, TQueryFnData, TError>
+          : T extends [infer TQueryFnData]
+            ? GetDefinedOrUndefinedCreateQueriesResult<T, TQueryFnData>
+            : T extends {
+                  queryFn?:
+                    | QueryFunction<infer TQueryFnData, any>
+                    | SkipTokenForCreateQueries
+                  select?: (data: any) => infer TData
+                  throwOnError?: ThrowOnError<any, infer TError, any, any>
+                }
+              ? GetDefinedOrUndefinedCreateQueriesResult<
+                  T,
+                  unknown extends TData ? TQueryFnData : TData,
+                  unknown extends TError ? DefaultError : TError
+                >
+              : QueryObserverResult
+
+export type CreateQueriesOptions<
+  T extends Array<any>,
+  TResults extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
+  ? Array<CreateQueriesInputForController>
+  : T extends []
+    ? []
+    : T extends [infer Head]
+      ? [...TResults, GetCreateQueriesInput<Head>]
+      : T extends [infer Head, ...infer Tails]
+        ? CreateQueriesOptions<
+            [...Tails],
+            [...TResults, GetCreateQueriesInput<Head>],
+            [...TDepth, 1]
+          >
+        : ReadonlyArray<unknown> extends T
+          ? T
+          : T extends Array<
+                CreateQueriesInputForController<
+                  infer TQueryFnData,
+                  infer TError,
+                  infer TData,
+                  infer TQueryKey
+                >
+              >
+            ? Array<
+                CreateQueriesInputForController<
+                  TQueryFnData,
+                  TError,
+                  TData,
+                  TQueryKey
+                >
+              >
+            : Array<CreateQueriesInputForController>
+
+export type CreateQueriesResults<
+  T extends Array<any>,
+  TResults extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
+  ? Array<QueryObserverResult>
+  : T extends []
+    ? []
+    : T extends [infer Head]
+      ? [...TResults, GetCreateQueriesResult<Head>]
+      : T extends [infer Head, ...infer Tails]
+        ? CreateQueriesResults<
+            [...Tails],
+            [...TResults, GetCreateQueriesResult<Head>],
+            [...TDepth, 1]
+          >
+        : { [K in keyof T]: GetCreateQueriesResult<T[K]> }
 
 export type CreateQueriesControllerOptions<
-  TQueryOptions extends readonly CreateQueriesInput[] =
-    readonly CreateQueriesInput[],
+  TQueryOptions extends Array<any> = Array<any>,
   TCombinedResult = CreateQueriesResults<TQueryOptions>,
 > = {
-  queries: Accessor<TQueryOptions>
+  queries: Accessor<
+    | readonly [...CreateQueriesOptions<TQueryOptions>]
+    | readonly [
+        ...{
+          [K in keyof TQueryOptions]: GetCreateQueriesInput<TQueryOptions[K]>
+        },
+      ]
+  >
   combine?: (result: CreateQueriesResults<TQueryOptions>) => TCombinedResult
 }
 
@@ -143,21 +239,24 @@ function resolveQueriesOptions<TCombinedResult>(
 } {
   const resolvedOptions = readAccessor(optionsAccessor)
   const resolvedQueries = readAccessor(resolvedOptions.queries)
+  const combine =
+    resolvedOptions.combine as QueriesObserverOptions<TCombinedResult>['combine']
 
   return {
-    queries: resolvedQueries.map((query: QueryObserverOptions) => {
-      const defaulted = client.defaultQueryOptions(query)
+    queries: resolvedQueries.map((query) => {
+      const defaulted = client.defaultQueryOptions(
+        query as QueryObserverOptions,
+      )
       ;(defaulted as { _optimisticResults?: 'optimistic' })._optimisticResults =
         'optimistic'
       return defaulted
     }),
-    combine:
-      resolvedOptions.combine as QueriesObserverOptions<TCombinedResult>['combine'],
+    combine,
   }
 }
 
 class QueriesController<
-  TQueryOptions extends readonly CreateQueriesInput[],
+  TQueryOptions extends Array<any>,
   TCombinedResult,
 > extends BaseController<TCombinedResult> {
   private readonly options: Accessor<
@@ -367,7 +466,7 @@ class QueriesController<
 }
 
 export function createQueriesController<
-  TQueryOptions extends readonly CreateQueriesInput[],
+  TQueryOptions extends Array<any>,
   TCombinedResult = CreateQueriesResults<TQueryOptions>,
 >(
   host: ReactiveControllerHost,

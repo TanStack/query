@@ -10,7 +10,6 @@ import type { CreateInfiniteQueryOptions } from './createInfiniteQueryController
 import type { CreateMutationOptions } from './createMutationController.js'
 import type {
   CreateQueriesControllerOptions,
-  CreateQueriesInput,
   CreateQueriesResults,
 } from './createQueriesController.js'
 import type { CreateQueryOptions } from './createQueryController.js'
@@ -57,7 +56,6 @@ export type MutationControllerResult<
 > = MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
 
 export type QueriesControllerOptions<
-  TQueryOptions extends readonly CreateQueriesInput[] =
-    readonly CreateQueriesInput[],
+  TQueryOptions extends Array<any> = Array<any>,
   TCombinedResult = CreateQueriesResults<TQueryOptions>,
 > = Accessor<CreateQueriesControllerOptions<TQueryOptions, TCombinedResult>>

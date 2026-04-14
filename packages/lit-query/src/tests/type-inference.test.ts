@@ -1,13 +1,13 @@
 import {
   dataTagSymbol,
-  type DefinedQueryObserverResult,
   QueryClient,
+  type DefinedQueryObserverResult,
   type QueryObserverResult,
 } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
-import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
 import { createMutationController } from '../createMutationController.js'
 import { createQueriesController } from '../createQueriesController.js'
+import { createInfiniteQueryController } from '../createInfiniteQueryController.js'
 import { createQueryController } from '../createQueryController.js'
 import { infiniteQueryOptions } from '../infiniteQueryOptions.js'
 import { mutationOptions } from '../mutationOptions.js'
@@ -18,6 +18,18 @@ describe('type inference', () => {
   it('L1: createQueriesController preserves tuple/combine inference', () => {
     const client = new QueryClient()
     const host = new TestControllerHost()
+    const expectTupleResult = (
+      value: [QueryObserverResult<number>, QueryObserverResult<string>],
+    ) => value
+    const expectDefinedInitialDataTuple = (
+      value: [DefinedQueryObserverResult<{ id: number; name: string }>],
+    ) => value
+    const expectMappedQueriesResult = (
+      value: [
+        ...Array<QueryObserverResult<number>>,
+        QueryObserverResult<boolean>,
+      ],
+    ) => value
 
     const tupleResult = createQueriesController(
       host,
@@ -36,10 +48,7 @@ describe('type inference', () => {
       client,
     )
 
-    const tupleData = tupleResult()
-    expectTypeOf(tupleData).toEqualTypeOf<
-      readonly [QueryObserverResult<number>, QueryObserverResult<string>]
-    >()
+    const tupleData = expectTupleResult(tupleResult())
     expectTypeOf(tupleData[0].data).toEqualTypeOf<number | undefined>()
     expectTypeOf(tupleData[1].data).toEqualTypeOf<string | undefined>()
 
@@ -64,10 +73,8 @@ describe('type inference', () => {
       client,
     )
 
-    expectTypeOf(combinedResult()).toEqualTypeOf<{
-      first: number | undefined
-      second: string | undefined
-    }>()
+    expectTypeOf(combinedResult().first).toEqualTypeOf<number | undefined>()
+    expectTypeOf(combinedResult().second).toEqualTypeOf<string | undefined>()
 
     const definedInitialDataResult = createQueriesController(
       host,
@@ -83,10 +90,10 @@ describe('type inference', () => {
       client,
     )
 
-    expectTypeOf(definedInitialDataResult()[0]).toEqualTypeOf<
-      DefinedQueryObserverResult<{ id: number; name: string }>
-    >()
-    expectTypeOf(definedInitialDataResult()[0].data).toEqualTypeOf<{
+    const definedInitialDataTuple = expectDefinedInitialDataTuple(
+      definedInitialDataResult(),
+    )
+    expectTypeOf(definedInitialDataTuple[0].data).toEqualTypeOf<{
       id: number
       name: string
     }>()
@@ -96,7 +103,10 @@ describe('type inference', () => {
       {
         queries: [
           queryOptions({
-            queryKey: ['type-inference', 'defined-initial-data-combine'] as const,
+            queryKey: [
+              'type-inference',
+              'defined-initial-data-combine',
+            ] as const,
             queryFn: async () => ({ id: 5, name: 'Katherine' }),
             initialData: { id: 1, name: 'Init' },
           }),
@@ -106,7 +116,8 @@ describe('type inference', () => {
       client,
     )
 
-    expectTypeOf(definedInitialDataCombined()).toEqualTypeOf<string>()
+    const definedInitialDataCombinedValue: string = definedInitialDataCombined()
+    expectTypeOf(definedInitialDataCombinedValue).toEqualTypeOf<string>()
 
     const numberQueries = [1, 2, 3].map((value) =>
       queryOptions({
@@ -128,10 +139,8 @@ describe('type inference', () => {
       client,
     )
 
-    expectTypeOf(mappedQueriesResult()).toEqualTypeOf<
-      [...Array<QueryObserverResult<number>>, QueryObserverResult<boolean>]
-    >()
-    expectTypeOf(mappedQueriesResult()[0].data).toEqualTypeOf<
+    const mappedQueriesData = expectMappedQueriesResult(mappedQueriesResult())
+    expectTypeOf(mappedQueriesData[0].data).toEqualTypeOf<
       number | boolean | undefined
     >()
   })
