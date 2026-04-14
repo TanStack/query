@@ -64,6 +64,26 @@ describe('useQueries', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
   })
 
+  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+    const queryResults = useQueries(() => ({
+      queries: [
+        {
+          queryKey: queryKey(),
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: () => undefined as { wow: boolean } | undefined,
+        },
+      ],
+    }))
+
+    const data = queryResults[0].data
+
+    expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
+  })
+
   it('should infer types from explicit object type parameter', () => {
     const queryResults = useQueries<
       [
@@ -143,35 +163,12 @@ describe('useQueries', () => {
     expectTypeOf(query2Data).toEqualTypeOf<boolean | undefined>()
   })
 
-  it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
-    const queryResults = useQueries(() => ({
-      queries: [
-        {
-          queryKey: queryKey(),
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-          initialData: () => undefined as { wow: boolean } | undefined,
-        },
-      ],
-    }))
-
-    const data = queryResults[0].data
-
-    expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
-  })
-
   describe('custom hook', () => {
     it('should allow custom hooks using SolidQueryOptions', () => {
       type Data = string
 
       const useCustomQueries = (
-        options?: OmitKeyof<
-          SolidQueryOptions<Data>,
-          'queryKey' | 'queryFn'
-        >,
+        options?: OmitKeyof<SolidQueryOptions<Data>, 'queryKey' | 'queryFn'>,
       ) => {
         return useQueries(() => ({
           queries: [
@@ -286,12 +283,8 @@ describe('useQueries', () => {
         },
       ],
       combine: (results) => {
-        expectTypeOf(results[0]).toEqualTypeOf<
-          UseQueryResult<number, Error>
-        >()
-        expectTypeOf(results[1]).toEqualTypeOf<
-          UseQueryResult<string, Error>
-        >()
+        expectTypeOf(results[0]).toEqualTypeOf<UseQueryResult<number, Error>>()
+        expectTypeOf(results[1]).toEqualTypeOf<UseQueryResult<string, Error>>()
         return results
       },
     }))
