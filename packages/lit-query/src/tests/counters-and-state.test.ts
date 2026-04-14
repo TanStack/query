@@ -447,6 +447,50 @@ describe('useIsFetching/useIsMutating/useMutationState', () => {
     )
   })
 
+  it('S4: useMutationState refreshes when the select closure changes on host update', async () => {
+    const client = new QueryClient()
+    const host = new TestControllerHost()
+    let label = 'before'
+
+    const mutation = createMutationController(
+      host,
+      {
+        mutationKey: ['state-select-reactivity'],
+        mutationFn: async () => 'ok',
+      },
+      client,
+    )
+
+    const mutationLabels = useMutationState<string>(
+      host,
+      {
+        filters: {
+          mutationKey: ['state-select-reactivity'],
+        },
+        select: () => label,
+      },
+      client,
+    )
+
+    host.connect()
+    host.update()
+
+    await expect(mutation.mutateAsync(undefined)).resolves.toBe('ok')
+    await waitFor(
+      () => mutationLabels().length === 1 && mutationLabels()[0] === 'before',
+    )
+
+    label = 'after'
+    host.update()
+
+    await waitFor(
+      () => mutationLabels().length === 1 && mutationLabels()[0] === 'after',
+    )
+
+    mutation.destroy()
+    mutationLabels.destroy()
+  })
+
   it('LC-COUNTERS-03: read-only helpers fail after handshake and recover under a provider', async () => {
     const consumer = document.createElement(
       contextCountersTagName,

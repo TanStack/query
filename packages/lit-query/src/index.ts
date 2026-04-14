@@ -55,6 +55,7 @@ export { useMutationState } from './useMutationState.js'
 export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
+  UnusedSkipTokenOptions,
 } from './queryOptions.js'
 export { queryOptions } from './queryOptions.js'
 

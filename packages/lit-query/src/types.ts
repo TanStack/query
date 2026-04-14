@@ -11,6 +11,7 @@ import type { CreateMutationOptions } from './createMutationController.js'
 import type {
   CreateQueriesControllerOptions,
   CreateQueriesInput,
+  CreateQueriesResults,
 } from './createQueriesController.js'
 import type { CreateQueryOptions } from './createQueryController.js'
 
@@ -58,5 +59,5 @@ export type MutationControllerResult<
 export type QueriesControllerOptions<
   TQueryOptions extends readonly CreateQueriesInput[] =
     readonly CreateQueriesInput[],
-  TCombinedResult = { [Index in keyof TQueryOptions]: QueryObserverResult },
+  TCombinedResult = CreateQueriesResults<TQueryOptions>,
 > = Accessor<CreateQueriesControllerOptions<TQueryOptions, TCombinedResult>>

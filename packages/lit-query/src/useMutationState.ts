@@ -58,7 +58,7 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
   }
 
   protected onHostUpdate(): void {
-    if (!this.options.filters || typeof this.options.filters !== 'function') {
+    if (!this.shouldRefreshOnHostUpdate()) {
       return
     }
 
@@ -108,6 +108,13 @@ class MutationStateController<TResult> extends BaseController<TResult[]> {
     this.unsubscribe = this.queryClient.getMutationCache().subscribe(() => {
       this.setResult(this.computeState())
     })
+  }
+
+  private shouldRefreshOnHostUpdate(): boolean {
+    return (
+      typeof this.options.filters === 'function' ||
+      typeof this.options.select === 'function'
+    )
   }
 
   private computeState(): TResult[] {
