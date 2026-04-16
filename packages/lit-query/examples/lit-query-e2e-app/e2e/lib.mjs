@@ -12,7 +12,7 @@ export const host = '127.0.0.1'
 export const port = DEMO_PORT
 export const baseUrl = `http://${host}:${port}`
 
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const packageManagerCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
 const projectDir = new URL('..', import.meta.url)
 const allowExistingServer = process.env.PW_ALLOW_EXISTING_SERVER === 'true'
 const strictPortErrorPattern =
@@ -78,7 +78,7 @@ function startServer() {
   let startupError
 
   const child = spawn(
-    npmCommand,
+    packageManagerCommand,
     [
       'run',
       'dev',

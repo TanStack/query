@@ -95,21 +95,21 @@
     "lit": "^3.3.1"
   },
   "peerDependencies": {
-    "lit": ">=2.8.0 <4",
-    "@tanstack/query-core": "^5.0.0"
+    "@tanstack/query-core": "^5.0.0",
+    "lit": ">=2.8.0 <4"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
     "@eslint/js": "^9.36.0",
-    "@types/node": "^24.5.2",
+    "@types/node": "^22.15.3",
     "@vitest/eslint-plugin": "^1.4.0",
     "eslint": "^9.36.0",
     "globals": "^17.4.0",
-    "jsdom": "^26.1.0",
+    "jsdom": "^27.0.0",
     "prettier": "^3.7.4",
     "publint": "^0.3.13",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.56.1",
-    "vitest": "^3.2.4"
+    "typescript-eslint": "^8.54.0",
+    "vitest": "^4.0.18"
   }
 }

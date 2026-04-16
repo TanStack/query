@@ -14,8 +14,8 @@
     "e2e:error": "node ./e2e/error-recovery.mjs",
     "e2e:mutations": "node ./e2e/mutations.mjs",
     "e2e:boundary": "node ./e2e/boundary.mjs",
-    "e2e:all": "npm run e2e && npm run e2e:prefetch && npm run e2e:error && npm run e2e:mutations && npm run e2e:boundary",
-    "e2e:all:headed": "PW_HEADLESS=false npm run e2e:all"
+    "e2e:all": "pnpm run e2e && pnpm run e2e:prefetch && pnpm run e2e:error && pnpm run e2e:mutations && pnpm run e2e:boundary",
+    "e2e:all:headed": "PW_HEADLESS=false pnpm run e2e:all"
   },
   "dependencies": {
     "@tanstack/lit-query": "file:../..",

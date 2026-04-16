@@ -301,6 +301,52 @@ describe('createInfiniteQueryController', () => {
 
     infinite.destroy()
   })
+
+  it('LC-INF-04: explicit-client infinite accessors defer until host fields are initialized', () => {
+    const client = new QueryClient()
+
+    class DeferredExplicitInfiniteHost implements ReactiveControllerHost {
+      private readonly controllers = new Set<ReactiveController>()
+
+      updatesRequested = 0
+      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
+
+      readonly infinite = createInfiniteQueryController(
+        this,
+        () => ({
+          queryKey: ['deferred-explicit-infinite', this.id] as const,
+          initialPageParam: 0,
+          queryFn: async ({ pageParam }) => Number(pageParam),
+          getNextPageParam: (lastPage) =>
+            lastPage < 1 ? lastPage + 1 : undefined,
+          retry: false,
+        }),
+        client,
+      )
+
+      readonly firstRead = this.infinite()
+      readonly id = 'alpha'
+
+      addController(controller: ReactiveController): void {
+        this.controllers.add(controller)
+      }
+
+      removeController(controller: ReactiveController): void {
+        this.controllers.delete(controller)
+      }
+
+      requestUpdate(): void {
+        this.updatesRequested += 1
+      }
+    }
+
+    expect(() => new DeferredExplicitInfiniteHost()).not.toThrow()
+
+    const host = new DeferredExplicitInfiniteHost()
+    expect(host.infinite().status).toBe('pending')
+
+    host.infinite.destroy()
+  })
 })
 
 describe('options helpers integration', () => {

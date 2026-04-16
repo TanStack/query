@@ -14,8 +14,8 @@
     "e2e:refetch-button": "node ./e2e/refetch-button.mjs",
     "e2e:lifecycle-reconnect": "node ./e2e/lifecycle-reconnect.mjs",
     "e2e:lifecycle-contract": "node ./e2e/lifecycle-contract.mjs",
-    "e2e:all": "npm run e2e && npm run e2e:query-error && npm run e2e:mutation-error && npm run e2e:refetch-button && npm run e2e:lifecycle-reconnect && npm run e2e:lifecycle-contract",
-    "e2e:all:headed": "PW_HEADLESS=false npm run e2e:all"
+    "e2e:all": "pnpm run e2e && pnpm run e2e:query-error && pnpm run e2e:mutation-error && pnpm run e2e:refetch-button && pnpm run e2e:lifecycle-reconnect && pnpm run e2e:lifecycle-contract",
+    "e2e:all:headed": "PW_HEADLESS=false pnpm run e2e:all"
   },
   "dependencies": {
     "@tanstack/lit-query": "file:../..",

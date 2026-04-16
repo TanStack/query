@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
 import { SSR_BASE_URL } from '../config/ports.js'
 
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const packageManagerCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
 const cwd = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const allowExistingServer = process.env.PW_ALLOW_EXISTING_SERVER === 'true'
 const strictPortErrorPattern =
@@ -23,7 +23,7 @@ const selectorTimeoutMs = 10_000
 export const baseUrl = SSR_BASE_URL
 
 export function runBuild() {
-  const result = spawnSync(npmCommand, ['run', 'build'], {
+  const result = spawnSync(packageManagerCommand, ['run', 'build'], {
     cwd,
     stdio: 'inherit',
   })
@@ -36,7 +36,7 @@ export function runBuild() {
 function startServer() {
   let startupError
 
-  const child = spawn(npmCommand, ['run', 'dev:server'], {
+  const child = spawn(packageManagerCommand, ['run', 'dev:server'], {
     cwd,
     env: {
       ...process.env,

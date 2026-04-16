@@ -1280,4 +1280,47 @@ describe('createQueryController', () => {
 
     query.destroy()
   })
+
+  it('defers explicit-client query accessors until host fields are initialized', () => {
+    const client = new QueryClient()
+
+    class DeferredExplicitQueryHost implements ReactiveControllerHost {
+      private readonly controllers = new Set<ReactiveController>()
+
+      updatesRequested = 0
+      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
+
+      readonly query = createQueryController(
+        this,
+        () => ({
+          queryKey: ['deferred-explicit-query', this.id] as const,
+          queryFn: async () => this.id,
+          retry: false,
+        }),
+        client,
+      )
+
+      readonly firstRead = this.query()
+      readonly id = 'alpha'
+
+      addController(controller: ReactiveController): void {
+        this.controllers.add(controller)
+      }
+
+      removeController(controller: ReactiveController): void {
+        this.controllers.delete(controller)
+      }
+
+      requestUpdate(): void {
+        this.updatesRequested += 1
+      }
+    }
+
+    expect(() => new DeferredExplicitQueryHost()).not.toThrow()
+
+    const host = new DeferredExplicitQueryHost()
+    expect(host.query().status).toBe('pending')
+
+    host.query.destroy()
+  })
 })

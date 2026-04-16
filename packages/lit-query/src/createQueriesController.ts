@@ -228,6 +228,37 @@ function createPendingQueryObserverResult(): QueryObserverResult {
   } as unknown as QueryObserverResult
 }
 
+function createPlaceholderQueryObserverResult(
+  query: QueryObserverOptions,
+): QueryObserverResult {
+  const initialData =
+    typeof query.initialData === 'function'
+      ? query.initialData()
+      : query.initialData
+
+  if (initialData === undefined) {
+    return createPendingQueryObserverResult()
+  }
+
+  const data = query.select ? query.select(initialData) : initialData
+  const initialDataUpdatedAt =
+    typeof query.initialDataUpdatedAt === 'function'
+      ? query.initialDataUpdatedAt()
+      : query.initialDataUpdatedAt
+
+  return {
+    ...createPendingQueryObserverResult(),
+    data,
+    dataUpdatedAt: initialDataUpdatedAt ?? Date.now(),
+    isPending: false,
+    isInitialLoading: false,
+    isLoading: false,
+    isSuccess: true,
+    status: 'success',
+    promise: Promise.resolve(data as never),
+  } as QueryObserverResult
+}
+
 function resolveQueriesOptions<TCombinedResult>(
   optionsAccessor: Accessor<
     CreateQueriesControllerOptions<any, TCombinedResult>
@@ -283,6 +314,10 @@ class QueriesController<
     })
 
     if (!queryClient) {
+      return
+    }
+
+    if (this.shouldRefreshOnHostUpdate()) {
       return
     }
 
@@ -434,7 +469,9 @@ class QueriesController<
   ): TCombinedResult {
     const resolvedOptions = readAccessor(optionsAccessor)
     const queries = readAccessor(resolvedOptions.queries)
-    const placeholders = queries.map(() => createPendingQueryObserverResult())
+    const placeholders = queries.map((query) =>
+      createPlaceholderQueryObserverResult(query as QueryObserverOptions),
+    )
     return (
       resolvedOptions.combine
         ? resolvedOptions.combine(placeholders as never)

@@ -61,6 +61,7 @@ function createIdleMutationResult<
     isError: false,
     isIdle: true,
     isPending: false,
+    isPaused: false,
     isSuccess: false,
     status: 'idle',
     submittedAt: 0,
@@ -111,6 +112,10 @@ class MutationController<
     this.options = options
 
     if (!queryClient) {
+      return
+    }
+
+    if (typeof options === 'function') {
       return
     }
 

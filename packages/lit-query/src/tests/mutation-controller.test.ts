@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createMutationController } from '../createMutationController.js'
 import {
@@ -191,6 +192,7 @@ describe('createMutationController', () => {
 
     mutation.reset()
     expect(mutation().isIdle).toBe(true)
+    expect(mutation().isPaused).toBe(false)
     expect(mutation().isError).toBe(false)
     expect(mutation().error).toBeNull()
     expect(mutation().data).toBeUndefined()
@@ -318,6 +320,7 @@ describe('createMutationController', () => {
     const placeholderResult = consumer.mutation()
 
     expect(placeholderResult.isIdle).toBe(true)
+    expect(placeholderResult.isPaused).toBe(false)
 
     document.body.append(consumer)
 
@@ -422,5 +425,48 @@ describe('createMutationController', () => {
     expect(mutation().isSuccess).toBe(true)
 
     mutation.destroy()
+  })
+
+  it('LC-MUT-05: explicit-client mutation accessors defer until host fields are initialized', () => {
+    const client = new QueryClient()
+
+    class DeferredExplicitMutationHost implements ReactiveControllerHost {
+      private readonly controllers = new Set<ReactiveController>()
+
+      updatesRequested = 0
+      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
+
+      readonly mutation = createMutationController(
+        this,
+        () => ({
+          mutationKey: ['deferred-explicit-mutation', this.id] as const,
+          mutationFn: async (value: number) => value + this.offset,
+        }),
+        client,
+      )
+
+      readonly firstRead = this.mutation()
+      readonly id = 'alpha'
+      readonly offset = 1
+
+      addController(controller: ReactiveController): void {
+        this.controllers.add(controller)
+      }
+
+      removeController(controller: ReactiveController): void {
+        this.controllers.delete(controller)
+      }
+
+      requestUpdate(): void {
+        this.updatesRequested += 1
+      }
+    }
+
+    expect(() => new DeferredExplicitMutationHost()).not.toThrow()
+
+    const host = new DeferredExplicitMutationHost()
+    expect(host.mutation().isIdle).toBe(true)
+
+    host.mutation.destroy()
   })
 })

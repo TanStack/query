@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process'
 import { once } from 'node:events'
 import { API_PORT } from '../config/ports.js'
 
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const packageManagerCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
 const cwd = new URL('..', import.meta.url)
 
 function forwardOutput(prefix, stream, output) {
@@ -12,7 +12,7 @@ function forwardOutput(prefix, stream, output) {
 }
 
 function start(name, args, extraEnv = {}) {
-  const child = spawn(npmCommand, args, {
+  const child = spawn(packageManagerCommand, args, {
     cwd,
     stdio: ['ignore', 'pipe', 'pipe'],
     env: {

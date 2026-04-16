@@ -137,6 +137,10 @@ class InfiniteQueryController<
       return
     }
 
+    if (typeof options === 'function') {
+      return
+    }
+
     const defaulted = this.defaultOptions(queryClient)
     const observer = new InfiniteQueryObserver(queryClient, defaulted)
     this.queryClient = queryClient

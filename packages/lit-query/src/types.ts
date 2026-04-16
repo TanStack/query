@@ -14,8 +14,6 @@ import type {
 } from './createQueriesController.js'
 import type { CreateQueryOptions } from './createQueryController.js'
 
-export type { Accessor }
-
 export type QueryControllerOptions<
   TQueryFnData = unknown,
   TError = DefaultError,

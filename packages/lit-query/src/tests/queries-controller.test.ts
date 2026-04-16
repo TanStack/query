@@ -3,6 +3,7 @@ import { QueryClient } from '@tanstack/query-core'
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueriesController } from '../createQueriesController.js'
+import { queryOptions } from '../queryOptions.js'
 import {
   TestControllerHost,
   TestElementHost,
@@ -471,6 +472,70 @@ describe('createQueriesController', () => {
 
     const host = new DeferredFieldsQueriesHost()
     expect(host.queries()).toEqual(['pending', 'pending'])
+  })
+
+  it('LC-QUERIES-06: placeholder combine materializes defined initialData before a client is available', () => {
+    const host = new TestControllerHost()
+    const queries = createQueriesController(host, {
+      queries: [
+        queryOptions({
+          queryKey: ['placeholder-initial-data'] as const,
+          queryFn: async () => ({ id: 4, name: 'Marie' }),
+          initialData: { id: 0, name: 'Seed' },
+        }),
+      ] as const,
+      combine: (result) => result[0].data.name,
+    })
+
+    expect(queries()).toBe('Seed')
+
+    queries.destroy()
+  })
+
+  it('LC-QUERIES-07: explicit-client constructor defers dynamic accessors until host fields are initialized', () => {
+    const client = new QueryClient()
+
+    class DeferredExplicitQueriesHost implements ReactiveControllerHost {
+      private readonly controllers = new Set<ReactiveController>()
+
+      updatesRequested = 0
+      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
+
+      readonly queries = createQueriesController(
+        this,
+        () => ({
+          queries: this.ids.map((id) => ({
+            queryKey: ['deferred-explicit-queries', id] as const,
+            queryFn: async () => id,
+            retry: false,
+          })),
+          combine: (results) => results.map((result) => result.status),
+        }),
+        client,
+      )
+
+      readonly firstRead = this.queries()
+      readonly ids = ['alpha', 'beta'] as const
+
+      addController(controller: ReactiveController): void {
+        this.controllers.add(controller)
+      }
+
+      removeController(controller: ReactiveController): void {
+        this.controllers.delete(controller)
+      }
+
+      requestUpdate(): void {
+        this.updatesRequested += 1
+      }
+    }
+
+    expect(() => new DeferredExplicitQueriesHost()).not.toThrow()
+
+    const host = new DeferredExplicitQueriesHost()
+    expect(host.queries()).toEqual(['pending', 'pending'])
+
+    host.queries.destroy()
   })
 
   it('ALREADYCONN-QUERIES-01: queries controller on already-connected host with explicit client does not throw', async () => {

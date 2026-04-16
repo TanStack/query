@@ -12,7 +12,7 @@ export const host = '127.0.0.1'
 export const apiUrl = `http://${host}:${API_PORT}`
 export const baseUrl = `http://${host}:${DEMO_PORT}`
 
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const packageManagerCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
 const projectDir = new URL('..', import.meta.url)
 const allowExistingServer = process.env.PW_ALLOW_EXISTING_SERVER === 'true'
 const strictPortErrorPattern =
@@ -77,7 +77,7 @@ async function captureFailureArtifacts(page, error) {
 function startProcess(name, args, extraEnv = {}) {
   let startupError
 
-  const child = spawn(npmCommand, args, {
+  const child = spawn(packageManagerCommand, args, {
     cwd: projectDir,
     env: {
       ...process.env,

@@ -69,20 +69,19 @@ async function readJsonOrThrow<T>(
   response: Response,
   fallbackMessage: string,
 ): Promise<T> {
-  const payload = (await response.json().catch(() => null)) as
-    | { error?: string }
-    | T
-    | null
-
-  if (!response.ok) {
-    throw new Error(
-      payload && typeof payload === 'object' && 'error' in payload
-        ? String(payload.error ?? fallbackMessage)
-        : fallbackMessage,
-    )
+  if (response.ok) {
+    return (await response.json()) as T
   }
 
-  return payload as T
+  const payload = (await response.json().catch(() => null)) as
+    | { error?: string }
+    | null
+
+  throw new Error(
+    payload && typeof payload === 'object' && 'error' in payload
+      ? String(payload.error ?? fallbackMessage)
+      : fallbackMessage,
+  )
 }
 
 async function requestJson<T>(

@@ -34,8 +34,14 @@ async function run() {
   process.on('SIGINT', () => stopServer('SIGINT'))
   process.on('SIGTERM', () => stopServer('SIGTERM'))
 
-  const [code] = await once(server, 'exit')
-  process.exitCode = code ?? 0
+  const outcome = await Promise.race([
+    once(server, 'error').then(([error]) => {
+      throw error
+    }),
+    once(server, 'exit').then(([code]) => ({ code })),
+  ])
+
+  process.exitCode = outcome.code ?? 0
 }
 
 run().catch((error) => {

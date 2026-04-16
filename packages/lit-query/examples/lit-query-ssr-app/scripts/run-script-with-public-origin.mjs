@@ -3,15 +3,15 @@ import { once } from 'node:events'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const packageManagerCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
 const cwd = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const scriptName = process.argv[2]
 
 if (!scriptName) {
-  throw new Error('Missing npm script name for public-origin wrapper.')
+  throw new Error('Missing script name for public-origin wrapper.')
 }
 
-const child = spawn(npmCommand, ['run', scriptName], {
+const child = spawn(packageManagerCommand, ['run', scriptName], {
   cwd,
   env: {
     ...process.env,

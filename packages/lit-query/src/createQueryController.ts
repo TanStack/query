@@ -102,6 +102,10 @@ class QueryController<
       return
     }
 
+    if (typeof options === 'function') {
+      return
+    }
+
     const defaulted = this.defaultOptions(initialClient)
     const observer = new QueryObserver(initialClient, defaulted)
     this.queryClient = initialClient
