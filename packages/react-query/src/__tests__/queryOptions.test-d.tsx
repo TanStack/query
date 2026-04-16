@@ -303,18 +303,22 @@ describe('queryOptions', () => {
   it('should still error when persister and queryFn return types genuinely conflict', () => {
     const persister = undefined as unknown as QueryPersister<string, any>
 
-    queryOptions({
-      queryKey: ['key'],
-      // @ts-expect-error persister expects string, queryFn returns number
-      queryFn: () => 42,
-      persister,
-    })
+    assertType(
+      queryOptions({
+        queryKey: ['key'],
+        // @ts-expect-error persister expects string, queryFn returns number
+        queryFn: () => 42,
+        persister,
+      }),
+    )
 
-    queryOptions({
-      queryKey: ['key'],
-      // @ts-expect-error persister expects string, queryFn with arg returns number
-      queryFn: (_context) => 42,
-      persister,
-    })
+    assertType(
+      queryOptions({
+        queryKey: ['key'],
+        // @ts-expect-error persister expects string, queryFn with arg returns number
+        queryFn: (_context) => 42,
+        persister,
+      }),
+    )
   })
 })
