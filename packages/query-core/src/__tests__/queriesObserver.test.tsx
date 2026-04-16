@@ -552,6 +552,40 @@ describe('queriesObserver', () => {
     expect(newCombined.keys).toEqual(['pending'])
   })
 
+  test('should recalculate combined result when combine function changes', () => {
+    const combine1 = vi.fn((results: Array<QueryObserverResult>) => ({
+      total: results.length,
+    }))
+    const combine2 = vi.fn((results: Array<QueryObserverResult>) => ({
+      total: results.length * 4,
+    }))
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    const queries = [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ]
+
+    const observer = new QueriesObserver<{ total: number }>(
+      queryClient,
+      queries,
+      { combine: combine1 },
+    )
+
+    const [raw1, getCombined1] = observer.getOptimisticResult(queries, combine1)
+    const combined1 = getCombined1(raw1)
+
+    const [raw2, getCombined2] = observer.getOptimisticResult(queries, combine2)
+    const combined2 = getCombined2(raw2)
+
+    expect(combined1.total).toBe(2)
+    expect(combined2.total).toBe(8)
+  })
+
   test('should track properties on all observers when trackResult is called', () => {
     const key1 = queryKey()
     const key2 = queryKey()
