@@ -246,11 +246,7 @@ export interface QueryOptions<
    */
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
-  persister?: QueryPersister<
-    NoInfer<TQueryFnData>,
-    NoInfer<TQueryKey>,
-    NoInfer<TPageParam>
-  >
+  persister?: QueryPersister<TQueryFnData, TQueryKey, TPageParam>
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
