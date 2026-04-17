@@ -586,6 +586,29 @@ describe('queriesObserver', () => {
     expect(combined2.total).toBe(8)
   })
 
+  test('should use fallback result when combineResult is called without raw argument', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+    }))
+
+    const key = queryKey()
+    const queryFn = vi.fn().mockReturnValue(1)
+
+    const observer = new QueriesObserver<{ count: number }>(
+      queryClient,
+      [{ queryKey: key, queryFn }],
+      { combine },
+    )
+
+    const [, getCombined] = observer.getOptimisticResult(
+      [{ queryKey: key, queryFn }],
+      combine,
+    )
+    const combined = getCombined()
+
+    expect(combined.count).toBe(1)
+  })
+
   test('should track properties on all observers when trackResult is called', () => {
     const key1 = queryKey()
     const key2 = queryKey()
