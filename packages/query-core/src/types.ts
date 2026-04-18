@@ -394,12 +394,7 @@ export interface QueryObserverOptions<
    * If set to a function, the function will be executed with the query to compute the value.
    * Defaults to `true`.
    */
-  retryOnMount?: QueryBooleanOption<
-    TQueryFnData,
-    TError,
-    TQueryData,
-    TQueryKey
-  >
+  retryOnMount?: QueryBooleanOption<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set, the component will only re-render if any of the listed properties change.
    * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.

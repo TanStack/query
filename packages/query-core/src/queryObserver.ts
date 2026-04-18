@@ -752,8 +752,10 @@ function shouldLoadOnMount(
   return (
     resolveQueryBoolean(options.enabled, query) !== false &&
     query.state.data === undefined &&
-    !(query.state.status === 'error' &&
-      resolveQueryBoolean(options.retryOnMount, query) === false)
+    !(
+      query.state.status === 'error' &&
+      resolveQueryBoolean(options.retryOnMount, query) === false
+    )
   )
 }
 

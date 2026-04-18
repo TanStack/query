@@ -271,7 +271,8 @@ export class Query<
 
   isActive(): boolean {
     return this.observers.some(
-      (observer) => resolveQueryBoolean(observer.options.enabled, this) !== false,
+      (observer) =>
+        resolveQueryBoolean(observer.options.enabled, this) !== false,
     )
   }
 
