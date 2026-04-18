@@ -5059,7 +5059,7 @@ describe('useQuery', () => {
         queryFn,
         enabled: props.enabled,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5126,7 +5126,7 @@ describe('useQuery', () => {
             props.id % 2 === 1 ? Promise.reject(new Error('Error')) : 'data',
           ),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5186,7 +5186,7 @@ describe('useQuery', () => {
         queryKey: [props.id],
         queryFn: () => sleep(10).then(() => Promise.reject(new Error('Error'))),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -6188,7 +6188,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
       }))
 
       createRenderEffect(() => {
