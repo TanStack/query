@@ -293,6 +293,7 @@ describe('useQuery', () => {
     expect(states.length).toEqual(2)
 
     expect(states[0]).toEqual({
+      queryKey: key,
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -322,6 +323,7 @@ describe('useQuery', () => {
     })
 
     expect(states[1]).toEqual({
+      queryKey: key,
       data: 'test',
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -388,6 +390,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('Status: error')).toBeInTheDocument()
 
     expect(states[0]).toEqual({
+      queryKey: key,
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -417,6 +420,7 @@ describe('useQuery', () => {
     })
 
     expect(states[1]).toEqual({
+      queryKey: key,
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -446,6 +450,7 @@ describe('useQuery', () => {
     })
 
     expect(states[2]).toEqual({
+      queryKey: key,
       data: undefined,
       dataUpdatedAt: 0,
       error: new Error('rejected'),
