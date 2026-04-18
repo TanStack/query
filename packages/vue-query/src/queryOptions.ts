@@ -2,9 +2,9 @@ import type { DeepUnwrapRef, ShallowOption } from './types'
 import type {
   DataTag,
   DefaultError,
-  Enabled,
   InitialDataFunction,
   NonUndefinedGuard,
+  QueryBooleanOption,
   QueryKey,
   QueryObserverOptions,
 } from '@tanstack/query-core'
@@ -23,7 +23,12 @@ export type QueryOptions<
     TQueryData,
     TQueryKey
   >]: Property extends 'enabled'
-    ? () => Enabled<TQueryFnData, TError, TQueryData, DeepUnwrapRef<TQueryKey>>
+    ? () => QueryBooleanOption<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        DeepUnwrapRef<TQueryKey>
+      >
     : QueryObserverOptions<
         TQueryFnData,
         TError,
