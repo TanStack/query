@@ -255,7 +255,10 @@ export function hydrate(
           queryKey,
           queryHash,
           meta,
-          _type: queryType === 'infiniteQuery' ? ('infiniteQuery' as const) : undefined,
+          _type:
+            queryType === 'infiniteQuery'
+              ? ('infiniteQuery' as const)
+              : undefined,
         }
 
         // Restore query

@@ -1399,9 +1399,10 @@ describe('dehydration and rehydration', () => {
             nextCursor: pageParam + 1,
           })),
         initialPageParam: 0,
-        getNextPageParam: (
-          lastPage: { items: Array<string>; nextCursor: number },
-        ) => lastPage.nextCursor,
+        getNextPageParam: (lastPage: {
+          items: Array<string>
+          nextCursor: number
+        }) => lastPage.nextCursor,
       }),
     )
 
@@ -1431,7 +1432,10 @@ describe('dehydration and rehydration', () => {
       queryClient.prefetchInfiniteQuery({
         queryKey: ['infinite-with-behavior'],
         queryFn: async ({ pageParam }) =>
-          sleep(0).then(() => ({ data: `page-${pageParam}`, next: pageParam + 1 })),
+          sleep(0).then(() => ({
+            data: `page-${pageParam}`,
+            next: pageParam + 1,
+          })),
         initialPageParam: 0,
         getNextPageParam: (lastPage: { data: string; next: number }) =>
           lastPage.next,
@@ -1448,7 +1452,10 @@ describe('dehydration and rehydration', () => {
       hydrationClient.fetchInfiniteQuery({
         queryKey: ['infinite-with-behavior'],
         queryFn: async ({ pageParam }) =>
-          sleep(0).then(() => ({ data: `page-${pageParam}`, next: pageParam + 1 })),
+          sleep(0).then(() => ({
+            data: `page-${pageParam}`,
+            next: pageParam + 1,
+          })),
         initialPageParam: 0,
         getNextPageParam: (lastPage: { data: string; next: number }) =>
           lastPage.next,
@@ -1466,7 +1473,10 @@ describe('dehydration and rehydration', () => {
       serverClient.prefetchInfiniteQuery({
         queryKey: ['infinite-type-restore'],
         queryFn: async ({ pageParam }) =>
-          sleep(0).then(() => ({ items: [`item-${pageParam}`], next: (pageParam as number) + 1 })),
+          sleep(0).then(() => ({
+            items: [`item-${pageParam}`],
+            next: (pageParam as number) + 1,
+          })),
         initialPageParam: 0,
         getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
           lastPage.next,
@@ -1484,7 +1494,9 @@ describe('dehydration and rehydration', () => {
     const clientClient = new QueryClient({ queryCache: clientCache })
     hydrate(clientClient, dehydrated)
 
-    const hydratedQuery = clientCache.find({ queryKey: ['infinite-type-restore'] })
+    const hydratedQuery = clientCache.find({
+      queryKey: ['infinite-type-restore'],
+    })
     expect(hydratedQuery?.type).toBe('infiniteQuery')
   })
 
@@ -1546,7 +1558,10 @@ describe('dehydration and rehydration', () => {
       serverClient.prefetchInfiniteQuery({
         queryKey: ['infinite-setoptions-guard'],
         queryFn: async ({ pageParam }) =>
-          sleep(0).then(() => ({ data: `p${pageParam}`, next: (pageParam as number) + 1 })),
+          sleep(0).then(() => ({
+            data: `p${pageParam}`,
+            next: (pageParam as number) + 1,
+          })),
         initialPageParam: 0,
         getNextPageParam: (lastPage: { data: string; next: number }) =>
           lastPage.next,
