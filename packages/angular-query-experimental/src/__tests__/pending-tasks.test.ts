@@ -1,7 +1,7 @@
 import {
   ApplicationRef,
+  ChangeDetectionStrategy,
   Component,
-  provideZonelessChangeDetection,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { HttpClient, provideHttpClient } from '@angular/common/http'
@@ -10,15 +10,10 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
-import {
-  QueryClient,
-  injectMutation,
-  injectQuery,
-  onlineManager,
-  provideTanStackQuery,
-} from '..'
+import { QueryClient, injectMutation, injectQuery, onlineManager } from '..'
+import { flushQueryUpdates, setupTanStackQueryTestBed } from './test-utils'
 
 describe('PendingTasks Integration', () => {
   let queryClient: QueryClient
@@ -37,12 +32,7 @@ describe('PendingTasks Integration', () => {
       },
     })
 
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
+    setupTanStackQueryTestBed(queryClient)
   })
 
   afterEach(() => {
@@ -55,13 +45,21 @@ describe('PendingTasks Integration', () => {
     test('should handle synchronous queryFn with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
-      const key = queryKey()
-      const query = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
-          queryKey: key,
+      @Component({
+        selector: 'app-test',
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        query = injectQuery(() => ({
+          queryKey: ['sync'],
           queryFn: () => 'instant-data', // Resolves synchronously
-        })),
-      )
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const query = fixture.componentInstance.query
 
       // Should start as pending even with synchronous data
       expect(query.status()).toBe('pending')
@@ -81,10 +79,9 @@ describe('PendingTasks Integration', () => {
     test('should handle synchronous error with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
-      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: key,
+          queryKey: ['sync-error'],
           queryFn: () => {
             throw new Error('instant-error')
           }, // Throws synchronously
@@ -142,7 +139,6 @@ describe('PendingTasks Integration', () => {
       )
 
       mutation.mutate()
-
       TestBed.tick()
 
       const stablePromise = app.whenStable()
@@ -157,7 +153,6 @@ describe('PendingTasks Integration', () => {
 
   describe('Race Conditions', () => {
     test('should handle query that completes during initial subscription', async () => {
-      const key = queryKey()
       const app = TestBed.inject(ApplicationRef)
       let resolveQuery: (value: string) => void
 
@@ -167,7 +162,7 @@ describe('PendingTasks Integration', () => {
 
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: key,
+          queryKey: ['race-condition'],
           queryFn: () => queryPromise,
         })),
       )
@@ -186,19 +181,27 @@ describe('PendingTasks Integration', () => {
 
     test('should handle rapid refetches without task leaks', async () => {
       const app = TestBed.inject(ApplicationRef)
-      let callCount = 0
 
-      const key = queryKey()
-      const query = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
-          queryKey: key,
+      @Component({
+        selector: 'app-test',
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        callCount = 0
+        query = injectQuery(() => ({
+          queryKey: ['rapid-refetch'],
           queryFn: async () => {
-            callCount++
+            this.callCount++
             await sleep(10)
-            return `data-${callCount}`
+            return `data-${this.callCount}`
           },
-        })),
-      )
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const query = fixture.componentInstance.query
 
       // Trigger multiple rapid refetches
       query.refetch()
@@ -213,14 +216,61 @@ describe('PendingTasks Integration', () => {
       expect(query.data()).toMatch(/^data-\d+$/)
     })
 
+    test('should keep PendingTasks active when query starts offline (never reaches fetching)', async () => {
+      const app = TestBed.inject(ApplicationRef)
+
+      onlineManager.setOnline(false)
+
+      const query = TestBed.runInInjectionContext(() =>
+        injectQuery(() => ({
+          queryKey: ['start-offline'],
+          networkMode: 'online', // Default: won't fetch while offline
+          queryFn: async () => {
+            await sleep(10)
+            return 'online-data'
+          },
+        })),
+      )
+
+      // Allow query to initialize
+      await Promise.resolve()
+      await flushQueryUpdates()
+
+      // Query should initialize directly to 'paused' (never goes through 'fetching')
+      expect(query.status()).toBe('pending')
+      expect(query.fetchStatus()).toBe('paused')
+
+      const stablePromise = app.whenStable()
+      let stableResolved = false
+      void stablePromise.then(() => {
+        stableResolved = true
+      })
+
+      await Promise.resolve()
+
+      // PendingTasks should block stability even though we never hit 'fetching'
+      expect(stableResolved).toBe(false)
+
+      // Bring the app back online so the query can fetch
+      onlineManager.setOnline(true)
+
+      await vi.advanceTimersByTimeAsync(20)
+      await Promise.resolve()
+
+      await stablePromise
+
+      expect(stableResolved).toBe(true)
+      expect(query.status()).toBe('success')
+      expect(query.data()).toBe('online-data')
+    })
+
     test('should keep PendingTasks active while query retry is paused offline', async () => {
       const app = TestBed.inject(ApplicationRef)
       let attempt = 0
 
-      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: key,
+          queryKey: ['paused-offline'],
           retry: 1,
           retryDelay: 50, // Longer delay to ensure we can go offline before retry
           queryFn: async () => {
@@ -235,7 +285,7 @@ describe('PendingTasks Integration', () => {
       )
 
       // Allow the initial attempt to start and fail
-      await vi.advanceTimersByTimeAsync(0)
+      await flushQueryUpdates()
       await Promise.resolve()
 
       // Wait for the first attempt to complete and start retry delay
@@ -284,80 +334,100 @@ describe('PendingTasks Integration', () => {
   describe('Component Destruction', () => {
     @Component({
       template: '',
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
       query = injectQuery(() => ({
         queryKey: ['component-query'],
-        queryFn: () => sleep(100).then(() => 'component-data'),
+        queryFn: async () => {
+          await sleep(100)
+          return 'component-data'
+        },
       }))
 
       mutation = injectMutation(() => ({
-        mutationFn: (data: string) =>
-          sleep(100).then(() => `processed: ${data}`),
+        mutationFn: async (data: string) => {
+          await sleep(100)
+          return `processed: ${data}`
+        },
       }))
     }
 
     test('should cleanup pending tasks when component with active query is destroyed', async () => {
-      const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
 
       // Start the query
       expect(fixture.componentInstance.query.status()).toBe('pending')
+      expect(fixture.isStable()).toBe(false)
 
       // Destroy component while query is running
       fixture.destroy()
 
       // Angular should become stable even though component was destroyed
-      const stablePromise = app.whenStable()
+      const stablePromise = fixture.whenStable()
       await vi.advanceTimersByTimeAsync(150)
-
-      await expect(stablePromise).resolves.toEqual(undefined)
+      await stablePromise
+      expect(fixture.isStable()).toBe(true)
     })
 
     test('should cleanup pending tasks when component with active mutation is destroyed', async () => {
-      const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
 
       fixture.componentInstance.mutation.mutate('test')
+      fixture.detectChanges()
+      expect(fixture.isStable()).toBe(false)
 
       // Destroy component while mutation is running
       fixture.destroy()
+      fixture.detectChanges()
+      expect(fixture.isStable()).toBe(true)
 
       // Angular should become stable even though component was destroyed
-      const stablePromise = app.whenStable()
-      await vi.advanceTimersByTimeAsync(150)
+      const stablePromise = fixture.whenStable()
+      await vi.advanceTimersByTimeAsync(200)
+      await stablePromise
 
-      await expect(stablePromise).resolves.toEqual(undefined)
+      expect(fixture.isStable()).toBe(true)
     })
   })
 
   describe('Concurrent Operations', () => {
     test('should handle multiple queries running simultaneously', async () => {
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const key3 = queryKey()
       const app = TestBed.inject(ApplicationRef)
 
-      const query1 = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
-          queryKey: key1,
-          queryFn: () => sleep(30).then(() => 'data-1'),
-        })),
-      )
+      @Component({
+        selector: 'app-test',
+        template: '',
+        changeDetection: ChangeDetectionStrategy.OnPush,
+      })
+      class TestComponent {
+        query1 = injectQuery(() => ({
+          queryKey: ['concurrent-1'],
+          queryFn: async () => {
+            await sleep(30)
+            return 'data-1'
+          },
+        }))
 
-      const query2 = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
-          queryKey: key2,
-          queryFn: () => sleep(50).then(() => 'data-2'),
-        })),
-      )
+        query2 = injectQuery(() => ({
+          queryKey: ['concurrent-2'],
+          queryFn: async () => {
+            await sleep(50)
+            return 'data-2'
+          },
+        }))
 
-      const query3 = TestBed.runInInjectionContext(() =>
-        injectQuery(() => ({
-          queryKey: key3,
+        query3 = injectQuery(() => ({
+          queryKey: ['concurrent-3'],
           queryFn: () => 'instant-data', // Synchronous
-        })),
-      )
+        }))
+      }
+
+      const fixture = TestBed.createComponent(TestComponent)
+      fixture.detectChanges()
+      const { query1, query2, query3 } = fixture.componentInstance
 
       // All queries should start
       expect(query1.status()).toBe('pending')
@@ -382,15 +452,19 @@ describe('PendingTasks Integration', () => {
 
       const mutation1 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: (data: string) =>
-            sleep(30).then(() => `processed-1: ${data}`),
+          mutationFn: async (data: string) => {
+            await sleep(30)
+            return `processed-1: ${data}`
+          },
         })),
       )
 
       const mutation2 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: (data: string) =>
-            sleep(50).then(() => `processed-2: ${data}`),
+          mutationFn: async (data: string) => {
+            await sleep(50)
+            return `processed-2: ${data}`
+          },
         })),
       )
 
@@ -426,18 +500,22 @@ describe('PendingTasks Integration', () => {
     test('should handle mixed queries and mutations', async () => {
       const app = TestBed.inject(ApplicationRef)
 
-      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: key,
-          queryFn: () => sleep(40).then(() => 'query-data'),
+          queryKey: ['mixed-query'],
+          queryFn: async () => {
+            await sleep(40)
+            return 'query-data'
+          },
         })),
       )
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: (data: string) =>
-            sleep(60).then(() => `mutation: ${data}`),
+          mutationFn: async (data: string) => {
+            await sleep(60)
+            return `mutation: ${data}`
+          },
         })),
       )
 
@@ -458,14 +536,8 @@ describe('PendingTasks Integration', () => {
 
   describe('HttpClient Integration', () => {
     beforeEach(() => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-          provideHttpClient(),
-          provideHttpClientTesting(),
-        ],
+      setupTanStackQueryTestBed(queryClient, {
+        providers: [provideHttpClient(), provideHttpClientTesting()],
       })
     })
 
@@ -474,12 +546,9 @@ describe('PendingTasks Integration', () => {
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
 
-      const key1 = queryKey()
-      const key2 = queryKey()
-
       const query1 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: key1,
+          queryKey: ['http-1'],
           queryFn: () =>
             lastValueFrom(httpClient.get<{ id: number }>('/api/1')),
         })),
@@ -487,7 +556,7 @@ describe('PendingTasks Integration', () => {
 
       const query2 = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: key2,
+          queryKey: ['http-2'],
           queryFn: () =>
             lastValueFrom(httpClient.get<{ id: number }>('/api/2')),
         })),
@@ -519,10 +588,9 @@ describe('PendingTasks Integration', () => {
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
 
-      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: key,
+          queryKey: ['http-cancel'],
           queryFn: () =>
             lastValueFrom(httpClient.get<{ data: string }>('/api/cancel')),
         })),
@@ -549,19 +617,21 @@ describe('PendingTasks Integration', () => {
 
   describe('Edge Cases', () => {
     test('should handle query cancellation mid-flight', async () => {
-      const key = queryKey()
       const app = TestBed.inject(ApplicationRef)
 
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: key,
-          queryFn: () => sleep(100).then(() => 'data'),
+          queryKey: ['cancel-test'],
+          queryFn: async () => {
+            await sleep(100)
+            return 'data'
+          },
         })),
       )
 
       // Cancel the query after a short delay
       setTimeout(() => {
-        queryClient.cancelQueries({ queryKey: key })
+        queryClient.cancelQueries({ queryKey: ['cancel-test'] })
       }, 20)
 
       // Advance to the cancellation point
@@ -582,10 +652,9 @@ describe('PendingTasks Integration', () => {
       const app = TestBed.inject(ApplicationRef)
       let attemptCount = 0
 
-      const key = queryKey()
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
-          queryKey: key,
+          queryKey: ['retry-test'],
           retry: 2,
           retryDelay: 10,
           queryFn: async () => {
@@ -609,13 +678,16 @@ describe('PendingTasks Integration', () => {
 
     test('should handle mutation with optimistic updates', async () => {
       const app = TestBed.inject(ApplicationRef)
-      const testQueryKey = queryKey()
+      const testQueryKey = ['optimistic-test']
 
       queryClient.setQueryData(testQueryKey, 'initial-data')
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: (newData: string) => sleep(50).then(() => newData),
+          mutationFn: async (newData: string) => {
+            await sleep(50)
+            return newData
+          },
           onMutate: async (newData) => {
             // Optimistic update
             const previousData = queryClient.getQueryData(testQueryKey)

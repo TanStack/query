@@ -19,7 +19,7 @@ describe('injectIsMutating', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
   })

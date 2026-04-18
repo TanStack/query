@@ -1,17 +1,21 @@
 import {
   ApplicationRef,
+  ChangeDetectionStrategy,
   Component,
   Injector,
+  NgZone,
   input,
+  inputBinding,
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import { render } from '@testing-library/angular'
+import { sleep } from '@tanstack/query-test-utils'
+import { firstValueFrom } from 'rxjs'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { By } from '@angular/platform-browser'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
-import { expectSignals, setFixtureSignalInputs } from './test-utils'
+import { expectSignals } from './test-utils'
 
 describe('injectMutation', () => {
   let queryClient: QueryClient
@@ -22,7 +26,7 @@ describe('injectMutation', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
   })
@@ -118,9 +122,7 @@ describe('injectMutation', () => {
     const mutationCache = queryClient.getMutationCache()
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const mutationKey = signal(key1)
+    const mutationKey = signal(['1'])
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
         mutationKey: mutationKey(),
@@ -128,13 +130,13 @@ describe('injectMutation', () => {
       }))
     })
 
-    mutationKey.set(key2)
+    mutationKey.set(['2'])
 
     mutation.mutate('xyz')
 
-    const mutations = mutationCache.find({ mutationKey: key2 })
+    const mutations = mutationCache.find({ mutationKey: ['2'] })
 
-    expect(mutations?.options.mutationKey).toEqual(key2)
+    expect(mutations?.options.mutationKey).toEqual(['2'])
   })
 
   test('should reset state after invoking mutation.reset', async () => {
@@ -309,6 +311,7 @@ describe('injectMutation', () => {
         <button (click)="mutate()"></button>
         <span>{{ mutation.data() }}</span>
       `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class FakeComponent {
       name = input.required<string>()
@@ -323,19 +326,28 @@ describe('injectMutation', () => {
       }
     }
 
-    const fixture = TestBed.createComponent(FakeComponent)
-    const { debugElement } = fixture
-    setFixtureSignalInputs(fixture, { name: 'value' })
+    const name = signal('value')
+    const rendered = await render(FakeComponent, {
+      bindings: [inputBinding('name', name.asReadonly())],
+      detectChangesOnRender: false,
+    })
+    rendered.fixture.detectChanges()
 
-    const button = debugElement.query(By.css('button'))
-    button.triggerEventHandler('click')
+    const fixture = rendered.fixture
+
+    const hostButton = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement
+    hostButton.click()
 
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    const text = debugElement.query(By.css('span')).nativeElement.textContent
-    expect(text).toEqual('value')
-    const mutation = mutationCache.find({ mutationKey: ['fake', 'value'] })
+    const span = fixture.nativeElement.querySelector('span') as HTMLSpanElement
+    expect(span.textContent).toEqual('value')
+    const mutation = mutationCache.find({
+      mutationKey: ['fake', 'value'],
+    })
     expect(mutation).toBeDefined()
     expect(mutation!.options.mutationKey).toStrictEqual(['fake', 'value'])
   })
@@ -349,6 +361,7 @@ describe('injectMutation', () => {
         <button (click)="mutate()"></button>
         <span>{{ mutation.data() }}</span>
       `,
+      changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class FakeComponent {
       name = input.required<string>()
@@ -361,28 +374,38 @@ describe('injectMutation', () => {
       mutate(): void {
         this.mutation.mutate()
       }
+
     }
 
-    const fixture = TestBed.createComponent(FakeComponent)
-    const { debugElement } = fixture
-    setFixtureSignalInputs(fixture, { name: 'value' })
+    const name = signal('value')
+    const rendered = await render(FakeComponent, {
+      bindings: [inputBinding('name', name.asReadonly())],
+      detectChangesOnRender: false,
+    })
+    rendered.fixture.detectChanges()
 
-    const button = debugElement.query(By.css('button'))
-    const span = debugElement.query(By.css('span'))
+    const fixture = rendered.fixture
 
-    button.triggerEventHandler('click')
+    let button = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement
+    button.click()
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    expect(span.nativeElement.textContent).toEqual('value')
+    let span = fixture.nativeElement.querySelector('span') as HTMLSpanElement
+    expect(span.textContent).toEqual('value')
 
-    setFixtureSignalInputs(fixture, { name: 'updatedValue' })
+    name.set('updatedValue')
+    fixture.detectChanges()
 
-    button.triggerEventHandler('click')
+    button = fixture.nativeElement.querySelector('button') as HTMLButtonElement
+    button.click()
     await vi.advanceTimersByTimeAsync(11)
     fixture.detectChanges()
 
-    expect(span.nativeElement.textContent).toEqual('updatedValue')
+    span = fixture.nativeElement.querySelector('span') as HTMLSpanElement
+    expect(span.textContent).toEqual('updatedValue')
 
     const mutations = mutationCache.findAll()
     expect(mutations.length).toBe(2)
@@ -393,12 +416,11 @@ describe('injectMutation', () => {
 
   describe('throwOnError', () => {
     test('should evaluate throwOnError when mutation is expected to throw', async () => {
-      const key = queryKey()
       const err = new Error('Expected mock error. All is well!')
       const boundaryFn = vi.fn()
       const { mutate } = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
-          mutationKey: key,
+          mutationKey: ['fake'],
           mutationFn: () => {
             return Promise.reject(err)
           },
@@ -416,36 +438,42 @@ describe('injectMutation', () => {
       expect(boundaryFn).toHaveBeenCalledWith(err)
     })
 
-    test('should throw when throwOnError is true and mutate is used', async () => {
-      const key = queryKey()
-      const { mutate } = TestBed.runInInjectionContext(() => {
-        return injectMutation(() => ({
-          mutationKey: key,
-          mutationFn: () => {
-            return Promise.reject(
-              new Error('Expected mock error. All is well!'),
-            )
-          },
-          throwOnError: true,
-        }))
+    test('should emit zone error when throwOnError is true and mutate is used', async () => {
+      const err = new Error('Expected mock error. All is well!')
+      const zone = TestBed.inject(NgZone)
+      const zoneErrorEmitSpy = vi.spyOn(zone.onError, 'emit')
+      const runSpy = vi.spyOn(zone, 'run').mockImplementation((callback: any) => {
+        try {
+          return callback()
+        } catch {
+          return undefined
+        }
       })
 
-      TestBed.tick()
+      const { mutate } = TestBed.runInInjectionContext(() =>
+        injectMutation(() => ({
+          mutationKey: ['fake'],
+          mutationFn: () => {
+            return sleep(0).then(() => Promise.reject(err))
+          },
+          throwOnError: true,
+        })),
+      )
 
       mutate()
 
-      await expect(vi.advanceTimersByTimeAsync(0)).rejects.toThrow(
-        'Expected mock error. All is well!',
-      )
+      await vi.runAllTimersAsync()
+
+      expect(zoneErrorEmitSpy).toHaveBeenCalledWith(err)
+      expect(runSpy).toHaveBeenCalled()
     })
   })
 
   test('should throw when throwOnError is true', async () => {
-    const key = queryKey()
     const err = new Error('Expected mock error. All is well!')
     const { mutateAsync } = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationKey: key,
+        mutationKey: ['fake'],
         mutationFn: () => {
           return Promise.reject(err)
         },
@@ -453,15 +481,14 @@ describe('injectMutation', () => {
       }))
     })
 
-    await expect(() => mutateAsync()).rejects.toThrow(err)
+    await expect(() => mutateAsync()).rejects.toThrowError(err)
   })
 
   test('should throw when throwOnError function returns true', async () => {
-    const key = queryKey()
     const err = new Error('Expected mock error. All is well!')
     const { mutateAsync } = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
-        mutationKey: key,
+        mutationKey: ['fake'],
         mutationFn: () => {
           return Promise.reject(err)
         },
@@ -469,26 +496,24 @@ describe('injectMutation', () => {
       }))
     })
 
-    await expect(() => mutateAsync()).rejects.toThrow(err)
+    await expect(() => mutateAsync()).rejects.toThrowError(err)
   })
 
   describe('injection context', () => {
     test('throws NG0203 with descriptive error outside injection context', () => {
-      const key = queryKey()
       expect(() => {
         injectMutation(() => ({
-          mutationKey: key,
+          mutationKey: ['injectionContextError'],
           mutationFn: () => Promise.resolve(),
         }))
-      }).toThrow(/NG0203(.*?)injectMutation/)
+      }).toThrowError(/NG0203(.*?)injectMutation/)
     })
 
     test('can be used outside injection context when passing an injector', () => {
-      const key = queryKey()
       expect(() => {
         injectMutation(
           () => ({
-            mutationKey: key,
+            mutationKey: ['injectionContextError'],
             mutationFn: () => Promise.resolve(),
           }),
           {
@@ -503,10 +528,9 @@ describe('injectMutation', () => {
       let mutationStarted = false
       let mutationCompleted = false
 
-      const key = queryKey()
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationKey: key,
+          mutationKey: ['pendingTasksTest'],
           mutationFn: async (data: string) => {
             mutationStarted = true
             await sleep(50)
@@ -540,7 +564,7 @@ describe('injectMutation', () => {
       TestBed.configureTestingModule({
         providers: [
           provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
+          ...provideTanStackQuery(queryClient),
         ],
       })
 
@@ -590,18 +614,16 @@ describe('injectMutation', () => {
       TestBed.configureTestingModule({
         providers: [
           provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
+          ...provideTanStackQuery(queryClient),
         ],
       })
 
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
-      const key = queryKey()
-
       const mutation1 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationKey: key,
+          mutationKey: ['sync-mutation-key'],
           mutationFn: async (data: string) => {
             callCount++
             return `mutation1: ${data}`
@@ -611,7 +633,7 @@ describe('injectMutation', () => {
 
       const mutation2 = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationKey: key,
+          mutationKey: ['sync-mutation-key'],
           mutationFn: async (data: string) => {
             callCount++
             return `mutation2: ${data}`
@@ -644,12 +666,12 @@ describe('injectMutation', () => {
       TestBed.configureTestingModule({
         providers: [
           provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
+          ...provideTanStackQuery(queryClient),
         ],
       })
 
       const app = TestBed.inject(ApplicationRef)
-      const testQueryKey = queryKey()
+      const testQueryKey = ['sync-optimistic']
       let onMutateCalled = false
       let onSuccessCalled = false
 
@@ -658,12 +680,13 @@ describe('injectMutation', () => {
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationFn: async (data: string) => `final: ${data}`, // Synchronous resolution
+          mutationFn: async (data: string) => {
+            await sleep(50)
+            return `final: ${data}`
+          },
           onMutate: async (variables) => {
             onMutateCalled = true
-            const previousData = queryClient.getQueryData(testQueryKey)
             queryClient.setQueryData(testQueryKey, `optimistic: ${variables}`)
-            return { previousData }
           },
           onSuccess: (data) => {
             onSuccessCalled = true
@@ -672,19 +695,30 @@ describe('injectMutation', () => {
         })),
       )
 
-      // Start mutation
-      mutation.mutate('test')
-
-      // Synchronize pending effects
+      // Run effects
       TestBed.tick()
 
-      const stablePromise = app.whenStable()
+      // Start mutation
+      expect(queryClient.getQueryData(testQueryKey)).toBe('initial')
+      mutation.mutate('test')
+
       // Flush microtasks to allow TanStack Query's scheduled notifications to process
       await Promise.resolve()
-      await vi.advanceTimersByTimeAsync(1)
+
+      // Check for optimistic update in the same macro task
+      expect(onMutateCalled).toBe(true)
+      expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic: test')
+
+      // Check stability before the mutation completes, waiting for the next macro task
+      await vi.advanceTimersByTimeAsync(0)
+      expect(mutation.isPending()).toBe(true)
+      expect(await firstValueFrom(app.isStable)).toBe(false)
+
+      // Wait for the mutation to complete
+      const stablePromise = app.whenStable()
+      await vi.advanceTimersByTimeAsync(60)
       await stablePromise
 
-      expect(onMutateCalled).toBe(true)
       expect(onSuccessCalled).toBe(true)
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('final: test')
@@ -696,16 +730,15 @@ describe('injectMutation', () => {
       TestBed.configureTestingModule({
         providers: [
           provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
+          ...provideTanStackQuery(queryClient),
         ],
       })
 
       const app = TestBed.inject(ApplicationRef)
 
-      const key = queryKey()
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
-          mutationKey: key,
+          mutationKey: ['cancel-sync'],
           mutationFn: async (data: string) => `processed: ${data}`, // Synchronous resolution
         })),
       )

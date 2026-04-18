@@ -1,21 +1,22 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Injector,
   input,
+  inputBinding,
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import { render } from '@testing-library/angular'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { By } from '@angular/platform-browser'
-import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectMutation,
   injectMutationState,
   provideTanStackQuery,
 } from '..'
-import { setFixtureSignalInputs } from './test-utils'
 
 describe('injectMutationState', () => {
   let queryClient: QueryClient
@@ -26,7 +27,7 @@ describe('injectMutationState', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
   })
@@ -37,7 +38,7 @@ describe('injectMutationState', () => {
 
   describe('injectMutationState', () => {
     test('should return variables after calling mutate 1', () => {
-      const mutationKey = queryKey()
+      const mutationKey = ['mutation']
       const variables = 'foo123'
 
       const mutation = TestBed.runInInjectionContext(() => {
@@ -60,8 +61,8 @@ describe('injectMutationState', () => {
     })
 
     test('reactive options should update injectMutationState', () => {
-      const mutationKey1 = queryKey()
-      const mutationKey2 = queryKey()
+      const mutationKey1 = ['mutation1']
+      const mutationKey2 = ['mutation2']
       const variables1 = 'foo123'
       const variables2 = 'bar234'
 
@@ -98,7 +99,7 @@ describe('injectMutationState', () => {
 
     test('should return variables after calling mutate 2', () => {
       queryClient.clear()
-      const mutationKey = queryKey()
+      const mutationKey = ['mutation']
       const variables = 'bar234'
 
       const mutation = TestBed.runInInjectionContext(() => {
@@ -145,6 +146,7 @@ describe('injectMutationState', () => {
             <span>{{ mutation.status }}</span>
           }
         `,
+        changeDetection: ChangeDetectionStrategy.OnPush,
       })
       class FakeComponent {
         name = input.required<string>()
@@ -157,23 +159,36 @@ describe('injectMutationState', () => {
         }))
       }
 
-      const fixture = TestBed.createComponent(FakeComponent)
-      const { debugElement } = fixture
-      setFixtureSignalInputs(fixture, { name: fakeName })
+      TestBed.resetTestingModule()
+      const name = signal(fakeName)
+      const rendered = await render(FakeComponent, {
+        providers: [
+          provideZonelessChangeDetection(),
+          ...provideTanStackQuery(queryClient),
+        ],
+        bindings: [inputBinding('name', name.asReadonly())],
+        detectChangesOnRender: false,
+      })
+      rendered.fixture.detectChanges()
+
+      const fixture = rendered.fixture
       await vi.advanceTimersByTimeAsync(0)
 
-      let spans = debugElement
-        .queryAll(By.css('span'))
-        .map((span) => span.nativeNode.textContent)
+      const readSpans = () =>
+        Array.from(
+          fixture.nativeElement.querySelectorAll(
+            'span',
+          ) as NodeListOf<HTMLSpanElement>,
+        ).map((span) => span.textContent)
+
+      let spans = readSpans()
 
       expect(spans).toEqual(['pending', 'pending'])
 
       await vi.advanceTimersByTimeAsync(11)
       fixture.detectChanges()
 
-      spans = debugElement
-        .queryAll(By.css('span'))
-        .map((span) => span.nativeNode.textContent)
+      spans = readSpans()
 
       expect(spans).toEqual(['success', 'error'])
     })
@@ -182,7 +197,7 @@ describe('injectMutationState', () => {
       test('throws NG0203 with descriptive error outside injection context', () => {
         expect(() => {
           injectMutationState()
-        }).toThrow(/NG0203(.*?)injectMutationState/)
+        }).toThrowError(/NG0203(.*?)injectMutationState/)
       })
 
       test('can be used outside injection context when passing an injector', () => {

@@ -5,7 +5,7 @@ title: CreateInfiniteQueryOptions
 
 # Interface: CreateInfiniteQueryOptions\<TQueryFnData, TError, TData, TQueryKey, TPageParam\>
 
-Defined in: [types.ts:81](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L81)
+Defined in: [types.ts:69](https://github.com/TanStack/query/blob/main/packages/angular-query-experimental/src/types.ts#L69)
 
 ## Extends
 

@@ -12,6 +12,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withFetch()),
     provideRouter(routes),
-    provideTanStackQuery(new QueryClient()),
+    ...provideTanStackQuery(new QueryClient()),
   ],
 }

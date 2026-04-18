@@ -11,7 +11,7 @@ describe('provideTanStackQuery', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
+        ...provideTanStackQuery(queryClient),
       ],
     })
 
@@ -28,7 +28,7 @@ describe('provideTanStackQuery', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        provideTanStackQuery(CUSTOM_QUERY_CLIENT),
+        ...provideTanStackQuery(CUSTOM_QUERY_CLIENT),
       ],
     })
 

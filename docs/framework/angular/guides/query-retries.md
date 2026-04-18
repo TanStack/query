@@ -45,7 +45,7 @@ const queryClient = new QueryClient({
 })
 
 bootstrapApplication(AppComponent, {
-  providers: [provideTanStackQuery(queryClient)],
+  providers: [...provideTanStackQuery(queryClient)],
 })
 ```
 
