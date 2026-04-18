@@ -1411,7 +1411,7 @@ describe('dehydration and rehydration', () => {
     const infiniteQueryState = dehydrated.queries.find(
       (q) => q.queryKey[0] === 'infinite',
     )
-    expect(infiniteQueryState?.queryType).toBe('infiniteQuery')
+    expect(infiniteQueryState?.type).toBe('infinite')
 
     const hydrationCache = new QueryCache()
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
@@ -1475,7 +1475,7 @@ describe('dehydration and rehydration', () => {
         queryFn: async ({ pageParam }) =>
           sleep(0).then(() => ({
             items: [`item-${pageParam}`],
-            next: (pageParam as number) + 1,
+            next: pageParam + 1,
           })),
         initialPageParam: 0,
         getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
@@ -1488,7 +1488,7 @@ describe('dehydration and rehydration', () => {
     const dehydratedQuery = dehydrated.queries.find(
       (q) => q.queryKey[0] === 'infinite-type-restore',
     )
-    expect(dehydratedQuery?.queryType).toBe('infiniteQuery')
+    expect(dehydratedQuery?.type).toBe('infinite')
 
     const clientCache = new QueryCache()
     const clientClient = new QueryClient({ queryCache: clientCache })
@@ -1497,7 +1497,7 @@ describe('dehydration and rehydration', () => {
     const hydratedQuery = clientCache.find({
       queryKey: ['infinite-type-restore'],
     })
-    expect(hydratedQuery?.type).toBe('infiniteQuery')
+    expect(hydratedQuery?.type).toBe('infinite')
   })
 
   test('should preserve pages structure when refetching infinite query after hydration', async () => {
@@ -1509,7 +1509,7 @@ describe('dehydration and rehydration', () => {
         queryFn: async ({ pageParam }) =>
           sleep(0).then(() => ({
             items: [`page-${pageParam}`],
-            next: (pageParam as number) + 1,
+            next: pageParam + 1,
           })),
         initialPageParam: 0,
         getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
@@ -1536,7 +1536,7 @@ describe('dehydration and rehydration', () => {
         queryFn: async ({ pageParam }) =>
           sleep(0).then(() => ({
             items: [`page-${pageParam}`],
-            next: (pageParam as number) + 1,
+            next: pageParam + 1,
           })),
         initialPageParam: 0,
         getNextPageParam: (lastPage: { items: Array<string>; next: number }) =>
@@ -1560,7 +1560,7 @@ describe('dehydration and rehydration', () => {
         queryFn: async ({ pageParam }) =>
           sleep(0).then(() => ({
             data: `p${pageParam}`,
-            next: (pageParam as number) + 1,
+            next: pageParam + 1,
           })),
         initialPageParam: 0,
         getNextPageParam: (lastPage: { data: string; next: number }) =>
@@ -1575,10 +1575,10 @@ describe('dehydration and rehydration', () => {
     hydrate(clientClient, dehydrated)
 
     const query = clientCache.find({ queryKey: ['infinite-setoptions-guard'] })!
-    expect(query.type).toBe('infiniteQuery')
+    expect(query.type).toBe('infinite')
 
     query.setOptions({ queryKey: ['infinite-setoptions-guard'] })
-    expect(query.type).toBe('infiniteQuery')
+    expect(query.type).toBe('infinite')
   })
 
   test('should restore all pages when refetching multi-page infinite query after hydration', async () => {
@@ -1590,7 +1590,7 @@ describe('dehydration and rehydration', () => {
         queryFn: async ({ pageParam }) =>
           sleep(0).then(() => ({
             items: [`item-${pageParam}`],
-            next: (pageParam as number) + 1,
+            next: pageParam + 1,
           })),
         initialPageParam: 0,
         pages: 2,
@@ -1617,7 +1617,7 @@ describe('dehydration and rehydration', () => {
         queryFn: async ({ pageParam }) =>
           sleep(0).then(() => ({
             items: [`item-${pageParam}`],
-            next: (pageParam as number) + 1,
+            next: pageParam + 1,
           })),
         initialPageParam: 0,
         pages: 2,

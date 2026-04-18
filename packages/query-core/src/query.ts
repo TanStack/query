@@ -167,7 +167,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  type: 'query' | 'infiniteQuery'
+  #type?: 'infinite'
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -183,7 +183,6 @@ export class Query<
 
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.type = 'query'
     this.setOptions(config.options)
     this.observers = []
     this.#client = config.client
@@ -198,6 +197,10 @@ export class Query<
     return this.options.meta
   }
 
+  get type() {
+    return this.#type
+  }
+
   get promise(): Promise<TData> | undefined {
     return this.#retryer?.promise
   }
@@ -208,7 +211,7 @@ export class Query<
     this.options = { ...this.#defaultOptions, ...options }
 
     if (options?._type) {
-      this.type = options._type
+      this.#type = options._type
     }
 
     this.updateGcTime(this.options.gcTime)
@@ -518,7 +521,7 @@ export class Query<
     const context = createFetchContext()
 
     const behavior =
-      this.type === 'infiniteQuery'
+      this.#type === 'infinite'
         ? (infiniteQueryBehavior(
             (this.options as { pages?: number }).pages,
           ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)

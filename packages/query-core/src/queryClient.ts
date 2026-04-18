@@ -394,7 +394,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    options._type = 'infiniteQuery'
+    options._type = 'infinite'
     return this.fetchQuery(options as any)
   }
 
@@ -431,7 +431,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    options._type = 'infiniteQuery'
+    options._type = 'infinite'
 
     return this.ensureQueryData(options as any)
   }

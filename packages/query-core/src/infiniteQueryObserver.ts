@@ -89,10 +89,8 @@ export class InfiniteQueryObserver<
       TPageParam
     >,
   ): void {
-    super.setOptions({
-      ...options,
-      _type: 'infiniteQuery',
-    })
+    options._type = 'infinite'
+    super.setOptions(options)
   }
 
   getOptimisticResult(
@@ -104,7 +102,7 @@ export class InfiniteQueryObserver<
       TPageParam
     >,
   ): InfiniteQueryObserverResult<TData, TError> {
-    options._type = 'infiniteQuery'
+    options._type = 'infinite'
     return super.getOptimisticResult(options) as InfiniteQueryObserverResult<
       TData,
       TError

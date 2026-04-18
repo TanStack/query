@@ -48,11 +48,11 @@ interface DehydratedQuery {
   state: QueryState
   promise?: Promise<unknown>
   meta?: QueryMeta
+  type?: 'infinite'
   // This is only optional because older versions of Query might have dehydrated
   // without it which we need to handle for backwards compatibility.
   // This should be changed to required in the future.
   dehydratedAt?: number
-  queryType?: 'query' | 'infiniteQuery'
 }
 
 export interface DehydratedState {
@@ -114,7 +114,7 @@ function dehydrateQuery(
     },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
-    queryType: query.type,
+    type: query.type,
     ...(query.state.status === 'pending' && {
       promise: dehydratePromise(),
     }),
@@ -211,15 +211,7 @@ export function hydrate(
   })
 
   queries.forEach(
-    ({
-      queryKey,
-      state,
-      queryHash,
-      meta,
-      promise,
-      dehydratedAt,
-      queryType,
-    }) => {
+    ({ queryKey, state, queryHash, meta, promise, dehydratedAt, type }) => {
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
       const data = rawData === undefined ? rawData : deserializeData(rawData)
@@ -249,22 +241,17 @@ export function hydrate(
           })
         }
       } else {
-        const queryOptions = {
-          ...client.getDefaultOptions().hydrate?.queries,
-          ...options?.defaultOptions?.queries,
-          queryKey,
-          queryHash,
-          meta,
-          _type:
-            queryType === 'infiniteQuery'
-              ? ('infiniteQuery' as const)
-              : undefined,
-        }
-
         // Restore query
         query = queryCache.build(
           client,
-          queryOptions,
+          {
+            ...client.getDefaultOptions().hydrate?.queries,
+            ...options?.defaultOptions?.queries,
+            queryKey,
+            queryHash,
+            meta,
+            _type: type,
+          },
           // Reset fetch status to idle to avoid
           // query being stuck in fetching state upon hydration
           {

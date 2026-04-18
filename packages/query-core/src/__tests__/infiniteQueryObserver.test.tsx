@@ -235,7 +235,7 @@ describe('InfiniteQueryObserver', () => {
 
     const result = observer.getOptimisticResult(options)
 
-    expect(options._type).toBe('infiniteQuery')
+    expect(options._type).toBe('infinite')
 
     expect(result).toMatchObject({
       data: undefined,
