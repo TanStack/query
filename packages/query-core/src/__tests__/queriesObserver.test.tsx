@@ -609,6 +609,30 @@ describe('queriesObserver', () => {
     expect(combined.count).toBe(1)
   })
 
+  test('should return observer result directly when notifyOnChangeProps is set', () => {
+    const key = queryKey()
+    const queryFn = vi.fn().mockReturnValue(1)
+
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key, queryFn, notifyOnChangeProps: ['data'] },
+    ])
+
+    const trackResultSpy = vi.spyOn(QueryObserver.prototype, 'trackResult')
+
+    const [, , trackResult] = observer.getOptimisticResult(
+      [{ queryKey: key, queryFn, notifyOnChangeProps: ['data'] }],
+      undefined,
+    )
+
+    const trackedResults = trackResult()
+
+    expect(trackedResults).toHaveLength(1)
+    // trackResult should NOT be called when notifyOnChangeProps is set
+    expect(trackResultSpy).not.toHaveBeenCalled()
+
+    trackResultSpy.mockRestore()
+  })
+
   test('should track properties on all observers when trackResult is called', () => {
     const key1 = queryKey()
     const key2 = queryKey()
