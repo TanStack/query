@@ -204,7 +204,7 @@ function App() {
     - Optional
     - This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache.
     - The `select` function will only run if `data` changed, or if the reference to the `select` function itself changes. To optimize, wrap the function in `useCallback`.
-  - ##### `placeholderData: TData | (previousValue: TData | undefined; previousQuery: Query | undefined,) => TData`
+  - ##### `placeholderData: TData | (previousValue: TData | undefined, previousQuery: Query | undefined, currentQuery: Query) => TData`
     - Optional
     - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` state.
     - `placeholderData` is **not persisted** to the cache

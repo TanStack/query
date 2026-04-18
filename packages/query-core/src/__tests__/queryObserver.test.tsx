@@ -1060,6 +1060,36 @@ describe('queryObserver', () => {
     expect(selectCount).toBe(3)
   })
 
+  test('should pass the current query to placeholderData function', () => {
+    const testQueryKey = queryKey()
+
+    const placeholderDataSpy = vi.fn(
+      (_: unknown, __: unknown, ___: unknown) => undefined,
+    )
+
+    const queryClient2 = new QueryClient({
+      defaultOptions: {
+        queries: {
+          placeholderData: placeholderDataSpy,
+        },
+      },
+    })
+
+    new QueryObserver(queryClient2, {
+      queryKey: testQueryKey,
+      queryFn: () => Promise.resolve(),
+    })
+
+    expect(placeholderDataSpy).toHaveBeenCalledTimes(1)
+    expect(placeholderDataSpy).toHaveBeenCalledWith(
+      undefined,
+      undefined,
+      expect.objectContaining({ queryKey: testQueryKey }),
+    )
+
+    queryClient2.clear()
+  })
+
   test('should use cached selectResult when switching between queries and placeholderData returns previousData', async () => {
     const results: Array<QueryObserverResult> = []
 
