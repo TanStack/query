@@ -1411,7 +1411,7 @@ describe('dehydration and rehydration', () => {
     const infiniteQueryState = dehydrated.queries.find(
       (q) => q.queryKey[0] === 'infinite',
     )
-    expect(infiniteQueryState?.type).toBe('infinite')
+    expect(infiniteQueryState?.queryType).toBe('infinite')
 
     const hydrationCache = new QueryCache()
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
@@ -1488,7 +1488,7 @@ describe('dehydration and rehydration', () => {
     const dehydratedQuery = dehydrated.queries.find(
       (q) => q.queryKey[0] === 'infinite-type-restore',
     )
-    expect(dehydratedQuery?.type).toBe('infinite')
+    expect(dehydratedQuery?.queryType).toBe('infinite')
 
     const clientCache = new QueryCache()
     const clientClient = new QueryClient({ queryCache: clientCache })
@@ -1497,7 +1497,7 @@ describe('dehydration and rehydration', () => {
     const hydratedQuery = clientCache.find({
       queryKey: ['infinite-type-restore'],
     })
-    expect(hydratedQuery?.type).toBe('infinite')
+    expect(hydratedQuery?.queryType).toBe('infinite')
   })
 
   test('should preserve pages structure when refetching infinite query after hydration', async () => {
@@ -1575,10 +1575,10 @@ describe('dehydration and rehydration', () => {
     hydrate(clientClient, dehydrated)
 
     const query = clientCache.find({ queryKey: ['infinite-setoptions-guard'] })!
-    expect(query.type).toBe('infinite')
+    expect(query.queryType).toBe('infinite')
 
     query.setOptions({ queryKey: ['infinite-setoptions-guard'] })
-    expect(query.type).toBe('infinite')
+    expect(query.queryType).toBe('infinite')
   })
 
   test('should restore all pages when refetching multi-page infinite query after hydration', async () => {
