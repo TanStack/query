@@ -73,9 +73,9 @@ async function readJsonOrThrow<T>(
     return (await response.json()) as T
   }
 
-  const payload = (await response.json().catch(() => null)) as
-    | { error?: string }
-    | null
+  const payload = (await response.json().catch(() => null)) as {
+    error?: string
+  } | null
 
   throw new Error(
     payload && typeof payload === 'object' && 'error' in payload
