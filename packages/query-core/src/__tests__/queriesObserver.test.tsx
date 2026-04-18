@@ -633,6 +633,32 @@ describe('queriesObserver', () => {
     trackResultSpy.mockRestore()
   })
 
+  test('should return cached combined result when nothing has changed', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+    }))
+
+    const key = queryKey()
+    const queryFn = vi.fn().mockReturnValue(1)
+
+    const queries = [{ queryKey: key, queryFn }]
+
+    const observer = new QueriesObserver<{ count: number }>(
+      queryClient,
+      queries,
+      { combine },
+    )
+
+    const [raw1, getCombined1] = observer.getOptimisticResult(queries, combine)
+    const combined1 = getCombined1(raw1)
+
+    const [raw2, getCombined2] = observer.getOptimisticResult(queries, combine)
+    const combined2 = getCombined2(raw2)
+
+    // Same combine, same queries → cached result returned
+    expect(combined1).toBe(combined2)
+  })
+
   test('should track properties on all observers when trackResult is called', () => {
     const key1 = queryKey()
     const key2 = queryKey()
