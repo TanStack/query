@@ -5,9 +5,9 @@ import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import { createMutation } from '../../src/index.js'
 import { withEffectRoot } from '../utils.svelte.js'
-import ResetExample from './ResetExample.svelte'
-import OnSuccessExample from './OnSuccessExample.svelte'
-import FailureExample from './FailureExample.svelte'
+import Reset from './Reset.svelte'
+import Success from './Success.svelte'
+import Failure from './Failure.svelte'
 
 describe('createMutation', () => {
   let queryClient: QueryClient
@@ -23,7 +23,7 @@ describe('createMutation', () => {
   })
 
   test('should be able to reset `error`', async () => {
-    const rendered = render(ResetExample, {
+    const rendered = render(Reset, {
       props: { queryClient },
     })
 
@@ -42,7 +42,7 @@ describe('createMutation', () => {
     const onSuccessMock = vi.fn()
     const onSettledMock = vi.fn()
 
-    const rendered = render(OnSuccessExample, {
+    const rendered = render(Success, {
       props: {
         queryClient,
         onSuccessMock,
@@ -80,7 +80,7 @@ describe('createMutation', () => {
 
     mutationFn.mockImplementation((value) => sleep(10).then(() => value))
 
-    const rendered = render(FailureExample, {
+    const rendered = render(Failure, {
       props: {
         queryClient,
         mutationFn,

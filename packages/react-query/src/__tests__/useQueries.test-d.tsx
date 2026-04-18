@@ -61,7 +61,7 @@ describe('UseQueries config object overload', () => {
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
 
-  it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
+  it('should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQueries', () => {
     const query1 = queryOptions({
       queryKey: queryKey(),
       queryFn: () => Promise.resolve(1),

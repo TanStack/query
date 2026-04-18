@@ -618,7 +618,7 @@ importers:
   examples/preact/simple:
     dependencies:
       '@tanstack/preact-query':
-        specifier: workspace:^
+        specifier: ^5.99.0
         version: link:../../../packages/preact-query
       preact:
         specifier: ^10.28.0
