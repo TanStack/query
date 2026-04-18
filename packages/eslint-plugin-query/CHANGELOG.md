@@ -1,5 +1,11 @@
 # @tanstack/eslint-plugin-query
 
+## 5.99.1
+
+### Patch Changes
+
+- fix(eslint-plugin-query): fix `no-void-query-fn` false positive on enum returns for typescript 6. ([#10460](https://github.com/TanStack/query/pull/10460))
+
 ## 5.99.0
 
 ## 5.98.0
