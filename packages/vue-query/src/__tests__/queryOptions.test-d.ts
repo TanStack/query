@@ -1,5 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { reactive, ref } from 'vue-demi'
+import { computed, reactive, ref } from 'vue-demi'
 import { dataTagSymbol } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
@@ -252,5 +252,50 @@ describe('queryOptions', () => {
 
     expectTypeOf(resolvedGetter.queryFn).not.toBeUndefined()
     expectTypeOf(resolvedGetter.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow computed ref as enabled property', () => {
+    const enabled = computed(() => true)
+
+    // This was broken in #10452, fixed in #10458
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(1),
+      enabled,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow ref as enabled property', () => {
+    const enabled = ref(true)
+
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(1),
+      enabled,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow boolean as enabled property', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(1),
+      enabled: true,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow getter function as enabled property', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(1),
+      enabled: () => true,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
   })
 })
