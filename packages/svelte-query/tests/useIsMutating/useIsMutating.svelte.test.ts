@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import BaseExample from './BaseExample.svelte'
+import Base from './Base.svelte'
 
 describe('useIsMutating', () => {
   let queryClient: QueryClient
@@ -17,7 +17,7 @@ describe('useIsMutating', () => {
   })
 
   test('should update as queries start and stop mutating', async () => {
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: { queryClient },
     })
 

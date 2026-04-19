@@ -552,6 +552,113 @@ describe('queriesObserver', () => {
     expect(newCombined.keys).toEqual(['pending'])
   })
 
+  test('should recalculate combined result when combine function changes', () => {
+    const combine1 = vi.fn((results: Array<QueryObserverResult>) => ({
+      total: results.length,
+    }))
+    const combine2 = vi.fn((results: Array<QueryObserverResult>) => ({
+      total: results.length * 4,
+    }))
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
+
+    const queries = [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: key2, queryFn: queryFn2 },
+    ]
+
+    const observer = new QueriesObserver<{ total: number }>(
+      queryClient,
+      queries,
+      { combine: combine1 },
+    )
+
+    const [raw1, getCombined1] = observer.getOptimisticResult(queries, combine1)
+    const combined1 = getCombined1(raw1)
+
+    const [raw2, getCombined2] = observer.getOptimisticResult(queries, combine2)
+    const combined2 = getCombined2(raw2)
+
+    expect(combined1.total).toBe(2)
+    expect(combined2.total).toBe(8)
+  })
+
+  test('should use fallback result when combineResult is called without raw argument', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+    }))
+
+    const key = queryKey()
+    const queryFn = vi.fn().mockReturnValue(1)
+
+    const observer = new QueriesObserver<{ count: number }>(
+      queryClient,
+      [{ queryKey: key, queryFn }],
+      { combine },
+    )
+
+    const [, getCombined] = observer.getOptimisticResult(
+      [{ queryKey: key, queryFn }],
+      combine,
+    )
+    const combined = getCombined()
+
+    expect(combined.count).toBe(1)
+  })
+
+  test('should return observer result directly when notifyOnChangeProps is set', () => {
+    const key = queryKey()
+    const queryFn = vi.fn().mockReturnValue(1)
+
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key, queryFn, notifyOnChangeProps: ['data'] },
+    ])
+
+    const trackResultSpy = vi.spyOn(QueryObserver.prototype, 'trackResult')
+
+    const [, , trackResult] = observer.getOptimisticResult(
+      [{ queryKey: key, queryFn, notifyOnChangeProps: ['data'] }],
+      undefined,
+    )
+
+    const trackedResults = trackResult()
+
+    expect(trackedResults).toHaveLength(1)
+    // trackResult should NOT be called when notifyOnChangeProps is set
+    expect(trackResultSpy).not.toHaveBeenCalled()
+
+    trackResultSpy.mockRestore()
+  })
+
+  test('should return cached combined result when nothing has changed', () => {
+    const combine = vi.fn((results: Array<QueryObserverResult>) => ({
+      count: results.length,
+    }))
+
+    const key = queryKey()
+    const queryFn = vi.fn().mockReturnValue(1)
+
+    const queries = [{ queryKey: key, queryFn }]
+
+    const observer = new QueriesObserver<{ count: number }>(
+      queryClient,
+      queries,
+      { combine },
+    )
+
+    const [raw1, getCombined1] = observer.getOptimisticResult(queries, combine)
+    const combined1 = getCombined1(raw1)
+
+    const [raw2, getCombined2] = observer.getOptimisticResult(queries, combine)
+    const combined2 = getCombined2(raw2)
+
+    // Same combine, same queries → cached result returned
+    expect(combined1).toBe(combined2)
+  })
+
   test('should track properties on all observers when trackResult is called', () => {
     const key1 = queryKey()
     const key2 = queryKey()

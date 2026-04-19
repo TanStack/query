@@ -3,8 +3,8 @@ import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { mutationOptions } from '../../src/index.js'
-import BaseExample from './BaseExample.svelte'
-import MultiExample from './MultiExample.svelte'
+import Base from './Base.svelte'
+import Multi from './Multi.svelte'
 
 describe('mutationOptions', () => {
   let queryClient: QueryClient
@@ -43,7 +43,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: { queryClient, mutationOpts: () => mutationOpts },
     })
 
@@ -61,7 +61,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: { queryClient, mutationOpts: () => mutationOpts },
     })
 
@@ -84,7 +84,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
         queryClient,
         mutationOpts1: () => mutationOpts1,
@@ -112,7 +112,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(50).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
         queryClient,
         mutationOpts1: () => mutationOpts1,
@@ -138,7 +138,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
         queryClient,
         mutationOpts: () => mutationOpts,
@@ -160,7 +160,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: { queryClient, mutationOpts: () => mutationOpts },
     })
 
@@ -183,7 +183,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
         queryClient,
         mutationOpts1: () => mutationOpts1,
@@ -211,7 +211,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(500).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
         queryClient,
         mutationOpts1: () => mutationOpts1,
@@ -237,7 +237,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
         queryClient,
         mutationOpts: () => mutationOpts,
@@ -262,7 +262,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
         queryClient,
         mutationOpts: () => mutationOpts,
@@ -289,7 +289,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
         queryClient,
         mutationOpts1: () => mutationOpts1,
@@ -320,7 +320,7 @@ describe('mutationOptions', () => {
       mutationFn: () => sleep(10).then(() => 'data2'),
     })
 
-    const rendered = render(MultiExample, {
+    const rendered = render(Multi, {
       props: {
         queryClient,
         mutationOpts1: () => mutationOpts1,
