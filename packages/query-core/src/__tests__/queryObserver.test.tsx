@@ -1368,6 +1368,40 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('should not track error prop when throwOnError is not set', async () => {
+    const key = queryKey()
+    const results: Array<QueryObserverResult> = []
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.reject('error'),
+      retry: false,
+    })
+
+    const trackedResult = observer.trackResult(
+      observer.getCurrentResult(),
+      (prop) => {
+        if (prop === 'data') {
+          observer.trackProp(prop)
+        }
+      },
+    )
+
+    trackedResult.data
+
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Without throwOnError, `error` is not auto-added to trackedProps.
+    // Since only `data` is tracked and it did not change (stayed undefined),
+    // the listener is not invoked even though `error` prop changed.
+    expect(results.length).toBe(0)
+
+    unsubscribe()
+  })
+
   test('should reject promise when experimental_prefetchInRender is disabled and thenable is pending', async () => {
     const key = queryKey()
     const queryClient2 = new QueryClient({
