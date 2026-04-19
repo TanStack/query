@@ -267,6 +267,84 @@ ruleTester.run('no-void-query-fn', rule, {
         })
       `,
     },
+    {
+      name: 'queryFn returns a numeric enum member',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        enum ExampleEnum {
+          A,
+          B,
+        }
+
+        function Component() {
+          const query = useQuery({
+            queryKey: ['test'],
+            queryFn: () => ExampleEnum.A,
+          })
+          return null
+        }
+      `,
+    },
+    {
+      name: 'queryFn returns a string enum member',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        enum StringEnum {
+          Foo = 'foo',
+          Bar = 'bar',
+        }
+
+        function Component() {
+          const query = useQuery({
+            queryKey: ['test'],
+            queryFn: () => StringEnum.Foo,
+          })
+          return null
+        }
+      `,
+    },
+    {
+      name: 'async queryFn returns a numeric enum member',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        enum Status {
+          Active,
+          Inactive,
+        }
+
+        function Component() {
+          const query = useQuery({
+            queryKey: ['test'],
+            queryFn: async () => {
+              return Status.Active
+            },
+          })
+          return null
+        }
+      `,
+    },
+    {
+      name: 'queryFn returns a const enum member',
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/react-query'
+
+        const enum Direction {
+          Up = 'UP',
+          Down = 'DOWN',
+        }
+
+        function Component() {
+          const query = useQuery({
+            queryKey: ['test'],
+            queryFn: () => Direction.Up,
+          })
+          return null
+        }
+      `,
+    },
   ],
   invalid: [
     {
