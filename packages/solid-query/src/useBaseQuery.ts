@@ -300,6 +300,31 @@ export function useBaseQuery<
     // Read isRestoring unconditionally so the memo re-runs when it changes
     const restoring = isRestoring()
 
+    if (isServer) {
+      // On retry passes (after the streaming Loading boundary awaits a
+      // pending Promise), the QueryClient cache already has the data, so
+      // `getOptimisticResult` returns a non-loading result synchronously.
+      // Returning the value directly (instead of a fresh Promise that
+      // resolves synchronously) lets Solid's `processResult` set
+      // `comp.value` directly without queueing another async settle. If we
+      // returned a new Promise on every retry, Solid's streaming Loading
+      // boundary `while (ret.p.length)` loop in `createLoadingBoundary`
+      // would never terminate, because each retry adds a new pending
+      // Promise to the boundary's tracked set even when it resolves
+      // synchronously.
+      const cached = observer.getOptimisticResult(opts)
+      if (!cached.isLoading) {
+        observerResult = cached
+        runWithOwner(null, () => {
+          setStateWithReconciliation(cached)
+        })
+        return hydratableObserverResult(
+          observer.getCurrentQuery(),
+          cached,
+        ) as ResourceData
+      }
+    }
+
     return new Promise<ResourceData>((resolve, reject) => {
       resolver = resolve
       if (isServer) {
