@@ -62,6 +62,7 @@ export class QueryClient {
   #queryCache: QueryCache
   #mutationCache: MutationCache
   #defaultOptions: DefaultOptions
+  #enforceQueryGcTime: number | undefined
   #queryDefaults: Map<string, QueryDefaults>
   #mutationDefaults: Map<string, MutationDefaults>
   #mountCount: number
@@ -72,6 +73,7 @@ export class QueryClient {
     this.#queryCache = config.queryCache || new QueryCache()
     this.#mutationCache = config.mutationCache || new MutationCache()
     this.#defaultOptions = config.defaultOptions || {}
+    this.#enforceQueryGcTime = config.enforceQueryGcTime
     this.#queryDefaults = new Map()
     this.#mutationDefaults = new Map()
     this.#mountCount = 0
@@ -591,6 +593,10 @@ export class QueryClient {
       ...this.getQueryDefaults(options.queryKey),
       ...options,
       _defaulted: true,
+    }
+
+    if (this.#enforceQueryGcTime !== undefined) {
+      defaultedOptions.gcTime = this.#enforceQueryGcTime
     }
 
     if (!defaultedOptions.queryHash) {

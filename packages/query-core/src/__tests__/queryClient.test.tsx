@@ -145,6 +145,47 @@ describe('queryClient', () => {
   })
 
   describe('defaultQueryOptions', () => {
+    test('should enforce gcTime from QueryClient config', () => {
+      const key = queryKey()
+      const testClient = new QueryClient({
+        enforceQueryGcTime: Infinity,
+      })
+
+      expect(
+        testClient.defaultQueryOptions({ queryKey: key, gcTime: 10 }).gcTime,
+      ).toBe(Infinity)
+    })
+
+    test('should enforce gcTime over matching query defaults', () => {
+      const key = queryKey()
+      const testClient = new QueryClient({
+        enforceQueryGcTime: Infinity,
+      })
+
+      testClient.setQueryDefaults(key, { gcTime: 10 })
+
+      expect(testClient.defaultQueryOptions({ queryKey: key }).gcTime).toBe(
+        Infinity,
+      )
+    })
+
+    test('should enforce gcTime when query is added to cache', async () => {
+      const key = queryKey()
+      const testClient = new QueryClient({
+        enforceQueryGcTime: Infinity,
+      })
+
+      await testClient.prefetchQuery({
+        queryKey: key,
+        queryFn: () => Promise.resolve('data'),
+        gcTime: 10,
+      })
+
+      expect(
+        testClient.getQueryCache().find({ queryKey: key })?.options.gcTime,
+      ).toBe(Infinity)
+    })
+
     test('should default networkMode when persister is present', () => {
       expect(
         new QueryClient({

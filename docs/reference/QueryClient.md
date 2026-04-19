@@ -64,6 +64,21 @@ Its available methods are:
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
   - You can also define defaults to be used for [hydration](../framework/react/reference/hydration.md)
+- `enforceQueryGcTime?: number`
+  - Optional
+  - Forces `gcTime` for every query created by this client, including calls that provide `gcTime` per-query or via `setQueryDefaults`.
+  - Useful when you need a strict retention policy, for example to keep all query data in cache with `Infinity`.
+
+```tsx
+const queryClient = new QueryClient({
+  enforceQueryGcTime: Infinity,
+  defaultOptions: {
+    queries: {
+      gcTime: 60 * 1000, // ignored because enforceQueryGcTime takes precedence
+    },
+  },
+})
+```
 
 ## `queryClient.fetchQuery`
 

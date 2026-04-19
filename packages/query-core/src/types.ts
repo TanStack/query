@@ -1356,6 +1356,11 @@ export interface QueryClientConfig {
   queryCache?: QueryCache
   mutationCache?: MutationCache
   defaultOptions?: DefaultOptions
+  /**
+   * Force all queries created by this client to use the same gcTime.
+   * This overrides gcTime set globally, per key or per query call.
+   */
+  enforceQueryGcTime?: number
 }
 
 export interface DefaultOptions<TError = DefaultError> {
