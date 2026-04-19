@@ -3,13 +3,14 @@
 // why that happens.
 import { notifyManager, shouldThrowError } from '@tanstack/query-core'
 import {
-  createMemo,
   createRenderEffect,
+  createSignal,
   createStore,
   isPending,
   onCleanup,
   reconcile,
   refresh,
+  runWithOwner,
   snapshot,
   untrack,
 } from 'solid-js'
@@ -75,9 +76,9 @@ function reconcileFn<TData, TError>(
         if (error instanceof Error) {
           console.warn(
             `Unable to correctly reconcile data for query key: ${queryHash}. ` +
-              `Possibly because the query data contains data structures that aren't supported ` +
-              `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
-              `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
+            `Possibly because the query data contains data structures that aren't supported ` +
+            `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
+            `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
           )
         }
       }
@@ -151,7 +152,12 @@ export function useBaseQuery<
 ) {
   type ResourceData = QueryObserverResult<TData, TError>
 
-  const client = createMemo(() => useQueryClient(queryClient?.()))
+  // Use createSignal(fn) instead of createMemo so these derived memos have
+  // _preventAutoDisposal set. Without it, a createMemo that no one reads
+  // reactively gets auto-disposed in Solid v2, which cascades and disposes
+  // the component's onCleanup, unsubscribing the observer before the fetch
+  // completes.
+  const [client] = createSignal(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
   // There are times when we run a query on the server but the resource is never read
   // This could lead to times when the queryObserver is unsubscribed before the resource has loaded
@@ -159,7 +165,7 @@ export function useBaseQuery<
   // before the resource has loaded
   let unsubscribeQueued = false
 
-  const defaultedOptions = createMemo(() => {
+  const [defaultedOptions] = createSignal(() => {
     const defaultOptions = client().defaultQueryOptions(options())
     defaultOptions._optimisticResults = isRestoring()
       ? 'isRestoring'
@@ -178,7 +184,7 @@ export function useBaseQuery<
   const observer = untrack(() => new Observer(client(), defaultedOptions()))
 
   // Track options reactively so the queryResource memo re-runs on change.
-  const trackedDefaultedOptions = createMemo(() => defaultedOptions())
+  const [trackedDefaultedOptions] = createSignal(() => defaultedOptions())
 
   // Apply options in an effect to avoid store writes inside the memo.
   // setOptions triggers updateResult → notify → subscription → setState,
@@ -186,7 +192,11 @@ export function useBaseQuery<
   createRenderEffect(
     () => trackedDefaultedOptions(),
     (opts) => {
-      observer.setOptions(opts)
+      // observer.setOptions synchronously invokes subscribers which write to
+      // the store. In Solid v2, signal/store writes inside an owned scope
+      // (like this render effect) throw. Escape the owner so subscriber
+      // writes don't trip the guard.
+      runWithOwner(null, () => observer.setOptions(opts))
     },
   )
 
@@ -231,8 +241,8 @@ export function useBaseQuery<
     return observer.subscribe((result) => {
       const previousResult = observerResult
       observerResult = result
-      setStateWithReconciliation(result)
-      queueMicrotask(() => {
+      runWithOwner(null, () => {
+        setStateWithReconciliation(result)
         if (
           unsubscribe &&
           !disposed &&
@@ -243,8 +253,7 @@ export function useBaseQuery<
             refresh(queryResource)
           } catch {
             // NotReadyError is expected when refreshing a memo that returns
-            // a Promise. The Loading boundary handles this during rendering,
-            // but when refresh is called from a microtask there is no boundary.
+            // a Promise. The Loading boundary handles this during rendering.
           }
         }
       })
@@ -280,27 +289,34 @@ export function useBaseQuery<
     but the resource is still in a loading state
   */
   let resolver: ((value: ResourceData) => void) | null = null
-  const queryResource = createMemo<ResourceData>(
-    () => {
-      // Read trackedDefaultedOptions to ensure this memo re-runs when options change
-      const opts = trackedDefaultedOptions()
-      // Read isRestoring unconditionally so the memo re-runs when it changes
-      const restoring = isRestoring()
+  // Use createSignal(fn) instead of createMemo so the derived memo has
+  // _preventAutoDisposal set. Without it, a createMemo that no one reads
+  // reactively gets auto-disposed in Solid v2, which would cascade-dispose
+  // the component's onCleanup and unsubscribe the observer before fetch
+  // completion.
+  const [queryResource] = createSignal<ResourceData>(() => {
+    // Read trackedDefaultedOptions to ensure this memo re-runs when options change
+    const opts = trackedDefaultedOptions()
+    // Read isRestoring unconditionally so the memo re-runs when it changes
+    const restoring = isRestoring()
 
-      return new Promise((resolve, reject) => {
-        resolver = resolve
-        if (isServer) {
-          unsubscribe = createServerSubscriber((data) => {
-            resolve(data as ResourceData)
-          }, reject)
-        } else if (!unsubscribe && !restoring) {
-          unsubscribe = createClientSubscriber()
-        }
-        // Use getOptimisticResult instead of updateResult to keep the memo
-        // free of store writes (updateResult triggers notify → setState).
-        const currentResult = observer.getOptimisticResult(opts)
-        observerResult = currentResult
+    return new Promise<ResourceData>((resolve, reject) => {
+      resolver = resolve
+      if (isServer) {
+        unsubscribe = createServerSubscriber((data) => {
+          resolve(data as ResourceData)
+        }, reject)
+      } else if (!unsubscribe && !restoring) {
+        unsubscribe = createClientSubscriber()
+      }
+      // Use getOptimisticResult instead of updateResult to keep the memo
+      // free of store writes (updateResult triggers notify → setState).
+      const currentResult = observer.getOptimisticResult(opts)
+      observerResult = currentResult
 
+      // Store writes inside a memo's owned scope throw in Solid v2.
+      // Escape the owner so setState calls are allowed.
+      runWithOwner(null, () => {
         if (
           currentResult.isError &&
           !currentResult.isFetching &&
@@ -311,23 +327,31 @@ export function useBaseQuery<
           ])
         ) {
           setStateWithReconciliation(currentResult)
-          return reject(currentResult.error)
+          reject(currentResult.error)
+          return
         }
-        if (!currentResult.isLoading) {
-          resolver = null
-          setStateWithReconciliation(currentResult)
-          return resolve(
-            hydratableObserverResult(observer.getCurrentQuery(), currentResult),
-          )
-        }
-
-        // Defer the loading-state store write so it runs outside the memo.
-        queueMicrotask(() => setStateWithReconciliation(currentResult))
+        setStateWithReconciliation(currentResult)
       })
-    },
-    observerResult,
-    { ssrSource: 'client' },
-  )
+
+      if (
+        currentResult.isError &&
+        !currentResult.isFetching &&
+        !restoring &&
+        shouldThrowError(opts.throwOnError, [
+          currentResult.error,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        return
+      }
+      if (!currentResult.isLoading) {
+        resolver = null
+        return resolve(
+          hydratableObserverResult(observer.getCurrentQuery(), currentResult),
+        )
+      }
+    })
+  })
 
   onCleanup(() => {
     disposed = true

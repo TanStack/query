@@ -36,7 +36,7 @@ export function useMutationState<TResult = MutationState>(
 
   const [result, setResult] = createSignal(
     untrack(() => getResult(mutationCache(), options())),
-    { pureWrite: true },
+    { ownedWrite: true },
   )
 
   const unsubscribe = untrack(() =>

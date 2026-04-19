@@ -13,7 +13,7 @@ export function useIsMutating(
 
   const [mutations, setMutations] = createSignal(
     untrack(() => client().isMutating(filters?.())),
-    { pureWrite: true },
+    { ownedWrite: true },
   )
 
   const unsubscribe = untrack(() =>

@@ -13,7 +13,7 @@ export function useIsFetching(
 
   const [fetches, setFetches] = createSignal(
     untrack(() => client().isFetching(filters?.())),
-    { pureWrite: true },
+    { ownedWrite: true },
   )
 
   const unsubscribe = untrack(() =>
