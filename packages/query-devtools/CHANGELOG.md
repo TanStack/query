@@ -1,5 +1,7 @@
 # @tanstack/query-devtools
 
+## 5.99.2
+
 ## 5.99.1
 
 ## 5.99.0
