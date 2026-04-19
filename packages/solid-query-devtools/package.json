@@ -74,7 +74,7 @@
     "npm-run-all2": "^5.0.0",
     "solid-js": "2.0.0-beta.7",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "3.0.0-next.4"
+    "vite-plugin-solid": "3.0.0-next.5"
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:^",
