@@ -1402,6 +1402,42 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('should not refetch on mount when retryOnMount is false and query is in error state', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn(() => Promise.reject('error'))
+
+    // First observer causes query to fail
+    const firstObserver = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      retry: false,
+    })
+    const unsubscribeFirst = firstObserver.subscribe(vi.fn())
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryClient.getQueryState(key)?.status).toBe('error')
+
+    unsubscribeFirst()
+
+    // New observer with retryOnMount: false should not refetch
+    const secondObserver = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      retry: false,
+      retryOnMount: false,
+    })
+    const unsubscribeSecond = secondObserver.subscribe(vi.fn())
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    // queryFn should still have been called only once (no refetch)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    unsubscribeSecond()
+  })
+
   test('should reject promise when experimental_prefetchInRender is disabled and thenable is pending', async () => {
     const key = queryKey()
     const queryClient2 = new QueryClient({
