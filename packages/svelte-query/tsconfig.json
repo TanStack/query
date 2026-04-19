@@ -5,5 +5,6 @@
     "rootDir": "."
   },
   "include": ["src", "tests", "*.config.*", "package.json"],
+  "exclude": ["**/*.bundled_*.mjs"],
   "references": [{ "path": "../query-core" }]
 }

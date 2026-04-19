@@ -4,5 +4,6 @@
     "outDir": "./dist-ts",
     "rootDir": "."
   },
-  "include": ["src", "*.config.*", "package.json"]
+  "include": ["src", "*.config.*", "package.json"],
+  "exclude": ["**/*.bundled_*.mjs"]
 }

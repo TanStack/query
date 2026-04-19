@@ -6,5 +6,6 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
-  "include": ["src", "test-setup.ts", "*.config.*", "package.json"]
+  "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
+  "exclude": ["**/*.bundled_*.mjs"]
 }

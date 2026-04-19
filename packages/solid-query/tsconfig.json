@@ -7,5 +7,6 @@
     "jsxImportSource": "solid-js"
   },
   "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
+  "exclude": ["**/*.bundled_*.mjs"],
   "references": [{ "path": "../query-core" }]
 }

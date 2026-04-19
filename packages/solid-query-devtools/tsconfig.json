@@ -7,5 +7,6 @@
     "jsxImportSource": "solid-js"
   },
   "include": ["src", "*.config.*", "package.json"],
+  "exclude": ["**/*.bundled_*.mjs"],
   "references": [{ "path": "../query-devtools" }, { "path": "../solid-query" }]
 }

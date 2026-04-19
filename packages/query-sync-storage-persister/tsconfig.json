@@ -5,6 +5,7 @@
     "rootDir": "."
   },
   "include": ["src", "*.config.*", "package.json"],
+  "exclude": ["**/*.bundled_*.mjs"],
   "references": [
     { "path": "../query-core" },
     { "path": "../query-persist-client-core" }

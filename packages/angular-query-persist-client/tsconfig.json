@@ -8,6 +8,7 @@
     "target": "ES2022"
   },
   "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
+  "exclude": ["**/*.bundled_*.mjs"],
   "references": [
     { "path": "../angular-query-experimental" },
     { "path": "../query-persist-client-core" }
