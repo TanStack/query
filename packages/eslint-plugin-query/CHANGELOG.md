@@ -1,5 +1,7 @@
 # @tanstack/eslint-plugin-query
 
+## 5.99.2
+
 ## 5.99.1
 
 ### Patch Changes
