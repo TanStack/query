@@ -413,6 +413,15 @@ export function useBaseQuery<
         return Reflect.get(target, prop, receiver)
       }
 
+      // On the server, force a Suspense dependency on the query resource so
+      // the per-route Loading boundary catches NotReadyError, awaits the
+      // pending Promise, and re-renders with the resolved state. Without
+      // this, JSX reads through the Proxy never subscribe to queryResource
+      // and SSR HTML reflects the initial loading state.
+      if (isServer) {
+        queryResource()
+      }
+
       // Always pass through error-related props without throwing
       if (errorPassthroughProps.has(prop)) {
         return Reflect.get(target, prop, receiver)
