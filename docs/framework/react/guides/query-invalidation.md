@@ -131,3 +131,31 @@ const todoListQuery = useQuery({
 ```
 
 [//]: # 'Example5'
+
+## Tracing invalidation sources with `meta`
+
+Pass a `meta` object as the second argument to `invalidateQueries` to attach caller context to the invalidation. The value flows through to the `invalidate` action seen by `queryCache.subscribe` subscribers, making it possible to build structured logs or suppress echo-invalidations without any out-of-band bookkeeping.
+
+[//]: # 'ExampleMeta'
+
+```tsx
+// Attach a source tag when invalidating from a WebSocket message
+queryClient.invalidateQueries(
+  { queryKey: ['orders'] },
+  { meta: { source: 'websocket', traceId: 'abc123' } },
+)
+
+// Read it back in a cache subscriber
+queryCache.subscribe((event) => {
+  if (event.type === 'updated' && event.action.type === 'invalidate') {
+    analytics.track('cache.invalidated', {
+      queryKey: event.query.queryKey,
+      ...event.action.meta,
+    })
+  }
+})
+```
+
+[//]: # 'ExampleMeta'
+
+> **Note:** `meta` in the second argument (`options.meta`) is unrelated to `filters.meta` in the first argument. `filters.meta` selects _which_ queries to invalidate; `options.meta` is arbitrary context that rides along with the invalidation action.

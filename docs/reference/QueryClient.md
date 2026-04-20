@@ -351,6 +351,9 @@ await queryClient.invalidateQueries(
     - Defaults to `true`
       - Per default, a currently running request will be cancelled before a new request is made
     - When set to `false`, no refetch will be made if there is already a request running.
+  - `meta?: QueryMeta`
+    - Optional metadata to attach to the invalidation. The value is forwarded to the `invalidate` action payload visible in `queryCache.subscribe`, allowing cache subscribers to identify the source of the invalidation.
+    - Note: this is distinct from `filters.meta`, which filters queries _by_ their meta.
 
 ## `queryClient.refetchQueries`
 

@@ -1600,6 +1600,27 @@ describe('queryClient', () => {
       expect(queryFn).toHaveBeenCalledTimes(1)
       unsubscribe()
     })
+
+    it('should forward meta to the invalidate action in queryCache.subscribe', async () => {
+      const key = queryKey()
+      await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+
+      const events: Array<unknown> = []
+      const unsubscribe = queryCache.subscribe((event) => {
+        if (event.type === 'updated' && event.action.type === 'invalidate') {
+          events.push(event.action.meta)
+        }
+      })
+
+      await queryClient.invalidateQueries(
+        { queryKey: key },
+        { meta: { source: 'websocket', traceId: 'abc123' } },
+      )
+
+      unsubscribe()
+      expect(events).toHaveLength(1)
+      expect(events[0]).toEqual({ source: 'websocket', traceId: 'abc123' })
+    })
   })
 
   describe('resetQueries', () => {

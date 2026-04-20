@@ -591,7 +591,9 @@ export interface RefetchQueryFilters<
   TQueryKey extends QueryKey = QueryKey,
 > extends QueryFilters<TQueryKey> {}
 
-export interface InvalidateOptions extends RefetchOptions {}
+export interface InvalidateOptions extends RefetchOptions {
+  meta?: QueryMeta
+}
 export interface ResetOptions extends RefetchOptions {}
 
 export interface FetchNextPageOptions extends ResultOptions {

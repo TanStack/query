@@ -296,7 +296,7 @@ export class QueryClient {
   ): Promise<void> {
     return notifyManager.batch(() => {
       this.#queryCache.findAll(filters).forEach((query) => {
-        query.invalidate()
+        query.invalidate(options.meta)
       })
 
       if (filters?.refetchType === 'none') {

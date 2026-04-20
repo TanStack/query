@@ -124,6 +124,7 @@ interface ErrorAction<TError> {
 
 interface InvalidateAction {
   type: 'invalidate'
+  meta?: QueryMeta
 }
 
 interface PauseAction {
@@ -388,9 +389,9 @@ export class Query<
     )
   }
 
-  invalidate(): void {
+  invalidate(meta?: QueryMeta): void {
     if (!this.state.isInvalidated) {
-      this.#dispatch({ type: 'invalidate' })
+      this.#dispatch({ type: 'invalidate', meta })
     }
   }
 
