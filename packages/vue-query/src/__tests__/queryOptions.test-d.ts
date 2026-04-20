@@ -298,4 +298,27 @@ describe('queryOptions', () => {
 
     expectTypeOf(options.queryKey).not.toBeUndefined()
   })
+
+  it('should allow computed ref as queryKey', () => {
+    const id = ref<string | null>('1')
+
+    // This was broken in #10452, the #10465 fix only covered `enabled`
+    const options = queryOptions({
+      queryKey: computed(() => ['foo', id.value] as const),
+      queryFn: () => Promise.resolve({ id: '1' }),
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow ref as queryKey', () => {
+    const keyRef = ref(['foo', '1'] as const)
+
+    const options = queryOptions({
+      queryKey: keyRef,
+      queryFn: () => Promise.resolve({ id: '1' }),
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
 })
