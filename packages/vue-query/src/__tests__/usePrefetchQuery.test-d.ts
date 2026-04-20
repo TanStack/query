@@ -1,12 +1,13 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { ref } from 'vue-demi'
 import { skipToken } from '@tanstack/query-core'
+import { queryKey } from '@tanstack/query-test-utils'
 import { usePrefetchQuery } from '..'
 
 describe('usePrefetchQuery', () => {
   it('should return nothing', () => {
     const result = usePrefetchQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
     })
 
@@ -16,7 +17,7 @@ describe('usePrefetchQuery', () => {
   it('should not allow refetchInterval, enabled or throwOnError options', () => {
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2353
         refetchInterval: 1000,
@@ -25,7 +26,7 @@ describe('usePrefetchQuery', () => {
 
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2353
         enabled: true,
@@ -34,7 +35,7 @@ describe('usePrefetchQuery', () => {
 
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2353
         throwOnError: true,
@@ -45,7 +46,7 @@ describe('usePrefetchQuery', () => {
   it('should accept refs in query options', () => {
     assertType(
       usePrefetchQuery({
-        queryKey: ['key', ref('id')],
+        queryKey: [...queryKey(), ref('id')],
         queryFn: () => Promise.resolve(5),
         staleTime: ref(1000),
       }),
@@ -55,7 +56,7 @@ describe('usePrefetchQuery', () => {
   it('should not allow skipToken in queryFn', () => {
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         // @ts-expect-error
         queryFn: skipToken,
       }),
@@ -63,7 +64,7 @@ describe('usePrefetchQuery', () => {
 
     assertType(
       usePrefetchQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         // @ts-expect-error
         queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
       }),
