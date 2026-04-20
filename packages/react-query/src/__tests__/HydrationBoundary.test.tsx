@@ -9,7 +9,9 @@ import {
   QueryClientProvider,
   dehydrate,
   useQuery,
+  useSuspenseQuery,
 } from '..'
+import { renderWithClient } from './utils'
 import type { hydrate } from '@tanstack/query-core'
 
 describe('React hydration', () => {
@@ -507,6 +509,59 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
+
+    queryClient.clear()
+  })
+
+  test('should hydrate an existing disabled query before a nested suspense query with the same key mounts', async () => {
+    const prefetchedData = ['prefetched']
+    const clientQueryFn = vi.fn(() => sleep(20).then(() => ['client']))
+    const queryClient = new QueryClient()
+
+    const prefetchClient = new QueryClient()
+    const prefetchPromise = prefetchClient.prefetchQuery({
+      queryKey: ['string'],
+      queryFn: () => sleep(10).then(() => prefetchedData),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    await prefetchPromise
+    const dehydratedState = dehydrate(prefetchClient)
+    prefetchClient.clear()
+
+    function Header() {
+      useQuery({
+        queryKey: ['string'],
+        queryFn: clientQueryFn,
+        enabled: false,
+      })
+      return null
+    }
+
+    function Child() {
+      useSuspenseQuery({
+        queryKey: ['string'],
+        queryFn: clientQueryFn,
+      })
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <>
+        <Header />
+        <React.Suspense fallback="loading">
+          <HydrationBoundary state={dehydratedState}>
+            <Child />
+          </HydrationBoundary>
+        </React.Suspense>
+      </>,
+    )
+
+    expect(queryClient.getQueryCache().find({ queryKey: ['string'] })?.state).toMatchObject({
+      data: prefetchedData,
+      status: 'success',
+    })
+    expect(clientQueryFn).toHaveBeenCalledTimes(0)
 
     queryClient.clear()
   })

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { QueryCache } from '../queryCache'
+import { QueryObserver } from '../queryObserver'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
@@ -958,6 +959,47 @@ describe('dehydration and rehydration', () => {
       isInvalidated: false,
       status: 'success',
     })
+  })
+
+  test('should hydrate over an existing disabled query shell', async () => {
+    const key = queryKey()
+
+    const prefetchClient = new QueryClient()
+    const prefetchPromise = prefetchClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'prefetched'),
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    await prefetchPromise
+    const dehydrated = dehydrate(prefetchClient)
+
+    const hydrationClient = new QueryClient()
+    const observer = new QueryObserver(hydrationClient, {
+      queryKey: key,
+      queryFn: () => Promise.resolve('client'),
+      enabled: false,
+    })
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    const disabledShellQuery = hydrationClient.getQueryCache().find({ queryKey: key })
+
+    expect(disabledShellQuery?.state).toMatchObject({
+      data: undefined,
+      fetchStatus: 'idle',
+      status: 'pending',
+    })
+    expect(disabledShellQuery?.isDisabled()).toBe(true)
+
+    hydrate(hydrationClient, dehydrated)
+
+    expect(hydrationClient.getQueryCache().find({ queryKey: key })?.state).toMatchObject({
+      data: 'prefetched',
+      status: 'success',
+    })
+
+    unsubscribe()
+    prefetchClient.clear()
+    hydrationClient.clear()
   })
 
   test('should transform promise result', async () => {

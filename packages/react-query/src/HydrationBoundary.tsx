@@ -82,8 +82,17 @@ export const HydrationBoundary = ({
                 dehydratedQuery.dehydratedAt >
                   existingQuery.state.dataUpdatedAt)
 
+            const canHydrateExistingInRender =
+              existingQuery.state.fetchStatus === 'idle' &&
+              (existingQuery.state.data === undefined ||
+                existingQuery.isDisabled())
+
             if (hydrationIsNewer) {
-              existingQueries.push(dehydratedQuery)
+              if (canHydrateExistingInRender) {
+                newQueries.push(dehydratedQuery)
+              } else {
+                existingQueries.push(dehydratedQuery)
+              }
             }
           }
         }
