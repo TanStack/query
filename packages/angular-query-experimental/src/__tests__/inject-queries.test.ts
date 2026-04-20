@@ -82,6 +82,66 @@ describe('injectQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
+  it('should return the combined result when combine is provided', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const results: Array<Record<string, any>> = []
+
+    @Component({
+      template: `
+        <div>data: {{ combined().data.join(',') }}</div>
+        <div>isPending: {{ combined().isPending }}</div>
+      `,
+    })
+    class Page {
+      combined = injectQueries(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(10).then(() => 1),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(10).then(() => 2),
+          },
+        ],
+        combine: (queries) => ({
+          data: queries.map((q) => q.data),
+          isPending: queries.some((q) => q.isPending),
+        }),
+      }))
+
+      _ = effect(() => {
+        results.push({ ...this.combined() })
+      })
+    }
+
+    const rendered = await render(Page, {
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
+    })
+
+    expect(rendered.getByText('data: ,')).toBeInTheDocument()
+    expect(rendered.getByText('isPending: true')).toBeInTheDocument()
+    expect(results[0]).toMatchObject({
+      data: [undefined, undefined],
+      isPending: true,
+    })
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+
+    expect(rendered.getByText('data: 1,2')).toBeInTheDocument()
+    expect(rendered.getByText('isPending: false')).toBeInTheDocument()
+    expect(results[results.length - 1]).toMatchObject({
+      data: [1, 2],
+      isPending: false,
+    })
+    expect(results.length).toBeGreaterThanOrEqual(2)
+  })
+
   describe('isRestoring', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
       const key1 = queryKey()
