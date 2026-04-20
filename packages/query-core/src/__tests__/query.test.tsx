@@ -849,6 +849,39 @@ describe('query', () => {
     unsubscribe()
   })
 
+  it('fetch should start a new fetch when the previous retryer has rejected', async () => {
+    const key = queryKey()
+
+    let shouldFail = true
+    const queryFn = vi.fn(() => {
+      if (shouldFail) {
+        return sleep(10).then(() => Promise.reject(new Error('fail')))
+      }
+      return sleep(10).then(() => 'success')
+    })
+
+    // Trigger a failing fetch so the query's retryer ends up rejected.
+    queryClient.prefetchQuery({ queryKey: key, queryFn, retry: false })
+    await vi.advanceTimersByTimeAsync(10)
+
+    const query = queryCache.find<string>({ queryKey: key })!
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(query.state.status).toBe('error')
+
+    // Flip the queryFn to succeed and invoke fetch directly on the Query.
+    // The guard `this.#retryer?.status() !== 'rejected'` in Query.fetch must
+    // let execution fall through to create a fresh retryer — otherwise the
+    // call would early-return the previous (rejected) retryer's promise and
+    // queryFn would never run again.
+    shouldFail = false
+    const refetchPromise = query.fetch({ queryKey: key, queryFn, retry: false })
+    await vi.advanceTimersByTimeAsync(10)
+
+    await expect(refetchPromise).resolves.toBe('success')
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(query.state.status).toBe('success')
+  })
+
   it('fetch should throw an error if the queryFn is not defined', async () => {
     const key = queryKey()
 
