@@ -123,7 +123,7 @@ describe('queryOptions', () => {
     const ref1 = ref(1)
     const ref2 = ref(2)
     const options = queryOptions(() => ({
-      queryKey: ['key', ref1.value, { nested: ref2.value }],
+      queryKey: [...queryKey(), ref1.value, { nested: ref2.value }],
       queryFn: () => Promise.resolve(5),
     }))
 
@@ -233,7 +233,7 @@ describe('queryOptions', () => {
 
   it('should allow accessing queryFn and other properties on the returned options object', () => {
     const options = queryOptions({
-      queryKey: ['groups'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve([]),
     })
 
@@ -244,7 +244,7 @@ describe('queryOptions', () => {
 
   it('should allow accessing queryFn and other properties on the returned options when used with getter', () => {
     const options = queryOptions(() => ({
-      queryKey: ['groups'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve([]),
     }))
 
@@ -259,7 +259,7 @@ describe('queryOptions', () => {
 
     // This was broken in #10452, fixed in #10458
     const options = queryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(1),
       enabled,
     })
@@ -271,7 +271,7 @@ describe('queryOptions', () => {
     const enabled = ref(true)
 
     const options = queryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(1),
       enabled,
     })
@@ -281,7 +281,7 @@ describe('queryOptions', () => {
 
   it('should allow boolean as enabled property', () => {
     const options = queryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(1),
       enabled: true,
     })
@@ -291,7 +291,7 @@ describe('queryOptions', () => {
 
   it('should allow getter function as enabled property', () => {
     const options = queryOptions({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(1),
       enabled: () => true,
     })
