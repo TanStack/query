@@ -61,7 +61,7 @@ export const HydrationBoundary = ({
       // State is supplied from the outside and we might as well fail
       // gracefully if it has the wrong shape, so while we type `queries`
       // as required, we still provide a fallback.
-       
+
       const queries = state.queries || []
 
       const newQueries: DehydratedState['queries'] = []

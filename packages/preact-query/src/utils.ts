@@ -56,7 +56,6 @@ function didSnapshotChange(inst: {
   try {
     const nextValue = latestGetSnapshot()
     return !Object.is(prevValue, nextValue)
-     
   } catch (_error) {
     return true
   }
