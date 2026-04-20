@@ -24,6 +24,7 @@
   </a>
 <a href="https://bestofjs.org/projects/tanstack-query"><img src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily" alt="Best of JS" /></a>
   <a href="https://twitter.com/tan_stack"><img src="https://img.shields.io/twitter/follow/tan_stack.svg?style=social" alt="Follow @TanStack"/></a>
+[![Stack Health](https://indiestack.ai/api/badge/health/TanStack/query.svg)](https://indiestack.ai/audit?repo=TanStack/query)
 </div>
 
 <div align="center">
