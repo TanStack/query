@@ -24,7 +24,7 @@ interface TestApp extends App {
   $root: TestApp
 }
 
-const testIf = (condition: boolean) => (condition ? it : it.skip)
+const itIf = (condition: boolean) => (condition ? it : it.skip)
 
 function getAppMock(withUnmountHook = false): TestApp {
   const mock = {
@@ -61,7 +61,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    testIf(isVue2)('should NOT setup devtools by default', () => {
+    itIf(isVue2)('should NOT setup devtools by default', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
@@ -75,7 +75,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    testIf(isVue2)('should setup devtools', () => {
+    itIf(isVue2)('should setup devtools', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
@@ -89,7 +89,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(1)
     })
 
-    testIf(isVue3)('should NOT setup devtools by default', () => {
+    itIf(isVue3)('should NOT setup devtools by default', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
@@ -100,7 +100,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    testIf(isVue3)('should setup devtools', () => {
+    itIf(isVue3)('should setup devtools', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
@@ -148,7 +148,7 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called without additional options', () => {
-    testIf(isVue2)('should provide a client with default clientKey', () => {
+    itIf(isVue2)('should provide a client with default clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
 
@@ -159,7 +159,7 @@ describe('VueQueryPlugin', () => {
       })
     })
 
-    testIf(isVue3)('should provide a client with default clientKey', () => {
+    itIf(isVue3)('should provide a client with default clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
 
@@ -171,7 +171,7 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called with custom clientKey', () => {
-    testIf(isVue2)('should provide a client with customized clientKey', () => {
+    itIf(isVue2)('should provide a client with customized clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock, { queryClientKey: 'CUSTOM' })
 
@@ -182,7 +182,7 @@ describe('VueQueryPlugin', () => {
       })
     })
 
-    testIf(isVue3)('should provide a client with customized clientKey', () => {
+    itIf(isVue3)('should provide a client with customized clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock, { queryClientKey: 'CUSTOM' })
 
@@ -194,7 +194,7 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called with custom client', () => {
-    testIf(isVue2)('should provide that custom client', () => {
+    itIf(isVue2)('should provide that custom client', () => {
       const appMock = getAppMock()
       const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
@@ -207,7 +207,7 @@ describe('VueQueryPlugin', () => {
       })
     })
 
-    testIf(isVue3)('should provide that custom client', () => {
+    itIf(isVue3)('should provide that custom client', () => {
       const appMock = getAppMock()
       const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
@@ -221,7 +221,7 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called with custom client config', () => {
-    testIf(isVue2)(
+    itIf(isVue2)(
       'should instantiate a client with the provided config',
       () => {
         const appMock = getAppMock()
@@ -240,7 +240,7 @@ describe('VueQueryPlugin', () => {
       },
     )
 
-    testIf(isVue3)(
+    itIf(isVue3)(
       'should instantiate a client with the provided config',
       () => {
         const appMock = getAppMock()
