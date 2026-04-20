@@ -4,6 +4,7 @@ import { QueryClient } from '..'
 import {
   addToEnd,
   addToStart,
+  ensureQueryFn,
   hashKey,
   hashQueryKeyByOptions,
   isPlainArray,
@@ -14,6 +15,7 @@ import {
   replaceEqualDeep,
   shallowEqualObjects,
   shouldThrowError,
+  skipToken,
 } from '../utils'
 import { Mutation } from '../mutation'
 
@@ -531,6 +533,57 @@ describe('core/utils', () => {
       const nested2 = [{ b: 2, a: { c: 3, d: 4 } }]
 
       expect(hashKey(nested1)).toEqual(hashKey(nested2))
+    })
+  })
+
+  describe('ensureQueryFn', () => {
+    it('should return a function that resolves to initialPromise when queryFn is missing and initialPromise is provided', async () => {
+      const initialPromise = Promise.resolve('initial-data')
+
+      const resolved = ensureQueryFn(
+        { queryHash: '["key"]' },
+        { initialPromise },
+      )
+
+      await expect(
+        (resolved as unknown as () => Promise<string>)(),
+      ).resolves.toBe('initial-data')
+    })
+
+    it('should return a function that rejects when initialPromise rejects', async () => {
+      const error = new Error('initial-promise-error')
+      const initialPromise = Promise.reject(error)
+
+      const resolved = ensureQueryFn(
+        { queryHash: '["key"]' },
+        { initialPromise },
+      )
+
+      await expect(
+        (resolved as unknown as () => Promise<unknown>)(),
+      ).rejects.toBe(error)
+    })
+
+    it('should return a function that rejects with missing queryFn error when queryFn is set to skipToken', async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+
+      const resolved = ensureQueryFn({
+        queryFn: skipToken,
+        queryHash: '["skip"]',
+      })
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Attempted to invoke queryFn when set to skipToken',
+        ),
+      )
+      await expect(
+        (resolved as unknown as () => Promise<unknown>)(),
+      ).rejects.toThrow('Missing queryFn: \'["skip"]\'')
+
+      consoleErrorSpy.mockRestore()
     })
   })
 
