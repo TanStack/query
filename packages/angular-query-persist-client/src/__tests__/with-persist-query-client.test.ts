@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   injectQuery,
@@ -62,7 +62,7 @@ const createMockErrorPersister = (
 }
 
 describe('withPersistQueryClient', () => {
-  test('restores cache from persister', async () => {
+  it('restores cache from persister', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -146,11 +146,11 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test.todo(
+  it.todo(
     '(Once injectQueries is functional) verify that injectQueries transitions to an idle state',
   )
 
-  test('should show initialData while restoring', async () => {
+  it('should show initialData while restoring', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -238,7 +238,7 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test('should not refetch after restoring when data is fresh', async () => {
+  it('should not refetch after restoring when data is fresh', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -321,7 +321,7 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test('should call onSuccess after successful restoring', async () => {
+  it('should call onSuccess after successful restoring', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
     queryClient.prefetchQuery({
@@ -377,7 +377,7 @@ describe('withPersistQueryClient', () => {
     expect(rendered.getByText('fetched')).toBeInTheDocument()
   })
 
-  test('should remove cache after non-successful restoring', async () => {
+  it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
     const onErrorMock = vi
       .spyOn(console, 'error')

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Injector, provideZonelessChangeDetection } from '@angular/core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
@@ -23,7 +23,7 @@ describe('injectInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should properly execute infinite query', async () => {
+  it('should properly execute infinite query', async () => {
     const key = queryKey()
     const query = TestBed.runInInjectionContext(() => {
       return injectInfiniteQuery(() => ({
@@ -64,7 +64,7 @@ describe('injectInfiniteQuery', () => {
   })
 
   describe('injection context', () => {
-    test('throws NG0203 with descriptive error outside injection context', () => {
+    it('throws NG0203 with descriptive error outside injection context', () => {
       const key = queryKey()
       expect(() => {
         injectInfiniteQuery(() => ({
@@ -77,7 +77,7 @@ describe('injectInfiniteQuery', () => {
       }).toThrow(/NG0203(.*?)injectInfiniteQuery/)
     })
 
-    test('can be used outside injection context when passing an injector', () => {
+    it('can be used outside injection context when passing an injector', () => {
       const key = queryKey()
       const query = injectInfiniteQuery(
         () => ({
