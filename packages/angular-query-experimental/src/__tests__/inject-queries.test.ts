@@ -82,48 +82,50 @@ describe('injectQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const queryFn1 = vi.fn().mockImplementation(() => sleep(10).then(() => 1))
-    const queryFn2 = vi.fn().mockImplementation(() => sleep(10).then(() => 2))
+  describe('isRestoring', () => {
+    it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const queryFn1 = vi.fn().mockImplementation(() => sleep(10).then(() => 1))
+      const queryFn2 = vi.fn().mockImplementation(() => sleep(10).then(() => 2))
 
-    TestBed.resetTestingModule()
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-        provideIsRestoring(signal(true).asReadonly()),
-      ],
-    })
-
-    const queries = TestBed.runInInjectionContext(() =>
-      injectQueries(() => ({
-        queries: [
-          { queryKey: key1, queryFn: queryFn1 },
-          { queryKey: key2, queryFn: queryFn2 },
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideZonelessChangeDetection(),
+          provideTanStackQuery(queryClient),
+          provideIsRestoring(signal(true).asReadonly()),
         ],
-      })),
-    )
+      })
 
-    await vi.advanceTimersByTimeAsync(0)
-    expect(queries()[0].status()).toBe('pending')
-    expect(queries()[0].fetchStatus()).toBe('idle')
-    expect(queries()[0].data()).toBeUndefined()
-    expect(queries()[1].status()).toBe('pending')
-    expect(queries()[1].fetchStatus()).toBe('idle')
-    expect(queries()[1].data()).toBeUndefined()
-    expect(queryFn1).toHaveBeenCalledTimes(0)
-    expect(queryFn2).toHaveBeenCalledTimes(0)
+      const queries = TestBed.runInInjectionContext(() =>
+        injectQueries(() => ({
+          queries: [
+            { queryKey: key1, queryFn: queryFn1 },
+            { queryKey: key2, queryFn: queryFn2 },
+          ],
+        })),
+      )
 
-    await vi.advanceTimersByTimeAsync(11)
-    expect(queries()[0].status()).toBe('pending')
-    expect(queries()[0].fetchStatus()).toBe('idle')
-    expect(queries()[0].data()).toBeUndefined()
-    expect(queries()[1].status()).toBe('pending')
-    expect(queries()[1].fetchStatus()).toBe('idle')
-    expect(queries()[1].data()).toBeUndefined()
-    expect(queryFn1).toHaveBeenCalledTimes(0)
-    expect(queryFn2).toHaveBeenCalledTimes(0)
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queries()[0].status()).toBe('pending')
+      expect(queries()[0].fetchStatus()).toBe('idle')
+      expect(queries()[0].data()).toBeUndefined()
+      expect(queries()[1].status()).toBe('pending')
+      expect(queries()[1].fetchStatus()).toBe('idle')
+      expect(queries()[1].data()).toBeUndefined()
+      expect(queryFn1).toHaveBeenCalledTimes(0)
+      expect(queryFn2).toHaveBeenCalledTimes(0)
+
+      await vi.advanceTimersByTimeAsync(11)
+      expect(queries()[0].status()).toBe('pending')
+      expect(queries()[0].fetchStatus()).toBe('idle')
+      expect(queries()[0].data()).toBeUndefined()
+      expect(queries()[1].status()).toBe('pending')
+      expect(queries()[1].fetchStatus()).toBe('idle')
+      expect(queries()[1].data()).toBeUndefined()
+      expect(queryFn1).toHaveBeenCalledTimes(0)
+      expect(queryFn2).toHaveBeenCalledTimes(0)
+    })
   })
 })
