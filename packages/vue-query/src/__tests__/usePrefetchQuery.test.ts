@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { nextTick, ref } from 'vue-demi'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
 import { usePrefetchQuery } from '../usePrefetchQuery'
 
@@ -16,10 +17,11 @@ describe('usePrefetchQuery', () => {
     const queryClient = new QueryClient()
     const prefetchQuerySpy = vi.spyOn(queryClient, 'prefetchQuery')
     const queryFn = vi.fn(() => Promise.resolve('prefetched'))
+    const key = queryKey()
 
     usePrefetchQuery(
       {
-        queryKey: ['prefetch-query'],
+        queryKey: key,
         queryFn,
       },
       queryClient,
@@ -27,7 +29,7 @@ describe('usePrefetchQuery', () => {
 
     expect(prefetchQuerySpy).toHaveBeenCalledTimes(1)
     expect(prefetchQuerySpy).toHaveBeenCalledWith({
-      queryKey: ['prefetch-query'],
+      queryKey: key,
       queryFn,
     })
   })
@@ -36,11 +38,12 @@ describe('usePrefetchQuery', () => {
     const queryClient = new QueryClient()
     const prefetchQuerySpy = vi.spyOn(queryClient, 'prefetchQuery')
     const queryFn = vi.fn(() => Promise.resolve('prefetched'))
-    queryClient.setQueryData(['prefetch-query-existing'], 'existing')
+    const key = queryKey()
+    queryClient.setQueryData(key, 'existing')
 
     usePrefetchQuery(
       {
-        queryKey: ['prefetch-query-existing'],
+        queryKey: key,
         queryFn,
       },
       queryClient,
@@ -53,10 +56,11 @@ describe('usePrefetchQuery', () => {
     const queryClient = new QueryClient()
     const prefetchQuerySpy = vi.spyOn(queryClient, 'prefetchQuery')
     const nestedRef = ref('value')
+    const key = queryKey()
 
     usePrefetchQuery(
       {
-        queryKey: ['prefetch-query-ref', nestedRef],
+        queryKey: [...key, nestedRef],
         queryFn: () => Promise.resolve('prefetched'),
       },
       queryClient,
@@ -64,7 +68,7 @@ describe('usePrefetchQuery', () => {
 
     expect(prefetchQuerySpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        queryKey: ['prefetch-query-ref', 'value'],
+        queryKey: [...key, 'value'],
       }),
     )
   })
@@ -73,10 +77,11 @@ describe('usePrefetchQuery', () => {
     const queryClient = new QueryClient()
     const prefetchQuerySpy = vi.spyOn(queryClient, 'prefetchQuery')
     const keyRef = ref('first')
+    const key = queryKey()
 
     usePrefetchQuery(
       () => ({
-        queryKey: ['prefetch-query-reactive', keyRef.value],
+        queryKey: [...key, keyRef.value],
         queryFn: () => Promise.resolve(keyRef.value),
       }),
       queryClient,
@@ -84,7 +89,7 @@ describe('usePrefetchQuery', () => {
 
     expect(prefetchQuerySpy).toHaveBeenCalledTimes(1)
     expect(prefetchQuerySpy).toHaveBeenLastCalledWith({
-      queryKey: ['prefetch-query-reactive', 'first'],
+      queryKey: [...key, 'first'],
       queryFn: expect.any(Function),
     })
 
@@ -93,7 +98,7 @@ describe('usePrefetchQuery', () => {
 
     expect(prefetchQuerySpy).toHaveBeenCalledTimes(2)
     expect(prefetchQuerySpy).toHaveBeenLastCalledWith({
-      queryKey: ['prefetch-query-reactive', 'second'],
+      queryKey: [...key, 'second'],
       queryFn: expect.any(Function),
     })
   })
@@ -105,7 +110,7 @@ describe('usePrefetchQuery', () => {
     try {
       usePrefetchQuery(
         {
-          queryKey: ['outside-scope-prefetch-query'],
+          queryKey: queryKey(),
           queryFn: () => Promise.resolve('prefetched'),
         },
         new QueryClient(),
