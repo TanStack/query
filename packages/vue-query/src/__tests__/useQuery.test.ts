@@ -476,6 +476,34 @@ describe('useQuery', () => {
         }),
       )
     })
+
+    test('should throw from error watcher when throwOnError is true and suspense is not used', async () => {
+      const throwOnErrorFn = vi.fn().mockReturnValue(true)
+      useQuery({
+        queryKey: ['throwOnErrorWithoutSuspense'],
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        retry: false,
+        throwOnError: throwOnErrorFn,
+      })
+
+      // Suppress the Unhandled Rejection caused by watcher throw in Vue 3
+      const rejectionHandler = () => {}
+      process.on('unhandledRejection', rejectionHandler)
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      process.off('unhandledRejection', rejectionHandler)
+
+      // throwOnError is evaluated and throw is attempted (not suppressed by suspense)
+      expect(throwOnErrorFn).toHaveBeenCalledTimes(1)
+      expect(throwOnErrorFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
+    })
   })
 
   describe('outside scope warning', () => {
@@ -612,6 +640,39 @@ describe('useQuery', () => {
           state: expect.objectContaining({ status: 'error' }),
         }),
       )
+    })
+
+    test('should not throw from error watcher when suspense is handling the error with throwOnError: true', async () => {
+      const getCurrentInstanceSpy = getCurrentInstance as Mock
+      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
+
+      const throwOnErrorFn = vi.fn().mockReturnValue(true)
+      const query = useQuery({
+        queryKey: ['suspense6'],
+        queryFn: () =>
+          sleep(10).then(() => Promise.reject(new Error('Some error'))),
+        retry: false,
+        throwOnError: throwOnErrorFn,
+      })
+
+      let rejectedError: unknown
+      const promise = query.suspense().catch((error) => {
+        rejectedError = error
+      })
+
+      await vi.advanceTimersByTimeAsync(10)
+
+      await promise
+
+      expect(rejectedError).toBeInstanceOf(Error)
+      expect((rejectedError as Error).message).toBe('Some error')
+      // throwOnError is evaluated in both suspense() and the error watcher
+      expect(throwOnErrorFn).toHaveBeenCalledTimes(2)
+      // but the error watcher should not throw when suspense is active
+      expect(query).toMatchObject({
+        status: { value: 'error' },
+        isError: { value: true },
+      })
     })
   })
 })
