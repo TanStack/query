@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/react'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
@@ -18,7 +18,7 @@ describe('QueryClientProvider', () => {
     vi.useRealTimers()
   })
 
-  test('sets a specific cache for all queries to use', async () => {
+  it('sets a specific cache for all queries to use', async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
@@ -49,7 +49,7 @@ describe('QueryClientProvider', () => {
     expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
 
-  test('allows multiple caches to be partitioned', async () => {
+  it('allows multiple caches to be partitioned', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -105,7 +105,7 @@ describe('QueryClientProvider', () => {
     expect(queryCache2.find({ queryKey: key2 })).toBeDefined()
   })
 
-  test("uses defaultOptions for queries when they don't provide their own config", async () => {
+  it("uses defaultOptions for queries when they don't provide their own config", async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
@@ -145,7 +145,7 @@ describe('QueryClientProvider', () => {
   })
 
   describe('useQueryClient', () => {
-    test('should throw an error if no query client has been set', () => {
+    it('should throw an error if no query client has been set', () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)

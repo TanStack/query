@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { afterEach, beforeEach, describe, expectTypeOf, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expectTypeOf, it, vi } from 'vitest'
 import { provideZonelessChangeDetection } from '@angular/core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectInfiniteQuery, provideTanStackQuery } from '..'
@@ -23,7 +23,7 @@ describe('injectInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should narrow type after isSuccess', () => {
+  it('should narrow type after isSuccess', () => {
     const key = queryKey()
     const query = TestBed.runInInjectionContext(() => {
       return injectInfiniteQuery(() => ({

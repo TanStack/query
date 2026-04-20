@@ -9,7 +9,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
 import {
@@ -52,7 +52,7 @@ describe('PendingTasks Integration', () => {
   })
 
   describe('Synchronous Resolution', () => {
-    test('should handle synchronous queryFn with whenStable()', async () => {
+    it('should handle synchronous queryFn with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
       const key = queryKey()
@@ -78,7 +78,7 @@ describe('PendingTasks Integration', () => {
       expect(query.data()).toBe('instant-data')
     })
 
-    test('should handle synchronous error with whenStable()', async () => {
+    it('should handle synchronous error with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
       const key = queryKey()
@@ -101,7 +101,7 @@ describe('PendingTasks Integration', () => {
       expect(query.error()).toEqual(new Error('instant-error'))
     })
 
-    test('should handle synchronous mutationFn with whenStable()', async () => {
+    it('should handle synchronous mutationFn with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
       let mutationFnCalled = false
 
@@ -129,7 +129,7 @@ describe('PendingTasks Integration', () => {
       expect(mutation.data()).toBe('processed: test')
     })
 
-    test('should handle synchronous mutation error with whenStable()', async () => {
+    it('should handle synchronous mutation error with whenStable()', async () => {
       const app = TestBed.inject(ApplicationRef)
 
       const mutation = TestBed.runInInjectionContext(() =>
@@ -156,7 +156,7 @@ describe('PendingTasks Integration', () => {
   })
 
   describe('Race Conditions', () => {
-    test('should handle query that completes during initial subscription', async () => {
+    it('should handle query that completes during initial subscription', async () => {
       const key = queryKey()
       const app = TestBed.inject(ApplicationRef)
       let resolveQuery: (value: string) => void
@@ -184,7 +184,7 @@ describe('PendingTasks Integration', () => {
       expect(query.data()).toBe('race-data')
     })
 
-    test('should handle rapid refetches without task leaks', async () => {
+    it('should handle rapid refetches without task leaks', async () => {
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
@@ -213,7 +213,7 @@ describe('PendingTasks Integration', () => {
       expect(query.data()).toMatch(/^data-\d+$/)
     })
 
-    test('should keep PendingTasks active while query retry is paused offline', async () => {
+    it('should keep PendingTasks active while query retry is paused offline', async () => {
       const app = TestBed.inject(ApplicationRef)
       let attempt = 0
 
@@ -297,7 +297,7 @@ describe('PendingTasks Integration', () => {
       }))
     }
 
-    test('should cleanup pending tasks when component with active query is destroyed', async () => {
+    it('should cleanup pending tasks when component with active query is destroyed', async () => {
       const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
 
@@ -314,7 +314,7 @@ describe('PendingTasks Integration', () => {
       await expect(stablePromise).resolves.toEqual(undefined)
     })
 
-    test('should cleanup pending tasks when component with active mutation is destroyed', async () => {
+    it('should cleanup pending tasks when component with active mutation is destroyed', async () => {
       const app = TestBed.inject(ApplicationRef)
       const fixture = TestBed.createComponent(TestComponent)
 
@@ -332,7 +332,7 @@ describe('PendingTasks Integration', () => {
   })
 
   describe('Concurrent Operations', () => {
-    test('should handle multiple queries running simultaneously', async () => {
+    it('should handle multiple queries running simultaneously', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
       const key3 = queryKey()
@@ -377,7 +377,7 @@ describe('PendingTasks Integration', () => {
       expect(query3.data()).toBe('instant-data')
     })
 
-    test('should handle multiple mutations running simultaneously', async () => {
+    it('should handle multiple mutations running simultaneously', async () => {
       const app = TestBed.inject(ApplicationRef)
 
       const mutation1 = TestBed.runInInjectionContext(() =>
@@ -423,7 +423,7 @@ describe('PendingTasks Integration', () => {
       expect(mutation3.data()).toBe('processed-3: test3')
     })
 
-    test('should handle mixed queries and mutations', async () => {
+    it('should handle mixed queries and mutations', async () => {
       const app = TestBed.inject(ApplicationRef)
 
       const key = queryKey()
@@ -469,7 +469,7 @@ describe('PendingTasks Integration', () => {
       })
     })
 
-    test('should handle multiple HttpClient requests with lastValueFrom', async () => {
+    it('should handle multiple HttpClient requests with lastValueFrom', async () => {
       const app = TestBed.inject(ApplicationRef)
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
@@ -514,7 +514,7 @@ describe('PendingTasks Integration', () => {
       httpTestingController.verify()
     })
 
-    test('should handle HttpClient request cancellation', async () => {
+    it('should handle HttpClient request cancellation', async () => {
       const app = TestBed.inject(ApplicationRef)
       const httpClient = TestBed.inject(HttpClient)
       const httpTestingController = TestBed.inject(HttpTestingController)
@@ -548,7 +548,7 @@ describe('PendingTasks Integration', () => {
   })
 
   describe('Edge Cases', () => {
-    test('should handle query cancellation mid-flight', async () => {
+    it('should handle query cancellation mid-flight', async () => {
       const key = queryKey()
       const app = TestBed.inject(ApplicationRef)
 
@@ -578,7 +578,7 @@ describe('PendingTasks Integration', () => {
       expect(query.fetchStatus()).toBe('idle')
     })
 
-    test('should handle query retry and pending task tracking', async () => {
+    it('should handle query retry and pending task tracking', async () => {
       const app = TestBed.inject(ApplicationRef)
       let attemptCount = 0
 
@@ -607,7 +607,7 @@ describe('PendingTasks Integration', () => {
       expect(attemptCount).toBe(3) // Initial + 2 retries
     })
 
-    test('should handle mutation with optimistic updates', async () => {
+    it('should handle mutation with optimistic updates', async () => {
       const app = TestBed.inject(ApplicationRef)
       const testQueryKey = queryKey()
 

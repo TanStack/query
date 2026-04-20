@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { Query, QueryClient, hashKey } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
@@ -71,7 +71,7 @@ describe('createPersister', () => {
     vi.useRealTimers()
   })
 
-  test('should fetch if storage is not provided', async () => {
+  it('should fetch if storage is not provided', async () => {
     const { context, persister, query, queryFn } = setupPersister(['foo'], {
       storage: undefined,
     })
@@ -81,7 +81,7 @@ describe('createPersister', () => {
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
-  test('should fetch if there is no stored data', async () => {
+  it('should fetch if there is no stored data', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn } = setupPersister(['foo'], {
       storage,
@@ -92,7 +92,7 @@ describe('createPersister', () => {
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
-  test('should fetch if query already has data', async () => {
+  it('should fetch if query already has data', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn } = setupPersister(['foo'], {
       storage,
@@ -104,7 +104,7 @@ describe('createPersister', () => {
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
-  test('should fetch if deserialization fails', async () => {
+  it('should fetch if deserialization fails', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -122,7 +122,7 @@ describe('createPersister', () => {
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
-  test('should remove stored item if `dataUpdatedAt` is empty', async () => {
+  it('should remove stored item if `dataUpdatedAt` is empty', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -146,7 +146,7 @@ describe('createPersister', () => {
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
-  test('should remove stored item if its expired', async () => {
+  it('should remove stored item if its expired', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -171,7 +171,7 @@ describe('createPersister', () => {
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
-  test('should remove stored item if its busted', async () => {
+  it('should remove stored item if its busted', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -195,7 +195,7 @@ describe('createPersister', () => {
     expect(queryFn).toHaveBeenCalledExactlyOnceWith(context)
   })
 
-  test('should restore item from the storage and set proper `updatedAt` values', async () => {
+  it('should restore item from the storage and set proper `updatedAt` values', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -226,7 +226,7 @@ describe('createPersister', () => {
     expect(query.state.dataUpdatedAt).toEqual(dataUpdatedAt)
   })
 
-  test('should restore item from the storage and refetch when `stale`', async () => {
+  it('should restore item from the storage and refetch when `stale`', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -253,7 +253,7 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
 
-  test('should restore item from the storage and refetch when `refetchOnRestore` is set to `always`', async () => {
+  it('should restore item from the storage and refetch when `refetchOnRestore` is set to `always`', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -281,7 +281,7 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
 
-  test('should restore item from the storage and NOT refetch when `refetchOnRestore` is set to false', async () => {
+  it('should restore item from the storage and NOT refetch when `refetchOnRestore` is set to false', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -309,7 +309,7 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(0)
   })
 
-  test('should store item after successful fetch', async () => {
+  it('should store item after successful fetch', async () => {
     const storage = getFreshStorage()
     const {
       context,
@@ -340,7 +340,7 @@ describe('createPersister', () => {
     })
   })
 
-  test('should skip stored item if not matched by filters', async () => {
+  it('should skip stored item if not matched by filters', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -373,7 +373,7 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(0)
   })
 
-  test('should restore item from the storage with async deserializer', async () => {
+  it('should restore item from the storage with async deserializer', async () => {
     const storage = getFreshStorage()
     const { context, persister, query, queryFn, storageKey } = setupPersister(
       ['foo'],
@@ -402,7 +402,7 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
 
-  test('should store item after successful fetch with async serializer', async () => {
+  it('should store item after successful fetch with async serializer', async () => {
     const storage = getFreshStorage()
     const {
       context,
@@ -436,7 +436,7 @@ describe('createPersister', () => {
   })
 
   describe('persistQuery', () => {
-    test('Should properly persiste basic query', async () => {
+    it('Should properly persiste basic query', async () => {
       const storage = getFreshStorage()
       const { persister, query, queryHash, queryKey, storageKey } =
         setupPersister(['foo'], {
@@ -458,7 +458,7 @@ describe('createPersister', () => {
       })
     })
 
-    test('Should skip persistance if storage is not provided', async () => {
+    it('Should skip persistance if storage is not provided', async () => {
       const serializeMock = vi.fn()
       const { persister, query } = setupPersister(['foo'], {
         storage: null,
@@ -473,7 +473,7 @@ describe('createPersister', () => {
   })
 
   describe('persistQueryByKey', () => {
-    test('Should skip persistance if storage is not provided', async () => {
+    it('Should skip persistance if storage is not provided', async () => {
       const serializeMock = vi.fn()
       const { persister, client, queryKey } = setupPersister(['foo'], {
         storage: null,
@@ -486,7 +486,7 @@ describe('createPersister', () => {
       expect(serializeMock).toHaveBeenCalledTimes(0)
     })
 
-    test('should skip persistance if query was not found', async () => {
+    it('should skip persistance if query was not found', async () => {
       const serializeMock = vi.fn()
       const storage = getFreshStorage()
       const { client, persister, queryKey } = setupPersister(['foo'], {
@@ -500,7 +500,7 @@ describe('createPersister', () => {
       expect(serializeMock).toHaveBeenCalledTimes(0)
     })
 
-    test('Should properly persiste basic query', async () => {
+    it('Should properly persiste basic query', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryHash, queryKey, storageKey } =
         setupPersister(['foo'], {
@@ -524,7 +524,7 @@ describe('createPersister', () => {
   })
 
   describe('persisterGc', () => {
-    test('should properly clean storage from busted entries', async () => {
+    it('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
       const { persister, client, query, queryKey } = setupPersister(['foo'], {
         storage,
@@ -545,7 +545,7 @@ describe('createPersister', () => {
   })
 
   describe('restoreQueries', () => {
-    test('should properly clean storage from busted entries', async () => {
+    it('should properly clean storage from busted entries', async () => {
       const storage = getFreshStorage()
       const { persister, client, query, queryKey } = setupPersister(['foo'], {
         storage,
@@ -564,7 +564,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(0)
     })
 
-    test('should properly restore queries from cache without filters', async () => {
+    it('should properly restore queries from cache without filters', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo'], {
         storage,
@@ -583,7 +583,7 @@ describe('createPersister', () => {
       expect(client.getQueryData(queryKey)).toEqual('foo')
     })
 
-    test('should properly restore queries from cache', async () => {
+    it('should properly restore queries from cache', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -602,7 +602,7 @@ describe('createPersister', () => {
       expect(client.getQueryData(queryKey)).toEqual('foo')
     })
 
-    test('should not restore queries from cache if there is no match', async () => {
+    it('should not restore queries from cache if there is no match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -619,7 +619,7 @@ describe('createPersister', () => {
       expect(client.getQueryCache().getAll()).toHaveLength(0)
     })
 
-    test('should properly restore queries from cache with partial match', async () => {
+    it('should properly restore queries from cache with partial match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -638,7 +638,7 @@ describe('createPersister', () => {
       expect(client.getQueryData(queryKey)).toEqual('foo')
     })
 
-    test('should not restore queries from cache with exact match if there is no match', async () => {
+    it('should not restore queries from cache with exact match if there is no match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -655,7 +655,7 @@ describe('createPersister', () => {
       expect(client.getQueryCache().getAll()).toHaveLength(0)
     })
 
-    test('should restore queries from cache with exact match', async () => {
+    it('should restore queries from cache with exact match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -677,7 +677,7 @@ describe('createPersister', () => {
   })
 
   describe('removeQueries', () => {
-    test('should remove restore queries from storage without filters', async () => {
+    it('should remove restore queries from storage without filters', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo'], {
         storage,
@@ -691,7 +691,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(0)
     })
 
-    test('should remove queries from storage', async () => {
+    it('should remove queries from storage', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -705,7 +705,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(0)
     })
 
-    test('should not remove queries from storage if there is no match', async () => {
+    it('should not remove queries from storage if there is no match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -719,7 +719,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(1)
     })
 
-    test('should properly remove queries from storage with partial match', async () => {
+    it('should properly remove queries from storage with partial match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -733,7 +733,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(0)
     })
 
-    test('should not remove queries from storage with exact match if there is no match', async () => {
+    it('should not remove queries from storage with exact match if there is no match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
@@ -747,7 +747,7 @@ describe('createPersister', () => {
       expect(await storage.entries()).toHaveLength(1)
     })
 
-    test('should remove queries from storage with exact match', async () => {
+    it('should remove queries from storage with exact match', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryKey } = setupPersister(['foo', 'bar'], {
         storage,
