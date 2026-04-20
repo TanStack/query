@@ -58,10 +58,12 @@ describe('injectQueries', () => {
         ],
       }))
 
-      _ = effect(() => {
-        const snapshot = this.result().map((q) => ({ data: q.data() }))
-        results.push(snapshot)
-      })
+      constructor() {
+        effect(() => {
+          const snapshot = this.result().map((q) => ({ data: q.data() }))
+          results.push(snapshot)
+        })
+      }
     }
 
     const rendered = await render(Page, {
@@ -111,9 +113,11 @@ describe('injectQueries', () => {
         }),
       }))
 
-      _ = effect(() => {
-        results.push({ ...this.combined() })
-      })
+      constructor() {
+        effect(() => {
+          results.push({ ...this.combined() })
+        })
+      }
     }
 
     const rendered = await render(Page, {
