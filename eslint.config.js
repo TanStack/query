@@ -59,7 +59,7 @@ export default [
       'vitest/no-standalone-expect': [
         'error',
         {
-          additionalTestBlockFunctions: ['testIf'],
+          additionalTestBlockFunctions: ['itIf'],
         },
       ],
     },
