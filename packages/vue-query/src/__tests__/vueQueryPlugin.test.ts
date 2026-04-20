@@ -221,42 +221,36 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called with custom client config', () => {
-    itIf(isVue2)(
-      'should instantiate a client with the provided config',
-      () => {
-        const appMock = getAppMock()
-        const config = {
-          defaultOptions: { queries: { enabled: true } },
-        }
-        VueQueryPlugin.install(appMock, {
-          queryClientConfig: config,
-        })
+    itIf(isVue2)('should instantiate a client with the provided config', () => {
+      const appMock = getAppMock()
+      const config = {
+        defaultOptions: { queries: { enabled: true } },
+      }
+      VueQueryPlugin.install(appMock, {
+        queryClientConfig: config,
+      })
 
-        appMock._mixin.beforeCreate?.call(appMock)
-        const client = appMock._provided.VUE_QUERY_CLIENT as QueryClient
-        const defaultOptions = client.getDefaultOptions()
+      appMock._mixin.beforeCreate?.call(appMock)
+      const client = appMock._provided.VUE_QUERY_CLIENT as QueryClient
+      const defaultOptions = client.getDefaultOptions()
 
-        expect(defaultOptions).toEqual(config.defaultOptions)
-      },
-    )
+      expect(defaultOptions).toEqual(config.defaultOptions)
+    })
 
-    itIf(isVue3)(
-      'should instantiate a client with the provided config',
-      () => {
-        const appMock = getAppMock()
-        const config = {
-          defaultOptions: { queries: { enabled: true } },
-        }
-        VueQueryPlugin.install(appMock, {
-          queryClientConfig: config,
-        })
+    itIf(isVue3)('should instantiate a client with the provided config', () => {
+      const appMock = getAppMock()
+      const config = {
+        defaultOptions: { queries: { enabled: true } },
+      }
+      VueQueryPlugin.install(appMock, {
+        queryClientConfig: config,
+      })
 
-        const client = (appMock.provide as Mock).mock.calls[0]?.[1]
-        const defaultOptions = client.getDefaultOptions()
+      const client = (appMock.provide as Mock).mock.calls[0]?.[1]
+      const defaultOptions = client.getDefaultOptions()
 
-        expect(defaultOptions).toEqual(config.defaultOptions)
-      },
-    )
+      expect(defaultOptions).toEqual(config.defaultOptions)
+    })
   })
 
   describe('when persister is provided', () => {
