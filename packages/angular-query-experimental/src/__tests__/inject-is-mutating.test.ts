@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TestBed } from '@angular/core/testing'
 import { Injector, provideZonelessChangeDetection } from '@angular/core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -28,7 +28,7 @@ describe('injectIsMutating', () => {
     vi.useRealTimers()
   })
 
-  test('should properly return isMutating state', async () => {
+  it('should properly return isMutating state', async () => {
     const key = queryKey()
     const [mutation, isMutating] = TestBed.runInInjectionContext(() => [
       injectMutation(() => ({
@@ -52,13 +52,13 @@ describe('injectIsMutating', () => {
   })
 
   describe('injection context', () => {
-    test('throws NG0203 with descriptive error outside injection context', () => {
+    it('throws NG0203 with descriptive error outside injection context', () => {
       expect(() => {
         injectIsMutating()
       }).toThrow(/NG0203(.*?)injectIsMutating/)
     })
 
-    test('can be used outside injection context when passing an injector', () => {
+    it('can be used outside injection context when passing an injector', () => {
       expect(
         injectIsMutating(undefined, {
           injector: TestBed.inject(Injector),

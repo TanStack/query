@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { streamedQuery } from '../streamedQuery'
 import { QueryClient, QueryObserver } from '..'
@@ -29,7 +29,7 @@ describe('streamedQuery', () => {
     }
   }
 
-  test('should stream data from an AsyncIterable', async () => {
+  it('should stream data from an AsyncIterable', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -73,7 +73,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should allow Arrays to be returned from the stream', async () => {
+  it('should allow Arrays to be returned from the stream', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -128,7 +128,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should handle empty streams', async () => {
+  it('should handle empty streams', async () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -157,7 +157,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should replace on refetch', async () => {
+  it('should replace on refetch', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -211,7 +211,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should support refetchMode append', async () => {
+  it('should support refetchMode append', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -266,7 +266,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should support refetchMode replace', async () => {
+  it('should support refetchMode replace', async () => {
     const key = queryKey()
     let offset = 0
     const observer = new QueryObserver(queryClient, {
@@ -324,7 +324,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should abort ongoing stream when refetch happens', async () => {
+  it('should abort ongoing stream when refetch happens', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -384,7 +384,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should abort when unsubscribed', async () => {
+  it('should abort when unsubscribed', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -425,7 +425,7 @@ describe('streamedQuery', () => {
     })
   })
 
-  test('should not abort when signal not consumed', async () => {
+  it('should not abort when signal not consumed', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -461,7 +461,7 @@ describe('streamedQuery', () => {
     })
   })
 
-  test('should support custom reducer', async () => {
+  it('should support custom reducer', async () => {
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -498,7 +498,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should support custom reducer with initialValue', async () => {
+  it('should support custom reducer with initialValue', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -539,7 +539,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should keep error state on reset refetch when initialData is defined', async () => {
+  it('should keep error state on reset refetch when initialData is defined', async () => {
     const key = queryKey()
     let shouldError = false
     const error = new Error('stream failed')
@@ -591,7 +591,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should treat a fetch after an initial error as a refetch for reset mode', async () => {
+  it('should treat a fetch after an initial error as a refetch for reset mode', async () => {
     const key = queryKey()
     let shouldError = true
     const error = new Error('stream failed')
@@ -647,7 +647,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should reset to initialData on refetch after an initial error', async () => {
+  it('should reset to initialData on refetch after an initial error', async () => {
     const key = queryKey()
     let shouldError = true
     const error = new Error('stream failed')
@@ -704,7 +704,7 @@ describe('streamedQuery', () => {
     unsubscribe()
   })
 
-  test('should not call reducer twice when refetchMode is replace', async () => {
+  it('should not call reducer twice when refetchMode is replace', async () => {
     const key = queryKey()
     const arr: Array<number> = []
 

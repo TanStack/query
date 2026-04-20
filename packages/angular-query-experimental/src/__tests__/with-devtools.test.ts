@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import {
@@ -62,7 +62,7 @@ describe('withDevtools feature', () => {
     TestBed.resetTestingModule()
   })
 
-  test.each([
+  it.each([
     {
       description: 'should load devtools in development mode',
       isDevMode: true,
