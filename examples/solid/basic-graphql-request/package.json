@@ -8,8 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^6.0.0-beta.3",
-    "@tanstack/solid-query-devtools": "^6.0.0-beta.3",
+    "@tanstack/solid-query": "^6.0.0-beta.4",
+    "@tanstack/solid-query-devtools": "^6.0.0-beta.4",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
     "@solidjs/web": "2.0.0-beta.7",

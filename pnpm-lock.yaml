@@ -1512,10 +1512,10 @@ importers:
         specifier: 2.0.0-beta.7
         version: 2.0.0-beta.7(@solidjs/signals@2.0.0-beta.7)(solid-js@2.0.0-beta.7)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^5.5.6
@@ -1536,10 +1536,10 @@ importers:
         specifier: 2.0.0-beta.7
         version: 2.0.0-beta.7(@solidjs/signals@2.0.0-beta.7)(solid-js@2.0.0-beta.7)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: 2.0.0-beta.7
@@ -1561,10 +1561,10 @@ importers:
         specifier: 2.0.0-beta.7
         version: 2.0.0-beta.7(@solidjs/signals@2.0.0-beta.7)(solid-js@2.0.0-beta.7)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -1592,10 +1592,10 @@ importers:
         specifier: 2.0.0-beta.7
         version: 2.0.0-beta.7(@solidjs/signals@2.0.0-beta.7)(solid-js@2.0.0-beta.7)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: 2.0.0-beta.7
@@ -1620,13 +1620,13 @@ importers:
         specifier: ^5.90.27
         version: link:../../../packages/query-async-storage-persister
       '@tanstack/solid-query':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query-devtools
       '@tanstack/solid-query-persist-client':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query-persist-client
       msw:
         specifier: ^2.6.6
@@ -1651,10 +1651,10 @@ importers:
         specifier: 2.0.0-beta.7
         version: 2.0.0-beta.7(@solidjs/signals@2.0.0-beta.7)(solid-js@2.0.0-beta.7)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: 2.0.0-beta.7
@@ -1688,10 +1688,10 @@ importers:
         specifier: 2.0.0-beta.7
         version: 2.0.0-beta.7(@solidjs/signals@2.0.0-beta.7)(solid-js@2.0.0-beta.7)
       '@tanstack/solid-query':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^6.0.0-beta.3
+        specifier: ^6.0.0-beta.4
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: 2.0.0-beta.7
@@ -2375,13 +2375,13 @@ importers:
         version: 7.8.2
       vite-plugin-dts:
         specifier: 4.2.3
-        version: 4.2.3(@types/node@22.19.15)(rollup@4.57.1)(typescript@5.9.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+        version: 4.2.3(@types/node@22.19.15)(rollup@4.57.1)(typescript@6.0.1-rc)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
       vite-plugin-externalize-deps:
         specifier: ^0.9.0
         version: 0.9.0(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.9.3)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
+        version: 5.1.4(typescript@6.0.1-rc)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2))
     optionalDependencies:
       '@tanstack/query-devtools':
         specifier: workspace:*
@@ -4824,7 +4824,7 @@ packages:
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {node: '>=0.10.0'}
+    engines: {'0': node >=0.10.0}
 
   '@expo/cli@0.22.28':
     resolution: {integrity: sha512-lvt72KNitGuixYD2l3SZmRKVu2G4zJpmg5V7WfUBNpmUU5oODBw/6qmiJ6kSLAlfDozscUk+BBGknBBzxUrwrA==}
@@ -21543,6 +21543,19 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
+  '@vue/language-core@2.1.6(typescript@6.0.1-rc)':
+    dependencies:
+      '@volar/language-core': 2.4.28
+      '@vue/compiler-dom': 3.5.28
+      '@vue/compiler-vue2': 2.7.16
+      '@vue/shared': 3.5.28
+      computeds: 0.0.1
+      minimatch: 9.0.5
+      muggle-string: 0.4.1
+      path-browserify: 1.0.1
+    optionalDependencies:
+      typescript: 6.0.1-rc
+
   '@vue/language-core@2.2.12(typescript@5.8.3)':
     dependencies:
       '@volar/language-core': 2.4.15
@@ -30818,6 +30831,10 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
+  tsconfck@3.1.6(typescript@6.0.1-rc):
+    optionalDependencies:
+      typescript: 6.0.1-rc
+
   tsconfig-paths@4.2.0:
     dependencies:
       json5: 2.2.3
@@ -31443,6 +31460,25 @@ snapshots:
       - rollup
       - supports-color
 
+  vite-plugin-dts@4.2.3(@types/node@22.19.15)(rollup@4.57.1)(typescript@6.0.1-rc)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)):
+    dependencies:
+      '@microsoft/api-extractor': 7.47.7(@types/node@22.19.15)
+      '@rollup/pluginutils': 5.3.0(rollup@4.57.1)
+      '@volar/typescript': 2.4.28
+      '@vue/language-core': 2.1.6(typescript@6.0.1-rc)
+      compare-versions: 6.1.1
+      debug: 4.4.3
+      kolorist: 1.8.0
+      local-pkg: 0.5.1
+      magic-string: 0.30.21
+      typescript: 6.0.1-rc
+    optionalDependencies:
+      vite: 6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
+    transitivePeerDependencies:
+      - '@types/node'
+      - rollup
+      - supports-color
+
   vite-plugin-externalize-deps@0.10.0(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)):
     dependencies:
       vite: 6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
@@ -31527,6 +31563,17 @@ snapshots:
       debug: 4.4.3
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.9.3)
+    optionalDependencies:
+      vite: 6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
+  vite-tsconfig-paths@5.1.4(typescript@6.0.1-rc)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)):
+    dependencies:
+      debug: 4.4.3
+      globrex: 0.1.2
+      tsconfck: 3.1.6(typescript@6.0.1-rc)
     optionalDependencies:
       vite: 6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.90.0)(terser@5.46.0)(yaml@2.8.2)
     transitivePeerDependencies:
