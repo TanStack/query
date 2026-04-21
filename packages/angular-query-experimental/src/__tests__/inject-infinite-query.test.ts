@@ -64,7 +64,7 @@ describe('injectInfiniteQuery', () => {
   })
 
   describe('injection context', () => {
-    it('throws NG0203 with descriptive error outside injection context', () => {
+    it('should throw NG0203 with descriptive error outside injection context', () => {
       const key = queryKey()
       expect(() => {
         injectInfiniteQuery(() => ({
@@ -77,7 +77,7 @@ describe('injectInfiniteQuery', () => {
       }).toThrow(/NG0203(.*?)injectInfiniteQuery/)
     })
 
-    it('can be used outside injection context when passing an injector', () => {
+    it('should be usable outside injection context when passing an injector', () => {
       const key = queryKey()
       const query = injectInfiniteQuery(
         () => ({

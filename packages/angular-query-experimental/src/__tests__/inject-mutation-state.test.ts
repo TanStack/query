@@ -59,7 +59,7 @@ describe('injectMutationState', () => {
       expect(mutationState()).toEqual([variables])
     })
 
-    it('reactive options should update injectMutationState', () => {
+    it('should update injectMutationState when reactive options change', () => {
       const mutationKey1 = queryKey()
       const mutationKey2 = queryKey()
       const variables1 = 'foo123'
@@ -179,13 +179,13 @@ describe('injectMutationState', () => {
     })
 
     describe('injection context', () => {
-      it('throws NG0203 with descriptive error outside injection context', () => {
+      it('should throw NG0203 with descriptive error outside injection context', () => {
         expect(() => {
           injectMutationState()
         }).toThrow(/NG0203(.*?)injectMutationState/)
       })
 
-      it('can be used outside injection context when passing an injector', () => {
+      it('should be usable outside injection context when passing an injector', () => {
         const injector = TestBed.inject(Injector)
         expect(
           injectMutationState(undefined, {
