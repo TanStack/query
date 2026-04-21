@@ -18,14 +18,6 @@ import type {
   Persister,
 } from '@tanstack/query-persist-client-core'
 
-beforeEach(() => {
-  vi.useFakeTimers()
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
-
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
@@ -62,6 +54,14 @@ const createMockErrorPersister = (
 }
 
 describe('withPersistQueryClient', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('restores cache from persister', async () => {
     const key = queryKey()
     const states: Array<{

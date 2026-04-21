@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { Injector, provideZonelessChangeDetection, signal } from '@angular/core'
 import {
   QueryClient,
@@ -11,16 +11,17 @@ import {
 describe('injectIsRestoring', () => {
   let queryClient: QueryClient
 
-  it('returns false by default when provideIsRestoring is not used', () => {
+  beforeEach(() => {
     queryClient = new QueryClient()
-
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         provideTanStackQuery(queryClient),
       ],
     })
+  })
 
+  it('returns false by default when provideIsRestoring is not used', () => {
     const isRestoring = TestBed.runInInjectionContext(() => {
       return injectIsRestoring()
     })
@@ -29,15 +30,10 @@ describe('injectIsRestoring', () => {
   })
 
   it('returns provided signal value when provideIsRestoring is used', () => {
-    queryClient = new QueryClient()
     const restoringSignal = signal(true)
 
     TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-        provideIsRestoring(restoringSignal.asReadonly()),
-      ],
+      providers: [provideIsRestoring(restoringSignal.asReadonly())],
     })
 
     const isRestoring = TestBed.runInInjectionContext(() => {
@@ -48,15 +44,6 @@ describe('injectIsRestoring', () => {
   })
 
   it('can be used outside injection context when passing an injector', () => {
-    queryClient = new QueryClient()
-
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
-
     const isRestoring = injectIsRestoring({
       injector: TestBed.inject(Injector),
     })
