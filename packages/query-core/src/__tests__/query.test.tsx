@@ -849,7 +849,7 @@ describe('query', () => {
     unsubscribe()
   })
 
-  it('fetch should start a new fetch when the previous retryer has rejected', async () => {
+  it('fetch should refetch successfully after the previous fetch errored', async () => {
     const key = queryKey()
 
     let shouldFail = true
@@ -860,7 +860,6 @@ describe('query', () => {
       return sleep(10).then(() => 'success')
     })
 
-    // Trigger a failing fetch so the query's retryer ends up rejected.
     queryClient.prefetchQuery({ queryKey: key, queryFn, retry: false })
     await vi.advanceTimersByTimeAsync(10)
 
@@ -868,11 +867,6 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.state.status).toBe('error')
 
-    // Flip the queryFn to succeed and invoke fetch directly on the Query.
-    // The guard `this.#retryer?.status() !== 'rejected'` in Query.fetch must
-    // let execution fall through to create a fresh retryer — otherwise the
-    // call would early-return the previous (rejected) retryer's promise and
-    // queryFn would never run again.
     shouldFail = false
     const refetchPromise = query.fetch({ queryKey: key, queryFn, retry: false })
     await vi.advanceTimersByTimeAsync(10)
