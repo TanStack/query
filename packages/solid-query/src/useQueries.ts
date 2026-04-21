@@ -6,6 +6,7 @@ import {
   merge,
   onCleanup,
   reconcile,
+  runWithOwner,
   untrack,
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
@@ -244,14 +245,16 @@ export function useQueries<
     () => {
       if (!isRestoring()) {
         unsubscribe = observer.subscribe((result) => {
-          setState(
-            reconcile(
-              [...result] as Array<QueryObserverResult>,
-              // Use a key function that returns undefined so reconcile
-              // uses positional matching and recursively updates nested properties
-              () => undefined,
-            ),
-          )
+          runWithOwner(null, () => {
+            setState(
+              reconcile(
+                [...result] as Array<QueryObserverResult>,
+                // Use a key function that returns undefined so reconcile
+                // uses positional matching and recursively updates nested properties
+                () => undefined,
+              ),
+            )
+          })
         })
       }
     },
@@ -265,14 +268,16 @@ export function useQueries<
   // Update observer queries when options change reactively
   const trackedDefaultedQueries = createMemo(() => {
     const queries = defaultedQueries()
-    observer.setQueries(
-      queries,
-      queriesOptions().combine
-        ? ({
-            combine: queriesOptions().combine,
-          } as QueriesObserverOptions<TCombinedResult>)
-        : undefined,
-    )
+    runWithOwner(null, () => {
+      observer.setQueries(
+        queries,
+        queriesOptions().combine
+          ? ({
+              combine: queriesOptions().combine,
+            } as QueriesObserverOptions<TCombinedResult>)
+          : undefined,
+      )
+    })
     return queries
   })
 

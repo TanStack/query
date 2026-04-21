@@ -69,14 +69,14 @@
     "@babel/core": "^7.28.0",
     "@babel/preset-typescript": "^7.18.6",
     "@solidjs/testing-library": "^0.8.10",
-    "@solidjs/web": "2.0.0-beta.4",
+    "@solidjs/web": "2.0.0-beta.7",
     "@tanstack/query-test-utils": "workspace:*",
     "@tanstack/solid-query": "workspace:*",
-    "babel-preset-solid": "2.0.0-beta.4",
+    "babel-preset-solid": "2.0.0-beta.7",
     "npm-run-all2": "^5.0.0",
-    "solid-js": "2.0.0-beta.5",
+    "solid-js": "2.0.0-beta.7",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "3.0.0-next.4"
+    "vite-plugin-solid": "3.0.0-next.5"
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:^",
