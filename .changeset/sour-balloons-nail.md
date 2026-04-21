@@ -4,4 +4,4 @@
 '@tanstack/solid-query': patch
 ---
 
-chore: bump vite-plugin-solid next.4
+chore: bump vite-plugin-solid next.5
