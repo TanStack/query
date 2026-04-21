@@ -536,14 +536,6 @@ describe('injectMutation', () => {
     })
 
     it('should handle synchronous mutation with retry', async () => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-        ],
-      })
-
       const app = TestBed.inject(ApplicationRef)
       let attemptCount = 0
 
@@ -586,14 +578,6 @@ describe('injectMutation', () => {
     })
 
     it('should handle multiple synchronous mutations on same key', async () => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-        ],
-      })
-
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
@@ -640,14 +624,6 @@ describe('injectMutation', () => {
     })
 
     it('should handle synchronous mutation with optimistic updates', async () => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-        ],
-      })
-
       const app = TestBed.inject(ApplicationRef)
       const testQueryKey = queryKey()
       let onMutateCalled = false
@@ -692,14 +668,6 @@ describe('injectMutation', () => {
     })
 
     it('should handle synchronous mutation cancellation', async () => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-        ],
-      })
-
       const app = TestBed.inject(ApplicationRef)
 
       const key = queryKey()

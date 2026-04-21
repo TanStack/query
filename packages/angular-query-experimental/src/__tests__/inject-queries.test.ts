@@ -11,24 +11,24 @@ import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, provideIsRestoring, provideTanStackQuery } from '..'
 import { injectQueries } from '../inject-queries'
 
-let queryClient: QueryClient
-
-beforeEach(() => {
-  vi.useFakeTimers()
-  queryClient = new QueryClient()
-  TestBed.configureTestingModule({
-    providers: [
-      provideZonelessChangeDetection(),
-      provideTanStackQuery(queryClient),
-    ],
-  })
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
-
 describe('injectQueries', () => {
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    queryClient = new QueryClient()
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        provideTanStackQuery(queryClient),
+      ],
+    })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should return the correct states', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -143,13 +143,8 @@ describe('injectQueries', () => {
       const queryFn1 = vi.fn().mockImplementation(() => sleep(10).then(() => 1))
       const queryFn2 = vi.fn().mockImplementation(() => sleep(10).then(() => 2))
 
-      TestBed.resetTestingModule()
       TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-          provideIsRestoring(signal(true).asReadonly()),
-        ],
+        providers: [provideIsRestoring(signal(true).asReadonly())],
       })
 
       const queries = TestBed.runInInjectionContext(() =>
