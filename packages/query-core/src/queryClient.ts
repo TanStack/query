@@ -302,12 +302,13 @@ export class QueryClient {
       if (filters?.refetchType === 'none') {
         return Promise.resolve()
       }
+      const { meta: _meta, ...refetchOptions } = options
       return this.refetchQueries(
         {
           ...filters,
           type: filters?.refetchType ?? filters?.type ?? 'active',
         },
-        options,
+        refetchOptions,
       )
     })
   }
