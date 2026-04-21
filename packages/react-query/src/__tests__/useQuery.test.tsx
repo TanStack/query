@@ -5675,9 +5675,9 @@ describe('useQuery', () => {
       function Component() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: () => {
             count++
-            return `data${count}`
+            return Promise.resolve(`data${count}`)
           },
         })
 

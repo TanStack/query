@@ -1481,12 +1481,12 @@ describe('queryObserver', () => {
   it('should not refetchOnWindowFocus when staleTime is static and query has background error', async () => {
     const key = queryKey()
     let callCount = 0
-    const queryFn = vi.fn(async () => {
+    const queryFn = vi.fn(() => {
       callCount++
       if (callCount === 1) {
-        return 'data'
+        return Promise.resolve('data')
       }
-      throw new Error('background error')
+      return Promise.reject(new Error('background error'))
     })
 
     const observer = new QueryObserver(queryClient, {
@@ -1520,15 +1520,15 @@ describe('queryObserver', () => {
   it('should refetchOnWindowFocus when query has background error and staleTime is not static', async () => {
     const key = queryKey()
     let callCount = 0
-    const queryFn = vi.fn(async () => {
+    const queryFn = vi.fn(() => {
       callCount++
       if (callCount === 1) {
-        return 'data'
+        return Promise.resolve('data')
       }
       if (callCount === 2) {
-        throw new Error('background error')
+        return Promise.reject(new Error('background error'))
       }
-      return 'new data'
+      return Promise.resolve('new data')
     })
 
     const observer = new QueryObserver(queryClient, {
