@@ -114,7 +114,7 @@ describe('injectMutation', () => {
     })
   })
 
-  it('reactive options should update mutation', () => {
+  it('should update mutation when reactive options change', () => {
     const mutationCache = queryClient.getMutationCache()
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
@@ -473,7 +473,7 @@ describe('injectMutation', () => {
   })
 
   describe('injection context', () => {
-    it('throws NG0203 with descriptive error outside injection context', () => {
+    it('should throw NG0203 with descriptive error outside injection context', () => {
       const key = queryKey()
       expect(() => {
         injectMutation(() => ({
@@ -483,7 +483,7 @@ describe('injectMutation', () => {
       }).toThrow(/NG0203(.*?)injectMutation/)
     })
 
-    it('can be used outside injection context when passing an injector', () => {
+    it('should be usable outside injection context when passing an injector', () => {
       const key = queryKey()
       expect(() => {
         injectMutation(

@@ -52,13 +52,13 @@ describe('injectIsMutating', () => {
   })
 
   describe('injection context', () => {
-    it('throws NG0203 with descriptive error outside injection context', () => {
+    it('should throw NG0203 with descriptive error outside injection context', () => {
       expect(() => {
         injectIsMutating()
       }).toThrow(/NG0203(.*?)injectIsMutating/)
     })
 
-    it('can be used outside injection context when passing an injector', () => {
+    it('should be usable outside injection context when passing an injector', () => {
       expect(
         injectIsMutating(undefined, {
           injector: TestBed.inject(Injector),

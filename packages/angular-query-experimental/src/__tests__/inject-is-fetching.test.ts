@@ -28,7 +28,7 @@ describe('injectIsFetching', () => {
     vi.useRealTimers()
   })
 
-  it('Returns number of fetching queries', async () => {
+  it('should return the number of fetching queries', async () => {
     const key = queryKey()
     const isFetching = TestBed.runInInjectionContext(() => {
       injectQuery(() => ({
@@ -46,13 +46,13 @@ describe('injectIsFetching', () => {
   })
 
   describe('injection context', () => {
-    it('throws NG0203 with descriptive error outside injection context', () => {
+    it('should throw NG0203 with descriptive error outside injection context', () => {
       expect(() => {
         injectIsFetching()
       }).toThrow(/NG0203(.*?)injectIsFetching/)
     })
 
-    it('can be used outside injection context when passing an injector', () => {
+    it('should be usable outside injection context when passing an injector', () => {
       expect(
         injectIsFetching(undefined, {
           injector: TestBed.inject(Injector),
