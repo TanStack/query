@@ -66,12 +66,7 @@ describe('injectQueries', () => {
       }
     }
 
-    const rendered = await render(Page, {
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
+    const rendered = await render(Page)
 
     await vi.advanceTimersByTimeAsync(101)
     rendered.fixture.detectChanges()
@@ -120,12 +115,7 @@ describe('injectQueries', () => {
       }
     }
 
-    const rendered = await render(Page, {
-      providers: [
-        provideZonelessChangeDetection(),
-        provideTanStackQuery(queryClient),
-      ],
-    })
+    const rendered = await render(Page)
 
     expect(rendered.getByText('data: ,')).toBeInTheDocument()
     expect(rendered.getByText('isPending: true')).toBeInTheDocument()
