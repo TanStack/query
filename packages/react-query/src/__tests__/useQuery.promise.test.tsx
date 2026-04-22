@@ -14,6 +14,7 @@ import {
   keepPreviousData,
   useInfiniteQuery,
   useQuery,
+  useTrackQueryHash,
 } from '..'
 import { QueryCache } from '../index'
 
@@ -1503,5 +1504,81 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     })
 
     expect(rendered.queryByText('error boundary')).toBeNull()
+  })
+
+  it('should retry when QERB triggers reset, even if useQuery is outside', async () => {
+    const key = queryKey()
+    const renderStream = createRenderStream({ snapshotDOM: true })
+
+    let queryCount = 0
+    function Child(props: { promise: Promise<string> }) {
+      useTrackQueryHash(props.promise)
+      const data = React.use(props.promise)
+      return <>{data}</>
+    }
+
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await vi.advanceTimersByTimeAsync(1)
+          queryCount++
+          if (queryCount === 1) {
+            throw new Error('Error test')
+          }
+          return 'data'
+        },
+        retry: false,
+      })
+
+      return (
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={reset}
+              resetKeys={[query.promise]}
+              fallbackRender={({ resetErrorBoundary }) => (
+                <div>
+                  <div>error boundary</div>
+                  <button onClick={resetErrorBoundary}>retry</button>
+                </div>
+              )}
+            >
+              <React.Suspense fallback={<div>loading..</div>}>
+                <Child promise={query.promise} />
+              </React.Suspense>
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
+      )
+    }
+
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      expect(withinDOM().getByText('loading..')).toBeInTheDocument()
+    }
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      expect(withinDOM().getByText('error boundary')).toBeInTheDocument()
+    }
+
+    rendered.getByText('retry').click()
+
+    await waitFor(() => {
+      expect(rendered.getByText('loading..')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
+      expect(rendered.getByText('data')).toBeInTheDocument()
+    })
+
+    expect(queryCount).toBe(2)
   })
 })

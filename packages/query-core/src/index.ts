@@ -35,6 +35,7 @@ export {
   noop,
   partialMatchKey,
   replaceEqualDeep,
+  resolveEnabled,
   shouldThrowError,
   skipToken,
 } from './utils'
