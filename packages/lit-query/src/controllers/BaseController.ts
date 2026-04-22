@@ -44,12 +44,13 @@ export abstract class BaseController<TResult> implements ReactiveController {
     }
 
     this.connected = true
+    let contextResolutionAttempt: number | undefined
 
     if (this.explicitClient) {
       this.queryClientResolutionState = 'bound'
     } else {
-      const attempt = ++this.connectionAttempt
-      this.startContextResolution(attempt)
+      contextResolutionAttempt = ++this.connectionAttempt
+      this.beginContextResolution()
     }
 
     // Defer onConnected to ensure subclass constructors complete before
@@ -62,6 +63,12 @@ export abstract class BaseController<TResult> implements ReactiveController {
         this.onConnected()
       }
     })
+
+    if (contextResolutionAttempt !== undefined) {
+      // Provider-backed controllers on already-connected hosts should finish
+      // their deferred onConnected pass before a context client binds.
+      this.queueContextResolution(contextResolutionAttempt)
+    }
   }
 
   hostDisconnected(): void {
@@ -169,23 +176,24 @@ export abstract class BaseController<TResult> implements ReactiveController {
     })
   }
 
-  private startContextResolution(attempt: number): void {
+  private beginContextResolution(): void {
     this.clearContextClient()
     this.updateQueryClientResolutionState('awaiting-context')
-    queueMicrotask(() => {
-      queueMicrotask(() => {
-        if (
-          this.destroyed ||
-          !this.connected ||
-          attempt !== this.connectionAttempt ||
-          this.queryClientResolutionState !== 'awaiting-context'
-        ) {
-          return
-        }
+  }
 
-        this.dispatchContextRequest(attempt)
-        this.queueInitialContextResolutionCompletion(attempt)
-      })
+  private queueContextResolution(attempt: number): void {
+    queueMicrotask(() => {
+      if (
+        this.destroyed ||
+        !this.connected ||
+        attempt !== this.connectionAttempt ||
+        this.queryClientResolutionState !== 'awaiting-context'
+      ) {
+        return
+      }
+
+      this.dispatchContextRequest(attempt)
+      this.queueInitialContextResolutionCompletion(attempt)
     })
   }
 
