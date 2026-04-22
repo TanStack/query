@@ -1,5 +1,14 @@
 # @tanstack/solid-query-devtools
 
+## 6.0.0-beta.4
+
+### Patch Changes
+
+- chore: bump vite-plugin-solid next.5 ([#10516](https://github.com/TanStack/query/pull/10516))
+
+- Updated dependencies [[`b38c18d`](https://github.com/TanStack/query/commit/b38c18d822dd47be8d926875c9dadbc591ab3892)]:
+  - @tanstack/solid-query@6.0.0-beta.4
+
 ## 6.0.0-beta.3
 
 ### Patch Changes
