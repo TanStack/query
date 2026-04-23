@@ -230,17 +230,19 @@ export function hydrate(
           state.dataUpdatedAt > query.state.dataUpdatedAt ||
           hasNewerSyncData
         ) {
-          // omit fetchStatus from dehydrated state
-          // so that query stays in its current fetchStatus
+          // Omit fetchStatus from dehydrated state so that query stays in its current fetchStatus
           const { fetchStatus: _ignored, ...serializedState } = state
           query.setState({
             ...serializedState,
             data,
-            // if data was resolved synchronously, transition to success
-            // (mirrors the new-query branch below), but preserve fetchStatus
-            // if the query is already actively fetching
-            ...(data !== undefined && {
+            // If the query was pending at the moment of dehydration, but resolved to have data
+            // before hydration, we can assume the query should be hydrated as successful.
+            //
+            // Since you can opt into dehydrating failed queries, and those can have data from
+            // previous successful fetches, we make sure we only do this for pending queries.
+            ...(state.status === 'pending' && data !== undefined && {
               status: 'success' as const,
+              // Preserve existing fetchStatus if the existing query is actively fetching.
               ...(!existingQueryIsFetching && {
                 fetchStatus: 'idle' as const,
               }),
@@ -264,7 +266,9 @@ export function hydrate(
             ...state,
             data,
             fetchStatus: 'idle',
-            status: data !== undefined ? 'success' : state.status,
+            // Like above, if the query was pending at the moment of dehydration but has data,
+            // we can assume it should be hydrated as successful.
+            status: state.status === 'pending' && data !== undefined ? 'success' : state.status,
           },
         )
       }
