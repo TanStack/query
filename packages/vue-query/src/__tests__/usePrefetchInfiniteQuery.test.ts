@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick, ref } from 'vue-demi'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
@@ -13,7 +13,7 @@ describe('usePrefetchInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should prefetch infinite query if query state does not exist', () => {
+  it('should prefetch infinite query if query state does not exist', () => {
     const queryClient = new QueryClient()
     const prefetchInfiniteQuerySpy = vi.spyOn(
       queryClient,
@@ -44,7 +44,7 @@ describe('usePrefetchInfiniteQuery', () => {
     })
   })
 
-  test('should not prefetch infinite query if query state exists', () => {
+  it('should not prefetch infinite query if query state exists', () => {
     const queryClient = new QueryClient()
     const prefetchInfiniteQuerySpy = vi.spyOn(
       queryClient,
@@ -73,7 +73,7 @@ describe('usePrefetchInfiniteQuery', () => {
     expect(prefetchInfiniteQuerySpy).not.toHaveBeenCalled()
   })
 
-  test('should unwrap refs in infinite query options', () => {
+  it('should unwrap refs in infinite query options', () => {
     const queryClient = new QueryClient()
     const prefetchInfiniteQuerySpy = vi.spyOn(
       queryClient,
@@ -99,7 +99,7 @@ describe('usePrefetchInfiniteQuery', () => {
     )
   })
 
-  test('should prefetch infinite query again when query key changes reactively', async () => {
+  it('should prefetch infinite query again when query key changes reactively', async () => {
     const queryClient = new QueryClient()
     const prefetchInfiniteQuerySpy = vi.spyOn(
       queryClient,
@@ -136,7 +136,7 @@ describe('usePrefetchInfiniteQuery', () => {
     )
   })
 
-  test('should warn when used outside of setup function in development mode', () => {
+  it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 

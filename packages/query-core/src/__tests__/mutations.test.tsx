@@ -1,5 +1,5 @@
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, QueryClient } from '..'
 import { MutationObserver } from '../mutationObserver'
 import { executeMutation } from './utils'
@@ -19,7 +19,7 @@ describe('mutations', () => {
     vi.useRealTimers()
   })
 
-  test('mutate should accept null values', async () => {
+  it('mutate should accept null values', async () => {
     let variables
 
     const mutation = new MutationObserver(queryClient, {
@@ -35,7 +35,7 @@ describe('mutations', () => {
     expect(variables).toBe(null)
   })
 
-  test('setMutationDefaults should be able to set defaults', async () => {
+  it('setMutationDefaults should be able to set defaults', async () => {
     const key = queryKey()
     const fn = vi.fn()
 
@@ -60,7 +60,7 @@ describe('mutations', () => {
     })
   })
 
-  test('mutation should set correct success states', async () => {
+  it('mutation should set correct success states', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: (text: string) => sleep(10).then(() => text),
       onMutate: (text) => text,
@@ -153,7 +153,7 @@ describe('mutations', () => {
     })
   })
 
-  test('mutation should set correct error states', async () => {
+  it('mutation should set correct error states', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: (_: string) =>
         sleep(20).then(() => Promise.reject(new Error('err'))),
@@ -251,7 +251,7 @@ describe('mutations', () => {
     })
   })
 
-  test('should be able to restore a mutation', async () => {
+  it('should be able to restore a mutation', async () => {
     const key = queryKey()
 
     const onMutate = vi.fn()
@@ -331,7 +331,7 @@ describe('mutations', () => {
     expect(onSettled).toHaveBeenCalled()
   })
 
-  test('addObserver should not add an existing observer', () => {
+  it('addObserver should not add an existing observer', () => {
     const mutationCache = queryClient.getMutationCache()
     const observer = new MutationObserver(queryClient, {})
     const currentMutation = mutationCache.build(queryClient, {})
@@ -351,7 +351,7 @@ describe('mutations', () => {
     unsubscribe()
   })
 
-  test('mutate should throw an error if no mutationFn found', async () => {
+  it('mutate should throw an error if no mutationFn found', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: undefined,
       retry: false,
@@ -366,7 +366,7 @@ describe('mutations', () => {
     expect(error).toEqual(new Error('No mutationFn found'))
   })
 
-  test('mutate update the mutation state even without an active subscription 1', async () => {
+  it('mutate update the mutation state even without an active subscription 1', async () => {
     const onSuccess = vi.fn()
     const onSettled = vi.fn()
 
@@ -384,7 +384,7 @@ describe('mutations', () => {
     expect(onSettled).not.toHaveBeenCalled()
   })
 
-  test('mutate update the mutation state even without an active subscription 2', async () => {
+  it('mutate update the mutation state even without an active subscription 2', async () => {
     const onSuccess = vi.fn()
     const onSettled = vi.fn()
 
@@ -402,7 +402,7 @@ describe('mutations', () => {
     expect(onSettled).not.toHaveBeenCalled()
   })
 
-  test('mutation callbacks should see updated options', async () => {
+  it('mutation callbacks should see updated options', async () => {
     const onSuccess = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
@@ -428,7 +428,7 @@ describe('mutations', () => {
   })
 
   describe('scoped mutations', () => {
-    test('mutations in the same scope should run in serial', async () => {
+    it('mutations in the same scope should run in serial', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
 
@@ -493,7 +493,7 @@ describe('mutations', () => {
     })
   })
 
-  test('mutations without scope should run in parallel', async () => {
+  it('mutations without scope should run in parallel', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -537,7 +537,7 @@ describe('mutations', () => {
     ])
   })
 
-  test('each scope should run in parallel, serial within scope', async () => {
+  it('each scope should run in parallel, serial within scope', async () => {
     const results: Array<string> = []
 
     executeMutation(
@@ -619,7 +619,7 @@ describe('mutations', () => {
   })
 
   describe('callback return types', () => {
-    test('should handle all sync callback patterns', async () => {
+    it('should handle all sync callback patterns', async () => {
       const key = queryKey()
       const results: Array<string> = []
 
@@ -657,7 +657,7 @@ describe('mutations', () => {
       ])
     })
 
-    test('should handle all async callback patterns', async () => {
+    it('should handle all async callback patterns', async () => {
       const key = queryKey()
       const results: Array<string> = []
 
@@ -695,7 +695,7 @@ describe('mutations', () => {
       ])
     })
 
-    test('should handle Promise.all() and Promise.allSettled() patterns', async () => {
+    it('should handle Promise.all() and Promise.allSettled() patterns', async () => {
       const key = queryKey()
       const results: Array<string> = []
 
@@ -736,7 +736,7 @@ describe('mutations', () => {
       ])
     })
 
-    test('should handle mixed sync/async patterns and return value isolation', async () => {
+    it('should handle mixed sync/async patterns and return value isolation', async () => {
       const key = queryKey()
       const results: Array<string> = []
 
@@ -783,7 +783,7 @@ describe('mutations', () => {
       ])
     })
 
-    test('should handle error cases with all callback patterns', async () => {
+    it('should handle error cases with all callback patterns', async () => {
       const key = queryKey()
       const results: Array<string> = []
 
@@ -838,7 +838,7 @@ describe('mutations', () => {
   })
 
   describe('erroneous mutation callback', () => {
-    test('error by global onSuccess triggers onError callback', async () => {
+    it('error by global onSuccess triggers onError callback', async () => {
       const newMutationError = new Error('mutation-error')
 
       queryClient = new QueryClient({
@@ -896,7 +896,7 @@ describe('mutations', () => {
       expect(mutationError).toEqual(newMutationError)
     })
 
-    test('error by mutations onSuccess triggers onError callback', async () => {
+    it('error by mutations onSuccess triggers onError callback', async () => {
       const key = queryKey()
       const results: Array<string> = []
 
@@ -946,7 +946,7 @@ describe('mutations', () => {
       expect(mutationError).toEqual(newMutationError)
     })
 
-    test('error by global onSettled triggers onError callback, calling global onSettled callback twice', async ({
+    it('error by global onSettled triggers onError callback, calling global onSettled callback twice', async ({
       onTestFinished,
     }) => {
       const newMutationError = new Error('mutation-error')
@@ -1020,7 +1020,7 @@ describe('mutations', () => {
       expect(mutationError).toEqual(newMutationError)
     })
 
-    test('error by mutations onSettled triggers onError callback, calling both onSettled callbacks twice', async ({
+    it('error by mutations onSettled triggers onError callback, calling both onSettled callbacks twice', async ({
       onTestFinished,
     }) => {
       const unhandledRejectionFn = vi.fn()
@@ -1084,7 +1084,7 @@ describe('mutations', () => {
       expect(mutationError).toEqual(newMutationError)
     })
 
-    test('errors by onError and consecutive onSettled callbacks are transferred to different execution context where it are reported', async ({
+    it('errors by onError and consecutive onSettled callbacks are transferred to different execution context where it are reported', async ({
       onTestFinished,
     }) => {
       const unhandledRejectionFn = vi.fn()
@@ -1166,7 +1166,7 @@ describe('mutations', () => {
     })
   })
 
-  test('should not remove mutation when one observer is removed but another still exists', async () => {
+  it('should not remove mutation when one observer is removed but another still exists', async () => {
     const observer1 = new MutationObserver(queryClient, {
       gcTime: 10,
       mutationFn: () => sleep(10).then(() => 'data'),

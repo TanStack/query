@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -3889,7 +3889,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  test('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
+  it('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3914,7 +3914,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('status: pending, idle')).toBeInTheDocument()
   })
 
-  test('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
+  it('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3937,7 +3937,7 @@ describe('useQuery', () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
 
-  test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
+  it('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
     const key = queryKey()
 
     function Page() {
@@ -5675,9 +5675,9 @@ describe('useQuery', () => {
       function Component() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: () => {
             count++
-            return `data${count}`
+            return Promise.resolve(`data${count}`)
           },
         })
 
@@ -6847,7 +6847,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         throwOnError: (error) => error.message.includes('404'),
-        retryOnMount: () => true,
+        retryOnMount: true,
         staleTime: Infinity,
         retry: false,
       })
