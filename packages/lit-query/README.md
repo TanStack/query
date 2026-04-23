@@ -223,13 +223,7 @@ npm run example:ssr:dev:public-origin
 Current local quality gate:
 
 ```bash
-npm run typecheck && npm test && npm run build
-```
-
-Full local demo gate:
-
-```bash
-npm run demo:gate
+npm run test:types && npm run test:lib && npm run build && npm run test:build
 ```
 
 ## License

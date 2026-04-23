@@ -35,15 +35,11 @@
     "build:esm": "tsc -p tsconfig.build.json",
     "build:cjs": "node -e \"require('node:fs').rmSync('dist-cjs', { recursive: true, force: true })\" && tsc -p tsconfig.build.cjs.json && node scripts/write-cjs-package.mjs",
     "test:types": "tsc --noEmit",
-    "typecheck": "pnpm run test:types",
     "test:eslint": "eslint .",
-    "lint": "pnpm run test:eslint",
     "lint:fix": "eslint . --fix",
     "test:lib": "vitest run",
-    "test": "pnpm run test:lib",
     "test:lib:dev": "vitest",
     "test:watch": "pnpm run test:lib:dev",
-    "package:check": "node scripts/check-package.mjs",
     "package:smoke:cjs-types": "node scripts/check-cjs-types-smoke.mjs",
     "test:build": "publint --strict && attw --pack && pnpm run package:smoke:cjs-types",
     "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
@@ -81,10 +77,7 @@
     "example:ssr:e2e": "pnpm run example:ssr:e2e:default && pnpm run example:ssr:e2e:public-origin",
     "example:ssr:e2e:all:default": "pnpm run build && pnpm --dir examples/lit-query-ssr-app run e2e:all",
     "example:ssr:e2e:all:nobuild": "pnpm --dir examples/lit-query-ssr-app run e2e:all && pnpm --dir examples/lit-query-ssr-app run e2e:public-origin",
-    "example:ssr:e2e:all": "pnpm run example:ssr:e2e:all:default && pnpm run example:ssr:e2e:public-origin",
-    "demo:setup": "pnpm run example:install && npm --prefix examples/lit-query-e2e-app exec playwright install chromium",
-    "demo:gate": "pnpm run typecheck && pnpm run lint && pnpm test && pnpm run build && pnpm run package:check && pnpm run test:build && pnpm run example:e2e:all:nobuild && pnpm run example:ssr:e2e:all:nobuild && pnpm run measure:bundle:raw && pnpm run perf:l3:raw",
-    "demo:gate:headed": "pnpm run build && pnpm run example:e2e:all:headed"
+    "example:ssr:e2e:all": "pnpm run example:ssr:e2e:all:default && pnpm run example:ssr:e2e:public-origin"
   },
   "dependencies": {
     "@lit/context": "^1.1.6",
