@@ -22,6 +22,8 @@ type UnwrapLeaf =
   | Set<any>
   | WeakSet<any>
 
+export type MaybeGetter<T> = T | (() => T)
+
 export type MaybeRef<T> = Ref<T> | ComputedRef<T> | T
 
 export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
@@ -61,6 +63,17 @@ export type ShallowOption = {
    */
   shallow?: boolean
 }
+
+export type MutationOptions<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+> = OmitKeyof<
+  MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
+  '_defaulted'
+> &
+  ShallowOption
 
 export interface DefaultOptions<TError = DefaultError> {
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'> &

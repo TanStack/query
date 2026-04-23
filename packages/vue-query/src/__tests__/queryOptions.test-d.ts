@@ -1,5 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { reactive, ref } from 'vue-demi'
+import { computed, reactive, ref } from 'vue-demi'
 import { dataTagSymbol } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
@@ -11,9 +11,9 @@ describe('queryOptions', () => {
     const key = queryKey()
     assertType(
       queryOptions({
+        // @ts-expect-error this is a good error, because stallTime does not exist!
         queryKey: key,
         queryFn: () => Promise.resolve(5),
-        // @ts-expect-error this is a good error, because stallTime does not exist!
         stallTime: 1000,
       }),
     )
@@ -119,11 +119,13 @@ describe('queryOptions', () => {
 
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
-  it('should allow to be passed to QueryClient methods while containing ref in queryKey', () => {
-    const options = queryOptions({
-      queryKey: ['key', ref(1), { nested: ref(2) }],
+  it('should allow to be passed to QueryClient methods while containing getter', () => {
+    const ref1 = ref(1)
+    const ref2 = ref(2)
+    const options = queryOptions(() => ({
+      queryKey: [...queryKey(), ref1.value, { nested: ref2.value }],
       queryFn: () => Promise.resolve(5),
-    })
+    }))
 
     const queryClient = new QueryClient()
 
@@ -227,5 +229,73 @@ describe('queryOptions', () => {
     )
 
     expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  it('should allow accessing queryFn and other properties on the returned options object', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve([]),
+    })
+
+    expectTypeOf(options.queryFn).not.toBeUndefined()
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+    expectTypeOf(options.staleTime).not.toBeUndefined()
+  })
+
+  it('should allow accessing queryFn and other properties on the returned options when used with getter', () => {
+    const options = queryOptions(() => ({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve([]),
+    }))
+
+    const resolvedGetter = options()
+
+    expectTypeOf(resolvedGetter.queryFn).not.toBeUndefined()
+    expectTypeOf(resolvedGetter.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow computed ref as enabled property', () => {
+    const enabled = computed(() => true)
+
+    // This was broken in #10452, fixed in #10458
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      enabled,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow ref as enabled property', () => {
+    const enabled = ref(true)
+
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      enabled,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow boolean as enabled property', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      enabled: true,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
+
+  it('should allow getter function as enabled property', () => {
+    const options = queryOptions({
+      queryKey: queryKey(),
+      queryFn: () => Promise.resolve(1),
+      enabled: () => true,
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
   })
 })

@@ -1,30 +1,29 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
+  import type { QueryClient } from '@tanstack/query-core'
   import { queryKey } from '@tanstack/query-test-utils'
-  import { setIsRestoringContext } from '../../src/context.js'
+  import {
+    setIsRestoringContext,
+    setQueryClientContext,
+  } from '../../src/context.js'
   import { createQueries } from '../../src/index.js'
 
-  let {
-    queryFn1,
-    queryFn2,
-  }: {
+  type Props = {
+    queryClient: QueryClient
     queryFn1: () => Promise<string>
     queryFn2: () => Promise<string>
-  } = $props()
+  }
 
-  const queryClient = new QueryClient()
+  let { queryClient, queryFn1, queryFn2 }: Props = $props()
 
+  setQueryClientContext(queryClient)
   setIsRestoringContext({ current: true })
 
-  const result = createQueries(
-    () => ({
-      queries: [
-        { queryKey: queryKey(), queryFn: queryFn1 },
-        { queryKey: queryKey(), queryFn: queryFn2 },
-      ],
-    }),
-    () => queryClient,
-  )
+  const result = createQueries(() => ({
+    queries: [
+      { queryKey: queryKey(), queryFn: queryFn1 },
+      { queryKey: queryKey(), queryFn: queryFn2 },
+    ],
+  }))
 </script>
 
 <div>

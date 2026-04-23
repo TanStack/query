@@ -1,11 +1,15 @@
 <script lang="ts">
   import { QueryClientProvider } from '../../src/index.js'
-  import ChildComponent from './ChildComponent.svelte'
+  import Child from './Child.svelte'
   import type { QueryClient } from '@tanstack/query-core'
 
-  let { queryClient }: { queryClient: QueryClient } = $props()
+  type Props = {
+    queryClient: QueryClient
+  }
+
+  let { queryClient }: Props = $props()
 </script>
 
 <QueryClientProvider client={queryClient}>
-  <ChildComponent />
+  <Child />
 </QueryClientProvider>

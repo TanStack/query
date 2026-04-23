@@ -1,5 +1,45 @@
 # @tanstack/preact-query-devtools
 
+## 5.100.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.100.0
+  - @tanstack/query-devtools@5.100.0
+
+## 5.99.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.99.2
+  - @tanstack/query-devtools@5.99.2
+
+## 5.99.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.99.1
+  - @tanstack/query-devtools@5.99.1
+
+## 5.99.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.99.0
+  - @tanstack/query-devtools@5.99.0
+
+## 5.98.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.98.0
+  - @tanstack/query-devtools@5.98.0
+
 ## 5.97.0
 
 ### Patch Changes

@@ -1,24 +1,27 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import ParentComponent from './ParentComponent.svelte'
+import Base from './Base.svelte'
 
 describe('QueryClientProvider', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
-  test('Sets a specific cache for all queries to use', async () => {
-    const queryClient = new QueryClient()
+  it('should set a specific cache for all queries to use', async () => {
     const queryCache = queryClient.getQueryCache()
 
-    const rendered = render(ParentComponent, {
+    const rendered = render(Base, {
       props: {
-        queryClient: queryClient,
+        queryClient,
       },
     })
 

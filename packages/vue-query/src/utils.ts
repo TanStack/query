@@ -109,3 +109,7 @@ function isPlainObject(value: unknown): value is Object {
 function isFunction(value: unknown): value is Function {
   return typeof value === 'function'
 }
+
+export function toValueDeep<T>(source: (() => T) | MaybeRefDeep<T>): T {
+  return isFunction(source) ? source() : cloneDeepUnref(source)
+}

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import {
@@ -62,7 +62,7 @@ describe('withDevtools feature', () => {
     TestBed.resetTestingModule()
   })
 
-  test.each([
+  it.each([
     {
       description: 'should load devtools in development mode',
       isDevMode: true,
@@ -152,6 +152,33 @@ describe('withDevtools feature', () => {
       )
     },
   )
+
+  it("should throw 'No QueryClient found' when 'loadDevtools' is 'true' and no 'QueryClient' is provided", async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        withDevtools(() => ({
+          loadDevtools: true,
+        })).ɵproviders,
+      ],
+    })
+
+    TestBed.inject(ENVIRONMENT_INITIALIZER)
+    TestBed.tick()
+    await vi.dynamicImportSettled()
+
+    expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Install @tanstack/query-devtools or reinstall without --omit=optional.',
+      expect.objectContaining({ message: 'No QueryClient found' }),
+    )
+
+    consoleErrorSpy.mockRestore()
+  })
 
   it('should not continue loading devtools after injector is destroyed', async () => {
     TestBed.configureTestingModule({

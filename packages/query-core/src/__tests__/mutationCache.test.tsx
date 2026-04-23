@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationCache, MutationObserver, QueryClient } from '..'
 import { executeMutation } from './utils'
@@ -13,7 +13,7 @@ describe('mutationCache', () => {
   })
 
   describe('MutationCacheConfig error callbacks', () => {
-    test('should call onError and onSettled when a mutation errors', async () => {
+    it('should call onError and onSettled when a mutation errors', async () => {
       const key = queryKey()
       const onError = vi.fn()
       const onSuccess = vi.fn()
@@ -63,7 +63,7 @@ describe('mutationCache', () => {
       )
     })
 
-    test('should be awaited', async () => {
+    it('should be awaited', async () => {
       const key = queryKey()
       const states: Array<number> = []
       const onError = () =>
@@ -106,7 +106,7 @@ describe('mutationCache', () => {
   })
 
   describe('MutationCacheConfig success callbacks', () => {
-    test('should call onSuccess and onSettled when a mutation is successful', async () => {
+    it('should call onSuccess and onSettled when a mutation is successful', async () => {
       const key = queryKey()
       const onError = vi.fn()
       const onSuccess = vi.fn()
@@ -155,7 +155,7 @@ describe('mutationCache', () => {
       )
     })
 
-    test('should be awaited', async () => {
+    it('should be awaited', async () => {
       const key = queryKey()
       const states: Array<number> = []
       const onSuccess = () =>
@@ -196,7 +196,7 @@ describe('mutationCache', () => {
   })
 
   describe('MutationCacheConfig.onMutate', () => {
-    test('should be called before a mutation executes', () => {
+    it('should be called before a mutation executes', () => {
       const key = queryKey()
       const onMutate = vi.fn()
       const testCache = new MutationCache({ onMutate })
@@ -221,7 +221,7 @@ describe('mutationCache', () => {
       })
     })
 
-    test('should be awaited', async () => {
+    it('should be awaited', async () => {
       const key = queryKey()
       const states: Array<number> = []
       const onMutate = () =>
@@ -250,7 +250,7 @@ describe('mutationCache', () => {
       expect(states).toEqual([1, 2, 3, 4])
     })
 
-    test('options.onMutate should run synchronously when mutationCache.config.onMutate is not defined', () => {
+    it('options.onMutate should run synchronously when mutationCache.config.onMutate is not defined', () => {
       const key = queryKey()
       const states: Array<string> = []
 
@@ -276,7 +276,7 @@ describe('mutationCache', () => {
   })
 
   describe('find', () => {
-    test('should filter correctly', () => {
+    it('should filter correctly', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
       const key = ['mutation', 'vars']
@@ -306,7 +306,7 @@ describe('mutationCache', () => {
   })
 
   describe('findAll', () => {
-    test('should filter correctly', () => {
+    it('should filter correctly', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
 
@@ -351,7 +351,7 @@ describe('mutationCache', () => {
   })
 
   describe('garbage collection', () => {
-    test('should remove unused mutations after gcTime has elapsed', async () => {
+    it('should remove unused mutations after gcTime has elapsed', async () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
       const onSuccess = vi.fn()
@@ -375,7 +375,7 @@ describe('mutationCache', () => {
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
-    test('should not remove mutations if there are active observers', async () => {
+    it('should not remove mutations if there are active observers', async () => {
       const queryClient = new QueryClient()
       const observer = new MutationObserver(queryClient, {
         gcTime: 10,
@@ -400,7 +400,7 @@ describe('mutationCache', () => {
       expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
     })
 
-    test('should be garbage collected later when unsubscribed and mutation is pending', async () => {
+    it('should be garbage collected later when unsubscribed and mutation is pending', async () => {
       const queryClient = new QueryClient()
       const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {
@@ -426,7 +426,7 @@ describe('mutationCache', () => {
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
-    test('should call callbacks even with gcTime 0 and mutation still pending', async () => {
+    it('should call callbacks even with gcTime 0 and mutation still pending', async () => {
       const queryClient = new QueryClient()
       const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {
@@ -447,7 +447,7 @@ describe('mutationCache', () => {
   })
 
   describe('remove', () => {
-    test('should remove only the target mutation from scope when multiple scoped mutations exist', () => {
+    it('should remove only the target mutation from scope when multiple scoped mutations exist', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
 
@@ -468,7 +468,7 @@ describe('mutationCache', () => {
       expect(testCache.getAll()).toEqual([mutation2])
     })
 
-    test('should delete scope when removing the only mutation in that scope', () => {
+    it('should delete scope when removing the only mutation in that scope', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
 
@@ -484,7 +484,7 @@ describe('mutationCache', () => {
       expect(testCache.getAll()).toHaveLength(0)
     })
 
-    test('should still notify removal when removing a mutation that does not exist in the cache', () => {
+    it('should still notify removal when removing a mutation that does not exist in the cache', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
 

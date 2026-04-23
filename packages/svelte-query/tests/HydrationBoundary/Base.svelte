@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
+  import type { QueryClient } from '@tanstack/query-core'
   import {
     HydrationBoundary,
     createQuery,
@@ -7,15 +7,14 @@
   } from '../../src/index.js'
   import type { DehydratedState } from '@tanstack/query-core'
 
-  let {
-    dehydratedState,
-    queryFn,
-  }: {
+  type Props = {
+    queryClient: QueryClient
     dehydratedState: DehydratedState
     queryFn: () => Promise<string>
-  } = $props()
+  }
 
-  const queryClient = new QueryClient()
+  let { queryClient, dehydratedState, queryFn }: Props = $props()
+
   setQueryClientContext(queryClient)
 
   const query = createQuery(() => ({

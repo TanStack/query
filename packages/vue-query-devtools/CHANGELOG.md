@@ -1,5 +1,47 @@
 # @tanstack/vue-query-devtools
 
+## 6.1.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.0
+  - @tanstack/vue-query@5.100.0
+
+## 6.1.18
+
+### Patch Changes
+
+- Updated dependencies [[`c2d0dff`](https://github.com/TanStack/query/commit/c2d0dfff5704406a8920348c602f8b97cfda34e7)]:
+  - @tanstack/vue-query@5.99.2
+  - @tanstack/query-devtools@5.99.2
+
+## 6.1.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.99.1
+  - @tanstack/vue-query@5.99.1
+
+## 6.1.16
+
+### Patch Changes
+
+- Updated dependencies [[`f279ad2`](https://github.com/TanStack/query/commit/f279ad24887051e81185aff64864a938ff7c139b)]:
+  - @tanstack/vue-query@5.99.0
+  - @tanstack/query-devtools@5.99.0
+
+## 6.1.15
+
+### Patch Changes
+
+- Fix Vue SSR devtools cleanup by only registering `unmount()` after `mount()` has run. ([#10439](https://github.com/TanStack/query/pull/10439))
+
+- Updated dependencies [[`b97513f`](https://github.com/TanStack/query/commit/b97513f2888ed1310a5b39bf91d559c5bc6b83e0), [`29e80d9`](https://github.com/TanStack/query/commit/29e80d9f79d7b71ac89f2c37ee254a5f718abac7)]:
+  - @tanstack/vue-query@5.98.0
+  - @tanstack/query-devtools@5.98.0
+
 ## 6.1.14
 
 ### Patch Changes

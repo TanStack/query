@@ -1,20 +1,25 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
-import BaseExample from './BaseExample.svelte'
-import SelectExample from './SelectExample.svelte'
+import Base from './Base.svelte'
+import Select from './Select.svelte'
 import type { Mutation } from '@tanstack/query-core'
 
 describe('useMutationState', () => {
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryClient = new QueryClient()
   })
 
   afterEach(() => {
+    queryClient.clear()
     vi.useRealTimers()
   })
 
-  test('Run few mutation functions and check from useMutationState', async () => {
+  it('should run few mutation functions and check from useMutationState', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
@@ -24,8 +29,9 @@ describe('useMutationState', () => {
         sleep(20).then(() => Promise.reject(new Error('error'))),
       )
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
+        queryClient,
         successMutationOpts: () => ({
           mutationKey: successKey,
           mutationFn: successMutationFn,
@@ -48,7 +54,7 @@ describe('useMutationState', () => {
     expect(rendered.getByText('Data: ["success","error"]')).toBeInTheDocument()
   })
 
-  test('Can select specific type of mutation ( i.e: error only )', async () => {
+  it('should select specific type of mutation ( i.e: error only )', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
@@ -58,8 +64,9 @@ describe('useMutationState', () => {
         sleep(20).then(() => Promise.reject(new Error('error'))),
       )
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
+        queryClient,
         successMutationOpts: () => ({
           mutationKey: successKey,
           mutationFn: successMutationFn,
@@ -85,11 +92,12 @@ describe('useMutationState', () => {
     expect(rendered.getByText('Data: ["error"]')).toBeInTheDocument()
   })
 
-  test('should return selected value when using select option', async () => {
+  it('should return selected value when using select option', async () => {
     const mutationKey = queryKey()
 
-    const rendered = render(SelectExample, {
+    const rendered = render(Select, {
       props: {
+        queryClient,
         mutationOpts: () => ({
           mutationKey,
           mutationFn: () => sleep(10).then(() => 'data'),
@@ -111,7 +119,7 @@ describe('useMutationState', () => {
     expect(rendered.getByText('Variables: ["success"]')).toBeInTheDocument()
   })
 
-  test('Can select specific mutation using mutation key', async () => {
+  it('should select specific mutation using mutation key', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
@@ -121,8 +129,9 @@ describe('useMutationState', () => {
         sleep(20).then(() => Promise.reject(new Error('error'))),
       )
 
-    const rendered = render(BaseExample, {
+    const rendered = render(Base, {
       props: {
+        queryClient,
         successMutationOpts: () => ({
           mutationKey: successKey,
           mutationFn: successMutationFn,
