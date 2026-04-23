@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   computed,
   getCurrentInstance,
@@ -24,7 +24,7 @@ describe('useQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should properly execute query', () => {
+  it('should properly execute query', () => {
     const key = queryKey()
     const queryFn = () => sleep(0).then(() => 'Some data')
 
@@ -45,7 +45,7 @@ describe('useQuery', () => {
     )
   })
 
-  test('should work with options getter', async () => {
+  it('should work with options getter', async () => {
     const key = queryKey()
     const query = useQuery(() => ({
       queryKey: key,
@@ -64,7 +64,7 @@ describe('useQuery', () => {
     })
   })
 
-  test('should work with options getter and be reactive', async () => {
+  it('should work with options getter and be reactive', async () => {
     const key = queryKey()
     const keyRef = ref('key011')
     const resultRef = ref('result02')
@@ -98,7 +98,7 @@ describe('useQuery', () => {
     })
   })
 
-  test('should return pending status initially', () => {
+  it('should return pending status initially', () => {
     const key = queryKey()
     const query = useQuery({
       queryKey: key,
@@ -113,7 +113,7 @@ describe('useQuery', () => {
     })
   })
 
-  test('should resolve to success and update reactive state: useQuery(key, dataFn)', async () => {
+  it('should resolve to success and update reactive state: useQuery(key, dataFn)', async () => {
     const key = queryKey()
     const query = useQuery({
       queryKey: key,
@@ -132,7 +132,7 @@ describe('useQuery', () => {
     })
   })
 
-  test('should resolve to success and update reactive state: useQuery(optionsObj)', async () => {
+  it('should resolve to success and update reactive state: useQuery(optionsObj)', async () => {
     const key = queryKey()
     const query = useQuery({
       queryKey: key,
@@ -152,7 +152,7 @@ describe('useQuery', () => {
     })
   })
 
-  test('should resolve to success and update reactive state: useQuery(key, optionsObj)', async () => {
+  it('should resolve to success and update reactive state: useQuery(key, optionsObj)', async () => {
     const key = queryKey()
     const query = useQuery({
       queryKey: key,
@@ -172,7 +172,7 @@ describe('useQuery', () => {
     })
   })
 
-  test('should reject and update reactive state', async () => {
+  it('should reject and update reactive state', async () => {
     const key = queryKey()
     const query = useQuery({
       queryKey: key,
@@ -195,7 +195,7 @@ describe('useQuery', () => {
     })
   })
 
-  test('should update query on reactive (Ref) key change', async () => {
+  it('should update query on reactive (Ref) key change', async () => {
     const key = queryKey()
     const secondKeyRef = ref('key7')
     const query = useQuery({
@@ -224,7 +224,7 @@ describe('useQuery', () => {
     })
   })
 
-  test("should update query when an option is passed as Ref and it's changed", async () => {
+  it("should update query when an option is passed as Ref and it's changed", async () => {
     const key = queryKey()
     const enabled = ref(false)
     const query = useQuery({
@@ -256,7 +256,7 @@ describe('useQuery', () => {
     })
   })
 
-  test('should properly execute dependent queries', async () => {
+  it('should properly execute dependent queries', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const { data } = useQuery({
@@ -296,7 +296,7 @@ describe('useQuery', () => {
     )
   })
 
-  test('should stop listening to changes on onScopeDispose', async () => {
+  it('should stop listening to changes on onScopeDispose', async () => {
     const key = queryKey()
     const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
@@ -319,7 +319,7 @@ describe('useQuery', () => {
     expect(status.value).toStrictEqual('pending')
   })
 
-  test('should use the current value for the queryKey when refetch is called', async () => {
+  it('should use the current value for the queryKey when refetch is called', async () => {
     const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const keyRef = ref('key11')
@@ -348,7 +348,7 @@ describe('useQuery', () => {
     )
   })
 
-  test('should be `enabled` to accept getter function', async () => {
+  it('should be `enabled` to accept getter function', async () => {
     const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const checked = ref(false)
@@ -368,7 +368,7 @@ describe('useQuery', () => {
     expect(fetchFn).toHaveBeenCalled()
   })
 
-  test('should allow getters for query keys', async () => {
+  it('should allow getters for query keys', async () => {
     const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
@@ -394,7 +394,7 @@ describe('useQuery', () => {
     expect(fetchFn).toHaveBeenCalledTimes(3)
   })
 
-  test('should allow arbitrarily nested getters for query keys', async () => {
+  it('should allow arbitrarily nested getters for query keys', async () => {
     const key = queryKey()
     const fetchFn = vi.fn(() => 'foo')
     const key1 = ref('key1')
@@ -455,7 +455,7 @@ describe('useQuery', () => {
   })
 
   describe('throwOnError', () => {
-    test('should evaluate throwOnError when query is expected to throw', async () => {
+    it('should evaluate throwOnError when query is expected to throw', async () => {
       const key = queryKey()
       const boundaryFn = vi.fn()
       useQuery({
@@ -479,7 +479,7 @@ describe('useQuery', () => {
   })
 
   describe('outside scope warning', () => {
-    test('should warn when used outside of setup function in development mode', () => {
+    it('should warn when used outside of setup function in development mode', () => {
       vi.stubEnv('NODE_ENV', 'development')
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
@@ -500,7 +500,7 @@ describe('useQuery', () => {
   })
 
   describe('suspense', () => {
-    test('should return a Promise', () => {
+    it('should return a Promise', () => {
       const key = queryKey()
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
@@ -514,7 +514,7 @@ describe('useQuery', () => {
       expect(result).toBeInstanceOf(Promise)
     })
 
-    test('should resolve after being enabled', async () => {
+    it('should resolve after being enabled', async () => {
       const key = queryKey()
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
@@ -539,7 +539,7 @@ describe('useQuery', () => {
       expect(afterTimeout).toBe(true)
     })
 
-    test('should resolve immediately when stale without refetching', () => {
+    it('should resolve immediately when stale without refetching', () => {
       const key = queryKey()
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
@@ -559,7 +559,7 @@ describe('useQuery', () => {
       })
     })
 
-    test('should not throw from suspense by default', async () => {
+    it('should not throw from suspense by default', async () => {
       const key = queryKey()
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
@@ -579,7 +579,7 @@ describe('useQuery', () => {
       })
     })
 
-    test('should throw from suspense when throwOnError is true', async () => {
+    it('should throw from suspense when throwOnError is true', async () => {
       const key = queryKey()
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))

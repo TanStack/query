@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isReactive, ref } from 'vue-demi'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
@@ -52,6 +52,19 @@ describe('mutationOptions', () => {
       }) as const
 
     expect(mutationOptions(getter)).toBe(getter)
+  })
+
+  it('should work when used with useMutation (getter without mutationKey in mutationOptions)', async () => {
+    const mutationOpts = mutationOptions(() => ({
+      mutationFn: () => sleep(10).then(() => 'data'),
+    }))
+
+    const { mutate, data } = useMutation(mutationOpts)
+
+    mutate()
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(data.value).toEqual('data')
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
@@ -147,6 +160,27 @@ describe('mutationOptions', () => {
     isMutatingArray.push(isMutating.value)
 
     expect(isMutatingArray).toEqual([0, 1, 0])
+  })
+
+  it('should return the number of fetching mutations when used with useIsMutating (getter with mutationKey in mutationOptions)', async () => {
+    const keyRef = ref('isMutatingGetter')
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: [keyRef.value],
+      mutationFn: () => sleep(10).then(() => 'data'),
+    }))
+
+    const { mutate } = useMutation(mutationOpts)
+    mutate()
+
+    const isMutating = useIsMutating({
+      mutationKey: [keyRef.value],
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(isMutating.value).toEqual(1)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(isMutating.value).toEqual(0)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (getter without mutationKey in mutationOptions)', async () => {
@@ -564,6 +598,25 @@ describe('mutationOptions', () => {
     expect(states.value).toEqual(['data1'])
   })
 
+  it('should return mutation states when used with useMutationState (getter with mutationKey in mutationOptions)', async () => {
+    const keyRef = ref('useMutationStateGetter')
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: [keyRef.value],
+      mutationFn: (params: string) => sleep(10).then(() => params),
+    }))
+
+    const { mutate } = useMutation(mutationOpts)
+    mutate('foo')
+
+    const states = useMutationState({
+      filters: { mutationKey: [keyRef.value], status: 'pending' },
+      select: (mutation) => mutation.state.variables,
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(states.value).toEqual(['foo'])
+  })
+
   it('should return mutation states when used with useMutationState (getter without mutationKey in mutationOptions)', async () => {
     const mutationOpts = mutationOptions(() => ({
       mutationFn: () => sleep(10).then(() => 'data'),
@@ -632,59 +685,6 @@ describe('mutationOptions', () => {
     expect(states.value).toEqual(['data1'])
   })
 
-  it('should work with getter passed to mutationOptions when used with useIsMutating', async () => {
-    const keyRef = ref('isMutatingGetter')
-    const mutationOpts = mutationOptions(() => ({
-      mutationKey: [keyRef.value],
-      mutationFn: () => sleep(10).then(() => 'data'),
-    }))
-
-    const { mutate } = useMutation(mutationOpts)
-    mutate()
-
-    const isMutating = useIsMutating({
-      mutationKey: [keyRef.value],
-    })
-
-    await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating.value).toEqual(1)
-
-    await vi.advanceTimersByTimeAsync(10)
-    expect(isMutating.value).toEqual(0)
-  })
-
-  it('should work with getter passed to mutationOptions when used with useMutationState', async () => {
-    const keyRef = ref('useMutationStateGetter')
-    const mutationOpts = mutationOptions(() => ({
-      mutationKey: [keyRef.value],
-      mutationFn: (params: string) => sleep(10).then(() => params),
-    }))
-
-    const { mutate } = useMutation(mutationOpts)
-    mutate('foo')
-
-    const states = useMutationState({
-      filters: { mutationKey: [keyRef.value], status: 'pending' },
-      select: (mutation) => mutation.state.variables,
-    })
-
-    await vi.advanceTimersByTimeAsync(0)
-    expect(states.value).toEqual(['foo'])
-  })
-
-  it('should work with getter passed to mutationOptions without mutationKey', async () => {
-    const mutationOpts = mutationOptions(() => ({
-      mutationFn: () => sleep(10).then(() => 'data'),
-    }))
-
-    const { mutate, data } = useMutation(mutationOpts)
-
-    mutate()
-    await vi.advanceTimersByTimeAsync(10)
-
-    expect(data.value).toEqual('data')
-  })
-
   it('should return data in a shallow ref when shallow is true', async () => {
     const mutationOpts = mutationOptions({
       mutationKey: ['key'],
@@ -715,5 +715,39 @@ describe('mutationOptions', () => {
 
     expect(data.value).toEqual({ nested: { count: 0 } })
     expect(isReactive(data.value?.nested)).toBe(false)
+  })
+
+  it('should reactively update mutationKey when ref changes in getter', async () => {
+    const key = queryKey()
+    const keyRef = ref('key01')
+    const fnMock = vi.fn((params: string) => sleep(10).then(() => params))
+    const mutationOpts = mutationOptions(() => ({
+      mutationKey: [...key, keyRef.value],
+      mutationFn: fnMock,
+    }))
+
+    const mutation = useMutation(mutationOpts)
+
+    mutation.mutate('data')
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fnMock).toHaveBeenCalledTimes(1)
+    expect(fnMock).toHaveBeenNthCalledWith(
+      1,
+      'data',
+      expect.objectContaining({ mutationKey: [...key, 'key01'] }),
+    )
+
+    keyRef.value = 'key02'
+    await vi.advanceTimersByTimeAsync(0)
+    mutation.mutate('data')
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(fnMock).toHaveBeenCalledTimes(2)
+    expect(fnMock).toHaveBeenNthCalledWith(
+      2,
+      'data',
+      expect.objectContaining({ mutationKey: [...key, 'key02'] }),
+    )
   })
 })

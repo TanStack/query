@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { MutationObserver, QueryClient } from '..'
 
@@ -16,7 +16,7 @@ describe('mutationObserver', () => {
     vi.useRealTimers()
   })
 
-  test('onUnsubscribe should not remove the current mutation observer if there is still a subscription', async () => {
+  it('onUnsubscribe should not remove the current mutation observer if there is still a subscription', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: (text: string) => sleep(20).then(() => text),
     })
@@ -41,7 +41,7 @@ describe('mutationObserver', () => {
     unsubscribe2()
   })
 
-  test('unsubscribe should remove observer to trigger GC', async () => {
+  it('unsubscribe should remove observer to trigger GC', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: (text: string) => sleep(5).then(() => text),
       gcTime: 10,
@@ -62,7 +62,7 @@ describe('mutationObserver', () => {
     expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
   })
 
-  test('reset should remove observer to trigger GC', async () => {
+  it('reset should remove observer to trigger GC', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: (text: string) => sleep(5).then(() => text),
       gcTime: 10,
@@ -85,7 +85,7 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('changing mutation keys should reset the observer', async () => {
+  it('changing mutation keys should reset the observer', async () => {
     const key = queryKey()
     const mutation = new MutationObserver(queryClient, {
       mutationKey: [...key, '1'],
@@ -115,7 +115,7 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('changing mutation keys should not affect already existing mutations', async () => {
+  it('changing mutation keys should not affect already existing mutations', async () => {
     const key = queryKey()
     const mutationObserver = new MutationObserver(queryClient, {
       mutationKey: [...key, '1'],
@@ -156,7 +156,7 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('changing mutation meta should not affect successful mutations', async () => {
+  it('changing mutation meta should not affect successful mutations', async () => {
     const mutationObserver = new MutationObserver(queryClient, {
       meta: { a: 1 },
       mutationFn: (text: string) => sleep(5).then(() => text),
@@ -192,7 +192,7 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('mutation cache should have different meta when updated between mutations', async () => {
+  it('mutation cache should have different meta when updated between mutations', async () => {
     const mutationFn = (text: string) => sleep(5).then(() => text)
     const mutationObserver = new MutationObserver(queryClient, {
       meta: { a: 1 },
@@ -233,7 +233,7 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('changing mutation meta should not affect rejected mutations', async () => {
+  it('changing mutation meta should not affect rejected mutations', async () => {
     const mutationObserver = new MutationObserver(queryClient, {
       meta: { a: 1 },
       mutationFn: (_: string) =>
@@ -268,7 +268,7 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('changing mutation meta should affect pending mutations', async () => {
+  it('changing mutation meta should affect pending mutations', async () => {
     const mutationObserver = new MutationObserver(queryClient, {
       meta: { a: 1 },
       mutationFn: (text: string) => sleep(20).then(() => text),
@@ -301,7 +301,7 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('mutation callbacks should be called in correct order with correct arguments for success case', async () => {
+  it('mutation callbacks should be called in correct order with correct arguments for success case', async () => {
     const onSuccess = vi.fn()
     const onSettled = vi.fn()
 
@@ -341,7 +341,7 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test('mutation callbacks should be called in correct order with correct arguments for error case', async () => {
+  it('mutation callbacks should be called in correct order with correct arguments for error case', async () => {
     const onError = vi.fn()
     const onSettled = vi.fn()
 
@@ -385,7 +385,7 @@ describe('mutationObserver', () => {
   })
 
   describe('erroneous mutation callback', () => {
-    test('onSuccess and onSettled is transferred to different execution context where it is reported', async ({
+    it('onSuccess and onSettled is transferred to different execution context where it is reported', async ({
       onTestFinished,
     }) => {
       const unhandledRejectionFn = vi.fn()
@@ -429,7 +429,7 @@ describe('mutationObserver', () => {
       unsubscribe()
     })
 
-    test('onError and onSettled is transferred to different execution context where it is reported', async ({
+    it('onError and onSettled is transferred to different execution context where it is reported', async ({
       onTestFinished,
     }) => {
       const unhandledRejectionFn = vi.fn()
@@ -477,7 +477,7 @@ describe('mutationObserver', () => {
     })
   })
 
-  test('should not notify cache when setOptions is called with same options', () => {
+  it('should not notify cache when setOptions is called with same options', () => {
     const mutationObserver = new MutationObserver(queryClient, {
       mutationFn: (text: string) => Promise.resolve(text),
     })
