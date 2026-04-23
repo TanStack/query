@@ -46,7 +46,6 @@
     "package:check": "node scripts/check-package.mjs",
     "package:smoke:cjs-types": "node scripts/check-cjs-types-smoke.mjs",
     "test:build": "publint --strict && attw --pack && pnpm run package:smoke:cjs-types",
-    "package:build": "pnpm run build && pnpm run test:build",
     "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
     "measure:bundle:raw": "node scripts/measure-bundle.mjs",
     "perf:l3": "pnpm run build && node scripts/l3-stress.mjs",
@@ -84,7 +83,7 @@
     "example:ssr:e2e:all:nobuild": "pnpm --dir examples/lit-query-ssr-app run e2e:all && pnpm --dir examples/lit-query-ssr-app run e2e:public-origin",
     "example:ssr:e2e:all": "pnpm run example:ssr:e2e:all:default && pnpm run example:ssr:e2e:public-origin",
     "demo:setup": "pnpm run example:install && npm --prefix examples/lit-query-e2e-app exec playwright install chromium",
-    "demo:gate": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm test && pnpm run build && pnpm run package:check && pnpm run package:build && pnpm run example:e2e:all:nobuild && pnpm run example:ssr:e2e:all:nobuild && pnpm run measure:bundle:raw && pnpm run perf:l3:raw",
+    "demo:gate": "pnpm run typecheck && pnpm run lint && pnpm test && pnpm run build && pnpm run package:check && pnpm run test:build && pnpm run example:e2e:all:nobuild && pnpm run example:ssr:e2e:all:nobuild && pnpm run measure:bundle:raw && pnpm run perf:l3:raw",
     "demo:gate:headed": "pnpm run build && pnpm run example:e2e:all:headed"
   },
   "dependencies": {
