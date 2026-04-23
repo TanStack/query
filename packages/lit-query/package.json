@@ -29,19 +29,18 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "compile": "tsc --build",
+    "compile": "node ../../node_modules/typescript/lib/tsc.js --build",
     "build:deps": "pnpm --dir ../query-core run build",
     "build": "pnpm run build:deps && pnpm run build:esm && pnpm run build:cjs",
-    "build:esm": "tsc -p tsconfig.build.json",
-    "build:cjs": "node -e \"require('node:fs').rmSync('dist-cjs', { recursive: true, force: true })\" && tsc -p tsconfig.build.cjs.json && node scripts/write-cjs-package.mjs",
-    "test:types": "tsc --noEmit",
+    "build:esm": "node ../../node_modules/typescript/lib/tsc.js -p tsconfig.build.json",
+    "build:cjs": "node -e \"require('node:fs').rmSync('dist-cjs', { recursive: true, force: true })\" && node ../../node_modules/typescript/lib/tsc.js -p tsconfig.build.cjs.json && node scripts/write-cjs-package.mjs",
+    "test:types": "node ../../node_modules/typescript/lib/tsc.js --noEmit",
     "test:eslint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test:lib": "vitest run",
     "test:lib:dev": "vitest",
     "test:watch": "pnpm run test:lib:dev",
-    "package:smoke:cjs-types": "node scripts/check-cjs-types-smoke.mjs",
-    "test:build": "publint --strict && attw --pack && pnpm run package:smoke:cjs-types",
+    "test:build": "publint --strict && attw --pack && node scripts/check-cjs-types-smoke.mjs",
     "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
     "measure:bundle:raw": "node scripts/measure-bundle.mjs",
     "perf:l3": "pnpm run build && node scripts/l3-stress.mjs",
@@ -89,17 +88,8 @@
     "lit": ">=2.8.0 <4"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.15.3",
     "@eslint/js": "^9.36.0",
-    "@types/node": "^22.15.3",
-    "@vitest/eslint-plugin": "^1.4.0",
-    "eslint": "^9.36.0",
     "globals": "^17.4.0",
-    "jsdom": "^27.0.0",
-    "prettier": "^3.7.4",
-    "publint": "^0.3.13",
-    "typescript": "^5.9.2",
-    "typescript-eslint": "^8.54.0",
-    "vitest": "^4.0.18"
+    "typescript-eslint": "^8.54.0"
   }
 }

@@ -2463,42 +2463,15 @@ importers:
         specifier: ^3.3.1
         version: 3.3.2
     devDependencies:
-      '@arethetypeswrong/cli':
-        specifier: ^0.15.3
-        version: 0.15.4
       '@eslint/js':
         specifier: ^9.36.0
         version: 9.39.4
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.19.15
-      '@vitest/eslint-plugin':
-        specifier: ^1.4.0
-        version: 1.6.14(@typescript-eslint/eslint-plugin@8.58.1(@typescript-eslint/parser@8.58.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@5.9.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(yaml@2.8.3)))
-      eslint:
-        specifier: ^9.36.0
-        version: 9.39.4(jiti@2.6.1)
       globals:
         specifier: ^17.4.0
         version: 17.5.0
-      jsdom:
-        specifier: ^27.0.0
-        version: 27.4.0
-      prettier:
-        specifier: ^3.7.4
-        version: 3.8.1
-      publint:
-        specifier: ^0.3.13
-        version: 0.3.18
-      typescript:
-        specifier: ^5.9.2
-        version: 5.9.3
       typescript-eslint:
         specifier: 8.58.1
         version: 8.58.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
-      vitest:
-        specifier: ^4.0.18
-        version: 4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@5.9.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(yaml@2.8.3))
 
   packages/preact-query:
     dependencies:

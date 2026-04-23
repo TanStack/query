@@ -9,9 +9,10 @@ const execFile = promisify(execFileCallback)
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 const pnpmCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
 const projectDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const typeRootsDir = resolve(projectDir, 'node_modules', '@types')
+const workspaceRoot = resolve(projectDir, '..', '..')
+const typeRootsDir = resolve(workspaceRoot, 'node_modules', '@types')
 const tscEntrypoint = resolve(
-  projectDir,
+  workspaceRoot,
   'node_modules',
   'typescript',
   'lib',
