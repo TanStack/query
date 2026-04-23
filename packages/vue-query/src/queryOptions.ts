@@ -1,9 +1,4 @@
-import type {
-  DeepUnwrapRef,
-  MaybeRef,
-  MaybeRefOrGetter,
-  ShallowOption,
-} from './types'
+import type { DeepUnwrapRef, MaybeRefOrGetter, ShallowOption } from './types'
 import type {
   DataTag,
   DefaultError,
@@ -37,7 +32,7 @@ export type QueryOptions<
             DeepUnwrapRef<TQueryKey>
           >)
     : Property extends 'queryKey'
-      ? MaybeRef<TQueryKey>
+      ? MaybeRefOrGetter<TQueryKey>
       : QueryObserverOptions<
           TQueryFnData,
           TError,

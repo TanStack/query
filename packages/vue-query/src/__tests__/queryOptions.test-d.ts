@@ -321,4 +321,15 @@ describe('queryOptions', () => {
 
     expectTypeOf(options.queryKey).not.toBeUndefined()
   })
+
+  it('should allow getter function as queryKey', () => {
+    const id = ref<string | null>('1')
+
+    const options = queryOptions({
+      queryKey: () => ['foo', id.value] as const,
+      queryFn: () => Promise.resolve({ id: '1' }),
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+  })
 })
