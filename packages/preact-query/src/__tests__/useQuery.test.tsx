@@ -12,7 +12,7 @@ import {
   useRef,
   useState,
 } from 'preact/hooks'
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Mock } from 'vitest'
 
 import {
@@ -3911,7 +3911,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  test('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
+  it('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3936,7 +3936,7 @@ describe('useQuery', () => {
     expect(rendered.getByText('status: pending, idle')).toBeInTheDocument()
   })
 
-  test('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
+  it('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3959,7 +3959,7 @@ describe('useQuery', () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
 
-  test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
+  it('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
     const key = queryKey()
 
     function Page() {
@@ -4919,7 +4919,7 @@ describe('useQuery', () => {
         queryFn,
         enabled,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -4979,7 +4979,7 @@ describe('useQuery', () => {
           return 'data'
         },
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -5033,7 +5033,7 @@ describe('useQuery', () => {
         queryFn: () =>
           sleep(10).then(() => Promise.reject<unknown>(new Error('Error'))),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -6012,7 +6012,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
       })
 
       states.push(state)
@@ -6433,7 +6433,7 @@ describe('useQuery', () => {
           ? () => sleep(10).then(() => Promise.resolve('data'))
           : skipToken,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
