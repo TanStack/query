@@ -1391,7 +1391,7 @@ describe('dehydration and rehydration', () => {
   // synchronous thenable resolution must also produce status: 'success'.
   // Previously the if (query) branch would spread status: 'pending' from the
   // server state without correcting it for the resolved data.
-  test('should set status to success when rehydrating an existing pending query with a synchronously resolved promise', async () => {
+  it('should set status to success when rehydrating an existing pending query with a synchronously resolved promise', async () => {
     const key = queryKey()
     // --- server ---
 
@@ -1447,7 +1447,7 @@ describe('dehydration and rehydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should not transition to a fetching/pending state when hydrating an already resolved promise into a new query', async () => {
+  it('should not transition to a fetching/pending state when hydrating an already resolved promise into a new query', async () => {
     const key = queryKey()
     // --- server ---
     const serverQueryClient = new QueryClient({
@@ -1502,7 +1502,7 @@ describe('dehydration and rehydration', () => {
     serverQueryClient.clear()
   })
 
-  test('should not transition to a fetching/pending state when hydrating an already resolved promise into an existing query', async () => {
+  it('should not transition to a fetching/pending state when hydrating an already resolved promise into an existing query', async () => {
     const key = queryKey()
     // --- server ---
     const serverQueryClient = new QueryClient({
