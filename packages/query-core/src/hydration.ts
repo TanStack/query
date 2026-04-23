@@ -240,13 +240,14 @@ export function hydrate(
             //
             // Since you can opt into dehydrating failed queries, and those can have data from
             // previous successful fetches, we make sure we only do this for pending queries.
-            ...(state.status === 'pending' && data !== undefined && {
-              status: 'success' as const,
-              // Preserve existing fetchStatus if the existing query is actively fetching.
-              ...(!existingQueryIsFetching && {
-                fetchStatus: 'idle' as const,
+            ...(state.status === 'pending' &&
+              data !== undefined && {
+                status: 'success' as const,
+                // Preserve existing fetchStatus if the existing query is actively fetching.
+                ...(!existingQueryIsFetching && {
+                  fetchStatus: 'idle' as const,
+                }),
               }),
-            }),
           })
         }
       } else {
@@ -268,7 +269,10 @@ export function hydrate(
             fetchStatus: 'idle',
             // Like above, if the query was pending at the moment of dehydration but has data,
             // we can assume it should be hydrated as successful.
-            status: state.status === 'pending' && data !== undefined ? 'success' : state.status,
+            status:
+              state.status === 'pending' && data !== undefined
+                ? 'success'
+                : state.status,
           },
         )
       }
