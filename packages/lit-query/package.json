@@ -39,8 +39,6 @@
     "test:eslint": "eslint .",
     "lint": "pnpm run test:eslint",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
     "test:lib": "vitest run",
     "test": "pnpm run test:lib",
     "test:lib:dev": "vitest",

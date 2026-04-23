@@ -99,7 +99,10 @@ describe('BaseController', () => {
     await Promise.resolve()
     await Promise.resolve()
 
-    expect(controller.lifecycle).toEqual(['connected:missing', 'changed:client'])
+    expect(controller.lifecycle).toEqual([
+      'connected:missing',
+      'changed:client',
+    ])
 
     controller.destroy()
     provider.remove()
