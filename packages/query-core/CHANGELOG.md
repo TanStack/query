@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.100.1
+
+### Patch Changes
+
+- Fix bugs where hydrating queries with promises that had already resolved could cause queries to briefly and incorrectly show as pending/fetching ([#10444](https://github.com/TanStack/query/pull/10444))
+
 ## 5.100.0
 
 ### Minor Changes

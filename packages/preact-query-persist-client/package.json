@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/preact-query-persist-client",
-  "version": "5.100.0",
+  "version": "5.100.1",
   "description": "Preact bindings to work with persisters in TanStack/preact-query",
   "author": "tannerlinsley",
   "license": "MIT",
