@@ -18,6 +18,7 @@ import {
   skipToken,
 } from '../utils'
 import { Mutation } from '../mutation'
+import type { QueryFunctionContext } from '..'
 
 describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
@@ -537,6 +538,8 @@ describe('core/utils', () => {
   })
 
   describe('ensureQueryFn', () => {
+    const context = {} as QueryFunctionContext
+
     it('should return a function that resolves to initialPromise when queryFn is missing and initialPromise is provided', async () => {
       const initialPromise = Promise.resolve('initial-data')
 
@@ -545,9 +548,7 @@ describe('core/utils', () => {
         { initialPromise },
       )
 
-      await expect(
-        (resolved as unknown as () => Promise<string>)(),
-      ).resolves.toBe('initial-data')
+      await expect(resolved(context)).resolves.toBe('initial-data')
     })
 
     it('should return a function that rejects when initialPromise rejects', async () => {
@@ -559,9 +560,7 @@ describe('core/utils', () => {
         { initialPromise },
       )
 
-      await expect(
-        (resolved as unknown as () => Promise<unknown>)(),
-      ).rejects.toBe(error)
+      await expect(resolved(context)).rejects.toBe(error)
     })
 
     it('should return a function that rejects with missing queryFn error when queryFn is set to skipToken', async () => {
@@ -579,9 +578,9 @@ describe('core/utils', () => {
           'Attempted to invoke queryFn when set to skipToken',
         ),
       )
-      await expect(
-        (resolved as unknown as () => Promise<unknown>)(),
-      ).rejects.toThrow('Missing queryFn: \'["skip"]\'')
+      await expect(resolved(context)).rejects.toThrow(
+        'Missing queryFn: \'["skip"]\'',
+      )
 
       consoleErrorSpy.mockRestore()
     })
