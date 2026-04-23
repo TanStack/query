@@ -45,7 +45,7 @@ describe('injectQueries', () => {
       `,
     })
     class Page {
-      result = injectQueries(() => ({
+      readonly result = injectQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -91,7 +91,7 @@ describe('injectQueries', () => {
       `,
     })
     class Page {
-      combined = injectQueries(() => ({
+      readonly combined = injectQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -160,7 +160,7 @@ describe('injectQueries', () => {
         `,
       })
       class Page {
-        queries = injectQueries(() => ({
+        readonly queries = injectQueries(() => ({
           queries: [
             { queryKey: key1, queryFn: queryFn1 },
             { queryKey: key2, queryFn: queryFn2 },
