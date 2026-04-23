@@ -267,9 +267,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
   it('should not fetch with initial data and staleTime', async () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
-    const queryFn = vi.fn().mockImplementation(() =>
-      sleep(10).then(() => 'test'),
-    )
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'test'))
 
     function MyComponent(props: { promise: Promise<string> }) {
       useTrackRenders()
@@ -678,9 +678,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
   it('should dedupe when re-fetched with queryClient.fetchQuery while suspending', async () => {
     const key = queryKey()
     const renderStream = createRenderStream({ snapshotDOM: true })
-    const queryFn = vi.fn().mockImplementation(() =>
-      sleep(10).then(() => 'test'),
-    )
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'test'))
 
     const options = {
       queryKey: key,
@@ -867,9 +867,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
   it('should resolve to previous data when canceled with cancelQueries while suspending', async () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
     const key = queryKey()
-    const queryFn = vi.fn().mockImplementation(() =>
-      sleep(10).then(() => 'test'),
-    )
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'test'))
 
     const options = {
       queryKey: key,
@@ -982,9 +982,9 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     const renderStream = createRenderStream({ snapshotDOM: true })
     queryClient.setQueryData(key, 'initial')
 
-    const queryFn = vi.fn().mockImplementation(() =>
-      sleep(10).then(() => 'test'),
-    )
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'test'))
 
     function MyComponent(props: { promise: Promise<string> }) {
       const data = React.use(props.promise)
@@ -1351,8 +1351,7 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
       useTrackRenders()
       const query = useInfiniteQuery({
         queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => ({ nextCursor: 1, data: 'test' })),
+        queryFn: () => sleep(10).then(() => ({ nextCursor: 1, data: 'test' })),
         initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       })
