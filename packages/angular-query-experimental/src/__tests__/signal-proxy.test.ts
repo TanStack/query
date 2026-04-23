@@ -16,12 +16,12 @@ describe('signalProxy', () => {
     expect(isSignal(proxy.fn)).toBe(false)
   })
 
-  it('supports "in" operator', () => {
+  it('should support "in" operator', () => {
     expect('baz' in proxy).toBe(true)
     expect('foo' in proxy).toBe(false)
   })
 
-  it('supports "Object.keys"', () => {
+  it('should support "Object.keys"', () => {
     expect(Object.keys(proxy)).toEqual(['fn', 'baz'])
   })
 })

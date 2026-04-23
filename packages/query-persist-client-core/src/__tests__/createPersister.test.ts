@@ -436,7 +436,7 @@ describe('createPersister', () => {
   })
 
   describe('persistQuery', () => {
-    it('Should properly persiste basic query', async () => {
+    it('should properly persist basic query', async () => {
       const storage = getFreshStorage()
       const { persister, query, queryHash, queryKey, storageKey } =
         setupPersister(['foo'], {
@@ -458,7 +458,7 @@ describe('createPersister', () => {
       })
     })
 
-    it('Should skip persistance if storage is not provided', async () => {
+    it('should skip persistence if storage is not provided', async () => {
       const serializeMock = vi.fn()
       const { persister, query } = setupPersister(['foo'], {
         storage: null,
@@ -473,7 +473,7 @@ describe('createPersister', () => {
   })
 
   describe('persistQueryByKey', () => {
-    it('Should skip persistance if storage is not provided', async () => {
+    it('should skip persistence if storage is not provided', async () => {
       const serializeMock = vi.fn()
       const { persister, client, queryKey } = setupPersister(['foo'], {
         storage: null,
@@ -486,7 +486,7 @@ describe('createPersister', () => {
       expect(serializeMock).toHaveBeenCalledTimes(0)
     })
 
-    it('should skip persistance if query was not found', async () => {
+    it('should skip persistence if query was not found', async () => {
       const serializeMock = vi.fn()
       const storage = getFreshStorage()
       const { client, persister, queryKey } = setupPersister(['foo'], {
@@ -500,7 +500,7 @@ describe('createPersister', () => {
       expect(serializeMock).toHaveBeenCalledTimes(0)
     })
 
-    it('Should properly persiste basic query', async () => {
+    it('should properly persist basic query', async () => {
       const storage = getFreshStorage()
       const { persister, client, queryHash, queryKey, storageKey } =
         setupPersister(['foo'], {

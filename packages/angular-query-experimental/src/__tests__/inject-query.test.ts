@@ -38,6 +38,7 @@ import type { CreateQueryOptions, OmitKeyof, QueryFunction } from '..'
 describe('injectQuery', () => {
   let queryCache: QueryCache
   let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
     queryCache = new QueryCache()
@@ -566,13 +567,8 @@ describe('injectQuery', () => {
         .fn()
         .mockImplementation(() => sleep(10).then(() => 'data'))
 
-      TestBed.resetTestingModule()
       TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-          provideIsRestoring(signal(true).asReadonly()),
-        ],
+        providers: [provideIsRestoring(signal(true).asReadonly())],
       })
 
       const query = TestBed.runInInjectionContext(() =>
@@ -597,7 +593,7 @@ describe('injectQuery', () => {
   })
 
   describe('injection context', () => {
-    it('throws NG0203 with descriptive error outside injection context', () => {
+    it('should throw NG0203 with descriptive error outside injection context', () => {
       const key = queryKey()
       expect(() => {
         injectQuery(() => ({
@@ -607,7 +603,7 @@ describe('injectQuery', () => {
       }).toThrow(/NG0203(.*?)injectQuery/)
     })
 
-    it('can be used outside injection context when passing an injector', () => {
+    it('should be usable outside injection context when passing an injector', () => {
       const key = queryKey()
       const query = injectQuery(
         () => ({
@@ -645,14 +641,8 @@ describe('injectQuery', () => {
     })
 
     it('should complete HttpClient-based queries before whenStable() resolves', async () => {
-      TestBed.resetTestingModule()
       TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-          provideHttpClient(),
-          provideHttpClientTesting(),
-        ],
+        providers: [provideHttpClient(), provideHttpClientTesting()],
       })
 
       const app = TestBed.inject(ApplicationRef)
@@ -691,14 +681,6 @@ describe('injectQuery', () => {
     })
 
     it('should handle synchronous queryFn with staleTime', async () => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-        ],
-      })
-
       const app = TestBed.inject(ApplicationRef)
       let callCount = 0
 
@@ -735,14 +717,6 @@ describe('injectQuery', () => {
     })
 
     it('should handle enabled/disabled transitions with synchronous queryFn', async () => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-        ],
-      })
-
       const app = TestBed.inject(ApplicationRef)
       const enabledSignal = signal(false)
       let callCount = 0
@@ -777,14 +751,6 @@ describe('injectQuery', () => {
     })
 
     it('should handle query invalidation with synchronous data', async () => {
-      TestBed.resetTestingModule()
-      TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-        ],
-      })
-
       const app = TestBed.inject(ApplicationRef)
       const testKey = queryKey()
       let callCount = 0

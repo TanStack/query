@@ -18,14 +18,6 @@ import type {
   Persister,
 } from '@tanstack/query-persist-client-core'
 
-beforeEach(() => {
-  vi.useFakeTimers()
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
-
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
 
@@ -62,7 +54,15 @@ const createMockErrorPersister = (
 }
 
 describe('withPersistQueryClient', () => {
-  it('restores cache from persister', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should restore cache from persister', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -97,13 +97,16 @@ describe('withPersistQueryClient', () => {
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'fetched'),
       }))
-      _ = effect(() => {
-        states.push({
-          status: this.state.status(),
-          fetchStatus: this.state.fetchStatus(),
-          data: this.state.data(),
+
+      constructor() {
+        effect(() => {
+          states.push({
+            status: this.state.status(),
+            fetchStatus: this.state.fetchStatus(),
+            data: this.state.data(),
+          })
         })
-      })
+      }
     }
 
     const rendered = await render(Page, {
@@ -189,13 +192,16 @@ describe('withPersistQueryClient', () => {
         // otherwise initialData would be newer and takes precedence
         initialDataUpdatedAt: 1,
       }))
-      _ = effect(() => {
-        states.push({
-          status: this.state.status(),
-          fetchStatus: this.state.fetchStatus(),
-          data: this.state.data(),
+
+      constructor() {
+        effect(() => {
+          states.push({
+            status: this.state.status(),
+            fetchStatus: this.state.fetchStatus(),
+            data: this.state.data(),
+          })
         })
-      })
+      }
     }
 
     const rendered = await render(Page, {
@@ -280,13 +286,16 @@ describe('withPersistQueryClient', () => {
         },
         staleTime: Infinity,
       }))
-      _ = effect(() => {
-        states.push({
-          status: this.state.status(),
-          fetchStatus: this.state.fetchStatus(),
-          data: this.state.data(),
+
+      constructor() {
+        effect(() => {
+          states.push({
+            status: this.state.status(),
+            fetchStatus: this.state.fetchStatus(),
+            data: this.state.data(),
+          })
         })
-      })
+      }
     }
 
     const rendered = await render(Page, {

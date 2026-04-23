@@ -550,6 +550,7 @@ describe('streamedQuery', () => {
       retry: false,
       queryFn: streamedQuery({
         refetchMode: 'reset',
+        // eslint-disable-next-line @typescript-eslint/require-await
         streamFn: async function* () {
           if (shouldError) {
             throw error
@@ -711,6 +712,7 @@ describe('streamedQuery', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: streamedQuery({
+        // eslint-disable-next-line @typescript-eslint/require-await
         streamFn: async function* () {
           const v = [1, 2, 3]
           yield* v

@@ -458,14 +458,8 @@ describe('PendingTasks Integration', () => {
 
   describe('HttpClient Integration', () => {
     beforeEach(() => {
-      TestBed.resetTestingModule()
       TestBed.configureTestingModule({
-        providers: [
-          provideZonelessChangeDetection(),
-          provideTanStackQuery(queryClient),
-          provideHttpClient(),
-          provideHttpClientTesting(),
-        ],
+        providers: [provideHttpClient(), provideHttpClientTesting()],
       })
     })
 
