@@ -4919,7 +4919,7 @@ describe('useQuery', () => {
         queryFn,
         enabled,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -4979,7 +4979,7 @@ describe('useQuery', () => {
           return 'data'
         },
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -5033,7 +5033,7 @@ describe('useQuery', () => {
         queryFn: () =>
           sleep(10).then(() => Promise.reject<unknown>(new Error('Error'))),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
@@ -6012,7 +6012,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
       })
 
       states.push(state)
@@ -6433,7 +6433,7 @@ describe('useQuery', () => {
           ? () => sleep(10).then(() => Promise.resolve('data'))
           : skipToken,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })

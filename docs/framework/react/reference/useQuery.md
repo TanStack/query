@@ -86,8 +86,9 @@ const {
   - If set to a `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
   - If set to a function, it will be called with `failureCount` (starting at `0` for the first retry) and `error` to determine if a retry should be attempted.
   - defaults to `3` on the client and `0` on the server
-- `retryOnMount: boolean`
-  - If set to `false`, the query will not be retried on mount if it contains an error. Defaults to `true`.
+- `retryOnMount: boolean | (query: Query) => boolean`
+  - If set to `false`, the query will not be retried on mount if it contains an error and has no data. Defaults to `true`.
+  - If set to a function, the function will be executed with the query to compute the value.
 - `retryDelay: number | (retryAttempt: number, error: TError) => number`
   - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
