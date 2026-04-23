@@ -1,5 +1,5 @@
 ---
-'@tanstack/lit-query': patch
+'@tanstack/lit-query': minor
 ---
 
 Add initial @tanstack/lit-query package
