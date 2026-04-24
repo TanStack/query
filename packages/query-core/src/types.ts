@@ -222,6 +222,12 @@ export type NotifyOnChangeProps =
   | undefined
   | (() => Array<keyof InfiniteQueryObserverResult> | 'all' | undefined)
 
+export type NotifyOnMutationChangeProps =
+  | Array<keyof MutationObserverResult>
+  | 'all'
+  | undefined
+  | (() => Array<keyof MutationObserverResult> | 'all' | undefined)
+
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -1154,6 +1160,14 @@ export interface MutationObserverOptions<
   TOnMutateResult = unknown,
 > extends MutationOptions<TData, TError, TVariables, TOnMutateResult> {
   throwOnError?: boolean | ((error: TError) => boolean)
+  /**
+   * If set, the component will only re-render if any of the listed properties change.
+   * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
+   * When set to `'all'`, the component will re-render whenever a mutation is updated.
+   * When set to a function, the function will be executed to compute the list of properties.
+   * By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
+   */
+  notifyOnChangeProps?: NotifyOnMutationChangeProps
 }
 
 export interface MutateOptions<

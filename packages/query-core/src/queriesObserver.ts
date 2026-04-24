@@ -185,14 +185,22 @@ export class QueriesObserver<
       (match) => match.defaultedQueryOptions.queryHash,
     )
 
+    const prevResult = this.#lastResult
+
+    const getStableResult = (r: Array<QueryObserverResult>) =>
+      prevResult && shallowEqualObjects(prevResult, r) ? prevResult : r
+
+    const nextResult = getStableResult(result)
+
     return [
-      result,
-      (r?: Array<QueryObserverResult>) => {
-        return this.#combineResult(r ?? result, combine, queryHashes)
-      },
-      () => {
-        return this.#trackResult(result, matches)
-      },
+      nextResult,
+      (r?: Array<QueryObserverResult>) =>
+        this.#combineResult(
+          (r && getStableResult(r)) ?? nextResult,
+          combine,
+          queryHashes,
+        ),
+      () => this.#trackResult(nextResult, matches),
     ]
   }
 
@@ -200,6 +208,10 @@ export class QueriesObserver<
     result: Array<QueryObserverResult>,
     matches: Array<QueryObserverMatch>,
   ) {
+    if (this.#lastResult && shallowEqualObjects(this.#lastResult, result)) {
+      return this.#lastResult
+    }
+
     return matches.map((match, index) => {
       const observerResult = result[index]!
       return !match.defaultedQueryOptions.notifyOnChangeProps
