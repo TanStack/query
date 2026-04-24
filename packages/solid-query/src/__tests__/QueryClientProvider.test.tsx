@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
+import { createMemo, createRoot } from 'solid-js'
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '..'
+import { useQueryClientResolver } from '../QueryClientProvider'
 
 describe('QueryClientProvider', () => {
   beforeEach(() => {
@@ -173,5 +175,28 @@ describe('QueryClientProvider', () => {
     expect(consoleMock).not.toHaveBeenCalled()
 
     consoleMock.mockRestore()
+  })
+
+  it('creates a query client resolver that is safe to call in reactive callbacks', () => {
+    const queryClient = new QueryClient()
+    let resolveClient!: () => QueryClient
+
+    function Page() {
+      resolveClient = useQueryClientResolver()
+      return null
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    createRoot((dispose) => {
+      const client = createMemo(() => resolveClient())
+
+      expect(client()).toBe(queryClient)
+      dispose()
+    })
   })
 })

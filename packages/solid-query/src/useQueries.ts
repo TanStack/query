@@ -11,7 +11,7 @@ import {
   onCleanup,
   onMount,
 } from 'solid-js'
-import { useQueryClient } from './QueryClientProvider'
+import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type { SolidQueryOptions, UseQueryResult } from './types'
 import type { Accessor } from 'solid-js'
@@ -196,7 +196,8 @@ export function useQueries<
   }>,
   queryClient?: Accessor<QueryClient>,
 ): TCombinedResult {
-  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const resolveClient = useQueryClientResolver(queryClient)
+  const client = createMemo(() => resolveClient())
   const isRestoring = useIsRestoring()
 
   const defaultedQueries = createMemo(() =>
