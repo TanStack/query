@@ -31,11 +31,13 @@ export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
 export type MaybeRefDeep<T> = MaybeRef<
   T extends Function
     ? T
-    : T extends object
-      ? {
-          [Property in keyof T]: MaybeRefDeep<T[Property]>
-        }
-      : T
+    : T extends { __brand: infer _ }
+      ? T
+      : T extends object
+        ? {
+            [Property in keyof T]: MaybeRefDeep<T[Property]>
+          }
+        : T
 >
 
 export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
