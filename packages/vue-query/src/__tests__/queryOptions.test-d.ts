@@ -298,4 +298,48 @@ describe('queryOptions', () => {
 
     expectTypeOf(options.queryKey).not.toBeUndefined()
   })
+
+  it('should work with branded queryKey', () => {
+    type PostId = string & { readonly __brand: 'PostId' }
+    const postId = '123' as PostId
+
+    const options = queryOptions({
+      queryKey: ['post', postId],
+      queryFn: () => Promise.resolve({ id: postId }),
+    })
+
+    expectTypeOf(options.queryKey).not.toBeUndefined()
+
+    // This should not error - the branded queryKey should be accepted by useQuery
+    const { data } = reactive(useQuery(options))
+    expectTypeOf(data).toEqualTypeOf<{ id: PostId } | undefined>()
+  })
+
+  it('should work with branded queryKey inside MaybeRefOrGetter', () => {
+    type PostId = string & { readonly __brand: 'PostId' }
+    const postId = '123' as PostId
+
+    // Test 1: simple queryOptions with branded string directly in tuple (like existing test)
+    const simpleOptions = queryOptions({
+      queryKey: ['post', postId as PostId],
+      queryFn: () => Promise.resolve({ id: postId as PostId }),
+    })
+    const { data: simpleData } = reactive(useQuery(simpleOptions))
+    expectTypeOf(simpleData).toEqualTypeOf<{ id: PostId } | undefined>()
+
+    // Test 2: branded string inside object inside tuple
+    const nestedOptions = queryOptions({
+      queryKey: ['post', { postId: postId as PostId }],
+      queryFn: () => Promise.resolve({ id: postId as PostId }),
+    })
+    const { data: nestedData } = reactive(useQuery(nestedOptions))
+    expectTypeOf(nestedData).toEqualTypeOf<{ id: PostId } | undefined>()
+
+    // Test 3: inline branded queryKey
+    const { data: inlineData } = reactive(useQuery({
+      queryKey: ['post', { postId: postId as PostId }],
+      queryFn: () => Promise.resolve({ id: postId as PostId }),
+    }))
+    expectTypeOf(inlineData).toEqualTypeOf<{ id: PostId } | undefined>()
+  })
 })
