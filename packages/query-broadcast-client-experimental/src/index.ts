@@ -75,7 +75,20 @@ export function broadcastQueryClient({
       }
 
       if (onBroadcastError) {
-        onBroadcastError(error, event)
+        // A throwing user handler would turn this `.catch` into a fresh
+        // rejected promise and re-introduce the exact `unhandledrejection`
+        // this helper exists to prevent. Guard the user-land call so the
+        // guarantee holds even when the hook misbehaves.
+        try {
+          onBroadcastError(error, event)
+        } catch (hookError) {
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn(
+              `[broadcastQueryClient] onBroadcastError threw while handling "${event.type}" for query ${event.queryHash}.`,
+              hookError,
+            )
+          }
+        }
         return
       }
 

@@ -144,5 +144,37 @@ describe('broadcastQueryClient', () => {
         process.off('unhandledRejection', onUnhandled)
       }
     })
+
+    it('does not surface failures even when onBroadcastError itself throws', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const onUnhandled = vi.fn()
+      process.on('unhandledRejection', onUnhandled)
+
+      try {
+        channelMock.postMessage.mockRejectedValue(
+          new DOMException('clone failed', 'DataCloneError'),
+        )
+
+        broadcastQueryClient({
+          queryClient,
+          broadcastChannel: 'test_channel',
+          // A misbehaving hook (e.g. a Sentry wrapper that throws during setup,
+          // or an inadvertent property access on a framework proxy) must not
+          // re-introduce an unhandled rejection through the catch handler.
+          onBroadcastError: () => {
+            throw new Error('boom')
+          },
+        })
+
+        queryClient.setQueryData(['stream'], { body: 'non-cloneable' })
+
+        await new Promise((resolve) => setTimeout(resolve, 20))
+
+        expect(onUnhandled).not.toHaveBeenCalled()
+        expect(warn).toHaveBeenCalled()
+      } finally {
+        process.off('unhandledRejection', onUnhandled)
+      }
+    })
   })
 })

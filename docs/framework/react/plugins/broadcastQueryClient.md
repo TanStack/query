@@ -54,14 +54,13 @@ interface BroadcastQueryClientOptions {
    * `queryKey` contains a value the structured-clone algorithm cannot
    * serialize (e.g. `ReadableStream`, `File`, functions, framework
    * proxies). Useful for routing failures to an error tracker. */
-  onBroadcastError?: (
-    error: unknown,
-    event: {
-      type: 'added' | 'removed' | 'updated'
-      queryHash: string
-      queryKey: QueryKey
-    },
-  ) => void
+  onBroadcastError?: (error: unknown, event: BroadcastErrorEvent) => void
+}
+
+interface BroadcastErrorEvent {
+  type: 'added' | 'removed' | 'updated'
+  queryHash: string
+  queryKey: QueryKey
 }
 ```
 
