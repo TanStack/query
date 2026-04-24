@@ -1,9 +1,9 @@
 import {
+  DestroyRef,
   Injector,
   NgZone,
   assertInInjectionContext,
   computed,
-  effect,
   inject,
   signal,
   untracked,
@@ -17,8 +17,7 @@ import {
 } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { PENDING_TASKS } from './pending-tasks-compat'
-import type { PendingTaskRef } from './pending-tasks-compat'
-import type { DefaultError, MutationObserverResult } from '@tanstack/query-core'
+import type { DefaultError } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
   CreateMutationOptions,
@@ -58,6 +57,7 @@ export function injectMutation<
 ): CreateMutationResult<TData, TError, TVariables, TOnMutateResult> {
   !options?.injector && assertInInjectionContext(injectMutation)
   const injector = options?.injector ?? inject(Injector)
+  const destroyRef = injector.get(DestroyRef)
   const ngZone = injector.get(NgZone)
   const pendingTasks = injector.get(PENDING_TASKS)
   const queryClient = injector.get(QueryClient)
@@ -78,7 +78,15 @@ export function injectMutation<
     > | null = null
 
     return computed(() => {
-      return (instance ||= new MutationObserver(queryClient, optionsSignal()))
+      const observerOptions = optionsSignal()
+      return untracked(() => {
+        if (instance) {
+          instance.setOptions(observerOptions)
+        } else {
+          instance = new MutationObserver(queryClient, observerOptions)
+        }
+        return instance
+      })
     })
   })()
 
@@ -87,97 +95,75 @@ export function injectMutation<
   >(() => {
     const observer = observerSignal()
     return (variables, mutateOptions) => {
-      observer.mutate(variables, mutateOptions).catch(noop)
+      void observer.mutate(variables, mutateOptions).catch(noop)
     }
   })
 
+  let cleanup: () => void = noop
+
   /**
-   * Computed signal that gets result from mutation cache based on passed options
+   * Returning a writable signal from a computed is similar to `linkedSignal`,
+   * but compatible with Angular < 19
+   *
+   * Compared to `linkedSignal`, this pattern requires extra parentheses:
+   * - Accessing value: `result()()`
+   * - Setting value: `result().set(newValue)`
    */
-  const resultFromInitialOptionsSignal = computed(() => {
+  const linkedResultSignal = computed(() => {
     const observer = observerSignal()
-    return observer.getCurrentResult()
+
+    return untracked(() => {
+      // observer.trackResult is not used as this optimization is not needed for Angular
+      const currentResult = observer.getCurrentResult()
+      const result = signal(currentResult)
+
+      cleanup()
+      let pendingTaskRef = currentResult.isPending ? pendingTasks.add() : null
+
+      const unsubscribe = ngZone.runOutsideAngular(() =>
+        observer.subscribe(
+          notifyManager.batchCalls((state) => {
+            ngZone.run(() => {
+              result.set(state)
+
+              // Track pending task when mutation is pending
+              if (state.isPending && !pendingTaskRef) {
+                pendingTaskRef = pendingTasks.add()
+              }
+
+              // Clear pending task when mutation is no longer pending
+              if (!state.isPending && pendingTaskRef) {
+                pendingTaskRef()
+                pendingTaskRef = null
+              }
+
+              if (
+                state.isError &&
+                shouldThrowError(observer.options.throwOnError, [state.error])
+              ) {
+                ngZone.onError.emit(state.error)
+                throw state.error
+              }
+            })
+          }),
+        ),
+      )
+
+      cleanup = () => {
+        // Clean up any pending task on destroy
+        if (pendingTaskRef) {
+          pendingTaskRef()
+          pendingTaskRef = null
+        }
+        unsubscribe()
+      }
+
+      return result
+    })
   })
 
-  /**
-   * Signal that contains result set by subscriber
-   */
-  const resultFromSubscriberSignal = signal<MutationObserverResult<
-    TData,
-    TError,
-    TVariables,
-    TOnMutateResult
-  > | null>(null)
-
-  effect(
-    () => {
-      const observer = observerSignal()
-      const observerOptions = optionsSignal()
-
-      untracked(() => {
-        observer.setOptions(observerOptions)
-      })
-    },
-    {
-      injector,
-    },
-  )
-
-  effect(
-    (onCleanup) => {
-      // observer.trackResult is not used as this optimization is not needed for Angular
-      const observer = observerSignal()
-      let pendingTaskRef: PendingTaskRef | null = null
-
-      untracked(() => {
-        const unsubscribe = ngZone.runOutsideAngular(() =>
-          observer.subscribe(
-            notifyManager.batchCalls((state) => {
-              ngZone.run(() => {
-                // Track pending task when mutation is pending
-                if (state.isPending && !pendingTaskRef) {
-                  pendingTaskRef = pendingTasks.add()
-                }
-
-                // Clear pending task when mutation is no longer pending
-                if (!state.isPending && pendingTaskRef) {
-                  pendingTaskRef()
-                  pendingTaskRef = null
-                }
-
-                if (
-                  state.isError &&
-                  shouldThrowError(observer.options.throwOnError, [state.error])
-                ) {
-                  ngZone.onError.emit(state.error)
-                  throw state.error
-                }
-
-                resultFromSubscriberSignal.set(state)
-              })
-            }),
-          ),
-        )
-        onCleanup(() => {
-          // Clean up any pending task on destroy
-          if (pendingTaskRef) {
-            pendingTaskRef()
-            pendingTaskRef = null
-          }
-          unsubscribe()
-        })
-      })
-    },
-    {
-      injector,
-    },
-  )
-
   const resultSignal = computed(() => {
-    const resultFromSubscriber = resultFromSubscriberSignal()
-    const resultFromInitialOptions = resultFromInitialOptionsSignal()
-
-    const result = resultFromSubscriber ?? resultFromInitialOptions
+    const result = linkedResultSignal()()
 
     return {
       ...result,
@@ -185,6 +171,8 @@ export function injectMutation<
       mutateAsync: result.mutate,
     }
   })
+
+  destroyRef.onDestroy(() => cleanup())
 
   return signalProxy(resultSignal) as CreateMutationResult<
     TData,

@@ -56,8 +56,6 @@ describe('injectMutation', () => {
       }))
     })
 
-    TestBed.tick()
-
     mutation.mutate(result)
     await vi.advanceTimersByTimeAsync(0)
 
@@ -417,12 +415,43 @@ describe('injectMutation', () => {
     expect(mutation2!.options.mutationKey).toEqual(['fake', 'updatedValue'])
   })
 
+  test('should have pending state when mutating in constructor', async () => {
+    @Component({
+      selector: 'app-fake',
+      template: `
+        <span>{{ mutation.isPending() ? 'pending' : 'not pending' }}</span>
+      `,
+    })
+    class FakeComponent {
+      mutation = injectMutation(() => ({
+        mutationKey: ['fake'],
+        mutationFn: () => sleep(10).then(() => 'fake'),
+      }))
+
+      constructor() {
+        this.mutation.mutate()
+      }
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    const { debugElement } = fixture
+    const span = debugElement.query(By.css('span'))
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(span.nativeElement.textContent).toEqual('pending')
+
+    await vi.advanceTimersByTimeAsync(11)
+    fixture.detectChanges()
+
+    expect(span.nativeElement.textContent).toEqual('not pending')
+  })
+
   describe('throwOnError', () => {
     it('should evaluate throwOnError when mutation is expected to throw', async () => {
       const key = queryKey()
       const err = new Error('Expected mock error. All is well!')
       const boundaryFn = vi.fn()
-      const { mutate } = TestBed.runInInjectionContext(() => {
+      const { mutate, status, error } = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationKey: key,
           mutationFn: () => {
@@ -432,14 +461,14 @@ describe('injectMutation', () => {
         }))
       })
 
-      TestBed.tick()
-
       mutate()
 
       await vi.advanceTimersByTimeAsync(0)
 
       expect(boundaryFn).toHaveBeenCalledTimes(1)
       expect(boundaryFn).toHaveBeenCalledWith(err)
+      expect(status()).toBe('error')
+      expect(error()).toBe(err)
     })
 
     it('should throw when throwOnError is true and mutate is used', async () => {
@@ -582,21 +611,8 @@ describe('injectMutation', () => {
       // Start mutation
       mutation.mutate('retry-test')
 
-      // Synchronize pending effects for each retry attempt
-      TestBed.tick()
-      await Promise.resolve()
-      await vi.advanceTimersByTimeAsync(10)
-
-      TestBed.tick()
-      await Promise.resolve()
-      await vi.advanceTimersByTimeAsync(10)
-
-      TestBed.tick()
-
-      const stablePromise = app.whenStable()
-      await Promise.resolve()
-      await vi.advanceTimersByTimeAsync(10)
-      await stablePromise
+      await vi.advanceTimersByTimeAsync(30)
+      await app.whenStable()
 
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('processed: retry-test')
@@ -633,14 +649,8 @@ describe('injectMutation', () => {
       mutation1.mutate('test1')
       mutation2.mutate('test2')
 
-      // Synchronize pending effects
-      TestBed.tick()
-
-      const stablePromise = app.whenStable()
-      // Flush microtasks to allow TanStack Query's scheduled notifications to process
-      await Promise.resolve()
       await vi.advanceTimersByTimeAsync(1)
-      await stablePromise
+      await app.whenStable()
 
       expect(mutation1.isSuccess()).toBe(true)
       expect(mutation1.data()).toBe('mutation1: test1')
@@ -677,14 +687,8 @@ describe('injectMutation', () => {
       // Start mutation
       mutation.mutate('test')
 
-      // Synchronize pending effects
-      TestBed.tick()
-
-      const stablePromise = app.whenStable()
-      // Flush microtasks to allow TanStack Query's scheduled notifications to process
-      await Promise.resolve()
       await vi.advanceTimersByTimeAsync(1)
-      await stablePromise
+      await app.whenStable()
 
       expect(onMutateCalled).toBe(true)
       expect(onSuccessCalled).toBe(true)
@@ -707,14 +711,8 @@ describe('injectMutation', () => {
       // Start mutation
       mutation.mutate('test')
 
-      // Synchronize pending effects
-      TestBed.tick()
-
-      const stablePromise = app.whenStable()
-      // Flush microtasks to allow TanStack Query's scheduled notifications to process
-      await Promise.resolve()
       await vi.advanceTimersByTimeAsync(1)
-      await stablePromise
+      await app.whenStable()
 
       // Synchronous mutations complete immediately
       expect(mutation.isSuccess()).toBe(true)
