@@ -473,6 +473,43 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(2)
   })
 
+  it('should skip combine notifications while suspense queries have no data', async () => {
+    const key = queryKey()
+    const combine = vi.fn((results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data),
+    )
+    const queries = [
+      {
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'data'),
+        staleTime: Infinity,
+        suspense: true,
+      },
+    ]
+
+    queryClient.setQueryData(key, 'data')
+
+    const observer = new QueriesObserver<Array<unknown>>(
+      queryClient,
+      queries,
+      { combine },
+    )
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      queries,
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toEqual(['data'])
+    expect(combine).toHaveBeenCalledTimes(1)
+
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    void queryClient.resetQueries({ queryKey: key })
+    expect(combine).toHaveBeenCalledTimes(1)
+
+    unsubscribe()
+  })
+
   it('should handle queries being removed with stable combine reference', () => {
     const combine = vi.fn((results: Array<QueryObserverResult>) => ({
       count: results.length,
