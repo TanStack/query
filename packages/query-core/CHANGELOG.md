@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.100.5
+
+### Patch Changes
+
+- fix(core): propagate AbortSignal reason in infinite queries ([`a53ef97`](https://github.com/TanStack/query/commit/a53ef97f87decb8ea2431710f5199431d3c94c8d))
+
 ## 5.100.4
 
 ## 5.100.3

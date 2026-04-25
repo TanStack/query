@@ -1,5 +1,7 @@
 # @tanstack/query-devtools
 
+## 5.100.5
+
 ## 5.100.4
 
 ### Patch Changes
