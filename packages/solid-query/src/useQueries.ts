@@ -186,7 +186,7 @@ type QueriesResults<
 
 export function useQueries<
   T extends Array<any>,
-  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
+  TCombinedResult extends object = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{
     queries:
@@ -243,11 +243,17 @@ export function useQueries<
     ),
   )
 
+  // Internal "view" of the underlying per-query results. `state` is typed as
+  // `TCombinedResult` (which may be a user-defined non-array shape via `combine`),
+  // but the proxy/resource logic below treats it as an array of `QueryObserverResult`.
+  // The cast preserves Solid's reactive store at runtime — it only affects TypeScript.
+  const queryResults = state as unknown as Array<QueryObserverResult>
+
   const dataResources = createMemo(
     on(
-      () => state.length,
+      () => queryResults.length,
       () =>
-        state.map((queryRes) => {
+        queryResults.map((queryRes) => {
           const dataPromise = () =>
             new Promise((resolve) => {
               if (queryRes.isFetching && queryRes.isLoading) return
@@ -262,7 +268,7 @@ export function useQueries<
     const dataResources_ = dataResources()
     for (let index = 0; index < dataResources_.length; index++) {
       const dataResource = dataResources_[index]!
-      dataResource[1].mutate(() => unwrap(state[index]!.data))
+      dataResource[1].mutate(() => unwrap(queryResults[index]!.data))
       dataResource[1].refetch()
     }
   })
@@ -278,7 +284,7 @@ export function useQueries<
             const unwrappedResult = { ...unwrap(result[index]) }
             // @ts-expect-error typescript pedantry regarding the possible range of index
             setState(index, unwrap(unwrappedResult))
-            dataResource[1].mutate(() => unwrap(state[index]!.data))
+            dataResource[1].mutate(() => unwrap(queryResults[index]!.data))
             dataResource[1].refetch()
           }
         })
@@ -332,7 +338,7 @@ export function useQueries<
   })
 
   const getProxies = () =>
-    state.map((s, index) => {
+    queryResults.map((s, index) => {
       return new Proxy(s, handler(index))
     })
 
