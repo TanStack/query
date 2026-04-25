@@ -1,5 +1,15 @@
 # @tanstack/query-core
 
+## 5.100.2
+
+### Patch Changes
+
+- fix(query-core): allow `persister` to contribute to `TQueryFnData` inference so a `queryFn` that declares a parameter no longer produces a spurious overload mismatch against a typed persister (#7842). ([#10510](https://github.com/TanStack/query/pull/10510))
+
+- fix: preserve infinite query behavior during SSR hydration (#8825) ([#10074](https://github.com/TanStack/query/pull/10074))
+
+- ref(core): remove leftover setStateOptions ([#10574](https://github.com/TanStack/query/pull/10574))
+
 ## 5.100.1
 
 ### Patch Changes
