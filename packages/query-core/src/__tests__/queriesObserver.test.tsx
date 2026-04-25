@@ -489,11 +489,9 @@ describe('queriesObserver', () => {
 
     queryClient.setQueryData(key, 'data')
 
-    const observer = new QueriesObserver<Array<unknown>>(
-      queryClient,
-      queries,
-      { combine },
-    )
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, queries, {
+      combine,
+    })
 
     const [rawResult, getCombinedResult] = observer.getOptimisticResult(
       queries,

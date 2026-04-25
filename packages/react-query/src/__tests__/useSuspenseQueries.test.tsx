@@ -302,7 +302,9 @@ describe('useSuspenseQueries', () => {
 
       return (
         <div>
-          <button onClick={() => void queryClient.resetQueries({ queryKey: key })}>
+          <button
+            onClick={() => void queryClient.resetQueries({ queryKey: key })}
+          >
             reset
           </button>
           <div>data: {data.join(',')}</div>
