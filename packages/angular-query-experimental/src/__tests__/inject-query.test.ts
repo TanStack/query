@@ -23,6 +23,7 @@ import {
   it,
   vi,
 } from 'vitest'
+import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
 import {
@@ -285,42 +286,76 @@ describe('injectQuery', () => {
 
   it('should resolve to success and update signal: injectQuery()', async () => {
     const key = queryKey()
-    const query = TestBed.runInInjectionContext(() => {
-      return injectQuery(() => ({
+
+    @Component({
+      template: `
+        <div>status: {{ query.status() }}</div>
+        <div>data: {{ query.data() ?? 'none' }}</div>
+        <div>isPending: {{ query.isPending() }}</div>
+        <div>isFetching: {{ query.isFetching() }}</div>
+        <div>isFetched: {{ query.isFetched() }}</div>
+        <div>isSuccess: {{ query.isSuccess() }}</div>
+      `,
+    })
+    class Page {
+      readonly query = injectQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'result2'),
       }))
-    })
+    }
+
+    const rendered = await render(Page)
 
     await vi.advanceTimersByTimeAsync(11)
-    expect(query.status()).toBe('success')
-    expect(query.data()).toBe('result2')
-    expect(query.isPending()).toBe(false)
-    expect(query.isFetching()).toBe(false)
-    expect(query.isFetched()).toBe(true)
-    expect(query.isSuccess()).toBe(true)
+    rendered.fixture.detectChanges()
+
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(rendered.getByText('data: result2')).toBeInTheDocument()
+    expect(rendered.getByText('isPending: false')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+    expect(rendered.getByText('isFetched: true')).toBeInTheDocument()
+    expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
   })
 
   it('should reject and update signal', async () => {
     const key = queryKey()
-    const query = TestBed.runInInjectionContext(() => {
-      return injectQuery(() => ({
+
+    @Component({
+      template: `
+        <div>status: {{ query.status() }}</div>
+        <div>data: {{ query.data() ?? 'none' }}</div>
+        <div>error: {{ query.error()?.message ?? 'none' }}</div>
+        <div>isPending: {{ query.isPending() }}</div>
+        <div>isFetching: {{ query.isFetching() }}</div>
+        <div>isError: {{ query.isError() }}</div>
+        <div>failureCount: {{ query.failureCount() }}</div>
+        <div>failureReason: {{ query.failureReason()?.message ?? 'none' }}</div>
+      `,
+    })
+    class Page {
+      readonly query = injectQuery(() => ({
         retry: false,
         queryKey: key,
         queryFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
       }))
-    })
+    }
+
+    const rendered = await render(Page)
 
     await vi.advanceTimersByTimeAsync(11)
-    expect(query.status()).toBe('error')
-    expect(query.data()).toBe(undefined)
-    expect(query.error()).toMatchObject({ message: 'Some error' })
-    expect(query.isPending()).toBe(false)
-    expect(query.isFetching()).toBe(false)
-    expect(query.isError()).toBe(true)
-    expect(query.failureCount()).toBe(1)
-    expect(query.failureReason()).toMatchObject({ message: 'Some error' })
+    rendered.fixture.detectChanges()
+
+    expect(rendered.getByText('status: error')).toBeInTheDocument()
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+    expect(rendered.getByText('error: Some error')).toBeInTheDocument()
+    expect(rendered.getByText('isPending: false')).toBeInTheDocument()
+    expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
+    expect(rendered.getByText('isError: true')).toBeInTheDocument()
+    expect(rendered.getByText('failureCount: 1')).toBeInTheDocument()
+    expect(
+      rendered.getByText('failureReason: Some error'),
+    ).toBeInTheDocument()
   })
 
   it('should update query on options contained signal change', async () => {
