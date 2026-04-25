@@ -353,9 +353,7 @@ describe('injectQuery', () => {
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
     expect(rendered.getByText('isError: true')).toBeInTheDocument()
     expect(rendered.getByText('failureCount: 1')).toBeInTheDocument()
-    expect(
-      rendered.getByText('failureReason: Some error'),
-    ).toBeInTheDocument()
+    expect(rendered.getByText('failureReason: Some error')).toBeInTheDocument()
   })
 
   it('should update query on options contained signal change', async () => {
