@@ -296,6 +296,41 @@ describe('useQueries', () => {
     }))
   })
 
+  it('combine should allow returning an arbitrary object shape (#7522)', () => {
+    const result = useQueries(() => ({
+      queries: [
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(true),
+        },
+        {
+          queryKey: queryKey(),
+          queryFn: () => Promise.resolve(false),
+        },
+      ],
+      combine: (results) => ({
+        data: results.every((r) => r.data),
+      }),
+    }))
+
+    expectTypeOf(result).toEqualTypeOf<{ data: boolean }>()
+  })
+
+  it('combine should infer custom object shape from .map() queries (#7522)', () => {
+    const list = ['test1', 'test2']
+    const result = useQueries(() => ({
+      queries: list.map((key) => ({
+        queryKey: ['key', key],
+        queryFn: () => true,
+      })),
+      combine: (results) => ({
+        data: results.every((r) => r.data),
+      }),
+    }))
+
+    expectTypeOf(result).toEqualTypeOf<{ data: boolean }>()
+  })
+
   describe('type parameters', () => {
     it('should handle type parameter - tuple of tuples', () => {
       const key1 = queryKey()
