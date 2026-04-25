@@ -137,7 +137,6 @@ interface ContinueAction {
 interface SetStateAction<TData, TError> {
   type: 'setState'
   state: Partial<QueryState<TData, TError>>
-  setStateOptions?: SetStateOptions
 }
 
 export type Action<TData, TError> =
@@ -149,10 +148,6 @@ export type Action<TData, TError> =
   | PauseAction
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
-
-export interface SetStateOptions {
-  meta?: any
-}
 
 // CLASS
 
@@ -241,11 +236,8 @@ export class Query<
     return data
   }
 
-  setState(
-    state: Partial<QueryState<TData, TError>>,
-    setStateOptions?: SetStateOptions,
-  ): void {
-    this.#dispatch({ type: 'setState', state, setStateOptions })
+  setState(state: Partial<QueryState<TData, TError>>): void {
+    this.#dispatch({ type: 'setState', state })
   }
 
   cancel(options?: CancelOptions): Promise<void> {
