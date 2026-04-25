@@ -1,5 +1,14 @@
 # @tanstack/angular-query-experimental
 
+## 5.100.4
+
+### Patch Changes
+
+- fix(devtools): change onClose callback type from () => unknown to () => void ([#10118](https://github.com/TanStack/query/pull/10118))
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.4
+
 ## 5.100.3
 
 ### Patch Changes
