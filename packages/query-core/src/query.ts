@@ -2,7 +2,7 @@ import {
   ensureQueryFn,
   noop,
   replaceData,
-  resolveEnabled,
+  resolveQueryBoolean,
   resolveStaleTime,
   skipToken,
   timeUntilStale,
@@ -281,7 +281,8 @@ export class Query<
 
   isActive(): boolean {
     return this.observers.some(
-      (observer) => resolveEnabled(observer.options.enabled, this) !== false,
+      (observer) =>
+        resolveQueryBoolean(observer.options.enabled, this) !== false,
     )
   }
 

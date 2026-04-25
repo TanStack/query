@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { onScopeDispose, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
@@ -16,7 +16,7 @@ describe('useIsFetching', () => {
     vi.useRealTimers()
   })
 
-  test('should properly return isFetching state', async () => {
+  it('should properly return isFetching state', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const { isFetching: isFetchingQuery } = useQuery({
@@ -38,7 +38,7 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(0)
   })
 
-  test('should stop listening to changes on onScopeDispose', async () => {
+  it('should stop listening to changes on onScopeDispose', async () => {
     const key = queryKey()
     const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
@@ -67,7 +67,7 @@ describe('useIsFetching', () => {
     onScopeDisposeMock.mockReset()
   })
 
-  test('should properly update filters', async () => {
+  it('should properly update filters', async () => {
     const key = queryKey()
     const filter = reactive({ stale: false, queryKey: key })
     useQuery({
@@ -84,7 +84,7 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(1)
   })
 
-  test('should work with options getter and be reactive', async () => {
+  it('should work with options getter and be reactive', async () => {
     const key = queryKey()
     const staleRef = ref(false)
     useQuery({
@@ -104,7 +104,7 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(1)
   })
 
-  test('should warn when used outside of setup function in development mode', () => {
+  it('should warn when used outside of setup function in development mode', () => {
     vi.stubEnv('NODE_ENV', 'development')
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
