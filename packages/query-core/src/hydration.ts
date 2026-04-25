@@ -223,6 +223,8 @@ export function hydrate(
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
       const data = rawData === undefined ? rawData : deserializeData(rawData)
+      const pendingQueryResolvedSync =
+        state.status === 'pending' && data !== undefined
 
       let query = queryCache.get(queryHash)
       const existingQueryIsUndefined = !query
@@ -255,14 +257,14 @@ export function hydrate(
             //
             // Since you can opt into dehydrating failed queries, and those can have data from
             // previous successful fetches, we make sure we only do this for pending queries.
-            ...(state.status === 'pending' &&
-              data !== undefined && {
-                status: 'success' as const,
-                // Preserve existing fetchStatus if the existing query is actively fetching.
-                ...(!existingQueryIsFetching && {
-                  fetchStatus: 'idle' as const,
-                }),
+            ...(pendingQueryResolvedSync && {
+              status: 'success' as const,
+              dataUpdatedAt: dehydratedAt ?? Date.now(),
+              // Preserve existing fetchStatus if the existing query is actively fetching.
+              ...(!existingQueryIsFetching && {
+                fetchStatus: 'idle' as const,
               }),
+            }),
           })
         }
       } else {
@@ -285,22 +287,22 @@ export function hydrate(
             fetchStatus: 'idle',
             // Like above, if the query was pending at the moment of dehydration but has data,
             // we can assume it should be hydrated as successful.
-            status:
-              state.status === 'pending' && data !== undefined
-                ? 'success'
-                : state.status,
+            status: pendingQueryResolvedSync ? 'success' : state.status,
+            ...(pendingQueryResolvedSync && {
+              dataUpdatedAt: dehydratedAt ?? Date.now(),
+            }),
           },
         )
       }
 
       if (
         promise &&
+        // If the data was synchronously available, there is no need to set up
+        // a retryer and thus no reason to call fetch
+        !syncData &&
         (existingQueryIsIdleUseQuery ||
-          // If the data was synchronously available, there is no need to set up
-          // a retryer and thus no reason to call fetch
-          (!syncData &&
-            (existingQueryIsUndefined ||
-              (!existingQueryIsPending && !existingQueryIsFetching)))) &&
+          existingQueryIsUndefined ||
+          (!existingQueryIsPending && !existingQueryIsFetching)) &&
         // Only hydrate if dehydration is newer than any existing data,
         // this is always true for new queries
         (dehydratedAt === undefined || dehydratedAt > query.state.dataUpdatedAt)
