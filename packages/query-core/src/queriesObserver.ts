@@ -254,8 +254,7 @@ export class QueriesObserver<
       this.#options?.combine !== undefined &&
       this.#observers.some((observer, index) => {
         return (
-          observer.options.suspense &&
-          this.#result[index]?.data === undefined
+          observer.options.suspense && this.#result[index]?.data === undefined
         )
       })
     )
