@@ -42,15 +42,25 @@ export type UseQueryOptions<
               TQueryData,
               DeepUnwrapRef<TQueryKey>
             >)
-      : MaybeRefDeep<
-          QueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            DeepUnwrapRef<TQueryKey>
-          >[Property]
-        >
+      : Property extends 'queryKey'
+        ? MaybeRef<
+            QueryObserverOptions<
+              TQueryFnData,
+              TError,
+              TData,
+              TQueryData,
+              TQueryKey
+            >[Property]
+          >
+        : MaybeRefDeep<
+            QueryObserverOptions<
+              TQueryFnData,
+              TError,
+              TData,
+              TQueryData,
+              DeepUnwrapRef<TQueryKey>
+            >[Property]
+          >
   } & ShallowOption
 >
 
