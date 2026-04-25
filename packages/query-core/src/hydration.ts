@@ -225,13 +225,13 @@ export function hydrate(
       const data = rawData === undefined ? rawData : deserializeData(rawData)
 
       let query = queryCache.get(queryHash)
+      const existingQueryIsUndefined = !query
       const existingQueryIsPending = query?.state.status === 'pending'
       const existingQueryIsFetching = query?.state.fetchStatus === 'fetching'
-      const existingQueryIsUndefinedOrIsIdleUseQuery =
-        !query ||
-        (query.state.dataUpdatedAt === 0 &&
-          query.state.status === 'pending' &&
-          query.state.fetchStatus === 'idle')
+      const existingQueryIsIdleUseQuery =
+        query?.state.dataUpdatedAt === 0 &&
+        query.state.status === 'pending' &&
+        query.state.fetchStatus === 'idle'
 
       // Do not hydrate if an existing query exists with newer data
       if (query) {
@@ -295,11 +295,12 @@ export function hydrate(
 
       if (
         promise &&
-        // If the data was synchronously available, there is no need to set up
-        // a retryer and thus no reason to call fetch
-        !syncData &&
-        (existingQueryIsUndefinedOrIsIdleUseQuery ||
-          (!existingQueryIsPending && !existingQueryIsFetching)) &&
+        (existingQueryIsIdleUseQuery ||
+          // If the data was synchronously available, there is no need to set up
+          // a retryer and thus no reason to call fetch
+          (!syncData &&
+            (existingQueryIsUndefined ||
+              (!existingQueryIsPending && !existingQueryIsFetching)))) &&
         // Only hydrate if dehydration is newer than any existing data,
         // this is always true for new queries
         (dehydratedAt === undefined || dehydratedAt > query.state.dataUpdatedAt)

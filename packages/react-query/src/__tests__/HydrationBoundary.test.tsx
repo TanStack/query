@@ -514,6 +514,7 @@ describe('React hydration', () => {
       useQuery({
         queryKey,
         queryFn,
+        enabled: false,
       })
       return null
     }
@@ -545,6 +546,85 @@ describe('React hydration', () => {
     expect(suspenseQueryFn).toHaveBeenCalledTimes(0)
 
     queryClient.clear()
+  })
+
+  it('should hydrate synchronously resolved pending idle queries in render', () => {
+    const queryKey = ['string'] as const
+
+    const makeQueryClient = () =>
+      new QueryClient({
+        defaultOptions: {
+          dehydrate: {
+            shouldDehydrateQuery: (query) =>
+              defaultShouldDehydrateQuery(query) ||
+              query.state.status === 'pending',
+            shouldRedactErrors: () => false,
+          },
+        },
+      })
+
+    const prefetchClient = makeQueryClient()
+    let resolvePrefetch: undefined | ((value: Array<string>) => void)
+    const prefetchPromise = new Promise<Array<string>>((resolve) => {
+      resolvePrefetch = resolve
+    })
+    void prefetchClient.prefetchQuery({
+      queryKey,
+      queryFn: () => prefetchPromise,
+      staleTime: Infinity,
+    })
+    const dehydratedState = dehydrate(prefetchClient)
+
+    resolvePrefetch?.(['stringCached'])
+    // Simulate a synchronously resolved thenable, like React can provide for
+    // an already resolved streamed promise.
+    // @ts-expect-error
+    dehydratedState.queries[0].promise.then = (cb) => {
+      cb?.(['stringCached'])
+      // @ts-expect-error
+      return dehydratedState.queries[0].promise
+    }
+
+    const queryFn = vi.fn(() => Promise.resolve(['string']))
+    const suspenseQueryFn = vi.fn(() => Promise.resolve(['string']))
+    const queryClient = new QueryClient()
+
+    function Header() {
+      useQuery({
+        queryKey,
+        queryFn,
+        enabled: false,
+      })
+      return null
+    }
+
+    function Page() {
+      const { data } = useSuspenseQuery({
+        queryKey,
+        queryFn: suspenseQueryFn,
+      })
+      return <div>{data}</div>
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <Header />
+        <HydrationBoundary state={dehydratedState}>
+          <React.Suspense fallback="loading">
+            <Page />
+          </React.Suspense>
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(rendered.getByText('stringCached')).toBeInTheDocument()
+    expect(queryClient.getQueryData(queryKey)).toEqual(['stringCached'])
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(suspenseQueryFn).toHaveBeenCalledTimes(0)
+
+    queryClient.clear()
+    prefetchClient.clear()
   })
 
   it('should not refetch when query has enabled set to false', async () => {
