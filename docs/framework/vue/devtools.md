@@ -110,7 +110,7 @@ function toggleDevtools() {
   - Default: `{ height: '500px' }`
   - Example: `{ height: '100%' }`
   - Example: `{ height: '100%', width: '100%' }`
-- `onClose?: () => unknown`
+- `onClose?: () => void`
   - Callback function that is called when the devtools panel is closed
 - `client?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
