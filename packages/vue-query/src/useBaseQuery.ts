@@ -35,7 +35,7 @@ export type UseBaseQueryReturnType<
   TData,
   TError,
   TResult = QueryObserverResult<TData, TError>,
-> = TResult extends unknown
+> = (TResult extends unknown
   ? {
       [K in keyof TResult]: K extends
         | 'fetchNextPage'
@@ -43,10 +43,10 @@ export type UseBaseQueryReturnType<
         | 'refetch'
         ? TResult[K]
         : Ref<Readonly<TResult>[K]>
-    } & {
-      suspense: () => Promise<QueryObserverResult<TData, TError>>
     }
-  : never
+  : never) & {
+  suspense: () => Promise<TResult>
+}
 
 type UseQueryOptionsGeneric<
   TQueryFnData,
