@@ -274,6 +274,72 @@ describe('useSuspenseQueries', () => {
     expect(spy).toHaveBeenCalled()
   })
 
+  it('should not call combine while reset queries are pending again', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+    let shouldError = false
+
+    function Page() {
+      const data = useSuspenseQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                if (shouldError) {
+                  throw new Error('Suspense Error Bingo')
+                }
+
+                return 'data'
+              }),
+            retry: false,
+          },
+        ],
+        combine: (result) => result.map((query) => query.data.toUpperCase()),
+      })
+
+      return (
+        <div>
+          <button onClick={() => void queryClient.resetQueries({ queryKey: key })}>
+            reset
+          </button>
+          <div>data: {data.join(',')}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <React.Suspense fallback="loading">
+          <Page />
+        </React.Suspense>
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('data: DATA')).toBeInTheDocument()
+
+    shouldError = true
+
+    expect(() => {
+      fireEvent.click(rendered.getByText('reset'))
+    }).not.toThrow()
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
+    )
+
+    consoleMock.mockRestore()
+  })
+
   it('should handle duplicate query keys without infinite loops', async () => {
     const key = queryKey()
     const localDuration = 10

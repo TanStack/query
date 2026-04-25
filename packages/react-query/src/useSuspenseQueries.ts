@@ -190,6 +190,7 @@ export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
   return useQueries(
     {
       ...options,
+      _combineOnlyOnSuccess: true,
       queries: options.queries.map((query: any) => {
         if (process.env.NODE_ENV !== 'production') {
           if (query.queryFn === skipToken) {

@@ -210,6 +210,7 @@ export function useQueries<
 >(
   {
     queries,
+    _combineOnlyOnSuccess = false,
     ...options
   }: {
     queries:
@@ -217,12 +218,17 @@ export function useQueries<
       | readonly [...{ [K in keyof T]: GetUseQueryOptionsForUseQueries<T[K]> }]
     combine?: (result: QueriesResults<T>) => TCombinedResult
     subscribed?: boolean
+    _combineOnlyOnSuccess?: boolean
   },
   queryClient?: QueryClient,
 ): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
+  const combine = options.combine
+  const combineForObserver = _combineOnlyOnSuccess
+    ? undefined
+    : (combine as QueriesObserverOptions<TCombinedResult>['combine'])
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -254,7 +260,7 @@ export function useQueries<
       new QueriesObserver<TCombinedResult>(
         client,
         defaultedQueries,
-        options as QueriesObserverOptions<TCombinedResult>,
+        combineForObserver ? { combine: combineForObserver } : undefined,
       ),
   )
 
@@ -262,7 +268,7 @@ export function useQueries<
   const [optimisticResult, getCombinedResult, trackResult] =
     observer.getOptimisticResult(
       defaultedQueries,
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
+      combineForObserver,
     )
 
   const shouldSubscribe = !isRestoring && options.subscribed !== false
@@ -281,9 +287,9 @@ export function useQueries<
   React.useEffect(() => {
     observer.setQueries(
       defaultedQueries,
-      options as QueriesObserverOptions<TCombinedResult>,
+      combineForObserver ? { combine: combineForObserver } : undefined,
     )
-  }, [defaultedQueries, options, observer])
+  }, [combineForObserver, defaultedQueries, observer])
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result),
@@ -324,5 +330,11 @@ export function useQueries<
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return getCombinedResult(trackResult())
+  const trackedResult = trackResult()
+
+  if (combine && _combineOnlyOnSuccess) {
+    return combine(trackedResult as unknown as QueriesResults<T>)
+  }
+
+  return getCombinedResult(trackedResult)
 }
