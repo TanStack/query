@@ -1,5 +1,97 @@
 # @tanstack/query-core
 
+## 5.100.3
+
+### Patch Changes
+
+- fix(suspense): skip calling combine when queries would suspend ([#10576](https://github.com/TanStack/query/pull/10576))
+
+## 5.100.2
+
+### Patch Changes
+
+- fix(query-core): allow `persister` to contribute to `TQueryFnData` inference so a `queryFn` that declares a parameter no longer produces a spurious overload mismatch against a typed persister (#7842). ([#10510](https://github.com/TanStack/query/pull/10510))
+
+- fix: preserve infinite query behavior during SSR hydration (#8825) ([#10074](https://github.com/TanStack/query/pull/10074))
+
+- ref(core): remove leftover setStateOptions ([#10574](https://github.com/TanStack/query/pull/10574))
+
+## 5.100.1
+
+### Patch Changes
+
+- Fix bugs where hydrating queries with promises that had already resolved could cause queries to briefly and incorrectly show as pending/fetching ([#10444](https://github.com/TanStack/query/pull/10444))
+
+## 5.100.0
+
+### Minor Changes
+
+- feat(query-core): accept callback function for retryOnMount ([#10515](https://github.com/TanStack/query/pull/10515))
+
+## 5.99.2
+
+## 5.99.1
+
+## 5.99.0
+
+## 5.98.0
+
+## 5.97.0
+
+### Patch Changes
+
+- fix(query-core): use explicit `undefined` check for timer IDs so that custom `TimeoutProvider`s returning `0` as a valid timer ID are properly cleared ([#10401](https://github.com/TanStack/query/pull/10401))
+
+## 5.96.2
+
+## 5.96.1
+
+## 5.96.0
+
+## 5.95.2
+
+### Patch Changes
+
+- fix(timeoutManager): make sure NodeJs.Timout doesn't leak ([#10325](https://github.com/TanStack/query/pull/10325))
+
+## 5.95.1
+
+### Patch Changes
+
+- fix(timeoutManager): make sure NodeJs.Timout doesn't leak ([#10323](https://github.com/TanStack/query/pull/10323))
+
+## 5.95.0
+
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
+## 5.91.2
+
+### Patch Changes
+
+- fix(streamedQuery): maintain error state on reset refetch with initialData defined ([#10287](https://github.com/TanStack/query/pull/10287))
+
+## 5.91.1
+
+### Patch Changes
+
+- fix(core): cancel paused initial fetch when last observer unsubscribes ([#10291](https://github.com/TanStack/query/pull/10291))
+
+## 5.91.0
+
+### Minor Changes
+
+- feat: environmentManager ([#10199](https://github.com/TanStack/query/pull/10199))
+
 ## 5.90.20
 
 ### Patch Changes

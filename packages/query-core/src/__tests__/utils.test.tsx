@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '..'
 import {
   addToEnd,
   addToStart,
+  ensureQueryFn,
   hashKey,
   hashQueryKeyByOptions,
   isPlainArray,
@@ -13,27 +15,29 @@ import {
   replaceEqualDeep,
   shallowEqualObjects,
   shouldThrowError,
+  skipToken,
 } from '../utils'
 import { Mutation } from '../mutation'
+import type { QueryFunctionContext } from '..'
 
 describe('core/utils', () => {
   describe('hashQueryKeyByOptions', () => {
     it('should use custom hash function when provided in options', () => {
-      const queryKey = ['test', { a: 1, b: 2 }]
+      const key = ['test', { a: 1, b: 2 }]
       const customHashFn = vi.fn(() => 'custom-hash')
 
-      const result = hashQueryKeyByOptions(queryKey, {
+      const result = hashQueryKeyByOptions(key, {
         queryKeyHashFn: customHashFn,
       })
 
-      expect(customHashFn).toHaveBeenCalledWith(queryKey)
+      expect(customHashFn).toHaveBeenCalledWith(key)
       expect(result).toEqual('custom-hash')
     })
 
     it('should use default hash function when no options provided', () => {
-      const queryKey = ['test', { a: 1, b: 2 }]
-      const defaultResult = hashKey(queryKey)
-      const result = hashQueryKeyByOptions(queryKey)
+      const key = ['test', { a: 1, b: 2 }]
+      const defaultResult = hashKey(key)
+      const result = hashQueryKeyByOptions(key)
 
       expect(result).toEqual(defaultResult)
     })
@@ -420,7 +424,7 @@ describe('core/utils', () => {
 
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
-      const filters = { mutationKey: ['key1'] }
+      const filters = { mutationKey: queryKey() }
       const queryClient = new QueryClient()
       const mutation = new Mutation({
         client: queryClient,
@@ -530,6 +534,55 @@ describe('core/utils', () => {
       const nested2 = [{ b: 2, a: { c: 3, d: 4 } }]
 
       expect(hashKey(nested1)).toEqual(hashKey(nested2))
+    })
+  })
+
+  describe('ensureQueryFn', () => {
+    const context = {} as QueryFunctionContext
+
+    it('should return a function that resolves to initialPromise when queryFn is missing and initialPromise is provided', async () => {
+      const initialPromise = Promise.resolve('initial-data')
+
+      const resolved = ensureQueryFn(
+        { queryHash: '["key"]' },
+        { initialPromise },
+      )
+
+      await expect(resolved(context)).resolves.toBe('initial-data')
+    })
+
+    it('should return a function that rejects when initialPromise rejects', async () => {
+      const error = new Error('initial-promise-error')
+      const initialPromise = Promise.reject(error)
+
+      const resolved = ensureQueryFn(
+        { queryHash: '["key"]' },
+        { initialPromise },
+      )
+
+      await expect(resolved(context)).rejects.toBe(error)
+    })
+
+    it('should return a function that rejects with missing queryFn error when queryFn is set to skipToken', async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+
+      const resolved = ensureQueryFn({
+        queryFn: skipToken,
+        queryHash: '["skip"]',
+      })
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Attempted to invoke queryFn when set to skipToken',
+        ),
+      )
+      await expect(resolved(context)).rejects.toThrow(
+        'Missing queryFn: \'["skip"]\'',
+      )
+
+      consoleErrorSpy.mockRestore()
     })
   })
 

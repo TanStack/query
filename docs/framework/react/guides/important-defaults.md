@@ -14,6 +14,8 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
   - set `staleTime` to `Infinity` to never trigger a refetch until the Query is [invalidated manually](./query-invalidation.md).
   - set `staleTime` to `'static'` to **never** trigger a refetch, even if the Query is [invalidated manually](./query-invalidation.md).
 
+> `'static'` and `Infinity` both prevent staleness-based refetches, but `'static'` is stricter: `queryClient.invalidateQueries()` can invalidate a query with `staleTime: Infinity`, but has no effect on `staleTime: 'static'`. `refetchOnMount`, `refetchOnWindowFocus`, and `refetchOnReconnect` set to `"always"` are also blocked by `'static'`. Use `'static'` for data that cannot change while the app is running: feature flags fetched at boot, user permissions loaded at login, static reference tables. Use `Infinity` when you still want manual invalidation to work.
+
 - Stale queries are refetched automatically in the background when:
   - New instances of the query mount
   - The window is refocused
@@ -21,7 +23,7 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
 > Setting `staleTime` is the recommended way to avoid excessive refetches, but you can also customize the points in time for refetches by setting options like `refetchOnMount`, `refetchOnWindowFocus` and `refetchOnReconnect`.
 
-- Queries can optionally be configured with a `refetchInterval` to trigger refetches periodically, which is independent of the `staleTime` setting.
+- Queries can optionally be configured with a `refetchInterval` to trigger refetches periodically, which is independent of the `staleTime` setting. See [Polling](./polling.md) for details.
 
 - Query results that have no more active instances of `useQuery`, `useInfiniteQuery` or query observers are labeled as "inactive" and remain in the cache in case they are used again at a later time.
 - By default, "inactive" queries are garbage collected after **5 minutes**.
@@ -32,9 +34,13 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
   > To change this, you can alter the default `retry` and `retryDelay` options for queries to something other than `3` and the default exponential backoff function.
 
+[//]: # 'StructuralSharing'
+
 - Query results by default are **structurally shared to detect if data has actually changed** and if not, **the data reference remains unchanged** to better help with value stabilization with regards to useMemo and useCallback. If this concept sounds foreign, then don't worry about it! 99.9% of the time you will not need to disable this and it makes your app more performant at zero cost to you.
 
-  > Structural sharing only works with JSON-compatible values, any other value types will always be considered as changed. If you are seeing performance issues because of large responses for example, you can disable this feature with the `config.structuralSharing` flag. If you are dealing with non-JSON compatible values in your query responses and still want to detect if data has changed or not, you can provide your own custom function as `config.structuralSharing` to compute a value from the old and new responses, retaining references as required.
+[//]: # 'StructuralSharing'
+
+> Structural sharing only works with JSON-compatible values, any other value types will always be considered as changed. If you are seeing performance issues because of large responses for example, you can disable this feature with the `config.structuralSharing` flag. If you are dealing with non-JSON compatible values in your query responses and still want to detect if data has changed or not, you can provide your own custom function as `config.structuralSharing` to compute a value from the old and new responses, retaining references as required.
 
 [//]: # 'Materials'
 

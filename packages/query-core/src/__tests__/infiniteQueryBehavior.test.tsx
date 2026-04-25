@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
 import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
@@ -19,7 +19,7 @@ describe('InfiniteQueryBehavior', () => {
     vi.useRealTimers()
   })
 
-  test('should throw an error if the queryFn is not defined', async () => {
+  it('should throw an error if the queryFn is not defined', async () => {
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -47,7 +47,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('should apply the maxPages option to limit the number of pages', async () => {
+  it('should apply the maxPages option to limit the number of pages', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
@@ -195,7 +195,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('should support query cancellation', async () => {
+  it('should support query cancellation', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
@@ -247,7 +247,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('should not refetch pages if the query is cancelled', async () => {
+  it('should not refetch pages if the query is cancelled', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
@@ -332,7 +332,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('should not enter an infinite loop when a page errors while retry is on #8046', async () => {
+  it('should not enter an infinite loop when a page errors while retry is on #8046', async () => {
     let errorCount = 0
     const key = queryKey()
 
@@ -406,7 +406,7 @@ describe('InfiniteQueryBehavior', () => {
     expect(reFetchedData.data?.pageParams).toEqual([1, 2, 3])
   })
 
-  test('should fetch even if initialPageParam is null', async () => {
+  it('should fetch even if initialPageParam is null', async () => {
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -433,7 +433,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('should not fetch next page when getNextPageParam returns null', async () => {
+  it('should not fetch next page when getNextPageParam returns null', async () => {
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -467,7 +467,7 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
-  test('should use persister when provided', async () => {
+  it('should use persister when provided', async () => {
     const key = queryKey()
 
     const persisterSpy = vi.fn().mockImplementation(async (fn) => {

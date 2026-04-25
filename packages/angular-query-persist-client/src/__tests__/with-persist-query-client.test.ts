@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   injectQuery,
@@ -17,14 +17,6 @@ import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
-
-beforeEach(() => {
-  vi.useFakeTimers()
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
@@ -62,7 +54,15 @@ const createMockErrorPersister = (
 }
 
 describe('withPersistQueryClient', () => {
-  test('restores cache from persister', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should restore cache from persister', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -97,13 +97,16 @@ describe('withPersistQueryClient', () => {
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'fetched'),
       }))
-      _ = effect(() => {
-        states.push({
-          status: this.state.status(),
-          fetchStatus: this.state.fetchStatus(),
-          data: this.state.data(),
+
+      constructor() {
+        effect(() => {
+          states.push({
+            status: this.state.status(),
+            fetchStatus: this.state.fetchStatus(),
+            data: this.state.data(),
+          })
         })
-      })
+      }
     }
 
     const rendered = await render(Page, {
@@ -146,11 +149,11 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test.todo(
+  it.todo(
     '(Once injectQueries is functional) verify that injectQueries transitions to an idle state',
   )
 
-  test('should show initialData while restoring', async () => {
+  it('should show initialData while restoring', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -189,13 +192,16 @@ describe('withPersistQueryClient', () => {
         // otherwise initialData would be newer and takes precedence
         initialDataUpdatedAt: 1,
       }))
-      _ = effect(() => {
-        states.push({
-          status: this.state.status(),
-          fetchStatus: this.state.fetchStatus(),
-          data: this.state.data(),
+
+      constructor() {
+        effect(() => {
+          states.push({
+            status: this.state.status(),
+            fetchStatus: this.state.fetchStatus(),
+            data: this.state.data(),
+          })
         })
-      })
+      }
     }
 
     const rendered = await render(Page, {
@@ -238,7 +244,7 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test('should not refetch after restoring when data is fresh', async () => {
+  it('should not refetch after restoring when data is fresh', async () => {
     const key = queryKey()
     const states: Array<{
       status: string
@@ -280,13 +286,16 @@ describe('withPersistQueryClient', () => {
         },
         staleTime: Infinity,
       }))
-      _ = effect(() => {
-        states.push({
-          status: this.state.status(),
-          fetchStatus: this.state.fetchStatus(),
-          data: this.state.data(),
+
+      constructor() {
+        effect(() => {
+          states.push({
+            status: this.state.status(),
+            fetchStatus: this.state.fetchStatus(),
+            data: this.state.data(),
+          })
         })
-      })
+      }
     }
 
     const rendered = await render(Page, {
@@ -321,7 +330,7 @@ describe('withPersistQueryClient', () => {
     })
   })
 
-  test('should call onSuccess after successful restoring', async () => {
+  it('should call onSuccess after successful restoring', async () => {
     const key = queryKey()
     const queryClient = new QueryClient()
     queryClient.prefetchQuery({
@@ -377,7 +386,7 @@ describe('withPersistQueryClient', () => {
     expect(rendered.getByText('fetched')).toBeInTheDocument()
   })
 
-  test('should remove cache after non-successful restoring', async () => {
+  it('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
     const onErrorMock = vi
       .spyOn(console, 'error')

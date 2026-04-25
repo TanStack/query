@@ -45,22 +45,25 @@ const fetchItems = async (
 }
 
 describe('useInfiniteQuery', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({
+      queryCache,
+      defaultOptions: {
+        queries: {
+          experimental_prefetchInRender: true,
+        },
+      },
+    })
   })
 
   afterEach(() => {
     vi.useRealTimers()
-  })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({
-    queryCache,
-    defaultOptions: {
-      queries: {
-        experimental_prefetchInRender: true,
-      },
-    },
+    queryClient.clear()
   })
 
   it('should return the correct states for a successful query', async () => {

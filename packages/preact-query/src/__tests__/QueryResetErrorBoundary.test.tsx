@@ -17,16 +17,19 @@ import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
 
 describe('QueryErrorResetBoundary', () => {
+  let queryCache: QueryCache
+  let queryClient: QueryClient
+
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
-
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
 
   describe('useQuery', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
@@ -750,7 +753,7 @@ describe('QueryErrorResetBoundary', () => {
                 }),
               retry: false,
               throwOnError: true,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })
@@ -815,7 +818,7 @@ describe('QueryErrorResetBoundary', () => {
                   return 'data'
                 }),
               retry: false,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })

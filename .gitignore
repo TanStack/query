@@ -20,6 +20,7 @@ dist-ts
 .env.test.local
 .env.production.local
 .next
+next-env.d.ts
 
 npm-debug.log*
 yarn-debug.log*

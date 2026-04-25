@@ -1,5 +1,4 @@
 import { Subscribable } from './subscribable'
-import { isServer } from './utils'
 
 type Listener = (focused: boolean) => void
 
@@ -18,7 +17,7 @@ export class FocusManager extends Subscribable<Listener> {
     this.#setup = (onFocus) => {
       // addEventListener does not exist in React Native, but window does
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (!isServer && window.addEventListener) {
+      if (typeof window !== 'undefined' && window.addEventListener) {
         const listener = () => onFocus()
         // Listen to visibilitychange
         window.addEventListener('visibilitychange', listener, false)

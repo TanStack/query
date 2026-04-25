@@ -1,5 +1,47 @@
 # @tanstack/query-devtools
 
+## 5.100.3
+
+## 5.100.2
+
+## 5.100.1
+
+## 5.100.0
+
+## 5.99.2
+
+## 5.99.1
+
+## 5.99.0
+
+## 5.98.0
+
+## 5.97.0
+
+## 5.96.2
+
+## 5.96.1
+
+## 5.96.0
+
+## 5.95.2
+
+## 5.95.1
+
+## 5.95.0
+
+## 5.94.5
+
+### Patch Changes
+
+- fix(\*): resolve issue about excluded build directory ([#10312](https://github.com/TanStack/query/pull/10312))
+
+## 5.94.4
+
+### Patch Changes
+
+- chore: fixed version ([#10064](https://github.com/TanStack/query/pull/10064))
+
 ## 5.93.0
 
 ### Minor Changes

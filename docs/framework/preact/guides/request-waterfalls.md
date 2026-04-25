@@ -1,8 +1,8 @@
 ---
 id: request-waterfalls
 title: Performance & Request Waterfalls
-ref: docs/framework/react/guides/request-waterfalls
-replace: { 'react': 'preact', 'react-query': 'preact-query' }
+ref: docs/framework/react/guides/request-waterfalls.md
+replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 ---
 
 [//]: # 'LazyExample'

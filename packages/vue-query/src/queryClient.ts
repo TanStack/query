@@ -202,15 +202,23 @@ export class QueryClient extends QC {
     TInferredQueryFnData = InferDataFromTag<TQueryFnData, TTaggedQueryKey>,
     TInferredError = InferErrorFromTag<TError, TTaggedQueryKey>,
   >(
-    filters?: InvalidateQueryFilters<TTaggedQueryKey>,
+    filters?:
+      | InvalidateQueryFilters<TTaggedQueryKey>
+      | (() => InvalidateQueryFilters<TTaggedQueryKey>),
     options?: MaybeRefDeep<InvalidateOptions>,
   ): Promise<void>
   invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
-    filters: MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>> = {},
-    options: MaybeRefDeep<InvalidateOptions> = {},
+    filters:
+      | MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>
+      | (() => InvalidateQueryFilters<TTaggedQueryKey>) = {},
+    options: MaybeRefDeep<InvalidateOptions> | (() => InvalidateOptions) = {},
   ): Promise<void> {
-    const filtersCloned = cloneDeepUnref(filters)
-    const optionsCloned = cloneDeepUnref(options)
+    const filtersCloned = cloneDeepUnref(
+      filters as MaybeRefDeep<InvalidateQueryFilters<TTaggedQueryKey>>,
+    )
+    const optionsCloned = cloneDeepUnref(
+      options as MaybeRefDeep<InvalidateOptions>,
+    )
 
     super.invalidateQueries(
       { ...filtersCloned, refetchType: 'none' },
@@ -275,9 +283,17 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
-    >,
+    options:
+      | MaybeRefDeep<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+        >
+      | (() => FetchQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >),
   ): Promise<TData>
   fetchQuery<
     TQueryFnData,

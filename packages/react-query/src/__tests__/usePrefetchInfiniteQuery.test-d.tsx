@@ -1,10 +1,11 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { queryKey } from '@tanstack/query-test-utils'
 import { usePrefetchInfiniteQuery } from '..'
 
 describe('usePrefetchInfiniteQuery', () => {
   it('should return nothing', () => {
     const result = usePrefetchInfiniteQuery({
-      queryKey: ['key'],
+      queryKey: queryKey(),
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
@@ -17,7 +18,7 @@ describe('usePrefetchInfiniteQuery', () => {
     assertType(
       // @ts-expect-error TS2345
       usePrefetchInfiniteQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
       }),
     )
@@ -26,7 +27,7 @@ describe('usePrefetchInfiniteQuery', () => {
   it('should not allow refetchInterval, enabled or throwOnError options', () => {
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -37,7 +38,7 @@ describe('usePrefetchInfiniteQuery', () => {
 
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
@@ -48,7 +49,7 @@ describe('usePrefetchInfiniteQuery', () => {
 
     assertType(
       usePrefetchInfiniteQuery({
-        queryKey: ['key'],
+        queryKey: queryKey(),
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,

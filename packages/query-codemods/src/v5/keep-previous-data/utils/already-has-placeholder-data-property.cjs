@@ -19,7 +19,7 @@ class AlreadyHasPlaceholderDataProperty extends Error {
     const start = location.start.line
     const end = location.end.line
 
-    return `The usage in file "${filePath}" at line ${start}:${end} already contains a a "placeholderData" property. Please migrate this usage manually.`
+    return `The usage in file "${filePath}" at line ${start}:${end} already contains a "placeholderData" property. Please migrate this usage manually.`
   }
 }
 

@@ -10,6 +10,9 @@
 'package: eslint-plugin-query':
   - changed-files:
       - any-glob-to-any-file: 'packages/eslint-plugin-query/**/*'
+'package: preact-query':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/preact-query/**/*'
 'package: query-async-storage-persister':
   - changed-files:
       - any-glob-to-any-file: 'packages/query-async-storage-persister/**/*'
