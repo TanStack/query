@@ -336,10 +336,12 @@ describe('queryOptions', () => {
     expectTypeOf(nestedData).toEqualTypeOf<{ id: PostId } | undefined>()
 
     // Test 3: inline branded queryKey
-    const { data: inlineData } = reactive(useQuery({
-      queryKey: ['post', { postId: postId as PostId }],
-      queryFn: () => Promise.resolve({ id: postId as PostId }),
-    }))
+    const { data: inlineData } = reactive(
+      useQuery({
+        queryKey: ['post', { postId: postId as PostId }],
+        queryFn: () => Promise.resolve({ id: postId as PostId }),
+      }),
+    )
     expectTypeOf(inlineData).toEqualTypeOf<{ id: PostId } | undefined>()
   })
 })
