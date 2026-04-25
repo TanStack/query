@@ -478,29 +478,70 @@ describe('queriesObserver', () => {
     const combine = vi.fn((results: Array<QueryObserverResult>) =>
       results.map((result) => result.data),
     )
-    const queries = [
-      {
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'data'),
-        staleTime: Infinity,
-        suspense: true,
-      },
-    ]
+    const query = {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      staleTime: Infinity,
+      suspense: true,
+    }
 
     queryClient.setQueryData(key, 'data')
 
-    const observer = new QueriesObserver<Array<unknown>>(queryClient, queries, {
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query], {
       combine,
     })
 
     const [rawResult, getCombinedResult] = observer.getOptimisticResult(
-      queries,
+      [query],
       combine,
     )
     expect(getCombinedResult(rawResult)).toEqual(['data'])
     expect(combine).toHaveBeenCalledTimes(1)
 
     const unsubscribe = observer.subscribe(() => undefined)
+
+    void queryClient.resetQueries({ queryKey: key })
+    expect(combine).toHaveBeenCalledTimes(1)
+
+    unsubscribe()
+  })
+
+  it('should skip combine notifications after suspense is enabled without structural changes', async () => {
+    const key = queryKey()
+    const combine = vi.fn((results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data),
+    )
+    const query = {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      staleTime: Infinity,
+      suspense: false,
+    }
+
+    queryClient.setQueryData(key, 'data')
+
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query], {
+      combine,
+    })
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      [query],
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toEqual(['data'])
+    expect(combine).toHaveBeenCalledTimes(1)
+
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    observer.setQueries(
+      [
+        {
+          ...query,
+          suspense: true,
+        },
+      ],
+      { combine },
+    )
 
     void queryClient.resetQueries({ queryKey: key })
     expect(combine).toHaveBeenCalledTimes(1)

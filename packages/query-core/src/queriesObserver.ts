@@ -252,9 +252,9 @@ export class QueriesObserver<
   #shouldSkipCombine(): boolean {
     return (
       this.#options?.combine !== undefined &&
-      this.#observerMatches.some((match, index) => {
+      this.#observers.some((observer, index) => {
         return (
-          match.defaultedQueryOptions.suspense &&
+          observer.options.suspense &&
           this.#result[index]?.data === undefined
         )
       })
