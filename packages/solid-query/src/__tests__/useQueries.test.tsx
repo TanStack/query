@@ -213,4 +213,37 @@ describe('useQueries', () => {
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(0)
   })
+
+  it('combine should recompute at runtime when returning an arbitrary object shape (#7522)', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const result = useQueries(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => sleep(10).then(() => true),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(10).then(() => true),
+          },
+        ],
+        combine: (results) => ({
+          allTrue: results.every((r) => r.data === true),
+        }),
+      }))
+
+      return <div>allTrue: {String(result.allTrue)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, () => <Page />)
+
+    expect(rendered.getByText('allTrue: false')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(20)
+
+    expect(rendered.getByText('allTrue: true')).toBeInTheDocument()
+  })
 })
