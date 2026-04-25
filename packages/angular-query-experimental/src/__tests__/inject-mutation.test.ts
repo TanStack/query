@@ -9,6 +9,7 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
+import { render } from '@testing-library/angular'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, injectMutation, provideTanStackQuery } from '..'
 import { expectSignals, setFixtureSignalInputs } from './test-utils'
@@ -94,24 +95,36 @@ describe('injectMutation', () => {
 
   it('should return data when request succeeds', async () => {
     const result = 'Mock data'
-    const mutation = TestBed.runInInjectionContext(() => {
-      return injectMutation(() => ({
+
+    @Component({
+      template: `
+        <div>isIdle: {{ mutation.isIdle() }}</div>
+        <div>isPending: {{ mutation.isPending() }}</div>
+        <div>isError: {{ mutation.isError() }}</div>
+        <div>isSuccess: {{ mutation.isSuccess() }}</div>
+        <div>data: {{ mutation.data() ?? 'none' }}</div>
+        <div>error: {{ mutation.error()?.message ?? 'none' }}</div>
+      `,
+    })
+    class Page {
+      readonly mutation = injectMutation(() => ({
         mutationFn: (params: string) => sleep(10).then(() => params),
       }))
-    })
+    }
 
-    mutation.mutate(result)
+    const rendered = await render(Page)
+
+    rendered.fixture.componentInstance.mutation.mutate(result)
 
     await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
 
-    expectSignals(mutation, {
-      isIdle: false,
-      isPending: false,
-      isError: false,
-      isSuccess: true,
-      data: result,
-      error: null,
-    })
+    expect(rendered.getByText('isIdle: false')).toBeInTheDocument()
+    expect(rendered.getByText('isPending: false')).toBeInTheDocument()
+    expect(rendered.getByText('isError: false')).toBeInTheDocument()
+    expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
+    expect(rendered.getByText(`data: ${result}`)).toBeInTheDocument()
+    expect(rendered.getByText('error: none')).toBeInTheDocument()
   })
 
   it('should update mutation when reactive options change', () => {
@@ -138,31 +151,44 @@ describe('injectMutation', () => {
   })
 
   it('should reset state after invoking mutation.reset', async () => {
-    const mutation = TestBed.runInInjectionContext(() => {
-      return injectMutation(() => ({
+    @Component({
+      template: `
+        <div>isIdle: {{ mutation.isIdle() }}</div>
+        <div>isPending: {{ mutation.isPending() }}</div>
+        <div>isError: {{ mutation.isError() }}</div>
+        <div>isSuccess: {{ mutation.isSuccess() }}</div>
+        <div>data: {{ mutation.data() ?? 'none' }}</div>
+        <div>error: {{ mutation.error()?.message ?? 'none' }}</div>
+      `,
+    })
+    class Page {
+      readonly mutation = injectMutation(() => ({
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
       }))
-    })
+    }
 
-    mutation.mutate()
+    const rendered = await render(Page)
+
+    rendered.fixture.componentInstance.mutation.mutate()
 
     await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
 
-    expect(mutation.isError()).toBe(true)
+    expect(rendered.getByText('isError: true')).toBeInTheDocument()
+    expect(rendered.getByText('error: Some error')).toBeInTheDocument()
 
-    mutation.reset()
+    rendered.fixture.componentInstance.mutation.reset()
 
     await vi.advanceTimersByTimeAsync(0)
+    rendered.fixture.detectChanges()
 
-    expectSignals(mutation, {
-      isIdle: true,
-      isPending: false,
-      isError: false,
-      isSuccess: false,
-      data: undefined,
-      error: null,
-    })
+    expect(rendered.getByText('isIdle: true')).toBeInTheDocument()
+    expect(rendered.getByText('isPending: false')).toBeInTheDocument()
+    expect(rendered.getByText('isError: false')).toBeInTheDocument()
+    expect(rendered.getByText('isSuccess: false')).toBeInTheDocument()
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+    expect(rendered.getByText('error: none')).toBeInTheDocument()
   })
 
   describe('side effects', () => {
