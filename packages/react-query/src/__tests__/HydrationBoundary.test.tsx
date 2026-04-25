@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import { render } from '@testing-library/react'
 import * as coreModule from '@tanstack/query-core'
@@ -33,7 +33,7 @@ describe('React hydration', () => {
     vi.useRealTimers()
   })
 
-  test('should hydrate queries to the cache on context', async () => {
+  it('should hydrate queries to the cache on context', async () => {
     const dehydratedState = JSON.parse(stringifiedState)
     const queryClient = new QueryClient()
 
@@ -63,7 +63,7 @@ describe('React hydration', () => {
     queryClient.clear()
   })
 
-  test('should hydrate queries to the cache on custom context', async () => {
+  it('should hydrate queries to the cache on custom context', async () => {
     const queryClientInner = new QueryClient()
     const queryClientOuter = new QueryClient()
 
@@ -100,7 +100,7 @@ describe('React hydration', () => {
   })
 
   describe('ReactQueryCacheProvider with hydration support', () => {
-    test('should hydrate new queries if queries change', async () => {
+    it('should hydrate new queries if queries change', async () => {
       const dehydratedState = JSON.parse(stringifiedState)
       const queryClient = new QueryClient()
 
@@ -171,7 +171,7 @@ describe('React hydration', () => {
     // remounted, I didn't change tabs etc?).
     // Any queries that does not exist in the cache yet can still be hydrated
     // since they don't have any observers on the current page that would update.
-    test('should hydrate new but not existing queries if transition is aborted', async () => {
+    it('should hydrate new but not existing queries if transition is aborted', async () => {
       const initialDehydratedState = JSON.parse(stringifiedState)
       const queryClient = new QueryClient()
 
@@ -264,7 +264,7 @@ describe('React hydration', () => {
       queryClient.clear()
     })
 
-    test('should hydrate queries to new cache if cache changes', async () => {
+    it('should hydrate queries to new cache if cache changes', async () => {
       const dehydratedState = JSON.parse(stringifiedState)
       const queryClient = new QueryClient()
 
@@ -309,7 +309,7 @@ describe('React hydration', () => {
     })
   })
 
-  test('should not hydrate queries if state is null', async () => {
+  it('should not hydrate queries if state is null', async () => {
     const queryClient = new QueryClient()
 
     const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
@@ -337,7 +337,7 @@ describe('React hydration', () => {
     queryClient.clear()
   })
 
-  test('should not hydrate queries if state is undefined', async () => {
+  it('should not hydrate queries if state is undefined', async () => {
     const queryClient = new QueryClient()
 
     const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
@@ -361,7 +361,7 @@ describe('React hydration', () => {
     queryClient.clear()
   })
 
-  test('should not hydrate queries if state is not an object', async () => {
+  it('should not hydrate queries if state is not an object', async () => {
     const queryClient = new QueryClient()
 
     const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
@@ -385,7 +385,7 @@ describe('React hydration', () => {
     queryClient.clear()
   })
 
-  test('should handle state without queries property gracefully', async () => {
+  it('should handle state without queries property gracefully', async () => {
     const queryClient = new QueryClient()
 
     const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
@@ -410,7 +410,7 @@ describe('React hydration', () => {
   })
 
   // https://github.com/TanStack/query/issues/8677
-  test('should not infinite loop when hydrating promises that resolve to errors', async () => {
+  it('should not infinite loop when hydrating promises that resolve to errors', async () => {
     const originalHydrate = coreModule.hydrate
     const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
     let hydrationCount = 0
@@ -483,7 +483,7 @@ describe('React hydration', () => {
     clientQueryClient.clear()
   })
 
-  test('should hydrate pending idle queries in render to avoid suspense refetches', async () => {
+  it('should hydrate pending idle queries in render to avoid suspense refetches', async () => {
     const queryKey = ['string'] as const
 
     const makeQueryClient = () =>
@@ -547,7 +547,7 @@ describe('React hydration', () => {
     queryClient.clear()
   })
 
-  test('should not refetch when query has enabled set to false', async () => {
+  it('should not refetch when query has enabled set to false', async () => {
     const queryFn = vi.fn()
     const queryClient = new QueryClient()
 
@@ -577,7 +577,7 @@ describe('React hydration', () => {
     queryClient.clear()
   })
 
-  test('should not refetch when query has staleTime set to Infinity', async () => {
+  it('should not refetch when query has staleTime set to Infinity', async () => {
     const queryFn = vi.fn()
     const queryClient = new QueryClient()
 

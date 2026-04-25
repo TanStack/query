@@ -1,7 +1,12 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TestBed } from '@angular/core/testing'
-import { Injector, provideZonelessChangeDetection } from '@angular/core'
-import { sleep } from '@tanstack/query-test-utils'
+import {
+  Component,
+  Injector,
+  provideZonelessChangeDetection,
+} from '@angular/core'
+import { render } from '@testing-library/angular'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
   injectIsMutating,
@@ -28,36 +33,43 @@ describe('injectIsMutating', () => {
     vi.useRealTimers()
   })
 
-  test('should properly return isMutating state', async () => {
-    const [mutation, isMutating] = TestBed.runInInjectionContext(() => [
-      injectMutation(() => ({
-        mutationKey: ['isMutating1'],
-        mutationFn: (params: { par1: string }) => sleep(10).then(() => params),
-      })),
-      injectIsMutating(),
-    ])
+  it('should properly return isMutating state', async () => {
+    const key = queryKey()
 
-    expect(isMutating()).toBe(0)
-
-    mutation.mutate({
-      par1: 'par1',
+    @Component({
+      template: `<div>mutating: {{ isMutating() }}</div>`,
     })
+    class Page {
+      readonly mutation = injectMutation(() => ({
+        mutationKey: key,
+        mutationFn: (params: { par1: string }) => sleep(10).then(() => params),
+      }))
+      readonly isMutating = injectIsMutating()
+    }
 
-    expect(isMutating()).toBe(0)
+    const rendered = await render(Page)
+
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+
+    rendered.fixture.componentInstance.mutation.mutate({ par1: 'par1' })
+
     await vi.advanceTimersByTimeAsync(0)
-    expect(isMutating()).toBe(1)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
     await vi.advanceTimersByTimeAsync(11)
-    expect(isMutating()).toBe(0)
+    rendered.fixture.detectChanges()
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
   describe('injection context', () => {
-    test('throws NG0203 with descriptive error outside injection context', () => {
+    it('should throw NG0203 with descriptive error outside injection context', () => {
       expect(() => {
         injectIsMutating()
-      }).toThrowError(/NG0203(.*?)injectIsMutating/)
+      }).toThrow(/NG0203(.*?)injectIsMutating/)
     })
 
-    test('can be used outside injection context when passing an injector', () => {
+    it('should be usable outside injection context when passing an injector', () => {
       expect(
         injectIsMutating(undefined, {
           injector: TestBed.inject(Injector),

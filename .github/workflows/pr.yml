@@ -13,6 +13,7 @@ env:
 permissions:
   contents: read
   pull-requests: write
+  issues: write
 
 jobs:
   test:
@@ -20,13 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
       - name: Start Nx Agents
         run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
       - name: Setup Tools
-        uses: tanstack/config/.github/setup@main
+        uses: TanStack/config/.github/setup@main
       - name: Get base and head commits for `nx affected`
         uses: nrwl/nx-set-shas@v4.4.0
         with:
@@ -41,11 +42,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v6.0.2
       - name: Setup Tools
-        uses: tanstack/config/.github/setup@main
+        uses: TanStack/config/.github/setup@main
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
@@ -65,10 +64,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v6.0.2
       - name: Check Provenance
         uses: danielroe/provenance-action@v0.1.1
         with:
           fail-on-downgrade: true
+  version-preview:
+    name: Version Preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+      - name: Setup Tools
+        uses: TanStack/config/.github/setup@main
+      - name: Changeset Preview
+        uses: TanStack/config/.github/changeset-preview@main

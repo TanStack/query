@@ -1,0 +1,1 @@
+../../scripts/getTsupConfig.js

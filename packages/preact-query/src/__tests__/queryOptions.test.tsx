@@ -10,6 +10,6 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     } as const
 
-    expect(queryOptions(object)).toStrictEqual(object)
+    expect(queryOptions(object)).toBe(object)
   })
 })
