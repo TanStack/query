@@ -266,6 +266,7 @@ export interface QueryOptions<
     | boolean
     | ((oldData: unknown | undefined, newData: unknown) => unknown)
   _defaulted?: boolean
+  _type?: 'infinite'
   /**
    * Additional payload to be stored on each query.
    * Use this property to pass information that can be used in other places.

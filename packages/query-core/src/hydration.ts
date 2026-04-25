@@ -48,6 +48,7 @@ interface DehydratedQuery {
   state: QueryState
   promise?: Promise<unknown>
   meta?: QueryMeta
+  queryType?: 'infinite'
   // This is only optional because older versions of Query might have dehydrated
   // without it which we need to handle for backwards compatibility.
   // This should be changed to required in the future.
@@ -117,6 +118,7 @@ function dehydrateQuery(
       promise: dehydratePromise(),
     }),
     ...(query.meta && { meta: query.meta }),
+    ...(query.queryType && { queryType: query.queryType }),
   }
 }
 
@@ -209,7 +211,15 @@ export function hydrate(
   })
 
   queries.forEach(
-    ({ queryKey, state, queryHash, meta, promise, dehydratedAt }) => {
+    ({
+      queryKey,
+      state,
+      queryHash,
+      meta,
+      promise,
+      dehydratedAt,
+      queryType,
+    }) => {
       const syncData = promise ? tryResolveSync(promise) : undefined
       const rawData = state.data === undefined ? syncData?.data : state.data
       const data = rawData === undefined ? rawData : deserializeData(rawData)
@@ -260,6 +270,7 @@ export function hydrate(
             queryKey,
             queryHash,
             meta,
+            _type: queryType,
           },
           // Reset fetch status to idle to avoid
           // query being stuck in fetching state upon hydration
