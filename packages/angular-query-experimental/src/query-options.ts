@@ -52,6 +52,33 @@ export type DefinedInitialDataOptions<
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
 }
 
+export type DefinedInitialDataOptionsResult<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
+}
+
+export type UnusedSkipTokenOptionsResult<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
+}
+
+export type UndefinedInitialDataOptionsResult<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
+}
+
 /**
  * Allows to share and re-use query options in a type-safe way.
  *
@@ -80,9 +107,7 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
-}
+): DefinedInitialDataOptionsResult<TQueryFnData, TError, TData, TQueryKey>
 
 /**
  * Allows to share and re-use query options in a type-safe way.
@@ -112,9 +137,7 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
-}
+): UnusedSkipTokenOptionsResult<TQueryFnData, TError, TData, TQueryKey>
 
 /**
  * Allows to share and re-use query options in a type-safe way.
@@ -144,9 +167,7 @@ export function queryOptions<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  queryKey: DataTag<TQueryKey, TQueryFnData, TError>
-}
+): UndefinedInitialDataOptionsResult<TQueryFnData, TError, TData, TQueryKey>
 
 /**
  * Allows to share and re-use query options in a type-safe way.
