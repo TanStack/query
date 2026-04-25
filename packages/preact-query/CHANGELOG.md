@@ -1,5 +1,12 @@
 # @tanstack/preact-query
 
+## 5.100.3
+
+### Patch Changes
+
+- Updated dependencies [[`f85d825`](https://github.com/TanStack/query/commit/f85d825e02efbbff02e2081528ed28f5e5382f7a)]:
+  - @tanstack/query-core@5.100.3
+
 ## 5.100.2
 
 ### Patch Changes

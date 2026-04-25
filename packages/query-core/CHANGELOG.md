@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.100.3
+
+### Patch Changes
+
+- fix(suspense): skip calling combine when queries would suspend ([#10576](https://github.com/TanStack/query/pull/10576))
+
 ## 5.100.2
 
 ### Patch Changes
