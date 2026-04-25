@@ -2,7 +2,7 @@ import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { queryOptions, useQuery } from '..'
-import type { OmitKeyof, UseQueryOptions } from '..'
+import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
 
 describe('useQuery', () => {
   describe('Config object overload', () => {
@@ -169,7 +169,9 @@ describe('useQuery', () => {
         })
       }
 
-      assertType(useBasket('fruit'))
+      assertType<UseQueryReturnType<'apple' | 'broccoli', Error>>(
+        useBasket('fruit'),
+      )
     })
   })
 
