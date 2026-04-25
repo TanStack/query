@@ -16,6 +16,8 @@ export default defineConfig(() => {
 
   tsup_options.forEach((tsup_option) => {
     tsup_option.outDir = 'build'
+    tsup_option.experimentalDts = true
+    delete tsup_option.dts
   })
 
   return tsup_options

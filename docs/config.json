@@ -184,6 +184,10 @@
               "to": "framework/preact/quick-start"
             },
             {
+              "label": "Devtools",
+              "to": "framework/preact/devtools"
+            },
+            {
               "label": "TypeScript",
               "to": "framework/preact/typescript"
             },
@@ -241,6 +245,10 @@
             {
               "label": "Window Focus Refetching",
               "to": "framework/react/guides/window-focus-refetching"
+            },
+            {
+              "label": "Polling",
+              "to": "framework/react/guides/polling"
             },
             {
               "label": "Disabling/Pausing Queries",
@@ -396,6 +404,10 @@
               "to": "framework/solid/guides/window-focus-refetching"
             },
             {
+              "label": "Polling",
+              "to": "framework/solid/guides/polling"
+            },
+            {
               "label": "Disabling/Pausing Queries",
               "to": "framework/solid/guides/disabling-queries"
             },
@@ -531,6 +543,10 @@
             {
               "label": "Window Focus Refetching",
               "to": "framework/vue/guides/window-focus-refetching"
+            },
+            {
+              "label": "Polling",
+              "to": "framework/vue/guides/polling"
             },
             {
               "label": "Disabling/Pausing Queries",
@@ -910,6 +926,10 @@
           "to": "reference/onlineManager"
         },
         {
+          "label": "environmentManager",
+          "to": "reference/environmentManager"
+        },
+        {
           "label": "notifyManager",
           "to": "reference/notifyManager"
         },
@@ -1048,6 +1068,18 @@
               "to": "framework/vue/reference/infiniteQueryOptions"
             },
             {
+              "label": "mutationOptions",
+              "to": "framework/vue/reference/mutationOptions"
+            },
+            {
+              "label": "usePrefetchQuery",
+              "to": "framework/vue/reference/usePrefetchQuery"
+            },
+            {
+              "label": "usePrefetchInfiniteQuery",
+              "to": "framework/vue/reference/usePrefetchInfiniteQuery"
+            },
+            {
               "label": "hydration",
               "to": "framework/vue/reference/hydration"
             }
@@ -1091,6 +1123,10 @@
             {
               "label": "infiniteQueryOptions",
               "to": "framework/solid/reference/infiniteQueryOptions"
+            },
+            {
+              "label": "mutationOptions",
+              "to": "framework/solid/reference/mutationOptions"
             },
             {
               "label": "hydration",
@@ -1140,6 +1176,10 @@
             {
               "label": "Functions / infiniteQueryOptions",
               "to": "framework/svelte/reference/functions/infiniteQueryOptions"
+            },
+            {
+              "label": "Functions / mutationOptions",
+              "to": "framework/svelte/reference/functions/mutationOptions"
             }
           ]
         },
@@ -1241,7 +1281,7 @@
             },
             {
               "label": "hydration",
-              "to": "framework/react/reference/functions/HydrationBoundary"
+              "to": "framework/preact/reference/functions/HydrationBoundary"
             }
           ]
         }
@@ -1281,6 +1321,10 @@
         {
           "label": "Mutation Property Order",
           "to": "eslint/mutation-property-order"
+        },
+        {
+          "label": "Prefer Query Options",
+          "to": "eslint/prefer-query-options"
         }
       ]
     },
@@ -1419,6 +1463,10 @@
             {
               "label": "Astro",
               "to": "framework/solid/examples/astro"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/solid/examples/offline"
             }
           ]
         },
@@ -1583,6 +1631,31 @@
             {
               "label": "createPersister (Experimental)",
               "to": "framework/vue/plugins/createPersister"
+            }
+          ]
+        },
+        {
+          "label": "preact",
+          "children": [
+            {
+              "label": "persistQueryClient",
+              "to": "framework/preact/plugins/persistQueryClient"
+            },
+            {
+              "label": "createSyncStoragePersister",
+              "to": "framework/preact/plugins/createSyncStoragePersister"
+            },
+            {
+              "label": "createAsyncStoragePersister",
+              "to": "framework/preact/plugins/createAsyncStoragePersister"
+            },
+            {
+              "label": "broadcastQueryClient (Experimental)",
+              "to": "framework/preact/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "framework/preact/plugins/createPersister"
             }
           ]
         }

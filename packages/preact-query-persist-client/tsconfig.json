@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-ts",
+    "rootDir": ".",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  },
+  "include": ["src", "test-setup.ts", "*.config.*", "package.json"],
+  "references": [
+    { "path": "../query-persist-client-core" },
+    { "path": "../preact-query" }
+  ]
+}

@@ -1,7 +1,6 @@
 import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
 import { getDocsUrl } from '../../utils/get-docs-url'
-import { uniqueBy } from '../../utils/unique-by'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
@@ -13,6 +12,13 @@ const QUERY_FN = 'queryFn'
 export const name = 'exhaustive-deps'
 
 const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
+
+type RuleOption = {
+  allowlist?: {
+    variables?: Array<string>
+    types?: Array<string>
+  }
+}
 
 export const rule = createRule({
   name,
@@ -28,27 +34,36 @@ export const rule = createRule({
     },
     hasSuggestions: true,
     fixable: 'code',
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          allowlist: {
+            type: 'object',
+            properties: {
+              variables: { type: 'array', items: { type: 'string' } },
+              types: { type: 'array', items: { type: 'string' } },
+            },
+            additionalProperties: false,
+          },
+        },
+        additionalProperties: false,
+      },
+    ],
   },
   defaultOptions: [],
 
   create: detectTanstackQueryImports((context) => {
     return {
-      Property: (node) => {
-        if (
-          !ASTUtils.isObjectExpression(node.parent) ||
-          !ASTUtils.isIdentifierWithName(node.key, QUERY_KEY)
-        ) {
-          return
-        }
-
+      ObjectExpression: (node: TSESTree.ObjectExpression) => {
         const scopeManager = context.sourceCode.scopeManager
+
         const queryKey = ASTUtils.findPropertyWithIdentifierKey(
-          node.parent.properties,
+          node.properties,
           QUERY_KEY,
         )
         const queryFn = ASTUtils.findPropertyWithIdentifierKey(
-          node.parent.properties,
+          node.properties,
           QUERY_FN,
         )
 
@@ -70,103 +85,134 @@ export const rule = createRule({
           context,
         )
 
-        const externalRefs = ASTUtils.getExternalRefs({
-          scopeManager,
-          sourceCode: context.sourceCode,
-          node: getQueryFnRelevantNode(queryFn),
-        })
+        const queryFnNodes = ExhaustiveDepsUtils.getQueryFnNodes(queryFn)
 
-        const relevantRefs = externalRefs.filter((reference) =>
-          ExhaustiveDepsUtils.isRelevantReference({
-            sourceCode: context.sourceCode,
-            reference,
+        const externalRefs = queryFnNodes.flatMap((fnNode) =>
+          ASTUtils.getExternalRefs({
             scopeManager,
-            node: getQueryFnRelevantNode(queryFn),
-            filename: context.filename,
+            sourceCode: context.sourceCode,
+            node: fnNode,
           }),
         )
 
-        const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyNode).map(
-          (identifier) =>
-            ASTUtils.mapKeyNodeToBaseText(identifier, context.sourceCode),
+        const relevantRefs = externalRefs.filter((reference) =>
+          queryFnNodes.some((fnNode) =>
+            ExhaustiveDepsUtils.isRelevantReference({
+              sourceCode: context.sourceCode,
+              reference,
+              scopeManager,
+              node: fnNode,
+              filename: context.filename,
+            }),
+          ),
         )
 
-        const missingRefs = relevantRefs
-          .map((ref) => ({
-            ref: ref,
-            text: ASTUtils.mapKeyNodeToBaseText(
-              ref.identifier,
-              context.sourceCode,
-            ),
-          }))
-          .filter(({ ref, text }) => {
-            return (
-              !ref.isTypeReference &&
-              !ASTUtils.isAncestorIsCallee(ref.identifier) &&
-              !existingKeys.some((existingKey) => existingKey === text) &&
-              !existingKeys.includes(text.split(/[?.]/)[0] ?? '')
-            )
-          })
-          .map(({ ref, text }) => ({
+        const ruleOptions = context.options.at(0) as RuleOption | undefined
+        const allowlistedVariables = new Set(
+          ruleOptions?.allowlist?.variables ?? [],
+        )
+        const allowlistedTypes = new Set(ruleOptions?.allowlist?.types ?? [])
+
+        const requiredRefs = relevantRefs.flatMap((ref) => {
+          if (ref.identifier.type !== AST_NODE_TYPES.Identifier) return []
+
+          const refPath = ExhaustiveDepsUtils.computeRefPath({
             identifier: ref.identifier,
-            text: text,
-          }))
-
-        const uniqueMissingRefs = uniqueBy(missingRefs, (x) => x.text)
-
-        if (uniqueMissingRefs.length > 0) {
-          const missingAsText = uniqueMissingRefs
-            .map((ref) =>
-              ASTUtils.mapKeyNodeToText(ref.identifier, context.sourceCode),
-            )
-            .join(', ')
-
-          const queryKeyValue = context.sourceCode.getText(queryKeyNode)
-
-          const existingWithMissing =
-            queryKeyValue === '[]'
-              ? `[${missingAsText}]`
-              : queryKeyValue.replace(/\]$/, `, ${missingAsText}]`)
-
-          const suggestions: TSESLint.ReportSuggestionArray<string> = []
-
-          if (queryKeyNode.type === AST_NODE_TYPES.ArrayExpression) {
-            suggestions.push({
-              messageId: 'fixTo',
-              data: { result: existingWithMissing },
-              fix(fixer) {
-                return fixer.replaceText(queryKeyNode, existingWithMissing)
-              },
-            })
-          }
-
-          context.report({
-            node: node,
-            messageId: 'missingDeps',
-            data: {
-              deps: uniqueMissingRefs.map((ref) => ref.text).join(', '),
-            },
-            suggest: suggestions,
+            sourceCode: context.sourceCode,
           })
-        }
+
+          if (refPath === null) return []
+
+          return [
+            {
+              ...refPath,
+              allowlistedByType:
+                ExhaustiveDepsUtils.variableIsAllowlistedByType({
+                  allowlistedTypes,
+                  variable: ref.resolved ?? null,
+                }),
+            },
+          ]
+        })
+
+        if (requiredRefs.length === 0) return
+
+        const queryKeyDeps = ExhaustiveDepsUtils.collectQueryKeyDeps({
+          sourceCode: context.sourceCode,
+          scopeManager: scopeManager,
+          queryKeyNode: queryKeyNode,
+        })
+
+        const missingPaths = ExhaustiveDepsUtils.computeFilteredMissingPaths({
+          requiredRefs: requiredRefs,
+          allowlistedVariables: allowlistedVariables,
+          existingRootIdentifiers: queryKeyDeps.roots,
+          existingFullPaths: queryKeyDeps.paths,
+        })
+
+        if (missingPaths.length === 0) return
+
+        const missingAsText = missingPaths.join(', ')
+        const suggestions = buildSuggestions({
+          queryKeyNode,
+          missingPaths,
+          missingAsText,
+          sourceCode: context.sourceCode,
+        })
+
+        context.report({
+          node,
+          messageId: 'missingDeps',
+          data: { deps: missingAsText },
+          suggest: suggestions,
+        })
       },
     }
   }),
 })
 
-function getQueryFnRelevantNode(queryFn: TSESTree.Property) {
-  if (queryFn.value.type !== AST_NODE_TYPES.ConditionalExpression) {
-    return queryFn.value
+function buildSuggestions(params: {
+  queryKeyNode: TSESTree.Node
+  missingPaths: Array<string>
+  missingAsText: string
+  sourceCode: Readonly<TSESLint.SourceCode>
+}): TSESLint.ReportSuggestionArray<string> {
+  const { queryKeyNode, missingPaths, missingAsText, sourceCode } = params
+
+  if (queryKeyNode.type !== AST_NODE_TYPES.ArrayExpression) {
+    return []
   }
 
-  if (
-    queryFn.value.consequent.type === AST_NODE_TYPES.Identifier &&
-    queryFn.value.consequent.name === 'skipToken'
-  ) {
-    return queryFn.value.alternate
+  const closingBracket = sourceCode.getLastToken(queryKeyNode)
+  if (!closingBracket) return []
+
+  const existingElements = queryKeyNode.elements
+    .filter((el): el is NonNullable<typeof el> => el !== null)
+    .map((el) => sourceCode.getText(el))
+
+  const resultText = `[${[...existingElements, ...missingPaths].join(', ')}]`
+
+  if (queryKeyNode.elements.length === 0) {
+    return [
+      {
+        messageId: 'fixTo',
+        data: { result: resultText },
+        fix: (fixer) => fixer.replaceText(queryKeyNode, resultText),
+      },
+    ]
   }
 
-  return queryFn.value.consequent
+  const tokenBefore = sourceCode.getTokenBefore(closingBracket)
+  const separator = tokenBefore?.value === ',' ? ' ' : ', '
+
+  return [
+    {
+      messageId: 'fixTo',
+      data: { result: resultText },
+      fix: (fixer) =>
+        fixer.insertTextBefore(closingBracket, `${separator}${missingAsText}`),
+    },
+  ]
 }
 
 function dereferenceVariablesAndTypeAssertions(

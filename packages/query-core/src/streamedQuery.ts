@@ -66,12 +66,10 @@ export function streamedQuery<
     const query = context.client
       .getQueryCache()
       .find({ queryKey: context.queryKey, exact: true })
-    const isRefetch = !!query && query.state.data !== undefined
+    const isRefetch = !!query && query.isFetched()
     if (isRefetch && refetchMode === 'reset') {
       query.setState({
-        status: 'pending',
-        data: undefined,
-        error: null,
+        ...query.resetState,
         fetchStatus: 'fetching',
       })
     }

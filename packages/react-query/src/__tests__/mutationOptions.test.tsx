@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
-import { sleep } from '@tanstack/query-test-utils'
+import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent } from '@testing-library/react'
 import { mutationOptions } from '../mutationOptions'
 import { useIsMutating, useMutation, useMutationState } from '..'
 import { renderWithClient } from './utils'
 import type { MutationState } from '@tanstack/query-core'
+import type { UseMutationOptions } from '../types'
 
 describe('mutationOptions', () => {
   beforeEach(() => {
@@ -17,27 +18,27 @@ describe('mutationOptions', () => {
   })
 
   it('should return the object received as a parameter without any modification (with mutationKey in mutationOptions)', () => {
-    const object = {
+    const object: UseMutationOptions = {
       mutationKey: ['key'],
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the object received as a parameter without any modification (without mutationKey in mutationOptions)', () => {
-    const object = {
+    const object: UseMutationOptions = {
       mutationFn: () => sleep(10).then(() => 5),
     } as const
 
-    expect(mutationOptions(object)).toStrictEqual(object)
+    expect(mutationOptions(object)).toBe(object)
   })
 
   it('should return the number of fetching mutations when used with useIsMutating (with mutationKey in mutationOptions)', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
     const mutationOpts = mutationOptions({
-      mutationKey: ['key'],
+      mutationKey: queryKey(),
       mutationFn: () => sleep(50).then(() => 'data'),
     })
 
@@ -128,7 +129,7 @@ describe('mutationOptions', () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['key'],
+      mutationKey: queryKey(),
       mutationFn: () => sleep(50).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -180,7 +181,7 @@ describe('mutationOptions', () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['key'],
+      mutationKey: queryKey(),
       mutationFn: () => sleep(50).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -234,7 +235,7 @@ describe('mutationOptions', () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
     const mutationOpts = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: queryKey(),
       mutationFn: () => sleep(500).then(() => 'data'),
     })
 
@@ -297,7 +298,7 @@ describe('mutationOptions', () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: queryKey(),
       mutationFn: () => sleep(500).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -335,7 +336,7 @@ describe('mutationOptions', () => {
     const isMutatingArray: Array<number> = []
     const queryClient = new QueryClient()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: queryKey(),
       mutationFn: () => sleep(500).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -377,7 +378,7 @@ describe('mutationOptions', () => {
     > = []
     const queryClient = new QueryClient()
     const mutationOpts = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: queryKey(),
       mutationFn: () => sleep(10).then(() => 'data'),
     })
 
@@ -446,7 +447,7 @@ describe('mutationOptions', () => {
     > = []
     const queryClient = new QueryClient()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: queryKey(),
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({
@@ -488,7 +489,7 @@ describe('mutationOptions', () => {
     > = []
     const queryClient = new QueryClient()
     const mutationOpts1 = mutationOptions({
-      mutationKey: ['mutation'],
+      mutationKey: queryKey(),
       mutationFn: () => sleep(10).then(() => 'data1'),
     })
     const mutationOpts2 = mutationOptions({

@@ -5,5 +5,7 @@
     "composite": false,
     "rootDir": "../../",
     "customConditions": null
-  }
+  },
+  "include": ["src"],
+  "exclude": ["src/__tests__"]
 }

@@ -1,11 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": [
-    ".pnpmfile.cjs",
-    "scripts/*.{j,t}s",
-    "**/root.*.config.*",
-    "**/ts-fixture/file.ts"
-  ],
+  "ignore": ["scripts/*.{j,t}s", "**/root.*.config.*", "**/ts-fixture/file.ts"],
   "ignoreDependencies": [
     "@types/react",
     "@types/react-dom",
@@ -25,7 +20,6 @@
       "ignore": ["**/__testfixtures__/**"]
     },
     "packages/vue-query": {
-      "ignore": ["**/__mocks__/**"],
       "ignoreDependencies": ["vue2", "vue2.7"]
     }
   }

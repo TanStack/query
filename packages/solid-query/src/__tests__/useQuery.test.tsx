@@ -25,6 +25,7 @@ import {
   sleep,
 } from '@tanstack/query-test-utils'
 import {
+  IsRestoringProvider,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -43,15 +44,18 @@ import type { Mock } from 'vitest'
 import type { JSX } from 'solid-js'
 
 describe('useQuery', () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  let queryCache: QueryCache
+  let queryClient: QueryClient
 
   beforeEach(() => {
     vi.useFakeTimers()
+    queryCache = new QueryCache()
+    queryClient = new QueryClient({ queryCache })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    queryClient.clear()
   })
 
   it('should return the correct types', () => {
@@ -1046,6 +1050,69 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
+  })
+
+  it('should maintain referential equality when reconcile option is a string key', async () => {
+    const key = queryKey()
+    const states: Array<Array<{ id: string; done: boolean }>> = []
+
+    let count = 0
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          count++
+          return [
+            { id: '1', done: false },
+            { id: '2', done: count > 1 },
+          ]
+        },
+        reconcile: 'id',
+      }))
+
+      createEffect(() => {
+        if (state.data) {
+          states.push(state.data)
+        }
+      })
+
+      const { refetch } = state
+
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText(
+        'Data: [{"id":"1","done":false},{"id":"2","done":false}]',
+      ),
+    ).toBeInTheDocument()
+    expect(states).toHaveLength(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(
+      rendered.getByText(
+        'Data: [{"id":"1","done":false},{"id":"2","done":true}]',
+      ),
+    ).toBeInTheDocument()
+
+    // reconcile by 'id' updates in-place, so the array reference stays the same
+    // and the effect is not triggered again
+    expect(states).toHaveLength(1)
   })
 
   it('should share equal data structures between query results', async () => {
@@ -3883,7 +3950,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  it('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
+  it('should init to status:pending, fetchStatus:idle when enabled is false', () => {
     const key = queryKey()
 
     function Page() {
@@ -4950,7 +5017,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should only call the query hash function once', async () => {
+  it('should only call the query hash function once', () => {
     const key = queryKey()
 
     let hashes = 0
@@ -4980,6 +5047,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
+    const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(() =>
       sleep(10).then(() => Promise.reject(new Error('Suspense Error Bingo'))),
@@ -4987,11 +5055,11 @@ describe('useQuery', () => {
 
     function Page(props: { enabled: boolean }) {
       const state = useQuery(() => ({
-        queryKey: ['key'],
+        queryKey: key,
         queryFn,
         enabled: props.enabled,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5058,7 +5126,7 @@ describe('useQuery', () => {
             props.id % 2 === 1 ? Promise.reject(new Error('Error')) : 'data',
           ),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5118,7 +5186,7 @@ describe('useQuery', () => {
         queryKey: [props.id],
         queryFn: () => sleep(10).then(() => Promise.reject(new Error('Error'))),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5680,17 +5748,17 @@ describe('useQuery', () => {
       expect(count).toBe(3)
     })
 
-    it('online queries should fetch if paused and we go online even if already unmounted (because not cancelled)', async () => {
+    it('online queries should not fetch if paused initial load and we go online after unmount', async () => {
       const key = queryKey()
       let count = 0
 
       function Component() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
-            await sleep(10)
+          queryFn: async ({ signal: _signal }) => {
             count++
-            return 'data' + count
+            await sleep(10)
+            return `signal${count}`
           },
         }))
 
@@ -5737,10 +5805,75 @@ describe('useQuery', () => {
       await vi.advanceTimersByTimeAsync(10)
       expect(queryClient.getQueryState(key)).toMatchObject({
         fetchStatus: 'idle',
+        status: 'pending',
+      })
+
+      expect(count).toBe(0)
+    })
+
+    it('online queries should re-fetch if paused and we go online even if already unmounted (because not cancelled)', async () => {
+      const key = queryKey()
+      let count = 0
+
+      queryClient.setQueryData(key, 'initial')
+
+      function Component() {
+        const state = useQuery(() => ({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            return 'data' + count
+          },
+        }))
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+          </div>
+        )
+      }
+
+      function Page() {
+        const [show, setShow] = createSignal(true)
+
+        return (
+          <div>
+            {show() && <Component />}
+            <button onClick={() => setShow(false)}>hide</button>
+          </div>
+        )
+      }
+
+      const onlineMock = mockOnlineManagerIsOnline(false)
+
+      const rendered = render(() => (
+        <QueryClientProvider client={queryClient}>
+          <Page />
+        </QueryClientProvider>
+      ))
+
+      expect(
+        rendered.getByText('status: success, fetchStatus: paused'),
+      ).toBeInTheDocument()
+
+      fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
+
+      onlineMock.mockReturnValue(true)
+      queryClient.getQueryCache().onOnline()
+
+      await vi.advanceTimersByTimeAsync(10)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        fetchStatus: 'idle',
         status: 'success',
       })
 
       expect(count).toBe(1)
+
+      onlineMock.mockRestore()
     })
 
     it('online queries should not fetch if paused and we go online when cancelled and no refetchOnReconnect', async () => {
@@ -5803,17 +5936,16 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
-    it('online queries should not fetch if paused and we go online if already unmounted when signal consumed', async () => {
+    it('online queries should fetch if paused and we go online even if already unmounted when refetch was not cancelled', async () => {
       const key = queryKey()
       let count = 0
 
       function Component() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async ({ signal: _signal }) => {
-            await sleep(10)
+          queryFn: () => {
             count++
-            return `signal${count}`
+            return Promise.resolve(`data${count}`)
           },
         }))
 
@@ -5863,16 +5995,16 @@ describe('useQuery', () => {
       fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
       onlineMock.mockReturnValue(true)
-      window.dispatchEvent(new Event('online'))
+      queryClient.getQueryCache().onOnline()
+
+      await vi.advanceTimersByTimeAsync(10)
 
       expect(queryClient.getQueryState(key)).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })
 
-      expect(count).toBe(1)
-
-      onlineMock.mockRestore()
+      expect(count).toBe(2)
     })
   })
 
@@ -6056,7 +6188,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
       }))
 
       createRenderEffect(() => {
@@ -6159,6 +6291,54 @@ describe('useQuery', () => {
     expect(rendered.getByText('data: 3')).toBeInTheDocument()
   })
 
+  it('should not fetch while restoring and refetch after restoring is complete', async () => {
+    const key = queryKey()
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
+
+    const [isRestoring, setIsRestoring] = createSignal(true)
+
+    function Page() {
+      const query = useQuery(() => ({
+        queryKey: key,
+        queryFn,
+      }))
+
+      return (
+        <div>
+          <div data-testid="status">{query.status}</div>
+          <div data-testid="fetchStatus">{query.fetchStatus}</div>
+          <div data-testid="data">{query.data ?? 'undefined'}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <IsRestoringProvider value={isRestoring}>
+          <Page />
+        </IsRestoringProvider>
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('pending')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    // Restoring complete: should refetch
+    setIsRestoring(false)
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByTestId('status')).toHaveTextContent('success')
+    expect(rendered.getByTestId('fetchStatus')).toHaveTextContent('idle')
+    expect(rendered.getByTestId('data')).toHaveTextContent('data')
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
   it('should use provided custom queryClient', async () => {
     const key = queryKey()
     const queryFn = () => sleep(10).then(() => 'custom client')
@@ -6179,5 +6359,45 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Status: custom client')).toBeInTheDocument()
+  })
+
+  it('should refetch query when queryClient changes', async () => {
+    const key = queryKey()
+
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+
+    const queryFn = vi
+      .fn()
+      .mockImplementation(() => sleep(10).then(() => 'data'))
+
+    function Page(props: { client: () => QueryClient }) {
+      const query = useQuery(
+        () => ({
+          queryKey: key,
+          queryFn,
+        }),
+        props.client,
+      )
+
+      return <div>status: {query.status}</div>
+    }
+
+    const [client, setClient] = createSignal(queryClient1)
+
+    const rendered = render(() => <Page client={client} />)
+
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(queryClient1.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    setClient(queryClient2)
+    await vi.advanceTimersByTimeAsync(10)
+
+    expect(rendered.getByText('status: success')).toBeInTheDocument()
+    expect(queryClient2.getQueryCache().find({ queryKey: key })).toBeDefined()
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 })
