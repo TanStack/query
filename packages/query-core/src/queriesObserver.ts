@@ -249,6 +249,17 @@ export class QueriesObserver<
     return input as any
   }
 
+  #shouldSkipCombine(): boolean {
+    return (
+      this.#options?.combine !== undefined &&
+      this.#observers.some((observer, index) => {
+        return (
+          observer.options.suspense && this.#result[index]?.data === undefined
+        )
+      })
+    )
+  }
+
   #findMatchingObservers(
     queries: Array<QueryObserverOptions>,
   ): Array<QueryObserverMatch> {
@@ -294,11 +305,14 @@ export class QueriesObserver<
 
   #notify(): void {
     if (this.hasListeners()) {
-      const previousResult = this.#combinedResult
       const newTracked = this.#trackResult(this.#result, this.#observerMatches)
-      const newResult = this.#combineResult(newTracked, this.#options?.combine)
+      const shouldSkipCombine = this.#shouldSkipCombine()
+      const previousResult = this.#combinedResult
+      const newResult = shouldSkipCombine
+        ? previousResult
+        : this.#combineResult(newTracked, this.#options?.combine)
 
-      if (previousResult !== newResult) {
+      if (shouldSkipCombine || previousResult !== newResult) {
         notifyManager.batch(() => {
           this.listeners.forEach((listener) => {
             listener(this.#result)
