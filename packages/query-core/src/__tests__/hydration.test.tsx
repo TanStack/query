@@ -1386,7 +1386,7 @@ describe('dehydration and rehydration', () => {
     await originalPromise
   })
 
-  test('should preserve queryType for infinite queries during hydration', async () => {
+  it('should preserve queryType for infinite queries during hydration', async () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
@@ -1424,7 +1424,7 @@ describe('dehydration and rehydration', () => {
     expect((hydratedQuery?.state.data as any).pages).toHaveLength(1)
   })
 
-  test('should attach infiniteQueryBehavior during hydration', async () => {
+  it('should attach infiniteQueryBehavior during hydration', async () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
@@ -1466,7 +1466,7 @@ describe('dehydration and rehydration', () => {
     expect(result.pageParams).toHaveLength(1)
   })
 
-  test('should restore infinite query type through dehydrate and hydrate cycle', async () => {
+  it('should restore infinite query type through dehydrate and hydrate cycle', async () => {
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
     await vi.waitFor(() =>
@@ -1500,7 +1500,7 @@ describe('dehydration and rehydration', () => {
     expect(hydratedQuery?.queryType).toBe('infinite')
   })
 
-  test('should preserve pages structure when refetching infinite query after hydration', async () => {
+  it('should preserve pages structure when refetching infinite query after hydration', async () => {
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
     await vi.waitFor(() =>
@@ -1551,7 +1551,7 @@ describe('dehydration and rehydration', () => {
     expect(result.pages[0]).toHaveProperty('items')
   })
 
-  test('should retain infinite query type after subsequent setOptions calls', async () => {
+  it('should retain infinite query type after subsequent setOptions calls', async () => {
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
     await vi.waitFor(() =>
@@ -1581,7 +1581,7 @@ describe('dehydration and rehydration', () => {
     expect(query.queryType).toBe('infinite')
   })
 
-  test('should restore all pages when refetching multi-page infinite query after hydration', async () => {
+  it('should restore all pages when refetching multi-page infinite query after hydration', async () => {
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
     await vi.waitFor(() =>
