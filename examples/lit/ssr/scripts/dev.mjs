@@ -4,6 +4,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const tsxCommand = process.platform === 'win32' ? 'tsx.cmd' : 'tsx'
 const cwd = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 function runBuild() {
@@ -20,7 +21,7 @@ function runBuild() {
 async function run() {
   runBuild()
 
-  const server = spawn(npmCommand, ['run', 'dev:server'], {
+  const server = spawn(tsxCommand, ['./server/index.mjs'], {
     cwd,
     stdio: 'inherit',
   })

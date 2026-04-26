@@ -1,0 +1,22 @@
+{
+  "name": "@tanstack/query-example-lit-ssr",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "node ./scripts/dev.mjs",
+    "build": "tsc --noEmit && vite build"
+  },
+  "dependencies": {
+    "@lit-labs/ssr": "^3.3.0",
+    "@tanstack/lit-query": "^0.1.0",
+    "@tanstack/query-core": "^5.99.0",
+    "lit": "^3.3.1"
+  },
+  "devDependencies": {
+    "@lit-labs/ssr-client": "^1.1.7",
+    "tsx": "^4.19.0",
+    "typescript": "5.8.3",
+    "vite": "^6.4.1"
+  }
+}

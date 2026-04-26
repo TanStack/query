@@ -75,142 +75,42 @@ customElements.define('users-view', UsersView)
 
 ## Runnable Examples
 
-This repo includes a Vite Lit example app at `examples/lit-query-e2e-app`.
-The demo uses a local in-memory mock API (`src/todoApi.ts`) for deterministic behavior.
+This repo includes runnable Lit examples under the top-level `examples/lit`
+directory so they can be surfaced in the docs:
 
-Run:
+- `examples/lit/basic`: Vite Lit app covering query and mutation primitives.
+- `examples/lit/pagination`: pagination, prefetching, optimistic updates, and error recovery.
+- `examples/lit/ssr`: Lit SSR render, dehydrate, and hydrate flow.
+
+Run an example from the repo root:
 
 ```bash
-npm run example:install
-npm run example:dev
+pnpm --dir examples/lit/basic run dev
+pnpm --dir examples/lit/pagination run dev
+pnpm --dir examples/lit/ssr run dev
 ```
 
 Open:
 
-- `http://127.0.0.1:4173/` (full integration demo)
-- `http://127.0.0.1:4173/basic-query.html` (query-only runnable example)
-- `http://127.0.0.1:4173/mutation.html` (mutation runnable example)
-
-Smoke test:
-
-```bash
-npm run example:e2e
-```
-
-Focused scenarios:
-
-```bash
-npm run example:e2e:query-error
-npm run example:e2e:mutation-error
-npm run example:e2e:refetch-button
-npm run example:e2e:lifecycle-reconnect
-npm run example:e2e:lifecycle-contract
-```
-
-Run all scenarios:
-
-```bash
-npm run example:e2e:all
-```
-
-This repo also includes a pagination example app at `examples/lit-query-pagination-app`.
-It demonstrates paginated queries, optimistic updates, prefetching, and error recovery against a local API.
-
-Run:
-
-```bash
-npm run example:pagination:install
-npm run example:pagination:dev
-```
-
-Smoke test:
-
-```bash
-npm run example:pagination:e2e
-```
-
-Focused scenarios:
-
-```bash
-npm run example:pagination:e2e:prefetch
-npm run example:pagination:e2e:error
-npm run example:pagination:e2e:mutations
-npm run example:pagination:e2e:boundary
-```
-
-Run all scenarios:
-
-```bash
-npm run example:pagination:e2e:all
-```
+- `http://127.0.0.1:4173/` (basic example)
+- `http://127.0.0.1:4183/` (pagination example app)
+- `http://127.0.0.1:4174/` (SSR example app)
 
 Use a different port (optional):
 
 ```bash
-DEMO_PORT=4180 npm run example:dev
-DEMO_PORT=4180 npm run example:e2e:all
+DEMO_PORT=4180 pnpm --dir examples/lit/basic run dev
+PAGINATION_DEMO_PORT=4181 PAGINATION_API_PORT=4182 pnpm --dir examples/lit/pagination run dev
+SSR_PORT=4180 pnpm --dir examples/lit/ssr run dev
+SSR_HOST=0.0.0.0 pnpm --dir examples/lit/ssr run dev
 ```
 
-E2E harness options (optional):
+## Integration Smoke
+
+For the framework build smoke used in CI:
 
 ```bash
-PW_HTTP_PROBE_TIMEOUT_MS=1000
-PW_SERVER_READY_TIMEOUT_MS=30000
-PW_WAIT_FOR_TEXT_TIMEOUT_MS=10000
-PW_CAPTURE_FAILURE_ARTIFACTS=false
-PW_ARTIFACT_DIR=output/playwright
-```
-
-This repo also includes an SSR example app at `examples/lit-query-ssr-app`.
-It demonstrates explicit `QueryClient` prefetch, SSR render, dehydrate, and hydrate flow for Lit.
-
-Run:
-
-```bash
-npm run example:ssr:install
-npm run example:ssr:dev
-```
-
-Open:
-
-- `http://127.0.0.1:4174/` (SSR example app)
-
-Smoke test:
-
-```bash
-npm run example:ssr:e2e
-```
-
-That root smoke test runs both the default same-origin SSR flow and the documented `SSR_PUBLIC_ORIGIN=http://localhost:4174` variant.
-
-Focused scenarios:
-
-```bash
-npm run example:ssr:e2e:error
-npm run example:ssr:e2e:refreshing
-```
-
-Run the full default-origin SSR suite plus the documented public-origin smoke:
-
-```bash
-npm run example:ssr:e2e:all
-```
-
-Run either path directly (optional):
-
-```bash
-npm run example:ssr:e2e:default
-npm run example:ssr:e2e:public-origin
-npm run example:ssr:e2e:all:default
-```
-
-Use a different host or port (optional):
-
-```bash
-SSR_PORT=4180 npm run example:ssr:dev
-SSR_PORT=4180 npm run example:ssr:e2e
-SSR_HOST=0.0.0.0 npm run example:ssr:dev
-npm run example:ssr:dev:public-origin
+pnpm --dir integrations/lit-vite run build
 ```
 
 ## Quality Gates

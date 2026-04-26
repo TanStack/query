@@ -155,7 +155,7 @@ async function readTemplate() {
   } catch (error) {
     if (error && typeof error === 'object' && 'code' in error) {
       throw new Error(
-        'Missing built client assets. Run "pnpm run build" in examples/lit-query-ssr-app first.',
+        'Missing built client assets. Run "pnpm --dir examples/lit/ssr run build" from the repo root first.',
       )
     }
 

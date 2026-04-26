@@ -12,7 +12,6 @@ coverage
 dist
 dist-cjs
 dist-ts
-packages/lit-query/examples/**/output/playwright/
 
 # misc
 .DS_Store

@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process'
 import { once } from 'node:events'
 import { API_PORT } from '../config/ports.js'
 
-const packageManagerCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
+const viteCommand = process.platform === 'win32' ? 'vite.cmd' : 'vite'
 const cwd = new URL('..', import.meta.url)
 
 function forwardOutput(prefix, stream, output) {
@@ -11,8 +11,8 @@ function forwardOutput(prefix, stream, output) {
   })
 }
 
-function start(name, args, extraEnv = {}) {
-  const child = spawn(packageManagerCommand, args, {
+function start(name, command, args, extraEnv = {}) {
+  const child = spawn(command, args, {
     cwd,
     stdio: ['ignore', 'pipe', 'pipe'],
     env: {
@@ -48,8 +48,8 @@ async function stop(child) {
 }
 
 async function run() {
-  const api = start('api', ['run', 'dev:api'])
-  const web = start('web', ['run', 'dev:web'], {
+  const api = start('api', process.execPath, ['./server/index.mjs'])
+  const web = start('web', viteCommand, [], {
     VITE_PAGINATION_API_PORT: String(API_PORT),
   })
 
