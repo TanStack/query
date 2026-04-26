@@ -72,25 +72,36 @@ describe('injectMutation', () => {
   })
 
   it('should return error when request fails', async () => {
-    const mutation = TestBed.runInInjectionContext(() => {
-      return injectMutation(() => ({
+    @Component({
+      template: `
+        <div>isIdle: {{ mutation.isIdle() }}</div>
+        <div>isPending: {{ mutation.isPending() }}</div>
+        <div>isError: {{ mutation.isError() }}</div>
+        <div>isSuccess: {{ mutation.isSuccess() }}</div>
+        <div>data: {{ mutation.data() ?? 'none' }}</div>
+        <div>error: {{ mutation.error()?.message ?? 'none' }}</div>
+      `,
+    })
+    class Page {
+      readonly mutation = injectMutation(() => ({
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
       }))
-    })
+    }
 
-    mutation.mutate()
+    const rendered = await render(Page)
+
+    rendered.fixture.componentInstance.mutation.mutate()
 
     await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
 
-    expectSignals(mutation, {
-      isIdle: false,
-      isPending: false,
-      isError: true,
-      isSuccess: false,
-      data: undefined,
-      error: Error('Some error'),
-    })
+    expect(rendered.getByText('isIdle: false')).toBeInTheDocument()
+    expect(rendered.getByText('isPending: false')).toBeInTheDocument()
+    expect(rendered.getByText('isError: true')).toBeInTheDocument()
+    expect(rendered.getByText('isSuccess: false')).toBeInTheDocument()
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+    expect(rendered.getByText('error: Some error')).toBeInTheDocument()
   })
 
   it('should return data when request succeeds', async () => {
