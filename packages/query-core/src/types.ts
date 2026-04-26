@@ -8,7 +8,6 @@ import type { RetryDelayValue, RetryValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
-import type { IntrinsicNoInfer } from './noInfer'
 
 export type NonUndefinedGuard<T> = T extends undefined ? never : T
 
@@ -34,8 +33,6 @@ export type Override<TTargetA, TTargetB> = {
     ? TTargetB[AKey]
     : TTargetA[AKey]
 }
-
-export type NoInfer<T> = IntrinsicNoInfer<T>
 
 export interface Register {
   // defaultError: Error
