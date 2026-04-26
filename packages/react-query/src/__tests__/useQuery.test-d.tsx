@@ -337,50 +337,50 @@ describe('useQuery', () => {
         })
       })
     })
+  })
 
-    describe('generic indexed access TData', () => {
-      // https://github.com/TanStack/query/issues/9937
-      it('should be assignable back to its source indexed type when passed to a generic function parameter', () => {
-        enum DataType {
-          Account = 'account',
-          Product = 'product',
-        }
+  describe('generic indexed access TData', () => {
+    // https://github.com/TanStack/query/issues/9937
+    it('should be assignable back to its source indexed type when passed to a generic function parameter', () => {
+      enum DataType {
+        Account = 'account',
+        Product = 'product',
+      }
 
-        interface Account {
-          name: string
-        }
-        interface Product {
-          code: string
-        }
+      interface Account {
+        name: string
+      }
+      interface Product {
+        code: string
+      }
 
-        type DataTypeToEntity = {
-          [DataType.Account]: Account
-          [DataType.Product]: Product
-        }
+      type DataTypeToEntity = {
+        [DataType.Account]: Account
+        [DataType.Product]: Product
+      }
 
-        const getData = <TDataType extends DataType>(
-          _dataType: TDataType,
-        ): Promise<DataTypeToEntity[TDataType]> =>
-          Promise.resolve({} as DataTypeToEntity[TDataType])
+      const getData = <TDataType extends DataType>(
+        _dataType: TDataType,
+      ): Promise<DataTypeToEntity[TDataType]> =>
+        Promise.resolve({} as DataTypeToEntity[TDataType])
 
-        const getLabel = <TDataType extends DataType>(
-          _dataType: TDataType,
-          _data: DataTypeToEntity[TDataType],
-        ) => 'test'
+      const getLabel = <TDataType extends DataType>(
+        _dataType: TDataType,
+        _data: DataTypeToEntity[TDataType],
+      ) => 'test'
 
-        function Test<TDataType extends DataType>(props: {
-          dataType: TDataType
-        }) {
-          const { data } = useQuery({
-            queryKey: ['test'],
-            queryFn: () => getData(props.dataType),
-          })
+      function Test<TDataType extends DataType>(props: {
+        dataType: TDataType
+      }) {
+        const { data } = useQuery({
+          queryKey: ['test'],
+          queryFn: () => getData(props.dataType),
+        })
 
-          return data ? getLabel(props.dataType, data) : null
-        }
+        return data ? getLabel(props.dataType, data) : null
+      }
 
-        expectTypeOf(Test).toBeFunction()
-      })
+      expectTypeOf(Test).toBeFunction()
     })
   })
 })
