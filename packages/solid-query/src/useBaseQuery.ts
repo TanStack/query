@@ -10,6 +10,7 @@ import {
   createSignal,
   on,
   onCleanup,
+  untrack,
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
@@ -377,6 +378,14 @@ export function useBaseQuery<
     ): any {
       if (prop === 'data') {
         if (state.data !== undefined) {
+          // When data is already in the store and no fetch is in-flight (e.g.
+          // it was preloaded via `ensureQueryData`), avoid reading the resource
+          // because its initial pending state would otherwise trigger Suspense
+          // on the synchronous-resolve microtask gap. See #9955.
+          // `untrack` keeps `isFetching` from leaking into the data subscriber.
+          if (!untrack(() => state.isFetching)) {
+            return state.data
+          }
           return queryResource.latest?.data
         }
         return queryResource()?.data
