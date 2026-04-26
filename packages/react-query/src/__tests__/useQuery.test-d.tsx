@@ -377,6 +377,9 @@ describe('useQuery', () => {
           queryFn: () => getData(props.dataType),
         })
 
+        // Regression guard: this call must compile. With the previous
+        // hand-rolled NoInfer, `data` failed to flow back into the generic
+        // indexed-access parameter `DataTypeToEntity[TDataType]`.
         return data ? getLabel(props.dataType, data) : null
       }
 
