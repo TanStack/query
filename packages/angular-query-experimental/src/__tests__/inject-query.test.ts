@@ -356,6 +356,30 @@ describe('injectQuery', () => {
     expect(rendered.getByText('failureReason: Some error')).toBeInTheDocument()
   })
 
+  it('should be able to select a part of the data with select', async () => {
+    const key = queryKey()
+
+    @Component({
+      template: `<div>data: {{ query.data() ?? 'none' }}</div>`,
+    })
+    class Page {
+      readonly query = injectQuery<{ name: string }, Error, string>(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+        select: (data) => data.name,
+      }))
+    }
+
+    const rendered = await render(Page)
+
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+
+    expect(rendered.getByText('data: test')).toBeInTheDocument()
+  })
+
   it('should update query on options contained signal change', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
