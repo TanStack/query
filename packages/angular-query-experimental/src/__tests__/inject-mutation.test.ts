@@ -518,6 +518,21 @@ describe('injectMutation', () => {
     await expect(() => mutateAsync()).rejects.toThrow(err)
   })
 
+  it('should resolve mutateAsync with the value returned from mutationFn', async () => {
+    const key = queryKey()
+    const { mutateAsync } = TestBed.runInInjectionContext(() => {
+      return injectMutation(() => ({
+        mutationKey: key,
+        mutationFn: (params: string) => sleep(10).then(() => params),
+      }))
+    })
+
+    const promise = mutateAsync('Mock data')
+    await vi.advanceTimersByTimeAsync(11)
+
+    await expect(promise).resolves.toBe('Mock data')
+  })
+
   describe('injection context', () => {
     it('should throw NG0203 with descriptive error outside injection context', () => {
       const key = queryKey()
