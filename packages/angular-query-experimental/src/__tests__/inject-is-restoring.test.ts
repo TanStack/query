@@ -43,6 +43,26 @@ describe('injectIsRestoring', () => {
     expect(isRestoring()).toBe(true)
   })
 
+  it('should reactively reflect changes to the provided signal', () => {
+    const restoringSignal = signal(true)
+
+    TestBed.configureTestingModule({
+      providers: [provideIsRestoring(restoringSignal.asReadonly())],
+    })
+
+    const isRestoring = TestBed.runInInjectionContext(() => {
+      return injectIsRestoring()
+    })
+
+    expect(isRestoring()).toBe(true)
+
+    restoringSignal.set(false)
+    expect(isRestoring()).toBe(false)
+
+    restoringSignal.set(true)
+    expect(isRestoring()).toBe(true)
+  })
+
   it('should be usable outside injection context when passing an injector', () => {
     const isRestoring = injectIsRestoring({
       injector: TestBed.inject(Injector),
