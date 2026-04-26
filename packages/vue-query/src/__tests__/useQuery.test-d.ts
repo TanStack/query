@@ -3,6 +3,7 @@ import { computed, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { queryOptions, useQuery } from '..'
 import type { Ref } from 'vue-demi'
+import type { QueryObserverResult } from '@tanstack/query-core'
 import type { OmitKeyof, UseQueryOptions } from '..'
 
 describe('useQuery', () => {
@@ -334,6 +335,30 @@ describe('useQuery', () => {
 
       if (status === 'success') {
         expectTypeOf(data).toEqualTypeOf<string>()
+      }
+    })
+
+    it('suspense() returns Promise<QueryObserverResult> parameterized by TResult', async () => {
+      const key = queryKey()
+
+      const query = useQuery({
+        queryKey: key,
+        queryFn: () => sleep(0).then(() => 'Some data'),
+      })
+
+      // Pinning the resolved type guards the `suspense: () => Promise<TResult>`
+      // parameterization on `UseBaseQueryReturnType` against accidental
+      // collapse to `Promise<unknown>` or `Promise<QueryObserverResult<unknown, unknown>>`.
+      expectTypeOf(query.suspense()).toEqualTypeOf<
+        Promise<QueryObserverResult<string, Error>>
+      >()
+
+      const result = await query.suspense()
+      // Awaiting the promise must preserve the discriminated union so
+      // narrowing on `isSuccess` reduces `data` to the queryFn return type.
+      if (result.isSuccess) {
+        expectTypeOf(result.data).toEqualTypeOf<string>()
+        expectTypeOf(result.error).toEqualTypeOf<null>()
       }
     })
   })
