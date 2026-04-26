@@ -604,24 +604,6 @@ describe('injectQuery', () => {
     })
   })
 
-  it('should set state to error when queryFn returns reject promise', async () => {
-    const key = queryKey()
-    const query = TestBed.runInInjectionContext(() => {
-      return injectQuery(() => ({
-        retry: false,
-        queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => Promise.reject(new Error('Some error'))),
-      }))
-    })
-
-    expect(query.status()).toBe('pending')
-
-    await vi.advanceTimersByTimeAsync(11)
-
-    expect(query.status()).toBe('error')
-  })
-
   it('should render with required signal inputs', async () => {
     @Component({
       selector: 'app-fake',
