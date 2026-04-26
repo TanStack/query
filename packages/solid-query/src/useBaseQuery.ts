@@ -34,6 +34,12 @@ function reconcileFn<TData, TError>(
   queryHash?: string,
 ): QueryObserverResult<TData, TError> {
   if (reconcileOption === false) return result
+  // When the incoming data is the same reference as what is already in the
+  // store there is nothing to reconcile. Skip both user-provided reconcile
+  // callbacks and the structural reconcile to avoid invoking them multiple
+  // times per logical query update (e.g. for fetching=true/false transitions
+  // where the data reference is unchanged). See #8873.
+  if (store.data === result.data) return result
   if (typeof reconcileOption === 'function') {
     const newData = reconcileOption(store.data, result.data as TData)
     return { ...result, data: newData } as typeof result

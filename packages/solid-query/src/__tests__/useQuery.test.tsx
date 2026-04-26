@@ -4705,6 +4705,62 @@ describe('useQuery', () => {
     expect(states).toHaveLength(1)
   })
 
+  it('should not call user-provided reconcile function when result.data reference is unchanged (#8873)', async () => {
+    const key = queryKey()
+    const reconcileSpy = vi.fn(
+      (oldData: Array<number> | undefined, newData: Array<number>) => {
+        return reconcile(newData)(oldData)
+      },
+    )
+
+    let count = 0
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          count++
+          return [count]
+        },
+        reconcile: reconcileSpy,
+      }))
+
+      const { refetch } = state
+
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Data: [1]')).toBeInTheDocument()
+    const callsAfterFirstFetch = reconcileSpy.mock.calls.length
+    expect(callsAfterFirstFetch).toBe(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('Data: [2]')).toBeInTheDocument()
+
+    // After a refetch we expect at most one *additional* reconcile call
+    // (one per actual data change). Without dedup, oldData === newData
+    // calls leak through and inflate the count.
+    expect(reconcileSpy.mock.calls.length - callsAfterFirstFetch).toBe(1)
+    // Sanity: reconcile should never be called with oldData === newData
+    for (const call of reconcileSpy.mock.calls) {
+      const [oldData, newData] = call
+      expect(oldData).not.toBe(newData)
+    }
+  })
+
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
     let cancelFn: Mock = vi.fn()
