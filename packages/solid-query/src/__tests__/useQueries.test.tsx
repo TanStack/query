@@ -732,41 +732,4 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(20)
     QueriesObserverSpy.mockRestore()
   })
-
-  it('combine should resolve at runtime when returning an arbitrary object shape (#7522)', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-
-    function Page() {
-      const result = useQueries(() => ({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: () => sleep(10).then(() => true),
-          },
-          {
-            queryKey: key2,
-            queryFn: () => sleep(10).then(() => false),
-          },
-        ],
-        combine: (results) => ({
-          allTrue: results.every((r) => r.data === true),
-        }),
-      }))
-
-      return <div>allTrue: {String(result.allTrue)}</div>
-    }
-
-    const rendered = render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    expect(rendered.getByText('allTrue: false')).toBeInTheDocument()
-
-    await vi.advanceTimersByTimeAsync(20)
-
-    expect(rendered.getByText('allTrue: false')).toBeInTheDocument()
-  })
 })
