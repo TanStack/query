@@ -136,6 +136,50 @@ describe('injectQueries', () => {
     expect(results.length).toBeGreaterThanOrEqual(2)
   })
 
+  it('should reflect error state when one of the queries rejects', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    @Component({
+      template: `
+        <div>
+          status1: {{ result()[0].status() }}, error1:
+          {{ result()[0].error()?.message ?? 'none' }}
+        </div>
+        <div>
+          status2: {{ result()[1].status() }}, data2:
+          {{ result()[1].data() ?? 'none' }}
+        </div>
+      `,
+    })
+    class Page {
+      readonly result = injectQueries(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () =>
+              sleep(10).then(() => Promise.reject(new Error('Some error'))),
+            retry: false,
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(10).then(() => 2),
+          },
+        ],
+      }))
+    }
+
+    const rendered = await render(Page)
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+
+    expect(
+      rendered.getByText('status1: error, error1: Some error'),
+    ).toBeInTheDocument()
+    expect(rendered.getByText('status2: success, data2: 2')).toBeInTheDocument()
+  })
+
   describe('isRestoring', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
       const key1 = queryKey()
