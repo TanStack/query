@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -14,7 +14,7 @@ describe('useInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
-  test('should properly execute infinite query', async () => {
+  it('should properly execute infinite query', async () => {
     const key = queryKey()
     const { data, fetchNextPage, status } = useInfiniteQuery({
       queryKey: key,
@@ -45,7 +45,7 @@ describe('useInfiniteQuery', () => {
     })
     expect(status.value).toStrictEqual('success')
   })
-  test('should properly execute infinite query using infiniteQueryOptions', async () => {
+  it('should properly execute infinite query using infiniteQueryOptions', async () => {
     const key = queryKey()
     const options = infiniteQueryOptions({
       queryKey: key,

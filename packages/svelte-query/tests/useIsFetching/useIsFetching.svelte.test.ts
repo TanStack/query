@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import BaseExample from './BaseExample.svelte'
+import Base from './Base.svelte'
 
 describe('useIsFetching', () => {
   let queryClient: QueryClient
@@ -16,8 +16,8 @@ describe('useIsFetching', () => {
     vi.useRealTimers()
   })
 
-  test('should update as queries start and stop fetching', async () => {
-    const rendered = render(BaseExample, {
+  it('should update as queries start and stop fetching', async () => {
+    const rendered = render(Base, {
       props: { queryClient },
     })
 

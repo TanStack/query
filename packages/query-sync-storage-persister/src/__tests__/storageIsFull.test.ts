@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   MutationCache,
   QueryCache,
@@ -41,7 +41,7 @@ function getMockStorage(limitSize?: number) {
 }
 
 describe('create persister', () => {
-  test('basic store and recover', async () => {
+  it('basic store and recover', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()
     const queryClient = new QueryClient({ queryCache, mutationCache })
@@ -84,7 +84,7 @@ describe('create persister', () => {
     expect(restoredClient).toEqual(persistClient)
   })
 
-  test('should clean the old queries when storage full', async () => {
+  it('should clean the old queries when storage full', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()
     const queryClient = new QueryClient({ queryCache, mutationCache })
@@ -160,7 +160,7 @@ describe('create persister', () => {
       restoredClient2?.clientState.queries.find((q) => q.queryKey[0] === 'B'),
     ).toBeUndefined()
   })
-  test('should clear storage as default error handling', async () => {
+  it('should clear storage as default error handling', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()
     const queryClient = new QueryClient({ queryCache, mutationCache })

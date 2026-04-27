@@ -1,5 +1,47 @@
 # @tanstack/query-core
 
+## 5.100.5
+
+### Patch Changes
+
+- fix(core): propagate AbortSignal reason in infinite queries ([`a53ef97`](https://github.com/TanStack/query/commit/a53ef97f87decb8ea2431710f5199431d3c94c8d))
+
+## 5.100.4
+
+## 5.100.3
+
+### Patch Changes
+
+- fix(suspense): skip calling combine when queries would suspend ([#10576](https://github.com/TanStack/query/pull/10576))
+
+## 5.100.2
+
+### Patch Changes
+
+- fix(query-core): allow `persister` to contribute to `TQueryFnData` inference so a `queryFn` that declares a parameter no longer produces a spurious overload mismatch against a typed persister (#7842). ([#10510](https://github.com/TanStack/query/pull/10510))
+
+- fix: preserve infinite query behavior during SSR hydration (#8825) ([#10074](https://github.com/TanStack/query/pull/10074))
+
+- ref(core): remove leftover setStateOptions ([#10574](https://github.com/TanStack/query/pull/10574))
+
+## 5.100.1
+
+### Patch Changes
+
+- Fix bugs where hydrating queries with promises that had already resolved could cause queries to briefly and incorrectly show as pending/fetching ([#10444](https://github.com/TanStack/query/pull/10444))
+
+## 5.100.0
+
+### Minor Changes
+
+- feat(query-core): accept callback function for retryOnMount ([#10515](https://github.com/TanStack/query/pull/10515))
+
+## 5.99.2
+
+## 5.99.1
+
+## 5.99.0
+
 ## 5.98.0
 
 ## 5.97.0

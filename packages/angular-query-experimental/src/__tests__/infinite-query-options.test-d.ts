@@ -1,4 +1,4 @@
-import { assertType, describe, expectTypeOf, it, test } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient, dataTagSymbol } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infinite-query-options'
@@ -167,7 +167,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  test('should not be allowed to be passed to non-infinite query functions', () => {
+  it('should not be allowed to be passed to non-infinite query functions', () => {
     const key = queryKey()
     const queryClient = new QueryClient()
     const options = infiniteQueryOptions({
@@ -194,7 +194,7 @@ describe('infiniteQueryOptions', () => {
     )
   })
 
-  test('allow optional initialData function', () => {
+  it('should allow optional initialData function', () => {
     const key = queryKey()
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
@@ -213,7 +213,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  test('allow optional initialData object', () => {
+  it('should allow optional initialData object', () => {
     const key = queryKey()
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({

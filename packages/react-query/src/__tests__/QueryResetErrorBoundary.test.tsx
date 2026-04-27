@@ -829,7 +829,7 @@ describe('QueryErrorResetBoundary', () => {
                 }),
               retry: false,
               throwOnError: true,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })
@@ -894,7 +894,7 @@ describe('QueryErrorResetBoundary', () => {
                   return 'data'
                 }),
               retry: false,
-              retryOnMount: true,
+              retryOnMount: () => true,
             },
           ],
         })

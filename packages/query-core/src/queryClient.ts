@@ -13,7 +13,6 @@ import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
-import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type {
   CancelOptions,
   DefaultError,
@@ -491,12 +490,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    options.behavior = infiniteQueryBehavior<
-      TQueryFnData,
-      TError,
-      TData,
-      TPageParam
-    >(options.pages)
+    options._type = 'infinite'
     return this.fetchQuery(options as any)
   }
 
@@ -539,12 +533,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
-    options.behavior = infiniteQueryBehavior<
-      TQueryFnData,
-      TError,
-      TData,
-      TPageParam
-    >(options.pages)
+    options._type = 'infinite'
 
     return this.ensureQueryData(options as any)
   }

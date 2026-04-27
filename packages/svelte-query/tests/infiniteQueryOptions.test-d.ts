@@ -1,11 +1,11 @@
-import { assertType, describe, expectTypeOf, test } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { createInfiniteQuery, infiniteQueryOptions } from '../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('infiniteQueryOptions', () => {
-  test('should not allow excess properties', () => {
+  it('should not allow excess properties', () => {
     const key = queryKey()
     assertType(
       infiniteQueryOptions({
@@ -19,7 +19,7 @@ describe('infiniteQueryOptions', () => {
     )
   })
 
-  test('should infer types for callbacks', () => {
+  it('should infer types for callbacks', () => {
     const key = queryKey()
     infiniteQueryOptions({
       queryKey: key,
@@ -33,7 +33,7 @@ describe('infiniteQueryOptions', () => {
     })
   })
 
-  test('should work when passed to createInfiniteQuery', () => {
+  it('should work when passed to createInfiniteQuery', () => {
     const key = queryKey()
     const options = infiniteQueryOptions({
       queryKey: key,
@@ -50,7 +50,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  test('Should work when passed to infiniteQuery', async () => {
+  it('should work when passed to infiniteQuery', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
@@ -63,7 +63,7 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
 
-  test('Should work when passed to infiniteQuery with select', async () => {
+  it('should work when passed to infiniteQuery with select', async () => {
     const options = infiniteQueryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
@@ -77,7 +77,7 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<Array<string>>()
   })
 
-  test('Should work when passed to fetchInfiniteQuery', async () => {
+  it('should work when passed to fetchInfiniteQuery', async () => {
     const key = queryKey()
     const options = infiniteQueryOptions({
       queryKey: key,

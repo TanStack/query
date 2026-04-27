@@ -64,6 +64,17 @@ export type ShallowOption = {
   shallow?: boolean
 }
 
+export type MutationOptions<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+> = OmitKeyof<
+  MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
+  '_defaulted'
+> &
+  ShallowOption
+
 export interface DefaultOptions<TError = DefaultError> {
   queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'> &
     ShallowOption

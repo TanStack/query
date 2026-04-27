@@ -5,7 +5,7 @@ import type {
   InitialDataFunction,
 } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
-import { assertType, describe, expectTypeOf, it, test } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
@@ -180,7 +180,7 @@ describe('infiniteQueryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
   })
 
-  test('should not be allowed to be passed to non-infinite query functions', () => {
+  it('should not be allowed to be passed to non-infinite query functions', () => {
     const queryClient = new QueryClient()
     const options = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -206,7 +206,7 @@ describe('infiniteQueryOptions', () => {
     )
   })
 
-  test('allow optional initialData function', () => {
+  it('allow optional initialData function', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),
@@ -224,7 +224,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  test('allow optional initialData object', () => {
+  it('allow optional initialData object', () => {
     const initialData: { example: boolean } | undefined = { example: true }
     const queryOptions = infiniteQueryOptions({
       queryKey: queryKey(),

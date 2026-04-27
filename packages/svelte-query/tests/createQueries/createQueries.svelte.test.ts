@@ -3,7 +3,7 @@ import { render } from '@testing-library/svelte'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { QueryClient, createQueries } from '../../src/index.js'
 import { promiseWithResolvers, withEffectRoot } from '../utils.svelte.js'
-import IsRestoringExample from './IsRestoringExample.svelte'
+import IsRestoring from './IsRestoring.svelte'
 import type { CreateQueryResult } from '../../src/index.js'
 
 describe('createQueries', () => {
@@ -273,7 +273,7 @@ describe('createQueries', () => {
     const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
     const queryFn2 = vi.fn(() => sleep(10).then(() => 'data2'))
 
-    const rendered = render(IsRestoringExample, {
+    const rendered = render(IsRestoring, {
       props: { queryClient, queryFn1, queryFn2 },
     })
 
@@ -304,7 +304,7 @@ describe('createQueries', () => {
     const queryFn1 = vi.fn(() => sleep(10).then(() => 'data1'))
     const queryFn2 = vi.fn(() => sleep(20).then(() => 'data2'))
 
-    const rendered = render(IsRestoringExample, {
+    const rendered = render(IsRestoring, {
       props: { queryClient, queryFn1, queryFn2 },
     })
 
