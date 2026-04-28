@@ -47,6 +47,9 @@ export class QueryClientProvider extends LitElement {
     const nextClient = this.client
     if (!nextClient) {
       if (this.isConnected) {
+        this.unmountClient(this.mountedClient)
+        // Sentinel: notify active consumers that the provider is now unbound.
+        this.contextProvider.setValue(undefined as unknown as QueryClient)
         throw createMissingQueryClientError()
       }
 

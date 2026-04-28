@@ -224,8 +224,9 @@ export abstract class BaseController<TResult> implements ReactiveController {
             this.contextUnsubscribe()
           }
 
-          const resolutionChanged =
-            this.updateQueryClientResolutionState('bound')
+          const resolutionChanged = this.updateQueryClientResolutionState(
+            value === undefined ? 'missing' : 'bound',
+          )
           const clientChanged = this.contextClient !== value
 
           this.contextClient = value

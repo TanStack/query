@@ -296,6 +296,7 @@ class QueriesController<
   private observer: QueriesObserver<TCombinedResult> | undefined
   private unsubscribe: (() => void) | undefined
   private queryClient: QueryClient | undefined
+  private explicitInitializationError: unknown | undefined
   private placeholderInitialized = false
   private placeholderRetryableFailure = true
 
@@ -321,14 +322,7 @@ class QueriesController<
       return
     }
 
-    const { queries, combine } = resolveQueriesOptions(options, queryClient)
-    const observer = new QueriesObserver(queryClient, queries, {
-      combine,
-    } as QueriesObserverOptions<TCombinedResult>)
-    this.queryClient = queryClient
-    this.observer = observer
-    this.result = this.computeResult(observer.getCurrentResult(), combine)
-    this.placeholderInitialized = true
+    this.tryInitializeExplicitClient(queryClient)
   }
 
   protected onConnected(): void {
@@ -377,6 +371,44 @@ class QueriesController<
       const { combine } = this.readResolvedOptions()
       this.setResult(this.computeResult(next, combine))
     })
+  }
+
+  private tryInitializeExplicitClient(queryClient: QueryClient): boolean {
+    try {
+      const { queries, combine } = resolveQueriesOptions(
+        this.options,
+        queryClient,
+      )
+      const observer = new QueriesObserver(queryClient, queries, {
+        combine,
+      } as QueriesObserverOptions<TCombinedResult>)
+      this.queryClient = queryClient
+      this.observer = observer
+      this.result = this.computeResult(observer.getCurrentResult(), combine)
+      this.explicitInitializationError = undefined
+      this.placeholderInitialized = true
+      return true
+    } catch (error) {
+      // Retry after construction completes so late host fields used by
+      // static queries/combine callbacks can finish initializing first.
+      this.explicitInitializationError = error
+      this.queryClient = undefined
+      this.observer = undefined
+      return false
+    }
+  }
+
+  private retryExplicitInitializationIfNeeded(): boolean {
+    if (!this.explicitInitializationError || this.shouldRefreshOnHostUpdate()) {
+      return false
+    }
+
+    const explicitClient = this.tryGetQueryClient()
+    if (!explicitClient) {
+      return false
+    }
+
+    return this.tryInitializeExplicitClient(explicitClient)
   }
 
   private unsubscribeObserver(): void {
@@ -480,6 +512,14 @@ class QueriesController<
   }
 
   readCurrent(): TCombinedResult {
+    if (this.retryExplicitInitializationIfNeeded()) {
+      return this.current
+    }
+
+    if (this.explicitInitializationError && !this.placeholderRetryableFailure) {
+      throw this.explicitInitializationError
+    }
+
     if (!this.queryClient && !this.observer && !this.placeholderInitialized) {
       try {
         // Early reads can happen during class-field initialization, before

@@ -1,15 +1,34 @@
 import { describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { createQueryController } from '../createQueryController.js'
 import {
   getDefaultQueryClient,
   resolveQueryClient,
   useQueryClient,
 } from '../index.js'
 import { QueryClientProvider } from '../QueryClientProvider.js'
+import {
+  TestElementHost,
+  waitFor,
+  waitForMissingQueryClient,
+} from './testHost.js'
 
 const tagName = 'test-query-client-provider'
 if (!customElements.get(tagName)) {
   customElements.define(tagName, QueryClientProvider)
+}
+
+class ProviderContextConsumerElement extends TestElementHost {
+  readonly query = createQueryController(this, {
+    queryKey: ['provider-context-consumer'] as const,
+    queryFn: async () => 'ok',
+    retry: false,
+  })
+}
+
+const consumerTagName = 'test-query-client-provider-consumer'
+if (!customElements.get(consumerTagName)) {
+  customElements.define(consumerTagName, ProviderContextConsumerElement)
 }
 
 describe('QueryClientProvider/context', () => {
@@ -149,26 +168,40 @@ describe('QueryClientProvider/context', () => {
     unmountB.mockRestore()
   })
 
-  it('LC-PROVIDER-01: invalid connected client updates do not tear down the mounted client first', async () => {
+  it('LC-PROVIDER-01: invalid connected client updates tear down the mounted client before surfacing the error', async () => {
     const client = new QueryClient()
     const mount = vi.spyOn(client, 'mount')
     const unmount = vi.spyOn(client, 'unmount')
 
     const provider = document.createElement(tagName) as QueryClientProvider
+    const consumer = document.createElement(
+      consumerTagName,
+    ) as ProviderContextConsumerElement
     provider.client = client
+    provider.append(consumer)
 
     document.body.append(provider)
     await provider.updateComplete
+    await consumer.updateComplete
+    await waitFor(() => consumer.query().isSuccess)
 
     expect(mount).toHaveBeenCalledTimes(1)
     expect(unmount).toHaveBeenCalledTimes(0)
+    expect(consumer.query().data).toBe('ok')
 
     provider.client = undefined as unknown as QueryClient
     await expect(provider.updateComplete).rejects.toThrow(
       /No QueryClient available/,
     )
-    expect(unmount).toHaveBeenCalledTimes(0)
+    expect(unmount).toHaveBeenCalledTimes(1)
+    expect(getDefaultQueryClient()).toBeUndefined()
+    expect(() => useQueryClient()).toThrowError(/No QueryClient available/)
+    await waitForMissingQueryClient(() => consumer.query())
+    await expect(consumer.query.refetch()).rejects.toThrow(
+      /No QueryClient available/,
+    )
 
+    consumer.query.destroy()
     provider.remove()
     await Promise.resolve()
 

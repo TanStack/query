@@ -20,7 +20,7 @@
       "ignore": ["**/__testfixtures__/**"]
     },
     "packages/lit-query": {
-      "ignore": ["examples/**", "src/tests/**"]
+      "ignore": ["src/tests/**"]
     },
     "packages/vue-query": {
       "ignoreDependencies": ["vue2", "vue2.7"]

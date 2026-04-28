@@ -538,6 +538,102 @@ describe('createQueriesController', () => {
     host.queries.destroy()
   })
 
+  it('LC-QUERIES-08: explicit-client constructor defers static combine callbacks until host fields are initialized', () => {
+    const client = new QueryClient()
+
+    class DeferredExplicitCombineQueriesHost implements ReactiveControllerHost {
+      private readonly controllers = new Set<ReactiveController>()
+
+      updatesRequested = 0
+      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
+
+      readonly queries = createQueriesController(
+        this,
+        {
+          queries: [
+            {
+              queryKey: ['deferred-explicit-combine-queries', 'alpha'] as const,
+              queryFn: async () => 'alpha',
+              retry: false,
+            },
+          ] as const,
+          combine: (results) =>
+            this.ids.map((id, index) => `${id}:${results[index]?.status}`),
+        },
+        client,
+      )
+
+      readonly firstRead = this.queries()
+      readonly ids = ['alpha'] as const
+
+      addController(controller: ReactiveController): void {
+        this.controllers.add(controller)
+      }
+
+      removeController(controller: ReactiveController): void {
+        this.controllers.delete(controller)
+      }
+
+      requestUpdate(): void {
+        this.updatesRequested += 1
+      }
+    }
+
+    expect(() => new DeferredExplicitCombineQueriesHost()).not.toThrow()
+
+    const host = new DeferredExplicitCombineQueriesHost()
+    expect(host.queries()).toEqual(['alpha:pending'])
+
+    host.queries.destroy()
+  })
+
+  it('LC-QUERIES-09: explicit-client constructor re-surfaces permanent static combine errors after initialization', async () => {
+    const client = new QueryClient()
+
+    class InvalidExplicitCombineQueriesHost implements ReactiveControllerHost {
+      private readonly controllers = new Set<ReactiveController>()
+
+      updatesRequested = 0
+      readonly updateComplete: Promise<boolean> = Promise.resolve(true)
+
+      readonly queries = createQueriesController(
+        this,
+        {
+          queries: [
+            {
+              queryKey: ['invalid-explicit-combine-queries', 'alpha'] as const,
+              queryFn: async () => 'alpha',
+              retry: false,
+            },
+          ] as const,
+          combine: () => {
+            throw new Error('invalid combine')
+          },
+        },
+        client,
+      )
+
+      addController(controller: ReactiveController): void {
+        this.controllers.add(controller)
+      }
+
+      removeController(controller: ReactiveController): void {
+        this.controllers.delete(controller)
+      }
+
+      requestUpdate(): void {
+        this.updatesRequested += 1
+      }
+    }
+
+    expect(() => new InvalidExplicitCombineQueriesHost()).not.toThrow()
+
+    const host = new InvalidExplicitCombineQueriesHost()
+    await Promise.resolve()
+
+    expect(() => host.queries()).toThrow('invalid combine')
+  })
+
   it('ALREADYCONN-QUERIES-01: queries controller on already-connected host with explicit client does not throw', async () => {
     const client = new QueryClient({
       defaultOptions: {
