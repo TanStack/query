@@ -71,6 +71,20 @@ describe('injectIsRestoring', () => {
     expect(isRestoring()).toBe(false)
   })
 
+  it('should return the provided signal value when using injector option', () => {
+    const restoringSignal = signal(true)
+
+    TestBed.configureTestingModule({
+      providers: [provideIsRestoring(restoringSignal.asReadonly())],
+    })
+
+    const isRestoring = injectIsRestoring({
+      injector: TestBed.inject(Injector),
+    })
+
+    expect(isRestoring()).toBe(true)
+  })
+
   it('should throw NG0203 with descriptive error outside injection context', () => {
     expect(() => {
       injectIsRestoring()
