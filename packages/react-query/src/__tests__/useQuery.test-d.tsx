@@ -2,7 +2,13 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { queryKey } from '@tanstack/query-test-utils'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
-import type { OmitKeyof, QueryFunction, UseQueryOptions } from '..'
+import type {
+  InferErrorFromFn,
+  OmitKeyof,
+  QueryFunction,
+  Throws,
+  UseQueryOptions,
+} from '..'
 
 describe('useQuery', () => {
   const key = queryKey()
@@ -102,10 +108,11 @@ describe('useQuery', () => {
   })
 
   // it should handle query-functions that return Promise<any>
-  useQuery({
+  const anyQuery = useQuery({
     queryKey: key,
     queryFn: () => fetch('return Promise<any>').then((resp) => resp.json()),
   })
+  expectTypeOf(anyQuery.error).toEqualTypeOf<Error | null>()
 
   // handles wrapped queries with custom fetcher passed as inline queryFn
   const useWrappedQuery = <
@@ -336,6 +343,101 @@ describe('useQuery', () => {
           },
         })
       })
+    })
+  })
+
+  describe('Throws pattern for typed errors', () => {
+    // Custom error type
+    class ApiError extends Error {
+      constructor(
+        public code: number,
+        message: string,
+      ) {
+        super(message)
+      }
+    }
+
+    // Data type
+    type User = { id: string; name: string }
+
+    // Function that declares what error it can throw using Throws<E>
+    const fetchUser = async (_id: string): Promise<User & Throws<ApiError>> => {
+      throw new ApiError(404, 'User not found')
+    }
+
+    it('should allow explicit error type using generics', () => {
+      // Option 1: Explicit generics - most straightforward way to type errors
+      const { data, error } = useQuery<User, ApiError>({
+        queryKey: ['user', '1'],
+        queryFn: () => fetchUser('1'),
+      })
+
+      expectTypeOf(data).toEqualTypeOf<User | undefined>()
+      expectTypeOf(error).toEqualTypeOf<ApiError | null>()
+    })
+
+    it('should infer error type from Throws return type', () => {
+      const { data, error } = useQuery({
+        queryKey: ['user', 'auto'],
+        queryFn: () => fetchUser('auto'),
+      })
+
+      expectTypeOf(data).toEqualTypeOf<User | undefined>()
+      expectTypeOf(error).toEqualTypeOf<ApiError | null>()
+    })
+
+    it('should allow using InferErrorFromFn helper to extract error type', () => {
+      // Option 2: Use InferErrorFromFn to extract the error type from the function
+      type FetchUserError = InferErrorFromFn<typeof fetchUser>
+      expectTypeOf<FetchUserError>().toEqualTypeOf<ApiError>()
+
+      const { data, error } = useQuery<
+        User,
+        InferErrorFromFn<typeof fetchUser>
+      >({
+        queryKey: ['user', '2'],
+        queryFn: () => fetchUser('2'),
+      })
+
+      expectTypeOf(data).toEqualTypeOf<User | undefined>()
+      expectTypeOf(error).toEqualTypeOf<ApiError | null>()
+    })
+
+    it('should infer DefaultError when function does not use Throws', () => {
+      // Function without Throws annotation
+      const fetchData = async (): Promise<string> => 'data'
+
+      type FetchDataError = InferErrorFromFn<typeof fetchData>
+      expectTypeOf<FetchDataError>().toEqualTypeOf<Error>()
+    })
+
+    it('should work with union error types', () => {
+      class NetworkError extends Error {
+        type = 'network' as const
+      }
+      class ValidationError extends Error {
+        type = 'validation' as const
+      }
+
+      type Data = { value: number }
+
+      const fetchWithMultipleErrors = async (): Promise<
+        Data & Throws<NetworkError | ValidationError>
+      > => {
+        throw new NetworkError('Network failed')
+      }
+
+      type InferredError = InferErrorFromFn<typeof fetchWithMultipleErrors>
+      expectTypeOf<InferredError>().toEqualTypeOf<
+        NetworkError | ValidationError
+      >()
+
+      const { error } = useQuery<Data, InferredError>({
+        queryKey: ['data'],
+        queryFn: fetchWithMultipleErrors,
+      })
+
+      expectTypeOf(error).toEqualTypeOf<NetworkError | ValidationError | null>()
     })
   })
 })

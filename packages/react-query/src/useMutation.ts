@@ -12,9 +12,56 @@ import type {
   UseMutationOptions,
   UseMutationResult,
 } from './types'
-import type { DefaultError, QueryClient } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  InferErrorFromFn,
+  MutationFunction,
+  QueryClient,
+  StripThrows,
+  ThrowsFnOptions,
+} from '@tanstack/query-core'
+
+type MutationFnData<TMutationFn extends (...args: Array<any>) => any> =
+  StripThrows<Awaited<ReturnType<TMutationFn>>>
+
+type MutationFnVariables<TMutationFn extends (...args: Array<any>) => any> =
+  Parameters<TMutationFn> extends [] ? void : Parameters<TMutationFn>[0]
 
 // HOOK
+
+export function useMutation<
+  TMutationFn extends MutationFunction<any, any>,
+  TOnMutateResult = unknown,
+>(
+  options: ThrowsFnOptions<
+    TMutationFn,
+    Omit<
+      UseMutationOptions<
+        MutationFnData<TMutationFn>,
+        InferErrorFromFn<TMutationFn>,
+        MutationFnVariables<TMutationFn>,
+        TOnMutateResult
+      >,
+      'mutationFn'
+    > & { mutationFn: TMutationFn }
+  >,
+  queryClient?: QueryClient,
+): UseMutationResult<
+  MutationFnData<TMutationFn>,
+  InferErrorFromFn<TMutationFn>,
+  MutationFnVariables<TMutationFn>,
+  TOnMutateResult
+>
+
+export function useMutation<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = void,
+  TOnMutateResult = unknown,
+>(
+  options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  queryClient?: QueryClient,
+): UseMutationResult<TData, TError, TVariables, TOnMutateResult>
 
 export function useMutation<
   TData = unknown,
