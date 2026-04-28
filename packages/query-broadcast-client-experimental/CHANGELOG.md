@@ -1,5 +1,12 @@
 # @tanstack/query-broadcast-client-experimental
 
+## 5.100.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.6
+
 ## 5.100.5
 
 ### Patch Changes

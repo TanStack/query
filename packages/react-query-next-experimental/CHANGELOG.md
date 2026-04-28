@@ -1,5 +1,12 @@
 # @tanstack/react-query-next-experimental
 
+## 5.100.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/react-query@5.100.6
+
 ## 5.100.5
 
 ### Patch Changes
