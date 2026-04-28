@@ -1,5 +1,31 @@
 # @tanstack/solid-query-devtools
 
+## 5.100.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.5
+  - @tanstack/solid-query@5.100.5
+
+## 5.100.4
+
+### Patch Changes
+
+- fix(devtools): change onClose callback type from () => unknown to () => void ([#10118](https://github.com/TanStack/query/pull/10118))
+
+- Updated dependencies [[`3d1a62e`](https://github.com/TanStack/query/commit/3d1a62e63bd864359e369bb21356fa80d043f2ba)]:
+  - @tanstack/query-devtools@5.100.4
+  - @tanstack/solid-query@5.100.4
+
+## 5.100.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.3
+  - @tanstack/solid-query@5.100.3
+
 ## 5.100.2
 
 ### Patch Changes

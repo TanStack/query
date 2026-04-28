@@ -89,7 +89,7 @@ interface ContentViewProps {
   localStore: StorageObject<string>
   setLocalStore: StorageSetter<string, unknown>
   showPanelViewOnly?: boolean
-  onClose?: () => unknown
+  onClose?: () => void
 }
 
 interface QueryStatusProps {

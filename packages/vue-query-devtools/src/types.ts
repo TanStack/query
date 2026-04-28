@@ -79,7 +79,7 @@ export interface DevtoolsPanelOptions {
   /**
    * Callback function that is called when the devtools panel is closed
    */
-  onClose?: () => unknown
+  onClose?: () => void
   /**
    * Set this to true to hide disabled queries from the devtools panel.
    */

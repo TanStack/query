@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
+import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
 import type { InfiniteData, InfiniteQueryObserverResult, QueryCache } from '..'
 
 describe('InfiniteQueryBehavior', () => {
@@ -330,6 +331,46 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenCalledTimes(0)
 
     unsubscribe()
+  })
+
+  it('should surface the abort reason when cancellation happens between refetched pages', async () => {
+    const key = queryKey()
+    const abortController = new AbortController()
+    const queryFn = vi.fn().mockImplementation(({ pageParam, signal }) => {
+      void signal.aborted
+
+      if (pageParam === 1) {
+        abortController.abort()
+      }
+
+      return pageParam
+    })
+
+    const behavior = infiniteQueryBehavior<number, Error, number, number>()
+    const context = {
+      client: queryClient,
+      queryKey: key,
+      fetchOptions: undefined,
+      options: {
+        queryKey: key,
+        queryFn,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage: number) => lastPage + 1,
+      },
+      state: {
+        data: {
+          pages: [1, 2],
+          pageParams: [1, 2],
+        },
+      },
+      fetchFn: () => Promise.resolve(),
+      signal: abortController.signal,
+    }
+
+    behavior.onFetch(context as any, {} as any)
+
+    await expect(context.fetchFn()).rejects.toBe(abortController.signal.reason)
+    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should not enter an infinite loop when a page errors while retry is on #8046', async () => {
