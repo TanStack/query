@@ -356,6 +356,62 @@ describe('injectQuery', () => {
     expect(rendered.getByText('failureReason: Some error')).toBeInTheDocument()
   })
 
+  it('should be able to select a part of the data with select', async () => {
+    const key = queryKey()
+
+    @Component({
+      template: `<div>data: {{ query.data() ?? 'none' }}</div>`,
+    })
+    class Page {
+      readonly query = injectQuery<{ name: string }, Error, string>(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+        select: (data) => data.name,
+      }))
+    }
+
+    const rendered = await render(Page)
+
+    expect(rendered.getByText('data: none')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+
+    expect(rendered.getByText('data: test')).toBeInTheDocument()
+  })
+
+  it('should show placeholderData until queryFn resolves and then expose real data', async () => {
+    const key = queryKey()
+
+    @Component({
+      template: `
+        <div>data: {{ query.data() }}</div>
+        <div>isPlaceholderData: {{ query.isPlaceholderData() }}</div>
+        <div>isSuccess: {{ query.isSuccess() }}</div>
+      `,
+    })
+    class Page {
+      readonly query = injectQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'real-data'),
+        placeholderData: 'placeholder',
+      }))
+    }
+
+    const rendered = await render(Page)
+
+    expect(rendered.getByText('data: placeholder')).toBeInTheDocument()
+    expect(rendered.getByText('isPlaceholderData: true')).toBeInTheDocument()
+    expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+
+    expect(rendered.getByText('data: real-data')).toBeInTheDocument()
+    expect(rendered.getByText('isPlaceholderData: false')).toBeInTheDocument()
+    expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
+  })
+
   it('should update query on options contained signal change', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -546,24 +602,6 @@ describe('injectQuery', () => {
 
       await expect(vi.runAllTimersAsync()).rejects.toThrow('Some error')
     })
-  })
-
-  it('should set state to error when queryFn returns reject promise', async () => {
-    const key = queryKey()
-    const query = TestBed.runInInjectionContext(() => {
-      return injectQuery(() => ({
-        retry: false,
-        queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => Promise.reject(new Error('Some error'))),
-      }))
-    })
-
-    expect(query.status()).toBe('pending')
-
-    await vi.advanceTimersByTimeAsync(11)
-
-    expect(query.status()).toBe('error')
   })
 
   it('should render with required signal inputs', async () => {
