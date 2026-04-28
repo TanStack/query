@@ -1,5 +1,5 @@
 import type { DataTag, DefaultError, QueryKey } from '@tanstack/query-core'
-import type { SolidQueryOptions } from './types'
+import type { QueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 
 export type UndefinedInitialDataOptions<
@@ -8,7 +8,7 @@ export type UndefinedInitialDataOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = Accessor<
-  SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
     initialData?: undefined
   }
 >
@@ -19,7 +19,7 @@ export type DefinedInitialDataOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = Accessor<
-  SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
     initialData: TQueryFnData | (() => TQueryFnData)
   }
 >
