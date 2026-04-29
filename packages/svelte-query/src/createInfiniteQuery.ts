@@ -3,6 +3,7 @@ import { createBaseQuery } from './createBaseQuery.svelte.js'
 import type {
   DefaultError,
   InfiniteData,
+  NoInfer,
   QueryClient,
   QueryKey,
   QueryObserver,
@@ -30,7 +31,7 @@ export function createInfiniteQuery<
     >
   >,
   queryClient?: Accessor<QueryClient>,
-): CreateInfiniteQueryResult<TData, TError> {
+): CreateInfiniteQueryResult<NoInfer<TData>, TError> {
   return createBaseQuery(
     options,
     InfiniteQueryObserver as typeof QueryObserver,
