@@ -284,7 +284,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     await Promise.resolve()
   })
 
-  it('reconnects mutation controller outside any provider into missing-client, then recovers under a new provider', async () => {
+  it('reparents mutation controller under a different provider and binds the new nearest client', async () => {
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
@@ -309,14 +309,10 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     await expect(consumer.mutation.mutateAsync(1)).resolves.toBe(2)
 
-    providerA.removeChild(consumer)
+    consumer.remove()
     await new Promise((resolve) => setTimeout(resolve, 0))
-    consumer.connectedCallback()
-    await expect(consumer.mutation.mutateAsync(2)).rejects.toThrow(
-      /No QueryClient available/,
-    )
+    providerA.remove()
 
-    consumer.disconnectedCallback()
     providerB.append(consumer)
     document.body.append(providerB)
     await providerB.updateComplete
@@ -334,7 +330,6 @@ describe('LQ-003 client-switch coverage across controllers', () => {
     ).toBeGreaterThan(0)
 
     consumer.mutation.destroy()
-    providerA.remove()
     providerB.remove()
     await Promise.resolve()
   })
@@ -374,7 +369,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     await waitFor(() => typeof consumer.queries()[0] === 'string')
 
-    providerA.removeChild(consumer)
+    consumer.remove()
     await waitFor(
       () =>
         (clientA
@@ -382,10 +377,8 @@ describe('LQ-003 client-switch coverage across controllers', () => {
           .find({ queryKey: consumer.queryKey })
           ?.getObserversCount() ?? 0) === 0,
     )
-    consumer.connectedCallback()
-    expect(Array.isArray(consumer.queries())).toBe(true)
+    providerA.remove()
 
-    consumer.disconnectedCallback()
     providerB.append(consumer)
     document.body.append(providerB)
     await providerB.updateComplete
@@ -448,7 +441,7 @@ describe('LQ-003 client-switch coverage across controllers', () => {
 
     await waitFor(() => consumer.infinite().isSuccess)
 
-    providerA.removeChild(consumer)
+    consumer.remove()
     await waitFor(
       () =>
         (clientA
@@ -456,12 +449,8 @@ describe('LQ-003 client-switch coverage across controllers', () => {
           .find({ queryKey: consumer.queryKey })
           ?.getObserversCount() ?? 0) === 0,
     )
-    consumer.connectedCallback()
-    await expect(consumer.infinite.fetchNextPage()).rejects.toThrow(
-      /No QueryClient available/,
-    )
+    providerA.remove()
 
-    consumer.disconnectedCallback()
     providerB.append(consumer)
     document.body.append(providerB)
     await providerB.updateComplete

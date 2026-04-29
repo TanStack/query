@@ -51,8 +51,10 @@ async function readJson<TResponse>(response: Response): Promise<TResponse> {
 export function createDataQueryOptions(apiBaseUrl = '') {
   return {
     queryKey: DATA_QUERY_KEY,
-    queryFn: async () => {
-      const response = await fetch(resolveApiUrl('/api/data', apiBaseUrl))
+    queryFn: async ({ signal }) => {
+      const response = await fetch(resolveApiUrl('/api/data', apiBaseUrl), {
+        signal,
+      })
       return readJson<DataResponse>(response)
     },
     retry: false,
