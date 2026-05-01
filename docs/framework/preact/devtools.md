@@ -72,7 +72,7 @@ function App() {
   - Set this `true` if you want the dev tools to default to being open
 - `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
   - Defaults to `bottom-right`
-  - The position of the Preact Query logo to open and close the devtools panel
+  - The position of the TanStack logo to open and close the devtools panel
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
   - The position of the Preact Query devtools panel
