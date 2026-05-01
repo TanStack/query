@@ -1,5 +1,14 @@
 # @tanstack/angular-query-experimental
 
+## 5.100.7
+
+### Patch Changes
+
+- docs(devtools): align logo, panel, and 'buttonPosition' union descriptions across docs and JSDoc ([#10617](https://github.com/TanStack/query/pull/10617))
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.7
+
 ## 5.100.6
 
 ### Patch Changes
