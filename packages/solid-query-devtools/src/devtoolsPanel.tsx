@@ -3,7 +3,7 @@ import { onlineManager, useQueryClient } from '@tanstack/solid-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/solid-query'
-import type { JSX } from 'solid-js'
+import type { JSX } from '@solidjs/web'
 
 export interface DevtoolsPanelOptions {
   /**

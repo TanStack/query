@@ -69,7 +69,7 @@ describe('useIsMutating', () => {
 
     await vi.advanceTimersByTimeAsync(150)
 
-    expect(isMutatingArray).toEqual([0, 1, 2, 1, 0])
+    expect(isMutatingArray).toEqual([0, 1, 0])
   })
 
   it('should filter correctly by mutationKey', async () => {

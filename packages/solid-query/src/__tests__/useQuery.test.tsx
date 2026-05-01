@@ -44,7 +44,7 @@ import type {
   UseQueryResult,
 } from '..'
 import type { Mock } from 'vitest'
-import type { JSX } from 'solid-js'
+import type { JSX } from '@solidjs/web'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
