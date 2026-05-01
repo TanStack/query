@@ -50,7 +50,7 @@ export interface DevtoolsOptions {
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
-   * The position of the TanStack Query devtools panel.
+   * The position of the Angular Query devtools panel.
    * `top` | `bottom` | `left` | `right`
    * Defaults to `bottom`.
    */
