@@ -221,10 +221,23 @@ export class QueryClient {
     return notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
-        .map(({ queryKey }) => [
-          queryKey,
-          this.setQueryData<TQueryFnData>(queryKey, updater, options),
-        ]),
+        .map((query) => {
+          const prevData = query.state.data as TQueryFnData | undefined
+          const data = functionalUpdate(updater, prevData)
+          if (data === undefined) {
+            return [query.queryKey, undefined] as [QueryKey, TQueryFnData | undefined]
+          }
+          // Use query.options (which carries the per-query queryKeyHashFn and the
+          // already-correct queryHash) so the default JSON.stringify hasher is never
+          // invoked for keys containing non-serializable values such as BigInt.
+          const defaultedOptions = this.defaultQueryOptions(query.options)
+          return [
+            query.queryKey,
+            this.#queryCache
+              .build(this, defaultedOptions)
+              .setData(data as NoInfer<TQueryFnData>, { ...options, manual: true }),
+          ] as [QueryKey, TQueryFnData | undefined]
+        }),
     )
   }
 
