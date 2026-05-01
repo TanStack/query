@@ -23,6 +23,7 @@ export interface DevtoolsOptions {
   buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the Preact Query devtools panel.
+   * 'top' | 'bottom' | 'left' | 'right'
    * Defaults to 'bottom'.
    */
   position?: DevtoolsPosition
