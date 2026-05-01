@@ -10,8 +10,8 @@
   "dependencies": {
     "@tanstack/solid-query": "^6.0.0-beta.4",
     "@tanstack/solid-query-devtools": "^6.0.0-beta.4",
-    "@solidjs/web": "2.0.0-beta.7",
-    "solid-js": "2.0.0-beta.7"
+    "@solidjs/web": "2.0.0-beta.10",
+    "solid-js": "2.0.0-beta.10"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.91.5",

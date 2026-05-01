@@ -12,8 +12,8 @@
     "@tanstack/solid-query-devtools": "^6.0.0-beta.4",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
-    "@solidjs/web": "2.0.0-beta.7",
-    "solid-js": "2.0.0-beta.7"
+    "@solidjs/web": "2.0.0-beta.10",
+    "solid-js": "2.0.0-beta.10"
   },
   "devDependencies": {
     "typescript": "5.8.3",
