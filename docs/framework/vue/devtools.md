@@ -70,7 +70,7 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
   - The position of the TanStack logo to open and close the devtools panel.
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`.
-  - The position of the React Query devtools panel.
+  - The position of the Vue Query devtools panel.
 - `client?: QueryClient`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}`
