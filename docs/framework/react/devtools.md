@@ -92,6 +92,9 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.
 
 ## Embedded Mode
 
@@ -135,6 +138,9 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.
 
 ## Devtools in production
 
