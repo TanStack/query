@@ -1,5 +1,12 @@
 # @tanstack/react-query
 
+## 5.100.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.8
+
 ## 5.100.7
 
 ### Patch Changes

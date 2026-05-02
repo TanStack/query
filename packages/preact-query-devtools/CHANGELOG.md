@@ -1,5 +1,15 @@
 # @tanstack/preact-query-devtools
 
+## 5.100.8
+
+### Patch Changes
+
+- refactor(preact-query-devtools): replace deprecated 'JSX.CSSProperties' with 'CSSProperties' from Preact namespace ([#10622](https://github.com/TanStack/query/pull/10622))
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.100.8
+  - @tanstack/query-devtools@5.100.8
+
 ## 5.100.7
 
 ### Patch Changes
