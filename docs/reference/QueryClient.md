@@ -8,7 +8,7 @@ title: QueryClient
 The `QueryClient` can be used to interact with a cache:
 
 ```tsx
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/vue-query'
 
 const queryClient = new QueryClient({
   defaultOptions: {
