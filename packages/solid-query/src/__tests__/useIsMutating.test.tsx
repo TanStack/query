@@ -207,6 +207,43 @@ describe('useIsMutating', () => {
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
   })
 
+  it('should resubscribe when a custom queryClient changes', async () => {
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+    const [client, setClient] = createSignal(queryClient1)
+
+    function Page() {
+      const isMutating = useIsMutating(undefined, client)
+
+      return <div>mutating: {isMutating()}</div>
+    }
+
+    const rendered = render(() => <Page />)
+
+    const firstMutation = queryClient1.getMutationCache().build(queryClient1, {
+      mutationFn: () => sleep(20).then(() => 'data1'),
+    })
+    const firstMutationPromise = firstMutation.execute(undefined)
+
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    setClient(queryClient2)
+
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+
+    const secondMutation = queryClient2.getMutationCache().build(queryClient2, {
+      mutationFn: () => sleep(20).then(() => 'data2'),
+    })
+    const secondMutationPromise = secondMutation.execute(undefined)
+
+    expect(rendered.getByText('mutating: 1')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(20)
+    await Promise.all([firstMutationPromise, secondMutationPromise])
+
+    expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
+  })
+
   // eslint-disable-next-line vitest/expect-expect
   it('should not change state if unmounted', async () => {
     // We have to mock the MutationCache to not unsubscribe

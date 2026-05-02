@@ -199,4 +199,28 @@ describe('QueryClientProvider', () => {
       dispose()
     })
   })
+
+  it('defers missing provider errors until a resolver is called', () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    let resolveClient!: () => QueryClient
+
+    function Page() {
+      resolveClient = useQueryClientResolver()
+      return null
+    }
+
+    expect(() => render(() => <Page />)).not.toThrow()
+
+    expect(() =>
+      createRoot((dispose) => {
+        const client = createMemo(() => resolveClient())
+        client()
+        dispose()
+      }),
+    ).toThrow('No QueryClient set, use QueryClientProvider to set one')
+
+    consoleMock.mockRestore()
+  })
 })
