@@ -3,7 +3,7 @@ import { onlineManager, useQueryClient } from '@tanstack/preact-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
 import type { DevtoolsErrorType, Theme } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/preact-query'
-import type { JSX, VNode } from 'preact'
+import type { CSSProperties, VNode } from 'preact'
 
 export interface DevtoolsPanelOptions {
   /**
@@ -28,7 +28,7 @@ export interface DevtoolsPanelOptions {
   /**
    * Custom styles for the devtools panel container.
    */
-  style?: JSX.CSSProperties
+  style?: CSSProperties
   /**
    * Callback function when the devtools panel is closed.
    */
