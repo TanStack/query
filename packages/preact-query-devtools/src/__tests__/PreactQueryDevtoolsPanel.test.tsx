@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/preact'
 import { QueryClient, QueryClientProvider } from '@tanstack/preact-query'
 import type { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
@@ -24,6 +24,10 @@ vi.mock('@tanstack/query-devtools', () => ({
 }))
 
 describe('PreactQueryDevtoolsPanel', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('should throw an error if no query client has been set', async () => {
     const { PreactQueryDevtoolsPanel } =
       await import('../PreactQueryDevtoolsPanel')
@@ -45,6 +49,7 @@ describe('PreactQueryDevtoolsPanel', () => {
         </QueryClientProvider>,
       ),
     ).not.toThrow()
+    expect(mountMock).toHaveBeenCalled()
   })
 
   it('should not throw an error if query client is provided via props', async () => {
@@ -55,6 +60,7 @@ describe('PreactQueryDevtoolsPanel', () => {
     expect(() =>
       render(<PreactQueryDevtoolsPanel client={queryClient} />),
     ).not.toThrow()
+    expect(mountMock).toHaveBeenCalled()
   })
 
   it('should return null in non-development environments', async () => {
