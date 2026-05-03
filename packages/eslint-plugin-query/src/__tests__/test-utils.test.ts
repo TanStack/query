@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   expectArrayEqualIgnoreOrder,
   generateInterleavedCombinations,
@@ -32,7 +32,7 @@ describe('test-utils', () => {
         expected: [['a']],
       },
     ]
-    test.each(testCases)('$input $expected', ({ input, expected }) => {
+    it.each(testCases)('$input $expected', ({ input, expected }) => {
       const permutations = generatePermutations(input)
       expect(permutations).toEqual(expected)
     })
@@ -71,7 +71,7 @@ describe('test-utils', () => {
         minLength: 0,
       },
     ]
-    test.each(testCases)(
+    it.each(testCases)(
       '$input $minLength $expected',
       ({ input, minLength, expected }) => {
         const combinations = generatePartialCombinations(input, minLength)
@@ -93,12 +93,9 @@ describe('test-utils', () => {
         ],
       },
     ]
-    test.each(testCases)(
-      '$input $expected',
-      ({ data, additional, expected }) => {
-        const combinations = generateInterleavedCombinations(data, additional)
-        expectArrayEqualIgnoreOrder(combinations, expected)
-      },
-    )
+    it.each(testCases)('$input $expected', ({ data, additional, expected }) => {
+      const combinations = generateInterleavedCombinations(data, additional)
+      expectArrayEqualIgnoreOrder(combinations, expected)
+    })
   })
 })

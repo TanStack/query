@@ -4,6 +4,6 @@
     "outDir": "./dist-ts",
     "rootDir": "."
   },
-  "include": ["src", "*.config.*", "package.json"],
+  "include": ["src", "tests", "*.config.*", "package.json"],
   "references": [{ "path": "../query-devtools" }, { "path": "../svelte-query" }]
 }

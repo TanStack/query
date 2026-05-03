@@ -1,5 +1,31 @@
 # @tanstack/query-devtools
 
+## 5.100.8
+
+## 5.100.7
+
+## 5.100.6
+
+## 5.100.5
+
+## 5.100.4
+
+### Patch Changes
+
+- fix(devtools): change onClose callback type from () => unknown to () => void ([#10118](https://github.com/TanStack/query/pull/10118))
+
+## 5.100.3
+
+## 5.100.2
+
+## 5.100.1
+
+## 5.100.0
+
+## 5.99.2
+
+## 5.99.1
+
 ## 5.99.0
 
 ## 5.98.0

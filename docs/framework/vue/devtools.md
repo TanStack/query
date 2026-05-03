@@ -65,12 +65,12 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 - `initialIsOpen: boolean`
   - Set this `true` if you want the dev tools to default to being open.
-- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
+- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
   - Defaults to `bottom-right`.
-  - The position of the React Query logo to open and close the devtools panel.
+  - The position of the TanStack logo to open and close the devtools panel.
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`.
-  - The position of the React Query devtools panel.
+  - The position of the Vue Query devtools panel.
 - `client?: QueryClient`
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}`
@@ -80,6 +80,9 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.
 
 ## Embedded Mode
 
@@ -105,12 +108,12 @@ function toggleDevtools() {
 
 ### Options
 
-- `style?: React.CSSProperties`
+- `style?: Partial<CSSStyleDeclaration>`
   - Custom styles for the devtools panel
   - Default: `{ height: '500px' }`
   - Example: `{ height: '100%' }`
   - Example: `{ height: '100%', width: '100%' }`
-- `onClose?: () => unknown`
+- `onClose?: () => void`
   - Callback function that is called when the devtools panel is closed
 - `client?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
@@ -121,6 +124,9 @@ function toggleDevtools() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.
 
 ## Traditional Devtools
 

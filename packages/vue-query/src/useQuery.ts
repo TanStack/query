@@ -3,9 +3,9 @@ import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
-  Enabled,
   InitialDataFunction,
   NonUndefinedGuard,
+  QueryBooleanOption,
   QueryKey,
   QueryObserverOptions,
 } from '@tanstack/query-core'
@@ -36,7 +36,7 @@ export type UseQueryOptions<
     >]: Property extends 'enabled'
       ?
           | MaybeRefOrGetter<boolean | undefined>
-          | (() => Enabled<
+          | (() => QueryBooleanOption<
               TQueryFnData,
               TError,
               TQueryData,
