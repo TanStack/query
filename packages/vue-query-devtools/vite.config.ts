@@ -1,6 +1,9 @@
-import { defineConfig, mergeConfig } from 'vite'
+import { mergeConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { tanstackViteConfig } from '@tanstack/vite-config'
+
+import packageJson from './package.json'
 
 const config = defineConfig({
   plugins: [vue()],
@@ -14,6 +17,20 @@ const config = defineConfig({
         conditions: ['@tanstack/custom-condition'],
       },
     },
+  },
+  test: {
+    name: packageJson.name,
+    dir: './src',
+    watch: false,
+    environment: 'jsdom',
+    coverage: {
+      enabled: true,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+      exclude: ['src/__tests__/**'],
+    },
+    typecheck: { enabled: true },
+    restoreMocks: true,
   },
 })
 
