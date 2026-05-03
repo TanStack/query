@@ -4,7 +4,6 @@
     "outDir": "./dist-ts",
     "rootDir": "."
   },
-  "include": ["src", "*.config.*", "package.json"],
-  "exclude": ["**/*.bundled_*.mjs"],
+  "include": ["src", "*.config.{ts,js,mjs,cjs}", "package.json"],
   "references": [{ "path": "../vue-query" }, { "path": "../query-devtools" }]
 }

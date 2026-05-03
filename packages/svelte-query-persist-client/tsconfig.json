@@ -4,8 +4,7 @@
     "outDir": "./dist-ts",
     "rootDir": "."
   },
-  "include": ["src", "tests", "*.config.*", "package.json"],
-  "exclude": ["**/*.bundled_*.mjs"],
+  "include": ["src", "tests", "*.config.{ts,js,mjs,cjs}", "package.json"],
   "references": [
     { "path": "../query-persist-client-core" },
     { "path": "../svelte-query" }
