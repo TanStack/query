@@ -9,7 +9,7 @@ To do that you need to wrap your suspendable component with `Suspense` component
 
 ```tsx
 import { Suspense } from 'solid-js'
-;<Suspense fallback={<LoadingSpinner />}>
+<Suspense fallback={<LoadingSpinner />}>
   <SuspendableComponent />
 </Suspense>
 ```
