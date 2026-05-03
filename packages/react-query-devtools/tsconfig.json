@@ -5,6 +5,12 @@
     "rootDir": ".",
     "jsx": "react-jsx"
   },
-  "include": ["src", "test-setup.ts", "*.config.ts", "*.config.js", "package.json"],
+  "include": [
+    "src",
+    "test-setup.ts",
+    "*.config.ts",
+    "*.config.js",
+    "package.json"
+  ],
   "references": [{ "path": "../query-devtools" }, { "path": "../react-query" }]
 }

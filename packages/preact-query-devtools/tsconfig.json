@@ -6,6 +6,12 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
-  "include": ["src", "test-setup.ts", "*.config.ts", "*.config.js", "package.json"],
+  "include": [
+    "src",
+    "test-setup.ts",
+    "*.config.ts",
+    "*.config.js",
+    "package.json"
+  ],
   "references": [{ "path": "../query-devtools" }, { "path": "../preact-query" }]
 }
