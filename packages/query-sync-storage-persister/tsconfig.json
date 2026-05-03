@@ -4,7 +4,7 @@
     "outDir": "./dist-ts",
     "rootDir": "."
   },
-  "include": ["src", "*.config.{ts,js,mjs,cjs}", "package.json"],
+  "include": ["src", "*.config.ts", "*.config.js", "package.json"],
   "references": [
     { "path": "../query-core" },
     { "path": "../query-persist-client-core" }

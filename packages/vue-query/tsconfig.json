@@ -7,7 +7,8 @@
   "include": [
     "src",
     "test-setup.ts",
-    "*.config.{ts,js,mjs,cjs}",
+    "*.config.ts",
+    "*.config.js",
     "package.json"
   ],
   "references": [{ "path": "../query-core" }]
