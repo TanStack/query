@@ -63,9 +63,15 @@ describe('PreactQueryDevtools', () => {
   })
 
   it('should return null in non-development environments', async () => {
-    const { PreactQueryDevtools } = await import('..')
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.resetModules()
 
-    expect(process.env.NODE_ENV).not.toBe('development')
-    expect(PreactQueryDevtools({})).toBeNull()
+    try {
+      const { PreactQueryDevtools } = await import('..')
+      expect(PreactQueryDevtools({})).toBeNull()
+    } finally {
+      vi.unstubAllEnvs()
+      vi.resetModules()
+    }
   })
 })
