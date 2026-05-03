@@ -29,9 +29,8 @@ describe('ReactQueryDevtoolsPanel', () => {
   })
 
   it('should throw an error if no query client has been set', async () => {
-    const { ReactQueryDevtoolsPanel } = await import(
-      '../ReactQueryDevtoolsPanel'
-    )
+    const { ReactQueryDevtoolsPanel } =
+      await import('../ReactQueryDevtoolsPanel')
 
     expect(() => render(<ReactQueryDevtoolsPanel />)).toThrow(
       'No QueryClient set, use QueryClientProvider to set one',
@@ -39,9 +38,8 @@ describe('ReactQueryDevtoolsPanel', () => {
   })
 
   it('should not throw an error if query client is provided via context', async () => {
-    const { ReactQueryDevtoolsPanel } = await import(
-      '../ReactQueryDevtoolsPanel'
-    )
+    const { ReactQueryDevtoolsPanel } =
+      await import('../ReactQueryDevtoolsPanel')
     const queryClient = new QueryClient()
 
     expect(() =>
@@ -55,9 +53,8 @@ describe('ReactQueryDevtoolsPanel', () => {
   })
 
   it('should not throw an error if query client is provided via props', async () => {
-    const { ReactQueryDevtoolsPanel } = await import(
-      '../ReactQueryDevtoolsPanel'
-    )
+    const { ReactQueryDevtoolsPanel } =
+      await import('../ReactQueryDevtoolsPanel')
     const queryClient = new QueryClient()
 
     expect(() =>
