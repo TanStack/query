@@ -2936,6 +2936,9 @@ importers:
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
+      '@testing-library/svelte':
+        specifier: ^5.2.8
+        version: 5.3.1(svelte@5.55.1)(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2(@types/node@22.19.15)(jsdom@27.4.0)(msw@2.12.14(@types/node@22.19.15)(typescript@5.9.3))(vite@6.4.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.90.0)(terser@5.46.1)(yaml@2.8.3)))
       '@typescript-eslint/parser':
         specifier: 8.58.1
         version: 8.58.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)

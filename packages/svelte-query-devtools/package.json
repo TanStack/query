@@ -24,6 +24,8 @@
     "compile": "tsc --build",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --concurrency=auto ./src",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
     "build": "svelte-package --input ./src --output ./dist"
   },
@@ -53,6 +55,7 @@
     "@sveltejs/package": "^2.4.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tanstack/svelte-query": "workspace:*",
+    "@testing-library/svelte": "^5.2.8",
     "@typescript-eslint/parser": "^8.48.0",
     "eslint-plugin-svelte": "^3.11.0",
     "svelte": "^5.39.3",
