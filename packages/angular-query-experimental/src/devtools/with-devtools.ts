@@ -143,7 +143,7 @@ export const withDevtools: WithDevtools = (
                 buttonPosition && devtools.setButtonPosition(buttonPosition)
                 typeof initialIsOpen === 'boolean' &&
                   devtools.setInitialIsOpen(initialIsOpen)
-                if (theme) devtools.setTheme(theme)
+                theme && devtools.setTheme(theme)
                 return
               }
 
