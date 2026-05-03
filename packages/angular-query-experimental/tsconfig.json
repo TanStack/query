@@ -14,13 +14,6 @@
     "strictStandalone": true,
     "strictTemplates": true
   },
-  "include": [
-    "src",
-    "scripts",
-    "test-setup.ts",
-    "*.config.ts",
-    "*.config.js",
-    "package.json"
-  ],
+  "include": ["src", "scripts", "test-setup.ts", "*.config.ts", "*.config.js", "package.json"],
   "references": [{ "path": "../query-core" }, { "path": "../query-devtools" }]
 }
