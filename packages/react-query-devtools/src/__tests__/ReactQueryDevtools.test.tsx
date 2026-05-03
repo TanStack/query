@@ -63,9 +63,15 @@ describe('ReactQueryDevtools', () => {
   })
 
   it('should return null in non-development environments', async () => {
-    const { ReactQueryDevtools } = await import('..')
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.resetModules()
 
-    expect(process.env.NODE_ENV).not.toBe('development')
-    expect(ReactQueryDevtools({})).toBeNull()
+    try {
+      const { ReactQueryDevtools } = await import('..')
+      expect(ReactQueryDevtools({})).toBeNull()
+    } finally {
+      vi.unstubAllEnvs()
+      vi.resetModules()
+    }
   })
 })
