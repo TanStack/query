@@ -1,5 +1,5 @@
 import type { DefaultError, WithRequired } from '@tanstack/query-core'
-import type { SolidMutationOptions } from './types'
+import type { MutationOptions } from './types'
 
 export function mutationOptions<
   TData = unknown,
@@ -8,11 +8,11 @@ export function mutationOptions<
   TOnMutateResult = unknown,
 >(
   options: WithRequired<
-    SolidMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    MutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): WithRequired<
-  SolidMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 export function mutationOptions<
@@ -22,11 +22,11 @@ export function mutationOptions<
   TOnMutateResult = unknown,
 >(
   options: Omit<
-    SolidMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+    MutationOptions<TData, TError, TVariables, TOnMutateResult>,
     'mutationKey'
   >,
 ): Omit<
-  SolidMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+  MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   'mutationKey'
 >
 export function mutationOptions<
@@ -35,7 +35,7 @@ export function mutationOptions<
   TVariables = void,
   TOnMutateResult = unknown,
 >(
-  options: SolidMutationOptions<TData, TError, TVariables, TOnMutateResult>,
-): SolidMutationOptions<TData, TError, TVariables, TOnMutateResult> {
+  options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
+): MutationOptions<TData, TError, TVariables, TOnMutateResult> {
   return options
 }

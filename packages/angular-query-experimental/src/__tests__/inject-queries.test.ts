@@ -45,7 +45,7 @@ describe('injectQueries', () => {
       `,
     })
     class Page {
-      result = injectQueries(() => ({
+      readonly result = injectQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -91,7 +91,7 @@ describe('injectQueries', () => {
       `,
     })
     class Page {
-      combined = injectQueries(() => ({
+      readonly combined = injectQueries(() => ({
         queries: [
           {
             queryKey: key1,
@@ -136,6 +136,50 @@ describe('injectQueries', () => {
     expect(results.length).toBeGreaterThanOrEqual(2)
   })
 
+  it('should reflect error state when one of the queries rejects', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    @Component({
+      template: `
+        <div>
+          status1: {{ result()[0].status() }}, error1:
+          {{ result()[0].error()?.message ?? 'none' }}
+        </div>
+        <div>
+          status2: {{ result()[1].status() }}, data2:
+          {{ result()[1].data() ?? 'none' }}
+        </div>
+      `,
+    })
+    class Page {
+      readonly result = injectQueries(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () =>
+              sleep(10).then(() => Promise.reject(new Error('Some error'))),
+            retry: false,
+          },
+          {
+            queryKey: key2,
+            queryFn: () => sleep(10).then(() => 2),
+          },
+        ],
+      }))
+    }
+
+    const rendered = await render(Page)
+
+    await vi.advanceTimersByTimeAsync(11)
+    rendered.fixture.detectChanges()
+
+    expect(
+      rendered.getByText('status1: error, error1: Some error'),
+    ).toBeInTheDocument()
+    expect(rendered.getByText('status2: success, data2: 2')).toBeInTheDocument()
+  })
+
   describe('isRestoring', () => {
     it('should not fetch for the duration of the restoring period when isRestoring is true', async () => {
       const key1 = queryKey()
@@ -147,32 +191,48 @@ describe('injectQueries', () => {
         providers: [provideIsRestoring(signal(true).asReadonly())],
       })
 
-      const queries = TestBed.runInInjectionContext(() =>
-        injectQueries(() => ({
+      @Component({
+        template: `
+          <div>
+            status1: {{ queries()[0].status() }}, fetchStatus1:
+            {{ queries()[0].fetchStatus() }}
+          </div>
+          <div>
+            status2: {{ queries()[1].status() }}, fetchStatus2:
+            {{ queries()[1].fetchStatus() }}
+          </div>
+        `,
+      })
+      class Page {
+        readonly queries = injectQueries(() => ({
           queries: [
             { queryKey: key1, queryFn: queryFn1 },
             { queryKey: key2, queryFn: queryFn2 },
           ],
-        })),
-      )
+        }))
+      }
+
+      const rendered = await render(Page)
 
       await vi.advanceTimersByTimeAsync(0)
-      expect(queries()[0].status()).toBe('pending')
-      expect(queries()[0].fetchStatus()).toBe('idle')
-      expect(queries()[0].data()).toBeUndefined()
-      expect(queries()[1].status()).toBe('pending')
-      expect(queries()[1].fetchStatus()).toBe('idle')
-      expect(queries()[1].data()).toBeUndefined()
+      rendered.fixture.detectChanges()
+      expect(
+        rendered.getByText('status1: pending, fetchStatus1: idle'),
+      ).toBeInTheDocument()
+      expect(
+        rendered.getByText('status2: pending, fetchStatus2: idle'),
+      ).toBeInTheDocument()
       expect(queryFn1).toHaveBeenCalledTimes(0)
       expect(queryFn2).toHaveBeenCalledTimes(0)
 
       await vi.advanceTimersByTimeAsync(11)
-      expect(queries()[0].status()).toBe('pending')
-      expect(queries()[0].fetchStatus()).toBe('idle')
-      expect(queries()[0].data()).toBeUndefined()
-      expect(queries()[1].status()).toBe('pending')
-      expect(queries()[1].fetchStatus()).toBe('idle')
-      expect(queries()[1].data()).toBeUndefined()
+      rendered.fixture.detectChanges()
+      expect(
+        rendered.getByText('status1: pending, fetchStatus1: idle'),
+      ).toBeInTheDocument()
+      expect(
+        rendered.getByText('status2: pending, fetchStatus2: idle'),
+      ).toBeInTheDocument()
       expect(queryFn1).toHaveBeenCalledTimes(0)
       expect(queryFn2).toHaveBeenCalledTimes(0)
     })

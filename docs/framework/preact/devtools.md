@@ -70,9 +70,9 @@ function App() {
 
 - `initialIsOpen: boolean`
   - Set this `true` if you want the dev tools to default to being open
-- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
+- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
   - Defaults to `bottom-right`
-  - The position of the Preact Query logo to open and close the devtools panel
+  - The position of the TanStack logo to open and close the devtools panel
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
   - The position of the Preact Query devtools panel
@@ -85,3 +85,6 @@ function App() {
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+- `theme?: "light" | "dark" | "system"`
+  - Defaults to `system`.
+  - Set this to change the theme of the devtools panel.

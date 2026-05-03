@@ -13,6 +13,12 @@
 'package: preact-query':
   - changed-files:
       - any-glob-to-any-file: 'packages/preact-query/**/*'
+'package: preact-query-devtools':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/preact-query-devtools/**/*'
+'package: preact-query-persist-client':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/preact-query-persist-client/**/*'
 'package: query-async-storage-persister':
   - changed-files:
       - any-glob-to-any-file: 'packages/query-async-storage-persister/**/*'

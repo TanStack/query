@@ -1,5 +1,85 @@
 # @tanstack/angular-query-persist-client
 
+## 5.100.9
+
+### Patch Changes
+
+- Updated dependencies [[`bf902df`](https://github.com/TanStack/query/commit/bf902df59dcc3196cbc4a379c43ee55200c75a0a)]:
+  - @tanstack/angular-query-experimental@5.100.9
+  - @tanstack/query-persist-client-core@5.100.9
+
+## 5.100.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.100.8
+  - @tanstack/query-persist-client-core@5.100.8
+
+## 5.100.7
+
+### Patch Changes
+
+- Updated dependencies [[`868577d`](https://github.com/TanStack/query/commit/868577d5daa6de7dc7698f8b41ad5cf225606d05)]:
+  - @tanstack/angular-query-experimental@5.100.7
+  - @tanstack/query-persist-client-core@5.100.7
+
+## 5.100.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.100.6
+  - @tanstack/query-persist-client-core@5.100.6
+
+## 5.100.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.100.5
+  - @tanstack/query-persist-client-core@5.100.5
+
+## 5.100.4
+
+### Patch Changes
+
+- Updated dependencies [[`3d1a62e`](https://github.com/TanStack/query/commit/3d1a62e63bd864359e369bb21356fa80d043f2ba)]:
+  - @tanstack/angular-query-experimental@5.100.4
+  - @tanstack/query-persist-client-core@5.100.4
+
+## 5.100.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.100.3
+  - @tanstack/query-persist-client-core@5.100.3
+
+## 5.100.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.100.2
+  - @tanstack/query-persist-client-core@5.100.2
+
+## 5.100.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.100.1
+  - @tanstack/query-persist-client-core@5.100.1
+
+## 5.100.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query-experimental@5.100.0
+  - @tanstack/query-persist-client-core@5.100.0
+
 ## 5.99.2
 
 ### Patch Changes
