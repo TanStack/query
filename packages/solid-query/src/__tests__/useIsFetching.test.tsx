@@ -267,6 +267,18 @@ describe('useIsFetching', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const [client, setClient] = createSignal(queryClient1)
+    const queryCache1 = queryClient1.getQueryCache()
+    const originalSubscribe1 = queryCache1.subscribe.bind(queryCache1)
+    const unsubscribe1 = vi.fn()
+
+    vi.spyOn(queryCache1, 'subscribe').mockImplementation((listener) => {
+      const cleanup = originalSubscribe1(listener)
+
+      return () => {
+        unsubscribe1()
+        cleanup()
+      }
+    })
 
     function Page() {
       const isFetching = useIsFetching(undefined, client)
@@ -285,6 +297,7 @@ describe('useIsFetching', () => {
 
     setClient(queryClient2)
 
+    expect(unsubscribe1).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
     const secondQuery = queryClient2.fetchQuery({

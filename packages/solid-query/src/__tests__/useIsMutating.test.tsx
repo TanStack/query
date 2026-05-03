@@ -211,6 +211,18 @@ describe('useIsMutating', () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
     const [client, setClient] = createSignal(queryClient1)
+    const mutationCache1 = queryClient1.getMutationCache()
+    const originalSubscribe1 = mutationCache1.subscribe.bind(mutationCache1)
+    const unsubscribe1 = vi.fn()
+
+    vi.spyOn(mutationCache1, 'subscribe').mockImplementation((listener) => {
+      const cleanup = originalSubscribe1(listener)
+
+      return () => {
+        unsubscribe1()
+        cleanup()
+      }
+    })
 
     function Page() {
       const isMutating = useIsMutating(undefined, client)
@@ -229,6 +241,7 @@ describe('useIsMutating', () => {
 
     setClient(queryClient2)
 
+    expect(unsubscribe1).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('mutating: 0')).toBeInTheDocument()
 
     const secondMutation = queryClient2.getMutationCache().build(queryClient2, {
