@@ -11,7 +11,9 @@ const setErrorTypesMock = vi.fn()
 const setThemeMock = vi.fn()
 
 vi.mock('@tanstack/query-devtools', () => ({
-  TanstackQueryDevtoolsPanel: vi.fn(function (this: TanstackQueryDevtoolsPanel) {
+  TanstackQueryDevtoolsPanel: vi.fn(function (
+    this: TanstackQueryDevtoolsPanel,
+  ) {
     this.mount = mountMock
     this.unmount = unmountMock
     this.setClient = setClientMock
@@ -23,9 +25,8 @@ vi.mock('@tanstack/query-devtools', () => ({
 
 describe('PreactQueryDevtoolsPanel', () => {
   it('should throw an error if no query client has been set', async () => {
-    const { PreactQueryDevtoolsPanel } = await import(
-      '../PreactQueryDevtoolsPanel'
-    )
+    const { PreactQueryDevtoolsPanel } =
+      await import('../PreactQueryDevtoolsPanel')
 
     expect(() => render(<PreactQueryDevtoolsPanel />)).toThrow(
       'No QueryClient set, use QueryClientProvider to set one',
@@ -33,9 +34,8 @@ describe('PreactQueryDevtoolsPanel', () => {
   })
 
   it('should not throw an error if query client is provided via context', async () => {
-    const { PreactQueryDevtoolsPanel } = await import(
-      '../PreactQueryDevtoolsPanel'
-    )
+    const { PreactQueryDevtoolsPanel } =
+      await import('../PreactQueryDevtoolsPanel')
     const queryClient = new QueryClient()
 
     expect(() =>
@@ -48,9 +48,8 @@ describe('PreactQueryDevtoolsPanel', () => {
   })
 
   it('should not throw an error if query client is provided via props', async () => {
-    const { PreactQueryDevtoolsPanel } = await import(
-      '../PreactQueryDevtoolsPanel'
-    )
+    const { PreactQueryDevtoolsPanel } =
+      await import('../PreactQueryDevtoolsPanel')
     const queryClient = new QueryClient()
 
     expect(() =>
