@@ -1,5 +1,11 @@
 # @tanstack/query-devtools
 
+## 5.100.9
+
+### Patch Changes
+
+- Update the devtools panel `setOnClose` callback type to return `void`. ([#10607](https://github.com/TanStack/query/pull/10607))
+
 ## 5.100.8
 
 ## 5.100.7

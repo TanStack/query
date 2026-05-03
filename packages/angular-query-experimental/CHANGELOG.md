@@ -1,5 +1,14 @@
 # @tanstack/angular-query-experimental
 
+## 5.100.9
+
+### Patch Changes
+
+- Add theme option support to Angular floating devtools. ([#10609](https://github.com/TanStack/query/pull/10609))
+
+- Updated dependencies [[`fcee7bd`](https://github.com/TanStack/query/commit/fcee7bdc429385ae8ffa224fa8a7a9ec7b8ee380)]:
+  - @tanstack/query-core@5.100.9
+
 ## 5.100.8
 
 ### Patch Changes
