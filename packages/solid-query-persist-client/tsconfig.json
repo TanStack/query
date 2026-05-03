@@ -6,7 +6,12 @@
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },
-  "include": ["src", "test-setup.ts", "*.config.{ts,js,mjs,cjs}", "package.json"],
+  "include": [
+    "src",
+    "test-setup.ts",
+    "*.config.{ts,js,mjs,cjs}",
+    "package.json"
+  ],
   "references": [
     { "path": "../query-persist-client-core" },
     { "path": "../solid-query" }
