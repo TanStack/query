@@ -908,6 +908,47 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
+  // https://github.com/TanStack/query/issues/9955
+  it('should not trigger Suspense when data was preloaded via ensureQueryData', async () => {
+    const key = queryKey()
+
+    const ensurePromise = queryClient.ensureQueryData({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'preloaded'),
+      staleTime: Infinity,
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    await ensurePromise
+
+    let fallbackMounted = false
+
+    function Page() {
+      const state = useQuery(() => ({
+        queryKey: key,
+        queryFn: () => sleep(10).then(() => 'fresh'),
+        staleTime: Infinity,
+      }))
+
+      return <div>data: {state.data}</div>
+    }
+
+    function Fallback() {
+      fallbackMounted = true
+      return <>loading</>
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback={<Fallback />}>
+          <Page />
+        </Suspense>
+      </QueryClientProvider>
+    ))
+
+    expect(rendered.getByText('data: preloaded')).toBeInTheDocument()
+    expect(fallbackMounted).toBe(false)
+  })
+
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
     const key = queryKey()
     let state: UseQueryResult<number> | null = null
