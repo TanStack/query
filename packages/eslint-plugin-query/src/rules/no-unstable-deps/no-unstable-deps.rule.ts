@@ -112,12 +112,13 @@ export const rule = createRule({
           allHookNames.includes(node.init.callee.name) &&
           helpers.isTanstackQueryImport(node.init.callee)
         ) {
-          // Special case for useQueries with combine property - it's stable
+          // Special case for useQueries/useSuspenseQueries with combine property - it's stable
           if (
-            node.init.callee.name === 'useQueries' &&
+            (node.init.callee.name === 'useQueries' ||
+              node.init.callee.name === 'useSuspenseQueries') &&
             hasCombineProperty(node.init)
           ) {
-            // Don't track useQueries with combine as unstable
+            // Don't track useQueries/useSuspenseQueries with combine as unstable
             return
           }
           collectVariableNames(node.id, node.init.callee.name)
