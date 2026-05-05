@@ -11,9 +11,9 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.100.9",
-    "eslint": "^9.39.0",
+    "eslint": "^9.39.4",
     "typescript": "5.8.3",
-    "typescript-eslint": "^8.48.0"
+    "typescript-eslint": "^8.59.2"
   },
   "nx": {
     "targets": {

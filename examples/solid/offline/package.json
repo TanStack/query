@@ -12,13 +12,13 @@
     "@tanstack/solid-query": "^5.100.9",
     "@tanstack/solid-query-devtools": "^5.100.9",
     "@tanstack/solid-query-persist-client": "^5.100.9",
-    "msw": "^2.6.6",
-    "solid-js": "^1.9.7"
+    "msw": "^2.14.3",
+    "solid-js": "^1.9.12"
   },
   "devDependencies": {
     "typescript": "5.8.3",
     "vite": "^6.4.1",
-    "vite-plugin-solid": "^2.11.6"
+    "vite-plugin-solid": "^2.11.12"
   },
   "msw": {
     "workerDirectory": [

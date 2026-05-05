@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "@tanstack/preact-query": "^5.100.9",
-    "preact": "^10.28.0"
+    "preact": "^10.29.1"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.10.2",
-    "eslint": "^9.36.0",
+    "@preact/preset-vite": "^2.10.5",
+    "eslint": "^9.39.4",
     "eslint-config-preact": "^2.0.0",
     "typescript": "^5.9.3",
     "vite": "^6.4.1"
