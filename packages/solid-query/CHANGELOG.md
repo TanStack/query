@@ -1,5 +1,35 @@
 # @tanstack/solid-query
 
+## 5.100.9
+
+### Patch Changes
+
+- Updated dependencies [[`fcee7bd`](https://github.com/TanStack/query/commit/fcee7bdc429385ae8ffa224fa8a7a9ec7b8ee380)]:
+  - @tanstack/query-core@5.100.9
+
+## 5.100.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.8
+
+## 5.100.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.7
+
+## 5.100.6
+
+### Patch Changes
+
+- refactor(solid-query): remove 'Solid' prefix from 'SolidQueryOptions', 'SolidInfiniteQueryOptions', and 'SolidMutationOptions' ([#10500](https://github.com/TanStack/query/pull/10500))
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.6
+
 ## 5.100.5
 
 ### Patch Changes

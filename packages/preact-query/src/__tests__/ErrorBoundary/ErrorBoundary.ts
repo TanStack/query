@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     /**
-     * To emulate the react behaviour of console.error
+     * To emulate the react behavior of console.error
      * we add one here to show that the errors bubble up
      * to the system and can be seen in the console
      */

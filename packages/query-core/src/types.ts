@@ -231,7 +231,7 @@ export interface QueryOptions<
 > {
   /**
    * If `false`, failed queries will not retry by default.
-   * If `true`, failed queries will retry infinitely., failureCount: num
+   * If `true`, failed queries will retry infinitely.
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
    */
@@ -246,7 +246,7 @@ export interface QueryOptions<
    */
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
-  persister?: QueryPersister<TQueryFnData, TQueryKey, TPageParam>
+  persister?: QueryPersister<TQueryFnData, NoInfer<TQueryKey>, TPageParam>
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
