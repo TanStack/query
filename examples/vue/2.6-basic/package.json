@@ -9,10 +9,10 @@
     "_preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.90.2",
+    "@tanstack/vue-query": "^5.100.9",
     "@vue/composition-api": "1.7.2",
     "vue": "2.6.14",
-    "vue-template-compiler": "2.6.14"
+    "vue-template-compiler": "2.7.16"
   },
   "devDependencies": {
     "typescript": "5.8.3",
