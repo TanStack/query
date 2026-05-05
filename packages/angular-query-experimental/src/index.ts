@@ -7,8 +7,11 @@ export * from './types'
 
 export type {
   DefinedInitialDataOptions,
+  DefinedInitialDataOptionsResult,
   UndefinedInitialDataOptions,
+  UndefinedInitialDataOptionsResult,
   UnusedSkipTokenOptions,
+  UnusedSkipTokenOptionsResult,
 } from './query-options'
 export { queryOptions } from './query-options'
 
@@ -17,8 +20,11 @@ export { mutationOptions } from './mutation-options'
 
 export type {
   DefinedInitialDataInfiniteOptions,
+  DefinedInitialDataInfiniteOptionsResult,
   UndefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptionsResult,
   UnusedSkipTokenInfiniteOptions,
+  UnusedSkipTokenInfiniteOptionsResult,
 } from './infinite-query-options'
 export { infiniteQueryOptions } from './infinite-query-options'
 
