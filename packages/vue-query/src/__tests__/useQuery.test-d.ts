@@ -1,8 +1,8 @@
-import { describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue-demi'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
 import { queryOptions, useQuery } from '..'
-import type { OmitKeyof, UseQueryOptions } from '..'
+import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
 
 describe('useQuery', () => {
   describe('Config object overload', () => {
@@ -149,6 +149,29 @@ describe('useQuery', () => {
       )
 
       expectTypeOf(data).toEqualTypeOf<number>()
+    })
+  })
+
+  describe('generic queryKey inference (#8199)', () => {
+    it('should not error when wrapping useQuery in a composable that propagates a generic type to the queryKey', () => {
+      const basket = { fruit: 'apple', vegetable: 'broccoli' } as const
+
+      function getBasket<T extends 'fruit' | 'vegetable'>(type: T) {
+        return basket[type]
+      }
+
+      function useBasket<T extends 'fruit' | 'vegetable'>(type: T) {
+        return useQuery({
+          queryKey: ['basket', type] as const,
+          queryFn({ queryKey: [, t] }) {
+            return getBasket(t)
+          },
+        })
+      }
+
+      assertType<UseQueryReturnType<'apple' | 'broccoli', Error>>(
+        useBasket('fruit'),
+      )
     })
   })
 
