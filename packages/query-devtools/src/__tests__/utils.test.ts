@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { deleteNestedDataByPath, updateNestedDataByPath } from '../utils'
+import {
+  deleteNestedDataByPath,
+  getMutationStatusColor,
+  getQueryStatusColorByLabel,
+  updateNestedDataByPath,
+} from '../utils'
+import type { MutationStatus } from '@tanstack/query-core'
 
 describe('Utils tests', () => {
   describe('updatedNestedDataByPath', () => {
@@ -727,6 +733,71 @@ describe('Utils tests', () => {
         `)
         /* eslint-enable */
       })
+    })
+  })
+
+  describe('getMutationStatusColor', () => {
+    const cases: Array<{
+      label: string
+      status: MutationStatus
+      isPaused: boolean
+      expected: string
+    }> = [
+      {
+        label: 'paused',
+        status: 'pending',
+        isPaused: true,
+        expected: 'purple',
+      },
+      {
+        label: 'paused even when status is "error"',
+        status: 'error',
+        isPaused: true,
+        expected: 'purple',
+      },
+      { label: '"error"', status: 'error', isPaused: false, expected: 'red' },
+      {
+        label: '"pending"',
+        status: 'pending',
+        isPaused: false,
+        expected: 'yellow',
+      },
+      {
+        label: '"success"',
+        status: 'success',
+        isPaused: false,
+        expected: 'green',
+      },
+      { label: '"idle"', status: 'idle', isPaused: false, expected: 'gray' },
+    ]
+
+    it.each(cases)(
+      'should return "$expected" when mutation is $label',
+      ({ status, isPaused, expected }) => {
+        expect(getMutationStatusColor({ status, isPaused })).toBe(expected)
+      },
+    )
+  })
+
+  describe('getQueryStatusColorByLabel', () => {
+    it('should return "green" for "fresh"', () => {
+      expect(getQueryStatusColorByLabel('fresh')).toBe('green')
+    })
+
+    it('should return "yellow" for "stale"', () => {
+      expect(getQueryStatusColorByLabel('stale')).toBe('yellow')
+    })
+
+    it('should return "purple" for "paused"', () => {
+      expect(getQueryStatusColorByLabel('paused')).toBe('purple')
+    })
+
+    it('should return "gray" for "inactive"', () => {
+      expect(getQueryStatusColorByLabel('inactive')).toBe('gray')
+    })
+
+    it('should return "blue" for "fetching"', () => {
+      expect(getQueryStatusColorByLabel('fetching')).toBe('blue')
     })
   })
 })
