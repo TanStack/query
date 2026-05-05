@@ -1,0 +1,20 @@
+{
+  "name": "@tanstack/query-example-lit-pagination",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "node ./scripts/dev.mjs",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/lit-query": "^0.1.0",
+    "@tanstack/query-core": "^5.99.0",
+    "lit": "^3.3.1"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3",
+    "vite": "^6.4.1"
+  }
+}

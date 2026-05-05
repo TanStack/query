@@ -1,0 +1,64 @@
+{
+  "name": "@tanstack/lit-query",
+  "version": "0.1.0",
+  "description": "Lit adapter for TanStack Query Core",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist-cjs/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "dist-cjs",
+    "src/**/*.ts",
+    "!src/tests/**/*"
+  ],
+  "exports": {
+    ".": {
+      "@tanstack/custom-condition": "./src/index.ts",
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist-cjs/index.d.cts",
+        "default": "./dist-cjs/index.js"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "compile": "node ../../node_modules/typescript/lib/tsc.js --build",
+    "build:deps": "pnpm --dir ../query-core run build",
+    "build": "pnpm run build:deps && pnpm run build:esm && pnpm run build:cjs",
+    "build:esm": "node ../../node_modules/typescript/lib/tsc.js -p tsconfig.build.json",
+    "build:cjs": "node -e \"require('node:fs').rmSync('dist-cjs', { recursive: true, force: true })\" && node ../../node_modules/typescript/lib/tsc.js -p tsconfig.build.cjs.json && node scripts/write-cjs-package.mjs",
+    "test:types": "node ../../node_modules/typescript/lib/tsc.js --noEmit",
+    "test:eslint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test:lib": "vitest run",
+    "test:lib:dev": "vitest",
+    "test:watch": "pnpm run test:lib:dev",
+    "test:build": "publint --strict && attw --pack && node scripts/check-cjs-types-smoke.mjs",
+    "measure:bundle": "pnpm run build && node scripts/measure-bundle.mjs",
+    "measure:bundle:raw": "node scripts/measure-bundle.mjs",
+    "perf:l3": "pnpm run build && node scripts/l3-stress.mjs",
+    "perf:l3:raw": "node scripts/l3-stress.mjs"
+  },
+  "dependencies": {
+    "@lit/context": "^1.1.6",
+    "@tanstack/query-core": "workspace:*",
+    "lit": "^3.3.1"
+  },
+  "peerDependencies": {
+    "@tanstack/query-core": "^5.0.0",
+    "lit": ">=2.8.0 <4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "globals": "^17.4.0",
+    "typescript-eslint": "^8.54.0"
+  }
+}
