@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/preact-query-devtools",
-  "version": "5.100.6",
+  "version": "5.100.9",
   "description": "Developer tools to interact with and visualize the TanStack/preact-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -27,6 +27,8 @@
     "test:types:ts59": "node ../../node_modules/typescript59/lib/tsc.js --build tsconfig.legacy.json",
     "test:types:tscurrent": "tsc --build",
     "test:types:ts60": "node ../../node_modules/typescript60/lib/tsc.js --build tsconfig.legacy.json",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
     "build": "tsup --tsconfig tsconfig.prod.json",
     "build:dev": "tsup --watch"

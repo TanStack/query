@@ -1,5 +1,30 @@
 # @tanstack/angular-query-experimental
 
+## 5.100.9
+
+### Patch Changes
+
+- Add theme option support to Angular floating devtools. ([#10609](https://github.com/TanStack/query/pull/10609))
+
+- Updated dependencies [[`fcee7bd`](https://github.com/TanStack/query/commit/fcee7bdc429385ae8ffa224fa8a7a9ec7b8ee380)]:
+  - @tanstack/query-core@5.100.9
+
+## 5.100.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.8
+
+## 5.100.7
+
+### Patch Changes
+
+- docs(devtools): align logo, panel, and 'buttonPosition' union descriptions across docs and JSDoc ([#10617](https://github.com/TanStack/query/pull/10617))
+
+- Updated dependencies []:
+  - @tanstack/query-core@5.100.7
+
 ## 5.100.6
 
 ### Patch Changes

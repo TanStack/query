@@ -1,5 +1,33 @@
 # @tanstack/preact-query-devtools
 
+## 5.100.9
+
+### Patch Changes
+
+- Updated dependencies [[`3d21cac`](https://github.com/TanStack/query/commit/3d21cacdec3028b700c4c2e3e0ff8dbe7a235e8c)]:
+  - @tanstack/query-devtools@5.100.9
+  - @tanstack/preact-query@5.100.9
+
+## 5.100.8
+
+### Patch Changes
+
+- refactor(preact-query-devtools): replace deprecated 'JSX.CSSProperties' with 'CSSProperties' from Preact namespace ([#10622](https://github.com/TanStack/query/pull/10622))
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.100.8
+  - @tanstack/query-devtools@5.100.8
+
+## 5.100.7
+
+### Patch Changes
+
+- docs(devtools): align logo, panel, and 'buttonPosition' union descriptions across docs and JSDoc ([#10617](https://github.com/TanStack/query/pull/10617))
+
+- Updated dependencies []:
+  - @tanstack/preact-query@5.100.7
+  - @tanstack/query-devtools@5.100.7
+
 ## 5.100.6
 
 ### Patch Changes

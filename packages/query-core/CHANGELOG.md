@@ -1,5 +1,15 @@
 # @tanstack/query-core
 
+## 5.100.9
+
+### Patch Changes
+
+- fix(query-core): wrap `persister`'s `TQueryKey` in `NoInfer` so that the `persister` slot no longer contributes to `TQueryKey` inference. Follow-up to #10510, which removed `NoInfer` on all three `persister` generics. Preserving `NoInfer<TQueryKey>` keeps that fix's benefit for `TQueryFnData` while preventing `TQueryKey` from widening to the augmented constraint when `Register.queryKey` is narrowed — which made `DataTag`-branded wrapper returns un-assignable in contravariant slots. ([#10601](https://github.com/TanStack/query/pull/10601))
+
+## 5.100.8
+
+## 5.100.7
+
 ## 5.100.6
 
 ## 5.100.5
