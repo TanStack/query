@@ -3,6 +3,74 @@ import { createSignal, onCleanup, onMount } from 'solid-js'
 import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './contexts'
 
+const DEFAULT_LOCALE = 'en-US'
+
+type NavigatorWithUserLanguage = {
+  language?: string
+  userLanguage?: string
+}
+
+export function sanitizeLocale(
+  locale: string | undefined,
+  fallback: string = DEFAULT_LOCALE,
+) {
+  if (typeof locale !== 'string') {
+    return fallback
+  }
+
+  const normalizedLocale = locale.trim()
+
+  if (!normalizedLocale) {
+    return fallback
+  }
+
+  try {
+    return (
+      Intl.DateTimeFormat.supportedLocalesOf([normalizedLocale])[0] || fallback
+    )
+  } catch {
+    return fallback
+  }
+}
+
+export function getPreferredLocale(
+  navigatorValue?: NavigatorWithUserLanguage,
+) {
+  return sanitizeLocale(
+    navigatorValue?.language || navigatorValue?.userLanguage,
+  )
+}
+
+export function createSafeLocale() {
+  const getLocale = () =>
+    getPreferredLocale(
+      typeof navigator === 'undefined'
+        ? undefined
+        : (navigator as NavigatorWithUserLanguage),
+    )
+
+  const [locale, setLocale] = createSignal(getLocale())
+
+  onMount(() => {
+    const updateLocale = () => {
+      setLocale(getLocale())
+    }
+
+    window.addEventListener('languagechange', updateLocale)
+    onCleanup(() => window.removeEventListener('languagechange', updateLocale))
+  })
+
+  return locale
+}
+
+export function formatDateTime(value: string | number | Date, locale?: string) {
+  return new Date(value).toLocaleString(sanitizeLocale(locale))
+}
+
+export function formatTime(value: string | number | Date, locale?: string) {
+  return new Date(value).toLocaleTimeString(sanitizeLocale(locale))
+}
+
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
     ? 'fetching'
