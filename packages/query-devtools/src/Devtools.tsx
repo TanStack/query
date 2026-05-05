@@ -1384,54 +1384,35 @@ const QueryRow: Component<{ query: Query }> = (props) => {
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
   const queryState = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache().find({
-        queryKey: props.query.queryKey,
-      })?.state,
+    (queryCache) => queryCache().get(props.query.queryHash)?.state,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isDisabled = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
-      queryCache()
-        .find({
-          queryKey: props.query.queryKey,
-        })
-        ?.isDisabled() ?? false,
+      queryCache().get(props.query.queryHash)?.isDisabled() ?? false,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isStatic = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
-      queryCache()
-        .find({
-          queryKey: props.query.queryKey,
-        })
-        ?.isStatic() ?? false,
+      queryCache().get(props.query.queryHash)?.isStatic() ?? false,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isStale = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
-      queryCache()
-        .find({
-          queryKey: props.query.queryKey,
-        })
-        ?.isStale() ?? false,
+      queryCache().get(props.query.queryHash)?.isStale() ?? false,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const observers = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
-      queryCache()
-        .find({
-          queryKey: props.query.queryKey,
-        })
-        ?.getObserversCount() ?? 0,
+      queryCache().get(props.query.queryHash)?.getObserversCount() ?? 0,
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
