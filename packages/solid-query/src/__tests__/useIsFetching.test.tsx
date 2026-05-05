@@ -260,4 +260,56 @@ describe('useIsFetching', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
   })
+
+  it('should resubscribe when a custom queryClient changes', async () => {
+    const queryClient1 = new QueryClient()
+    const queryClient2 = new QueryClient()
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const [client, setClient] = createSignal(queryClient1)
+    const queryCache1 = queryClient1.getQueryCache()
+    const originalSubscribe1 = queryCache1.subscribe.bind(queryCache1)
+    const unsubscribe1 = vi.fn()
+
+    vi.spyOn(queryCache1, 'subscribe').mockImplementation((listener) => {
+      const cleanup = originalSubscribe1(listener)
+
+      return () => {
+        unsubscribe1()
+        cleanup()
+      }
+    })
+
+    function Page() {
+      const isFetching = useIsFetching(undefined, client)
+
+      return <div>isFetching: {isFetching()}</div>
+    }
+
+    const rendered = render(() => <Page />)
+
+    const firstQuery = queryClient1.fetchQuery({
+      queryKey: key1,
+      queryFn: () => sleep(20).then(() => 'test1'),
+    })
+
+    expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
+
+    setClient(queryClient2)
+
+    expect(unsubscribe1).toHaveBeenCalledTimes(1)
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
+
+    const secondQuery = queryClient2.fetchQuery({
+      queryKey: key2,
+      queryFn: () => sleep(20).then(() => 'test2'),
+    })
+
+    expect(rendered.getByText('isFetching: 1')).toBeInTheDocument()
+
+    await vi.advanceTimersByTimeAsync(20)
+    await Promise.all([firstQuery, secondQuery])
+
+    expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
+  })
 })

@@ -1,7 +1,7 @@
 import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
 import { createComputed, createMemo, on, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { useQueryClient } from './QueryClientProvider'
+import { useQueryClientResolver } from './QueryClientProvider'
 import type { DefaultError } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -21,7 +21,8 @@ export function useMutation<
   options: UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   queryClient?: Accessor<QueryClient>,
 ): UseMutationResult<TData, TError, TVariables, TOnMutateResult> {
-  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const resolveClient = useQueryClientResolver(queryClient)
+  const client = createMemo(() => resolveClient())
 
   const observer = new MutationObserver<
     TData,
