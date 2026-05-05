@@ -743,7 +743,12 @@ describe('Utils tests', () => {
       isPaused: boolean
       expected: string
     }> = [
-      { label: 'paused', status: 'pending', isPaused: true, expected: 'purple' },
+      {
+        label: 'paused',
+        status: 'pending',
+        isPaused: true,
+        expected: 'purple',
+      },
       {
         label: 'paused even when status is "error"',
         status: 'error',
@@ -751,8 +756,18 @@ describe('Utils tests', () => {
         expected: 'purple',
       },
       { label: '"error"', status: 'error', isPaused: false, expected: 'red' },
-      { label: '"pending"', status: 'pending', isPaused: false, expected: 'yellow' },
-      { label: '"success"', status: 'success', isPaused: false, expected: 'green' },
+      {
+        label: '"pending"',
+        status: 'pending',
+        isPaused: false,
+        expected: 'yellow',
+      },
+      {
+        label: '"success"',
+        status: 'success',
+        isPaused: false,
+        expected: 'green',
+      },
       { label: '"idle"', status: 'idle', isPaused: false, expected: 'gray' },
     ]
 
