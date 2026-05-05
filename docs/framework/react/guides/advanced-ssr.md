@@ -116,10 +116,12 @@ import {
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return {
     props: {
@@ -172,10 +174,12 @@ import Posts from './posts'
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return (
     // Neat! Serialization is now as easy as passing props.
@@ -237,10 +241,12 @@ import CommentsServerComponent from './comments-server'
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -261,10 +267,12 @@ import Comments from './comments'
 export default async function CommentsServerComponent() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts-comments'],
-    queryFn: getComments,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts-comments'],
+      queryFn: getComments,
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -325,8 +333,8 @@ import Posts from './posts'
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  // Note we are now using fetchQuery()
-  const posts = await queryClient.fetchQuery({
+  // Note we are getting the result from query
+  const posts = await queryClient.query({
     queryKey: ['posts'],
     queryFn: getPosts,
   })
@@ -355,7 +363,7 @@ Using React Query with Server Components makes most sense if:
 
 It's hard to give general advice on when it makes sense to pair React Query with Server Components and not. **If you are just starting out with a new Server Components app, we suggest you start out with any tools for data fetching your framework provides you with and avoid bringing in React Query until you actually need it.** This might be never, and that's fine, use the right tool for the job!
 
-If you do use it, a good rule of thumb is to avoid `queryClient.fetchQuery` unless you need to catch errors. If you do use it, don't render its result on the server or pass the result to another component, even a Client Component one.
+If you do use it, a good rule of thumb is to avoid rendering the result of `queryClient.query` on the server or passing it to another component, even a Client Component one.
 
 From the React Query perspective, treat Server Components as a place to prefetch data, nothing more.
 
@@ -424,7 +432,7 @@ export function getQueryClient() {
 
 > Note: This works in NextJs and Server Components because React can serialize Promises over the wire when you pass them down to Client Components.
 
-Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `await` prefetches anymore:
+Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `await` these prefetches anymore:
 
 ```tsx
 // app/posts/page.tsx
@@ -437,10 +445,12 @@ export default function PostsPage() {
   const queryClient = getQueryClient()
 
   // look ma, no await
-  queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  void queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -504,10 +514,12 @@ export default function PostsPage() {
   const queryClient = getQueryClient()
 
   // look ma, no await
-  queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
-  })
+  void queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
+    })
+    .catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

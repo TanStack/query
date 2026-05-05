@@ -7,7 +7,7 @@ ref: docs/framework/react/guides/query-options.md
 [//]: # 'Example1'
 
 ```ts
-import { queryOptions } from '@tanstack/angular-query-experimental'
+import { queryOptions, noop } from '@tanstack/angular-query-experimental'
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +38,7 @@ queries = inject(QueriesService)
 
 postQuery = injectQuery(() => this.queries.post(this.postId()))
 
-queryClient.prefetchQuery(this.queries.post(23))
+queryClient.query(this.queries.post(23)).catch(noop)
 queryClient.setQueryData(this.queries.post(42).queryKey, newPost)
 ```
 

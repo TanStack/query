@@ -16,49 +16,65 @@ In this guide, we'll take a look at the first three, while the fourth will be co
 
 One specific use of prefetching is to avoid Request Waterfalls, for an in-depth background and explanation of those, see the [Performance & Request Waterfalls guide](./request-waterfalls.md).
 
-## prefetchQuery & prefetchInfiniteQuery
+## Using `query` to prefetch
 
-Before jumping into the different specific prefetch patterns, let's look at the `prefetchQuery` and `prefetchInfiniteQuery` functions. First a few basics:
+> [!NOTE]
+> These tips replace the use of the now deprecated `prefetchQuery` and `ensureQueryData` methods. If you used an earlier version of this guide, note that those methods will be removed in the next major version of TanStack Query
 
-- Out of the box, these functions use the default `staleTime` configured for the `queryClient` to determine whether existing data in the cache is fresh or needs to be fetched again
-- You can also pass a specific `staleTime` like this: `prefetchQuery({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })`
-  - This `staleTime` is only used for the prefetch, you still need to set it for any `useQuery` call as well
-  - If you want to ignore `staleTime` and instead always return data if it's available in the cache, you can use the `ensureQueryData` function.
+Prefetching a query uses the `query` method. This method by default will
+
+- Run the query function
+- Cache the result
+- Return the result of that query
+- Throw if it hits any errors
+
+For prefetching you often want to modify these defaults:
+
+- Out of the box, `query` uses the default `staleTime` configured for the `queryClient` to determine whether existing data in the cache is fresh or needs to be fetched again
+- You can also pass a specific `staleTime` like this: `query({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })`
+  - This `staleTime` is only used for that query fetch, you still need to set it for any `useQuery` call as well
+  - If you want to always return data if it's available in the cache regardless of the default `staleTime`, you can pass `"static"` in for `staleTime`.
   - Tip: If you are prefetching on the server, set a default `staleTime` higher than `0` for that `queryClient` to avoid having to pass in a specific `staleTime` to each prefetch call
 - If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `gcTime`
-- These functions return `Promise<void>` and thus never return query data. If that's something you need, use `fetchQuery`/`fetchInfiniteQuery` instead.
-- The prefetch functions never throw errors because they usually try to fetch again in a `useQuery` which is a nice graceful fallback. If you need to catch errors, use `fetchQuery`/`fetchInfiniteQuery` instead.
+- If your prefetch is for non-critical data, you can discard the promise with `void` and use `.catch(noop)` to swallow errors. The query will usually try to fetch again in a `useQuery`, which is a nice graceful fallback.
 
-This is how you use `prefetchQuery`:
+This is how you use `query` to prefetch:
 
 [//]: # 'ExamplePrefetchQuery'
 
 ```tsx
+import { noop } from '@tanstack/react-query'
+
 const prefetchTodos = async () => {
-  // The results of this query will be cached like a normal query
-  await queryClient.prefetchQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-  })
+  await queryClient
+    .query({
+      queryKey: ['todos'],
+      queryFn: fetchTodos,
+      // Swallow errors here, because usually they will fetch again in `useQuery`
+    })
+    .catch(noop)
 }
 ```
 
 [//]: # 'ExamplePrefetchQuery'
 
-Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option, in which case you also have to provide a `getNextPageParam` function:
+Infinite Queries can be prefetched like regular Queries. By default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option, in which case you also have to provide a `getNextPageParam` function:
 
 [//]: # 'ExamplePrefetchInfiniteQuery'
 
 ```tsx
-const prefetchProjects = async () => {
-  // The results of this query will be cached like a normal query
-  await queryClient.prefetchInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-    pages: 3, // prefetch the first 3 pages
-  })
+import { noop } from '@tanstack/react-query'
+
+const prefetchProjects = () => {
+  await queryClient
+    .infiniteQuery({
+      queryKey: ['projects'],
+      queryFn: fetchProjects,
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+      pages: 3, // prefetch the first 3 pages
+    })
+    .catch(noop)
 }
 ```
 
@@ -68,7 +84,7 @@ Next, let's look at how you can use these and other ways to prefetch in differen
 
 ## Prefetch in event handlers
 
-A straightforward form of prefetching is doing it when the user interacts with something. In this example we'll use `queryClient.prefetchQuery` to start a prefetch on `onMouseEnter` or `onFocus`.
+A straightforward form of prefetching is doing it when the user interacts with something. In this example we'll use `queryClient.query` to start a prefetch on `onMouseEnter` or `onFocus`.
 
 [//]: # 'ExampleEventHandler'
 
@@ -77,13 +93,13 @@ function ShowDetailsButton() {
   const queryClient = useQueryClient()
 
   const prefetch = () => {
-    queryClient.prefetchQuery({
+    void queryClient.query({
       queryKey: ['details'],
       queryFn: getDetailsData,
       // Prefetch only fires when data is older than the staleTime,
       // so in a case like this you definitely want to set one
       staleTime: 60000,
-    })
+    }).catch(noop)
   }
 
   return (
@@ -224,33 +240,37 @@ function Article({ id }) {
 }
 ```
 
-Another way is to prefetch inside of the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.prefetchQuery`:
+Another way is to prefetch inside the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.query`:
 
 ```tsx
 const queryClient = useQueryClient()
 const { data: articleData, isPending } = useQuery({
   queryKey: ['article', id],
   queryFn: (...args) => {
-    queryClient.prefetchQuery({
-      queryKey: ['article-comments', id],
-      queryFn: getArticleCommentsById,
-    })
+    void queryClient
+      .query({
+        queryKey: ['article-comments', id],
+        queryFn: getArticleCommentsById,
+      })
+      .catch(noop)
 
     return getArticleById(...args)
   },
 })
 ```
 
-Prefetching in an effect also works, but note that if you are using `useSuspenseQuery` in the same component, this effect wont run until _after_ the query finishes which might not be what you want.
+Prefetching in an effect also works, but note that if you are using `useSuspenseQuery` in the same component, this effect won't run until _after_ the query finishes which might not be what you want.
 
 ```tsx
 const queryClient = useQueryClient()
 
 useEffect(() => {
-  queryClient.prefetchQuery({
-    queryKey: ['article-comments', id],
-    queryFn: getArticleCommentsById,
-  })
+  void queryClient
+    .query({
+      queryKey: ['article-comments', id],
+      queryFn: getArticleCommentsById,
+    })
+    .catch(noop)
 }, [queryClient, id])
 ```
 
@@ -273,7 +293,7 @@ Sometimes we want to prefetch conditionally, based on the result of another fetc
 
 ```tsx
 // This lazy loads the GraphFeedItem component, meaning
-// it wont start loading until something renders it
+// it won't start loading until something renders it
 const GraphFeedItem = React.lazy(() => import('./GraphFeedItem'))
 
 function Feed() {
@@ -334,10 +354,10 @@ function Feed() {
 
       for (const feedItem of feed) {
         if (feedItem.type === 'GRAPH') {
-          queryClient.prefetchQuery({
+          void queryClient.query({
             queryKey: ['graph', feedItem.id],
             queryFn: getGraphDataById,
-          })
+          }).catch(noop)
         }
       }
 
@@ -373,6 +393,8 @@ For now, let's focus on the client side case and look at an example of how you c
 
 When integrating at the router level, you can choose to either _block_ rendering of that route until all data is present, or you can start a prefetch but not await the result. That way, you can start rendering the route as soon as possible. You can also mix these two approaches and await some critical data, but start rendering before all the secondary data has finished loading. In this example, we'll configure an `/article` route to not render until the article data has finished loading, as well as start prefetching comments as soon as possible, but not block rendering the route if comments haven't finished loading yet.
 
+Note that many route loaders use error boundaries to trigger error fallbacks. Whereas up to now we have been using `.catch(noop)` to ignore errors for data that will be retried by `useQuery`, for critical data that the route will not work without, you should `await` the promise without `noop` and handle the error in a `try` block or the router's error handling (such as TanStack Router's `errorComponent`).
+
 ```tsx
 const queryClient = new QueryClient()
 const routerContext = new RouterContext()
@@ -393,11 +415,19 @@ const articleRoute = new Route({
     context: { queryClient },
     routeContext: { articleQueryOptions, commentsQueryOptions },
   }) => {
-    // Fetch comments asap, but don't block
-    queryClient.prefetchQuery(commentsQueryOptions)
+    // Fetch comments asap, but don't block or throw errors
+    void queryClient.query(commentsQueryOptions).catch(noop)
 
     // Don't render the route at all until article has been fetched
-    await queryClient.prefetchQuery(articleQueryOptions)
+    // As this is critical data we want the error component to trigger
+    // as soon as possible if something goes wrong
+    await queryClient.query({
+      ...articleQueryOptions,
+      // If we have the article loaded already, we don't want to block on
+      // an extra prefetch; fallback on the default useQuery behavior to
+      // keep the data fresh
+      staleTime: 'static'
+    })
   },
   component: ({ useRouteContext }) => {
     const { articleQueryOptions, commentsQueryOptions } = useRouteContext()

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ref } from 'vue-demi'
+import { ref, unref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -338,6 +338,41 @@ describe('QueryCache', () => {
     })
   })
 
+  describe('query', () => {
+    it('should properly unwrap queryKey', () => {
+      const queryClient = new QueryClient()
+
+      queryClient.query({
+        queryKey: queryKeyRef,
+      })
+
+      expect(QueryClientOrigin.prototype.query).toBeCalledWith({
+        queryKey: queryKeyUnref,
+      })
+    })
+
+    it('should properly unwrap enabled, staleTime, and select', () => {
+      const queryClient = new QueryClient()
+      const enabled = () => false
+      const staleTime = () => 1000
+      const select = (data: string) => data.length
+
+      queryClient.query({
+        queryKey: queryKeyRef,
+        enabled: ref(enabled),
+        staleTime: ref(staleTime),
+        select: ref(select),
+      })
+
+      expect(QueryClientOrigin.prototype.query).toBeCalledWith({
+        queryKey: queryKeyUnref,
+        enabled,
+        staleTime,
+        select,
+      })
+    })
+  })
+
   describe('prefetchQuery', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
@@ -382,6 +417,59 @@ describe('QueryCache', () => {
         expect.objectContaining({
           initialPageParam: 0,
           queryKey: queryKeyUnref,
+        }),
+      )
+    })
+  })
+
+  describe('infiniteQuery', () => {
+    it('should properly unwrap queryKey, initialPageParam, pages, and select', () => {
+      const queryClient = new QueryClient()
+      const getNextPageParam = () => 1
+      const select = (data: { pages: Array<string> }) => data.pages.length
+
+      queryClient.infiniteQuery({
+        queryKey: queryKeyRef,
+        initialPageParam: ref(0),
+        pages: ref(2),
+        getNextPageParam: ref(getNextPageParam),
+        select: ref(select),
+      })
+
+      expect(QueryClientOrigin.prototype.infiniteQuery).toBeCalledWith(
+        expect.objectContaining({
+          queryKey: queryKeyUnref,
+          initialPageParam: 0,
+          pages: 2,
+          getNextPageParam,
+          select,
+        }),
+      )
+    })
+
+    it('should properly unwrap getNextPageParam when using infiniteQueryOptions', () => {
+      const queryClient = new QueryClient()
+      const getNextPageParam = () => 12
+
+      const options = infiniteQueryOptions({
+        queryKey: queryKeyRef,
+        initialPageParam: ref(0),
+        getNextPageParam: ref(getNextPageParam),
+      })
+
+      queryClient.infiniteQuery({
+        ...unref(options),
+        enabled: true,
+        staleTime: 0,
+        pages: 1,
+      })
+
+      expect(QueryClientOrigin.prototype.infiniteQuery).toBeCalledWith(
+        expect.objectContaining({
+          queryKey: queryKeyUnref,
+          initialPageParam: 0,
+          pages: 1,
+          getNextPageParam,
         }),
       )
     })

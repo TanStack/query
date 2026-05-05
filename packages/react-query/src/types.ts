@@ -5,7 +5,6 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
-  FetchQueryOptions,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -44,21 +43,6 @@ export interface UseBaseQueryOptions<
    * Defaults to `true`.
    */
   subscribed?: boolean
-}
-
-export interface UsePrefetchQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> extends OmitKeyof<
-  FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'queryFn'
-> {
-  queryFn?: Exclude<
-    FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
-    SkipToken
-  >
 }
 
 export type AnyUseQueryOptions = UseQueryOptions<any, any, any, any>

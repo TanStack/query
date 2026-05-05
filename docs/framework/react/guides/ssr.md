@@ -170,7 +170,7 @@ Setting up the full hydration solution is straightforward and does not have thes
 With just a little more setup, you can use a `queryClient` to prefetch queries during a preload phase, pass a serialized version of that `queryClient` to the rendering part of the app and reuse it there. This avoids the drawbacks above. Feel free to skip ahead for full Next.js pages router and Remix examples, but at a general level these are the extra steps:
 
 - In the framework loader function, create a `const queryClient = new QueryClient(options)`
-- In the loader function, do `await queryClient.prefetchQuery(...)` for each query you want to prefetch
+- In the loader function, do `await queryClient.query(...)` for each query you want to prefetch
   - You want to use `await Promise.all(...)` to fetch the queries in parallel when possible
   - It's fine to have queries that aren't prefetched. These wont be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that are shown only after user interaction, or is far down on the page to avoid blocking more critical content.
 - From the loader, return `dehydrate(queryClient)`, note that the exact syntax to return this differs between frameworks
@@ -228,10 +228,12 @@ import {
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return {
     props: {
@@ -310,10 +312,12 @@ import {
 export async function loader() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-  })
+  await queryClient
+    .query({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+    })
+    .catch(noop)
 
   return json({ dehydratedState: dehydrate(queryClient) })
 }
@@ -419,13 +423,13 @@ How would we prefetch this so it can be server rendered? Here's an example:
 export async function getServerSideProps() {
   const queryClient = new QueryClient()
 
-  const user = await queryClient.fetchQuery({
+  const user = await queryClient.query({
     queryKey: ['user', email],
     queryFn: getUserByEmail,
   })
 
   if (user?.userId) {
-    await queryClient.prefetchQuery({
+    await queryClient.query({
       queryKey: ['projects', userId],
       queryFn: getProjectsByUser,
     })
@@ -443,18 +447,18 @@ This can get more complex of course, but since these loader functions are just J
 
 React Query defaults to a graceful degradation strategy. This means:
 
-- `queryClient.prefetchQuery(...)` never throws errors
 - `dehydrate(...)` only includes successful queries, not failed ones
+- We can intentionally ignore the returned promise from `void queryClient.query(...)` and add `.catch(noop)` to swallow any errors, so surrounding loader code will not observe query errors
 
 This will lead to any failed queries being retried on the client and that the server rendered output will include loading states instead of the full content.
 
-While a good default, sometimes this is not what you want. When critical content is missing, you might want to respond with a 404 or 500 status code depending on the situation. For these cases, use `queryClient.fetchQuery(...)` instead, which will throw errors when it fails, letting you handle things in a suitable way.
+While a good default, sometimes this is not what you want. When critical content is missing, you might want to respond with a 404 or 500 status code depending on the situation. For these cases, use `await queryClient.query(...)` without the noop catch, which will throw errors when it fails, letting you handle things in a suitable way.
 
 ```tsx
 let result
 
 try {
-  result = await queryClient.fetchQuery(...)
+  result = await queryClient.query(...)
 } catch (error) {
   // Handle the error, refer to your framework documentation
 }

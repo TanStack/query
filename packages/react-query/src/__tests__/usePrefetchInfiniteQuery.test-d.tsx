@@ -24,7 +24,7 @@ describe('usePrefetchInfiniteQuery', () => {
     )
   })
 
-  it('should not allow refetchInterval, enabled or throwOnError options', () => {
+  it('should not allow refetchInterval or throwOnError options', () => {
     assertType(
       usePrefetchInfiniteQuery({
         queryKey: queryKey(),
@@ -33,17 +33,6 @@ describe('usePrefetchInfiniteQuery', () => {
         getNextPageParam: () => 1,
         // @ts-expect-error TS2353
         refetchInterval: 1000,
-      }),
-    )
-
-    assertType(
-      usePrefetchInfiniteQuery({
-        queryKey: queryKey(),
-        queryFn: () => Promise.resolve(5),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-        // @ts-expect-error TS2353
-        enabled: true,
       }),
     )
 

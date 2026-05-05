@@ -67,6 +67,27 @@ it('should work when passed to fetchQuery', () => {
   assertType<Promise<number>>(data)
 })
 
+it('should work when passed to query', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: () => Promise.resolve(5),
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<number>>(data)
+})
+
+it('should work when passed to query with select', () => {
+  const options = queryOptions({
+    queryKey: ['key'],
+    queryFn: () => Promise.resolve(5),
+    select: (data) => data.toString(),
+  })
+
+  const data = new QueryClient().query(options)
+  assertType<Promise<string>>(data)
+})
+
 it('should tag the queryKey with the result type of the QueryFn', () => {
   const key = queryKey()
   const { queryKey: tagged } = queryOptions({

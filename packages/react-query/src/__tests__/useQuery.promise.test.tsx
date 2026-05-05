@@ -730,6 +730,62 @@ describe('useQuery().promise', { timeout: 10_000 }, () => {
     expect(queryFn).toHaveBeenCalledOnce()
   })
 
+  it('should dedupe when re-fetched with queryClient.query while suspending', async () => {
+    const key = queryKey()
+    const renderStream = createRenderStream({ snapshotDOM: true })
+    const queryFn = vi.fn().mockImplementation(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+      return 'test'
+    })
+
+    const options = {
+      queryKey: key,
+      queryFn,
+    }
+
+    function MyComponent(props: { promise: Promise<string> }) {
+      const data = React.use(props.promise)
+
+      return <>{data}</>
+    }
+
+    function Loading() {
+      return <>loading..</>
+    }
+    function Page() {
+      const query = useQuery(options)
+
+      return (
+        <div>
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+          <button onClick={() => queryClient.query(options)}>fetch</button>
+        </div>
+      )
+    }
+
+    const rendered = await renderStream.render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>,
+    )
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('loading..')
+    }
+
+    rendered.getByText('fetch').click()
+
+    {
+      const { withinDOM } = await renderStream.takeRender()
+      withinDOM().getByText('test')
+    }
+
+    expect(queryFn).toHaveBeenCalledOnce()
+  })
+
   it('should dedupe when re-fetched with refetchQueries while suspending', async () => {
     const key = queryKey()
     let count = 0
