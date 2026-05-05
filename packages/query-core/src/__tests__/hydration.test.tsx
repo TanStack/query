@@ -1804,4 +1804,90 @@ describe('dehydration and rehydration', () => {
     clientQueryClient.clear()
     serverQueryClient.clear()
   })
+
+  it('should set dataUpdatedAt when hydrating a resolved streamed query into a new cache entry', async () => {
+    const key = queryKey()
+
+    // --- server ---
+    const serverQueryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    let resolvePrefetch: undefined | ((value?: unknown) => void)
+    void serverQueryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => new Promise((res) => { resolvePrefetch = res }),
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+    expect(dehydrated.queries[0]?.state.status).toBe('pending')
+
+    // Resolve before hydration — models a React streaming promise that
+    // resolved between the dehydrate and hydrate calls
+    resolvePrefetch?.('streamed data')
+    // @ts-expect-error
+    dehydrated.queries[0].promise.then = (cb) => {
+      cb?.('streamed data')
+      // @ts-expect-error
+      return dehydrated.queries[0].promise
+    }
+
+    // --- client ---
+    const clientQueryClient = new QueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    const query = clientQueryClient.getQueryCache().find({ queryKey: key })!
+    expect(query.state.status).toBe('success')
+    expect(query.state.data).toBe('streamed data')
+    expect(query.state.dataUpdatedAt).toBeGreaterThan(0)
+
+    clientQueryClient.clear()
+    serverQueryClient.clear()
+  })
+
+  it('should set dataUpdatedAt when hydrating a resolved streamed query into an existing cache entry', async () => {
+    const key = queryKey()
+
+    // --- server ---
+    const serverQueryClient = new QueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    let resolvePrefetch: undefined | ((value?: unknown) => void)
+    void serverQueryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => new Promise((res) => { resolvePrefetch = res }),
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    resolvePrefetch?.('streamed data')
+    // @ts-expect-error
+    dehydrated.queries[0].promise.then = (cb) => {
+      cb?.('streamed data')
+      // @ts-expect-error
+      return dehydrated.queries[0].promise
+    }
+
+    // --- client ---
+    // Pre-existing stale entry — updatedAt: 0 ensures dehydratedAt wins
+    const clientQueryClient = new QueryClient()
+    clientQueryClient.setQueryData(key, 'old data', { updatedAt: 0 })
+
+    const query = clientQueryClient.getQueryCache().find({ queryKey: key })!
+    expect(query.state.dataUpdatedAt).toBe(0)
+
+    hydrate(clientQueryClient, dehydrated)
+
+    expect(query.state.status).toBe('success')
+    expect(query.state.data).toBe('streamed data')
+    expect(query.state.dataUpdatedAt).toBeGreaterThan(0)
+
+    clientQueryClient.clear()
+    serverQueryClient.clear()
+  })
 })
