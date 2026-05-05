@@ -4,6 +4,7 @@ import {
   displayValue,
   getMutationStatusColor,
   getQueryStatusColorByLabel,
+  getSidedProp,
   updateNestedDataByPath,
 } from '../utils'
 import type { MutationStatus } from '@tanstack/query-core'
@@ -825,6 +826,24 @@ describe('Utils tests', () => {
 
     it('should return an indented multi-line string when "beautify" is true', () => {
       expect(displayValue({ a: 1 }, true)).toBe('{\n  "a": 1\n}')
+    })
+  })
+
+  describe('getSidedProp', () => {
+    it('should append capitalized "top" to the prop', () => {
+      expect(getSidedProp('margin', 'top')).toBe('marginTop')
+    })
+
+    it('should append capitalized "bottom" to the prop', () => {
+      expect(getSidedProp('margin', 'bottom')).toBe('marginBottom')
+    })
+
+    it('should append capitalized "left" to the prop', () => {
+      expect(getSidedProp('padding', 'left')).toBe('paddingLeft')
+    })
+
+    it('should append capitalized "right" to the prop', () => {
+      expect(getSidedProp('padding', 'right')).toBe('paddingRight')
     })
   })
 })
