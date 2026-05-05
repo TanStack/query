@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   deleteNestedDataByPath,
+  displayValue,
   getMutationStatusColor,
   getQueryStatusColorByLabel,
   updateNestedDataByPath,
@@ -798,6 +799,32 @@ describe('Utils tests', () => {
 
     it('should return "blue" for "fetching"', () => {
       expect(getQueryStatusColorByLabel('fetching')).toBe('blue')
+    })
+  })
+
+  describe('displayValue', () => {
+    it('should stringify a primitive value', () => {
+      expect(displayValue('hello')).toBe('"hello"')
+    })
+
+    it('should stringify a number', () => {
+      expect(displayValue(42)).toBe('42')
+    })
+
+    it('should serialize an object using superjson and discard meta', () => {
+      expect(displayValue({ a: 1, b: 'two' })).toBe('{"a":1,"b":"two"}')
+    })
+
+    it('should return "null" for "undefined" since only the json part is used', () => {
+      expect(displayValue(undefined)).toBe('null')
+    })
+
+    it('should return a single-line string by default', () => {
+      expect(displayValue({ a: 1 })).toBe('{"a":1}')
+    })
+
+    it('should return an indented multi-line string when "beautify" is true', () => {
+      expect(displayValue({ a: 1 }, true)).toBe('{\n  "a": 1\n}')
     })
   })
 })
