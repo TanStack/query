@@ -463,12 +463,7 @@ export class QueryClient {
       ? InfiniteData<TQueryFnData, TPageParam>
       : TData
   > {
-    options.behavior = infiniteQueryBehavior<
-      TQueryFnData,
-      TError,
-      TQueryFnData,
-      TPageParam
-    >(options.pages)
+    options._type = 'infinite'
     return this.query(options as any)
   }
 
