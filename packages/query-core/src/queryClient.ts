@@ -4,7 +4,7 @@ import {
   hashQueryKeyByOptions,
   noop,
   partialMatchKey,
-  resolveEnabled,
+  resolveQueryBoolean,
   resolveStaleTime,
   skipToken,
 } from './utils'
@@ -368,7 +368,8 @@ export class QueryClient {
     }
 
     const query = this.#queryCache.build(this, defaultedOptions)
-    const isEnabled = resolveEnabled(defaultedOptions.enabled, query) !== false
+    const isEnabled =
+      resolveQueryBoolean(defaultedOptions.enabled, query) !== false
 
     if (!isEnabled && query.state.data === undefined) {
       return Promise.reject(
