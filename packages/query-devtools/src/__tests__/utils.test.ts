@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { QueryClient, QueryObserver } from '@tanstack/query-core'
 import {
   convertRemToPixels,
   deleteNestedDataByPath,
@@ -7,9 +8,10 @@ import {
   getQueryStatusColorByLabel,
   getSidedProp,
   setupStyleSheet,
+  sortFns,
   updateNestedDataByPath,
 } from '../utils'
-import type { MutationStatus } from '@tanstack/query-core'
+import type { MutationStatus, Query } from '@tanstack/query-core'
 
 describe('Utils tests', () => {
   describe('updatedNestedDataByPath', () => {
@@ -951,6 +953,118 @@ describe('Utils tests', () => {
       const styleTags = shadow.querySelectorAll('#_goober')
       expect(styleTags).toHaveLength(1)
       expect(styleTags[0]?.getAttribute('nonce')).toBe('first-nonce')
+    })
+  })
+
+  describe('sortFns', () => {
+    let queryClient: QueryClient
+
+    function buildQuery(
+      queryKey: ReadonlyArray<unknown>,
+      state?: Partial<Query['state']>,
+    ): Query {
+      const query = queryClient.getQueryCache().build(queryClient, { queryKey })
+      if (state) {
+        query.setState(state)
+      }
+      return query
+    }
+
+    beforeEach(() => {
+      queryClient = new QueryClient()
+    })
+
+    afterEach(() => {
+      queryClient.clear()
+    })
+
+    describe("'last updated'", () => {
+      const dateSort = sortFns['last updated']!
+
+      it('should place the more recently updated query first', () => {
+        const older = buildQuery(['a'], { dataUpdatedAt: 100 })
+        const newer = buildQuery(['b'], { dataUpdatedAt: 200 })
+
+        expect(dateSort(older, newer)).toBe(1)
+        expect(dateSort(newer, older)).toBe(-1)
+      })
+    })
+
+    describe("'query hash'", () => {
+      const queryHashSort = sortFns['query hash']!
+
+      it('should sort queries by query hash alphabetically', () => {
+        const a = buildQuery(['a'])
+        const b = buildQuery(['b'])
+
+        expect(queryHashSort(a, b)).toBeLessThan(0)
+        expect(queryHashSort(b, a)).toBeGreaterThan(0)
+      })
+
+      it('should return 0 when query hashes are identical', () => {
+        const a = buildQuery(['same'])
+        const b = buildQuery(['same'])
+
+        expect(queryHashSort(a, b)).toBe(0)
+      })
+    })
+
+    describe("'status'", () => {
+      const statusSort = sortFns['status']!
+
+      function addObserver(query: Query) {
+        const observer = new QueryObserver(queryClient, {
+          queryKey: query.queryKey,
+          enabled: false,
+        })
+        return observer.subscribe(() => {})
+      }
+
+      it('should place a fetching query before an idle one', () => {
+        const fetching = buildQuery(['fetching'], {
+          fetchStatus: 'fetching',
+          dataUpdatedAt: 100,
+        })
+        const idle = buildQuery(['idle'], {
+          fetchStatus: 'idle',
+          dataUpdatedAt: 100,
+        })
+        const unsubscribe = addObserver(idle)
+
+        try {
+          expect(statusSort(fetching, idle)).toBe(-1)
+          expect(statusSort(idle, fetching)).toBe(1)
+        } finally {
+          unsubscribe()
+        }
+      })
+
+      it('should place an inactive (no observers) query last', () => {
+        const active = buildQuery(['active'], {
+          fetchStatus: 'idle',
+          dataUpdatedAt: 100,
+        })
+        const inactive = buildQuery(['inactive'], {
+          fetchStatus: 'idle',
+          dataUpdatedAt: 100,
+        })
+        const unsubscribe = addObserver(active)
+
+        try {
+          expect(statusSort(active, inactive)).toBe(-1)
+          expect(statusSort(inactive, active)).toBe(1)
+        } finally {
+          unsubscribe()
+        }
+      })
+
+      it('should fall back to "last updated" sort within the same status rank', () => {
+        const older = buildQuery(['older'], { dataUpdatedAt: 100 })
+        const newer = buildQuery(['newer'], { dataUpdatedAt: 200 })
+
+        expect(statusSort(older, newer)).toBe(1)
+        expect(statusSort(newer, older)).toBe(-1)
+      })
     })
   })
 })
