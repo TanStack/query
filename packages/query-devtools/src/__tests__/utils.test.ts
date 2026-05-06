@@ -7,11 +7,12 @@ import {
   getMutationStatusColor,
   getQueryStatusColorByLabel,
   getSidedProp,
+  mutationSortFns,
   setupStyleSheet,
   sortFns,
   updateNestedDataByPath,
 } from '../utils'
-import type { MutationStatus, Query } from '@tanstack/query-core'
+import type { Mutation, MutationStatus, Query } from '@tanstack/query-core'
 
 describe('Utils tests', () => {
   describe('updatedNestedDataByPath', () => {
@@ -1064,6 +1065,116 @@ describe('Utils tests', () => {
 
         expect(statusSort(older, newer)).toBe(1)
         expect(statusSort(newer, older)).toBe(-1)
+      })
+    })
+  })
+
+  describe('mutationSortFns', () => {
+    let queryClient: QueryClient
+
+    const defaultMutationState: Mutation['state'] = {
+      context: undefined,
+      data: undefined,
+      error: null,
+      failureCount: 0,
+      failureReason: null,
+      isPaused: false,
+      status: 'idle',
+      variables: undefined,
+      submittedAt: 0,
+    }
+
+    function buildMutation(overrides: Partial<Mutation['state']>): Mutation {
+      return queryClient
+        .getMutationCache()
+        .build(queryClient, {}, { ...defaultMutationState, ...overrides })
+    }
+
+    beforeEach(() => {
+      queryClient = new QueryClient()
+    })
+
+    afterEach(() => {
+      queryClient.clear()
+    })
+
+    describe("'last updated'", () => {
+      const mutationDateSort = mutationSortFns['last updated']!
+
+      it('should place the more recently submitted mutation first', () => {
+        const older = buildMutation({ submittedAt: 100 })
+        const newer = buildMutation({ submittedAt: 200 })
+
+        expect(mutationDateSort(older, newer)).toBe(1)
+        expect(mutationDateSort(newer, older)).toBe(-1)
+      })
+    })
+
+    describe("'status'", () => {
+      const mutationStatusSort = mutationSortFns['status']!
+
+      it('should place a paused mutation first', () => {
+        const paused = buildMutation({
+          isPaused: true,
+          status: 'pending',
+          submittedAt: 100,
+        })
+        const pending = buildMutation({
+          isPaused: false,
+          status: 'pending',
+          submittedAt: 100,
+        })
+
+        expect(mutationStatusSort(paused, pending)).toBe(-1)
+        expect(mutationStatusSort(pending, paused)).toBe(1)
+      })
+
+      it('should place a pending mutation before a successful one', () => {
+        const pending = buildMutation({
+          isPaused: false,
+          status: 'pending',
+          submittedAt: 100,
+        })
+        const success = buildMutation({
+          isPaused: false,
+          status: 'success',
+          submittedAt: 100,
+        })
+
+        expect(mutationStatusSort(pending, success)).toBe(-1)
+        expect(mutationStatusSort(success, pending)).toBe(1)
+      })
+
+      it('should place an errored mutation before a successful one', () => {
+        const error = buildMutation({
+          isPaused: false,
+          status: 'error',
+          submittedAt: 100,
+        })
+        const success = buildMutation({
+          isPaused: false,
+          status: 'success',
+          submittedAt: 100,
+        })
+
+        expect(mutationStatusSort(error, success)).toBe(-1)
+        expect(mutationStatusSort(success, error)).toBe(1)
+      })
+
+      it('should fall back to "last updated" sort within the same status rank', () => {
+        const older = buildMutation({
+          isPaused: false,
+          status: 'success',
+          submittedAt: 100,
+        })
+        const newer = buildMutation({
+          isPaused: false,
+          status: 'success',
+          submittedAt: 200,
+        })
+
+        expect(mutationStatusSort(older, newer)).toBe(1)
+        expect(mutationStatusSort(newer, older)).toBe(-1)
       })
     })
   })
