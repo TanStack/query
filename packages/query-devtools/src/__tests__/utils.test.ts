@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
+  convertRemToPixels,
   deleteNestedDataByPath,
   displayValue,
   getMutationStatusColor,
@@ -844,6 +845,46 @@ describe('Utils tests', () => {
 
     it('should append capitalized "right" to the prop', () => {
       expect(getSidedProp('padding', 'right')).toBe('paddingRight')
+    })
+  })
+
+  describe('convertRemToPixels', () => {
+    beforeEach(() => {
+      document.documentElement.style.fontSize = '16px'
+    })
+
+    afterEach(() => {
+      document.documentElement.style.fontSize = ''
+    })
+
+    it('should convert 1 rem to the document root font size in pixels', () => {
+      expect(convertRemToPixels(1)).toBe(16)
+    })
+
+    it('should return 0 for 0 rem', () => {
+      expect(convertRemToPixels(0)).toBe(0)
+    })
+
+    it('should multiply rem by the document root font size', () => {
+      expect(convertRemToPixels(2)).toBe(32)
+    })
+
+    it('should support decimal rem values', () => {
+      expect(convertRemToPixels(0.5)).toBe(8)
+    })
+
+    it('should reflect the current document root font size', () => {
+      document.documentElement.style.fontSize = '20px'
+      expect(convertRemToPixels(1)).toBe(20)
+    })
+
+    it('should support negative rem values', () => {
+      expect(convertRemToPixels(-1)).toBe(-16)
+    })
+
+    it('should support non-integer font sizes', () => {
+      document.documentElement.style.fontSize = '15.5px'
+      expect(convertRemToPixels(1)).toBe(15.5)
     })
   })
 })
