@@ -294,16 +294,25 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      QueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
+    options:
+      | MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | (() => QueryExecuteOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey,
+          TPageParam
+        >),
   ): Promise<TData>
   query<
     TQueryFnData,
@@ -353,15 +362,23 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
-    options: MaybeRefDeep<
-      InfiniteQueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
+    options:
+      | MaybeRefDeep<
+          InfiniteQueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | (() => InfiniteQueryExecuteOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >),
   ): Promise<
     Array<TData> extends Array<InfiniteData<TQueryFnData>>
       ? InfiniteData<TQueryFnData, TPageParam>

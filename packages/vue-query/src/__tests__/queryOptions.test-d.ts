@@ -1,5 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { computed, reactive, ref, unref } from 'vue-demi'
+import { computed, reactive, ref } from 'vue-demi'
 import { dataTagSymbol } from '@tanstack/query-core'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
@@ -45,11 +45,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
-    const data = await new QueryClient().query({
-      ...unref(options),
-      enabled: true,
-      staleTime: 0,
-    })
+    const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
   it('should work when passed to query with select', async () => {
@@ -59,11 +55,7 @@ describe('queryOptions', () => {
       select: (data) => data.toString(),
     })
 
-    const data = await new QueryClient().query({
-      ...unref(options),
-      enabled: true,
-      staleTime: 0,
-    })
+    const data = await new QueryClient().query(options)
     expectTypeOf(data).toEqualTypeOf<string>()
   })
   it('should tag the queryKey with the result type of the QueryFn', () => {
@@ -159,11 +151,7 @@ describe('queryOptions', () => {
     // Should not error
     const data = queryClient.invalidateQueries(options)
     // Should not error
-    const data2 = queryClient.query({
-      ...unref(options),
-      enabled: true,
-      staleTime: 0,
-    })
+    const data2 = queryClient.query(options)
     // Should not error
     const data3 = queryClient.fetchQuery(options)
 
