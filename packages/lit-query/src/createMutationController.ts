@@ -16,6 +16,12 @@ import {
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 
+/**
+ * Options accepted by `createMutationController`.
+ *
+ * This is the Lit adapter shape for `MutationObserverOptions`. Pass it directly
+ * or through an `Accessor` when the options depend on Lit host state.
+ */
 export type CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -23,26 +29,44 @@ export type CreateMutationOptions<
   TOnMutateResult = unknown,
 > = MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
 
+/**
+ * Accessor returned by `createMutationController`.
+ *
+ * Call the accessor or read its `current` property to get the latest mutation
+ * result. The attached methods delegate to the active mutation observer.
+ */
 export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
   ValueAccessor<
     MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
   > & {
+    /**
+     * Starts the mutation and swallows the returned promise.
+     *
+     * Throws synchronously if no `QueryClient` can be resolved.
+     */
     mutate: (
       variables: TVariables,
       options?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
     ) => void
+    /**
+     * Starts the mutation and returns the observer promise.
+     *
+     * Rejects if no `QueryClient` can be resolved.
+     */
     mutateAsync: MutationObserverResult<
       TData,
       TError,
       TVariables,
       TOnMutateResult
     >['mutate']
+    /** Resets the mutation observer to its idle state. */
     reset: MutationObserverResult<
       TData,
       TError,
       TVariables,
       TOnMutateResult
     >['reset']
+    /** Removes the controller from its Lit host and unsubscribes observers. */
     destroy: () => void
   }
 
@@ -269,6 +293,48 @@ class MutationController<
   }
 }
 
+/**
+ * Creates a Lit reactive controller that subscribes the host to a mutation.
+ *
+ * The returned accessor is callable and also exposes `current`, `mutate`,
+ * `mutateAsync`, `reset`, and `destroy`. When `options` is a function, it is
+ * re-read during host updates so mutation options can follow reactive host
+ * state.
+ *
+ * If `queryClient` is omitted, the controller resolves the client from the
+ * nearest connected `QueryClientProvider`.
+ *
+ * @param host - The Lit reactive controller host that owns the mutation
+ * subscription.
+ * @param options - Mutation observer options, or a getter that returns options.
+ * @param queryClient - Optional explicit query client. Provide this for
+ * controllers that should not resolve a client from Lit context.
+ * @returns An accessor for the latest mutation result with mutation helper
+ * methods.
+ *
+ * @example
+ * ```ts
+ * import { LitElement, html } from 'lit'
+ * import { createMutationController } from '@tanstack/lit-query'
+ *
+ * class AddTodoForm extends LitElement {
+ *   private readonly addTodo = createMutationController(this, {
+ *     mutationFn: (title: string) =>
+ *       fetch('/api/todos', { method: 'POST', body: JSON.stringify({ title }) }),
+ *   })
+ *
+ *   render() {
+ *     const mutation = this.addTodo()
+ *
+ *     return html`
+ *       <button ?disabled=${mutation.isPending} @click=${() => this.addTodo.mutate('Ship docs')}>
+ *         Add todo
+ *       </button>
+ *     `
+ *   }
+ * }
+ * ```
+ */
 export function createMutationController<
   TData = unknown,
   TError = DefaultError,

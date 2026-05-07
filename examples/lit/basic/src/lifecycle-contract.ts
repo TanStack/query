@@ -1,6 +1,9 @@
-import { html, LitElement } from 'lit'
-import { QueryClient } from '@tanstack/query-core'
-import { QueryClientProvider, createQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
+import {
+  QueryClient,
+  QueryClientProvider,
+  createQueryController,
+} from '@tanstack/lit-query'
 
 type ContractProbeData = {
   provider: 'provider-a' | 'provider-b'
@@ -73,7 +76,7 @@ class LifecycleContractConsumer extends LitElement {
     this,
     {
       queryKey: contractQueryKey,
-      queryFn: async () => {
+      queryFn: () => {
         throw new Error(
           'Lifecycle contract fixture unexpectedly fetched from queryFn.',
         )
@@ -154,9 +157,9 @@ class LifecycleContractRoot extends LitElement {
   }
 
   private ensureConsumer(): LifecycleContractConsumer {
-    const existing = this.querySelector(
+    const existing = this.querySelector<LifecycleContractConsumer>(
       'lifecycle-contract-consumer',
-    ) as LifecycleContractConsumer | null
+    )
     if (existing) {
       return existing
     }
@@ -190,7 +193,7 @@ class LifecycleContractRoot extends LitElement {
         <h1>Lifecycle Contract Fixture</h1>
         <p>
           Exercises the same consumer across missing-provider and provider
-          reparent flows.
+          switching flows.
         </p>
         <div data-testid="contract-location">
           location: ${this.currentTarget}

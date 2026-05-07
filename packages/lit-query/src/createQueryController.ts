@@ -17,6 +17,13 @@ import {
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 
+/**
+ * Options accepted by `createQueryController`.
+ *
+ * This is the Lit adapter shape for `QueryObserverOptions`. It can be passed
+ * directly to `createQueryController`, or wrapped in an `Accessor` when the
+ * options depend on Lit host state.
+ */
 export type CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -25,11 +32,20 @@ export type CreateQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
 
+/**
+ * Accessor returned by `createQueryController`.
+ *
+ * Call the accessor or read its `current` property to get the latest query
+ * result. The attached methods delegate to the active query observer.
+ */
 export type QueryResultAccessor<TData, TError> = ValueAccessor<
   QueryObserverResult<TData, TError>
 > & {
+  /** Refetches the current query. */
   refetch: QueryObserverResult<TData, TError>['refetch']
+  /** Resolves with an optimistic query result, fetching first when needed. */
   suspense: () => Promise<QueryObserverResult<TData, TError>>
+  /** Removes the controller from its Lit host and unsubscribes observers. */
   destroy: () => void
 }
 
@@ -261,6 +277,45 @@ class QueryController<
   }
 }
 
+/**
+ * Creates a Lit reactive controller that subscribes the host to a single query.
+ *
+ * The returned accessor is callable and also exposes `current`, `refetch`,
+ * `suspense`, and `destroy`. When `options` is a function, it is re-read during
+ * host updates so query keys and options can follow reactive host state.
+ *
+ * If `queryClient` is omitted, the controller resolves the client from the
+ * nearest connected `QueryClientProvider`.
+ *
+ * @param host - The Lit reactive controller host that owns the query
+ * subscription.
+ * @param options - Query observer options, or a getter that returns options.
+ * @param queryClient - Optional explicit query client. Provide this for
+ * controllers that should not resolve a client from Lit context.
+ * @returns An accessor for the latest query result with query helper methods.
+ *
+ * @example
+ * ```ts
+ * import { LitElement, html } from 'lit'
+ * import { createQueryController } from '@tanstack/lit-query'
+ *
+ * class TodosView extends LitElement {
+ *   private readonly todos = createQueryController(this, {
+ *     queryKey: ['todos'],
+ *     queryFn: async () => fetch('/api/todos').then((r) => r.json()),
+ *   })
+ *
+ *   render() {
+ *     const query = this.todos()
+ *
+ *     if (query.isPending) return html`Loading...`
+ *     if (query.isError) return html`Error`
+ *
+ *     return html`<ul>${query.data.map((todo) => html`<li>${todo.title}</li>`)}</ul>`
+ *   }
+ * }
+ * ```
+ */
 export function createQueryController<
   TQueryFnData = unknown,
   TError = DefaultError,

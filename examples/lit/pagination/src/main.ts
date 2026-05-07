@@ -1,16 +1,10 @@
-import { html, LitElement } from 'lit'
+import { LitElement, html } from 'lit'
 import {
-  keepPreviousData,
   QueryClient,
-  type QueryKey,
-} from '@tanstack/query-core'
-import {
-  type CreateQueryOptions,
-  type MutationResultAccessor,
   QueryClientProvider,
   createMutationController,
   createQueryController,
-  type QueryResultAccessor,
+  keepPreviousData,
 } from '@tanstack/lit-query'
 import {
   armNextProjectMutationFailureOnServer,
@@ -19,10 +13,18 @@ import {
   projectsQueryKey,
   resetProjectsApiState,
   toggleProjectFavoriteOnServer,
-  type CreateProjectInput,
-  type Project,
-  type ProjectsPageResponse,
-  type ToggleProjectFavoriteInput,
+} from './api'
+import type {
+  CreateQueryOptions,
+  MutationResultAccessor,
+  QueryKey,
+  QueryResultAccessor,
+} from '@tanstack/lit-query'
+import type {
+  CreateProjectInput,
+  Project,
+  ProjectsPageResponse,
+  ToggleProjectFavoriteInput,
 } from './api'
 
 type ProjectsCacheSnapshot = Array<[QueryKey, ProjectsPageResponse | undefined]>

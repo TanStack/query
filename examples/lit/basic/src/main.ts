@@ -1,6 +1,6 @@
-import { html, LitElement } from 'lit'
-import { QueryClient } from '@tanstack/query-core'
+import { LitElement, html } from 'lit'
 import {
+  QueryClient,
   QueryClientProvider,
   createMutationController,
   createQueryController,
@@ -13,9 +13,8 @@ import {
   failNextMutationRequest,
   fetchTodosFromServer,
   resetTodoApi,
-  type Todo,
-  type TodosResponse,
 } from './todoApi'
+import type { Todo, TodosResponse } from './todoApi'
 
 resetTodoApi()
 

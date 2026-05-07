@@ -21,6 +21,12 @@ import {
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 
+/**
+ * Options for one query inside `createQueriesController`.
+ *
+ * This mirrors `QueryObserverOptions` and is used by the tuple inference that
+ * maps each input query to its corresponding result.
+ */
 export type CreateQueriesInput<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -156,6 +162,10 @@ export type CreateQueriesOptions<
               >
             : Array<CreateQueriesInputForController>
 
+/**
+ * Tuple of query results inferred from the query inputs passed to
+ * `createQueriesController`.
+ */
 export type CreateQueriesResults<
   T extends Array<any>,
   TResults extends Array<any> = [],
@@ -174,10 +184,18 @@ export type CreateQueriesResults<
           >
         : { [K in keyof T]: GetCreateQueriesResult<T[K]> }
 
+/**
+ * Options accepted by `createQueriesController`.
+ *
+ * `queries` can be a static list or a getter that returns the current list.
+ * `combine` can reshape the array of query results into a single value for the
+ * returned accessor.
+ */
 export type CreateQueriesControllerOptions<
   TQueryOptions extends Array<any> = Array<any>,
   TCombinedResult = CreateQueriesResults<TQueryOptions>,
 > = {
+  /** Query options to observe, or a getter that returns the current options. */
   queries: Accessor<
     | readonly [...CreateQueriesOptions<TQueryOptions>]
     | readonly [
@@ -186,11 +204,19 @@ export type CreateQueriesControllerOptions<
         },
       ]
   >
+  /** Optional function that combines the query result array into one value. */
   combine?: (result: CreateQueriesResults<TQueryOptions>) => TCombinedResult
 }
 
+/**
+ * Accessor returned by `createQueriesController`.
+ *
+ * Call the accessor or read its `current` property to get the latest combined
+ * value.
+ */
 export type QueriesResultAccessor<TCombinedResult> =
   ValueAccessor<TCombinedResult> & {
+    /** Removes the controller from its Lit host and unsubscribes observers. */
     destroy: () => void
   }
 
@@ -542,6 +568,50 @@ class QueriesController<
   }
 }
 
+/**
+ * Creates a Lit reactive controller that subscribes the host to multiple
+ * queries.
+ *
+ * The returned accessor is callable and also exposes `current` and `destroy`.
+ * When `options` or `options.queries` is a function, it is re-read during host
+ * updates so the query list can follow reactive host state.
+ *
+ * If `queryClient` is omitted, the controller resolves the client from the
+ * nearest connected `QueryClientProvider`.
+ *
+ * @param host - The Lit reactive controller host that owns the queries
+ * subscription.
+ * @param options - Queries controller options, or a getter that returns options.
+ * @param queryClient - Optional explicit query client. Provide this for
+ * controllers that should not resolve a client from Lit context.
+ * @returns An accessor for the latest query results, or the value returned by
+ * `combine`.
+ *
+ * @example
+ * ```ts
+ * import { LitElement, html } from 'lit'
+ * import { createQueriesController } from '@tanstack/lit-query'
+ *
+ * class DashboardView extends LitElement {
+ *   private readonly dashboard = createQueriesController(this, {
+ *     queries: [
+ *       { queryKey: ['stats'], queryFn: fetchStats },
+ *       { queryKey: ['projects'], queryFn: fetchProjects },
+ *     ],
+ *     combine: ([stats, projects]) => ({
+ *       stats: stats.data,
+ *       projects: projects.data ?? [],
+ *       isPending: stats.isPending || projects.isPending,
+ *     }),
+ *   })
+ *
+ *   render() {
+ *     const dashboard = this.dashboard()
+ *     return html`<p>Projects: ${dashboard.projects.length}</p>`
+ *   }
+ * }
+ * ```
+ */
 export function createQueriesController<
   TQueryOptions extends Array<any>,
   TCombinedResult = CreateQueriesResults<TQueryOptions>,

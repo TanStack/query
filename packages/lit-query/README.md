@@ -2,25 +2,31 @@
 
 Lit adapter for `@tanstack/query-core` using Lit reactive controllers.
 
+This package is currently experimental and v0.1. Pin exact versions if you use
+it in production while the API is early.
+
 ## Install
 
 ```bash
-npm install @tanstack/lit-query @tanstack/query-core lit @lit/context
+npm install @tanstack/lit-query @tanstack/query-core lit
 ```
 
 For local development in this repository:
 
 ```bash
-npm install
-npm run build
+pnpm install
+pnpm --dir packages/lit-query run build
 ```
 
 ## Quick Start
 
 ```ts
 import { LitElement, html } from 'lit'
-import { QueryClient } from '@tanstack/query-core'
-import { QueryClientProvider, createQueryController } from '@tanstack/lit-query'
+import {
+  QueryClient,
+  QueryClientProvider,
+  createQueryController,
+} from '@tanstack/lit-query'
 
 const client = new QueryClient({
   defaultOptions: { queries: { retry: false } },
@@ -30,10 +36,6 @@ class AppProvider extends QueryClientProvider {
   constructor() {
     super()
     this.client = client
-  }
-
-  protected override createRenderRoot(): HTMLElement | DocumentFragment {
-    return this
   }
 }
 customElements.define('app-provider', AppProvider)
@@ -47,10 +49,6 @@ class UsersView extends LitElement {
     },
   })
 
-  protected override createRenderRoot(): HTMLElement | DocumentFragment {
-    return this
-  }
-
   render() {
     const query = this.users()
     if (query.isPending) return html`Loading...`
@@ -63,7 +61,7 @@ class UsersView extends LitElement {
 customElements.define('users-view', UsersView)
 ```
 
-## API Surface (v1)
+## API Surface
 
 - `QueryClientProvider`, `useQueryClient`, `resolveQueryClient`
 - `createQueryController`
@@ -115,15 +113,13 @@ pnpm --dir integrations/lit-vite run build
 
 ## Quality Gates
 
-- Core matrix: `docs/TEST_MATRIX.md`
-- Integration matrix: `docs/TEST_MATRIX_INTEGRATION.md`
-- Perf matrix: `docs/TEST_MATRIX_PERF.md`
-- RFC and phase log: `docs/RFC-v4.1.md`
-
-Current local quality gate:
+From the repository root:
 
 ```bash
-npm run test:types && npm run test:lib && npm run build && npm run test:build
+pnpm --dir packages/lit-query run test:types
+pnpm --dir packages/lit-query run test:lib
+pnpm --dir packages/lit-query run build
+pnpm --dir packages/lit-query run test:build
 ```
 
 ## License

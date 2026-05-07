@@ -9,11 +9,70 @@ import {
   unregisterDefaultQueryClient,
 } from './context.js'
 
+/**
+ * Lit element that provides a `QueryClient` to descendant Lit Query
+ * controllers through Lit context.
+ *
+ * The `client` is a property, not an attribute. When rendering this element in
+ * a Lit template, bind it with property binding: `.client=${queryClient}`.
+ * The provider throws if it connects without a client, or if an already
+ * connected provider has its client cleared.
+ *
+ * This class is not registered as a custom element by the package. Applications
+ * must register either a subclass or the class itself with
+ * `customElements.define`.
+ *
+ * @example
+ * ```ts
+ * import { html, LitElement } from 'lit'
+ * import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
+ *
+ * const queryClient = new QueryClient()
+ *
+ * class AppQueryProvider extends QueryClientProvider {
+ *   constructor() {
+ *     super()
+ *     this.client = queryClient
+ *   }
+ * }
+ *
+ * customElements.define('app-query-provider', AppQueryProvider)
+ *
+ * class AppRoot extends LitElement {
+ *   render() {
+ *     return html`<app-query-provider><todos-view></todos-view></app-query-provider>`
+ *   }
+ * }
+ * ```
+ *
+ * @example
+ * ```ts
+ * import { html } from 'lit'
+ * import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
+ *
+ * const queryClient = new QueryClient()
+ *
+ * customElements.define('query-client-provider', QueryClientProvider)
+ *
+ * const view = html`
+ *   <query-client-provider .client=${queryClient}>
+ *     <todos-view></todos-view>
+ *   </query-client-provider>
+ * `
+ * ```
+ */
 export class QueryClientProvider extends LitElement {
+  /** @internal */
   static properties = {
     client: { attribute: false },
   }
 
+  /**
+   * The `QueryClient` provided to descendant controllers and global fallback
+   * helpers while this provider is connected.
+   *
+   * Bind this as a property in Lit templates with `.client=${queryClient}`.
+   */
   declare client: QueryClient
 
   private readonly contextProvider: ContextProvider<typeof queryClientContext>
@@ -27,6 +86,7 @@ export class QueryClientProvider extends LitElement {
     })
   }
 
+  /** @internal */
   connectedCallback(): void {
     super.connectedCallback()
     const client = this.requireClient()
@@ -34,11 +94,13 @@ export class QueryClientProvider extends LitElement {
     this.mountClient(client)
   }
 
+  /** @internal */
   disconnectedCallback(): void {
     this.unmountClient(this.mountedClient)
     super.disconnectedCallback()
   }
 
+  /** @internal */
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (!changedProperties.has('client')) {
       return
@@ -70,6 +132,7 @@ export class QueryClientProvider extends LitElement {
     }
   }
 
+  /** @internal */
   render(): TemplateResult {
     return html`<slot></slot>`
   }

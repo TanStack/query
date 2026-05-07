@@ -1,11 +1,11 @@
-import { html, LitElement } from 'lit'
-import { QueryClient } from '@tanstack/query-core'
-import { QueryClientProvider, createQueryController } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 import {
-  fetchTodosFromServer,
-  resetTodoApi,
-  type TodosResponse,
-} from './todoApi'
+  QueryClient,
+  QueryClientProvider,
+  createQueryController,
+} from '@tanstack/lit-query'
+import { fetchTodosFromServer, resetTodoApi } from './todoApi'
+import type { TodosResponse } from './todoApi'
 
 resetTodoApi()
 

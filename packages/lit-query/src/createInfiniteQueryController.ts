@@ -18,6 +18,12 @@ import {
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 
+/**
+ * Options accepted by `createInfiniteQueryController`.
+ *
+ * This is the Lit adapter shape for `InfiniteQueryObserverOptions`. Pass it
+ * directly or through an `Accessor` when the options depend on Lit host state.
+ */
 export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -32,15 +38,26 @@ export type CreateInfiniteQueryOptions<
   TPageParam
 >
 
+/**
+ * Accessor returned by `createInfiniteQueryController`.
+ *
+ * Call the accessor or read its `current` property to get the latest infinite
+ * query result. The attached methods delegate to the active infinite query
+ * observer.
+ */
 export type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<
   InfiniteQueryObserverResult<TData, TError>
 > & {
+  /** Refetches the current infinite query. */
   refetch: InfiniteQueryObserverResult<TData, TError>['refetch']
+  /** Fetches the next page for the current infinite query. */
   fetchNextPage: InfiniteQueryObserverResult<TData, TError>['fetchNextPage']
+  /** Fetches the previous page for the current infinite query. */
   fetchPreviousPage: InfiniteQueryObserverResult<
     TData,
     TError
   >['fetchPreviousPage']
+  /** Removes the controller from its Lit host and unsubscribes observers. */
   destroy: () => void
 }
 
@@ -298,6 +315,52 @@ class InfiniteQueryController<
   }
 }
 
+/**
+ * Creates a Lit reactive controller that subscribes the host to an infinite
+ * query.
+ *
+ * The returned accessor is callable and also exposes `current`, `refetch`,
+ * `fetchNextPage`, `fetchPreviousPage`, and `destroy`. When `options` is a
+ * function, it is re-read during host updates so query keys and options can
+ * follow reactive host state.
+ *
+ * If `queryClient` is omitted, the controller resolves the client from the
+ * nearest connected `QueryClientProvider`.
+ *
+ * @param host - The Lit reactive controller host that owns the infinite query
+ * subscription.
+ * @param options - Infinite query observer options, or a getter that returns
+ * options.
+ * @param queryClient - Optional explicit query client. Provide this for
+ * controllers that should not resolve a client from Lit context.
+ * @returns An accessor for the latest infinite query result with page helper
+ * methods.
+ *
+ * @example
+ * ```ts
+ * import { LitElement, html } from 'lit'
+ * import { createInfiniteQueryController } from '@tanstack/lit-query'
+ *
+ * class ProjectsView extends LitElement {
+ *   private readonly projects = createInfiniteQueryController(this, {
+ *     queryKey: ['projects'],
+ *     queryFn: ({ pageParam }) => fetchProjects(pageParam),
+ *     initialPageParam: 0,
+ *     getNextPageParam: (lastPage) => lastPage.nextCursor,
+ *   })
+ *
+ *   render() {
+ *     const query = this.projects()
+ *
+ *     return html`
+ *       <button ?disabled=${!query.hasNextPage} @click=${() => this.projects.fetchNextPage()}>
+ *         Load more
+ *       </button>
+ *     `
+ *   }
+ * }
+ * ```
+ */
 export function createInfiniteQueryController<
   TQueryFnData = unknown,
   TError = DefaultError,

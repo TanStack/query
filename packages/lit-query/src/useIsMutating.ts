@@ -8,6 +8,12 @@ import {
 } from './accessor.js'
 import { BaseController } from './controllers/BaseController.js'
 
+/**
+ * Accessor returned by `useIsMutating`.
+ *
+ * Call the accessor or read its `current` property to get the number of
+ * currently pending mutations that match the filters.
+ */
 export type IsMutatingAccessor = ValueAccessor<number> & { destroy: () => void }
 
 class IsMutatingController extends BaseController<number> {
@@ -107,6 +113,37 @@ class IsMutatingController extends BaseController<number> {
   }
 }
 
+/**
+ * Creates a Lit reactive controller that tracks how many matching mutations are
+ * currently pending.
+ *
+ * When `filters` is a function, it is re-read during host updates so the count
+ * can follow reactive host state. If `queryClient` is omitted, the controller
+ * resolves the client from the nearest connected `QueryClientProvider`.
+ *
+ * @param host - The Lit reactive controller host that owns the cache
+ * subscription.
+ * @param filters - Mutation filters, or a getter that returns mutation filters.
+ * @param queryClient - Optional explicit query client. Provide this for
+ * controllers that should not resolve a client from Lit context.
+ * @returns An accessor for the current number of matching pending mutations.
+ *
+ * @example
+ * ```ts
+ * import { LitElement, html } from 'lit'
+ * import { useIsMutating } from '@tanstack/lit-query'
+ *
+ * class MutationStatus extends LitElement {
+ *   private readonly savesPending = useIsMutating(this, {
+ *     mutationKey: ['save-project'],
+ *   })
+ *
+ *   render() {
+ *     return html`<span>${this.savesPending()} saves pending</span>`
+ *   }
+ * }
+ * ```
+ */
 export function useIsMutating(
   host: ReactiveControllerHost,
   filters: Accessor<MutationFilters> = {},
