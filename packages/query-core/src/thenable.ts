@@ -45,7 +45,7 @@ export function pendingThenable<T>(): PendingThenable<T> {
   let resolve: Pending<T>['resolve']
   let reject: Pending<T>['reject']
   // this could use `Promise.withResolvers()` in the future
-  const promise = new Promise((_resolve, _reject) => {
+  const promise = new Promise<T>((_resolve, _reject) => {
     resolve = _resolve
     reject = _reject
   })
@@ -56,6 +56,15 @@ export function pendingThenable<T>(): PendingThenable<T> {
 
   const thenable = Object.create(promise) as PendingThenable<T>
   thenable.status = 'pending'
+
+  // Bind Promise methods so React's Suspense and other code calling .then()
+  // works correctly. Without binding, the native Promise implementation checks
+  // for internal slots on `this`, which won't exist on the wrapper object.
+  thenable.then = promise.then.bind(promise)
+  thenable.catch = promise.catch.bind(promise)
+  if (promise.finally) {
+    thenable.finally = promise.finally.bind(promise)
+  }
 
   function finalize(data: Fulfilled<T> | Rejected) {
     Object.assign(thenable, data)
