@@ -45,15 +45,17 @@ export function pendingThenable<T>(): PendingThenable<T> {
   let resolve: Pending<T>['resolve']
   let reject: Pending<T>['reject']
   // this could use `Promise.withResolvers()` in the future
-  const thenable = new Promise((_resolve, _reject) => {
+  const promise = new Promise((_resolve, _reject) => {
     resolve = _resolve
     reject = _reject
-  }) as PendingThenable<T>
+  })
 
-  thenable.status = 'pending'
-  thenable.catch(() => {
+  promise.catch(() => {
     // prevent unhandled rejection errors
   })
+
+  const thenable = Object.create(promise) as PendingThenable<T>
+  thenable.status = 'pending'
 
   function finalize(data: Fulfilled<T> | Rejected) {
     Object.assign(thenable, data)
