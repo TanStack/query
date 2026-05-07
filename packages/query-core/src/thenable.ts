@@ -57,6 +57,15 @@ export function pendingThenable<T>(): PendingThenable<T> {
   const thenable = Object.create(promise) as PendingThenable<T>
   thenable.status = 'pending'
 
+  // Bind Promise methods so React's Suspense and other code calling .then()
+  // works correctly. Without binding, the native Promise implementation checks
+  // for internal slots on `this`, which won't exist on the wrapper object.
+  thenable.then = promise.then.bind(promise)
+  thenable.catch = promise.catch.bind(promise)
+  if (promise.finally) {
+    thenable.finally = promise.finally.bind(promise)
+  }
+
   function finalize(data: Fulfilled<T> | Rejected) {
     Object.assign(thenable, data)
 
