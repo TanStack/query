@@ -6,6 +6,6 @@
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },
-  "include": ["src", "*.config.*", "package.json"],
+  "include": ["src", "*.config.ts", "*.config.js", "package.json"],
   "references": [{ "path": "../query-core" }]
 }
