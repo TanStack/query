@@ -1,13 +1,21 @@
 import { nextTick, ref } from 'vue-demi'
 import { QueryClient as QC } from '@tanstack/query-core'
-import { cloneDeepUnref } from './utils'
+import { cloneDeepUnref, toValueDeep } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
 import type { UseQueryOptions } from './useQuery'
 import type { Ref } from 'vue-demi'
-import type { MaybeRefDeep, NoUnknown, QueryClientConfig } from './types'
+import type {
+  DeepUnwrapRef,
+  InfiniteQueryExecuteOptions,
+  MaybeRefDeep,
+  NoUnknown,
+  QueryClientConfig,
+  QueryExecuteOptions,
+} from './types'
 import type {
   CancelOptions,
+  QueryExecuteOptions as CoreQueryExecuteOptions,
   DefaultError,
   DefaultOptions,
   EnsureQueryDataOptions,
@@ -65,6 +73,9 @@ export class QueryClient extends QC {
     return super.getQueryData(cloneDeepUnref(queryKey))
   }
 
+  /**
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -73,6 +84,9 @@ export class QueryClient extends QC {
   >(
     options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData>
+  /**
+   * @deprecated Use queryClient.query({ ...options, staleTime: 'static' }) instead. This method will be removed in the next major version.
+   */
   ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
@@ -260,6 +274,201 @@ export class QueryClient extends QC {
     )
   }
 
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options:
+      | MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | (() => MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >),
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options:
+      | MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | (() => MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >),
+  ): Promise<TData> {
+    return super.query(
+      toValueDeep<
+        QueryExecuteOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey,
+          TPageParam
+        >
+      >(options) as CoreQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        DeepUnwrapRef<TQueryKey>,
+        TPageParam
+      >,
+    )
+  }
+
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options:
+      | MaybeRefDeep<
+          InfiniteQueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | (() => MaybeRefDeep<
+          InfiniteQueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryKey,
+            TPageParam
+          >
+        >),
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options:
+      | MaybeRefDeep<
+          InfiniteQueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | (() => MaybeRefDeep<
+          InfiniteQueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryKey,
+            TPageParam
+          >
+        >),
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  > {
+    return super.infiniteQuery(
+      toValueDeep<
+        InfiniteQueryExecuteOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >
+      >(options),
+    )
+  }
+
+  /**
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -275,6 +484,9 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<TData>
+  /**
+   * @deprecated Use queryClient.query(options) instead. This method will be removed in the next major version.
+   */
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -308,6 +520,9 @@ export class QueryClient extends QC {
     return super.fetchQuery(cloneDeepUnref(options))
   }
 
+  /**
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -316,6 +531,9 @@ export class QueryClient extends QC {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void>
+  /**
+   * @deprecated Use queryClient.query(options) instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -339,6 +557,9 @@ export class QueryClient extends QC {
     return super.prefetchQuery(cloneDeepUnref(options))
   }
 
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = DefaultError,
@@ -354,6 +575,9 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<InfiniteData<TData, TPageParam>>
+  /**
+   * @deprecated Use queryClient.infiniteQuery(options) instead. This method will be removed in the next major version.
+   */
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -391,6 +615,9 @@ export class QueryClient extends QC {
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
+  /**
+   * @deprecated use void queryClient.infiniteQuery(options)instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -406,6 +633,9 @@ export class QueryClient extends QC {
       TPageParam
     >,
   ): Promise<void>
+  /**
+   * @deprecated use void queryClient.infiniteQuery(options)instead. You can swallow errors with `.catch(noop)`. This method will be removed in the next major version.
+   */
   prefetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
