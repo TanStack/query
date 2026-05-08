@@ -921,11 +921,12 @@ describe("useQuery's in Suspense mode", () => {
     await ensurePromise
 
     let fallbackMounted = false
+    const pageQueryFn = vi.fn(() => sleep(10).then(() => 'fresh'))
 
     function Page() {
       const state = useQuery(() => ({
         queryKey: key,
-        queryFn: () => sleep(10).then(() => 'fresh'),
+        queryFn: pageQueryFn,
         staleTime: Infinity,
       }))
 
@@ -947,6 +948,7 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(rendered.getByText('data: preloaded')).toBeInTheDocument()
     expect(fallbackMounted).toBe(false)
+    expect(pageQueryFn).not.toHaveBeenCalled()
   })
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
