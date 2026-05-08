@@ -1,8 +1,19 @@
 {
   "name": "@tanstack/lit-query",
-  "version": "0.2.0",
-  "description": "Lit adapter for TanStack Query Core",
+  "version": "5.100.9",
+  "description": "Controllers for managing, caching and syncing asynchronous and remote data in Lit",
+  "author": "tannerlinsley",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanStack/query.git",
+    "directory": "packages/lit-query"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
   "type": "module",
   "main": "dist-cjs/index.js",
   "module": "dist/index.js",
