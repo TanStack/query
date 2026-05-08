@@ -1,10 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryObserver } from '@tanstack/query-core'
+import { createRoot } from 'solid-js'
 import {
   convertRemToPixels,
   deleteNestedDataByPath,
   displayValue,
   getMutationStatusColor,
+  getPreferredColorScheme,
   getQueryStatusColorByLabel,
   getSidedProp,
   mutationSortFns,
@@ -1175,6 +1177,118 @@ describe('Utils tests', () => {
 
         expect(mutationStatusSort(older, newer)).toBe(1)
         expect(mutationStatusSort(newer, older)).toBe(-1)
+      })
+    })
+  })
+
+  describe('getPreferredColorScheme', () => {
+    type MatchMediaListener = (event: MediaQueryListEvent) => void
+
+    function setupMatchMediaMock(initialMatches: boolean) {
+      const listeners = new Set<MatchMediaListener>()
+      const matchMedia: typeof window.matchMedia = vi.fn(
+        (query: string): MediaQueryList => ({
+          matches: initialMatches,
+          media: query,
+          onchange: null,
+          addEventListener: vi.fn(
+            (_event: string, listener: MatchMediaListener) => {
+              listeners.add(listener)
+            },
+          ) as MediaQueryList['addEventListener'],
+          removeEventListener: vi.fn(
+            (_event: string, listener: MatchMediaListener) => {
+              listeners.delete(listener)
+            },
+          ) as MediaQueryList['removeEventListener'],
+          dispatchEvent: vi.fn(() => true),
+          addListener: vi.fn(),
+          removeListener: vi.fn(),
+        }),
+      )
+      vi.stubGlobal('matchMedia', matchMedia)
+      return {
+        matchMedia,
+        emit(matches: boolean) {
+          listeners.forEach((listener) =>
+            listener({ matches } as MediaQueryListEvent),
+          )
+        },
+        listenerCount: () => listeners.size,
+      }
+    }
+
+    beforeEach(() => {
+      vi.useFakeTimers()
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+      vi.useRealTimers()
+    })
+
+    it('should return "dark" before "onMount" runs', () => {
+      setupMatchMediaMock(false)
+
+      createRoot((dispose) => {
+        const colorScheme = getPreferredColorScheme()
+        expect(colorScheme()).toBe('dark')
+        dispose()
+      })
+    })
+
+    it('should reflect "matchMedia.matches" after "onMount" runs', async () => {
+      const { matchMedia, listenerCount } = setupMatchMediaMock(true)
+
+      await createRoot(async (dispose) => {
+        const colorScheme = getPreferredColorScheme()
+        await vi.advanceTimersByTimeAsync(0)
+        expect(matchMedia).toHaveBeenCalledWith('(prefers-color-scheme: dark)')
+        expect(listenerCount()).toBe(1)
+        expect(colorScheme()).toBe('dark')
+        dispose()
+      })
+    })
+
+    it('should reflect "light" when "matchMedia.matches" is false after "onMount" runs', async () => {
+      setupMatchMediaMock(false)
+
+      await createRoot(async (dispose) => {
+        const colorScheme = getPreferredColorScheme()
+        await vi.advanceTimersByTimeAsync(0)
+        expect(colorScheme()).toBe('light')
+        dispose()
+      })
+    })
+
+    it('should update the signal when the "change" event fires', async () => {
+      const { emit } = setupMatchMediaMock(false)
+
+      await createRoot(async (dispose) => {
+        const colorScheme = getPreferredColorScheme()
+        await vi.advanceTimersByTimeAsync(0)
+        expect(colorScheme()).toBe('light')
+
+        emit(true)
+        expect(colorScheme()).toBe('dark')
+
+        emit(false)
+        expect(colorScheme()).toBe('light')
+
+        dispose()
+      })
+    })
+
+    it('should remove the "change" listener on cleanup', async () => {
+      const { listenerCount } = setupMatchMediaMock(false)
+
+      await createRoot(async (dispose) => {
+        getPreferredColorScheme()
+        await vi.advanceTimersByTimeAsync(0)
+        expect(listenerCount()).toBe(1)
+
+        dispose()
+        expect(listenerCount()).toBe(0)
       })
     })
   })
