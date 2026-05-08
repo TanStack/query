@@ -1,27 +1,105 @@
-import { isSignal, signal } from '@angular/core'
-import { describe, expect, it } from 'vitest'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  inputBinding,
+  isSignal,
+  provideZonelessChangeDetection,
+  signal,
+  untracked,
+} from '@angular/core'
+import { beforeEach, describe, expect, test } from 'vitest'
+import { TestBed } from '@angular/core/testing'
 import { signalProxy } from '../signal-proxy'
 
 describe('signalProxy', () => {
-  const inputSignal = signal({ fn: () => 'bar', baz: 'qux' })
-  const proxy = signalProxy(inputSignal)
+  const inputSignal = signal({
+    fn: () => 'bar',
+    baz: 'qux',
+    falsy: false,
+    zero: 0,
+  })
+  const proxy = signalProxy(inputSignal, ['fn'])
 
-  it('should have computed fields', () => {
+  test('should have computed fields', () => {
     expect(proxy.baz()).toEqual('qux')
     expect(isSignal(proxy.baz)).toBe(true)
   })
 
-  it('should pass through functions as-is', () => {
+  test('should pass through functions as-is', () => {
     expect(proxy.fn()).toEqual('bar')
     expect(isSignal(proxy.fn)).toBe(false)
   })
 
-  it('should support "in" operator', () => {
+  test('supports "in" operator', () => {
     expect('baz' in proxy).toBe(true)
+    expect('falsy' in proxy).toBe(true)
+    expect('zero' in proxy).toBe(true)
     expect('foo' in proxy).toBe(false)
   })
 
-  it('should support "Object.keys"', () => {
-    expect(Object.keys(proxy)).toEqual(['fn', 'baz'])
+  test('supports "Object.keys"', () => {
+    expect(Object.keys(proxy)).toEqual(['fn', 'baz', 'falsy', 'zero'])
+  })
+
+  describe('in component fixture', () => {
+    @Component({
+      selector: 'app-test',
+      standalone: true,
+      template: '{{ proxy.baz() }}',
+      changeDetection: ChangeDetectionStrategy.OnPush,
+    })
+    class TestComponent {
+      number = input.required<number>()
+      obj = computed(() => ({
+        number: this.number(),
+        fn: () => untracked(this.number) + 1,
+      }))
+      proxy = signalProxy(this.obj, ['fn'])
+      shortNumber = this.proxy.number
+      shortFn = this.proxy.fn
+    }
+
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [provideZonelessChangeDetection()],
+      })
+    })
+
+    test('should generate fixed fields after initial change detection run', async () => {
+      const number = signal(1)
+      const fixture = TestBed.createComponent(TestComponent, {
+        bindings: [inputBinding('number', number.asReadonly())],
+      })
+      fixture.detectChanges()
+      const instance = fixture.componentInstance
+
+      expect(isSignal(instance.proxy.number)).toBe(true)
+      expect(instance.proxy.number()).toBe(1)
+      expect(instance.shortNumber).toBe(instance.proxy.number)
+
+      expect(instance.proxy.fn()).toBe(2)
+      expect(isSignal(instance.proxy.fn)).toBe(false)
+      expect(instance.shortFn).toBe(instance.proxy.fn)
+    })
+
+    test('should reflect updates on the proxy', async () => {
+      const number = signal(0)
+      const fixture = TestBed.createComponent(TestComponent, {
+        bindings: [inputBinding('number', number.asReadonly())],
+      })
+      fixture.detectChanges()
+      const instance = fixture.componentInstance
+
+      expect(instance.shortNumber()).toBe(0)
+      expect(instance.shortFn()).toBe(1)
+
+      number.set(1)
+      fixture.detectChanges()
+
+      expect(instance.shortNumber()).toBe(1)
+      expect(instance.shortFn()).toBe(2)
+    })
   })
 })

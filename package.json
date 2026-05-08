@@ -102,6 +102,13 @@
       "typescript-eslint": "8.58.1",
       "vite": "^6.4.1",
       "esbuild": "^0.27.2"
+    },
+    "packageExtensions": {
+      "@angular/compiler-cli@20.3.18": {
+        "optionalDependencies": {
+          "typescript": "5.9.3"
+        }
+      }
     }
   }
 }

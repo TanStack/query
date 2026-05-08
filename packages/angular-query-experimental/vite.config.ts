@@ -1,8 +1,7 @@
-import { defineConfig, mergeConfig } from 'vitest/config'
+import { defineConfig, mergeConfig } from 'vite'
 import { externalizeDeps } from 'vite-plugin-externalize-deps'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import dts from 'vite-plugin-dts'
-import packageJson from './package.json'
 import type { Options } from '@tanstack/vite-config'
 
 function ensureImportFileExtension({
@@ -30,29 +29,6 @@ const config = defineConfig({
   // fix from https://github.com/vitest-dev/vitest/issues/6992#issuecomment-2509408660
   resolve: {
     conditions: ['@tanstack/custom-condition'],
-  },
-  environments: {
-    ssr: {
-      resolve: {
-        conditions: ['@tanstack/custom-condition'],
-      },
-    },
-  },
-  test: {
-    name: packageJson.name,
-    dir: './src',
-    watch: false,
-    environment: 'jsdom',
-    setupFiles: ['test-setup.ts'],
-    coverage: {
-      enabled: true,
-      provider: 'istanbul',
-      include: ['src/**/*'],
-      exclude: ['src/__tests__/**'],
-    },
-    typecheck: { enabled: true },
-    globals: true,
-    restoreMocks: true,
   },
 })
 
