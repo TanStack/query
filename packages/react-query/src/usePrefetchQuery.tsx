@@ -1,6 +1,12 @@
+import { noop } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
-import type { UsePrefetchQueryOptions } from './types'
+
+import type {
+  DefaultError,
+  QueryClient,
+  QueryExecuteOptions,
+  QueryKey,
+} from '@tanstack/query-core'
 
 export function usePrefetchQuery<
   TQueryFnData = unknown,
@@ -8,12 +14,12 @@ export function usePrefetchQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: QueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
 ) {
   const client = useQueryClient(queryClient)
 
   if (!client.getQueryState(options.queryKey)) {
-    client.prefetchQuery(options)
+    void client.query(options).then(noop).catch(noop)
   }
 }
