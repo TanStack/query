@@ -199,7 +199,7 @@ declare module '@tanstack/react-query' {
 
 ## Typing Query Options
 
-If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
+If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `query`. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
 
 ```ts
 import { queryOptions } from '@tanstack/react-query'
@@ -213,7 +213,7 @@ function groupOptions() {
 }
 
 useQuery(groupOptions())
-queryClient.prefetchQuery(groupOptions())
+queryClient.query(groupOptions())
 ```
 
 Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:
