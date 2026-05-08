@@ -2,10 +2,17 @@ import type {
   DefaultError,
   DehydrateOptions,
   HydrateOptions,
+  // spellchecker is overzealous here
+  // eslint-disable-next-line cspell/spellchecker
+  InfiniteQueryExecuteOptions as IQCEOptions,
+  InfiniteData,
   MutationCache,
   MutationObserverOptions,
   OmitKeyof,
+  QueryExecuteOptions as QCEOptions,
+  QueryBooleanOption,
   QueryCache,
+  QueryKey,
   QueryObserverOptions,
 } from '@tanstack/query-core'
 import type { ComputedRef, Ref, UnwrapRef } from 'vue-demi'
@@ -63,6 +70,62 @@ export type ShallowOption = {
    */
   shallow?: boolean
 }
+
+export type QueryExecuteOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = {
+  [Property in keyof QCEOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey,
+    TPageParam
+  >]: Property extends 'enabled'
+    ?
+        | MaybeRefOrGetter<boolean | undefined>
+        | (() => QueryBooleanOption<
+            TQueryFnData,
+            TError,
+            TQueryData,
+            DeepUnwrapRef<TQueryKey>
+          >)
+        | QCEOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            DeepUnwrapRef<TQueryKey>,
+            TPageParam
+          >[Property]
+    : QCEOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        DeepUnwrapRef<TQueryKey>,
+        TPageParam
+      >[Property]
+}
+
+export type InfiniteQueryExecuteOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = IQCEOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  DeepUnwrapRef<TQueryKey>,
+  TPageParam
+>
 
 export type MutationOptions<
   TData = unknown,
