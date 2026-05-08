@@ -42,18 +42,16 @@ describe('usePrefetchQuery', () => {
     )
   })
 
-  it('should not allow skipToken in queryFn', () => {
+  it('should allow skipToken in queryFn', () => {
     assertType(
       usePrefetchQuery({
         queryKey: queryKey(),
-        // @ts-expect-error
         queryFn: skipToken,
       }),
     )
     assertType(
       usePrefetchQuery({
         queryKey: queryKey(),
-        // @ts-expect-error
         queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
       }),
     )
