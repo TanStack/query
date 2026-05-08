@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/query-example-lit-basic",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/lit-query": "^0.1.0",
+    "@tanstack/lit-query": "^0.2.0",
     "@tanstack/query-core": "^5.99.0",
     "lit": "^3.3.1"
   },
