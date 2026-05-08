@@ -13,6 +13,22 @@ describe('usePrefetchQuery', () => {
     expectTypeOf(result).toEqualTypeOf<void>()
   })
 
+  it('should forward query data and query key types', () => {
+    type CustomQueryKey = readonly ['key', number]
+
+    usePrefetchQuery<string, Error, number, Array<string>, CustomQueryKey>({
+      queryKey: ['key', 1],
+      queryFn: (context) => {
+        expectTypeOf(context.queryKey).toEqualTypeOf<CustomQueryKey>()
+        return Promise.resolve('data')
+      },
+      select: (data) => {
+        expectTypeOf(data).toEqualTypeOf<Array<string>>()
+        return data.length
+      },
+    })
+  })
+
   it('should not allow refetchInterval, enabled or throwOnError options', () => {
     assertType(
       usePrefetchQuery({

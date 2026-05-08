@@ -4,8 +4,8 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
-  FetchQueryOptions,
   InfiniteData,
+  InfiniteQueryExecuteOptions,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -13,6 +13,7 @@ import type {
   MutationObserverResult,
   OmitKeyof,
   Override,
+  QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -46,17 +47,52 @@ export interface UseBaseQueryOptions<
   subscribed?: boolean
 }
 
-export interface UsePrefetchQueryOptions<
+export type UsePrefetchQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = DistributiveOmit<
+  QueryExecuteOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  'queryFn'
+> & {
+  queryFn?: Exclude<
+    QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
+    >['queryFn'],
+    SkipToken
+  >
+}
+
+export type UsePrefetchInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends OmitKeyof<
-  FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  TPageParam = unknown,
+> = DistributiveOmit<
+  InfiniteQueryExecuteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
   'queryFn'
-> {
+> & {
   queryFn?: Exclude<
-    FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
+    InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >['queryFn'],
     SkipToken
   >
 }
