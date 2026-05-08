@@ -1,11 +1,12 @@
 import { nextTick, ref } from 'vue-demi'
 import { QueryClient as QC } from '@tanstack/query-core'
-import { cloneDeepUnref } from './utils'
+import { cloneDeepUnref, toValueDeep } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
 import type { UseQueryOptions } from './useQuery'
 import type { Ref } from 'vue-demi'
 import type { MaybeRefDeep, NoUnknown, QueryClientConfig } from './types'
+import type { QueryOptions as VueQueryOptions } from './queryOptions'
 import type {
   CancelOptions,
   DefaultError,
@@ -292,9 +293,53 @@ export class QueryClient extends QC {
     TData = TQueryFnData,
     TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: VueQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: () => VueQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
     options:
+      | VueQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >
+      | (() => VueQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >)
       | MaybeRefDeep<
           QueryExecuteOptions<
             TQueryFnData,
@@ -305,13 +350,15 @@ export class QueryClient extends QC {
             TPageParam
           >
         >
-      | (() => QueryExecuteOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryData,
-          TQueryKey,
-          TPageParam
+      | (() => MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
         >),
   ): Promise<TData>
   query<
@@ -322,18 +369,52 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: MaybeRefDeep<
-      QueryExecuteOptions<
+    options:
+      | VueQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >
+      | (() => VueQueryOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >)
+      | MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | (() => MaybeRefDeep<
+          QueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >
+        >),
+  ): Promise<TData> {
+    return super.query(
+      toValueDeep(options as any) as QueryExecuteOptions<
         TQueryFnData,
         TError,
         TData,
         TQueryData,
         TQueryKey,
         TPageParam
-      >
-    >,
-  ): Promise<TData> {
-    return super.query(cloneDeepUnref(options))
+      >,
+    )
   }
 
   infiniteQuery<
@@ -372,12 +453,14 @@ export class QueryClient extends QC {
             TPageParam
           >
         >
-      | (() => InfiniteQueryExecuteOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryKey,
-          TPageParam
+      | (() => MaybeRefDeep<
+          InfiniteQueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryKey,
+            TPageParam
+          >
         >),
   ): Promise<
     Array<TData> extends Array<InfiniteData<TQueryFnData>>
@@ -391,21 +474,39 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
-    options: MaybeRefDeep<
-      InfiniteQueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
+    options:
+      | MaybeRefDeep<
+          InfiniteQueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryKey,
+            TPageParam
+          >
+        >
+      | (() => MaybeRefDeep<
+          InfiniteQueryExecuteOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryKey,
+            TPageParam
+          >
+        >),
   ): Promise<
     Array<TData> extends Array<InfiniteData<TQueryFnData>>
       ? InfiniteData<TQueryFnData, TPageParam>
       : TData
   > {
-    return super.infiniteQuery(cloneDeepUnref(options))
+    return super.infiniteQuery(
+      toValueDeep(options as any) as InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >,
+    )
   }
 
   /**
