@@ -1,34 +1,24 @@
-import { getCurrentScope, unref, watchEffect } from 'vue-demi'
+import { getCurrentScope, watchEffect } from 'vue-demi'
+import { noop } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref } from './utils'
-import type {
-  DefaultError,
-  FetchQueryOptions,
-  OmitKeyof,
-  QueryKey,
-  SkipToken,
-} from '@tanstack/query-core'
+import { toValueDeep } from './utils'
+import type { DefaultError, QueryKey } from '@tanstack/query-core'
 import type { QueryClient } from './queryClient'
-import type { MaybeRefDeep, MaybeRefOrGetter } from './types'
+import type { MaybeRefDeep, QueryExecuteOptions } from './types'
 
 export type UsePrefetchQueryOptions<
   TQueryFnData,
   TError,
   TData,
   TQueryKey extends QueryKey,
-> = OmitKeyof<
-  FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'queryFn'
-> & {
-  queryFn?: Exclude<
-    FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
-    SkipToken
-  >
-}
-
-function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
-  return typeof value === 'function'
-}
+> = QueryExecuteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryFnData,
+  TQueryKey,
+  never
+>
 
 export function usePrefetchQuery<
   TQueryFnData = unknown,
@@ -36,11 +26,13 @@ export function usePrefetchQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: MaybeRefOrGetter<
-    MaybeRefDeep<
-      UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-    >
-  >,
+  options:
+    | MaybeRefDeep<
+        UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+      >
+    | (() => MaybeRefDeep<
+        UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+      >),
   queryClient?: QueryClient,
 ): void {
   if (process.env.NODE_ENV === 'development') {
@@ -54,16 +46,12 @@ export function usePrefetchQuery<
   const client = queryClient || useQueryClient()
 
   watchEffect(() => {
-    const resolvedOptions = isGetter(options) ? options() : unref(options)
-    const clonedOptions: UsePrefetchQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey
-    > = cloneDeepUnref(resolvedOptions)
+    const clonedOptions = toValueDeep<
+      UsePrefetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    >(options)
 
     if (!client.getQueryState(clonedOptions.queryKey)) {
-      void client.prefetchQuery(clonedOptions)
+      void client.query(clonedOptions).then(noop).catch(noop)
     }
   })
 }
