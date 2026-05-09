@@ -539,6 +539,38 @@ describe('Utils tests', () => {
     `)
     })
 
+    describe('array nested path', () => {
+      it('should delete nested data inside an array correctly', () => {
+        const oldData = [
+          { id: 1, title: 'first' },
+          { id: 2, title: 'second' },
+        ]
+
+        const newData = deleteNestedDataByPath(oldData, ['1', 'title'])
+
+        expect(newData).not.toBe(oldData)
+        expect(newData).toMatchInlineSnapshot(`
+          [
+            {
+              "id": 1,
+              "title": "first",
+            },
+            {
+              "id": 2,
+            },
+          ]
+        `)
+      })
+    })
+
+    describe('primitive', () => {
+      it('should return primitive data as-is when it is not an Object/Array/Map/Set', () => {
+        expect(deleteNestedDataByPath(42, ['x'])).toBe(42)
+        expect(deleteNestedDataByPath('hello', ['x'])).toBe('hello')
+        expect(deleteNestedDataByPath(null, ['x'])).toBe(null)
+      })
+    })
+
     describe('nested data', () => {
       it('should delete nested items correctly', () => {
         /* eslint-disable cspell/spellchecker */
