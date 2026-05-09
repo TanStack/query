@@ -2730,6 +2730,9 @@ importers:
       '@solid-primitives/storage':
         specifier: ^1.3.11
         version: 1.3.11(solid-js@1.9.12)
+      '@solidjs/testing-library':
+        specifier: ^0.8.10
+        version: 0.8.10(@solidjs/router@0.15.4(solid-js@1.9.12))(solid-js@1.9.12)
       '@tanstack/match-sorter-utils':
         specifier: ^8.19.4
         version: 8.19.4
