@@ -9,6 +9,7 @@ import {
   getPreferredColorScheme,
   getQueryStatusColor,
   getQueryStatusColorByLabel,
+  getQueryStatusLabel,
   getSidedProp,
   mutationSortFns,
   setupStyleSheet,
@@ -20,6 +21,7 @@ import type {
   Mutation,
   MutationStatus,
   Query,
+  QueryKey,
 } from '@tanstack/query-core'
 
 describe('Utils tests', () => {
@@ -1296,6 +1298,121 @@ describe('Utils tests', () => {
         dispose()
         expect(listenerCount()).toBe(0)
       })
+    })
+  })
+
+  describe('getQueryStatusLabel', () => {
+    let queryClient: QueryClient
+
+    function buildQuery(
+      queryKey: QueryKey,
+      state?: Partial<Query['state']>,
+    ): Query {
+      const query = queryClient.getQueryCache().build(queryClient, { queryKey })
+      if (state) {
+        query.setState(state)
+      }
+      return query
+    }
+
+    function addObserver(query: Query) {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: query.queryKey,
+        enabled: false,
+      })
+      return observer.subscribe(() => {})
+    }
+
+    beforeEach(() => {
+      queryClient = new QueryClient()
+    })
+
+    afterEach(() => {
+      queryClient.clear()
+    })
+
+    it('should return "fetching" when fetchStatus is "fetching"', () => {
+      const query = buildQuery(['q'], { fetchStatus: 'fetching' })
+
+      expect(getQueryStatusLabel(query)).toBe('fetching')
+    })
+
+    it('should return "inactive" when there are no observers', () => {
+      const query = buildQuery(['q'], { fetchStatus: 'idle' })
+
+      expect(getQueryStatusLabel(query)).toBe('inactive')
+    })
+
+    it('should return "paused" when fetchStatus is "paused" and there are observers', () => {
+      const query = buildQuery(['q'], { fetchStatus: 'paused' })
+      const unsubscribe = addObserver(query)
+
+      try {
+        expect(getQueryStatusLabel(query)).toBe('paused')
+      } finally {
+        unsubscribe()
+      }
+    })
+
+    it('should return "paused" even when stale if fetchStatus is "paused"', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: ['paused-stale'],
+        staleTime: 0,
+      })
+      const unsubscribe = observer.subscribe(() => {})
+      const query = queryClient.getQueryCache().find({
+        queryKey: ['paused-stale'],
+      })!
+      query.setState({
+        ...query.state,
+        fetchStatus: 'paused',
+        data: 'data',
+        dataUpdatedAt: 0,
+      })
+
+      try {
+        expect(query.isStale()).toBe(true)
+        expect(getQueryStatusLabel(query)).toBe('paused')
+      } finally {
+        unsubscribe()
+      }
+    })
+
+    it('should return "stale" when query is idle, has observers, and is stale', () => {
+      const observer = new QueryObserver(queryClient, {
+        queryKey: ['stale'],
+        staleTime: 0,
+      })
+      const unsubscribe = observer.subscribe(() => {})
+      const query = queryClient.getQueryCache().find({ queryKey: ['stale'] })!
+      query.setState({
+        ...query.state,
+        fetchStatus: 'idle',
+        data: 'data',
+        dataUpdatedAt: 0,
+      })
+
+      try {
+        expect(query.isStale()).toBe(true)
+        expect(getQueryStatusLabel(query)).toBe('stale')
+      } finally {
+        unsubscribe()
+      }
+    })
+
+    it('should return "fresh" when query is idle, has observers, and is not stale', () => {
+      const query = buildQuery(['q'], {
+        fetchStatus: 'idle',
+        data: 'fresh-data',
+        dataUpdatedAt: Date.now(),
+      })
+      const unsubscribe = addObserver(query)
+
+      try {
+        expect(getQueryStatusLabel(query)).toBe('fresh')
+      } finally {
+        unsubscribe()
+      }
     })
   })
 
