@@ -135,6 +135,51 @@ describe('Utils tests', () => {
       /* eslint-enable */
     })
 
+    describe('empty path', () => {
+      it('should return the new value as-is when "updatePath" is empty', () => {
+        const oldData = { title: 'Hello world' }
+
+        expect(updateNestedDataByPath(oldData, [], 'replaced')).toBe('replaced')
+      })
+    })
+
+    describe('array nested path', () => {
+      it('should update nested data inside an array correctly', () => {
+        const oldData = [
+          { id: 1, title: 'first' },
+          { id: 2, title: 'second' },
+        ]
+
+        const newData = updateNestedDataByPath(
+          oldData,
+          ['1', 'title'],
+          'updated',
+        )
+
+        expect(newData).not.toBe(oldData)
+        expect(newData).toMatchInlineSnapshot(`
+          [
+            {
+              "id": 1,
+              "title": "first",
+            },
+            {
+              "id": 2,
+              "title": "updated",
+            },
+          ]
+        `)
+      })
+    })
+
+    describe('primitive', () => {
+      it('should return primitive data as-is when it is not an Object/Array/Map/Set', () => {
+        expect(updateNestedDataByPath(42, ['x'], 'new')).toBe(42)
+        expect(updateNestedDataByPath('hello', ['x'], 'new')).toBe('hello')
+        expect(updateNestedDataByPath(null, ['x'], 'new')).toBe(null)
+      })
+    })
+
     describe('nested data', () => {
       it('should update data correctly', () => {
         /* eslint-disable cspell/spellchecker */
