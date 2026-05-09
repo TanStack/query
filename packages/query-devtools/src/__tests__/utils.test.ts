@@ -1152,9 +1152,7 @@ describe('Utils tests', () => {
           staleTime: 0,
         })
         const staleUnsubscribe = staleObserver.subscribe(() => {})
-        const stale = queryClient
-          .getQueryCache()
-          .find({ queryKey: ['stale'] })!
+        const stale = queryClient.getQueryCache().find({ queryKey: ['stale'] })!
         stale.setState({
           ...stale.state,
           fetchStatus: 'idle',
