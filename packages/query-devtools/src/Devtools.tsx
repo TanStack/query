@@ -2757,6 +2757,7 @@ const stylesFactory = (
       border-radius: 9999px;
       box-shadow: ${shadow.md()};
       overflow: hidden;
+      isolation: isolate;
 
       & div {
         position: absolute;
