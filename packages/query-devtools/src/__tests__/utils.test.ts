@@ -7,6 +7,7 @@ import {
   displayValue,
   getMutationStatusColor,
   getPreferredColorScheme,
+  getQueryStatusColor,
   getQueryStatusColorByLabel,
   getSidedProp,
   mutationSortFns,
@@ -14,7 +15,12 @@ import {
   sortFns,
   updateNestedDataByPath,
 } from '../utils'
-import type { Mutation, MutationStatus, Query } from '@tanstack/query-core'
+import type {
+  FetchStatus,
+  Mutation,
+  MutationStatus,
+  Query,
+} from '@tanstack/query-core'
 
 describe('Utils tests', () => {
   describe('updatedNestedDataByPath', () => {
@@ -1290,6 +1296,96 @@ describe('Utils tests', () => {
         dispose()
         expect(listenerCount()).toBe(0)
       })
+    })
+  })
+
+  describe('getQueryStatusColor', () => {
+    let queryClient: QueryClient
+
+    function makeState(fetchStatus: FetchStatus): Query['state'] {
+      const query = queryClient.getQueryCache().build(queryClient, {
+        queryKey: [fetchStatus],
+      })
+      query.setState({ fetchStatus })
+      return query.state
+    }
+
+    beforeEach(() => {
+      queryClient = new QueryClient()
+    })
+
+    afterEach(() => {
+      queryClient.clear()
+    })
+
+    it('should return "blue" when fetchStatus is "fetching"', () => {
+      expect(
+        getQueryStatusColor({
+          queryState: makeState('fetching'),
+          observerCount: 1,
+          isStale: false,
+        }),
+      ).toBe('blue')
+    })
+
+    it('should return "blue" even when there are no observers if fetchStatus is "fetching"', () => {
+      expect(
+        getQueryStatusColor({
+          queryState: makeState('fetching'),
+          observerCount: 0,
+          isStale: false,
+        }),
+      ).toBe('blue')
+    })
+
+    it('should return "gray" when there are no observers', () => {
+      expect(
+        getQueryStatusColor({
+          queryState: makeState('idle'),
+          observerCount: 0,
+          isStale: false,
+        }),
+      ).toBe('gray')
+    })
+
+    it('should return "purple" when fetchStatus is "paused"', () => {
+      expect(
+        getQueryStatusColor({
+          queryState: makeState('paused'),
+          observerCount: 1,
+          isStale: false,
+        }),
+      ).toBe('purple')
+    })
+
+    it('should return "purple" even when stale if fetchStatus is "paused"', () => {
+      expect(
+        getQueryStatusColor({
+          queryState: makeState('paused'),
+          observerCount: 1,
+          isStale: true,
+        }),
+      ).toBe('purple')
+    })
+
+    it('should return "yellow" when query is stale', () => {
+      expect(
+        getQueryStatusColor({
+          queryState: makeState('idle'),
+          observerCount: 1,
+          isStale: true,
+        }),
+      ).toBe('yellow')
+    })
+
+    it('should return "green" when query is active and not stale', () => {
+      expect(
+        getQueryStatusColor({
+          queryState: makeState('idle'),
+          observerCount: 1,
+          isStale: false,
+        }),
+      ).toBe('green')
     })
   })
 })
