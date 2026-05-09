@@ -1146,6 +1146,39 @@ describe('Utils tests', () => {
         }
       })
 
+      it('should place a stale query after a fresh one when both are idle and have observers', () => {
+        const staleObserver = new QueryObserver(queryClient, {
+          queryKey: ['stale'],
+          staleTime: 0,
+        })
+        const staleUnsubscribe = staleObserver.subscribe(() => {})
+        const stale = queryClient
+          .getQueryCache()
+          .find({ queryKey: ['stale'] })!
+        stale.setState({
+          ...stale.state,
+          fetchStatus: 'idle',
+          data: 'data',
+          dataUpdatedAt: 200,
+        })
+
+        const fresh = buildQuery(['fresh'], {
+          fetchStatus: 'idle',
+          data: 'fresh-data',
+          dataUpdatedAt: 100,
+        })
+        const freshUnsubscribe = addObserver(fresh)
+
+        try {
+          expect(stale.isStale()).toBe(true)
+          expect(statusSort(fresh, stale)).toBe(-1)
+          expect(statusSort(stale, fresh)).toBe(1)
+        } finally {
+          staleUnsubscribe()
+          freshUnsubscribe()
+        }
+      })
+
       it('should fall back to "last updated" sort within the same status rank', () => {
         const older = buildQuery(['older'], { dataUpdatedAt: 100 })
         const newer = buildQuery(['newer'], { dataUpdatedAt: 200 })
