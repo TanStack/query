@@ -32,6 +32,7 @@ describe('Devtools', () => {
   let previousRootFontSize = ''
 
   beforeEach(() => {
+    vi.useFakeTimers()
     previousRootFontSize = document.documentElement.style.fontSize
     // jsdom doesn't implement `PointerEvent`; the DropdownMenu trigger checks
     // `e.pointerType !== 'touch'` on pointerdown to decide whether to open,
@@ -101,6 +102,7 @@ describe('Devtools', () => {
   })
 
   afterEach(() => {
+    vi.useRealTimers()
     vi.unstubAllGlobals()
     Object.keys(storage).forEach((key) => delete storage[key])
     queryClient.clear()
@@ -344,7 +346,7 @@ describe('Devtools', () => {
         mutationFn: () => Promise.resolve('ok'),
       })
       mutation.execute({})
-      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(
         rendered.getByLabelText(/Mutation submitted at/),
