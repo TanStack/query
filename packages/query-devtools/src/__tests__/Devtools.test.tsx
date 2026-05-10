@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, onlineManager } from '@tanstack/query-core'
-import { render } from '@solidjs/testing-library'
+import { fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
 import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
@@ -184,6 +184,64 @@ describe('Devtools', () => {
       expect(
         rendered.queryByLabelText('Tanstack query devtools'),
       ).not.toBeInTheDocument()
+    })
+  })
+
+  describe('open and close', () => {
+    it('should render the panel when the open button is clicked', () => {
+      const rendered = renderDevtools()
+
+      fireEvent.click(rendered.getByLabelText('Open Tanstack query devtools'))
+
+      expect(
+        rendered.getByLabelText('Tanstack query devtools'),
+      ).toBeInTheDocument()
+    })
+
+    it('should hide the open button when the panel is open', () => {
+      const rendered = renderDevtools()
+
+      fireEvent.click(rendered.getByLabelText('Open Tanstack query devtools'))
+
+      expect(
+        rendered.queryByLabelText('Open Tanstack query devtools'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should hide the panel when the close button is clicked', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText('Close tanstack query devtools'))
+
+      expect(
+        rendered.queryByLabelText('Tanstack query devtools'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should render the open button after the panel is closed', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText('Close tanstack query devtools'))
+
+      expect(
+        rendered.getByLabelText('Open Tanstack query devtools'),
+      ).toBeInTheDocument()
+    })
+
+    it('should persist "open" as "true" to "localStorage" when the open button is clicked', () => {
+      const rendered = renderDevtools()
+
+      fireEvent.click(rendered.getByLabelText('Open Tanstack query devtools'))
+
+      expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('true')
+    })
+
+    it('should persist "open" as "false" to "localStorage" when the close button is clicked', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText('Close tanstack query devtools'))
+
+      expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('false')
     })
   })
 })
