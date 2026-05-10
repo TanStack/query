@@ -497,9 +497,7 @@ describe('Devtools', () => {
       queryClient.setQueryData(['action-remove'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
-      fireEvent.click(
-        rendered.getByLabelText(/Query key \["action-remove"\]/),
-      )
+      fireEvent.click(rendered.getByLabelText(/Query key \["action-remove"\]/))
       fireEvent.click(rendered.getByText('Remove'))
 
       expect(
@@ -511,9 +509,7 @@ describe('Devtools', () => {
       queryClient.setQueryData(['action-reset'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
-      fireEvent.click(
-        rendered.getByLabelText(/Query key \["action-reset"\]/),
-      )
+      fireEvent.click(rendered.getByLabelText(/Query key \["action-reset"\]/))
       fireEvent.click(rendered.getByText('Reset'))
 
       expect(queryClient.getQueryData(['action-reset'])).toBeUndefined()
@@ -551,10 +547,7 @@ describe('Devtools', () => {
         )
         expect(dispatched).toBe(true)
       } finally {
-        window.removeEventListener(
-          '@tanstack/query-devtools-event',
-          listener,
-        )
+        window.removeEventListener('@tanstack/query-devtools-event', listener)
       }
     })
 
@@ -582,6 +575,5 @@ describe('Devtools', () => {
         queryClient.getQueryState(['action-restore-error'])?.status,
       ).not.toBe('error')
     })
-
   })
 })
