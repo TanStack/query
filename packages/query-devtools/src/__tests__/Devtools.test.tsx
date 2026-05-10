@@ -796,9 +796,7 @@ describe('Devtools', () => {
     it('should render the settings button', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
-      expect(
-        rendered.getByLabelText('Open settings menu'),
-      ).toBeInTheDocument()
+      expect(rendered.getByLabelText('Open settings menu')).toBeInTheDocument()
     })
 
     it('should show "Position" sub-trigger when the settings menu is opened', () => {
@@ -855,9 +853,7 @@ describe('Devtools', () => {
         fireEvent.keyDown(topItem, { key: 'Enter' })
       }
 
-      expect(localStorage.getItem('TanstackQueryDevtools.position')).toBe(
-        'top',
-      )
+      expect(localStorage.getItem('TanstackQueryDevtools.position')).toBe('top')
     })
 
     it('should open "Theme" sub-menu when the sub-trigger is activated', () => {
