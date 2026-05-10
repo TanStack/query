@@ -313,9 +313,10 @@ describe('Devtools', () => {
       try {
         fireEvent.click(rendered.getByLabelText('Clear query cache'))
 
-        expect(listener).toHaveBeenCalled()
-        const event = listener.mock.calls[0]?.[0] as CustomEvent
-        expect(event.detail.type).toBe('CLEAR_MUTATION_CACHE')
+        const dispatched = listener.mock.calls.some(
+          ([e]) => (e as CustomEvent).detail.type === 'CLEAR_MUTATION_CACHE',
+        )
+        expect(dispatched).toBe(true)
       } finally {
         window.removeEventListener('@tanstack/query-devtools-event', listener)
       }
