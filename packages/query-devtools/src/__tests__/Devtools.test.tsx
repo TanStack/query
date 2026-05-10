@@ -34,19 +34,6 @@ describe('Devtools', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     previousRootFontSize = document.documentElement.style.fontSize
-    // jsdom doesn't implement `PointerEvent`; the DropdownMenu trigger checks
-    // `e.pointerType !== 'touch'` on pointerdown to decide whether to open,
-    // so we polyfill it as a thin wrapper around `MouseEvent`.
-    if (typeof window.PointerEvent === 'undefined') {
-      class FakePointerEvent extends MouseEvent {
-        pointerType: string
-        constructor(type: string, init: PointerEventInit = {}) {
-          super(type, init)
-          this.pointerType = init.pointerType ?? 'mouse'
-        }
-      }
-      vi.stubGlobal('PointerEvent', FakePointerEvent)
-    }
     vi.stubGlobal('localStorage', {
       getItem: (key: string) =>
         Object.prototype.hasOwnProperty.call(storage, key)
@@ -802,6 +789,173 @@ describe('Devtools', () => {
         'TanstackQueryDevtools.sortOrder',
       )
       expect(afterSecondToggle).toBe(afterFirstToggle === '1' ? '-1' : '1')
+    })
+  })
+
+  describe('settings menu', () => {
+    it('should render the settings button', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.getByLabelText('Open settings menu'),
+      ).toBeInTheDocument()
+    })
+
+    it('should show "Position" sub-trigger when the settings menu is opened', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      // The menu is rendered through a Portal mounted on `document.body`,
+      // outside `rendered.container`, so look it up via `document` directly.
+      expect(
+        document.querySelector('.tsqd-settings-menu-sub-trigger-position'),
+      ).not.toBeNull()
+    })
+
+    it('should open "Position" sub-menu when the sub-trigger is activated', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      const subTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-position',
+      )
+      if (subTrigger) {
+        fireEvent.keyDown(subTrigger, { key: 'ArrowRight' })
+      }
+
+      expect(
+        document.querySelector('[aria-label="Position settings"]'),
+      ).not.toBeNull()
+    })
+
+    it('should persist "position" when a position radio item is selected', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      const subTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-position',
+      )
+      if (subTrigger) {
+        fireEvent.keyDown(subTrigger, { key: 'ArrowRight' })
+      }
+
+      const topItem = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-position-btn-top',
+      )
+      if (topItem) {
+        fireEvent.keyDown(topItem, { key: 'Enter' })
+      }
+
+      expect(localStorage.getItem('TanstackQueryDevtools.position')).toBe(
+        'top',
+      )
+    })
+
+    it('should open "Theme" sub-menu when the sub-trigger is activated', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      const themeTrigger = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '.tsqd-settings-menu-sub-trigger',
+        ),
+      ).find((el) => el.textContent.includes('Theme'))
+      if (themeTrigger) {
+        fireEvent.keyDown(themeTrigger, { key: 'ArrowRight' })
+      }
+
+      expect(
+        document.querySelector('[aria-label="Theme preference"]'),
+      ).not.toBeNull()
+    })
+
+    it('should persist "theme_preference" when a theme radio item is selected', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      const themeTrigger = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '.tsqd-settings-menu-sub-trigger',
+        ),
+      ).find((el) => el.textContent.includes('Theme'))
+      if (themeTrigger) {
+        fireEvent.keyDown(themeTrigger, { key: 'ArrowRight' })
+      }
+
+      const themeMenu = document.querySelector(
+        '[aria-label="Theme preference"]',
+      )
+      const lightItem = Array.from(
+        themeMenu?.querySelectorAll<HTMLElement>('[role="menuitemradio"]') ??
+          [],
+      ).find((el) => el.textContent.includes('Light'))
+      if (lightItem) {
+        fireEvent.keyDown(lightItem, { key: 'Enter' })
+      }
+
+      expect(
+        localStorage.getItem('TanstackQueryDevtools.theme_preference'),
+      ).toBe('light')
+    })
+
+    it('should open "Hide disabled queries" sub-menu when the sub-trigger is activated', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      const hideTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-disabled-queries',
+      )
+      if (hideTrigger) {
+        fireEvent.keyDown(hideTrigger, { key: 'ArrowRight' })
+      }
+
+      expect(
+        document.querySelector('[aria-label="Hide disabled queries setting"]'),
+      ).not.toBeNull()
+    })
+
+    it('should persist "hideDisabledQueries" when a hide-disabled radio item is selected', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
+        key: 'Enter',
+      })
+
+      const hideTrigger = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-sub-trigger-disabled-queries',
+      )
+      if (hideTrigger) {
+        fireEvent.keyDown(hideTrigger, { key: 'ArrowRight' })
+      }
+
+      const hideItem = document.querySelector<HTMLElement>(
+        '.tsqd-settings-menu-position-btn-hide',
+      )
+      if (hideItem) {
+        fireEvent.keyDown(hideItem, { key: 'Enter' })
+      }
+
+      expect(
+        localStorage.getItem('TanstackQueryDevtools.hideDisabledQueries'),
+      ).toBe('true')
     })
   })
 })
