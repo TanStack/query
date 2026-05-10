@@ -864,7 +864,7 @@ describe('Devtools', () => {
         document.querySelectorAll<HTMLElement>(
           '.tsqd-settings-menu-sub-trigger',
         ),
-      ).find((el) => el.textContent.includes('Theme'))
+      ).find((el) => String(el.textContent).includes('Theme'))
       expect(themeTrigger).not.toBeUndefined()
       fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
@@ -884,7 +884,7 @@ describe('Devtools', () => {
         document.querySelectorAll<HTMLElement>(
           '.tsqd-settings-menu-sub-trigger',
         ),
-      ).find((el) => el.textContent.includes('Theme'))
+      ).find((el) => String(el.textContent).includes('Theme'))
       expect(themeTrigger).not.toBeUndefined()
       fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
@@ -894,7 +894,7 @@ describe('Devtools', () => {
       const lightItem = Array.from(
         themeMenu?.querySelectorAll<HTMLElement>('[role="menuitemradio"]') ??
           [],
-      ).find((el) => el.textContent.includes('Light'))
+      ).find((el) => String(el.textContent).includes('Light'))
       expect(lightItem).not.toBeUndefined()
       fireEvent.keyDown(lightItem!, { key: 'Enter' })
 
