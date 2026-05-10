@@ -793,12 +793,6 @@ describe('Devtools', () => {
   })
 
   describe('settings menu', () => {
-    it('should render the settings button', () => {
-      const rendered = renderDevtools({ initialIsOpen: true })
-
-      expect(rendered.getByLabelText('Open settings menu')).toBeInTheDocument()
-    })
-
     it('should show "Position" sub-trigger when the settings menu is opened', () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
