@@ -795,13 +795,13 @@ describe('Devtools', () => {
       const afterFirstToggle = localStorage.getItem(
         'TanstackQueryDevtools.sortOrder',
       )
-      expect(afterFirstToggle).not.toBeNull()
+      expect(['1', '-1']).toContain(afterFirstToggle)
 
       fireEvent.click(rendered.getByLabelText(/Sort order/))
       const afterSecondToggle = localStorage.getItem(
         'TanstackQueryDevtools.sortOrder',
       )
-      expect(afterSecondToggle).not.toBe(afterFirstToggle)
+      expect(afterSecondToggle).toBe(afterFirstToggle === '1' ? '-1' : '1')
     })
   })
 })
