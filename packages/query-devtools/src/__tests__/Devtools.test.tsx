@@ -394,26 +394,79 @@ describe('Devtools', () => {
   })
 
   describe('status tooltip', () => {
-    it('should show the tooltip on mouse enter when label is hidden', () => {
-      const rendered = renderDevtools(
-        { initialIsOpen: true },
-        {
-          'TanstackQueryDevtools.open': 'true',
-          'TanstackQueryDevtools.height': '500',
-          'TanstackQueryDevtools.width': '500',
+    it('should show the tooltip on mouse enter and hide it on mouse leave when the panel is narrow', () => {
+      // Re-stub ResizeObserver with a narrow width (< secondBreakpoint = 796)
+      // so `showLabel()` is false and the tooltip is rendered conditionally on
+      // hover/focus.
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          callback: ResizeObserverCallback
+          constructor(callback: ResizeObserverCallback) {
+            this.callback = callback
+          }
+          observe = vi.fn((target: Element) => {
+            this.callback(
+              [
+                {
+                  target,
+                  contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
+                } as ResizeObserverEntry,
+              ],
+              this as unknown as ResizeObserver,
+            )
+          })
+          unobserve = vi.fn()
+          disconnect = vi.fn()
         },
       )
 
+      const rendered = renderDevtools({ initialIsOpen: true })
       const fresh = rendered.getByLabelText('Fresh: 0')
+
+      expect(rendered.queryByRole('tooltip')).not.toBeInTheDocument()
+
       fireEvent.mouseEnter(fresh)
+      expect(rendered.getByRole('tooltip')).toBeInTheDocument()
 
-      // tooltip is conditionally rendered based on showLabel + mouseOver/focused
-      // not deterministic via panelWidth in jsdom but the handler itself runs
       fireEvent.mouseLeave(fresh)
-      fireEvent.focus(fresh)
-      fireEvent.blur(fresh)
+      expect(rendered.queryByRole('tooltip')).not.toBeInTheDocument()
+    })
 
-      expect(fresh).toBeInTheDocument()
+    it('should show the tooltip on focus and hide it on blur when the panel is narrow', () => {
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          callback: ResizeObserverCallback
+          constructor(callback: ResizeObserverCallback) {
+            this.callback = callback
+          }
+          observe = vi.fn((target: Element) => {
+            this.callback(
+              [
+                {
+                  target,
+                  contentRect: { width: 500, height: 500 } as DOMRectReadOnly,
+                } as ResizeObserverEntry,
+              ],
+              this as unknown as ResizeObserver,
+            )
+          })
+          unobserve = vi.fn()
+          disconnect = vi.fn()
+        },
+      )
+
+      const rendered = renderDevtools({ initialIsOpen: true })
+      const fresh = rendered.getByLabelText('Fresh: 0')
+
+      expect(rendered.queryByRole('tooltip')).not.toBeInTheDocument()
+
+      fireEvent.focus(fresh)
+      expect(rendered.getByRole('tooltip')).toBeInTheDocument()
+
+      fireEvent.blur(fresh)
+      expect(rendered.queryByRole('tooltip')).not.toBeInTheDocument()
     })
   })
 })
