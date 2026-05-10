@@ -601,32 +601,47 @@ describe('Devtools', () => {
       fireEvent.click(rendered.getByText('Mutations'))
 
       fireEvent.click(rendered.getByLabelText(/Sort order/))
+      const afterFirstToggle = localStorage.getItem(
+        'TanstackQueryDevtools.mutationSortOrder',
+      )
+      expect(afterFirstToggle).not.toBeNull()
 
-      expect(
-        localStorage.getItem('TanstackQueryDevtools.mutationSortOrder'),
-      ).not.toBeNull()
+      fireEvent.click(rendered.getByLabelText(/Sort order/))
+      const afterSecondToggle = localStorage.getItem(
+        'TanstackQueryDevtools.mutationSortOrder',
+      )
+      expect(afterSecondToggle).not.toBe(afterFirstToggle)
     })
   })
 
   describe('mutation filter', () => {
-    it('should filter mutations by their submission timestamp', async () => {
+    it('should filter mutations by their "mutationKey"', async () => {
       const rendered = renderDevtools({ initialIsOpen: true })
       fireEvent.click(rendered.getByText('Mutations'))
 
-      const mutation = queryClient.getMutationCache().build(queryClient, {
-        mutationKey: ['filter-test'],
+      const matching = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['filter-match'],
         mutationFn: () => Promise.resolve('ok'),
       })
-      mutation.execute({})
+      const other = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['filter-other'],
+        mutationFn: () => Promise.resolve('ok'),
+      })
+      matching.execute({})
+      other.execute({})
       await vi.advanceTimersByTimeAsync(0)
 
+      expect(
+        rendered.getAllByLabelText(/Mutation submitted at/),
+      ).toHaveLength(2)
+
       fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
-        target: { value: 'filter-test' },
+        target: { value: 'filter-match' },
       })
 
       expect(
-        rendered.getByLabelText(/Mutation submitted at/),
-      ).toBeInTheDocument()
+        rendered.getAllByLabelText(/Mutation submitted at/),
+      ).toHaveLength(1)
     })
   })
 })
