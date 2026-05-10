@@ -644,4 +644,48 @@ describe('Devtools', () => {
       )
     })
   })
+
+  describe('data edit', () => {
+    it('should switch to data editor when "Bulk Edit Data" is clicked', () => {
+      queryClient.setQueryData(['edit-data'], { name: 'a' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["edit-data"\]/))
+      fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
+
+      expect(
+        rendered.getByLabelText('Edit query data as JSON'),
+      ).toBeInTheDocument()
+    })
+
+    it('should save the edited data when the form is submitted', () => {
+      queryClient.setQueryData(['edit-save'], { name: 'a' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["edit-save"\]/))
+      fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
+
+      const textarea = rendered.getByLabelText('Edit query data as JSON')
+      fireEvent.input(textarea, {
+        target: { value: JSON.stringify({ name: 'b' }) },
+      })
+      fireEvent.submit(textarea.closest('form')!)
+
+      expect(queryClient.getQueryData(['edit-save'])).toEqual({ name: 'b' })
+    })
+
+    it('should set an error state when the edited data is invalid JSON', () => {
+      queryClient.setQueryData(['edit-invalid'], { name: 'a' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["edit-invalid"\]/))
+      fireEvent.click(rendered.getByLabelText('Bulk Edit Data'))
+
+      const textarea = rendered.getByLabelText('Edit query data as JSON')
+      fireEvent.input(textarea, { target: { value: 'not json' } })
+      fireEvent.submit(textarea.closest('form')!)
+
+      expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
+    })
+  })
 })
