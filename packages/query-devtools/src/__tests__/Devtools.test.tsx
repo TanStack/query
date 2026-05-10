@@ -823,9 +823,8 @@ describe('Devtools', () => {
       const subTrigger = document.querySelector<HTMLElement>(
         '.tsqd-settings-menu-sub-trigger-position',
       )
-      if (subTrigger) {
-        fireEvent.keyDown(subTrigger, { key: 'ArrowRight' })
-      }
+      expect(subTrigger).not.toBeNull()
+      fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
 
       expect(
         document.querySelector('[aria-label="Position settings"]'),
@@ -842,16 +841,14 @@ describe('Devtools', () => {
       const subTrigger = document.querySelector<HTMLElement>(
         '.tsqd-settings-menu-sub-trigger-position',
       )
-      if (subTrigger) {
-        fireEvent.keyDown(subTrigger, { key: 'ArrowRight' })
-      }
+      expect(subTrigger).not.toBeNull()
+      fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
 
       const topItem = document.querySelector<HTMLElement>(
         '.tsqd-settings-menu-position-btn-top',
       )
-      if (topItem) {
-        fireEvent.keyDown(topItem, { key: 'Enter' })
-      }
+      expect(topItem).not.toBeNull()
+      fireEvent.keyDown(topItem!, { key: 'Enter' })
 
       expect(localStorage.getItem('TanstackQueryDevtools.position')).toBe('top')
     })
@@ -868,9 +865,8 @@ describe('Devtools', () => {
           '.tsqd-settings-menu-sub-trigger',
         ),
       ).find((el) => el.textContent.includes('Theme'))
-      if (themeTrigger) {
-        fireEvent.keyDown(themeTrigger, { key: 'ArrowRight' })
-      }
+      expect(themeTrigger).not.toBeUndefined()
+      fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
       expect(
         document.querySelector('[aria-label="Theme preference"]'),
@@ -889,9 +885,8 @@ describe('Devtools', () => {
           '.tsqd-settings-menu-sub-trigger',
         ),
       ).find((el) => el.textContent.includes('Theme'))
-      if (themeTrigger) {
-        fireEvent.keyDown(themeTrigger, { key: 'ArrowRight' })
-      }
+      expect(themeTrigger).not.toBeUndefined()
+      fireEvent.keyDown(themeTrigger!, { key: 'ArrowRight' })
 
       const themeMenu = document.querySelector(
         '[aria-label="Theme preference"]',
@@ -900,9 +895,8 @@ describe('Devtools', () => {
         themeMenu?.querySelectorAll<HTMLElement>('[role="menuitemradio"]') ??
           [],
       ).find((el) => el.textContent.includes('Light'))
-      if (lightItem) {
-        fireEvent.keyDown(lightItem, { key: 'Enter' })
-      }
+      expect(lightItem).not.toBeUndefined()
+      fireEvent.keyDown(lightItem!, { key: 'Enter' })
 
       expect(
         localStorage.getItem('TanstackQueryDevtools.theme_preference'),
@@ -919,9 +913,8 @@ describe('Devtools', () => {
       const hideTrigger = document.querySelector<HTMLElement>(
         '.tsqd-settings-menu-sub-trigger-disabled-queries',
       )
-      if (hideTrigger) {
-        fireEvent.keyDown(hideTrigger, { key: 'ArrowRight' })
-      }
+      expect(hideTrigger).not.toBeNull()
+      fireEvent.keyDown(hideTrigger!, { key: 'ArrowRight' })
 
       expect(
         document.querySelector('[aria-label="Hide disabled queries setting"]'),
@@ -938,16 +931,14 @@ describe('Devtools', () => {
       const hideTrigger = document.querySelector<HTMLElement>(
         '.tsqd-settings-menu-sub-trigger-disabled-queries',
       )
-      if (hideTrigger) {
-        fireEvent.keyDown(hideTrigger, { key: 'ArrowRight' })
-      }
+      expect(hideTrigger).not.toBeNull()
+      fireEvent.keyDown(hideTrigger!, { key: 'ArrowRight' })
 
       const hideItem = document.querySelector<HTMLElement>(
         '.tsqd-settings-menu-position-btn-hide',
       )
-      if (hideItem) {
-        fireEvent.keyDown(hideItem, { key: 'Enter' })
-      }
+      expect(hideItem).not.toBeNull()
+      fireEvent.keyDown(hideItem!, { key: 'Enter' })
 
       expect(
         localStorage.getItem('TanstackQueryDevtools.hideDisabledQueries'),
