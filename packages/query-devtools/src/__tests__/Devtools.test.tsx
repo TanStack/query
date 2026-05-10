@@ -688,4 +688,48 @@ describe('Devtools', () => {
       expect(rendered.getByText('Invalid Value')).toBeInTheDocument()
     })
   })
+
+  describe('error type select', () => {
+    it('should render the error type select when "errorTypes" is provided', () => {
+      queryClient.setQueryData(['error-select'], [{ id: 1 }])
+      const rendered = renderDevtools({
+        initialIsOpen: true,
+        errorTypes: [
+          {
+            name: 'NetworkError',
+            initializer: () => new Error('Network'),
+          },
+        ],
+      })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["error-select"\]/))
+
+      expect(
+        rendered.getByLabelText('Select error type to trigger'),
+      ).toBeInTheDocument()
+    })
+
+    it('should trigger error when an error type is selected', () => {
+      queryClient.setQueryData(['error-select-trigger'], [{ id: 1 }])
+      const rendered = renderDevtools({
+        initialIsOpen: true,
+        errorTypes: [
+          {
+            name: 'NetworkError',
+            initializer: () => new Error('Network'),
+          },
+        ],
+      })
+
+      fireEvent.click(
+        rendered.getByLabelText(/Query key \["error-select-trigger"\]/),
+      )
+      const select = rendered.getByLabelText('Select error type to trigger')
+      fireEvent.change(select, { target: { value: 'NetworkError' } })
+
+      expect(
+        queryClient.getQueryState(['error-select-trigger'])?.status,
+      ).toBe('error')
+    })
+  })
 })
