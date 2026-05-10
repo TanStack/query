@@ -469,4 +469,119 @@ describe('Devtools', () => {
       expect(rendered.queryByRole('tooltip')).not.toBeInTheDocument()
     })
   })
+
+  describe('query details', () => {
+    it('should open the query details panel when a query row is clicked', () => {
+      queryClient.setQueryData(['posts'], [{ id: 1 }])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["posts"\]/))
+
+      expect(rendered.getByText('Query Details')).toBeInTheDocument()
+    })
+
+    it('should close the query details panel when the same row is clicked again', () => {
+      queryClient.setQueryData(['details-toggle'], [{ id: 1 }])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const row = rendered.getByLabelText(/Query key \["details-toggle"\]/)
+      fireEvent.click(row)
+      fireEvent.click(row)
+
+      expect(rendered.queryByText('Query Details')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('query actions', () => {
+    it('should remove the query when the "Remove" button is clicked', () => {
+      queryClient.setQueryData(['action-remove'], [{ id: 1 }])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText(/Query key \["action-remove"\]/),
+      )
+      fireEvent.click(rendered.getByText('Remove'))
+
+      expect(
+        rendered.queryByLabelText(/Query key \["action-remove"\]/),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should reset the query when the "Reset" button is clicked', () => {
+      queryClient.setQueryData(['action-reset'], [{ id: 1 }])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText(/Query key \["action-reset"\]/),
+      )
+      fireEvent.click(rendered.getByText('Reset'))
+
+      expect(queryClient.getQueryData(['action-reset'])).toBeUndefined()
+    })
+
+    it('should invalidate the query when the "Invalidate" button is clicked', () => {
+      queryClient.setQueryData(['action-invalidate'], [{ id: 1 }])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText(/Query key \["action-invalidate"\]/),
+      )
+      fireEvent.click(rendered.getByText('Invalidate'))
+
+      expect(
+        queryClient.getQueryState(['action-invalidate'])?.isInvalidated,
+      ).toBe(true)
+    })
+
+    it('should dispatch a "REFETCH" event when "Refetch" is clicked', () => {
+      queryClient.setQueryData(['action-refetch'], [{ id: 1 }])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      const listener = vi.fn()
+      window.addEventListener('@tanstack/query-devtools-event', listener)
+
+      try {
+        fireEvent.click(
+          rendered.getByLabelText(/Query key \["action-refetch"\]/),
+        )
+        fireEvent.click(rendered.getByText('Refetch'))
+
+        const dispatched = listener.mock.calls.some(
+          ([e]) => (e as CustomEvent).detail.type === 'REFETCH',
+        )
+        expect(dispatched).toBe(true)
+      } finally {
+        window.removeEventListener(
+          '@tanstack/query-devtools-event',
+          listener,
+        )
+      }
+    })
+
+    it('should set the query status to "error" when "Trigger Error" is clicked', () => {
+      queryClient.setQueryData(['action-error'], [{ id: 1 }])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Query key \["action-error"\]/))
+      fireEvent.click(rendered.getByText('Trigger Error'))
+
+      expect(queryClient.getQueryState(['action-error'])?.status).toBe('error')
+    })
+
+    it('should restore the query status when "Restore Error" is clicked after "Trigger Error"', () => {
+      queryClient.setQueryData(['action-restore-error'], [{ id: 1 }])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText(/Query key \["action-restore-error"\]/),
+      )
+      fireEvent.click(rendered.getByText('Trigger Error'))
+      fireEvent.click(rendered.getByText('Restore Error'))
+
+      expect(
+        queryClient.getQueryState(['action-restore-error'])?.status,
+      ).not.toBe('error')
+    })
+
+  })
 })
