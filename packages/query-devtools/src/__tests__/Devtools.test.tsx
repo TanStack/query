@@ -484,12 +484,8 @@ describe('Devtools', () => {
       queryClient.setQueryData(['details-toggle'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
-      fireEvent.click(
-        rendered.getByLabelText(/Query key \["details-toggle"\]/),
-      )
-      fireEvent.click(
-        rendered.getByLabelText(/Query key \["details-toggle"\]/),
-      )
+      fireEvent.click(rendered.getByLabelText(/Query key \["details-toggle"\]/))
+      fireEvent.click(rendered.getByLabelText(/Query key \["details-toggle"\]/))
 
       expect(rendered.queryByText('Query Details')).not.toBeInTheDocument()
     })
@@ -574,9 +570,9 @@ describe('Devtools', () => {
       fireEvent.click(rendered.getByText('Trigger Error'))
       fireEvent.click(rendered.getByText('Restore Error'))
 
-      expect(
-        queryClient.getQueryState(['action-restore-error'])?.status,
-      ).toBe('pending')
+      expect(queryClient.getQueryState(['action-restore-error'])?.status).toBe(
+        'pending',
+      )
     })
   })
 })
