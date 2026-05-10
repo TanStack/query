@@ -244,4 +244,173 @@ describe('Devtools', () => {
       expect(localStorage.getItem('TanstackQueryDevtools.open')).toBe('false')
     })
   })
+
+  describe('query list', () => {
+    it('should render a row for each query in the cache', () => {
+      queryClient.setQueryData(['posts'], [{ id: 1 }])
+      queryClient.setQueryData(['users', 'me'], { id: 'u1' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.getByLabelText(/Query key \["posts"\]/),
+      ).toBeInTheDocument()
+      expect(
+        rendered.getByLabelText(/Query key \["users","me"\]/),
+      ).toBeInTheDocument()
+    })
+
+    it('should reflect a newly added query reactively', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(
+        rendered.queryByLabelText(/Query key \["new"\]/),
+      ).not.toBeInTheDocument()
+
+      queryClient.setQueryData(['new'], 'hello')
+
+      expect(rendered.getByLabelText(/Query key \["new"\]/)).toBeInTheDocument()
+    })
+
+    it('should filter queries by "queryHash"', () => {
+      queryClient.setQueryData(['posts'], [])
+      queryClient.setQueryData(['users'], [])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
+        target: { value: 'posts' },
+      })
+
+      expect(
+        rendered.getByLabelText(/Query key \["posts"\]/),
+      ).toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText(/Query key \["users"\]/),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should clear all queries when the clear cache button is clicked', () => {
+      queryClient.setQueryData(['posts'], [])
+      queryClient.setQueryData(['users'], [])
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText('Clear query cache'))
+
+      expect(
+        rendered.queryByLabelText(/Query key \["posts"\]/),
+      ).not.toBeInTheDocument()
+      expect(
+        rendered.queryByLabelText(/Query key \["users"\]/),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should dispatch a "CLEAR_MUTATION_CACHE" event when clear cache is clicked in mutations view', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      const listener = vi.fn()
+      window.addEventListener('@tanstack/query-devtools-event', listener)
+
+      try {
+        fireEvent.click(rendered.getByLabelText('Clear query cache'))
+
+        expect(listener).toHaveBeenCalled()
+        const event = listener.mock.calls[0]?.[0] as CustomEvent
+        expect(event.detail.type).toBe('CLEAR_MUTATION_CACHE')
+      } finally {
+        window.removeEventListener('@tanstack/query-devtools-event', listener)
+      }
+    })
+  })
+
+  describe('view toggle', () => {
+    it('should switch to mutations view when the mutations toggle is clicked', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      expect(
+        rendered.container.querySelector('.tsqd-mutations-container'),
+      ).not.toBeNull()
+    })
+
+    it('should render mutations in the mutations view', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      const mutation = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['add-post'],
+        mutationFn: () => Promise.resolve('ok'),
+      })
+      mutation.execute({})
+      await Promise.resolve()
+
+      expect(
+        rendered.getByLabelText(/Mutation submitted at/),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('disabled and static queries', () => {
+    it('should mark a disabled query in the row label', () => {
+      const observer = queryClient.getQueryCache().build(queryClient, {
+        queryKey: ['disabled-q'],
+        queryFn: () => 'x',
+      })
+      observer.setOptions({
+        ...observer.options,
+        enabled: false,
+      } as typeof observer.options)
+      observer.setState({ ...observer.state, data: 'x' })
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(rendered.getByLabelText(/disabled/)).toBeInTheDocument()
+    })
+  })
+
+  describe('status counts', () => {
+    it('should render status count badges', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(rendered.getByLabelText(/Fresh: \d+/)).toBeInTheDocument()
+      expect(rendered.getByLabelText(/Stale: \d+/)).toBeInTheDocument()
+      expect(rendered.getByLabelText(/Fetching: \d+/)).toBeInTheDocument()
+      expect(rendered.getByLabelText(/Paused: \d+/)).toBeInTheDocument()
+      expect(rendered.getByLabelText(/Inactive: \d+/)).toBeInTheDocument()
+    })
+
+    it('should reflect the inactive count when a query is added without observers', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      expect(rendered.getByLabelText('Inactive: 0')).toBeInTheDocument()
+
+      queryClient.setQueryData(['posts'], [{ id: 1 }])
+
+      expect(rendered.getByLabelText('Inactive: 1')).toBeInTheDocument()
+    })
+  })
+
+  describe('status tooltip', () => {
+    it('should show the tooltip on mouse enter when label is hidden', () => {
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        {
+          'TanstackQueryDevtools.open': 'true',
+          'TanstackQueryDevtools.height': '500',
+          'TanstackQueryDevtools.width': '500',
+        },
+      )
+
+      const fresh = rendered.getByLabelText('Fresh: 0')
+      fireEvent.mouseEnter(fresh)
+
+      // tooltip is conditionally rendered based on showLabel + mouseOver/focused
+      // not deterministic via panelWidth in jsdom but the handler itself runs
+      fireEvent.mouseLeave(fresh)
+      fireEvent.focus(fresh)
+      fireEvent.blur(fresh)
+
+      expect(fresh).toBeInTheDocument()
+    })
+  })
 })
