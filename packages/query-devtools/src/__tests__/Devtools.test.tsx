@@ -575,4 +575,59 @@ describe('Devtools', () => {
       )
     })
   })
+
+  describe('mutation details', () => {
+    it('should open the mutation details panel when a mutation row is clicked', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      const mutation = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['mutation-detail'],
+        mutationFn: () => Promise.resolve('ok'),
+      })
+      mutation.execute({})
+      await vi.advanceTimersByTimeAsync(0)
+
+      fireEvent.click(rendered.getByLabelText(/Mutation submitted at/))
+
+      expect(rendered.getByText('Mutation Details')).toBeInTheDocument()
+    })
+  })
+
+  describe('mutation sort order', () => {
+    it('should toggle the mutation sort order in the mutations view', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      fireEvent.click(rendered.getByLabelText(/Sort order/))
+
+      expect(
+        localStorage.getItem('TanstackQueryDevtools.mutationSortOrder'),
+      ).not.toBeNull()
+    })
+  })
+
+  describe('mutation filter', () => {
+    it('should filter mutations by their submission timestamp', async () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      const mutation = queryClient.getMutationCache().build(queryClient, {
+        mutationKey: ['filter-test'],
+        mutationFn: () => Promise.resolve('ok'),
+      })
+      mutation.execute({})
+      await vi.advanceTimersByTimeAsync(0)
+
+      fireEvent.input(
+        rendered.getByLabelText('Filter queries by query key'),
+        { target: { value: 'filter-test' } },
+      )
+
+      expect(
+        rendered.getByLabelText(/Mutation submitted at/),
+      ).toBeInTheDocument()
+    })
+  })
 })
