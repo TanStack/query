@@ -620,10 +620,9 @@ describe('Devtools', () => {
       mutation.execute({})
       await vi.advanceTimersByTimeAsync(0)
 
-      fireEvent.input(
-        rendered.getByLabelText('Filter queries by query key'),
-        { target: { value: 'filter-test' } },
-      )
+      fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
+        target: { value: 'filter-test' },
+      })
 
       expect(
         rendered.getByLabelText(/Mutation submitted at/),
