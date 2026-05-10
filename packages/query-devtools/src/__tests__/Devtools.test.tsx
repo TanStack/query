@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  QueryObserver,
+  onlineManager,
+} from '@tanstack/query-core'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
@@ -730,6 +734,78 @@ describe('Devtools', () => {
       expect(queryClient.getQueryState(['error-select-trigger'])?.status).toBe(
         'error',
       )
+    })
+  })
+
+  describe('sort by', () => {
+    it('should change sort key when the sort dropdown is changed in queries view', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.change(rendered.getByLabelText('Sort queries by'), {
+        target: { value: 'last updated' },
+      })
+
+      expect(localStorage.getItem('TanstackQueryDevtools.sort')).toBe(
+        'last updated',
+      )
+    })
+
+    it('should change sort key when the sort dropdown is changed in mutations view', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+
+      fireEvent.change(rendered.getByLabelText('Sort mutations by'), {
+        target: { value: 'last updated' },
+      })
+
+      expect(localStorage.getItem('TanstackQueryDevtools.mutationSort')).toBe(
+        'last updated',
+      )
+    })
+
+    it('should hide disabled queries when "hideDisabledQueries" is enabled in localStorage', () => {
+      const disabled = new QueryObserver(queryClient, {
+        queryKey: ['hide-test-disabled'],
+        queryFn: () => 'x',
+        enabled: false,
+      })
+      const unsubscribe = disabled.subscribe(() => {})
+      queryClient.setQueryData(['hide-test-disabled'], 'x')
+      queryClient.setQueryData(['hide-test-active'], 'y')
+
+      try {
+        const rendered = renderDevtools(
+          { initialIsOpen: true },
+          { 'TanstackQueryDevtools.hideDisabledQueries': 'true' },
+        )
+
+        expect(
+          rendered.queryByLabelText(/Query key \["hide-test-disabled"\]/),
+        ).not.toBeInTheDocument()
+        expect(
+          rendered.getByLabelText(/Query key \["hide-test-active"\]/),
+        ).toBeInTheDocument()
+      } finally {
+        unsubscribe()
+      }
+    })
+  })
+
+  describe('sort order', () => {
+    it('should toggle the sort order when the sort order button is clicked', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText(/Sort order/))
+      const afterFirstToggle = localStorage.getItem(
+        'TanstackQueryDevtools.sortOrder',
+      )
+      expect(afterFirstToggle).not.toBeNull()
+
+      fireEvent.click(rendered.getByLabelText(/Sort order/))
+      const afterSecondToggle = localStorage.getItem(
+        'TanstackQueryDevtools.sortOrder',
+      )
+      expect(afterSecondToggle).not.toBe(afterFirstToggle)
     })
   })
 })
