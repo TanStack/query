@@ -3,11 +3,7 @@ import { QueryClient, onlineManager } from '@tanstack/query-core'
 import { render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
-import {
-  PiPProvider,
-  QueryDevtoolsContext,
-  ThemeContext,
-} from '../contexts'
+import { PiPProvider, QueryDevtoolsContext, ThemeContext } from '../contexts'
 import type { QueryDevtoolsProps } from '../contexts'
 
 // `solid-transition-group` internally imports from
