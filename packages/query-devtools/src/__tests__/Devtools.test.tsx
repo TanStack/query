@@ -631,17 +631,17 @@ describe('Devtools', () => {
       other.execute({})
       await vi.advanceTimersByTimeAsync(0)
 
-      expect(
-        rendered.getAllByLabelText(/Mutation submitted at/),
-      ).toHaveLength(2)
+      expect(rendered.getAllByLabelText(/Mutation submitted at/)).toHaveLength(
+        2,
+      )
 
       fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
         target: { value: 'filter-match' },
       })
 
-      expect(
-        rendered.getAllByLabelText(/Mutation submitted at/),
-      ).toHaveLength(1)
+      expect(rendered.getAllByLabelText(/Mutation submitted at/)).toHaveLength(
+        1,
+      )
     })
   })
 })
