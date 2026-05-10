@@ -1,9 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  QueryClient,
-  QueryObserver,
-  onlineManager,
-} from '@tanstack/query-core'
+import { QueryClient, QueryObserver, onlineManager } from '@tanstack/query-core'
 import { fireEvent, render } from '@solidjs/testing-library'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { Devtools } from '../Devtools'
