@@ -727,9 +727,9 @@ describe('Devtools', () => {
       const select = rendered.getByLabelText('Select error type to trigger')
       fireEvent.change(select, { target: { value: 'NetworkError' } })
 
-      expect(
-        queryClient.getQueryState(['error-select-trigger'])?.status,
-      ).toBe('error')
+      expect(queryClient.getQueryState(['error-select-trigger'])?.status).toBe(
+        'error',
+      )
     })
   })
 })
