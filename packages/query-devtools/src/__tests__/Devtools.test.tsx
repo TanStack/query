@@ -964,9 +964,11 @@ describe('Devtools', () => {
       const handle = rendered.getByLabelText('Resize devtools panel')
       fireEvent.keyDown(handle, { key: 'ArrowDown' })
 
-      expect(
-        Number(localStorage.getItem('TanstackQueryDevtools.height')),
-      ).toBeLessThan(500)
+      // Assert the value exists before parsing — `Number(null)` is `0`,
+      // which would falsely satisfy `toBeLessThan(500)` if the write was missing.
+      const nextHeight = localStorage.getItem('TanstackQueryDevtools.height')
+      expect(nextHeight).not.toBeNull()
+      expect(Number(nextHeight)).toBeLessThan(500)
     })
 
     it('should increase width when "ArrowLeft" is pressed on the resize handle in "right" position', () => {
@@ -992,9 +994,9 @@ describe('Devtools', () => {
       const handle = rendered.getByLabelText('Resize devtools panel')
       fireEvent.keyDown(handle, { key: 'ArrowRight' })
 
-      expect(
-        Number(localStorage.getItem('TanstackQueryDevtools.width')),
-      ).toBeLessThan(500)
+      const nextWidth = localStorage.getItem('TanstackQueryDevtools.width')
+      expect(nextWidth).not.toBeNull()
+      expect(Number(nextWidth)).toBeLessThan(500)
     })
 
     it('should increase height while dragging up in "bottom" position', () => {
