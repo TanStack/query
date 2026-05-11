@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isVue2, isVue3, ref } from 'vue-demi'
 import { queryKey } from '@tanstack/query-test-utils'
 import { QueryClient } from '../queryClient'
@@ -24,7 +24,7 @@ interface TestApp extends App {
   $root: TestApp
 }
 
-const testIf = (condition: boolean) => (condition ? test : test.skip)
+const itIf = (condition: boolean) => (condition ? it : it.skip)
 
 function getAppMock(withUnmountHook = false): TestApp {
   const mock = {
@@ -53,7 +53,7 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('devtools', () => {
-    test('should NOT setup devtools', () => {
+    it('should NOT setup devtools', () => {
       const setupDevtoolsMock = setupDevtools as Mock
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
@@ -61,7 +61,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    testIf(isVue2)('should NOT setup devtools by default', () => {
+    itIf(isVue2)('should NOT setup devtools by default', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
@@ -75,7 +75,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    testIf(isVue2)('should setup devtools', () => {
+    itIf(isVue2)('should setup devtools', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
@@ -89,7 +89,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(1)
     })
 
-    testIf(isVue3)('should NOT setup devtools by default', () => {
+    itIf(isVue3)('should NOT setup devtools by default', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
@@ -100,7 +100,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    testIf(isVue3)('should setup devtools', () => {
+    itIf(isVue3)('should setup devtools', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
@@ -113,7 +113,7 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when app unmounts', () => {
-    test('should call unmount on each client when onUnmount is missing', () => {
+    it('should call unmount on each client when onUnmount is missing', () => {
       const appMock = getAppMock()
       const customClient = {
         mount: vi.fn(),
@@ -131,7 +131,7 @@ describe('VueQueryPlugin', () => {
       expect(originalUnmount).toHaveBeenCalledTimes(1)
     })
 
-    test('should call onUnmount if present', () => {
+    it('should call onUnmount if present', () => {
       const appMock = getAppMock(true)
       const customClient = {
         mount: vi.fn(),
@@ -148,7 +148,7 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called without additional options', () => {
-    testIf(isVue2)('should provide a client with default clientKey', () => {
+    itIf(isVue2)('should provide a client with default clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
 
@@ -159,7 +159,7 @@ describe('VueQueryPlugin', () => {
       })
     })
 
-    testIf(isVue3)('should provide a client with default clientKey', () => {
+    itIf(isVue3)('should provide a client with default clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
 
@@ -171,7 +171,7 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called with custom clientKey', () => {
-    testIf(isVue2)('should provide a client with customized clientKey', () => {
+    itIf(isVue2)('should provide a client with customized clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock, { queryClientKey: 'CUSTOM' })
 
@@ -182,7 +182,7 @@ describe('VueQueryPlugin', () => {
       })
     })
 
-    testIf(isVue3)('should provide a client with customized clientKey', () => {
+    itIf(isVue3)('should provide a client with customized clientKey', () => {
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock, { queryClientKey: 'CUSTOM' })
 
@@ -194,7 +194,7 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called with custom client', () => {
-    testIf(isVue2)('should provide that custom client', () => {
+    itIf(isVue2)('should provide that custom client', () => {
       const appMock = getAppMock()
       const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
@@ -207,7 +207,7 @@ describe('VueQueryPlugin', () => {
       })
     })
 
-    testIf(isVue3)('should provide that custom client', () => {
+    itIf(isVue3)('should provide that custom client', () => {
       const appMock = getAppMock()
       const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
@@ -221,46 +221,40 @@ describe('VueQueryPlugin', () => {
   })
 
   describe('when called with custom client config', () => {
-    testIf(isVue2)(
-      'should instantiate a client with the provided config',
-      () => {
-        const appMock = getAppMock()
-        const config = {
-          defaultOptions: { queries: { enabled: true } },
-        }
-        VueQueryPlugin.install(appMock, {
-          queryClientConfig: config,
-        })
+    itIf(isVue2)('should instantiate a client with the provided config', () => {
+      const appMock = getAppMock()
+      const config = {
+        defaultOptions: { queries: { enabled: true } },
+      }
+      VueQueryPlugin.install(appMock, {
+        queryClientConfig: config,
+      })
 
-        appMock._mixin.beforeCreate?.call(appMock)
-        const client = appMock._provided.VUE_QUERY_CLIENT as QueryClient
-        const defaultOptions = client.getDefaultOptions()
+      appMock._mixin.beforeCreate?.call(appMock)
+      const client = appMock._provided.VUE_QUERY_CLIENT as QueryClient
+      const defaultOptions = client.getDefaultOptions()
 
-        expect(defaultOptions).toEqual(config.defaultOptions)
-      },
-    )
+      expect(defaultOptions).toEqual(config.defaultOptions)
+    })
 
-    testIf(isVue3)(
-      'should instantiate a client with the provided config',
-      () => {
-        const appMock = getAppMock()
-        const config = {
-          defaultOptions: { queries: { enabled: true } },
-        }
-        VueQueryPlugin.install(appMock, {
-          queryClientConfig: config,
-        })
+    itIf(isVue3)('should instantiate a client with the provided config', () => {
+      const appMock = getAppMock()
+      const config = {
+        defaultOptions: { queries: { enabled: true } },
+      }
+      VueQueryPlugin.install(appMock, {
+        queryClientConfig: config,
+      })
 
-        const client = (appMock.provide as Mock).mock.calls[0]?.[1]
-        const defaultOptions = client.getDefaultOptions()
+      const client = (appMock.provide as Mock).mock.calls[0]?.[1]
+      const defaultOptions = client.getDefaultOptions()
 
-        expect(defaultOptions).toEqual(config.defaultOptions)
-      },
-    )
+      expect(defaultOptions).toEqual(config.defaultOptions)
+    })
   })
 
   describe('when persister is provided', () => {
-    test('should properly modify isRestoring flag on queryClient', async () => {
+    it('should properly modify isRestoring flag on queryClient', async () => {
       const appMock = getAppMock()
       const customClient = {
         mount: vi.fn(),
@@ -284,7 +278,7 @@ describe('VueQueryPlugin', () => {
       expect(customClient.isRestoring?.value).toBeFalsy()
     })
 
-    test('should delay useQuery subscription and not call fetcher if data is not stale', async () => {
+    it('should delay useQuery subscription and not call fetcher if data is not stale', async () => {
       const key = queryKey()
       const appMock = getAppMock()
       const customClient = new QueryClient({
@@ -332,7 +326,7 @@ describe('VueQueryPlugin', () => {
       expect(fnSpy).toHaveBeenCalledTimes(0)
     })
 
-    test('should delay useQueries subscription and not call fetcher if data is not stale', async () => {
+    it('should delay useQueries subscription and not call fetcher if data is not stale', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
       const appMock = getAppMock()

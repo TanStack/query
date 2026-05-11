@@ -3950,7 +3950,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  it('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
+  it('should init to status:pending, fetchStatus:idle when enabled is false', () => {
     const key = queryKey()
 
     function Page() {
@@ -5017,7 +5017,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should only call the query hash function once', async () => {
+  it('should only call the query hash function once', () => {
     const key = queryKey()
 
     let hashes = 0
@@ -5059,7 +5059,7 @@ describe('useQuery', () => {
         queryFn,
         enabled: props.enabled,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5126,7 +5126,7 @@ describe('useQuery', () => {
             props.id % 2 === 1 ? Promise.reject(new Error('Error')) : 'data',
           ),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5186,7 +5186,7 @@ describe('useQuery', () => {
         queryKey: [props.id],
         queryFn: () => sleep(10).then(() => Promise.reject(new Error('Error'))),
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       }))
@@ -5943,9 +5943,9 @@ describe('useQuery', () => {
       function Component() {
         const state = useQuery(() => ({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: () => {
             count++
-            return `data${count}`
+            return Promise.resolve(`data${count}`)
           },
         }))
 
@@ -6188,7 +6188,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn,
         retry: false,
-        retryOnMount: false,
+        retryOnMount: () => false,
       }))
 
       createRenderEffect(() => {

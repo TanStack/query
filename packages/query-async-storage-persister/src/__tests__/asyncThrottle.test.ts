@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { asyncThrottle } from '../asyncThrottle'
 
@@ -11,7 +11,7 @@ describe('asyncThrottle', () => {
     vi.useRealTimers()
   })
 
-  test('basic', async () => {
+  it('basic', async () => {
     const interval = 10
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
@@ -44,7 +44,7 @@ describe('asyncThrottle', () => {
     )
   })
 
-  test('Bug #3331 case 1: Special timing', async () => {
+  it('Bug #3331 case 1: Special timing', async () => {
     const interval = 1000
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
@@ -76,7 +76,7 @@ describe('asyncThrottle', () => {
     )
   })
 
-  test('Bug #3331 case 2: "func" execution time is greater than the interval.', async () => {
+  it('Bug #3331 case 2: "func" execution time is greater than the interval.', async () => {
     const interval = 1000
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
@@ -106,7 +106,7 @@ describe('asyncThrottle', () => {
     )
   })
 
-  test('"func" throw error not break next invoke', async () => {
+  it('"func" throw error not break next invoke', async () => {
     const interval = 10
 
     const mockFunc = vi.fn(
@@ -130,7 +130,7 @@ describe('asyncThrottle', () => {
     expect(mockFunc.mock.calls[1]?.[0]).toBe(2)
   })
 
-  test('"onError" should be called when "func" throw error', () => {
+  it('"onError" should be called when "func" throw error', () => {
     const err = new Error('error')
     const handleError = (e: unknown) => {
       expect(e).toBe(err)
@@ -145,7 +145,7 @@ describe('asyncThrottle', () => {
     testFunc()
   })
 
-  test('should throw error when "func" is not a function', () => {
+  it('should throw error when "func" is not a function', () => {
     expect(() => asyncThrottle(1 as any)).toThrow()
   })
 })

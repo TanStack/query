@@ -1,11 +1,11 @@
-import { describe, expectTypeOf, test } from 'vitest'
+import { describe, expectTypeOf, it } from 'vitest'
 import { sleep } from '@tanstack/query-test-utils'
 import { injectMutation } from '..'
 import type { Signal } from '@angular/core'
 
 describe('injectMutation', () => {
   describe('Discriminated union return type', () => {
-    test('data should be possibly undefined by default', () => {
+    it('data should be possibly undefined by default', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))
@@ -13,7 +13,7 @@ describe('injectMutation', () => {
       expectTypeOf(mutation.data).toEqualTypeOf<Signal<string | undefined>>()
     })
 
-    test('data should be defined when mutation is success', () => {
+    it('data should be defined when mutation is success', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))
@@ -23,7 +23,7 @@ describe('injectMutation', () => {
       }
     })
 
-    test('error should be null when mutation is success', () => {
+    it('error should be null when mutation is success', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))
@@ -33,7 +33,7 @@ describe('injectMutation', () => {
       }
     })
 
-    test('data should be undefined when mutation is pending', () => {
+    it('data should be undefined when mutation is pending', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))
@@ -43,7 +43,7 @@ describe('injectMutation', () => {
       }
     })
 
-    test('error should be defined when mutation is error', () => {
+    it('error should be defined when mutation is error', () => {
       const mutation = injectMutation(() => ({
         mutationFn: () => sleep(0).then(() => 'string'),
       }))
@@ -53,7 +53,7 @@ describe('injectMutation', () => {
       }
     })
 
-    test('should narrow variables', () => {
+    it('should narrow variables', () => {
       const mutation = injectMutation(() => ({
         mutationFn: (_variables: string) => sleep(0).then(() => 'string'),
       }))

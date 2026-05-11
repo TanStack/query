@@ -1,5 +1,89 @@
 # @tanstack/vue-query-devtools
 
+## 6.1.28
+
+### Patch Changes
+
+- Updated dependencies [[`3d21cac`](https://github.com/TanStack/query/commit/3d21cacdec3028b700c4c2e3e0ff8dbe7a235e8c)]:
+  - @tanstack/query-devtools@5.100.9
+  - @tanstack/vue-query@5.100.9
+
+## 6.1.27
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.8
+  - @tanstack/vue-query@5.100.8
+
+## 6.1.26
+
+### Patch Changes
+
+- docs(devtools): align logo, panel, and 'buttonPosition' union descriptions across docs and JSDoc ([#10617](https://github.com/TanStack/query/pull/10617))
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.7
+  - @tanstack/vue-query@5.100.7
+
+## 6.1.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.6
+  - @tanstack/vue-query@5.100.6
+
+## 6.1.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.5
+  - @tanstack/vue-query@5.100.5
+
+## 6.1.23
+
+### Patch Changes
+
+- fix(devtools): change onClose callback type from () => unknown to () => void ([#10118](https://github.com/TanStack/query/pull/10118))
+
+- Updated dependencies [[`3d1a62e`](https://github.com/TanStack/query/commit/3d1a62e63bd864359e369bb21356fa80d043f2ba)]:
+  - @tanstack/query-devtools@5.100.4
+  - @tanstack/vue-query@5.100.4
+
+## 6.1.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.3
+  - @tanstack/vue-query@5.100.3
+
+## 6.1.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.2
+  - @tanstack/vue-query@5.100.2
+
+## 6.1.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.1
+  - @tanstack/vue-query@5.100.1
+
+## 6.1.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/query-devtools@5.100.0
+  - @tanstack/vue-query@5.100.0
+
 ## 6.1.18
 
 ### Patch Changes

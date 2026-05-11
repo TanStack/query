@@ -2,7 +2,7 @@ import {
   ensureQueryFn,
   noop,
   replaceData,
-  resolveEnabled,
+  resolveQueryBoolean,
   resolveStaleTime,
   skipToken,
   timeUntilStale,
@@ -10,6 +10,7 @@ import {
 import { notifyManager } from './notifyManager'
 import { CancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
+import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type {
@@ -137,7 +138,6 @@ interface ContinueAction {
 interface SetStateAction<TData, TError> {
   type: 'setState'
   state: Partial<QueryState<TData, TError>>
-  setStateOptions?: SetStateOptions
 }
 
 export type Action<TData, TError> =
@@ -149,10 +149,6 @@ export type Action<TData, TError> =
   | PauseAction
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
-
-export interface SetStateOptions {
-  meta?: any
-}
 
 // CLASS
 
@@ -166,6 +162,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
+  #queryType?: 'infinite'
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -195,6 +192,10 @@ export class Query<
     return this.options.meta
   }
 
+  get queryType() {
+    return this.#queryType
+  }
+
   get promise(): Promise<TData> | undefined {
     return this.#retryer?.promise
   }
@@ -203,6 +204,10 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
+
+    if (options?._type) {
+      this.#queryType = options._type
+    }
 
     this.updateGcTime(this.options.gcTime)
 
@@ -241,11 +246,8 @@ export class Query<
     return data
   }
 
-  setState(
-    state: Partial<QueryState<TData, TError>>,
-    setStateOptions?: SetStateOptions,
-  ): void {
-    this.#dispatch({ type: 'setState', state, setStateOptions })
+  setState(state: Partial<QueryState<TData, TError>>): void {
+    this.#dispatch({ type: 'setState', state })
   }
 
   cancel(options?: CancelOptions): Promise<void> {
@@ -271,7 +273,8 @@ export class Query<
 
   isActive(): boolean {
     return this.observers.some(
-      (observer) => resolveEnabled(observer.options.enabled, this) !== false,
+      (observer) =>
+        resolveQueryBoolean(observer.options.enabled, this) !== false,
     )
   }
 
@@ -510,7 +513,13 @@ export class Query<
 
     const context = createFetchContext()
 
-    this.options.behavior?.onFetch(context, this as unknown as Query)
+    const behavior =
+      this.#queryType === 'infinite'
+        ? (infiniteQueryBehavior(
+            (this.options as { pages?: number }).pages,
+          ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
+        : this.options.behavior
+    behavior?.onFetch(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state

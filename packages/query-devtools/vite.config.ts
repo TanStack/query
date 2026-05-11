@@ -29,5 +29,6 @@ export default defineConfig({
     },
     typecheck: { enabled: true },
     restoreMocks: true,
+    setupFiles: ['test-setup.ts'],
   },
 })

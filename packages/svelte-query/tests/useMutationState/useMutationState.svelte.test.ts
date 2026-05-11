@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
 import { queryKey, sleep } from '@tanstack/query-test-utils'
@@ -19,7 +19,7 @@ describe('useMutationState', () => {
     vi.useRealTimers()
   })
 
-  test('should run few mutation functions and check from useMutationState', async () => {
+  it('should run few mutation functions and check from useMutationState', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
@@ -54,7 +54,7 @@ describe('useMutationState', () => {
     expect(rendered.getByText('Data: ["success","error"]')).toBeInTheDocument()
   })
 
-  test('should select specific type of mutation ( i.e: error only )', async () => {
+  it('should select specific type of mutation ( i.e: error only )', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))
@@ -92,7 +92,7 @@ describe('useMutationState', () => {
     expect(rendered.getByText('Data: ["error"]')).toBeInTheDocument()
   })
 
-  test('should return selected value when using select option', async () => {
+  it('should return selected value when using select option', async () => {
     const mutationKey = queryKey()
 
     const rendered = render(Select, {
@@ -119,7 +119,7 @@ describe('useMutationState', () => {
     expect(rendered.getByText('Variables: ["success"]')).toBeInTheDocument()
   })
 
-  test('should select specific mutation using mutation key', async () => {
+  it('should select specific mutation using mutation key', async () => {
     const successKey = queryKey()
     const errorKey = queryKey()
     const successMutationFn = vi.fn(() => sleep(10).then(() => 'data'))

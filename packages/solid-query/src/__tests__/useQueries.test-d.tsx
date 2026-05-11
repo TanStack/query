@@ -5,7 +5,7 @@ import { queryOptions, useQueries } from '..'
 import { QueryClient } from '../QueryClient'
 import type { OmitKeyof } from '@tanstack/query-core'
 import type { UseQueryResult } from '..'
-import type { SolidQueryOptions } from '../types'
+import type { QueryOptions } from '../types'
 
 describe('useQueries', () => {
   it('TData should have undefined in the union even when initialData is provided as an object', () => {
@@ -164,11 +164,11 @@ describe('useQueries', () => {
   })
 
   describe('custom hook', () => {
-    it('should allow custom hooks using SolidQueryOptions', () => {
+    it('should allow custom hooks using QueryOptions', () => {
       type Data = string
 
       const useCustomQueries = (
-        options?: OmitKeyof<SolidQueryOptions<Data>, 'queryKey' | 'queryFn'>,
+        options?: OmitKeyof<QueryOptions<Data>, 'queryKey' | 'queryFn'>,
       ) => {
         return useQueries(() => ({
           queries: [

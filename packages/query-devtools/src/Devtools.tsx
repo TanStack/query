@@ -89,7 +89,7 @@ interface ContentViewProps {
   localStore: StorageObject<string>
   setLocalStore: StorageSetter<string, unknown>
   showPanelViewOnly?: boolean
-  onClose?: () => unknown
+  onClose?: () => void
 }
 
 interface QueryStatusProps {
@@ -2098,7 +2098,10 @@ const QueryDetails = () => {
                 type: 'INVALIDATE',
                 queryHash: activeQuery()?.queryHash,
               })
-              queryClient.invalidateQueries(activeQuery())
+              queryClient.invalidateQueries({
+                queryKey: activeQuery()?.queryKey,
+                exact: true,
+              })
             }}
             disabled={queryStatus() === 'pending'}
           >
@@ -2123,7 +2126,10 @@ const QueryDetails = () => {
                 type: 'RESET',
                 queryHash: activeQuery()?.queryHash,
               })
-              queryClient.resetQueries(activeQuery())
+              queryClient.resetQueries({
+                queryKey: activeQuery()?.queryKey,
+                exact: true,
+              })
             }}
             disabled={queryStatus() === 'pending'}
           >
@@ -2148,7 +2154,10 @@ const QueryDetails = () => {
                 type: 'REMOVE',
                 queryHash: activeQuery()?.queryHash,
               })
-              queryClient.removeQueries(activeQuery())
+              queryClient.removeQueries({
+                queryKey: activeQuery()?.queryKey,
+                exact: true,
+              })
               setSelectedQueryHash(null)
             }}
             disabled={statusLabel() === 'fetching'}
@@ -2228,7 +2237,9 @@ const QueryDetails = () => {
                     type: 'RESTORE_ERROR',
                     queryHash: activeQuery()?.queryHash,
                   })
-                  queryClient.resetQueries(activeQuery())
+                  queryClient.resetQueries({
+                    queryKey: activeQuery()?.queryKey,
+                  })
                 }
               }}
               disabled={queryStatus() === 'pending'}
