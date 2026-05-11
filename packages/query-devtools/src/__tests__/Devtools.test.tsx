@@ -1089,4 +1089,16 @@ describe('Devtools', () => {
       ).toBeInTheDocument()
     })
   })
+
+  describe('logo close', () => {
+    it('should hide the panel when the TanStack logo is clicked', () => {
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(rendered.getByLabelText('Close Tanstack query devtools'))
+
+      expect(
+        rendered.queryByLabelText('Tanstack query devtools'),
+      ).not.toBeInTheDocument()
+    })
+  })
 })
