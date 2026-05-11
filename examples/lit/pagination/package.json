@@ -8,8 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/lit-query": "^0.2.0",
-    "@tanstack/query-core": "^5.99.0",
+    "@tanstack/lit-query": "^0.2.1",
+    "@tanstack/query-core": "^5.100.10",
     "lit": "^3.3.1"
   },
   "devDependencies": {
