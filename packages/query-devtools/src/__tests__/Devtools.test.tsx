@@ -1009,7 +1009,7 @@ describe('Devtools', () => {
       // that drag math starts from `initialHeight` instead of 0.
       // Only `height` is read by the production code; other fields are unused.
       const panel = handle.parentElement
-      expect(panel).not.toBeNull()
+      expect(panel).toBeInstanceOf(HTMLElement)
       vi.spyOn(panel!, 'getBoundingClientRect').mockReturnValue({
         height: initialHeight,
         width: 0,
@@ -1048,7 +1048,7 @@ describe('Devtools', () => {
       // detect when the panel hits its minimum. Returning the same value both
       // times keeps the "minimum reached" branch from firing.
       const panel = handle.parentElement
-      expect(panel).not.toBeNull()
+      expect(panel).toBeInstanceOf(HTMLElement)
       vi.spyOn(panel!, 'getBoundingClientRect').mockReturnValue({
         height: 0,
         width: initialWidth,
