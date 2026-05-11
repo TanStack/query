@@ -939,4 +939,140 @@ describe('Devtools', () => {
       ).toBe('true')
     })
   })
+
+  describe('resize handle', () => {
+    it('should increase height when "ArrowUp" is pressed on the resize handle in "bottom" position', () => {
+      const rendered = renderDevtools(
+        { position: 'bottom', initialIsOpen: true },
+        { 'TanstackQueryDevtools.height': '500' },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      fireEvent.keyDown(handle, { key: 'ArrowUp' })
+
+      expect(
+        Number(localStorage.getItem('TanstackQueryDevtools.height')),
+      ).toBeGreaterThan(500)
+    })
+
+    it('should decrease height when "ArrowDown" is pressed on the resize handle in "bottom" position', () => {
+      const rendered = renderDevtools(
+        { position: 'bottom', initialIsOpen: true },
+        { 'TanstackQueryDevtools.height': '500' },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      fireEvent.keyDown(handle, { key: 'ArrowDown' })
+
+      expect(
+        Number(localStorage.getItem('TanstackQueryDevtools.height')),
+      ).toBeLessThan(500)
+    })
+
+    it('should increase width when "ArrowLeft" is pressed on the resize handle in "right" position', () => {
+      const rendered = renderDevtools(
+        { position: 'right', initialIsOpen: true },
+        { 'TanstackQueryDevtools.width': '500' },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      fireEvent.keyDown(handle, { key: 'ArrowLeft' })
+
+      expect(
+        Number(localStorage.getItem('TanstackQueryDevtools.width')),
+      ).toBeGreaterThan(500)
+    })
+
+    it('should decrease width when "ArrowRight" is pressed on the resize handle in "right" position', () => {
+      const rendered = renderDevtools(
+        { position: 'right', initialIsOpen: true },
+        { 'TanstackQueryDevtools.width': '500' },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      fireEvent.keyDown(handle, { key: 'ArrowRight' })
+
+      expect(
+        Number(localStorage.getItem('TanstackQueryDevtools.width')),
+      ).toBeLessThan(500)
+    })
+
+    it('should increase height while dragging up in "bottom" position', () => {
+      const initialHeight = 500
+      const rendered = renderDevtools(
+        { position: 'bottom', initialIsOpen: true },
+        { 'TanstackQueryDevtools.height': String(initialHeight) },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      // jsdom returns zeros for `getBoundingClientRect`; stub the panel size so
+      // that drag math starts from `initialHeight` instead of 0.
+      // Only `height` is read by the production code; other fields are unused.
+      const panel = handle.parentElement
+      expect(panel).not.toBeNull()
+      vi.spyOn(panel!, 'getBoundingClientRect').mockReturnValue({
+        height: initialHeight,
+        width: 0,
+        x: 0,
+        y: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => ({}),
+      })
+
+      // Move the cursor up by 50px (`clientY` 100 → 50), which adds 50px to the
+      // drag base of `initialHeight`.
+      fireEvent.mouseDown(handle, { clientX: 0, clientY: 100 })
+      fireEvent(
+        document,
+        new MouseEvent('mousemove', { clientX: 0, clientY: 50 }),
+      )
+      fireEvent(document, new MouseEvent('mouseup'))
+
+      expect(
+        Number(localStorage.getItem('TanstackQueryDevtools.height')),
+      ).toBeGreaterThan(initialHeight)
+    })
+
+    it('should increase width while dragging left in "right" position', () => {
+      const initialWidth = 500
+      const rendered = renderDevtools(
+        { position: 'right', initialIsOpen: true },
+        { 'TanstackQueryDevtools.width': String(initialWidth) },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      // `width` is read twice during drag: once as the base size, and again to
+      // detect when the panel hits its minimum. Returning the same value both
+      // times keeps the "minimum reached" branch from firing.
+      const panel = handle.parentElement
+      expect(panel).not.toBeNull()
+      vi.spyOn(panel!, 'getBoundingClientRect').mockReturnValue({
+        height: 0,
+        width: initialWidth,
+        x: 0,
+        y: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => ({}),
+      })
+
+      // Move the cursor left by 50px (`clientX` 100 → 50); in `right` position,
+      // moving left grows the panel by 50px from the drag base of `initialWidth`.
+      fireEvent.mouseDown(handle, { clientX: 100, clientY: 0 })
+      fireEvent(
+        document,
+        new MouseEvent('mousemove', { clientX: 50, clientY: 0 }),
+      )
+      fireEvent(document, new MouseEvent('mouseup'))
+
+      expect(
+        Number(localStorage.getItem('TanstackQueryDevtools.width')),
+      ).toBeGreaterThan(initialWidth)
+    })
+  })
 })
