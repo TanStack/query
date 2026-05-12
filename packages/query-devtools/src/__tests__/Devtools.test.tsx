@@ -1079,7 +1079,10 @@ describe('Devtools', () => {
 
     it('should close the query details panel when dragging shrinks the panel below the minimum height', () => {
       queryClient.setQueryData(['shrink-below-min-height'], [{ id: 1 }])
-      const rendered = renderDevtools({ position: 'bottom', initialIsOpen: true })
+      const rendered = renderDevtools({
+        position: 'bottom',
+        initialIsOpen: true,
+      })
 
       // Open the query details so `selectedQueryHash` is set.
       fireEvent.click(
