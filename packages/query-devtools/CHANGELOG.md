@@ -1,5 +1,11 @@
 # @tanstack/query-devtools
 
+## 5.100.10
+
+### Patch Changes
+
+- fix(query-devtools): remove experimentalDts to prevent solid-js type leak ([#10694](https://github.com/TanStack/query/pull/10694))
+
 ## 5.100.9
 
 ### Patch Changes
