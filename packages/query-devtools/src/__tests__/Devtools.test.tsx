@@ -1076,6 +1076,46 @@ describe('Devtools', () => {
         Number(localStorage.getItem('TanstackQueryDevtools.width')),
       ).toBeGreaterThan(initialWidth)
     })
+
+    it('should close the query details panel when dragging shrinks the panel below the minimum height', () => {
+      queryClient.setQueryData(['shrink-below-min-height'], [{ id: 1 }])
+      const rendered = renderDevtools({ position: 'bottom', initialIsOpen: true })
+
+      // Open the query details so `selectedQueryHash` is set.
+      fireEvent.click(
+        rendered.getByLabelText(/Query key \["shrink-below-min-height"\]/),
+      )
+      expect(rendered.getByText('Query Details')).toBeInTheDocument()
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      const panel = handle.parentElement
+      expect(panel).toBeInstanceOf(HTMLElement)
+      // Stub the base size to a value just above the 56px (`3.5rem`) minimum so
+      // a small downward drag pushes `newSize` below `minHeight` and triggers
+      // the clamp branch that also resets `selectedQueryHash`.
+      vi.spyOn(panel!, 'getBoundingClientRect').mockReturnValue({
+        height: 60,
+        width: 0,
+        x: 0,
+        y: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => ({}),
+      })
+
+      // In `bottom` position, dragging the cursor down (`clientY` 100 → 200)
+      // shrinks the panel by 100px, which is well under the 56px minimum.
+      fireEvent.mouseDown(handle, { clientX: 0, clientY: 100 })
+      fireEvent(
+        document,
+        new MouseEvent('mousemove', { clientX: 0, clientY: 200 }),
+      )
+      fireEvent(document, new MouseEvent('mouseup'))
+
+      expect(rendered.queryByText('Query Details')).not.toBeInTheDocument()
+    })
   })
 
   describe('online toggle', () => {
