@@ -1110,6 +1110,60 @@ describe('Devtools', () => {
       ).toBeGreaterThan(initialWidth)
     })
 
+    it('should clamp the width to the minimum when dragging shrinks the panel below the minimum width', () => {
+      const initialWidth = 200
+      const rendered = renderDevtools(
+        { position: 'left', initialIsOpen: true },
+        { 'TanstackQueryDevtools.width': String(initialWidth) },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      const panel = handle.parentElement
+      expect(panel).toBeInstanceOf(HTMLElement)
+      // `width` is read twice during drag: once as the base size, and again
+      // after the clamp to detect when the panel has hit its minimum. The
+      // first call returns `initialWidth`; the second returns `0` so the
+      // `localStore.width < newWidth` restore branch stays inactive and only
+      // the `newSize < minWidth` clamp is observed.
+      const getBoundingClientRect = vi
+        .spyOn(panel!, 'getBoundingClientRect')
+        .mockReturnValueOnce({
+          height: 0,
+          width: initialWidth,
+          x: 0,
+          y: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          toJSON: () => ({}),
+        })
+      getBoundingClientRect.mockReturnValue({
+        height: 0,
+        width: 0,
+        x: 0,
+        y: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => ({}),
+      })
+
+      // In `left` position, dragging the cursor left (`clientX` 100 → 0)
+      // shrinks the panel by 100px, which lands well under the 192px minimum.
+      fireEvent.mouseDown(handle, { clientX: 100, clientY: 0 })
+      fireEvent(
+        document,
+        new MouseEvent('mousemove', { clientX: 0, clientY: 0 }),
+      )
+      fireEvent(document, new MouseEvent('mouseup'))
+
+      expect(
+        Number(localStorage.getItem('TanstackQueryDevtools.width')),
+      ).toBe(192)
+    })
+
     it('should close the query details panel when dragging shrinks the panel below the minimum height', () => {
       queryClient.setQueryData(['shrink-below-min-height'], [{ id: 1 }])
       const rendered = renderDevtools({
