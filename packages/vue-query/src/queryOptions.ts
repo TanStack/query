@@ -31,13 +31,15 @@ export type QueryOptions<
             TQueryData,
             DeepUnwrapRef<TQueryKey>
           >)
-    : QueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        DeepUnwrapRef<TQueryKey>
-      >[Property]
+    : Property extends 'queryKey'
+      ? MaybeRefOrGetter<TQueryKey>
+      : QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >[Property]
 } & ShallowOption
 
 export type UndefinedInitialQueryOptions<
