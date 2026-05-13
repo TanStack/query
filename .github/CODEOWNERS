@@ -3,3 +3,4 @@
 nx.json @TanStack/tanstack-core
 .changeset/config.json @TanStack/tanstack-core
 scripts/ @TanStack/tanstack-core
+.npmrc @TanStack/tanstack-core
