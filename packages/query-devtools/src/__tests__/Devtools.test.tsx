@@ -561,6 +561,39 @@ describe('Devtools', () => {
         'pending',
       )
     })
+
+    it('should restore the previous query options when "Restore Loading" is clicked after "Trigger Loading"', async () => {
+      const queryFn = vi.fn(() => Promise.resolve('original'))
+      queryClient.prefetchQuery({
+        queryKey: ['action-restore-loading'],
+        queryFn,
+      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText(/Query key \["action-restore-loading"\]/),
+      )
+
+      // First click puts the query into a pending state with `data: undefined`
+      // and stashes the original options in `fetchMeta.__previousQueryOptions`.
+      fireEvent.click(rendered.getByText('Trigger Loading'))
+      expect(
+        queryClient.getQueryState(['action-restore-loading'])?.status,
+      ).toBe('pending')
+
+      // Second click runs `restoreQueryAfterLoadingOrError`, which cancels the
+      // never-resolving fetch and refetches with the stashed options.
+      fireEvent.click(rendered.getByText('Restore Loading'))
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(['action-restore-loading'])).toBe(
+        'original',
+      )
+    })
   })
 
   describe('mutation details', () => {
@@ -1075,6 +1108,103 @@ describe('Devtools', () => {
       expect(
         Number(localStorage.getItem('TanstackQueryDevtools.width')),
       ).toBeGreaterThan(initialWidth)
+    })
+
+    it('should clamp the width to the minimum when dragging shrinks the panel below the minimum width', () => {
+      const initialWidth = 200
+      const rendered = renderDevtools(
+        { position: 'left', initialIsOpen: true },
+        { 'TanstackQueryDevtools.width': String(initialWidth) },
+      )
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      const panel = handle.parentElement
+      expect(panel).toBeInstanceOf(HTMLElement)
+      // `width` is read twice during drag: once as the base size, and again
+      // after the clamp to detect when the panel has hit its minimum. The
+      // first call returns `initialWidth`; the second returns `0` so the
+      // `localStore.width < newWidth` restore branch stays inactive and only
+      // the `newSize < minWidth` clamp is observed.
+      const getBoundingClientRect = vi
+        .spyOn(panel!, 'getBoundingClientRect')
+        .mockReturnValueOnce({
+          height: 0,
+          width: initialWidth,
+          x: 0,
+          y: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          toJSON: () => ({}),
+        })
+      getBoundingClientRect.mockReturnValue({
+        height: 0,
+        width: 0,
+        x: 0,
+        y: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => ({}),
+      })
+
+      // In `left` position, dragging the cursor left (`clientX` 100 → 0)
+      // shrinks the panel by 100px, which lands well under the 192px minimum.
+      fireEvent.mouseDown(handle, { clientX: 100, clientY: 0 })
+      fireEvent(
+        document,
+        new MouseEvent('mousemove', { clientX: 0, clientY: 0 }),
+      )
+      fireEvent(document, new MouseEvent('mouseup'))
+
+      expect(Number(localStorage.getItem('TanstackQueryDevtools.width'))).toBe(
+        192,
+      )
+    })
+
+    it('should close the query details panel when dragging shrinks the panel below the minimum height', () => {
+      queryClient.setQueryData(['shrink-below-min-height'], [{ id: 1 }])
+      const rendered = renderDevtools({
+        position: 'bottom',
+        initialIsOpen: true,
+      })
+
+      // Open the query details so `selectedQueryHash` is set.
+      fireEvent.click(
+        rendered.getByLabelText(/Query key \["shrink-below-min-height"\]/),
+      )
+      expect(rendered.getByText('Query Details')).toBeInTheDocument()
+
+      const handle = rendered.getByLabelText('Resize devtools panel')
+      const panel = handle.parentElement
+      expect(panel).toBeInstanceOf(HTMLElement)
+      // Stub the base size to a value just above the 56px (`3.5rem`) minimum so
+      // a small downward drag pushes `newSize` below `minHeight` and triggers
+      // the clamp branch that also resets `selectedQueryHash`.
+      vi.spyOn(panel!, 'getBoundingClientRect').mockReturnValue({
+        height: 60,
+        width: 0,
+        x: 0,
+        y: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => ({}),
+      })
+
+      // In `bottom` position, dragging the cursor down (`clientY` 100 → 200)
+      // shrinks the panel by 100px, which is well under the 56px minimum.
+      fireEvent.mouseDown(handle, { clientX: 0, clientY: 100 })
+      fireEvent(
+        document,
+        new MouseEvent('mousemove', { clientX: 0, clientY: 200 }),
+      )
+      fireEvent(document, new MouseEvent('mouseup'))
+
+      expect(rendered.queryByText('Query Details')).not.toBeInTheDocument()
     })
   })
 
