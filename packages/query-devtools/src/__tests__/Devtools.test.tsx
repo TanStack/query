@@ -561,6 +561,39 @@ describe('Devtools', () => {
         'pending',
       )
     })
+
+    it('should restore the previous query options when "Restore Loading" is clicked after "Trigger Loading"', async () => {
+      const queryFn = vi.fn(() => Promise.resolve('original'))
+      queryClient.prefetchQuery({
+        queryKey: ['action-restore-loading'],
+        queryFn,
+      })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(queryFn).toHaveBeenCalledTimes(1)
+
+      const rendered = renderDevtools({ initialIsOpen: true })
+
+      fireEvent.click(
+        rendered.getByLabelText(/Query key \["action-restore-loading"\]/),
+      )
+
+      // First click puts the query into a pending state with `data: undefined`
+      // and stashes the original options in `fetchMeta.__previousQueryOptions`.
+      fireEvent.click(rendered.getByText('Trigger Loading'))
+      expect(queryClient.getQueryState(['action-restore-loading'])?.status).toBe(
+        'pending',
+      )
+
+      // Second click runs `restoreQueryAfterLoadingOrError`, which cancels the
+      // never-resolving fetch and refetches with the stashed options.
+      fireEvent.click(rendered.getByText('Restore Loading'))
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(queryFn).toHaveBeenCalledTimes(2)
+      expect(queryClient.getQueryData(['action-restore-loading'])).toBe(
+        'original',
+      )
+    })
   })
 
   describe('mutation details', () => {
