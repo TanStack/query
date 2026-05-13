@@ -1159,9 +1159,9 @@ describe('Devtools', () => {
       )
       fireEvent(document, new MouseEvent('mouseup'))
 
-      expect(
-        Number(localStorage.getItem('TanstackQueryDevtools.width')),
-      ).toBe(192)
+      expect(Number(localStorage.getItem('TanstackQueryDevtools.width'))).toBe(
+        192,
+      )
     })
 
     it('should close the query details panel when dragging shrinks the panel below the minimum height', () => {
