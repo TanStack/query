@@ -1,3 +1,5 @@
 .github/ @TanStack/tanstack-core
+.nx/ @TanStack/tanstack-core
+nx.json @TanStack/tanstack-core
 .changeset/config.json @TanStack/tanstack-core
 scripts/ @TanStack/tanstack-core
