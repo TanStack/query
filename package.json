@@ -101,10 +101,8 @@
       "@typescript-eslint/visitor-keys": "8.58.1",
       "typescript-eslint": "8.58.1",
       "vite": "^6.4.1",
-      "esbuild": "^0.27.2"
+      "esbuild": "^0.27.2",
+      "@sveltejs/kit": "2.57.1"
     }
-  },
-  "dependencies": {
-    "@sveltejs/kit": "2.57.1"
   }
 }
