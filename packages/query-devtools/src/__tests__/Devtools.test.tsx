@@ -580,9 +580,9 @@ describe('Devtools', () => {
       // First click puts the query into a pending state with `data: undefined`
       // and stashes the original options in `fetchMeta.__previousQueryOptions`.
       fireEvent.click(rendered.getByText('Trigger Loading'))
-      expect(queryClient.getQueryState(['action-restore-loading'])?.status).toBe(
-        'pending',
-      )
+      expect(
+        queryClient.getQueryState(['action-restore-loading'])?.status,
+      ).toBe('pending')
 
       // Second click runs `restoreQueryAfterLoadingOrError`, which cancels the
       // never-resolving fetch and refetches with the stashed options.
