@@ -1,0 +1,3 @@
+.github/ @TanStack/tanstack-core
+.changeset/config.json @TanStack/tanstack-core
+scripts/ @TanStack/tanstack-core
