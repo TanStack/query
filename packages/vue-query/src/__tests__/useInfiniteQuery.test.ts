@@ -95,8 +95,8 @@ describe('useInfiniteQuery', () => {
         throwOnError: throwOnErrorFn,
       })
 
-      // Suppress the Unhandled Rejection caused by watcher throw in Vue 3
-      const rejectionHandler = () => {}
+      // Capture the Unhandled Rejection caused by the watcher throw in Vue 3.
+      const rejectionHandler = vi.fn()
       process.on('unhandledRejection', rejectionHandler)
 
       await vi.advanceTimersByTimeAsync(10)
@@ -111,6 +111,12 @@ describe('useInfiniteQuery', () => {
           state: expect.objectContaining({ status: 'error' }),
         }),
       )
+      // The watcher rethrows, so an unhandled rejection is observed.
+      expect(rejectionHandler).toHaveBeenCalledTimes(1)
+      expect(rejectionHandler).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.anything(),
+      )
     })
   })
 
@@ -118,6 +124,10 @@ describe('useInfiniteQuery', () => {
     it('should not throw from error watcher when suspense is handling the error with throwOnError: true', async () => {
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
+
+      // Spy on unhandled rejections so we can assert the watcher does not rethrow.
+      const rejectionHandler = vi.fn()
+      process.on('unhandledRejection', rejectionHandler)
 
       const throwOnErrorFn = vi.fn().mockReturnValue(true)
       const query = useInfiniteQuery({
@@ -139,11 +149,15 @@ describe('useInfiniteQuery', () => {
 
       await promise
 
+      process.off('unhandledRejection', rejectionHandler)
+
       expect(rejectedError).toBeInstanceOf(Error)
       expect((rejectedError as Error).message).toBe('Some error')
       // throwOnError is evaluated in both suspense() and the error watcher
       expect(throwOnErrorFn).toHaveBeenCalledTimes(2)
-      // but the error watcher should not throw when suspense is active
+      // The error watcher must not rethrow when suspense is active, so no
+      // unhandled rejection should be observed.
+      expect(rejectionHandler).not.toHaveBeenCalled()
       expect(query).toMatchObject({
         status: { value: 'error' },
         isError: { value: true },
