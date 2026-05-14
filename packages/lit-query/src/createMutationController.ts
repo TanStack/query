@@ -15,6 +15,7 @@ import {
 } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
+import { RendererResult, renderResult, ResultRenderers } from './render.js'
 
 /**
  * Options accepted by `createMutationController`.
@@ -68,6 +69,17 @@ export type MutationResultAccessor<TData, TError, TVariables, TOnMutateResult> =
     >['reset']
     /** Removes the controller from its Lit host and unsubscribes observers. */
     destroy: () => void
+    /** Renders the query result using the appropriate renderer from the given set, based on the result's `status`. */
+    render: <
+      TRenderers extends ResultRenderers<
+        MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
+      >,
+    >(
+      renderers: TRenderers,
+    ) => RendererResult<
+      MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
+      TRenderers
+    >
   }
 
 function createIdleMutationResult<
@@ -356,6 +368,13 @@ export function createMutationController<
       mutateAsync: controller.mutateAsync,
       reset: controller.reset,
       destroy: () => controller.destroy(),
+      render: <
+        TRenderers extends ResultRenderers<
+          MutationObserverResult<TData, TError, TVariables, TOnMutateResult>
+        >,
+      >(
+        renderers: TRenderers,
+      ) => renderResult(controller.current, renderers),
     },
   )
 }
