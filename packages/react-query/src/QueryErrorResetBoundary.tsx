@@ -3,8 +3,8 @@ import * as React from 'react'
 
 // CONTEXT
 export type QueryErrorResetFunction = () => void
-export type QueryErrorIsResetFunction = () => boolean
-export type QueryErrorClearResetFunction = () => void
+export type QueryErrorIsResetFunction = (queryHash?: string) => boolean
+export type QueryErrorClearResetFunction = (queryHash?: string) => void
 
 export interface QueryErrorResetBoundaryValue {
   clearReset: QueryErrorClearResetFunction
@@ -14,15 +14,31 @@ export interface QueryErrorResetBoundaryValue {
 
 function createValue(): QueryErrorResetBoundaryValue {
   let isReset = false
+  let resetId = 0
+  const queryResetIds = new Map<string, number>()
+
   return {
-    clearReset: () => {
+    clearReset: (queryHash?: string) => {
       isReset = false
+
+      if (queryHash) {
+        queryResetIds.set(queryHash, resetId)
+      } else {
+        queryResetIds.clear()
+        resetId = 0
+      }
     },
     reset: () => {
       isReset = true
+      resetId += 1
     },
-    isReset: () => {
-      return isReset
+    isReset: (queryHash?: string) => {
+      if (!queryHash) {
+        return isReset
+      }
+
+      const queryResetId = queryResetIds.get(queryHash) ?? resetId
+      return queryResetId < resetId
     },
   }
 }

@@ -81,7 +81,7 @@ export function useBaseQuery<
 
   ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
-  useClearResetErrorBoundary(errorResetBoundary)
+  useClearResetErrorBoundary(errorResetBoundary, [defaultedOptions.queryHash])
 
   // this needs to be invoked before creating the Observer because that can create a cache entry
   const isNewCacheEntry = !client
