@@ -18,6 +18,7 @@ import {
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
 import { QueryObserverResultTracker } from './queryObserverResultTracker.js'
+import { RendererResult, renderResult, ResultRenderers } from './render.js'
 
 /**
  * Options accepted by `createInfiniteQueryController`.
@@ -60,6 +61,14 @@ export type InfiniteQueryResultAccessor<TData, TError> = ValueAccessor<
   >['fetchPreviousPage']
   /** Removes the controller from its Lit host and unsubscribes observers. */
   destroy: () => void
+  /** Renders the query result using the appropriate renderer from the given set, based on the result's `status`. */
+  render: <
+    TRenderers extends ResultRenderers<
+      InfiniteQueryObserverResult<TData, TError>
+    >,
+  >(
+    renderers: TRenderers,
+  ) => RendererResult<InfiniteQueryObserverResult<TData, TError>, TRenderers>
 }
 
 function createPendingInfiniteQueryResult<
@@ -428,6 +437,13 @@ export function createInfiniteQueryController<
       fetchNextPage: controller.fetchNextPage,
       fetchPreviousPage: controller.fetchPreviousPage,
       destroy: () => controller.destroy(),
+      render: <
+        TRenderers extends ResultRenderers<
+          InfiniteQueryObserverResult<TData, TError>
+        >,
+      >(
+        renderers: TRenderers,
+      ) => renderResult(controller.current, renderers),
     },
   )
 }
